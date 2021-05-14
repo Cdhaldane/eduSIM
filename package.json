@@ -19,6 +19,7 @@
     "body-parser": "^1.19.0",
     "client": "0.0.1",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "create-react-app": "^4.0.3",
     "express": "^4.17.1",
     "pg": "^8.6.0"
