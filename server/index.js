@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-var db = require('./database')
+var db = require('./databaseConnection')
 
 const ENV = process.env.NODE_ENV; //Tells us if we're working in development or production
 const PORT = process.env.PORT || 5000;
@@ -13,10 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+//Listening on port 5000
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);
 });
 
+//Gives us the confirmation in console whether the PostgreSQL is actually connected or not
 db.query('SELECT NOW()', (err, res) => {
   if (err.error)
     return console.log(err.error);
