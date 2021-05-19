@@ -1,0 +1,31 @@
+{
+  "name": "teamleadershipsimulator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuskanDubey99/TeamLeadershipSimulator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MuskanDubey99/TeamLeadershipSimulator/issues"
+  },
+  "homepage": "https://github.com/MuskanDubey99/TeamLeadershipSimulator#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "client": "0.0.1",
+    "cookie-parser": "^1.4.5",
+    "create-react-app": "^4.0.3",
+    "express": "^4.17.1",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "concurrently": "^6.1.0",
+    "nodemon": "^2.0.7"
+  },
+  "description": ""
+}

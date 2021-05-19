@@ -1,0 +1,255 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  font-family: "Montserrat", sans-serif;
+}
+body {
+  background: #181818;
+  padding: 0 16px;
+}
+
+
+
+footer {
+  position: absolute;
+  text-align: center;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;
+}
+
+footer p {
+  color: white;
+}
+
+.welcome h1 {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 5.5rem;
+  margin-top: 100px;
+  text-align: center;
+}
+.welcome p {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.5rem;
+  margin-top: 100px;
+  text-align: center;
+
+}
+
+.textbox {
+  border-radius: 2em;
+  border: none;
+  margin: 2em;
+  padding: 0.8em;
+  color: #181818;
+  font-size: 0.7em;
+  padding-left: 1.5em;
+  outline: none;
+  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+}
+
+
+.NavbarItems {
+  background-color: #8f001a;
+  height: 80px;
+}
+
+.note {
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 10px;
+  width: 340px;
+  height: 100px;
+  margin: 30px;
+  float: left;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
+.note h1 {
+  font-size: 1.5em;
+  margin-bottom: 6px;
+}
+.note p {
+  font-size: 1.0em;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.next-steps .fa-link {
+  margin-right: 5px;
+}
+
+/* Fix for use only flexbox in content area */
+.next-steps .row {
+  margin-bottom: 0;
+}
+
+.next-steps .col-md-5 {
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .next-steps .col-md-5 {
+    margin-bottom: 0;
+  }
+}
+
+.spinner {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.result-block-container .result-block {
+  opacity: 1;
+}
+
+.NavbarItems {
+  background-color: #8f001a;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.navbar-logo{
+  color: white;
+  justify-self: start;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.img{
+  margin-left: 0.5rem;
+  font-size: 2rem;
+  height: 30px;
+  vertical-align: middle;
+}
+
+.nav-menu{
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-gap: 10px;
+  list-style: none;
+  text-align: center;
+  width: 70vw;
+  justify-content: end;
+  margin-right: 2rem;
+}
+
+.nav-links{
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.nav-links:hover {
+  background-color: grey;
+  border-radius:  4px;
+  transition: all 0.2s ease-out;
+}
+
+.fa-bars{
+  color: white;
+}
+
+.nav-links-mobile{
+  display: none;
+}
+
+.menu-icon{
+  display: none;
+}
+
+@media screen and (max-width: 960px){
+  .NavbarItems{
+    position: relative;
+  }
+  .nav-menu{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 500px;
+    position: absolute;
+    top: 80px;
+    left: -100%;
+    opacity: 1;
+    transition: all 0.5s ease;
+  }
+
+  .nav-menu.active{
+    background: #181818;
+    left: 0;
+    opacity: 1;
+    transition: all 0.5s ease;
+    z-index: 1;
+  }
+
+  .nav-links{
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    display: table;
+  }
+
+  .nav-links:hover{
+    background-color: grey;
+    border-radius: 2;
+  }
+  .navbar-logo{
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(25%, 50%);
+  }
+
+  .menu-icon{
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-100%, 60%);
+    font-size: 1.8rem;
+    cursor: pointer;
+  }
+  .fa-times{
+    color: white;
+    font-size: 2rem;
+  }
+  .nav-links-mobile{
+    display: block;
+    text-align: center;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    border-radius: 4px;
+    width: 80%;
+    background: #8f001a;
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .nav-links-mobile:hover {
+    background: white;
+    color: black;
+    transition: 250ms;
+  }
+
+
+
+
+}
