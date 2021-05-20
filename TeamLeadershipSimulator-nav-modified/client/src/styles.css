@@ -8,8 +8,21 @@ html {
 }
 body {
   background: #181818;
-  padding: 0 16px;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-y: scroll;
 }
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
 
 
 
@@ -25,21 +38,98 @@ footer p {
   color: white;
 }
 
+.welcome {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 5.0rem;
+  margin-top: 100px;
+  text-align: center;
+}
+
 .welcome h1 {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 5.5rem;
+  font-size: 5.0rem;
   margin-top: 100px;
   text-align: center;
 }
 .welcome p {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 2.5rem;
-  margin-top: 100px;
+  font-size: 2.0rem;
+  margin-top: 70px;
   text-align: center;
 
 }
+.welcomep1 {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 10px;
+  width: 400px;
+  height: 400px;
+  margin: 30px;
+  margin-left: 355px;
+  margin-top: 100px;
+  float: center;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  position: relative;
+}
+
+.welcomep1 h1 {
+  margin-top: -60px;
+  color: #181818;
+}
+
+.welcomep1 img {
+  position: relative;
+  top: 40px;
+  height: 200px;
+}
+
+
+
+.dashboard {
+  color: #181818;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  margin-top: 0px;
+  margin-left: 20px;
+  margin-right: 20px;
+  text-align: left;
+}
+
+.dashboard hr{
+  margin-top: 20px;
+  border-width: 1px;
+}
+
+#under_menu_line{
+  margin-top: 220px;
+}
+
+
+.dashboard h1 {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 3.0rem;
+  margin-top: 50px;
+  margin-left: 25px;
+  text-align: left;
+
+}
+
+.dashboard h2 {
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  margin-top: 25px;
+  margin-left: 100px;
+  text-align: left;
+
+}
+
 
 .textbox {
   border-radius: 2em;
@@ -65,15 +155,23 @@ footer p {
   box-shadow: 0 2px 5px #ccc;
   padding: 10px;
   width: 340px;
-  height: 100px;
+  height: 150px;
   margin: 30px;
+  margin-left: 100px;
   float: left;
   font-family: "Montserrat", sans-serif;
   text-align: center;
 }
+
+
 .note h1 {
-  font-size: 1.5em;
-  margin-bottom: 6px;
+  color: #181818;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  margin-top: 0px;
+  margin-left: 0px;
+  text-align: center;
+  padding: 5px;
 }
 .note p {
   font-size: 1.0em;
@@ -81,6 +179,105 @@ footer p {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.note img{
+  height: 30px;
+  margin-top: 5px;
+}
+
+.note button {
+  padding: 8px 20px;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: white;
+  font-size: 1.2rem;
+  transition: transform 0.5s ease;
+}
+
+
+.sim{
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 10px;
+  width: 200px;
+  height: 200px;
+  margin: 30px;
+  margin-left: 100px;
+  float: left;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
+
+.sim h1 {
+  color: #181818;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  margin-top: 0px;
+  margin-left: 0px;
+  text-align: center;
+  padding: 5px;
+}
+
+.next-steps .fa-link {
+  margin-right: 5px;
+}
+
+/* Fix for use only flexbox in content area */
+.next-steps .row {
+  margin-bottom: 0;
+}
+
+.next-steps .col-md-5 {
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .next-steps .col-md-5 {
+    margin-bottom: 0;
+  }
+}
+
+.spinner {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.result-block-container .result-block {
+  opacity: 1;
+}
+
+.loading {
+  display: flex;
+  min-height: 500px;
+  align-items: center;
+  justify-content: center;
+}
+
+.userImg {
+  border-radius: 100px;
+  display: block;
+  height: 100px;
+  margin: 0 auto;
+  width: 100px;
+}
+
+.hero .app-logo {
+  max-width: 10.5rem;
+  border-radius: 50%;
+}
+
+
 .next-steps .fa-link {
   margin-right: 5px;
 }
@@ -119,11 +316,11 @@ footer p {
 
 .NavbarItems {
   background-color: #8f001a;
-  height: 80px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .navbar-logo{
@@ -155,6 +352,7 @@ footer p {
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
+  font-size: 1.7rem;
 }
 
 .nav-links:hover {
@@ -240,7 +438,7 @@ footer p {
     background: #8f001a;
     text-decoration: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 2.0rem;
   }
 
   .nav-links-mobile:hover {
@@ -249,7 +447,98 @@ footer p {
     transition: 250ms;
   }
 
+  Button {
+      display: none;
+    }
+  }
+  /* BUTTON */
+:root {
+  --primary: white;
+  --warning: #ffd028;
+  --danger: #eb3f27;
+  --success: #75fa83;
+  --white: #fdfdfd;
+  --dark: #181717;
+}
 
+.btn {
+  padding: 8px 20px;
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: white;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
 
+.btn:hover {
+  padding: 8px 20px;
+  transition: all 0.3s ease-out;
+  transition: 250ms;
+  transform: translateY(-3px);
+}
 
+/* Button Colors and Styles */
+.btn--primary--solid {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+}
+
+.btn--warning--solid {
+  background-color: var(--warning);
+  color: var(--white);
+  border: none;
+}
+
+.btn--danger--solid {
+  background-color: var(--danger);
+  color: var(--white);
+  border: none;
+}
+
+.btn--success--solid {
+  background-color: var(--success);
+  color: var(--white);
+  border: none;
+}
+
+.btn--primary--outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2 px solid var(--primary);
+}
+
+.btn--warning--outline {
+  background-color: transparent;
+  color: var(--warning);
+  border: 2 px solid var(--outline);
+}
+
+.btn--danger--outline {
+  background-color: transparent;
+  color: var(--danger);
+  border: 2 px solid var(--danger);
+}
+
+.btn--success--outline {
+  background-color: transparent;
+  color: var(--success);
+  border: 2 px solid var(--success);
+}
+
+/* Button Sizes */
+.btn--medium {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 24px;
+  color: #8f001a;
+}
+
+.btn--large {
+  padding: 12px 26px;
+  border-radius: 4px;
+  font-size: 22px;
+  color: #8f001a;
 }

@@ -20,7 +20,12 @@
     "react-router-dom": "^5.2.0",
     "react-syntax-highlighter": "^12.2.1",
     "request": "^2.79.0",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "react-dnd": "10.0.2",
+    "react-dnd-html5-backend": "10.0.2",
+    "faker": "^4.1.0",
+    "immutability-helper": "^3.0.0",
+    "react-frame-component": "^4.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

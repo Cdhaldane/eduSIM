@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {MenuItems} from "./MenuItems";
-import Button from "./Button"
-import AuthenticationButton from "./authentication-button"
+import Button from "./Button.jsx"
+import AuthenticationButton from "./AuthenticationButton"
 
 class NavBar extends Component {
   state = { clicked: false}

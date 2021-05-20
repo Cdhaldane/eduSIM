@@ -1,5 +1,5 @@
-import { withAuth0 } from "@auth0/auth0-react";
-import AuthenticationButton from "./authentication-button"
+
+
 
 export const MenuItems =[
   {
@@ -13,7 +13,7 @@ export const MenuItems =[
     cName:"nav-links"
   },
   {
-    title: "Dahsboard",
+    title: "Dashboard",
     url: "/dashboard",
     cName:"nav-links"
   },

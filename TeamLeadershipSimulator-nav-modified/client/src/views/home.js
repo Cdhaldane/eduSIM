@@ -8,10 +8,20 @@ import Note from "../components/Note";
 
 function Home(props){
     return (
-      <div className="welcome">
-        <h1>Welcome!</h1>
-        <p>Already have a room code?</p>
-        <p><form action = {"http://localhost:3000/" + document.getElementById.value}><label>Join!<input type="text" class="textbox" placeholder="Room Code" id="code" /></label></form></p>
+      <div>
+        <h1 class="welcome">Welcome!</h1>
+        <Note
+          title="Are you a Student / Participant?"
+          url="/welcome"
+          img="student.png"
+          class="welcomep1"
+        />
+        <Note
+          title="Are you a Teacher / Facillitator?"
+          url="/dashboard"
+          img="teacher.png"
+          class="welcomep1"
+        />
       </div>
     );
 }
