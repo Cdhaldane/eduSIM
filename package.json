@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon server"
+  "dev": "concurrently \"npm run server\" \"npm run client\"",
+  "client": "npm start --prefix client",
+  "server": "nodemon server"
   },
   "repository": {
     "type": "git",

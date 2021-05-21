@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { withAuth0 } from "@auth0/auth0-react";
 import DashboardItems from "./DashboardItems"
 import Note from "../components/Note";
-import simulationitems from "./simulationitems"
+import simulationitems from "./Simulationitems"
 import SimNote from "../components/SimNote";
 import CreateArea from "./CreateArea";
 

@@ -1,5 +1,5 @@
 
-const simulationitems = [
+const Simulationitems = [
   {
     id: 1,
     title: "My simulation One",
@@ -16,4 +16,4 @@ const simulationitems = [
   }
 ]
 
-export default simulationitems;
+export default Simulationitems;

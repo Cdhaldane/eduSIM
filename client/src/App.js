@@ -13,7 +13,7 @@ import Note from "./components/Note";
 
 
 
-import "./styles.css";
+
 
 class App extends React.Component {
   render() {
