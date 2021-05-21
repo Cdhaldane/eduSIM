@@ -5,7 +5,7 @@ import Loading from "./components/loading";
 import Welcome from "./views/welcome";
 import Home from "./views/home";
 import Profile from "./views/profile";
-import Dashboard from "./views/dashboard";
+import Dashboard from "./views/dashboard.jsx";
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./api/protected-route";
 import Footer from "./components/Footer";
@@ -32,7 +32,7 @@ class App extends React.Component {
           <Route path="/" exact component={Home} />
           <Route path="/welcome" exact component={Welcome} />
           <ProtectedRoute path="/profile" component={Profile} />
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
           </Switch>
         </div>
       </div>

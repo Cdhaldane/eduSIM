@@ -71,7 +71,7 @@ footer p {
   margin: 30px;
   margin-left: 355px;
   margin-top: 100px;
-  float: center;
+  float: left;
   font-family: "Montserrat", sans-serif;
   font-size: 1.0rem;
   position: relative;
@@ -195,7 +195,38 @@ footer p {
   font-size: 1.2rem;
   transition: transform 0.5s ease;
 }
+.garbage{
+  background: #181818;
+  width: 40px;
+  height: 40px;
+  margin-left: -300px;
+  margin-top: 10px;
+  float: left;
+  text-align: center;
+  vertical-align: middle;
+  outline: none;
+  border: none;
+}
 
+.garbage:Hover {
+  cursor: pointer;
+  background-color: #grey;
+}
+
+.garbage:active {
+  cursor: pointer;
+  background-color: #red;
+}
+
+.garbage img{
+  height: 40px;
+  width: 40px;
+  position: relative;
+  right: 2px;
+  top: -50px;
+  outline: none;
+  border: none;
+}
 
 .sim{
   background: #fff;
@@ -219,6 +250,80 @@ footer p {
   margin-left: 0px;
   text-align: center;
   padding: 5px;
+}
+
+.sim img{
+    height: 195px;
+    width: 195px;
+    position: relative;
+    top: -140px;
+    margin-left: -10px;
+    opacity: 0.8;
+}
+
+.delete {
+  position: relative;
+  top: -330px;
+  left: 80px;
+  outline: none;
+  border: none;
+  height: 20px;
+  width: 20px;
+  font-size: 1.4rem;
+  background-color: inherit;
+}
+
+.delete img {
+  position: relative;
+  top: 0px;
+  outline: none;
+  border: none;
+  height: 30px;
+  width: 30px;
+  font-size: 1.4rem;
+  background-color: inherit;
+}
+
+.delete img:hover {
+  height: 32px;
+  width: 32px;
+  left: -1px;
+  top: -1px;
+  cursor: pointer;
+}
+
+form {
+  position: relative;
+  width: 480px;
+  margin: 30px auto 20px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 7px;
+  box-shadow: 0 1px 5px rgb(138, 137, 137);
+}
+form input,
+form textarea {
+  width: 100%;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-size: 1.2em;
+  font-family: inherit;
+  resize: none;
+}
+form button {
+  position: absolute;
+  right: 18px;
+  bottom: -18px;
+  background: #8f001a;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  outline: none;
 }
 
 .next-steps .fa-link {
