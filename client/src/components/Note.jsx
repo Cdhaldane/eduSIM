@@ -1,26 +1,16 @@
 import React from "react";
 import {Link } from "react-router-dom";
 
-
-
-
-
-
-
 function Note(props) {
   return (
-
     <Link to={props.url}>
-    <button  className={props.class} type="button" >
+    <button  className={props.class} type="button" onClick="" >
       <div>
       <h1>{props.title}</h1>
       <img src={props.img}/>
       </div>
-
     </button>
     </Link>
-
-
   );
 }
 

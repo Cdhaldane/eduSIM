@@ -27,21 +27,22 @@ function CreateArea(props) {
   }
 
   return (
-    <div>
-      <form>
+    <div className="area">
+      <form >
         <input
           name="title"
           onChange={handleChange}
           value={note.title}
-          placeholder="Title"
+          placeholder="Simulation Name"
         />
-        <textarea
-          name="content"
-          onChange={handleChange}
-          value={note.content}
-          placeholder="Take a note..."
-          rows="3"
-        />
+      <input
+            type="file"
+            name="file"
+            id="file"
+            onChange={handleChange}
+            value=""
+          />
+        <label for="file">Choose an image</label>
         <button onClick={submitNote}>Add</button>
       </form>
     </div>

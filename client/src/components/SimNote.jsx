@@ -5,12 +5,13 @@ import {Link } from "react-router-dom";
 function SimNote(props) {
   function handleClick() {
     props.onDelete(props.id);
+
   }
 
   return (
-    <div className="note">
-      <h1>{props.title}</h1>
-      <p>{props.content}</p>
+    <div className="notesim">
+      <img src="temp.png" />
+      <h1><strong>{props.title}</strong></h1>
       <button onClick={handleClick}>DELETE</button>
     </div>
   );

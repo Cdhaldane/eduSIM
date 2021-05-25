@@ -36,11 +36,11 @@ function Dashboard() {
       <CreateArea onAdd={addNote} />
       {notes.map((noteItem, index) => {
         return (
-          <SimNote
+          <SimNote className="notesim"
             key={index}
             id={index}
             title={noteItem.title}
-            content={noteItem.content}
+            img={noteItem.img}
             onDelete={deleteNote}
           />
         );
