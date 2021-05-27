@@ -13,7 +13,7 @@ function AuthenticationButton(props) {
     type="button"
     buttonStyle="btn--primary--solid"
     buttonSize="button--medium">Logout</Button>:
-    <Button onClick={() => loginWithRedirect()}
+    <Button onClick={() => loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})}
     type="button"
     buttonStyle="btn--primary--solid"
     buttonSize="button--medium">Create Simulation</Button>

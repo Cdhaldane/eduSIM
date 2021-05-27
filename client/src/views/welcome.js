@@ -2,13 +2,6 @@ import React from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import Note from "../components/Note";
 
-
-
-
-
-
-
-
 function Welcome(props){
   const { isAuthenticated, loginWithRedirect, login } = useAuth0();
     return (

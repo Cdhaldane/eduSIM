@@ -4,8 +4,9 @@ import {Link } from "react-router-dom";
 
 function SimNote(props) {
   function handleClick() {
-    props.onDelete(props.id);
-
+    {if (window.confirm('Are you sure you wish to delete this item?'))
+      props.onDelete(props.id)
+    }
   }
 
   return (

@@ -15,6 +15,11 @@ export const MenuItems =[
     cName:"nav-links"
   },
   {
+    title: "Game Page",
+    url: "/gamepage",
+    cName:"nav-links"
+  },
+  {
     title: "Login",
     url: "/dashboard" ,
     cName:"nav-links-mobile"

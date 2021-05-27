@@ -9,6 +9,7 @@ function CreateArea(props) {
   function handleChange(event) {
     const { name, value } = event.target;
 
+
     setNote(prevNote => {
       return {
         ...prevNote,
@@ -26,8 +27,11 @@ function CreateArea(props) {
     event.preventDefault();
   }
 
+
+
+
   return (
-    <div className="area">
+      <div className="area">
       <form >
         <input
           name="title"
@@ -37,16 +41,17 @@ function CreateArea(props) {
         />
       <input
             type="file"
-            name="file"
+            name="img"
             id="file"
             onChange={handleChange}
-            value=""
+            value={note.img}
           />
         <label for="file">Choose an image</label>
         <button onClick={submitNote}>Add</button>
       </form>
     </div>
-  );
+
+);
 }
 
 export default CreateArea;

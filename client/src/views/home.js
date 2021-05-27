@@ -1,14 +1,9 @@
 import React, { Fragment } from "react";
-
-
 import Note from "../components/Note";
-
-
-
 
 function Home(props){
     return (
-      <div>
+      <div class="body">
         <h1 class="welcome">Welcome!</h1>
         <Note
           title="Are you a Student / Participant?"
@@ -27,6 +22,3 @@ function Home(props){
 }
 
 export default Home;
-
-/*<HomeContent />*/
-//<input type="submit" class="textbox" /
