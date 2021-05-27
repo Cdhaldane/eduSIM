@@ -23,9 +23,6 @@ code {
     monospace;
 }
 
-
-
-
 footer {
   position: absolute;
   text-align: center;
@@ -35,14 +32,13 @@ footer {
 }
 
 footer p {
-  
   color: white;
 }
 
 .welcome {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 5.0rem;
+  font-size: 5rem;
   margin-top: 100px;
   text-align: center;
 }
@@ -50,17 +46,16 @@ footer p {
 .welcome h1 {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 5.0rem;
+  font-size: 5rem;
   margin-top: 100px;
   text-align: center;
 }
 .welcome p {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
+  font-size: 2rem;
   margin-top: 70px;
   text-align: center;
-
 }
 .welcomep1 {
   background: #fff;
@@ -74,7 +69,7 @@ footer p {
   margin-top: 100px;
   float: left;
   font-family: "Montserrat", sans-serif;
-  font-size: 1.0rem;
+  font-size: 1rem;
   position: relative;
 }
 
@@ -89,48 +84,42 @@ footer p {
   height: 200px;
 }
 
-
-
 .dashboard {
   color: #181818;
   font-family: "Montserrat", sans-serif;
-  font-size: 1.0rem;
+  font-size: 1rem;
   margin-top: 0px;
   margin-left: 20px;
   margin-right: 20px;
   text-align: left;
 }
 
-.dashboard hr{
+.dashboard hr {
   margin-top: 20px;
   border-width: 1px;
 }
 
-#under_menu_line{
+#under_menu_line {
   margin-top: 220px;
 }
-
 
 .dashboard h1 {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 3.0rem;
+  font-size: 3rem;
   margin-top: 50px;
   margin-left: 25px;
   text-align: left;
-
 }
 
 .dashboard h2 {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
+  font-size: 2rem;
   margin-top: 25px;
   margin-left: 100px;
   text-align: left;
-
 }
-
 
 .textbox {
   border-radius: 2em;
@@ -141,9 +130,9 @@ footer p {
   font-size: 0.7em;
   padding-left: 1.5em;
   outline: none;
-  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%),
+    inset 0px 4px 6px -5px hsl(0, 0%, 2%);
 }
-
 
 .NavbarItems {
   background-color: #8f001a;
@@ -164,24 +153,23 @@ footer p {
   text-align: center;
 }
 
-
 .note h1 {
   color: #181818;
   font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
+  font-size: 2rem;
   margin-top: 0px;
   margin-left: 0px;
   text-align: center;
   padding: 5px;
 }
 .note p {
-  font-size: 1.0em;
+  font-size: 1em;
   margin-bottom: 10px;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
-.note img{
+.note img {
   height: 30px;
   margin-top: 5px;
 }
@@ -196,7 +184,6 @@ footer p {
   font-size: 1.2rem;
   transition: transform 0.5s ease;
 }
-
 
 .notesim {
   background: #fff;
@@ -219,7 +206,6 @@ footer p {
   left: -12px;
   color: #181818;
   font-size: 1.5rem;
-
 }
 .notesim p {
   font-size: 1.1em;
@@ -250,7 +236,7 @@ footer p {
   left: 0px;
 }
 
-.garbage{
+.garbage {
   background: #181818;
   width: 40px;
   height: 40px;
@@ -263,17 +249,17 @@ footer p {
   border: none;
 }
 
-.garbage:Hover {
+.garbage:hover {
   cursor: pointer;
-  background-color: #grey;
+  background-color: gray;
 }
 
 .garbage:active {
   cursor: pointer;
-  background-color: #red;
+  background-color: red;
 }
 
-.garbage img{
+.garbage img {
   height: 40px;
   width: 40px;
   position: relative;
@@ -283,7 +269,7 @@ footer p {
   border: none;
 }
 
-.sim{
+.sim {
   background: #fff;
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
@@ -300,20 +286,20 @@ footer p {
 .sim h1 {
   color: #181818;
   font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
+  font-size: 2rem;
   margin-top: 0px;
   margin-left: 0px;
   text-align: center;
   padding: 5px;
 }
 
-.sim img{
-    height: 195px;
-    width: 195px;
-    position: relative;
-    top: -140px;
-    margin-left: -10px;
-    opacity: 0.8;
+.sim img {
+  height: 195px;
+  width: 195px;
+  position: relative;
+  top: -140px;
+  margin-left: -10px;
+  opacity: 0.8;
 }
 
 .delete {
@@ -347,7 +333,6 @@ footer p {
   cursor: pointer;
 }
 
-
 .area form {
   position: relative;
   top: -285px;
@@ -360,7 +345,6 @@ footer p {
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
-
 }
 .area form input,
 .area form textarea {
@@ -368,7 +352,7 @@ footer p {
   border: none;
   padding: 4px;
   outline: none;
-  font-size: 2.0em;
+  font-size: 2em;
   font-family: "Montserrat", sans-serif;
   padding: 5px;
 }
@@ -387,16 +371,16 @@ footer p {
   outline: none;
 }
 .area input[type="file"] {
-  font-size: 1.0rem;
+  font-size: 1rem;
   width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
-.area label{
+.area label {
   font-size: 1.25em;
   font-weight: 700;
   margin-top: 15px;
@@ -405,8 +389,8 @@ footer p {
   cursor: pointer;
 }
 
-.area label:hover{
- font-size: 1.5em;
+.area label:hover {
+  font-size: 1.5em;
 }
 
 .next-steps .fa-link {
@@ -465,7 +449,6 @@ footer p {
   border-radius: 50%;
 }
 
-
 .next-steps .fa-link {
   margin-right: 5px;
 }
@@ -511,21 +494,21 @@ footer p {
   font-size: 1.5rem;
 }
 
-.navbar-logo{
+.navbar-logo {
   color: white;
   justify-self: start;
   margin-left: 20px;
   cursor: pointer;
 }
 
-.img{
+.img {
   margin-left: 0.5rem;
   font-size: 2rem;
   height: 30px;
   vertical-align: middle;
 }
 
-.nav-menu{
+.nav-menu {
   display: grid;
   grid-template-columns: repeat(4, auto);
   grid-gap: 10px;
@@ -536,7 +519,7 @@ footer p {
   margin-right: 2rem;
 }
 
-.nav-links{
+.nav-links {
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
@@ -545,27 +528,27 @@ footer p {
 
 .nav-links:hover {
   background-color: grey;
-  border-radius:  4px;
+  border-radius: 4px;
   transition: all 0.2s ease-out;
 }
 
-.fa-bars{
+.fa-bars {
   color: white;
 }
 
-.nav-links-mobile{
+.nav-links-mobile {
   display: none;
 }
 
-.menu-icon{
+.menu-icon {
   display: none;
 }
 
-@media screen and (max-width: 960px){
-  .NavbarItems{
+@media screen and (max-width: 960px) {
+  .NavbarItems {
     position: relative;
   }
-  .nav-menu{
+  .nav-menu {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -577,7 +560,7 @@ footer p {
     transition: all 0.5s ease;
   }
 
-  .nav-menu.active{
+  .nav-menu.active {
     background: #181818;
     left: 0;
     opacity: 1;
@@ -585,25 +568,25 @@ footer p {
     z-index: 1;
   }
 
-  .nav-links{
+  .nav-links {
     text-align: center;
     padding: 2rem;
     width: 100%;
     display: table;
   }
 
-  .nav-links:hover{
+  .nav-links:hover {
     background-color: grey;
     border-radius: 2;
   }
-  .navbar-logo{
+  .navbar-logo {
     position: absolute;
     top: 0;
     left: 0;
     transform: translate(25%, 50%);
   }
 
-  .menu-icon{
+  .menu-icon {
     display: block;
     position: absolute;
     top: 0;
@@ -612,11 +595,11 @@ footer p {
     font-size: 1.8rem;
     cursor: pointer;
   }
-  .fa-times{
+  .fa-times {
     color: white;
     font-size: 2rem;
   }
-  .nav-links-mobile{
+  .nav-links-mobile {
     display: block;
     text-align: center;
     padding: 1.5rem;
@@ -626,7 +609,7 @@ footer p {
     background: #8f001a;
     text-decoration: none;
     color: white;
-    font-size: 2.0rem;
+    font-size: 2rem;
   }
 
   .nav-links-mobile:hover {
@@ -636,10 +619,10 @@ footer p {
   }
 
   Button {
-      display: none;
-    }
+    display: none;
   }
-  /* BUTTON */
+}
+/* BUTTON */
 :root {
   --primary: white;
   --warning: #ffd028;

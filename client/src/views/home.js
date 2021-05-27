@@ -1,6 +1,4 @@
 import React, { Fragment } from "react";
-
-
 import Note from "../components/Note";
 
 
