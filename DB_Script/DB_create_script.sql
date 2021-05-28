@@ -122,7 +122,6 @@ ALTER TABLE public.gameplayers OWNER TO postgres;
 --
 
 COPY public.adminaccounts (adminid, email, name, createdtimestamp, issuperadmin) FROM stdin;
-\.
 
 
 --
@@ -130,7 +129,6 @@ COPY public.adminaccounts (adminid, email, name, createdtimestamp, issuperadmin)
 --
 
 COPY public.game (gameid, createdbyadminid, name, createdtimestamp, gameroles) FROM stdin;
-\.
 
 
 --
@@ -138,7 +136,6 @@ COPY public.game (gameid, createdbyadminid, name, createdtimestamp, gameroles) F
 --
 
 COPY public.gameactions (gameactionid, gameinstanceid, gameplayerid, gameaction, createdtimestamp) FROM stdin;
-\.
 
 
 --
@@ -146,7 +143,6 @@ COPY public.gameactions (gameactionid, gameinstanceid, gameplayerid, gameaction,
 --
 
 COPY public.gameinstances (gameid, createdtimestamp, gamestate, createdbyadminid, url) FROM stdin;
-\.
 
 
 --
@@ -154,7 +150,6 @@ COPY public.gameinstances (gameid, createdtimestamp, gamestate, createdbyadminid
 --
 
 COPY public.gameplayers (gameplayerid, player_id, gameinstanceid, gamestarttimestamp, roleid) FROM stdin;
-\.
 
 
 --
@@ -200,4 +195,3 @@ ALTER TABLE ONLY public.gameplayers
 --
 -- PostgreSQL database dump complete
 --
-
