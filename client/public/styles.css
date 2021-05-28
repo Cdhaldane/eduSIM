@@ -13,7 +13,7 @@ html {
   font-family: "Montserrat", sans-serif;
 }
 body {
-  background: #181818;
+  background-color: #202020;
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -42,7 +42,6 @@ footer p {
 }
 
 .body{
-  background: #181818;
   margin: 0;
   padding: 0;
 }
@@ -173,10 +172,6 @@ footer p {
 }
 
 
-.NavbarItems {
-  background-color: #8f001a;
-  height: 80px;
-}
 
 .note {
   background: #fff;
@@ -276,6 +271,7 @@ footer p {
   position: absolute;
   top: 0px;
   left: 0px;
+  opacity: 80%;
 }
 
 .sim{
@@ -345,7 +341,9 @@ footer p {
 .area{
   position: absolute;
   left: 700px;
+  top: 17px;
 }
+
 .area body {
   background: black;
 }
@@ -759,14 +757,79 @@ footer p {
 }
 
 .nav-links{
+  position: relative;
+  top: 20px;
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
   font-size: 1.7rem;
+  width: 20px;
 }
 
 .nav-links:hover {
   background-color: grey;
+  border-radius:  4px;
+  transition: all 0.2s ease-out;
+}
+
+.nav-pic{
+  align-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  margin-left: 10px;
+  margin-right: -50px;
+}
+
+.profilevist{
+  font-family: font-family: "Montserrat", sans-serif;
+  z-index: 1;
+  text-align: center;
+  font-size: 1.0rem;
+  position: absolute;
+  right: 50px;
+  top: 100px;
+  width: 250px;
+  height: 200px;
+  border-radius: 3px;
+  color: #181818;
+  background: white;
+
+}
+.profilevist h1{
+  position: relative;
+  left: 10px;
+  top: 10px;
+  color: black;
+  text-align: left;
+
+
+}
+
+.profilevist h2{
+ color: grey;
+ text-align: left;
+ margin-left: 20px;
+ font-size: 1.5rem;
+}
+
+.profilevist a{
+ color: Black;
+ margin-left: -110px;
+ font-size: 1.2rem;
+}
+
+.pbut{
+  position: relative;
+  bottom: -50px;
+}
+
+
+.profilevistf{
+  display: none;
+}
+
+.nav-pic:hover{
   border-radius:  4px;
   transition: all 0.2s ease-out;
 }
@@ -839,6 +902,7 @@ footer p {
     font-size: 2rem;
   }
   .nav-links-mobile{
+    position: relative;
     display: block;
     text-align: center;
     padding: 1.5rem;
@@ -863,7 +927,7 @@ footer p {
   }
   /* BUTTON */
 :root {
-  --primary: white;
+  --primary: #8f001a;
   --warning: #ffd028;
   --danger: #eb3f27;
   --success: #75fa83;
@@ -877,8 +941,8 @@ footer p {
   outline: none;
   border: none;
   cursor: pointer;
-  background-color: white;
-  font-size: 1.2rem;
+  background-color: #8f001a;
+  font-size: 1.3rem;
   transition: transform 0.3s ease;
 }
 
@@ -943,7 +1007,7 @@ footer p {
   padding: 8px 20px;
   border-radius: 4px;
   font-size: 24px;
-  color: #8f001a;
+  color: white;;
 }
 
 .btn--large {

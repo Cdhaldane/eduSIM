@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 
 function CreateArea(props) {
-  const [note, setNote] = useState({
-    title: "",
-    content: ""
-  });
+  const [note, setNote,] = useState(0);
 
   function handleChange(event) {
     const { name, value } = event.target;
-
 
     setNote(prevNote => {
       return {
@@ -18,13 +14,22 @@ function CreateArea(props) {
     });
   }
 
+
   function submitNote(event) {
     props.onAdd(note);
     setNote({
       title: "",
-      content: ""
+      content: "",
     });
     event.preventDefault();
+  }
+
+  function onChange(event){
+    if (event.target.files && event.target.files[0]) {
+      setNote({
+      img: URL.createObjectURL(event.target.files[0])
+    });
+    }
   }
 
 
@@ -40,11 +45,10 @@ function CreateArea(props) {
           placeholder="Simulation Name"
         />
       <input
-            type="file"
-            name="img"
-            id="file"
-            onChange={handleChange}
-            value={note.img}
+          type="file"
+          name="img"
+          id="file"
+          onChange={onChange}
           />
         <label for="file">Choose an image</label>
         <button onClick={submitNote}>Add</button>

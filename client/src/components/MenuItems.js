@@ -1,13 +1,13 @@
-export const MenuItems =[
+import React from "react";
+import { withAuth0 } from "@auth0/auth0-react";
+
+
+export const MenuItems =
+  [
   {
     title: "Home",
     url: "/",
     cName: "nav-links"
-  },
-  {
-    title: "Profile",
-    url: "/profile",
-    cName:"nav-links"
   },
   {
     title: "Dashboard",
@@ -18,6 +18,10 @@ export const MenuItems =[
     title: "Game Page",
     url: "/gamepage",
     cName:"nav-links"
+  },
+  {
+    title:"",
+    cName:"nav-pic"
   },
   {
     title: "Login",

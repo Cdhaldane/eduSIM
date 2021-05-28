@@ -39,7 +39,7 @@ function Dashboard() {
                       <h1>Setup an existing simulation</h1>
                       <img src="plus.png"/>
                       </div>
-              </button>}
+              </button>
               <button  className="note" type="button" onClick="" >
                 <div>
                 <h1>Create a custom simulation</h1>

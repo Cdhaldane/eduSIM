@@ -33,6 +33,7 @@ class App extends React.Component {
           <div >
             <Switch>
             <Route path="/" exact component={Home} />
+            <Route path="../components/Navbar" exact component={Navbar} />
             <Route path="/welcome" exact component={Welcome} />
             <Route path="/gamepage" exact component={GamePage} />
             <ProtectedRoute path="/profile" component={Profile} />

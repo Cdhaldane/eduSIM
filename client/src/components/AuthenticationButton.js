@@ -8,7 +8,7 @@ function AuthenticationButton(props) {
     isAuthenticated ?
     <Button onClick={() =>
       logout({
-        returnTo: window.location.origin,
+        returnTo: "http://localhost:3000/",
       })}
     type="button"
     buttonStyle="btn--primary--solid"
