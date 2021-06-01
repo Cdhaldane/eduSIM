@@ -5,26 +5,25 @@ function CreateArea(props) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-
     setNote(prevNote => {
       return {
         ...prevNote,
-        [name]: value
+        [name]: value,
       };
     });
   }
-
 
   function submitNote(event) {
     props.onAdd(note);
     setNote({
       title: "",
-      content: "",
+      img: ""
     });
     event.preventDefault();
   }
 
   function onChange(event){
+    const { name, value } = event.target;
     if (event.target.files && event.target.files[0]) {
       setNote({
       img: URL.createObjectURL(event.target.files[0])
@@ -32,12 +31,14 @@ function CreateArea(props) {
     }
   }
 
-
-
-
   return (
       <div className="area">
+
       <form >
+        <p>
+        Set up a simulation by entering a name and either selecting a display image
+        from the ones listed or choose your own!
+        </p>
         <input
           name="title"
           onChange={handleChange}
@@ -51,6 +52,9 @@ function CreateArea(props) {
           onChange={onChange}
           />
         <label for="file">Choose an image</label>
+      <h3>
+        Press off to exit.
+      </h3>
         <button onClick={submitNote}>Add</button>
       </form>
     </div>

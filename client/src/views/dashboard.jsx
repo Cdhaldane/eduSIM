@@ -12,7 +12,6 @@ function Dashboard() {
   const [notes, setNotes] = useState([]);
   const [showNote, setShowNote] = useState(false);
 
-
   function addNote(newNote) {
     setNotes((prevNotes) => {
       return [...prevNotes, newNote];
@@ -27,8 +26,6 @@ function Dashboard() {
     });
   }
 
-
-
   return (
     <div className="dashboard">
             <h1>Home</h1>
@@ -40,6 +37,10 @@ function Dashboard() {
                       <img src="plus.png"/>
                       </div>
               </button>
+              {showNote && <div>
+                <img className="bimg" src= "modalback.jpg" onClick={() => setShowNote(!showNote)} />
+                <CreateArea onAdd={addNote} />
+              </div>}
               <button  className="note" type="button" onClick="" >
                 <div>
                 <h1>Create a custom simulation</h1>
@@ -49,12 +50,9 @@ function Dashboard() {
             <hr id="under_menu_line" />
             <div className="dashsim">
             <h2>My simulations ️</h2>
-      {showNote && <div className="dashboard">
-      <CreateArea onAdd={addNote} />
-    </div>}
+
     {notes.map((noteItem, index) => {
       return (
-
         <SimNote className="notesim"
           key={index}
           id={index}
@@ -66,55 +64,7 @@ function Dashboard() {
     })}
     </div>
     </div>
-
   );
 }
 
-
-
-
-//
-// function createSimNote(term){
-//   return (<SimNote
-//     key={term.id}
-//     title={term.title}
-//     url={term.url}
-//     img={term.img}
-//     class={term.class}
-//     onDelete={deleteNote}
-//   />
-// );
-// }
-//
-//
-// function deleteNote(id) {
-//   const [notes, setNotes] = useState([]);
-//     setNotes(prevNotes => {
-//       return prevNotes.filter((noteItem, index) => {
-//         return index !== id;
-//       });
-//     });
-//   }
-//
-// function Dashboard(props){
-//     return (
-//       <div className="dashboard">
-//         <h1>Home</h1>
-//         <hr />
-//         <h2>New simulation</h2>
-//         {DashboardItems.map(createNote)}
-//         <hr id="under_menu_line" />
-//         <h2>My simulations ️</h2>
-//         {simulationitems.map(createSimNote)}
-//         <button  id="garbage" className="garbage" type="button" >
-//           <div>
-//           <img src="garbage.png"/>
-//           </div>
-//         </button>
-//       </div>
-//     );
-//   }
-//
 export default withAuth0(Dashboard);
-
-/*<HomeContent />*/

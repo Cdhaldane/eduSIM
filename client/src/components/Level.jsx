@@ -8,8 +8,8 @@ function Level() {
     <div className = "level">
       <img src="levelbar.png" />
         <div>
-           <p>It's Day {count}! </p>
-       {(count != 6)
+           <p>It's {count}! </p>
+        {(count != 6)
          ? <button onClick={() => setCount(count + 1)}>Next</button>
          : <button onClick={() => setCount(1)}>Next</button>
        }
@@ -20,5 +20,3 @@ function Level() {
 }
 
 export default Level;
-
-// <button onClick={() => setCount(count + 1)}>Next</button>

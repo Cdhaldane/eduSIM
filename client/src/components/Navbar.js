@@ -2,22 +2,17 @@ import React, {Component, useState} from "react";
 import {MenuItems} from "./MenuItems";
 import Button from "./Button.jsx"
 import AuthenticationButton from "./AuthenticationButton"
-import { withAuth0 } from "@auth0/auth0-react";
-
-
+import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 
 function NavBar(props) {
   const [count, setCount] = useState(false);
-
-
-    const { user } = props.auth0
-    const { picture, nickname } = user;
-
+  const { isAuthenticated } = useAuth0();
+  const { user } = props.auth0;
   const state = { clicked: false}
+
   function handleClick() {
     this.setState({clicked: !this.state.clicked})
   }
-
 
     return (
       <nav className="NavbarItems">
@@ -26,14 +21,16 @@ function NavBar(props) {
         <i className={state.clicked ? "fas fa-times" : "fas fa-bars"}></i>
         </div>
       <ul className={state.clicked ? "nav-menu active" : "nav-menu"}>
+        <div className="pp">
+        {(isAuthenticated)
+        ? <img className="nav-pic" src={ user.picture } onClick={() => setCount(!count)}/>
+        : <AuthenticationButton />
+    }
+        </div>
         {MenuItems.map((item,index) =>{
           return (
             <li key={index}>
               <a className={item.cName} href={item.url} >
-                {(item.title == "")
-                ? <img className={item.cName} src={picture} onClick={() => setCount(!count)}/>
-                : <a></a>
-                }
                 {item.title}
               </a>
             </li>
@@ -41,17 +38,17 @@ function NavBar(props) {
         })}
         {(count == true)
         ? <div className={"profilevist"}>
-          <h1>User:</h1>
-          <h2>
-            {nickname}
+            {(isAuthenticated)
+            ? <h2>{user.name}</h2>
+            : <h2>Nothing</h2>
+          }
           <br />
-          </h2>
-          <a href="/profile">Modify Profile</a>
+          <a href="/profile">Profile</a>
           <br />
         <div className="pbut">
             <AuthenticationButton />
           </div>
-          </div>
+        </div>
         : <div className={"profilevisf"}>
           </div>
         }
