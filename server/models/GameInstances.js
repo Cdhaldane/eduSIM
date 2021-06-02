@@ -9,8 +9,8 @@ class GameInstances {
     });
   }
 
-  static insert (id, name, callback) {
-    db.query('INSERT INTO test (id, name) VALUES ($1, $2) RETURNING *', [id, name], (err, res) => {
+  static insert (createdtimestamp, gamestate, url, callback) {
+    db.query('INSERT INTO gameinstances (createdtimestamp, gamestate, url) VALUES ($1, $2, $3) RETURNING *', [createdtimestamp, gamestate, url], (err, res) => {
       if (err.error)
         return callback(err);
       callback(res);
