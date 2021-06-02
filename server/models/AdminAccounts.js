@@ -1,8 +1,8 @@
 const db = require('../databaseConnection');
 
-class Game {
+class AdminAccounts {
   static retrieveAll (callback) {
-    db.query('SELECT * from test', (err, res) => {
+    db.query('SELECT * from adminaccounts', (err, res) => {
       if (err.error)
         return callback(err);
       callback(res);
@@ -18,4 +18,4 @@ class Game {
   }
 }
 
-module.exports = Game;
+module.exports = AdminAccounts;
