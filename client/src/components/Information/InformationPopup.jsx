@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import "./Info.css";
 
 function Info() {
   const[open, setOpen] = useState(0);
   return(
   <div className={"ibut" + open}>
-  {(open != 1)
+  {(open !== 1)
     ? <button onClick={() => setOpen(1)}><i class="fas fa-caret-square-up fa-3x"></i></button>
     : <button onClick={() => setOpen(0)}><i class="fas fa-caret-square-down fa-3x"></i></button>
 }

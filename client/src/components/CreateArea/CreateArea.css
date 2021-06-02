@@ -1,0 +1,164 @@
+.area{
+  font-family: "Montserrat", sans-serif;
+  position: absolute;
+  left: 700px;
+  top: 17px;
+  z-index: 2;
+}
+
+.area p{
+  font-size: 2.0rem;
+  padding: 30px;
+}
+
+.area h3{
+  font-size: 1.5rem;
+  text-align: left;
+  margin-top: 140px;
+  margin-left: 30px;
+}
+
+.area body {
+  background: black;
+}
+
+.area form {
+  position: relative;
+  top: -50px;
+  right: 250px;
+  width: 1000px;
+  height: 600px;
+  margin: 30px auto 20px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  text-align: center;
+}
+
+.area form input,
+.area form textarea {
+  position: relative;
+  left: -240px;
+  color: black;
+  font-weight: 700;
+  text-align: left;
+  width: 500px;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-size: 2.0rem;
+  font-family: "Montserrat", sans-serif;
+  padding: 50px;
+}
+.inputfile{
+  z-index: 0;
+  width: 300px;
+}
+.area form input:hover{
+  font-size: 2.2rem;
+  cursor: text;
+}
+.area form button {
+  font-size: 1.5rem;
+  position: absolute;
+  right: 18px;
+  bottom: -18px;
+  background: #8f001a;
+  color: #fff;
+  border: none;
+  border-radius: 5%;
+  width: 100px;
+  height: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  outline: none;
+}
+
+.area form button:hover{
+  width: 110px;
+  height: 55px;
+}
+
+.area input[type="file"] {
+  position: relative;
+  left: 0px;
+  font-size: 0rem;
+  width: 0.1px;
+	height: 0.1px;
+  opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+  text-align: left;
+}
+
+.area label{
+  position: absolute;
+  left: 59px;
+  width: 500px;
+
+  font-size: 2.0rem;
+  font-weight: 700;
+  color: black;
+  text-align: left;
+  cursor: pointer;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+
+.area label:hover{
+ font-size: 2.2em;
+}
+
+.textbox {
+  border-radius: 2em;
+  border: none;
+  margin: 2em;
+  padding: 0.8em;
+  color: #181818;
+  font-size: 0.7em;
+  padding-left: 1.5em;
+  outline: none;
+  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+}
+
+.flex-container {
+  /* We first create a flex layout context */
+  display: flex;
+
+  /* Then we define the flow direction
+     and if we allow the items to wrap
+   * Remember this is the same as:
+   * flex-direction: row;
+   * flex-wrap: wrap;
+   */
+  flex-flow: row;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  flex-shrink: 2;
+  width: 125px;
+  height: 125px;
+}
+
+.imageitems {
+  opacity: 1;
+  padding: 10px;
+  width: 125px;
+  height: 125px;
+  margin-top: 10px;
+  line-height: 150px;
+  color: white;
+  font-weight: bold;
+  font-size: 3em;
+  text-align: center;
+}

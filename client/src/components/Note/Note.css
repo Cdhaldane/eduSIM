@@ -1,0 +1,49 @@
+.note {
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px #ccc;
+  padding: 10px;
+  width: 340px;
+  height: 150px;
+  margin: 30px;
+  margin-left: 100px;
+  float: left;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
+
+
+.note h1 {
+  color: #181818;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  margin-top: 0px;
+  margin-left: 0px;
+  text-align: center;
+  padding: 5px;
+}
+.note p {
+  font-size: 1.0em;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.note img{
+  height: 30px;
+  margin-top: 5px;
+}
+
+.note input {
+  position: relative;
+  left: -110px;
+  top: -39px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: white;
+  font-size: 1.2rem;
+  transition: transform 0.5s ease;
+}

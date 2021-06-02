@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import {ImageItems} from "./ImageItems";
+import "./CreateArea.css";
 
 function CreateArea(props) {
   const [note, setNote,] = useState(0);
+  const [showNote, setShowNote] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -15,10 +18,12 @@ function CreateArea(props) {
 
   function submitNote(event) {
     props.onAdd(note);
+    props.onDelete(showNote);
     setNote({
       title: "",
       img: ""
     });
+    setShowNote(!showNote);
     event.preventDefault();
   }
 
@@ -31,9 +36,14 @@ function CreateArea(props) {
     }
   }
 
+  function showNotes(event){
+    props.onDelete(showNote);
+    setShowNote(!showNote);
+    event.preventDefault();
+  }
+
   return (
       <div className="area">
-
       <form >
         <p>
         Set up a simulation by entering a name and either selecting a display image
@@ -43,15 +53,26 @@ function CreateArea(props) {
           name="title"
           onChange={handleChange}
           value={note.title}
-          placeholder="Simulation Name"
+          placeholder="Simulation Name..."
         />
-      <input
+        <br />
+        <input
           type="file"
           name="img"
           id="file"
           onChange={onChange}
           />
-        <label for="file">Choose an image</label>
+        <label for="file">Choose an image...</label>
+        {/* {ImageItems.map((item,index) =>{
+          return (
+            <ul class="flex-container">
+              <li class={item.cName}>
+                <img src={item.img} />
+            </li>
+            </ul>
+          )
+        })} */}
+      
       <h3>
         Press off to exit.
       </h3>

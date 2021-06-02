@@ -1,6 +1,7 @@
 import React from "react"
 import Button from "./Button"
 import { useAuth0 } from '@auth0/auth0-react';
+import "./Buttons.css";
 
 function AuthenticationButton(props) {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();

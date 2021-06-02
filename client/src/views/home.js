@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-import Note from "../components/Note";
+import React from "react";
+import Note from "../components/Note/Note";
 
 function Home(props){
     return (

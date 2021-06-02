@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import Note from "../components/Note";
-import Level from "../components/Level";
-import Info from "../components/InformationPopup";
+import Level from "../components/Level/Level";
+import Info from "../components/Information/InformationPopup";
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import styled from "styled-components"
@@ -28,27 +27,27 @@ const GridHeader = styled.header`
 
 const GridMain = styled.main`
   grid-area: main;
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
 `;
 
 function Game(props){
-    const [showNav, setShowNav] = useState(false);
-    const toggle = () => setShowNav(!showNav)
-    return (
-      <div className="gamepage">
-      <Grid>
-        <GridNav>
-            <Sidebar class="grid-sidebar" visible={showNav} close={toggle}/>
-        </GridNav>
-        <GridHeader>
-            <Header class="header" toggle={toggle} />
-        </GridHeader>
-        <GridMain>
-          <Level />
-          <Info />
-        </GridMain>
-      </Grid>
-      </div>
+      const [showNav, setShowNav] = useState(false);
+      const toggle = () => setShowNav(!showNav)
+      return (
+        <div className="editpage">
+        <Grid>
+          <GridNav>
+              <Sidebar class="grid-sidebar" visible={showNav} close={toggle}/>
+          </GridNav>
+          <GridHeader>
+              <Header class="header" toggle={toggle} />
+          </GridHeader>
+          <GridMain>
+            <Level />
+            <Info />
+          </GridMain>
+        </Grid>
+        </div>
     );
 }
 

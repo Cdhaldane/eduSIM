@@ -1,6 +1,5 @@
 import React from "react";
-import {Link } from "react-router-dom";
-
+import "./SimNote.css";
 
 function SimNote(props) {
   function handleClick() {
@@ -11,7 +10,7 @@ function SimNote(props) {
 
   return (
     <div className="notesim">
-      <img src={props.img} />
+      <img src={props.img} alt="backdrop"/>
       <h1><strong>{props.title}</strong></h1>
       <button onClick={handleClick}>DELETE</button>
     </div>

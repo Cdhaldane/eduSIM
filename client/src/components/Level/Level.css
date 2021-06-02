@@ -1,0 +1,90 @@
+.ball1{
+  position: relative;
+  top:  59px;
+  left: 473px;
+  z-index: 1;
+}
+
+.ball2{
+  position: relative;
+  top:  59px;
+  left: 637px;
+  z-index: 1;
+}
+
+.ball3{
+  position: relative;
+  top:  59px;
+  left: 802px;
+  z-index: 1;
+}
+
+.ball4{
+  position: relative;
+  top:  59px;
+  left: 964px;
+  z-index: 1;
+}
+
+.ball5{
+  position: relative;
+  top:  59px;
+  left: 1126px;
+  z-index: 1;
+}
+
+.ball6{
+  position: relative;
+  top:  59px;
+  left: 1290px;
+  z-index: 1;
+}
+
+
+
+.level p {
+  position: relative;
+  color: #181818;
+  font-size: 2.0rem;
+  position: absolute;
+  top: 0px;
+  left: 835px;
+}
+
+.App{
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.level button{
+  position: relative;
+  top: -70px;
+  left: 1400px;
+  width: 100px;
+  height: 50px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5rem;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px
+}
+
+.level img{
+  position: relative;
+  left: 450px;
+  top: 0px;
+  height:80px;
+  width:900px;
+}
+
+.level button:hover{
+  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  width: 105px;
+  height: 55px;
+  border-radius: 15px;
+}
