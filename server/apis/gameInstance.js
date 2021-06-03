@@ -1,12 +1,13 @@
 var express = require('express');
-var Game = require('../models/Game');
+var GameInstances = require('../models/GameInstances');
 
 var router = express.Router();
 
-// API path to get all the game instances that a specific admin has created
-// request should have an admin id
-router.get('/getGameInstances', (req, res) => {
-  Game.retrieveAll((err, games) => {
+// API Path to get all the game instances that a specific admin has created
+// Request should have an admin id
+router.get('/getAdminSimulations/:id', (req, res) => {
+  const {id} = req.params;
+  GameInstances.retrieveAll( id, (err, games) => {
     if (err)
       return res.json(err);
     return res.json(games);
@@ -14,27 +15,38 @@ router.get('/getGameInstances', (req, res) => {
 });
 
 // API path to get a specific game instance that a specific admin has created
-// request should have an admin id, gameInstanceObject(to get id)
-// router.get('/getGameInstances', (req, res) => {
-//   Game.retrieveAll((err, games) => {
-//     if (err)
-//       return res.json(err);
-//     return res.json(games);
-//   });
-// });
+// Request should have an admin and a gameinstance id
+router.get('/getGameSimulationById/:id/:gid', (req, res) => {
+  const {id, gid} =req.params;
+  GameInstances.retrieve(id, gid, (err, games) => {
+    if (err)
+      return res.json(err);
+    return res.json(games);
+  });
+});
 
-router.post('/createGameInstances', (req, res) => {
-  // var id = req.body.id;
-  // var name = req.body.name;
-  const {name} =req.body;
-  // var timeStamp = req.body.timeStamp;
-  // var role = req.body.role;
+//API Path to update a specific game instance
+// Success or Failure method required
+router.put('/updateGameSimulation/:id', (req, res) => {
+    const {gid} = req.params;
+    const {gamestate} = req.body;
+    GameInstances.update(gamestate, gid, (err, result) => {
+      if (err)
+        return res.json(err);
+      return res.json(result);
+    });
+  });
 
-  Game.insert(name,(err, result) => {
+//API Path to create a new game instance
+//Success or Failure message required
+router.post('/NewGameSimulation', (req, res) => {
+  const {createdtimestamp, gamestate, url} =req.body;
+  GameInstances.insert(createdtimestamp, gamestate, url, (err, result) => {
     if (err)
       return res.json(err);
     return res.json(result);
   });
 });
+
 
 module.exports = router;

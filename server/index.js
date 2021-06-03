@@ -13,7 +13,8 @@ app.use(express.json()); //-> allows us to access the req.body
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.use('/apis/game', require('./apis/game'));
+app.use('/apis/gameinstances', require('./apis/gameInstance'));
+app.use('/apis/games', require('./apis/game'));
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);
