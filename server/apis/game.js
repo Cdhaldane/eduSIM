@@ -14,8 +14,8 @@ router.get('/getGames', (req, res) => {
 
 // API Path to get a specific game
 router.get('/getGameParameters/:id', (req, res) => {
-  const {id} = req.params;
-  Games.retrieve( id, (err, games) => {
+  const { id } = req.params;
+  Games.retrieve(id, (err, games) => {
     if (err)
       return res.json(err);
     return res.json(games);
@@ -24,7 +24,7 @@ router.get('/getGameParameters/:id', (req, res) => {
 
 //API Path to create a new game
 router.post('/createGames', (req, res) => {
-    const {name, createdtimestamp, gameroles, status} =req.body;
+    const { name, createdtimestamp, gameroles, status } =req.body;
     Games.insert(name, createdtimestamp, gameroles, status, (err, result) => {
       if (err)
         return res.json(err);
