@@ -10,6 +10,8 @@
   background-color: white;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
   border-radius: 15px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .info1 {
@@ -24,6 +26,8 @@
   background-color: white;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
   border-radius: 15px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .info0 h1{
@@ -64,37 +68,35 @@
   margin-right: 10px;
   text-align: left;
 }
-.ibut0 button{
+
+.info0 button{
   z-index: 1;
-  position: absolute;
-  bottom: 70px;
-  right: 200px;
+  position: relative;
+  bottom: 13px;
+  right: -600px;
   border: none;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ibut0 button:hover{
+.info0 button:hover{
   cursor: pointer;
   z-index: 1;
-  position: absolute;
-  bottom: 70px;
-  right: 200px;
-  border: none;
-  background-image:
+
 }
-.ibut1 button{
+.info1 button{
   z-index: 1;
-  position: absolute;
-  bottom: 320px;
-  right: 200px;
+  position: relative;
+  bottom: 13px;
+  right: -600px;
   border: none;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ibut1 button:hover{
+.info1 button:hover{
   cursor: pointer;
   z-index: 1;
-  position: absolute;
-  bottom: 320px;
-  right: 200px;
   border: none;
   background-image:
 }

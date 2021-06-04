@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Switch} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
+import DropdownMenu from "./components/DropDown/Dropdown"
 import Welcome from "./views/Welcome";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
@@ -38,6 +39,7 @@ class App extends React.Component {
       return(
         <div>
         <Navbar />
+
           <div >
             <div >
               <Switch>

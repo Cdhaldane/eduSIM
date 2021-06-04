@@ -1,43 +1,58 @@
+.levelimg {
+
+}
 .ball1{
   position: relative;
   top:  59px;
   left: 473px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .ball2{
   position: relative;
   top:  59px;
-  left: 637px;
+  left: 631px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .ball3{
   position: relative;
   top:  59px;
-  left: 802px;
+  left: 792px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .ball4{
   position: relative;
   top:  59px;
-  left: 964px;
+  left: 948px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .ball5{
   position: relative;
   top:  59px;
-  left: 1126px;
+  left: 1106px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .ball6{
   position: relative;
   top:  59px;
-  left: 1290px;
+  left: 1266px;
   z-index: 1;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 
@@ -74,6 +89,7 @@
 }
 
 .level img{
+  display: block;
   position: relative;
   left: 450px;
   top: 0px;
@@ -87,4 +103,39 @@
   width: 105px;
   height: 55px;
   border-radius: 15px;
+}
+#img1 {
+  object-position: left;
+  object-fit: cover;
+  width: 900px;
+}
+
+#img2 {
+  object-position: left;
+  object-fit: cover;
+  width: 220px;
+}
+
+#img3 {
+  object-position: left;
+  object-fit: cover;
+  width: 379px;
+}
+
+#img4 {
+  object-position: left;
+  object-fit: cover;
+  width: 537px;
+}
+
+#img5 {
+  object-position: left;
+  object-fit: cover;
+  width: 694px;
+}
+
+#img6 {
+  object-position: left;
+  object-fit: cover;
+  width: 854px;
 }

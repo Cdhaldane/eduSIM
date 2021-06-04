@@ -1,25 +1,51 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
+
 .area{
-  font-family: "Montserrat", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: 100%;
+  font-family: 'Raleway';
+  font-size: 2.5rem;
   position: absolute;
   left: 700px;
-  top: 17px;
+  top: 200px;
   z-index: 2;
+}
+.area form:after{
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+}
+
+
+@keyframes animatedgradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .area p{
+  text-align: left;
   font-size: 2.0rem;
   padding: 30px;
-}
-
-.area h3{
-  font-size: 1.5rem;
-  text-align: left;
-  margin-top: 140px;
-  margin-left: 30px;
-}
-
-.area body {
-  background: black;
+  font-weight: 700;
 }
 
 .area form {
@@ -34,50 +60,22 @@
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
+  --borderWidth: 6px;
+  border-radius: var(--borderWidth);
 }
 
-.area form input,
-.area form textarea {
-  position: relative;
-  left: -240px;
-  color: black;
-  font-weight: 700;
-  text-align: left;
-  width: 500px;
-  border: none;
-  padding: 4px;
-  outline: none;
-  font-size: 2.0rem;
-  font-family: "Montserrat", sans-serif;
-  padding: 50px;
-}
-.inputfile{
-  z-index: 0;
-  width: 300px;
-}
-.area form input:hover{
-  font-size: 2.2rem;
-  cursor: text;
-}
-.area form button {
+#add {
+  color: white;
+  z-index: 2000;
   font-size: 1.5rem;
-  position: absolute;
-  right: 18px;
-  bottom: -18px;
-  background: #8f001a;
-  color: #fff;
-  border: none;
+  position: relative;
+  bottom: 20px;
+  left: 412px;
   border-radius: 5%;
   width: 100px;
   height: 50px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  outline: none;
-}
-
-.area form button:hover{
-  width: 110px;
-  height: 55px;
 }
 
 .area input[type="file"] {
@@ -94,12 +92,24 @@
 }
 
 .area label{
-  position: absolute;
-  left: 59px;
-  width: 500px;
-
+  position: relative;
+  top: 20px;
+  left: -300px;
+  padding: 30px;
   font-size: 2.0rem;
   font-weight: 700;
+  color: black;
+  text-align: left;
+  cursor: pointer;
+}
+
+.area select {
+  position: relative;
+  top: 20px;
+  left: -280px;
+  padding: 10px;
+  font-size: 1.5rem;
+  font-weight: 200;
   color: black;
   text-align: left;
   cursor: pointer;
@@ -110,55 +120,149 @@
   opacity: 1; /* Firefox */
 }
 
-
-.area label:hover{
- font-size: 2.2em;
+.gradient-border {
+  --borderWidth: 3px;
+  background: #1D1F20;
+  position: relative;
+  border-radius: var(--borderWidth);
+}
+.gradient-border:after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
 }
 
-.textbox {
-  border-radius: 2em;
-  border: none;
-  margin: 2em;
-  padding: 0.8em;
-  color: #181818;
-  font-size: 0.7em;
-  padding-left: 1.5em;
-  outline: none;
-  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+
+@keyframes animatedgradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
-.flex-container {
-  /* We first create a flex layout context */
+#box {
+  z-index: 200;
   display: flex;
-
-  /* Then we define the flow direction
-     and if we allow the items to wrap
-   * Remember this is the same as:
-   * flex-direction: row;
-   * flex-wrap: wrap;
-   */
-  flex-flow: row;
-
-  /* Then we define how is distributed the remaining space */
-  justify-content: space-around;
-
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  flex-shrink: 2;
-  width: 125px;
-  height: 125px;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 100px;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.3rem;
+  font-weight: 2000;
 }
 
-.imageitems {
-  opacity: 1;
-  padding: 10px;
-  width: 125px;
-  height: 125px;
-  margin-top: 10px;
-  line-height: 150px;
+
+#box1 {
+  position: relative;
+  top: 40px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 480px;
+  height: 100px;
   color: white;
-  font-weight: bold;
-  font-size: 3em;
-  text-align: center;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#box2{
+  position: relative;
+  top:100px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 100px;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#box3{
+  position: relative;
+  left: 570px;
+  top:0px;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 100px;
+  color: black;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#box3 input, #box3 textarea {
+  position: relative;
+  top: 0px;
+  color: black;
+  font-weight: 700;
+  text-align: left;
+  width: 340px;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#prevgame{
+    position: relative;
+    top: 70px;
+    left: -75px;
+    padding: 30px;
+    font-size: 2.0rem;
+    font-weight: 700;
+    color: black;
+    text-align: left;
+    cursor: pointer;
+}
+
+#prevgames {
+  position: relative;
+  top: 70px;
+  left: -50px;
+}
+
+#file {
+  position: absolute;
+  top: 0px;
+  left: -20px;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#preview{
+  display: flex;
+  border: solid white 3px;
+  position: relative;
+  left: 140px;
+  width: 80px;
+  height: 80px;
+}
+
+.react-switch {
+  position: relative;
+  top: -20px;
+  left: 330px;
+  vertical-align: middle;
+  margin-left: 4px;
 }

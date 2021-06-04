@@ -11,6 +11,8 @@
   top: -0px;
   margin-right: 145px;
   margin-top: 50px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 .notesim h1 {
   z-index: 1;

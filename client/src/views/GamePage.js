@@ -32,6 +32,7 @@ const GridMain = styled.main`
 
 function Game(props){
       const [showNav, setShowNav] = useState(false);
+      const [number, setNumber] = useState(6)
       const toggle = () => setShowNav(!showNav)
       return (
         <div className="editpage">
@@ -43,7 +44,7 @@ function Game(props){
               <Header class="header" toggle={toggle} />
           </GridHeader>
           <GridMain>
-            <Level />
+            <Level number={number}/>
             <Info />
           </GridMain>
         </Grid>

@@ -91,6 +91,18 @@ footer {
   height: 200px;
 }
 
+.textbox {
+  border-radius: 2em;
+  border: none;
+  margin: 2em;
+  padding: 0.8em;
+  color: #181818;
+  font-size: 0.7em;
+  padding-left: 1.5em;
+  outline: none;
+  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+}
+
 .dashboard {
   color: #181818;
   font-family: "Montserrat", sans-serif;
@@ -116,11 +128,13 @@ footer {
 
 .dashboard hr{
   margin-top: 20px;
+  margin-bottom: 20px;
   border-width: 1px;
 }
 
 #under_menu_line{
-  margin-top: 220px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .dashboard h1 {
@@ -143,6 +157,29 @@ footer {
 
 }
 
+#new {
+  padding: 10px;
+  display: flex;
+  text-align: center;
+  position: relative;
+  left: 100px;
+  width: 300px;
+  height: 100px;
+  background-color: #8f001a;
+  border-style: none;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+  border-radius: 5%;
+}
+
+#new:hover {
+  text-align: center;
+  cursor: pointer;
+  font-size: 2.2rem;
+}
+
+
 .gamepage {
   background-color: #e5e5e5;
   position:absolute;
@@ -155,6 +192,7 @@ footer {
   background-color: #e5e5e5;
   overflow: hidden;
 }
+
 
 .editpage {
   position:absolute;

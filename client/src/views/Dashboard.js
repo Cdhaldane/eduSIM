@@ -27,26 +27,11 @@ function Dashboard(props) {
     <div className="dashboard">
             <h1>Home</h1>
             <hr />
-            <h2>New simulation</h2>
-              <button  className="note" onClick={() => setShowNote(!showNote)} >
-                      <div>
-                      <h1>Setup an existing simulation</h1>
-                    <img src="./plus.png"/>
-                      </div>
-              </button>
+            <button id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation</button>
               {showNote && <div>
                 <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
               <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} />
               </div>}
-              <Link to="/EditPage">
-              <button  className="note" type="button" onClick="">
-                <div>
-                <h1>Create a custom simulation</h1>
-                <img src="plus.png"/>
-                </div>
-              </button>
-              </Link>
-            <hr id="under_menu_line" />
             <div className="dashsim">
             <h2>My simulations ️</h2>
 
@@ -67,3 +52,19 @@ function Dashboard(props) {
 }
 
 export default withAuth0(Dashboard);
+
+// <Link to="/EditPage">
+// <button  className="note" type="button" onClick="">
+//   <div>
+//   <h1>Create a custom simulation</h1>
+//   <img src="plus.png"/>
+//   </div>
+// </button>
+// </Link>
+//
+// <button  className="note" onClick={() => setShowNote(!showNote)} >
+//         <div>
+//         <h1>Setup an existing simulation</h1>
+//       <img src="./plus.png"/>
+//         </div>
+// </button>
