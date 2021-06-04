@@ -5,7 +5,6 @@ import Loading from "./components/Loading/Loading";
 import DropdownMenu from "./components/DropDown/Dropdown"
 import Welcome from "./views/Welcome";
 import Home from "./views/Home";
-import Game from "./views/Game"
 import Profile from "./views/Profile";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";

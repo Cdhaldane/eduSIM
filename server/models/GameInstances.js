@@ -1,7 +1,10 @@
 const db = require('../databaseConnection');
 
 class GameInstances {
-  //Postgres query to get all game instances for a particular admin
+  // list of attributes and some methods
+  // create game instance object which controller passes to the api
+  // generate models using script (open api framework) - update and run scripts - update models accordingly 
+  // Postgres query to get all game instances for a particular admin
   static retrieveAll (id, callback) {
     db.query('SELECT * from gameinstances WHERE createdbyadminid = $1', [id], (err, res) => {
       if (err.error)

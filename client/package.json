@@ -33,6 +33,7 @@
     "react-step-progress-bar": "^1.0.3",
     "react-switch": "^6.0.0",
     "react-syntax-highlighter": "^12.2.1",
+    "react-transition-group": "^4.4.2",
     "reactjs-popup": "^2.0.4",
     "request": "^2.79.0",
     "styled-components": "^5.3.0",
@@ -62,6 +63,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-    "proxy": "http://localhost:5000"
+  }
+ 
 }
