@@ -1,22 +1,21 @@
 import React from "react";
 import { Route, Switch} from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Loading from "./components/Loading";
+import Navbar from "./components/Navbar/Navbar";
+import Loading from "./components/Loading/Loading";
+import DropdownMenu from "./components/DropDown/Dropdown"
 import Welcome from "./views/Welcome";
 import Home from "./views/Home";
 import Game from "./views/Game"
 import Profile from "./views/Profile";
-import Dashboard from "./views/Dashboard.jsx";
+import Dashboard from "./views/Dashboard";
+import GamePage from "./views/GamePage";
+import EditPage from "./views/EditPage";
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./api/protected-route";
 import Footer from "./components/Footer";
-import Note from "./components/Note";
-
-
-
-
 
 class App extends React.Component {
+
   render() {
     const { isLoading } = this.props.auth0;
 
@@ -24,41 +23,43 @@ class App extends React.Component {
       return <Loading />;
     }
 
-    if(window.location.href != "http://localhost:3000/game") {
-      return (
-        <div id="app" className="d-flex flex-column h-100">
-        <Navbar />
-          <div className="container flex-grow-1">
-            <div className="mt-5">
-              <Switch>
-              <Route path="/" exact component={Home} />
-              <Route path="/welcome" exact component={Welcome} />
-              <Route path="/game" exact component={Game} />
-              <ProtectedRoute path="/profile" component={Profile} />
-              <ProtectedRoute path="/dashboard" component={Dashboard} />
-              </Switch>
-            </div>
-          </div>
-          <Footer />
-          </div>
-    
-        );
-    } 
-    else {
+    if (window.location.href == "http://localhost:3000/gamepage" || (window.location.href == "http://localhost:3000/EditPage")) {
       return (
         <div>
-              <Switch>
+          <Switch>
               <Route path="/" exact component={Home} />
               <Route path="/welcome" exact component={Welcome} />
-              <Route path="/game" exact component={Game} />
+              <Route path="/gamepage" exact component={GamePage} />
+              <Route path="/editpage" exact component={EditPage} />
+              <ProtectedRoute path="/profile" component={Profile} />
+              <ProtectedRoute path="/dashboard" component={Dashboard} />
+          </Switch>
+        </div>
+      );
+    } else {
+      return(
+        <div>
+        <Navbar />
+
+          <div >
+            <div >
+              <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="../components/Navbar" exact component={Navbar} />
+              <Route path="/welcome" exact component={Welcome} />
+              <Route path="/gamepage" exact component={GamePage} />
+              <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />
               <ProtectedRoute path="/dashboard" component={Dashboard} />
               </Switch>
+              <div>
+                <Footer />
+              </div>
+            </div>
           </div>
-    
+          </div>
         );
     }
-    
   }
 }
 

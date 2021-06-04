@@ -7,6 +7,7 @@ import Auth0ProviderWithHistory from "./api/auth0-provider-with-history";
 
 
 
+
 ReactDOM.render(
   <Router>
     <Auth0ProviderWithHistory>

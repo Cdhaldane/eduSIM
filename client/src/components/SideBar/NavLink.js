@@ -7,7 +7,7 @@ const StyledLink = styled(Link)`
   display: flex;
   align-items: center;
   padding: 0 24px;
-  font-size: 13px;
+  font-size: 1.5rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
@@ -15,7 +15,7 @@ const StyledLink = styled(Link)`
   i {
     min-height: 22px;
     min-width: 22px;
-    font-size: 18px;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,6 +1,7 @@
 import React from "react"
 import Button from "./Button"
 import { useAuth0 } from '@auth0/auth0-react';
+import "./Buttons.css";
 
 function AuthenticationButton(props) {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -8,12 +9,12 @@ function AuthenticationButton(props) {
     isAuthenticated ?
     <Button onClick={() =>
       logout({
-        returnTo: window.location.origin,
+        returnTo: "http://localhost:3000/",
       })}
     type="button"
     buttonStyle="btn--primary--solid"
     buttonSize="button--medium">Logout</Button>:
-    <Button onClick={() => loginWithRedirect()}
+    <Button onClick={() => loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})}
     type="button"
     buttonStyle="btn--primary--solid"
     buttonSize="button--medium">Create Simulation</Button>

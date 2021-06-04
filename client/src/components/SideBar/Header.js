@@ -28,7 +28,7 @@ function Header({toggle}){
         <Grid>
             <div onClick={toggle}>
                 <i className="fas fa-bars toggle-button" />
-            </div>  
+            </div>
         </Grid>
     );
 }

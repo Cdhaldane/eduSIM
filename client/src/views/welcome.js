@@ -1,16 +1,9 @@
 import React from "react";
 import { useAuth0 } from '@auth0/auth0-react';
-import Note from "../components/Note";
-
-
-
-
-
-
 
 
 function Welcome(props){
-  const { isAuthenticated, loginWithRedirect, login } = useAuth0();
+  const { loginWithRedirect } = useAuth0();
     return (
       <div className="welcome">
         <h1>Welcome!</h1>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Backdrop from "../../ui/Backdrop" 
+import Backdrop from "../../ui/Backdrop"
 import NavLink from "./NavLink"
 import NavLinksGroup from "./NavLinksGroup"
 import NavToggle from "./NavToggle"
