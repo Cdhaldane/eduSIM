@@ -43,11 +43,11 @@
 
 // module.exports = new Database();
 const Sequelize = require('sequelize');
-// const dotenv = require('dotenv');
+const dotenv = require('dotenv');
 
-// dotenv.config();
+dotenv.config();
 
-module.exports =  new Sequelize('simulator-db','postgres','Postgres#123', {
+module.exports =  new Sequelize(`${process.env.POSTGRES_DB}`,`${process.env.POSTGRES_USER}`,`${process.env.POSTGRES_PASS}`, {
   host: 'localhost',
   dialect: 'postgres',
 

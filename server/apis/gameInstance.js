@@ -52,13 +52,3 @@ var router = express.Router();
 // const Sequelize = require('sequelize');
 // const Op = Sequelize.Op;
 
-// Get gig list
-router.get('/', (req, res) => 
-  GameInstances.findAll()
-    .then(gameinstances => 
-      {console.log(gameinstances);
-      res.status(200);
-      })
-    .catch(err => console.log(err)));
-
-module.exports = router;
