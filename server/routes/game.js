@@ -4,10 +4,14 @@ const router = Router();
 
 //Routes go here
 
+// API Path to get all games of 'active' status
 router.get('/getGames', game.getGames);
 
-router.get('/getGameParameters/:id', game.getGameParameters);
+// API Path to get a specific game
+// Request should have a game id
+router.get('/getGamebyId/:id', game.getGamebyId);
 
+//API Path to create a new game
 router.post('/createGames', game.createGame);
 
 export default router;

@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../../databaseConnection');
+const db = require('../databaseConnection');
 
 const adminaccounts = db.define('adminaccounts', {
   adminid: {

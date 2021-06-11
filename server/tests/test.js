@@ -1,7 +1,7 @@
 var supertest = require("supertest");
 
 const express = require('express');
-const gameinstances = require("../models/simulatordb/GameInstances");
+const gameinstances = require("../models/GameInstances");
 
 const app = express();
 
