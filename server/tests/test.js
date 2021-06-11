@@ -1,6 +1,7 @@
 var supertest = require("supertest");
 
 const express = require('express');
+const gameinstances = require("../models/simulatordb/GameInstances");
 
 const app = express();
 
@@ -14,7 +15,7 @@ var server = supertest.agent("http://localhost:5000");
 describe('GET /getGames', function () {
     it('respond with json containing a list of all games', function (done) {
         server
-            .get('/apis/games/getGames')
+            .get('/games/getGames')
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200,done);
@@ -22,8 +23,9 @@ describe('GET /getGames', function () {
 });
 describe('GET /getAdminSimulations', function () {
     it('respond with json containing a list of all game instances created by an admin', function (done) {
+        const adminid = "6d960e3e-5063-48eb-9d06-3e5b1e07a2f7"
         server
-            .get('/apis/gameinstances/getAdminSimulations/:id')
+            .get('/gameinstances/'+ adminid)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200,done);
@@ -31,8 +33,10 @@ describe('GET /getAdminSimulations', function () {
 });
 describe('GET /getGameSimulationById', function () {
     it('respond with json containing a specific game instance', function (done) {
+        const adminid = "6d960e3e-5063-48eb-9d06-3e5b1e07a2f7"
+        const gameid = "1cffee2b-465e-42bc-8dfa-5ddd4e4c0c11"
         server
-            .get('/apis/gameinstances/getGameSimulationById/:id/:gid')
+            .get('/gameinstances/getGameInstance/'+adminid+'/'+gameid)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200,done);
@@ -41,8 +45,8 @@ describe('GET /getGameSimulationById', function () {
 describe('POST /createGames', function () {
     it('respond with newly created game', function (done) {
         server
-        .post('/apis/games/createGames')
-        .send({ name: "Muskan", createdtimestamp: null, gameroles: null, status: 'active' })
+        .post('/games/createGames')
+        .send({ name: "Muskan", createdtimestamp: "123", gameroles: null, status: 'active' })
         .set('X-API-Key', 'foobar')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
@@ -56,8 +60,8 @@ describe('POST /createGames', function () {
 describe('POST /NewGameSimulation', function () {
     it('respond with newly created game instance', function (done) {
         server
-        .post('/apis/gameinstances/NewGameSimulation')
-        .send({ createdtimestamp: null, gamestate: null, url: 'abc@example.com' })
+        .post('/gameinstances/createGameInstance')
+        .send({ createdtimestamp: "123", gamestate: null, url: 'abc@example.com' })
         .set('X-API-Key', 'foobar')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
@@ -70,9 +74,10 @@ describe('POST /NewGameSimulation', function () {
 });
 describe('Put /UpdateGameSimulation', function () {
     it('respond with updated game instance', function (done) {
+        const id = "1cffee2b-465e-42bc-8dfa-5ddd4e4c0c11"
         server
-        .put('/apis/gameinstances//updateGameSimulation/:gid')
-        .send({ createdtimestamp: null, gamestate: null, url: 'abc@example.com' })
+        .put('/gameinstances/update/'+id)
+        .send({ createdtimestamp: "123", gamestate: null, url: 'abc@example.com' })
         .set('X-API-Key', 'foobar')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)

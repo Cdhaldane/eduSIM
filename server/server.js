@@ -27,6 +27,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/gameinstances', routes.gameinstance)
+app.use('/games', routes.game)
 
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
