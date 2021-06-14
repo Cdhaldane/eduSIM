@@ -9,18 +9,18 @@ const adminaccounts = db.define('adminaccounts', {
     allowNull: false
   },
   email: {
-    type: Sequelize.STRING(50)
+    type: Sequelize.STRING(50),
+    allowNull: false
   },
   name: {
     type: Sequelize.STRING(50)
   },
-  createdtimestamp: {
-    type: Sequelize.DATE,
-    allowNull: false
+  picture: {
+    type: Sequelize.JSON
   },
   issuperadmin: {
     type: Sequelize.BOOLEAN,
-    allowNull: false
+    defaultValue: true
   }
 });
 
