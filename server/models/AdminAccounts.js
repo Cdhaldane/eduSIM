@@ -20,7 +20,7 @@ const adminaccounts = db.define('adminaccounts', {
   },
   issuperadmin: {
     type: Sequelize.BOOLEAN,
-    defaultValue: true
+    defaultValue: false
   }
 });
 
