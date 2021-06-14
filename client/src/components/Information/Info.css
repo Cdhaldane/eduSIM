@@ -35,13 +35,13 @@
   float: left;
   font-size: 1.0rem;
   font-family: "Montserrat", sans-serif;
-  color: grey;
+  color: #8f001a;
 }
 
 .info0 b{
   font-size: 1.0rem;
   font-family: "Montserrat", sans-serif;
-  color: #181818;
+  color:  #636363;
   float: left;
   position: absolute;
   top: 50px;
@@ -54,7 +54,7 @@
   float: left;
   font-size: 1.0rem;
   font-family: "Montserrat", sans-serif;
-  color: grey;
+  color:  #8f001a;
 }
 
 .info1 b{
@@ -70,6 +70,7 @@
 }
 
 .info0 button{
+  color: #8f001a;
   z-index: 1;
   position: relative;
   bottom: 13px;
@@ -85,6 +86,7 @@
 
 }
 .info1 button{
+  color: #8f001a;
   z-index: 1;
   position: relative;
   bottom: 13px;
@@ -99,4 +101,26 @@
   z-index: 1;
   border: none;
   background-image:
+}
+
+#pencili1{
+  position: absolute;
+  top: 585px;
+  left: 480px;
+  z-index: 200;
+  width: 20px;
+  color: #8f001a;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+#pencili0{
+  position: absolute;
+  top: 825px;
+  left: 480px;
+  z-index: 200;
+  width: 20px;
+  color: #8f001a;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }

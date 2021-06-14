@@ -20,9 +20,8 @@
   position: relative;
   top: -40px;
   left: -12px;
-  color: #181818;
+  color: #636363;
   font-size: 1.5rem;
-
 }
 .notesim p {
   font-size: 1.1em;
@@ -46,11 +45,48 @@
 }
 
 .notesim img {
+  border: solid 2px black;
   z-index: 0;
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 180px;
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 8px;
+  left: 10px;
   opacity: 80%;
+  border-radius: 15%;
+}
+
+
+
+#garbage{
+  color: #8f001a;
+  position: absolute;
+  bottom: 3px;
+  right: 27px;
+}
+
+#garbage:hover{
+  cursor: pointer;
+}
+
+#pencil{
+  color: #8f001a;
+  position: absolute;
+  bottom: 3px;
+  right: 82px;
+}
+
+#pencil:hover{
+  cursor: pointer;
+}
+
+#play{
+  color: #8f001a;
+  position: absolute;
+  bottom: 3px;
+  right: 140px;
+}
+
+#garbage:play{
+  cursor: pointer;
 }

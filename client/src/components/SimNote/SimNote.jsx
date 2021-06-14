@@ -1,4 +1,5 @@
 import React from "react";
+import {Link } from "react-router-dom";
 import "./SimNote.css";
 
 function SimNote(props) {
@@ -10,9 +11,15 @@ function SimNote(props) {
 
   return (
     <div className="notesim">
-      <img src={props.img} alt="backdrop"/>
       <h1><strong>{props.title}</strong></h1>
-      <button onClick={handleClick}>DELETE</button>
+      <img src={props.img} alt="backdrop"/>
+      <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
+      <Link to="/EditPage">
+        <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+      </Link>
+      <Link to="/gamepage">
+        <i id="play" class="fas fa-play-circle fa-2x"></i>
+      </Link>
     </div>
   );
 }

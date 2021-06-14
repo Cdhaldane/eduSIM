@@ -34,7 +34,7 @@
 
 .nav-links{
   position: relative;
-  top: 30px;
+  top: 35px;
   color: white;
   text-decoration: none;
   padding: 0.5rem 1rem;
@@ -56,7 +56,7 @@
   margin-left: 10px;
   position: relative;
   right: -550px;
-  top: 15px;
+  top: 22px;
 }
 
 .profilevist{
@@ -66,7 +66,7 @@
   font-size: 1.0rem;
   position: absolute;
   right: 50px;
-  top: 100px;
+  top: 80px;
   width: 250px;
   height: 200px;
   border-radius: 3px;
@@ -114,6 +114,7 @@
 }
 
 .nav-pic:hover{
+  background-color: grey;
   border-radius:  4px;
   transition: all 0.2s ease-out;
 }
@@ -165,6 +166,12 @@
     background-color: grey;
     border-radius: 2;
   }
+  .nav-pics{
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    display: table;
+  }
   .navbar-logo{
     position: absolute;
     top: 0;
@@ -189,8 +196,8 @@
     position: relative;
     display: block;
     text-align: center;
-    padding: 1.5rem;
-    margin: 2rem auto;
+    padding: 1rem;
+    margin: 1rem auto;
     border-radius: 4px;
     width: 80%;
     background: #8f001a;
@@ -204,7 +211,7 @@
     color: black;
     transition: 250ms;
   }
-  
+
   Button {
       display: none;
     }

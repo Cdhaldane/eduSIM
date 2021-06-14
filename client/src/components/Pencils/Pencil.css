@@ -1,0 +1,69 @@
+#pencil1{
+  position: relative;
+  left:10px;
+  top: 0px;
+  color: #8f001a;
+}
+
+#pencil1:hover{
+  cursor: pointer;
+}
+
+#pencil2{
+  position: relative;
+  left:110px;
+  top:-210px;
+  color: #8f001a;
+}
+
+#pencil2:hover{
+  cursor: pointer;
+}
+
+#pencil3{
+  position: relative;
+  left:1570px;
+  top:-280px;
+  color: #8f001a;
+}
+
+#pencil3:hover{
+  cursor: pointer;
+}
+
+#pencil4{
+  z-index: 2000;
+  position: absolute;
+  left:20px;
+  top:20px;
+  color: #dcafb7;
+}
+
+#pencil4:hover{
+  cursor: pointer;
+}
+
+
+.drop1{
+  position: relative;
+  left: -450px;
+  top: -180px;
+}
+
+.drop2 {
+  position: relative;
+  top: -380px;
+  left: -360px;
+}
+
+.drop3 {
+  position: relative;
+  top: -448px;
+  left: 880px;
+}
+
+.drop4{
+  position: relative;
+  top: -560px;
+  left: -400px;
+}

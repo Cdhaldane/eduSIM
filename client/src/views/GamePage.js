@@ -45,7 +45,10 @@ function Game(props){
           </GridHeader>
           <GridMain>
             <Level number={number}/>
-            <Info />
+            <Info
+              stuff=""
+              editmode="0"
+              />
           </GridMain>
         </Grid>
         </div>

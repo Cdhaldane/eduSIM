@@ -1,11 +1,11 @@
 
 :root {
-  --bg:  #242526;
-  --bg-accent: #484a4d;
-  --text-color: #dadce1;
+  --bg: white;
+  --bg-accent: white;
+  --text-color: #636363;
   --nav-size: 60px;
-  --border: 1px solid #474a4d;
-  --border-radius: 10px;
+  --border: 1px solid #181818;
+  --border-radius: 20px;
   --speed: 500ms;
 }
 
@@ -30,7 +30,7 @@ a {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size );
-  background-color: #484a4d;
+  background-color: #8f001a;
   border-radius: 50%;
   padding: 5px;
   margin: 5px;
@@ -63,13 +63,21 @@ a {
   background-color: var(--bg);
   border: var(--border);
   border-radius: var(--border-radius);
-  padding: 1rem;
+  padding: 0rem;
   overflow: hidden;
   transition: height var(--speed) ease;
 }
 
 .menu {
   width: 100%;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.menu h1{
+  padding: 10px;
+  font-size: 1.5rem;
+  color: #636363;
 }
 
 .menu-item {
@@ -92,7 +100,7 @@ a {
 }
 
 .menu-item:hover {
-  background-color: #525357;
+  background-color: lightgrey;
 }
 
 .icon-right {
@@ -130,4 +138,14 @@ a {
 .menu-secondary-exit-active {
   transform: translateX(110%);
   transition: all var(--speed) ease;
+}
+
+#icons {
+  color: white;
+  font-size: 1.1rem;
+}
+
+#iconst {
+  color: white;
+  font-size: 2.0rem;
 }

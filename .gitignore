@@ -1,4 +1,8 @@
 .DS_Store
 Assets/.DS_Store
 node_modules
+<<<<<<< HEAD
 .env
+=======
+.env
+>>>>>>> editpage

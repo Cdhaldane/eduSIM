@@ -11,23 +11,20 @@ body {
 }
 
 html {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Raleway';
 }
 body {
-  background-color: #202020;
+  background-color: #636363;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: 'Raleway';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: scroll;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+
 }
 
 footer {
@@ -156,25 +153,23 @@ footer {
 }
 
 #new {
-  padding: 10px;
   display: flex;
-  text-align: center;
   position: relative;
+  top: 20px;
   left: 100px;
-  width: 300px;
-  height: 100px;
-  background-color: #8f001a;
-  border-style: none;
+  width: 600px;
   color: white;
-  font-family: "Raleway";
-  font-size: 2rem;
-  border-radius: 5%;
+  margin-bottom: 50px;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 #new:hover {
   text-align: center;
   cursor: pointer;
-  font-size: 2.2rem;
+  font-weight: 7000;
 }
 
 .gamepage {
@@ -190,6 +185,7 @@ footer {
   overflow: hidden;
 }
 
+/* edit page stuff */
 .editpage {
   position: absolute;
   top: 0;
@@ -198,4 +194,24 @@ footer {
   bottom: 0;
   background-color: #e5e5e5;
   overflow: hidden;
+}
+
+#levels input, select{
+  position: relative;
+  top: 53px;
+  left: 250px;
+  color: #181818;
+  border: solid 2px #636363;
+  font-size: 2.0rem;
+  font-family: inherit;
+  border-radius: 10px;
+}
+
+#editmode{
+  opacity: 0.7;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 100px;
+  left: 1740px;
+  font-family: 'Cedarville Cursive', cursive;
 }

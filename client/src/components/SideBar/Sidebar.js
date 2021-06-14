@@ -45,15 +45,17 @@ function Sidebar (props) {
     return (
       <>    
         <Backdrop visible={props.visible} onClick={props.close}/>
-        <StyledNav compact={compact} {...props}>
-          <NavLinksGroup compact={compact} />
+        <StyledNav compact={!compact} {...props}>
+          <br />
+          <br />
+          <NavLinksGroup compact={!compact} />
           {/* <NavLink
           compact={compact}
           to="/"
           iconClassName="far fa-copyright"
           label="Copyright 2021"
           />  */}
-          <NavToggle compact={compact} setCompact={setCompact} />
+          <NavToggle compact={!compact} setCompact={setCompact} />
         </StyledNav>
       </>
     );

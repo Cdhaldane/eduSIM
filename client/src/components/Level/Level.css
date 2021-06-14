@@ -1,9 +1,7 @@
-.levelimg {
 
-}
 .ball1{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 473px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -12,7 +10,7 @@
 
 .ball2{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 631px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -21,7 +19,7 @@
 
 .ball3{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 792px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -30,7 +28,7 @@
 
 .ball4{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 948px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -39,7 +37,7 @@
 
 .ball5{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 1106px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -48,7 +46,7 @@
 
 .ball6{
   position: relative;
-  top:  59px;
+  top:  9px;
   left: 1266px;
   z-index: 1;
   transition-duration: 0.3s !important;
@@ -59,11 +57,11 @@
 
 .level p {
   position: relative;
-  color: #181818;
-  font-size: 2.0rem;
-  position: absolute;
-  top: 0px;
-  left: 835px;
+  color: #636363;
+  font-size: 2.2rem;
+  top: -170px;
+  left: 825px;
+  font-weight: 700;
 }
 
 .App{
@@ -73,7 +71,7 @@
 
 .level button{
   position: relative;
-  top: -70px;
+  top: -165px;
   left: 1400px;
   width: 100px;
   height: 50px;
@@ -89,20 +87,17 @@
 }
 
 .level img{
-  display: block;
   position: relative;
   left: 450px;
-  top: 0px;
+  top: -50px;
   height:80px;
   width:900px;
+
 }
 
 .level button:hover{
   cursor: pointer;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-  width: 105px;
-  height: 55px;
-  border-radius: 15px;
+  box-shadow: 0 5px 10px grey;
 }
 #img1 {
   object-position: left;

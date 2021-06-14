@@ -2,10 +2,9 @@ import React from "react";
 import { Route, Switch} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
-import DropdownMenu from "./components/DropDown/Dropdown"
-import Welcome from "./views/Welcome";
-import Home from "./views/Home";
-import Profile from "./views/Profile";
+import Welcome from "./views/welcome.js";
+import Home from "./views/home.js";
+import Profile from "./views/profile.js";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
@@ -52,7 +51,7 @@ class App extends React.Component {
               <ProtectedRoute path="/dashboard" component={Dashboard} />
               </Switch>
               <div>
-                <Footer />
+
               </div>
             </div>
           </div>
@@ -63,3 +62,5 @@ class App extends React.Component {
 }
 
 export default withAuth0(App);
+
+  // <Footer />

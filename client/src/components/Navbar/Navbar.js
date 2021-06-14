@@ -17,7 +17,7 @@ function NavBar(props) {
 
     return (
       <nav className="NavbarItems">
-        <h1 className="navbar-logo">uOttawa<img className="img" src="favicon.ico" ></img></h1>
+        <h1 className="navbar-logo">eduSIM<img className="img" src="favicon.ico" ></img></h1>
         <div className="menu-icon" onClick={handleClick}>
         <i className={clicked ? "fas fa-times" : "fas fa-bars"}></i>
         </div>
@@ -25,7 +25,7 @@ function NavBar(props) {
         <div className="pp">
         {(isAuthenticated)
         ? <img className="nav-pic" src={ user.picture } onClick={() => setCount(!count)}/>
-        : <AuthenticationButton />
+      : <p className="nav-pic" ><AuthenticationButton /></p>
     }
         </div>
         {MenuItems.map((item,index) =>{

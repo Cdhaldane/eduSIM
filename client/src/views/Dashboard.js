@@ -26,8 +26,8 @@ function Dashboard(props) {
   return (
     <div className="dashboard">
             <h1>Home</h1>
+          <a id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</a>
             <hr />
-            <button id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation</button>
               {showNote && <div>
                 <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
               <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} />
@@ -47,6 +47,7 @@ function Dashboard(props) {
       );
     })}
     </div>
+
     </div>
   );
 }

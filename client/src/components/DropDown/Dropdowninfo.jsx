@@ -44,7 +44,7 @@ import "./Dropdown.css";
             leftIcon={<i id="icons" class="fas fa-shapes"></i>}
             rightIcon={""}
             goToMenu="shapes">
-            Add shapes
+            Add pages
           </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-camera"></i>}

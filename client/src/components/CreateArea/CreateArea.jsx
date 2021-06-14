@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import {ImageItems} from "./ImageItems";
 import Switch from "react-switch"
 import {Link } from "react-router-dom";
-import DropdownMenu from "../DropDown/Dropdown";
+import { Container, Row, Col } from "react-bootstrap";
 import "./CreateArea.css";
 
 
-function CreateArea(props) {
-  const [save, setSave] = useState("");
-  const [note, setNote,] = useState(0);
-  const [showNote, setShowNote] = useState(false);
-  const [showSim, setShowSim] = useState(false);
-  const [checked, setChecked] = useState(false);
+  function CreateArea(props) {
+    const [save, setSave] = useState("");
+    const [note, setNote,] = useState([]);
+    const [showNote, setShowNote] = useState(false);
+    const [img, setImg] = useState(false);
+    const [checked, setChecked] = useState(false);
+    // sets all const
 
 
+  //handle input and adds title and img to notes array
   function handleChange(event) {
     const { name, value } = event.target;
     setNote(prevNote => {
@@ -24,18 +25,17 @@ function CreateArea(props) {
     });
   }
 
+  //adds note to dahsboard by setting notes and sending to app
   function submitNote(event) {
     props.onAdd(note);
     props.onDelete(showNote);
     setNote({
-      title: "",
-      img: ""
+      img: "",
+      title: ""
     });
-    setShowNote(!showNote);
-
-    event.preventDefault();
   }
 
+  //handles selection of img from file
   function onChange(event){
     const { name, value } = event.target;
     if (event.target.files && event.target.files[0]) {
@@ -45,33 +45,30 @@ function CreateArea(props) {
     }
   }
 
-  function showNotes(event){
-    props.onDelete(showNote);
-    setShowNote(!showNote);
-    event.preventDefault();
-  }
-
-  function handleClick(event){
-     event.preventDefault();
-     setShowSim(!showSim)
-  }
-
+  //handles switch overlay
   function handleSwitch(checked) {
       setChecked(!checked);
-}
+    }
+
+  //handles showing of img overlay
+  function handleImg(event){
+     event.preventDefault();
+     setImg(!img)
+  }
 
   return (
       <div class="area" >
+        <Container>
       <form>
         <p class="gradient-border" id="box">
         Add New Simulation
         </p>
         <label for="Game">Choose a game</label>
-        <select name="cars" id="cars">
-          <option value="volvo">Bing</option>
-          <option value="saab">Bong</option>
-          <option value="mercedes">Bing</option>
-          <option value="audi">Bong</option>
+        <select id="games">
+          <option value="Team Leadership">Team Leadership</option>
+          <option value="Project Management">Project Management</option>
+          <option value="">...</option>
+          <option value="blank">Create a blank simulation</option>
         </select>
         <p class="gradient-border" id="box1">
           Duplicate a previous simulation
@@ -86,69 +83,62 @@ function CreateArea(props) {
 
         {checked && <div>
         <label for="PrevGame" id="prevgame">Select a previous simulation</label>
-        <select name="cars" id="prevgames">
-          <option value="volvo">Bing</option>
-          <option value="saab">Bong</option>
-          <option value="mercedes">Bing</option>
-          <option value="audi">Bong</option>
+        <select id="prevgames">
+          <option value=""></option>
+          <option value="">Bong</option>
+          <option value="">Bing</option>
+          <option value="">Bong</option>
         </select>
           </div>}
 
-        <p class="gradient-border" id="box2">
-        <input
-          type="file"
-          name="img"
-          id="file"
-          onChange={onChange}
+          <p class="gradient-border" id="box3">
+            Enter a ‎name‎‏‏‎ ‎
+          <input
+            id="namei"
+            name="title"
+            onChange={handleChange}
+            value={note.title}
+            placeholder="                         "
           />
-        <label id="file" for="file">Choose an image...</label>
-        <img id="preview" src={note.img} />
-        </p>
+          </p>
 
-        <p class="gradient-border" id="box3">
-        <input
-          name="title"
-          onChange={handleChange}
-          value={note.title}
-          placeholder="Simulation Name..."
-        />
+        <p class="gradient-border" id="box2" >
+        Choose an image
+        <img id="plus" src="plus.png" onClick={handleImg}/>
+
+        {(note.img)
+        ?<img id="preview" src={note.img} />
+        :<img id="previewno" src={note.img} />
+        }
         </p>
         <p>
-        <button class="gradient-border" id="add" onClick={submitNote}>Add</button>
+        <button id="add" onClick={submitNote}>Add</button>
         </p>
         </form>
+
+        {img && <div>
+          <form id="imgs">
+            <p id="box4" >
+              <img src="temp.png" onClick={() => setNote({img:"temp.png"})}/>
+              <img src="temp1.png" onClick={() => setNote({img:"temp1.png"})}/>
+              <img src="temp.png" onClick={() => setNote({img:"temp.png"})}/>
+              <img src="temp1.png" onClick={() => setNote({img:"temp1.png"})}/>
+              <img src="temp.png" onClick={() => setNote({img:"temp.png"})}/>
+              <img src="temp1.png" onClick={() => setNote({img:"temp1.png"})}/>
+              <input
+                 type="file"
+                 name="img"
+                 id="file"
+                 onChange={onChange}
+                 />
+               <label for="file">From file</label>
+            </p>
+          </form>
+          </div>
+        }
+        </Container>
     </div>
   );
 }
 
 export default CreateArea;
-
-// <input
-//   name="title"
-//   onChange={handleChange}
-//   value={note.title}
-//   placeholder="Simulation Name..."
-// />
-// <br />
-// <input
-//   type="file"
-//   name="img"
-//   id="file"
-//   onChange={onChange}
-//   />
-// <label for="file">Choose an image...</label>
-//
-// <button id="para" onClick={handleClick}>Parameters ↓</button>
-// <button id="sims" onClick={handleClick}>Existing sims ↓</button>
-//
-//
-// {showSim && <div>
-//      <DropdownMenu/>
-//
-//     </div>}
-// <h3>
-//   Press off to exit.
-// </h3>
-// </form>
-// <button id="add" onClick={submitNote}>Add</button>
-// <Link to="/EditPage"><button id="edit" onClick="">Edit</button></Link>
