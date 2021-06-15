@@ -13,6 +13,7 @@ function Dashboard(props) {
     setNotes((prevNotes) => {
       return [...prevNotes, newNote];
     });
+    
   }
 
   function deleteNote(id) {

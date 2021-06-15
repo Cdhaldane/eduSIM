@@ -1,6 +1,7 @@
 import React from "react"
 import Button from "../Buttons/Button"
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from "axios";
 import "../Buttons/Buttons.css";
 
 // async postData() {
@@ -24,11 +25,22 @@ import "../Buttons/Buttons.css";
 // }
 
 
+
+
 function AuthenticationButton(props) {
   const { isAuthenticated, loginWithRedirect, logout,  } = useAuth0();
 
   function handleClick(){
      loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})
+     axios({
+       method: 'post',
+       url: '/createAdmin',
+       data: {
+         email:  user.email ,
+         name:  user.name ,
+         picture:  user.picture
+       }
+     });
   }
 
   return (
