@@ -3,13 +3,13 @@ import { Route, Switch} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
 import Welcome from "./views/welcome.js";
-import Home from "./views/home.js";
+import Home from "./views/Home.js";
 import Profile from "./views/profile.js";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
 import { withAuth0 } from "@auth0/auth0-react";
-import ProtectedRoute from "./api/protected-route";
+import ProtectedRoute from "./components/Auth0/protected-route";
 import Footer from "./components/Footer";
 
 class App extends React.Component {

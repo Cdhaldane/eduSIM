@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {MenuItems} from "./MenuItems";
-import AuthenticationButton from "../Buttons/AuthenticationButton"
+import AuthenticationButton from "../Auth0/AuthenticationButton"
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import DropdownMenu from "../DropDown/Dropdown"
 import "./Navbar.css";

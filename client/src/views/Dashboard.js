@@ -53,19 +53,3 @@ function Dashboard(props) {
 }
 
 export default withAuth0(Dashboard);
-
-// <Link to="/EditPage">
-// <button  className="note" type="button" onClick="">
-//   <div>
-//   <h1>Create a custom simulation</h1>
-//   <img src="plus.png"/>
-//   </div>
-// </button>
-// </Link>
-//
-// <button  className="note" onClick={() => setShowNote(!showNote)} >
-//         <div>
-//         <h1>Setup an existing simulation</h1>
-//       <img src="./plus.png"/>
-//         </div>
-// </button>
