@@ -17,15 +17,15 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: simulator-db; Type: DATABASE; Schema: -; Owner: postgres
+-- Name: simulatordb; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE "simulator-db" WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'en_US.utf8';
+CREATE DATABASE simulatordb WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'en_US.utf8';
 
 
-ALTER DATABASE "simulator-db" OWNER TO postgres;
+ALTER DATABASE simulatordb OWNER TO postgres;
 
-\connect -reuse-previous=on "dbname='simulator-db'"
+\connect simulatordb
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,6 +38,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -48,29 +62,16 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.adminaccounts (
     adminid uuid NOT NULL,
-    email character varying(50),
+    email character varying(50) NOT NULL,
     name character varying(50),
-    createdtimestamp timestamp without time zone,
-    issuperadmin boolean
+    picture json,
+    issuperadmin boolean DEFAULT true,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
 );
 
 
 ALTER TABLE public.adminaccounts OWNER TO postgres;
-
---
--- Name: game; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.game (
-    gameid uuid NOT NULL,
-    createdbyadminid uuid NOT NULL,
-    name character varying(50),
-    createdtimestamp timestamp without time zone,
-    gameroles json
-);
-
-
-ALTER TABLE public.game OWNER TO postgres;
 
 --
 -- Name: gameactions; Type: TABLE; Schema: public; Owner: postgres
@@ -92,11 +93,13 @@ ALTER TABLE public.gameactions OWNER TO postgres;
 --
 
 CREATE TABLE public.gameinstances (
-    gameid uuid NOT NULL,
-    createdtimestamp timestamp without time zone,
+    gameinstanceid uuid NOT NULL,
+    createdtimestamp timestamp with time zone NOT NULL,
     gamestate json,
     createdbyadminid uuid NOT NULL,
-    url character varying
+    url character varying(255),
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
 );
 
 
@@ -118,17 +121,29 @@ CREATE TABLE public.gameplayers (
 ALTER TABLE public.gameplayers OWNER TO postgres;
 
 --
+-- Name: games; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.games (
+    gameid uuid NOT NULL,
+    createdbyadminid uuid NOT NULL,
+    name character varying(50),
+    createdtimestamp timestamp with time zone NOT NULL,
+    gameroles json,
+    status character varying(250),
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.games OWNER TO postgres;
+
+--
 -- Data for Name: adminaccounts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.adminaccounts (adminid, email, name, createdtimestamp, issuperadmin) FROM stdin;
-
-
---
--- Data for Name: game; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.game (gameid, createdbyadminid, name, createdtimestamp, gameroles) FROM stdin;
+COPY public.adminaccounts (adminid, email, name, picture, issuperadmin, "createdAt", "updatedAt") FROM stdin;
+\.
 
 
 --
@@ -136,13 +151,15 @@ COPY public.game (gameid, createdbyadminid, name, createdtimestamp, gameroles) F
 --
 
 COPY public.gameactions (gameactionid, gameinstanceid, gameplayerid, gameaction, createdtimestamp) FROM stdin;
+\.
 
 
 --
 -- Data for Name: gameinstances; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.gameinstances (gameid, createdtimestamp, gamestate, createdbyadminid, url) FROM stdin;
+COPY public.gameinstances (gameinstanceid, createdtimestamp, gamestate, createdbyadminid, url, "createdAt", "updatedAt") FROM stdin;
+\.
 
 
 --
@@ -150,6 +167,15 @@ COPY public.gameinstances (gameid, createdtimestamp, gamestate, createdbyadminid
 --
 
 COPY public.gameplayers (gameplayerid, player_id, gameinstanceid, gamestarttimestamp, roleid) FROM stdin;
+\.
+
+
+--
+-- Data for Name: games; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.games (gameid, createdbyadminid, name, createdtimestamp, gameroles, status, "createdAt", "updatedAt") FROM stdin;
+\.
 
 
 --
@@ -158,14 +184,6 @@ COPY public.gameplayers (gameplayerid, player_id, gameinstanceid, gamestarttimes
 
 ALTER TABLE ONLY public.adminaccounts
     ADD CONSTRAINT adminaccounts_pkey PRIMARY KEY (adminid);
-
-
---
--- Name: game game_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.game
-    ADD CONSTRAINT game_pkey PRIMARY KEY (gameid);
 
 
 --
@@ -181,7 +199,7 @@ ALTER TABLE ONLY public.gameactions
 --
 
 ALTER TABLE ONLY public.gameinstances
-    ADD CONSTRAINT gameinstances_pkey PRIMARY KEY (gameid);
+    ADD CONSTRAINT gameinstances_pkey PRIMARY KEY (gameinstanceid);
 
 
 --
@@ -193,5 +211,14 @@ ALTER TABLE ONLY public.gameplayers
 
 
 --
+-- Name: games games_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT games_pkey PRIMARY KEY (gameid);
+
+
+--
 -- PostgreSQL database dump complete
 --
+
