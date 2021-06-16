@@ -100,12 +100,7 @@ exports.updateGameInstance = async (req, res) => {
 
 //Delete a game instance
 exports.deleteGameInstance = async (req, res) => {
-  const { id } = req.body;
-  if (!id) {
-    return res.status(400).send({
-      message: 'Please provide a id for the user you are trying to delete!',
-    });
-  }
+  const { id } = req.params;
 
   const gameinstance = await GameInstance.findOne({
     where: {
@@ -115,7 +110,7 @@ exports.deleteGameInstance = async (req, res) => {
 
   if (!gameinstance) {
     return res.status(400).send({
-      message: `No user found with the id ${id}`,
+      message: `No game instance found with the id ${id}`,
     });
   }
 
