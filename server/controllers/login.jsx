@@ -6,7 +6,7 @@ const AdminAccount = require("../models/AdminAccounts");
 exports.getAdminbyId = async (req, res) => {
   const { id } = req.params;
     try {
-      let adminaccount = await AdminAccount.findAll({
+      let adminaccount = await AdminAccount.findOne({
       where: {
         adminid: id,
       },
@@ -21,12 +21,12 @@ exports.getAdminbyId = async (req, res) => {
 
   //Create a new game instance
 exports.createAdmin = async (req, res) => {
-    const { email, name, picture } = req.body;
+    const { email, name, picturePath } = req.body;
       try {
         let newAdmin= await AdminAccount.create({
           email,
           name,
-          picture
+          picturePath
         });
         return res.send(newAdmin);
       } catch (err) {

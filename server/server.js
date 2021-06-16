@@ -17,7 +17,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/gameinstances', routes.gameinstance)
-app.use('/games', routes.game)
 app.use('/adminaccounts', routes.adminaccount)
 
 app.use((req, res) => {

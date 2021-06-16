@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const gameinstance = require('../controllers/adminpage.jsx');
+const gameinstance = require('../controllers/gamepage.jsx');
 const router = Router();
 
 //Routes go here
@@ -17,5 +17,8 @@ router.post('/createGameInstance', gameinstance.createGameInstance);
 
 //API Path to update a specific game instance
 router.put('/update/:id', gameinstance.updateGameInstance);
+
+//API Path to update a specific game instance
+router.delete('/delete', gameinstance.deleteGameInstance);
 
 export default router;

@@ -1,6 +1,5 @@
 //Logic when the server is involved
 const GameInstance = require("../models/GameInstances");
-const Game = require("../models/Games")
 
 //Get all the game instances that a specific admin has created
 // Request has an admin id
@@ -9,7 +8,7 @@ exports.getGameInstances = async (req, res) => {
     try {
       let gameinstance = await GameInstance.findAll({
       where: {
-        createdbyadminid: id,
+        createdby_adminid: id,
       },
     });
       return res.send(gameinstance);
@@ -27,7 +26,7 @@ exports.getGameInstance = async (req, res) => {
     try {
       let gameinstance = await GameInstance.findOne({
         where: {
-          createdbyadminid: adminid,
+          createdby_adminid: adminid,
           gameinstanceid: gameid
         },
       });
@@ -41,12 +40,13 @@ exports.getGameInstance = async (req, res) => {
 
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
-  const {  createdtimestamp, gamestate,  url } = req.body;
+  const {  gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
     try {
       let newGameInstance = await GameInstance.create({
-        createdtimestamp,
-        gamestate,
-        url
+        gameinstance_name,
+        gameinstance_photo_path,
+        game_parameters,
+        invite_url
       });
       return res.send(newGameInstance);
     } catch (err) {
@@ -58,7 +58,7 @@ exports.createGameInstance = async (req, res) => {
 
 //Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { gamestate, url } = req.body;
+  const { gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
   const { id } = req.params;
   
   const gameinstance = await GameInstance.findOne({
@@ -74,11 +74,17 @@ exports.updateGameInstance = async (req, res) => {
   }
   
   try {
-    if (gamestate) {
-      gameinstance.gamestate = gamestate;
+    if (gameinstance_name) {
+      gameinstance.gameinstance_name = gameinstance_name;
     }
-    if (url) {
-      gameinstance.url = url;
+    if (gameinstance_photo_path) {
+      gameinstance.gameinstance_photo_path = gameinstance_photo_path;
+    }
+    if (game_parameters) {
+      gameinstance.game_parameters = game_parameters;
+    }
+    if (invite_url) {
+      gameinstance.invite_url = invite_url;
     }
   
     gameinstance.save();
@@ -92,56 +98,35 @@ exports.updateGameInstance = async (req, res) => {
     }
   };
 
-//Get all games with 'active' status
-exports.getGames = async (req, res) => {
-  try {
-    let game = await Game.findAll({
-      where: {
-        status: 'active',
-      },
+//Delete a game instance
+exports.deleteGameInstance = async (req, res) => {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(400).send({
+      message: 'Please provide a id for the user you are trying to delete!',
     });
-    console.log(game);
-    return res.send(game);
-    } catch (err) {
-      return res.status(400).send({
-        message: `No game found `,
-      });
-    } 
-  };
+  }
 
-//Get a specific game
-//Request should have a game id
-exports.getGamebyId = async (req, res) => {
-  const { id } = req.params;
-  try {
-    let game = await Game.findOne({
-      where: {
-          gameid: id,
-        },
-      });
-    return res.send(game);
-    } catch (err) {
-        return res.status(400).send({
-        message: `No game found with the id ${id}`,
-      });
-    } 
-  };
+  const gameinstance = await GameInstance.findOne({
+    where: {
+      gameinstanceid: id,
+    },
+  });
 
-//Create a new game
-exports.createGame = async (req, res) => {
-  const {  name, createdtimestamp, gameroles,  status } = req.body;
-  try {
-    let newGame = await Game.create({
-      name,
-      createdtimestamp,
-      gameroles,
-      status
+  if (!gameinstance) {
+    return res.status(400).send({
+      message: `No user found with the id ${id}`,
     });
-    return res.send(newGame);
-    } catch (err) {
-      return res.status(500).send({
-        message: `Error: ${err.message}`,
-        });
-      }
-  };
-  
+  }
+
+  try {
+    await gameinstance.destroy();
+    return res.send({
+      message: `Game ${id} has been deleted!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
