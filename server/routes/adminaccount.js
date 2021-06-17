@@ -6,9 +6,9 @@ const router = Router();
 
 // API Path to get a specific admin
 // Request should have an admin
-router.get('/getAdminbyId/:id', adminaccount.getAdminbyId);
-
-//API Path to create a new admin
-router.post('/createAdmin', adminaccount.createAdmin);
+// Just one get method -> admin by email
+router.get('/getAdminbyEmail/:email/:name', adminaccount.getAdminbyEmail);
 
 export default router;
+
+

@@ -40,12 +40,13 @@ exports.getGameInstance = async (req, res) => {
 
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
-  const {  gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
+  const {  gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, invite_url } = req.body;
     try {
       let newGameInstance = await GameInstance.create({
         gameinstance_name,
         gameinstance_photo_path,
         game_parameters,
+        createdby_adminid,
         invite_url
       });
       return res.send(newGameInstance);

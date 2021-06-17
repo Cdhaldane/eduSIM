@@ -23,7 +23,6 @@ const gameinstances = db.define('gameinstances', {
   },
   createdby_adminid: {
     type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
   invite_url: {
