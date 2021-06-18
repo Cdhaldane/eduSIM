@@ -1,34 +1,35 @@
 //Logic when the server is involved
 const AdminAccount = require("../models/AdminAccounts");
 
-//Get admin account with admin id
-// Request has an admin id
-exports.getAdminbyId = async (req, res) => {
-  const { id } = req.params;
-    try {
-      let adminaccount = await AdminAccount.findAll({
+  //Get admin
+  //if email exists -> getAdminbyemail
+  //if not -> create admin
+  exports.getAdminbyEmail = async (req, res) => {
+    const email = req.query.email;
+    const name = req.query.name;
+
+    const admin = await AdminAccount.findOne({
       where: {
-        adminid: id,
+        email: email,
       },
     });
-      return res.send(adminaccount);
-    } catch (err) {
-      return res.status(400).send({
-        message: `No admin found with the id ${id}`,
-      });
-    }
-  };
-
-  //Create a new game instance
-exports.createAdmin = async (req, res) => {
-    const { email, name, picture } = req.body;
-      try {
+    try {
+      if (!admin) {
         let newAdmin= await AdminAccount.create({
           email,
           name,
-          picture
         });
         return res.send(newAdmin);
+      }
+      else {
+        let adminaccount = await AdminAccount.findOne({
+          where: {
+            email: email,
+          },
+        });
+          return res.send(adminaccount);
+
+      }
       } catch (err) {
         return res.status(500).send({
           message: `Error: ${err.message}`,

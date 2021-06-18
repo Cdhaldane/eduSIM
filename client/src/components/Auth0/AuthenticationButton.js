@@ -1,47 +1,35 @@
-import React from "react"
+import React, { useState } from "react"
 import Button from "../Buttons/Button"
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from "axios";
 import "../Buttons/Buttons.css";
 
-// async postData() {
-//   try{
-//     let result = await fetch("../../../server/models/AdminAccounts", {
-//       method: "post",
-//       mode: "no-cars",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         key1: "myusername"
-//       })
-//     });
-//     console.log("Result: " + result)
-//
-// } catche(e) {
-//   console.log(e)
-//   }
-// }
-
-
-
-
 function AuthenticationButton(props) {
   const { isAuthenticated, loginWithRedirect, logout,  } = useAuth0();
+  const [ login, setLogin ] =useState([]);
+  const { user } = useAuth0();
+
+
 
   function handleClick(){
-     loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})
-     axios({
-       method: 'post',
-       url: '/createAdmin',
-       data: {
-         email:  user.email ,
-         name:  user.name ,
-         picture:  user.picture
-       }
-     });
+    loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})
+    axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name',{
+      params: {
+            email: user.email,
+            name: user.name
+        }
+    })
+    .then((res) => {
+      const allData = res.data;
+      console.log(allData);
+      setLogin(allData.adminid);
+      localStorage.setItem('adminid', allData.adminid)
+      console.log(localStorage)
+    })
+    .catch(error => console.log(error.response));
+
   }
+
 
   return (
     isAuthenticated ?
@@ -51,12 +39,37 @@ function AuthenticationButton(props) {
       })}
     type="button"
     buttonStyle="btn--primary--solid"
-    buttonSize="button--medium">Logout</Button>:
+    buttonSize="button--medium">Logout{user.email}</Button>:
     <Button onClick={handleClick}
     type="button"
     buttonStyle="btn--primary--solid"
-    buttonSize="button--medium">Create Simulation</Button>
+    buttonSize="button--medium">Create Simulation </Button>
   );
 }
 
 export default AuthenticationButton;
+
+// let data = {
+//   email: "email",
+//   name: "name",
+//   picture: "picture"
+// }
+//
+// let config = {
+//   headers: {
+//     "Content-Type": "application/json",
+//     'Access-Control-Allow-Origin': '*',
+//     'Access-Control-Allow-Methods': 'HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS',
+//     'Access-Control-Allow-Headers': 'Content-Type'
+//     }
+//   }
+//
+//   axios.post('http://localhost:5000/adminaccounts/createAdmin', data, config)
+//      .then((res) => {
+//         console.log(res)
+//        })
+//       .catch((err) => {
+//         console.log(err.response.data)
+//      });
+//    }
+//

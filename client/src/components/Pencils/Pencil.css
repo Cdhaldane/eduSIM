@@ -11,8 +11,8 @@
 
 #pencil2{
   position: relative;
-  left:110px;
-  top:-210px;
+  left:140px;
+  top:-935px;
   color: #8f001a;
 }
 
@@ -22,8 +22,8 @@
 
 #pencil3{
   position: relative;
-  left:1570px;
-  top:-280px;
+  left:1590px;
+  top:-980px;
   color: #8f001a;
 }
 
@@ -47,7 +47,7 @@
 .drop1{
   position: relative;
   left: -450px;
-  top: -180px;
+  top: 200px;
 }
 
 .drop2 {

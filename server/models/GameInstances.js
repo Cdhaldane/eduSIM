@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const db = require('../databaseConnection')
+const db = require('../databaseConnection');
 
 const gameinstances = db.define('gameinstances', {
   gameinstanceid: {
@@ -8,20 +8,26 @@ const gameinstances = db.define('gameinstances', {
     primaryKey: true,
     allowNull: false
   },
-  createdtimestamp: {
-    type: Sequelize.DATE,
-    allowNull: false
+  isdefaultgame: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   },
-  gamestate: {
+  gameinstance_name: {
+    type: Sequelize.STRING(250)
+  },
+  gameinstance_photo_path: {
+    type: Sequelize.STRING(250)
+  },
+  game_parameters: {
     type: Sequelize.JSON
   },
-  createdbyadminid: {
+  createdby_adminid: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
-  url: {
-    type: Sequelize.STRING
+  invite_url: {
+    type: Sequelize.STRING(250)
   }
 });
 

@@ -6,7 +6,7 @@ import axios from "axios"
 import "./CreateArea.css";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/gameinstance/createGameInstance"
+  baseURL: "http://localhost:5000/gameinstance/createGameInstance"
 })
 
 const options = [
@@ -36,30 +36,35 @@ const options = [
     const [title, setTitle] = useState();
     const [checked, setChecked] = useState(false);
     const [state, setState] = useState("");
+    const [gamedata, getGamedata] = useState([]);
+    const [value, setValue] = React.useState(
+    localStorage.getItem('adminid') || ''
+  );
+
+
     // sets all const
 
-
-  function onCreateGame(){
-    let gameinstance={
-      gameinstanceid: this.refs.gameinstanceid.value
-    };
-
-    fetch("http://localhost:4000/gameinstance/createGameInstance",{
-      method:"POST",
-      headers:{"Content-type" : "application/json"},
-      body:JSON.stringify(gameinstance)
-    }).then(r=>r.json()).then(res=>{
-      if(res){
-        setState("Added game");
-      }
-    })
-  }
 
   //adds note to dahsboard by setting notes and sending to app
   function submitNote(event) {
     event.preventDefault();
-    props.onAdd(note);
     props.onDelete(showNote);
+    let data = {
+      gameinstance_name: title,
+      gameinstance_photo_path: 'temp.png',
+      game_parameters: 'value',
+      createdby_adminid: localStorage.adminid,
+      invite_url: 'value'
+    }
+      axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
+         .then((res) => {
+            console.log(res)
+           })
+          .catch(error => console.log(error.response));
+         console.log(data);
+
+      props.onAdd(note);
+      window.location.reload();
   }
 
   function setNotes(event) {
@@ -81,11 +86,6 @@ const options = [
   //handle input and adds title and img to notes array
   function handleChange(event) {
     setTitle(event.target.value);
-  }
-
-  //handles switch overlay
-  function handleSwitch(checked) {
-      setChecked(!checked);
   }
 
   //handles showing of img overlay
@@ -122,8 +122,8 @@ const options = [
         {checked && <div>
         <label for="PrevGame" id="prevgame">Select a previous simulation</label>
         <select id="prevgames">
-          {options.map(options =>
-            <option value={options.value}>{options.label}</option>
+          {gamedata.map(gamedata =>
+            <option value={gamedata.gameinstanceid}>{gamedata.gameinstance_name}</option>
           )};
         </select>
           </div>}
@@ -181,3 +181,50 @@ const options = [
 }
 
 export default CreateArea;
+
+// 
+// const editpagejson = [
+//   {
+//     "components":{
+//       "shapes": {
+//         width: x,
+//         height:x,
+//         poistion_x: x,
+//         poistion_y:x,
+//         colour: "",
+//         text: "",
+//         textcolour: ""
+//       },
+//       "media": {
+//         width: x,
+//         height: x,
+//         poistion_x: x,
+//         poistion_y:x,
+//         file: "path"
+//       },
+//       "game piece": {
+//         width: x,
+//         height: x,
+//         poistion_x: x,
+//         poistion_y:x
+//       },
+//     },
+//     "rules": {
+//       levelbar: bool,
+//       pages: x,
+//       leveltext: "",
+//     },
+//     "information": {
+//       role: "",
+//       text: "",
+//       components: ""
+//     },
+//     "navigation bar": {
+//       messages: bool,
+//       alerts: bool,
+//       parameters: bool,
+//       setting: bool,
+//       performance: bool
+//     }
+//   }
+// ]

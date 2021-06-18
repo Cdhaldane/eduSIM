@@ -1,11 +1,22 @@
 import React from "react";
 import {Link } from "react-router-dom";
 import "./SimNote.css";
+import axios from "axios";
 
 function SimNote(props) {
   function handleClick() {
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
       props.onDelete(props.id)
+      axios.delete('http://localhost:5000/gameinstances/delete/:id',{
+        params: {
+              id: props.gameid
+          }
+      })
+      .then((res) => {
+        const allData = res.data;
+        console.log(allData);
+      })
+      .catch(error => console.log(error.response));
     }
   }
 

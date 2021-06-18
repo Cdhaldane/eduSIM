@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Note from "../Note/Note";
 import { CSSTransition } from 'react-transition-group';
+import Stages from "../Stage/Stage"
 
 
 import "./Dropdown.css";
@@ -8,6 +10,7 @@ import "./Dropdown.css";
   function DropdownMenu() {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
+    const [ components, setComponents ] = useState();
     const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -28,6 +31,15 @@ import "./Dropdown.css";
         <span className="icon-right">{props.rightIcon}</span>
       </a>
     );
+  }
+
+  const Widget = ({ text }) => <p>{text}</p>;
+
+  function renderWidget() {
+    console.log("clicked")
+    return (
+      <Stages />
+    )
   }
 
  return (
@@ -72,9 +84,9 @@ import "./Dropdown.css";
             <h2>SHAPES!</h2>
           </DropdownItem>
           <DropdownItem leftIcon={<i id="icons" class="fa fa-square"></i>}>Square</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-circle"></i>}>Circle</DropdownItem>
+          <DropdownItem leftIcon={<i id="icons" class="fa fa-circle" onClick={renderWidget}></i>}>Circle</DropdownItem>
           <DropdownItem leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x"></i>}>Triangle</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-heart"></i>}>*insert other popular shape*</DropdownItem>
+          <DropdownItem leftIcon={<i id="icons" class="fa fa-star"></i>}>Star</DropdownItem>
         </div>
       </CSSTransition>
 

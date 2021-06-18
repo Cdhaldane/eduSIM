@@ -15,12 +15,12 @@ const adminaccounts = db.define('adminaccounts', {
   name: {
     type: Sequelize.STRING(50)
   },
-  picture: {
-    type: Sequelize.JSON
+  picturePath: {
+    type: Sequelize.STRING(250)
   },
   issuperadmin: {
     type: Sequelize.BOOLEAN,
-    defaultValue: false
+    defaultValue: true
   }
 });
 
