@@ -19,6 +19,12 @@ router.post('/createGameInstance', gameinstance.createGameInstance);
 router.put('/update/:id', gameinstance.updateGameInstance);
 
 //API Path to update a specific game instance
+<<<<<<< HEAD
 router.delete('/delete/:id', gameinstance.deleteGameInstance);
 
 export default router;
+=======
+router.put('/delete/:id', gameinstance.deleteGameInstance);
+
+export default router;
+>>>>>>> b529ada54d18fc84242bf30206391695610ff3af
