@@ -12,7 +12,8 @@ function AuthenticationButton(props) {
 
 
   function handleClick(){
-    loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})
+    loginWithRedirect({redirectUri: "http://localhost:3000/",})
+    console.log(user.email)
     axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name',{
       params: {
             email: user.email,
@@ -30,16 +31,20 @@ function AuthenticationButton(props) {
 
   }
 
+  function handleLogout(){
+    logout({
+      returnTo: "http://localhost:3000/",
+    })
+    localStorage.clear();
+  }
+
 
   return (
     isAuthenticated ?
-    <Button onClick={() =>
-      logout({
-        returnTo: "http://localhost:3000/",
-      })}
+    <Button onClick={handleLogout}
     type="button"
     buttonStyle="btn--primary--solid"
-    buttonSize="button--medium">Logout{user.email}</Button>:
+    buttonSize="button--medium">Logout</Button>:
     <Button onClick={handleClick}
     type="button"
     buttonStyle="btn--primary--solid"

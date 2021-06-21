@@ -77,7 +77,7 @@ const Stages = () => {
             shadowBlur={10}
             shadowOpacity={0.6}
             shadowOffsetX={star.isDragging ? 10 : 5}
-            shadowOffsetY={star.isDragging ? 10 : 5}  
+            shadowOffsetY={star.isDragging ? 10 : 5}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           />
@@ -97,7 +97,6 @@ const Stages = () => {
               shadowColor="black"
               shadowBlur={10}
               shadowOpacity={0.6}
-
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             />

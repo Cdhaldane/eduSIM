@@ -5,29 +5,6 @@ import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios"
 import "./CreateArea.css";
 
-const api = axios.create({
-  baseURL: "http://localhost:5000/gameinstance/createGameInstance"
-})
-
-const options = [
-  {
-    label: "Apple",
-    value: "apple",
-  },
-  {
-    label: "Mango",
-    value: "mango",
-  },
-  {
-    label: "Banana",
-    value: "banana",
-  },
-  {
-    label: "Pineapple",
-    value: "pineapple",
-  },
-];
-
   function CreateArea(props) {
     const [save, setSave] = useState("");
     const [note, setNote,] = useState([]);
@@ -40,9 +17,7 @@ const options = [
     const [value, setValue] = React.useState(
     localStorage.getItem('adminid') || ''
   );
-
-
-    // sets all const
+  // sets all const
 
 
   //adds note to dahsboard by setting notes and sending to app
@@ -62,7 +37,6 @@ const options = [
            })
           .catch(error => console.log(error.response));
          console.log(data);
-
       props.onAdd(note);
       window.location.reload();
   }
@@ -175,56 +149,8 @@ const options = [
           </div>
         }
         </Container>
-        <p>{state.message}</p>
     </div>
   );
 }
 
 export default CreateArea;
-
-// 
-// const editpagejson = [
-//   {
-//     "components":{
-//       "shapes": {
-//         width: x,
-//         height:x,
-//         poistion_x: x,
-//         poistion_y:x,
-//         colour: "",
-//         text: "",
-//         textcolour: ""
-//       },
-//       "media": {
-//         width: x,
-//         height: x,
-//         poistion_x: x,
-//         poistion_y:x,
-//         file: "path"
-//       },
-//       "game piece": {
-//         width: x,
-//         height: x,
-//         poistion_x: x,
-//         poistion_y:x
-//       },
-//     },
-//     "rules": {
-//       levelbar: bool,
-//       pages: x,
-//       leveltext: "",
-//     },
-//     "information": {
-//       role: "",
-//       text: "",
-//       components: ""
-//     },
-//     "navigation bar": {
-//       messages: bool,
-//       alerts: bool,
-//       parameters: bool,
-//       setting: bool,
-//       performance: bool
-//     }
-//   }
-// ]
