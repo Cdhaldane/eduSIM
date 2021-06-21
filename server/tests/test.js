@@ -40,6 +40,7 @@ describe('POST /NewGameSimulation', function () {
         .send({ gameinstance_name: "Chess",
         gameinstance_photo_path: "/chess",
         game_parameters: {"key": "value"},
+        createdby_adminid: "d07f452e-d05b-11eb-b8bc-0242ac130003",
         invite_url: "def.com" })
         .set('X-API-Key', 'foobar')
         .set('Accept', 'application/json')

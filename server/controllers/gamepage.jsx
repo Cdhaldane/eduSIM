@@ -5,10 +5,14 @@ const GameInstance = require("../models/GameInstances");
 // Request has an admin id
 exports.getGameInstances = async (req, res) => {
   const { id } = req.params;
+  const { Op } = require("sequelize");
     try {
       let gameinstance = await GameInstance.findAll({
       where: {
         createdby_adminid: id,
+        game_parameters : {
+          [Op.or] : [{"status":"created"} , {"status":"started"} , {"status":"ended"}]
+        }
       },
     });
       return res.send(gameinstance);
@@ -99,7 +103,8 @@ exports.updateGameInstance = async (req, res) => {
     }
   };
 
-//Delete a game instance
+// Delete a game instance
+// change the status to deleted instead of actually deleting it
 exports.deleteGameInstance = async (req, res) => {
   const { id } = req.params;
 
@@ -116,9 +121,18 @@ exports.deleteGameInstance = async (req, res) => {
   }
 
   try {
-    await gameinstance.destroy();
+    // await gameinstance.destroy();
+    // gameinstance.game_parameters.status = "deleted";
+    // gameinstance.save();
+    gameinstance.update(
+      {
+        game_parameters: {"status" :"deleted"}
+      }
+      
+    )
     return res.send({
       message: `Game ${id} has been deleted!`,
+      gameinstance
     });
   } catch (err) {
     return res.status(500).send({
