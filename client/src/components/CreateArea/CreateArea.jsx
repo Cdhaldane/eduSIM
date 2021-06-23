@@ -27,7 +27,9 @@ import "./CreateArea.css";
     let data = {
       gameinstance_name: title,
       gameinstance_photo_path: 'temp.png',
-      game_parameters: 'value',
+      game_parameters: {
+        "status": "created"
+      },
       createdby_adminid: localStorage.adminid,
       invite_url: 'value'
     }
@@ -38,7 +40,7 @@ import "./CreateArea.css";
           .catch(error => console.log(error.response));
          console.log(data);
       props.onAdd(note);
-      window.location.reload();
+      // window.location.reload();
   }
 
   function setNotes(event) {

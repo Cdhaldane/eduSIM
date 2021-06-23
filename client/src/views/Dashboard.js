@@ -22,7 +22,7 @@ function Dashboard(props) {
    }, []);
 
   const getAllGamedata = () => {
-    axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name',{
+    axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name', {
       params: {
             email: user.email,
             name: user.name
@@ -36,7 +36,8 @@ function Dashboard(props) {
       console.log(localStorage)
     })
     .catch(error => console.log(error.response));
-    axios.get('http://localhost:5000/gameinstances/getGameInstances/',{
+    axios.get('http://localhost:5000/gameinstances/getGameInstances/',
+    {
       params: {
             id: value
         }
@@ -47,7 +48,7 @@ function Dashboard(props) {
     getGamedata(allData);
     })
     .catch(error => console.log(error.response));
-  }
+}
 
   function addNote(newgamedata) {
          getGamedata((prevgamedata) => {
@@ -75,12 +76,13 @@ function Dashboard(props) {
             <div className="dashsim">
             <h2>My simulations ️</h2>
             {gamedata.map((noteItem, index) => {
+
           return (
             <SimNote className="notesim"
              key={index}
              id={index}
              gameid={noteItem.gameinstanceid}
-             img="temp.png"
+             img={noteItem.gameinstance_photo_path}
              onDelete={deleteNote}
              title={noteItem.gameinstance_name}
             />
