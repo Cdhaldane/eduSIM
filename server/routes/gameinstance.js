@@ -6,6 +6,8 @@ const multer = require('multer');
 const gameinstances = require('../models/GameInstances');
 
 const upload = multer({dest: "uploads/"});
+
+
 //Routes go here
 
 // API Path to get all the game instances that a specific admin has created
@@ -19,9 +21,24 @@ router.get('/getGameInstance/:adminid/:gameid', gameinstance.getGameInstance);
 //API Path to create a new game instance
 router.post('/createGameInstance', gameinstance.createGameInstance);
 
-//API Path to upload image
-router.post('/upload', gameinstance.upload);
+// router.post('/upload', gameinstance.upload);
 
+router.post('/upload', (req, res) => {
+  if (req.files === null) {
+    return res.status(400).json({ msg: 'No file uploaded' });
+  }
+
+  const file = req.files.file;
+
+  file.mv(`${__dirname}../../../client/public/uploads/${file.name}`, err => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send(err);
+    }
+
+    res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+  });
+});
 
 //API Path to update a specific game instance
 router.put('/update/:id', gameinstance.updateGameInstance);

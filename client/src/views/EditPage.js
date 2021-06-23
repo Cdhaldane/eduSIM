@@ -38,16 +38,6 @@ const GridMain = styled.main`
   linear-gradient(to bottom, grey 1px, transparent 1px);
 `;
 
-// function generateShapes() {
-//   return [...Array(10)].map((_, i) => ({
-//     id: i.toString(),
-//     x: Math.random() * window.innerWidth,
-//     y: Math.random() * window.innerHeight,
-//     rotation: Math.random() * 180,
-//     isDragging: false,
-//   }));
-// }
-
 function EditPage(props){
     const [showNav, setShowNav] = useState(false);
     const [number, setNumber] = useState(6)

@@ -4,6 +4,7 @@ import Info from "../components/Information/InformationPopup";
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import styled from "styled-components"
+import Stages from "../components/Stage/Stage";
 
 
 const Grid = styled.div`
@@ -44,6 +45,7 @@ function Game(props){
               <Header class="header" toggle={toggle} />
           </GridHeader>
           <GridMain>
+            
             <Level number={number}/>
             <Info
               stuff=""

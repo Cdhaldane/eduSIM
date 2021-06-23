@@ -31,6 +31,8 @@ import "./CreateArea.css";
   //adds note to dahsboard by setting notes and sending to app
 const submitNote = async event => {
     event.preventDefault();
+    console.log(file);
+    console.log(file);
     const formData = new FormData();
     formData.append('file', file);
 

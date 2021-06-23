@@ -16,6 +16,7 @@ function generateShapes() {
 const INITIAL_STATE = generateShapes();
 
 const Stages = () => {
+
   const [stars, setStars] = React.useState(INITIAL_STATE);
   const [rects, setRects] = React.useState(INITIAL_STATE);
 
