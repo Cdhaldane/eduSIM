@@ -5,6 +5,8 @@ import routes from './routes';
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+
 var cors = require('cors')
 
 
@@ -19,6 +21,7 @@ app.use(helmet());
 app.use(express.json()); //-> allows us to access the req.body
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(fileUpload());
 
 app.use('/gameinstances', routes.gameinstance)
 app.use('/adminaccounts', routes.adminaccount)
@@ -26,6 +29,7 @@ app.use('/adminaccounts', routes.adminaccount)
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Switch from "react-switch"
 import {Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import axios from "axios"
+import axios from "axios";
 import "./CreateArea.css";
 
   function CreateArea(props) {
@@ -17,25 +17,59 @@ import "./CreateArea.css";
     const [value, setValue] = React.useState(
     localStorage.getItem('adminid') || ''
   );
+
+  const [file, setFile] = useState('');
+  const [filename, setFilename] = useState('Choose File');
+  const [uploadedFile, setUploadedFile] = useState({});
+  const [message, setMessage] = useState('');
+  const [uploadPercentage, setUploadPercentage] = useState(0);
+
+
   // sets all const
 
 
   //adds note to dahsboard by setting notes and sending to app
-  function submitNote(event) {
+const submitNote = async event => {
     event.preventDefault();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await axios.post('http://localhost:5000/gameinstances/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      console.log(res);
+      const { fileName, filePath } = res.data;
+
+      setUploadedFile({ fileName, filePath });
+
+      setMessage('File Uploaded');
+    } catch (err) {
+      if (err.response.status === 500) {
+        setMessage('There was a problem with the server');
+      } else {
+        setMessage(err.response.data.msg);
+      }
+      setUploadPercentage(0)
+    }
+    console.log(uploadedFile.filePath)
     props.onDelete(showNote);
     let data = {
       gameinstance_name: title,
-      gameinstance_photo_path: 'temp.png',
+      gameinstance_photo_path: filename,
       game_parameters: 'value',
       createdby_adminid: localStorage.adminid,
       invite_url: 'value'
     }
+
       axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
          .then((res) => {
             console.log(res)
            })
           .catch(error => console.log(error.response));
+          console.log(localStorage.adminid);
          console.log(data);
       props.onAdd(note);
       window.location.reload();
@@ -51,11 +85,15 @@ import "./CreateArea.css";
 
   //handles selection of img from file
   function onChange(event){
+    setFile(event.target.files[0]);
+    setFilename(event.target.files[0].name);
+    setImg(URL.createObjectURL(event.target.files[0]))
     setNote({
       title: title,
       img: URL.createObjectURL(event.target.files[0])
     });
-  }
+}
+
 
   //handle input and adds title and img to notes array
   function handleChange(event) {
@@ -104,23 +142,23 @@ import "./CreateArea.css";
 
           <p class="gradient-border" id="box3">
             Enter a ‎name‎‏‏‎ ‎
-          <input
-            tpye="text"
-            id="namei"
-            name="title"
-            onChange={handleChange}
-            value={note.title}
-            placeholder="                         "
-          />
+            <input
+           tpye="text"
+           id="namei"
+           name="title"
+           onChange={handleChange}
+           value={note.title}
+           placeholder="                         "
+         />
           </p>
 
         <p class="gradient-border" id="box2" >
         Choose an image
         <img id="plus" src="plus.png" onClick={handleImg}/>
 
-        {(note.img)
-        ?<img id="preview" src={note.img} />
-        :<img id="previewno" src={note.img} />
+        {(img)
+        ?<img id="preview" src={img} />
+        :<img id="previewno" src={img} />
         }
         </p>
         <p>
@@ -131,19 +169,19 @@ import "./CreateArea.css";
         {img && <div>
           <form id="imgs">
             <p id="box4" >
-              <img src="temp.png" onClick={() => setNote({title:title, img:"temp.png"})}/>
-              <img src="temp1.png" onClick={() => setNote({title:title, img:"temp1.png"})}/>
-              <img src="temp.png" onClick={() => setNote({title:title, img:"temp.png"})}/>
-              <img src="temp1.png" onClick={() => setNote({title:title, img:"temp1.png"})}/>
-              <img src="temp.png" onClick={() => setNote({title:title, img:"temp.png"})}/>
-              <img src="temp1.png" onClick={() => setNote({title:title, img:"temp1.png"})}/>
-              <input
-                 type="file"
-                 name="img"
-                 id="file"
-                 onChange={onChange}
-                 />
-               <label for="file">From file</label>
+              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
+              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
+              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
+            <input
+                  type="file"
+                  name="img"
+                  id="file"
+                  onChange={onChange}
+                  />
+                <label for="file">From file</label>
             </p>
           </form>
           </div>

@@ -2,9 +2,12 @@ import React from "react";
 import {Link } from "react-router-dom";
 import "./SimNote.css";
 import axios from "axios";
+import ImageLoader from 'react-image-file';
 
 function SimNote(props) {
+    
   function handleClick() {
+    console.log(props.img)
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
       props.onDelete(props.id)
       axios.delete('http://localhost:5000/gameinstances/delete/:id',{
@@ -23,7 +26,7 @@ function SimNote(props) {
   return (
     <div className="notesim">
       <h1><strong>{props.title}</strong></h1>
-      <img src={props.img} alt="backdrop"/>
+    <img src={"/uploads/" + props.img}  alt="backdrop"/>
       <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
       <Link to="/EditPage">
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>

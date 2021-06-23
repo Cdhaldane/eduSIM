@@ -1,7 +1,11 @@
 import { Router } from 'express';
 const gameinstance = require('../controllers/gamepage.jsx');
 const router = Router();
+const multer = require('multer');
 
+const gameinstances = require('../models/GameInstances');
+
+const upload = multer({dest: "uploads/"});
 //Routes go here
 
 // API Path to get all the game instances that a specific admin has created
@@ -15,16 +19,15 @@ router.get('/getGameInstance/:adminid/:gameid', gameinstance.getGameInstance);
 //API Path to create a new game instance
 router.post('/createGameInstance', gameinstance.createGameInstance);
 
+//API Path to upload image
+router.post('/upload', gameinstance.upload);
+
+
 //API Path to update a specific game instance
 router.put('/update/:id', gameinstance.updateGameInstance);
 
 //API Path to update a specific game instance
-<<<<<<< HEAD
+
 router.delete('/delete/:id', gameinstance.deleteGameInstance);
 
 export default router;
-=======
-router.put('/delete/:id', gameinstance.deleteGameInstance);
-
-export default router;
->>>>>>> b529ada54d18fc84242bf30206391695610ff3af
