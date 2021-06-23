@@ -7,11 +7,11 @@ function SimNote(props) {
   function handleClick() {
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
       props.onDelete(props.id)
-      axios.delete('http://localhost:5000/gameinstances/delete/:id',{
-        params: {
-              id: props.gameid
-          }
-      })
+      console.log(props.gameid)
+      let data = {
+        id: props.gameid
+      }
+      axios.put('http://localhost:5000/gameinstances/delete/:id', data)
       .then((res) => {
         const allData = res.data;
         console.log(allData);

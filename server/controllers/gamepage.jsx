@@ -97,7 +97,6 @@ exports.updateGameInstance = async (req, res) => {
     if (invite_url) {
       gameinstance.invite_url = invite_url;
     }
-
     gameinstance.save();
     return res.send({
       message: `Game Instance ${id} has been updated!`,
@@ -109,9 +108,37 @@ exports.updateGameInstance = async (req, res) => {
     }
   };
 
+  //
+  // exports.deleteGameInstance = async (req, res) => {
+  //
+  //   const id  = req.params.id;
+  //
+  //   const gameinstance = await GameInstance.findOne({
+  //     where: {
+  //       gameinstanceid: id,
+  //     },
+  //   });
+  //
+  //   if (!gameinstance) {
+  //     return res.status(400).send({
+  //       message: `No game instance found with the id ${id}`,
+  //     });
+  //   }
+  //
+  //   try {
+  //     await gameinstance.destroy();
+  //     return res.send({
+  //       message: `Game ${id} has been deleted!`,
+  //     });
+  //   } catch (err) {
+  //     return res.status(500).send({
+  //       message: `Error: ${err.message}`,
+  //     });
+  //   }
+  // };
 
 exports.deleteGameInstance = async (req, res) => {
-  const id = req.query.id;
+  const  id  = req.body.id;
 
   const gameinstance = await GameInstance.findOne({
     where: {

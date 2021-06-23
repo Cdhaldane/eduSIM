@@ -9,8 +9,6 @@ const AdminAccount = require("../models/AdminAccounts");
     const email = req.query.email;
     const name = req.query.name;
 
-
-
     const admin = await AdminAccount.findOne({
       where: {
         email: email,

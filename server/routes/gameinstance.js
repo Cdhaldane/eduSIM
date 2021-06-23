@@ -22,4 +22,7 @@ router.put('/update/:id', gameinstance.updateGameInstance);
 
 router.put('/delete/:id', gameinstance.deleteGameInstance);
 
+
+// router.put('/delete/:id', gameinstance.deleteGameInstance);
+
 export default router;
