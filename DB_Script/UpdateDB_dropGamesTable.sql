@@ -12,12 +12,11 @@ CREATE TABLE public.adminaccounts (
 Drop table public.gameinstances;
 CREATE TABLE public.gameinstances (
     gameinstanceid uuid NOT NULL,
-	is_default_game bool,
+    is_default_game bool,
     gameinstance_name varchar(250),
     gameinstance_photo_path varchar(250),
-    game_parameters json,
+    game_parameters json, -- include the game rooms and the link to each room
     createdby_adminid uuid NOT NULL,
-    invite_url character varying(255),
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL
 );
