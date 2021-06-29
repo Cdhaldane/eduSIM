@@ -15,7 +15,8 @@ CREATE TABLE public.gameinstances (
     is_default_game bool,
     gameinstance_name varchar(250),
     gameinstance_photo_path varchar(250),
-    game_parameters json, -- include the game rooms and the link to each room
+    game_parameters json, 
+    game_rooms json, -- includes the game rooms and the link to each room
     createdby_adminid uuid NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL
