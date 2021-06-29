@@ -39,7 +39,7 @@ const StyledLink = styled(Link)`
       opacity: 1;
     }
   }
-`; 
+`;
 
 function NavLink({children, iconClassName, label, ...rest}) {
   return (

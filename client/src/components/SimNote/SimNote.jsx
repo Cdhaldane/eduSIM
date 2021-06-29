@@ -5,7 +5,7 @@ import axios from "axios";
 import ImageLoader from 'react-image-file';
 
 function SimNote(props) {
-    
+
   function handleClick() {
     console.log(props.img)
     {if (window.confirm('Are you sure you wish to delete this simulation?'))

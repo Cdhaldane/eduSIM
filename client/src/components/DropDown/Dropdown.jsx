@@ -6,8 +6,7 @@ import Stages from "../Stage/Stage"
 
 import "./Dropdown.css";
 
-
-  function DropdownMenu() {
+  function DropdownMenu(props) {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
     const [ components, setComponents ] = useState();
@@ -33,13 +32,34 @@ import "./Dropdown.css";
     );
   }
 
-  const Widget = ({ text }) => <p>{text}</p>;
 
-  function renderWidget() {
-    console.log("clicked")
-    return (
-      <Stages />
-    )
+    function DropdownItems(props) {
+      return (
+        <a href="#" className="menu-item" onClick={props.onClick}>
+          <span className="icon-button">{props.leftIcon}</span>
+          {props.children}
+          <span className="icon-right">{props.rightIcon}</span>
+        </a>
+      );
+    }
+
+  function addCircle(){
+    props.addCircle();
+  }
+  function addRectangle(){
+    props.addRectangle();
+  }
+  function drawLine(){
+    props.drawLine();
+  }
+  function drawText(){
+    props.drawLine();
+  }
+  function drawImage(){
+    props.drawLine();
+  }
+  function eraseLine(){
+    props.eraseLine();
   }
 
  return (
@@ -51,7 +71,7 @@ import "./Dropdown.css";
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <h1>Edit Group Space</h1>
+          <h1>{props.title}</h1>
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-shapes"></i>}
             rightIcon={""}
@@ -83,10 +103,13 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>SHAPES!</h2>
           </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-square"></i>}>Square</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-circle" onClick={renderWidget}></i>}>Circle</DropdownItem>
-          <DropdownItem leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x"></i>}>Triangle</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-star"></i>}>Star</DropdownItem>
+          <DropdownItems  onClick={addRectangle} leftIcon={<i id="icons" class="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
+          <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
+          <DropdownItems onClick="" leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick=""></i>}>Triangle</DropdownItems>
+          <DropdownItems onClick="" leftIcon={<i id="icons" class="fas fa-times" onClick=""></i>}>Cross</DropdownItems>
+          <DropdownItems onClick="" leftIcon={<i id="icons" class="fa fa-star" onClick=""></i>}>Star</DropdownItems>
+          <DropdownItems onClick={drawLine} leftIcon={<i id="icons" class="fas fa-marker" onClick={drawLine}></i>}>Draw</DropdownItems>
+        <DropdownItems onClick={eraseLine} leftIcon={<i id="icons" class="fas fa-eraser" onClick={eraseLine}></i>}>Eraser</DropdownItems>
         </div>
       </CSSTransition>
 
@@ -100,10 +123,11 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>MEDIA!</h2>
           </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-picture-o"></i>}>Image</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-video"></i>}>Video</DropdownItem>
+          <DropdownItem leftIcon={<i id="icons" class="fa fa-picture-o" onClick={drawImage}></i>}>Image</DropdownItem>
+        <DropdownItem leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>}>Video</DropdownItem>
           <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItem>
           <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItem>
+        <DropdownItem leftIcon={<i id="icons" class="fas fa-text" onClick={drawText}></i>}>Textbox</DropdownItem>
         </div>
       </CSSTransition>
     </div>

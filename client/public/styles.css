@@ -237,3 +237,10 @@ footer {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
+
+#editpagex {
+  position: relative;
+  top: -1080px;
+  color: #8f001a;
+  right: -1770px;
+}

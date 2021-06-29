@@ -3,22 +3,32 @@ import "./Level.css"
 
 function Level(props) {
   const [count, setCount] = useState(1);
+  let items = [];
+
+  function createSelectItems() {
+
+    for (let i = 1; i <=  props.num ; i++) {
+         items.push(<option>{props.ptype} {i}</option>);
+         //here I will be creating my options dynamically based on
+         //what props are currently passed to the parent component
+    }
+    return items;
+    console.log(items);
+}
+
   return (
-  <div>
+  <div id="all">
       <img className= {"ball" + count}  src={"ball.png"} alt="level counter"/>
     <div className = "level">
-      <img id={"img" + props.number} src={"levelbar.png"} />
-      <p>It's day {count}! </p>
+      <img id={"img" + props.num} src={"levelbar.png"} />
+    <p>It's {props.ptype} {count}! </p>
 
          {(count !== props.number)
          ? <button onClick={() => setCount(count + 1)}>Next</button>
          : <button onClick={() => setCount(1)}>Next</button>
        }
        <select id="levels">
-         <option value="pg1">Page 1</option>
-         <option value="pg2">Page 2</option>
-         <option value="pg3">Page 3</option>
-         <option value="pg4">Page 4</option>
+         {createSelectItems()}
        </select>
     </div>
   </div>

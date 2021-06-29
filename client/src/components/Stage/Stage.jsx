@@ -1,120 +1,525 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Star, Text, Rect } from 'react-konva';
-import "./Stage.css";
+import React, { useState, useRef } from "react";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from "react-bootstrap/Button";
 
-function generateShapes() {
-  return [...Array(1)].map((_, i) => ({
-    id: i.toString(),
-    x: 0.46 * window.innerWidth,
-    y: 0.45 * window.innerHeight,
-    // rotation: Math.random() * 180,
-    isDragging: false,
-  }));
-}
+import { Stage, Layer } from "react-konva";
+import Rectangle from "./Shapes/Rectangle";
+import Circle from "./Shapes/Circle";
+import { addLine } from "./Shapes/Line";
+import { addTextNode } from "./Shapes/Text";
+import Image from "./Shapes/Img";
+import { v1 as uuidv1 } from 'uuid';
 
-const INITIAL_STATE = generateShapes();
+import {Link } from "react-router-dom";
+import Level from "../Level/Level";
+import Info from "../Information/InformationPopup";
+import EditShapes from "../EditShapes/EditShapes";
+import Pencil from "../Pencils/Pencil";
+import Sidebar from "../SideBar/Sidebar";
+import Header from "../SideBar/Header";
+import styled from "styled-components"
 
-const Stages = () => {
+import { Container, Row, Col } from "react-bootstrap";
 
-  const [stars, setStars] = React.useState(INITIAL_STATE);
-  const [rects, setRects] = React.useState(INITIAL_STATE);
 
-  const handleDragStart = (e) => {
-  const id = e.target.id();
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: star.id === id,
-        };
-      })
-    );
-  setRects(
-    rects.map((rect) => {
-      return {
-        ...rect,
-        isDragging: rect.id === id,
-      };
-    })
-  );
-};
-  const handleDragEnd = (e) => {
-    setStars(
-      stars.map((star) => {
-        return {
-          ...star,
-          isDragging: false,
-        };
-      })
-    );
-    setRects(
-      rects.map((rect) => {
-        return {
-          ...rect,
-          isDragging: false,
-        };
-      })
-    );
+function Stages(props) {
+  const [showNav, setShowNav] = useState(false);
+  const [number, setNumber] = useState(6);
+  const [mvisible, setMvisible] = useState("false")
+  const [avisible, setAvisible] = useState("false")
+  const [pavisible, setPavisible] = useState("false")
+  const [svisible, setSvisible] = useState("false")
+  const [pevisible, setPevisible] = useState("false")
+  const [ptype, setType] = useState("")
+  const [num, setNum] = useState(6)
+  const [color, setColor]= useState("white")
+  const [rectangles, setRectangles] = useState([]);
+  const [circles, setCircles] = useState([]);
+  const [images, setImages] = useState([]);
+  const [selectedId, selectShape] = useState(null);
+  const [shapes, setShapes] = useState([]);
+  const [, updateState] = React.useState();
+  const stageEl = React.createRef();
+  const layerEl = React.createRef();
+  const fileUploadEl = React.createRef();
+
+  function handleMvisible(e) {
+    props.mvisible(e)
+  }
+  function handleAvisible(e) {
+    props.avisible(e)
+  }
+  function handlePavisible(e) {
+    props.pavisible(e)
+  }
+  function handleSvisible(e) {
+    props.svisible(e)
+  }
+  function handlePevisible(e) {
+    props.pevisible(e)
+  }
+  function handleType(e){
+    setType(e);
+  }
+  function handleNum(e){
+    setNum(e);
+  }
+  function handleColor(e){
+    setColor(e.hex);
+    console.log(color);
+  }
+
+  const getRandomInt = max => {
+    return Math.floor(Math.random() * Math.floor(max));
+  };
+  const addRectangle = () => {
+    const rect = {
+      x: getRandomInt(100),
+      y: getRandomInt(100),
+      width: 100,
+      height: 100,
+      fill: props.color,
+      id: `rect${rectangles.length + 1}`,
+    };
+    const rects = rectangles.concat([rect]);
+    setRectangles(rects);
+    const shs = shapes.concat([`rect${rectangles.length + 1}`]);
+    setShapes(shs);
+  };
+  const addCircle = () => {
+    const circ = {
+      x: getRandomInt(100),
+      y: getRandomInt(100),
+      width: 100,
+      height: 100,
+      fill: props.color,
+      id: `circ${circles.length + 1}`,
+    };
+    const circs = circles.concat([circ]);
+    setCircles(circs);
+    const shs = shapes.concat([`circ${circles.length + 1}`]);
+    setShapes(shs);
 
   };
-
+const drawLine = () => {
+    addLine(stageEl.current.getStage(), layerEl.current);
+  };
+  const eraseLine = () => {
+    addLine(stageEl.current.getStage(), layerEl.current, "erase");
+  };
+  const drawText = () => {
+    const id = addTextNode(stageEl.current.getStage(), layerEl.current);
+    const shs = shapes.concat([id]);
+    setShapes(shs);
+  };
+  const drawImage = () => {
+    fileUploadEl.current.click();
+  };
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const fileChange = ev => {
+    let file = ev.target.files[0];
+    let reader = new FileReader();
+    reader.addEventListener(
+      "load",
+      () => {
+        const id = uuidv1();
+        images.push({
+          content: reader.result,
+          id,
+        });
+        setImages(images);
+        fileUploadEl.current.value = null;
+        shapes.push(id);
+        setShapes(shapes);
+        forceUpdate();
+      },
+      false
+    );
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+  const undo = () => {
+    const lastId = shapes[shapes.length - 1];
+    let index = circles.findIndex(c => c.id == lastId);
+    if (index != -1) {
+      circles.splice(index, 1);
+      setCircles(circles);
+    }
+    index = rectangles.findIndex(r => r.id == lastId);
+    if (index != -1) {
+      rectangles.splice(index, 1);
+      setRectangles(rectangles);
+    }
+    index = images.findIndex(r => r.id == lastId);
+    if (index != -1) {
+      images.splice(index, 1);
+      setImages(images);
+    }
+    shapes.pop();
+    setShapes(shapes);
+    forceUpdate();
+  };
+  document.addEventListener("keydown", ev => {
+    if (ev.code == "Delete") {
+      let index = circles.findIndex(c => c.id == selectedId);
+      if (index != -1) {
+        circles.splice(index, 1);
+        setCircles(circles);
+      }
+      index = rectangles.findIndex(r => r.id == selectedId);
+      if (index != -1) {
+        rectangles.splice(index, 1);
+        setRectangles(rectangles);
+      }
+      index = images.findIndex(r => r.id == selectedId);
+      if (index != -1) {
+        images.splice(index, 1);
+        setImages(images);
+      }
+      forceUpdate();
+    }
+  });
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
-      <Layer>
-        {stars.map((star) => (
-          <Star
-            key={star.id}
-            id={star.id}
-            x={star.x}
-            y={star.y}
-            numPoints={5}
-            innerRadius={20}
-            outerRadius={40}
-            fill="black"
-            draggable
-            rotation={star.rotation}
-            shadowColor="black"
-            shadowBlur={10}
-            shadowOpacity={0.6}
-            shadowOffsetX={star.isDragging ? 10 : 5}
-            shadowOffsetY={star.isDragging ? 10 : 5}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+    <div className="home-page">
+      <input
+        style={{ display: "none" }}
+        type="file"
+        ref={fileUploadEl}
+        onChange={fileChange}
+      />
+      <Stage
+        width={window.innerWidth * 0.9}
+        height={window.innerHeight - 150}
+        ref={stageEl}
+        onMouseDown={e => {
+          // deselect when clicked on empty area
+          const clickedOnEmpty = e.target === e.target.getStage();
+          if (clickedOnEmpty) {
+            selectShape(null);
+          }
+        }}
+      >
+        <Layer ref={layerEl}>
+          {rectangles.map((rect, i) => {
+            return (
+              <Rectangle
+                key={i}
+                shapeProps={rect}
+                isSelected={rect.id === selectedId}
+                onSelect={() => {
+                  selectShape(rect.id);
+                }}
+                onChange={newAttrs => {
+                  const rects = rectangles.slice();
+                  rects[i] = newAttrs;
+                  setRectangles(rects);
+                }}
+              />
+            );
+          })}
+          {circles.map((circle, i) => {
+            return (
+              <Circle
+                key={i}
+                shapeProps={circle}
+                isSelected={circle.id === selectedId}
+                onSelect={() => {
+                  selectShape(circle.id);
+                }}
+                onChange={newAttrs => {
+                  const circs = circles.slice();
+                  circs[i] = newAttrs;
+                  setCircles(circs);
+                }}
+              />
+            );
+          })}
+          {images.map((image, i) => {
+            return (
+              <Image
+                key={i}
+                imageUrl={image.content}
+                isSelected={image.id === selectedId}
+                onSelect={() => {
+                  selectShape(image.id);
+                }}
+                onChange={newAttrs => {
+                  const imgs = images.slice();
+                  imgs[i] = newAttrs;
+                }}
+              />
+            );
+          })}
+        </Layer>
+      </Stage>
+      <Level number={number} ptype={ptype} num={num}/>
+        <h1 id="editmode">Edit Mode</h1>
+        <Info
+          stuff="asdasdas"
+          editmode="1"
           />
-        ))}
-          {rects.map((rect) => (
-            <Rect
-              key={rect.id}
-              id={rect.id}
-              x={rect.x}
-              y={rect.y}
-              width={50}
-              height={50}
-              draggable
-              fill="black"
-              draggable
-              rotation={rect.rotation}
-              shadowColor="black"
-              shadowBlur={10}
-              shadowOpacity={0.6}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            />
-        ))}
-      </Layer>
-    </Stage>
-  );
-};
+          <EditShapes
+            choosecolor={handleColor}
+          />
 
+          <Pencil
+            id="2"
+            psize="3"
+            type="main"
+            title="Edit Group Space"
+            addCircle={addCircle}
+            addRectangle={addRectangle}
+            drawLine={drawLine}
+            drawText={drawText}
+            drawImage={drawImage}
+            eraseLine={eraseLine}
+            />
+          <Pencil
+            id="3"
+            psize="3"
+            type="info"
+            title=""
+            ptype={handleType}
+            num={handleNum}
+          />
+          <Pencil
+            id="4"
+            psize="2"
+            type="nav"
+            title=""
+            mvisible={handleMvisible}
+            avisible={handleAvisible}
+            pavisible={handlePavisible}
+            svisible={handleSvisible}
+            pevisible={handlePevisible}
+            />
+
+            <Link to="/dashboard">
+              <i id="editpagex" class="fas fa-times fa-3x"></i>
+            </Link>
+
+    </div>
+  );
+}
 export default Stages;
 
-// shadowOffsetX={rect.isDragging ? 10 : 5}
-// shadowOffsetY={rect.isDragging ? 10 : 5}
-// scaleX={rect.isDragging ? 1.2 : 1}
-// scaleY={rect.isDragging ? 1.2 : 1}
 
-// shadowOffsetX={star.isDragging ? 10 : 5}
-// shadowOffsetY={star.isDragging ? 10 : 5}
-// scaleX={star.isDragging ? 1.2 : 1}
-// scaleY={star.isDragging ? 1.2 : 1}
+
+
+
+
+
+
+// import React, { useState } from 'react';
+// import { render } from 'react-dom';
+// import { Stage, Layer, Rect, Transformer, Circle, Star } from 'react-konva';
+// import Rectangle from "./Shapes/Rectangle"
+// import Stars from "./Shapes/Star"
+// import Dropdown from "../DropDown/Dropdown";
+// import "./Stage.css";
+// import ContextMenu from "../ContextMenu/ContextMenu"
+//
+//
+// function generateShapes() {
+//   return [...Array(1)].map((_, i) => ({
+//     id: i.toString(),
+//     x: 0.46 * window.innerWidth,
+//     y: 0.45 * window.innerHeight,
+//     width: 100,
+//     height: 100,
+//     // rotation: Math.random() * 180,
+//   }));
+// }
+//
+// const INITIAL_STATE = generateShapes();
+//
+// const Stages = (props) => {
+//   const [drop, setDrop] = useState(false);
+//   const [selectedId, selectShape] = React.useState(null);
+//   const [stars, setStars] = React.useState(INITIAL_STATE);
+//   const [rects, setRects] = React.useState(INITIAL_STATE);
+//
+//
+//
+//
+//   const initialRectangles = [
+//     {
+//       x: 10,
+//       y: 10,
+//       width: 100,
+//       height: 100,
+//       fill: props.color,
+//       id: 'rect1',
+//     },
+//     {
+//       x: 150,
+//       y: 150,
+//       width: 100,
+//       height: 100,
+//       fill: '#693434',
+//       id: 'rect2',
+//     },
+//   ];
+//
+//   const initialStars = [
+//     {
+//       numPoints: 5,
+//       innerRadius: 20,
+//       outerRadius: 40,
+//       x: 100,
+//       y: 100,
+//       width: 100,
+//       height: 100,
+//       fill: '#693434',
+//       id: 'star1',
+//     },
+//     {
+//       x: 150,
+//       y: 150,
+//       width: 100,
+//       height: 100,
+//       fill: '#693434',
+//       id: 'star2',
+//     },
+//   ];
+//
+//
+//   const [rectangles, setRectangles] = React.useState(initialRectangles);
+//   const [starss, setStarss] = React.useState(initialStars);
+//
+//
+//
+//   const handleDragStart = (e) => {
+//     const id = e.target.id();
+//       setStars(
+//         stars.map((star) => {
+//           return {
+//             ...star,
+//             isDragging: star.id === id,
+//           };
+//         })
+//       );
+//     setRects(
+//       rects.map((rect) => {
+//         return {
+//           ...rect,
+//           isDragging: rect.id === id,
+//         };
+//       })
+//     );
+//   };
+//     const handleDragEnd = (e) => {
+//
+//       setStars(
+//         stars.map((star) => {
+//           return {
+//             ...star,
+//             isDragging: false,
+//             fill: "yellow"
+//           };
+//         })
+//       );
+//       setRects(
+//         rects.map((rect) => {
+//           return {
+//             ...rect,
+//             isDragging: false,
+//           };
+//         })
+//       );
+//
+//     };
+//
+//   const checkDeselect = (e) => {
+//    // deselect when clicked on empty area
+//    const clickedOnEmpty = e.target === e.target.getStage();
+//    if (clickedOnEmpty) {
+//      selectShape(null);
+//    }
+//  }
+//
+//
+//   return (
+//     <div>
+//       <Stage
+//         width={window.innerWidth}
+//         height={window.innerHeight}
+//         onMouseDown={checkDeselect}
+//         onTouchStart={checkDeselect}
+//       >
+//       <Layer>
+//         {rectangles.map((rect, i) => {
+//             return (
+//               <Rectangle
+//                 key={i}
+//                 fill={props.color}
+//                 shapeProps={rect}
+//                 isSelected={rect.id === selectedId}
+//                 onSelect={() => {selectShape(rect.id);}}
+//                 onChange={(newAttrs) => {
+//                   const rects = rectangles.slice();
+//                   rects[i] = newAttrs;
+//                   setRectangles(rects);
+//                 }}
+//               />
+//             );
+//           })}
+//           {starss.map((star, i) => {
+//               return (
+//                 <Star
+//                   key={i}
+//                   numPoints={5}
+//                   innerRadius={20}
+//                   outerRadius={40}
+//                   fill={props.color}
+//                   shapeProps={star}
+//                   isSelected={star.id === selectedId}
+//                   onSelect={() => {selectShape(star.id);}}
+//                   onChange={(newAttrs) => {
+//                     const sta = starss.slice();
+//                     sta[i] = newAttrs;
+//                     setStarss(sta);
+//                   }}
+//                 />
+//               );
+//             })}
+//           {stars.map((star, i) => (
+//          <Star
+//            key={star.id}
+//            id={star.id}
+//            x={star.x}
+//            y={star.y}
+//            numPoints={5}
+//            innerRadius={20}
+//            outerRadius={40}
+//            fill={props.color}
+//            draggable
+//            rotation={star.rotation}
+//            shadowColor="black"
+//            shadowBlur={10}
+//            shadowOpacity={0.6}
+//            shadowOffsetX={star.isDragging ? 10 : 5}
+//            shadowOffsetY={star.isDragging ? 10 : 5}
+//            onDragStart={handleDragStart}
+//            onDragEnd={handleDragEnd}
+//            isSelected={star.id === selectedId}
+//            onSelect={() => {selectShape(star.id);}}
+//            onChange={(newAttrs) => {
+//              const star = stars.slice();
+//              star[i] = newAttrs;
+//              setStars(star);
+//            }}
+//          />
+//        ))}
+//       </Layer>
+//     </Stage>
+//     {drop && <div className="drop">
+//       <Dropdown />
+//   </div>
+//   }
+//   </div>
+//   );
+// };
+//
+// export default Stages;

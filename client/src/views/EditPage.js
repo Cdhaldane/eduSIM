@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {Link } from "react-router-dom";
 import Level from "../components/Level/Level";
 import Info from "../components/Information/InformationPopup";
+import EditShapes from "../components/EditShapes/EditShapes";
 import Pencil from "../components/Pencils/Pencil";
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
@@ -40,44 +41,67 @@ const GridMain = styled.main`
 
 function EditPage(props){
     const [showNav, setShowNav] = useState(false);
-    const [number, setNumber] = useState(6)
+    const [number, setNumber] = useState(6);
+    const [mvisible, setMvisible] = useState("false")
+    const [avisible, setAvisible] = useState("false")
+    const [pavisible, setPavisible] = useState("false")
+    const [svisible, setSvisible] = useState("false")
+    const [pevisible, setPevisible] = useState("false")
+    const [ptype, setType] = useState("")
+    const [num, setNum] = useState(6)
+    const [color, setColor]= useState("white")
+
+    function handleMvisible(e) {
+      setMvisible(e);
+    }
+    function handleAvisible(e) {
+      setAvisible(e);
+    }
+    function handlePavisible(e) {
+      setPavisible(e);
+    }
+    function handleSvisible(e) {
+      setSvisible(e);
+    }
+    function handlePevisible(e) {
+      setPevisible(e);
+    }
+    function handleType(e){
+      setType(e);
+    }
+    function handleNum(e){
+      setNum(e);
+    }
+    function handleColor(e){
+      setColor(e.hex);
+      console.log(color);
+    }
+
     const toggle = () => setShowNav(!showNav)
     return (
       <div className="editpage">
       <Container>
         <Grid>
           <GridNav>
-              <Sidebar class="grid-sidebar" visible={showNav} close={toggle}/>
+              <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
+                mvisible={mvisible}
+                avisible={avisible}
+                pavisible={pavisible}
+                svisible={svisible}
+                pevisible={pevisible} />
           </GridNav>
 
           <GridMain>
-            <Stages />
-            <Level number={number}/>
-            <h1 id="editmode">Edit Mode</h1>
-            <Info
-              stuff="asdasdas"
-              editmode="1"
-              />
-              <Pencil
-                id="2"
-                psize="3"
-                type="main"
-                />
-              <Pencil
-                id="3"
-                psize="3"
-              />
-              <Pencil
-                id="4"
-                psize="2"
-                />
 
-                <Link to="/dashboard">
-                  <button id="save" type="button">
-                     Save
-                   </button>
-                </Link>
-
+            <Stages
+              color={color}
+              mvisible={handleMvisible}
+              avisible={handleAvisible}
+              pavisible={handlePavisible}
+              svisible={handleSvisible}
+              pevisible={handlePevisible}
+              ptype={handleType}
+            />
 
           </GridMain>
         </Grid>

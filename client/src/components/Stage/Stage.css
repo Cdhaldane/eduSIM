@@ -2,3 +2,14 @@
   z-index: 3000;
   position: absolute;
 }
+
+.drop{
+  position: relative;
+  left: 0px;
+  top: 0px;
+}
+
+#stuff {
+  position: absolute;
+  top:600px;
+}

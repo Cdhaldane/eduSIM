@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import Switch from "react-switch"
+import Button from "../Buttons/Button"
 
 
 import "./Dropdown.css";
 
 
-  function DropdownMenu() {
+  function Dropdowninfo(props) {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
+    const [checked, setChecked] = useState(false);
     const dropdownRef = useRef(null);
+    const [ptype, setType] = useState([]);
+    const [numpages, setNumpages ] = useState();
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
@@ -19,6 +24,14 @@ import "./Dropdown.css";
     setMenuHeight(height);
   }
 
+  function handleType(e){
+    props.ptype(e.target.value);
+  }
+
+  function handleNum(e){
+    console.log(e)
+    props.num(e.target.value);
+  }
 
   function DropdownItem(props) {
     return (
@@ -30,6 +43,7 @@ import "./Dropdown.css";
     );
   }
 
+
  return (
      <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
        <CSSTransition
@@ -39,63 +53,38 @@ import "./Dropdown.css";
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <h1>Edit Group Space</h1>
-          <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-shapes"></i>}
-            rightIcon={""}
-            goToMenu="shapes">
-            Add pages
-          </DropdownItem>
-          <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-camera"></i>}
-            rightIcon=""
-            goToMenu="media">
-            Add Media
-          </DropdownItem>
-          <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-puzzle-piece"></i>}
-            rightIcon=""
-            goToMenu="pieces">
-            Game Piece
-          </DropdownItem>
-        </div>
-      </CSSTransition>
+          <h1>Edit Timeline Bar</h1>
+          <label id="switchtime">
+            <Switch
+              onChange={() => setChecked(!checked)}
+              checked={checked}
+              className="react-switch"
+            />
+          </label>
+          <h1>Number of pages:</h1>
+            <button onClick={handleNum} value="1">1</button>
+            <button onClick={handleNum} value="2">2</button>
+            <button onClick={handleNum} value="3">3</button>
+            <button onClick={handleNum} value="4">4</button>
+            <button onClick={handleNum} value="5">5</button>
+            <button onClick={handleNum} value="6">6</button>
+            <button onClick={handleNum} value="7">7</button>
+            <button onClick={handleNum} value="8">8</button>
+          <p id="pagetype">
+        <input
+             type="text"
+             name="ptype"
+             placeholder="Enter a page type"
+             onChange={handleType}
+           />
+         </p>
 
-      <CSSTransition
-        in={activeMenu === 'shapes'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
-            <h2>SHAPES!</h2>
-          </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-square"></i>}>Square</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-circle"></i>}>Circle</DropdownItem>
-          <DropdownItem leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x"></i>}>Triangle</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-heart"></i>}>*insert other popular shape*</DropdownItem>
-        </div>
-      </CSSTransition>
 
-      <CSSTransition
-        in={activeMenu === 'media'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
-            <h2>MEDIA!</h2>
-          </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-picture-o"></i>}>Image</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-video"></i>}>Video</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItem>
+
         </div>
       </CSSTransition>
     </div>
   );
 }
 
-export default DropdownMenu;
+export default Dropdowninfo;

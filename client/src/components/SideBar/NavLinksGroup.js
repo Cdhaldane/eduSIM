@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState} from "react";
 import styled from "styled-components"
 import Pencil from "../Pencils/Pencil";
 import NavLink from "./NavLink"
@@ -34,24 +34,49 @@ const DenseNavLinks = styled(NavLink)`
   }
 `;
 
-const links = [
-    {
-        to: "/chat",
-        icon:"fas fa-comment-dots",
-        label:"Messaging"
-    },
-    {
-        to: "/alert",
-        icon:"fas fa-bell",
-        label:"Alert"
-    }
 
-];
 
 function NavLinksGroup(props) {
+
+  const links = [
+      {
+          to: "/chat",
+          icon:"fas fa-comment-dots",
+          label:"Messaging",
+          visible: props.mvisible
+      },
+      {
+          to: "/alert",
+          icon:"fas fa-bell",
+          label:"Alert",
+          visible: props.avisible
+      },
+      {
+          to: "/parameters",
+          icon:"fas fa-sliders-h",
+          label:"Parameters",
+          visible: props.pavisible
+      },
+      {
+          to: "/settings",
+          icon:"fas fa-cog",
+          label:"Settings",
+          visible: props.svisible
+
+      },
+      {
+          to: "/performance",
+          icon:"fas fa-chart-bar",
+          label:"Performance",
+          visible: props.pevisible
+      },
+
+
+  ];
     return (
       <LinksGroup {...props}>
-        {links.map((link) => (
+        {links.map((link) => {
+          return link.visible ?
           <DenseNavLinks
             compact={props.compact}
             key={link.to}
@@ -59,7 +84,9 @@ function NavLinksGroup(props) {
             iconClassName={link.icon}
             label={link.label}
           />
-        ))}
+          :
+          <h1></h1>
+          })}
       </LinksGroup>
     );
   }

@@ -1,5 +1,5 @@
 export const MenuItems =
-  [
+[
   {
     title: "Home",
     url: "/",
@@ -24,6 +24,4 @@ export const MenuItems =
     url: "/dashboard" ,
     cName:"nav-links-mobile"
   }
-
-
 ]

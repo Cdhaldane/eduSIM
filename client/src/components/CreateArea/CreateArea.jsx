@@ -31,10 +31,11 @@ import "./CreateArea.css";
   //adds note to dahsboard by setting notes and sending to app
 const submitNote = async event => {
     event.preventDefault();
-    console.log(file);
-    console.log(file);
+    setFilename(encodeURI(filename))
     const formData = new FormData();
     formData.append('file', file);
+
+    console.log(file)
 
     try {
       const res = await axios.post('http://localhost:5000/gameinstances/upload', formData, {
@@ -74,7 +75,7 @@ const submitNote = async event => {
           console.log(localStorage.adminid);
          console.log(data);
       props.onAdd(note);
-      window.location.reload();
+      // window.location.reload();
   }
 
   function setNotes(event) {

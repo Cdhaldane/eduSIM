@@ -22,6 +22,8 @@ function Info(props) {
           <Pencil
           id="1"
           psize="2"
+          type="main"
+          title="Edit Personal Space"
           />
         </div>
       : ""

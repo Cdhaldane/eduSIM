@@ -37,18 +37,23 @@ const StyledNav = styled.nav`
     );
     transition: transform 0.3s
       ${(p) => p.visible ? "cubic-bezier(0.4, 0, 1, 1)" : "cubic-bezier(0, 0, 0.2, 1)"} !important;
-  }  
+  }
 `;
- 
+
 function Sidebar (props) {
   const [compact, setCompact] = useState(0);
     return (
-      <>    
+      <>
         <Backdrop visible={props.visible} onClick={props.close}/>
         <StyledNav compact={!compact} {...props}>
           <br />
           <br />
-          <NavLinksGroup compact={!compact} />
+        <NavLinksGroup compact={!compact}
+          mvisible={props.mvisible}
+          avisible={props.avisible}
+          pavisible={props.pavisible}
+          svisible={props.svisible}
+          pevisible={props.pevisible} />
           {/* <NavLink
           compact={compact}
           to="/"
