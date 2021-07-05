@@ -1,10 +1,9 @@
+import { RegularPolygon, Transformer } from "react-konva";
 import React, { useState, useEffect  } from 'react';
-import { Stage, Layer, Rect, Transformer, Circle, Star } from 'react-konva';
 import ContextMenu from "../../ContextMenu/ContextMenu";
 import Portal from "./Portal"
 
-
-const Stars = ({ shapeProps, isSelected, onSelect, onChange }) => {
+const Triangle = ({ shapeProps, isSelected, onSelect, onChange }) => {
   const shapeRef = React.useRef();
   const trRef = React.useRef();
   const [selectedContextMenu, setSelectedContextMenu] = useState(null);
@@ -44,62 +43,42 @@ const mousePosition = useMousePosition()
   React.useEffect(() => {
     if (isSelected) {
       // we need to attach transformer manually
-      trRef.current.nodes([shapeRef.current]);
+      trRef.current.setNode(shapeRef.current);
       trRef.current.getLayer().batchDraw();
-
     }
   }, [isSelected]);
-
   return (
     <React.Fragment>
-      <Star
+      <RegularPolygon
         onContextMenu={handleContextMenu}
         onClick={onSelect}
-        onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
         draggable
-        onDragEnd={(e) => {
+        onDragEnd={e => {
           onChange({
             ...shapeProps,
             x: e.target.x(),
             y: e.target.y(),
           });
         }}
-        onTransformEnd={(e) => {
-          // transformer is changing scale of the node
-          // and NOT its width or height
-          // but in the store we have only width and height
-          // to match the data better we will reset scale on transform end
+        onTransformEnd={e => {
+          // transformer is changing scale
           const node = shapeRef.current;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
-
-          // we will reset it back
           node.scaleX(1);
           node.scaleY(1);
           onChange({
             ...shapeProps,
             x: node.x(),
             y: node.y(),
-            // set minimal value
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY),
+            width: node.width() * scaleX,
+            height: node.height() * scaleY,
           });
         }}
       />
-      {isSelected && (
-        <Transformer
-          ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // limit resize
-            if (newBox.width < 5 || newBox.height < 5) {
-              return oldBox;
-            }
-            return newBox;
-          }}
-        />
-      )}
+      {isSelected && <Transformer ref={trRef} />}
       {selectedContextMenu && (
            <Portal>
              <ContextMenu
@@ -111,5 +90,4 @@ const mousePosition = useMousePosition()
     </React.Fragment>
   );
 };
-
-export default Stars;
+export default Triangle;

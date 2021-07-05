@@ -1,12 +1,13 @@
 import Konva from "konva";
-export const addLine = (stage, layer, mode = "brush") => {
+export const addLine = ( stage, layer, mode = "brush", color) => {
+  let colour = "green";
   let isPaint = false;
   let lastLine;
   stage.on("mousedown touchstart", function(e) {
     isPaint = true;
     let pos = stage.getPointerPosition();
     lastLine = new Konva.Line({
-      stroke: mode == "brush" ? "red" : "white",
+      stroke: mode == "brush" ? color : "yellow",
       strokeWidth: mode == "brush" ? 5 : 20,
       globalCompositeOperation:
         mode === "brush" ? "source-over" : "destination-out",
@@ -16,6 +17,7 @@ export const addLine = (stage, layer, mode = "brush") => {
     layer.add(lastLine);
   });
   stage.on("mouseup touchend", function() {
+    console.log(color)
     isPaint = false;
   });
   stage.on("mousemove touchmove", function() {

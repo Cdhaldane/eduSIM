@@ -5,10 +5,13 @@ import Button from "react-bootstrap/Button";
 import { Stage, Layer } from "react-konva";
 import Rectangle from "./Shapes/Rectangle";
 import Circle from "./Shapes/Circle";
+import Triangle from "./Shapes/Triangle"
+import Star from "./Shapes/Star"
 import { addLine } from "./Shapes/Line";
 import { addTextNode } from "./Shapes/Text";
 import Image from "./Shapes/Img";
 import { v1 as uuidv1 } from 'uuid';
+
 
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
@@ -35,6 +38,9 @@ function Stages(props) {
   const [color, setColor]= useState("white")
   const [rectangles, setRectangles] = useState([]);
   const [circles, setCircles] = useState([]);
+  const [stars, setStars] = useState([]);
+  const [triangles, setTriangles] = useState([]);
+
   const [images, setImages] = useState([]);
   const [selectedId, selectShape] = useState(null);
   const [shapes, setShapes] = useState([]);
@@ -66,7 +72,6 @@ function Stages(props) {
   }
   function handleColor(e){
     setColor(e.hex);
-    console.log(color);
   }
 
   const getRandomInt = max => {
@@ -78,7 +83,7 @@ function Stages(props) {
       y: getRandomInt(100),
       width: 100,
       height: 100,
-      fill: props.color,
+      fill: color,
       id: `rect${rectangles.length + 1}`,
     };
     const rects = rectangles.concat([rect]);
@@ -92,17 +97,50 @@ function Stages(props) {
       y: getRandomInt(100),
       width: 100,
       height: 100,
-      fill: props.color,
+      fill: color,
       id: `circ${circles.length + 1}`,
     };
     const circs = circles.concat([circ]);
     setCircles(circs);
     const shs = shapes.concat([`circ${circles.length + 1}`]);
     setShapes(shs);
-
   };
-const drawLine = () => {
-    addLine(stageEl.current.getStage(), layerEl.current);
+  const addTriangle = () => {
+    const tri = {
+      x: getRandomInt(100),
+      y: getRandomInt(100),
+      width: 100,
+      height: 100,
+      sides: 3,
+      radius: 70,
+      fill: color,
+      id: `tri${triangles.length + 1}`,
+    };
+    const tris = triangles.concat([tri]);
+    setTriangles(tris);
+    const shs = shapes.concat([`tri${triangles.length + 1}`]);
+    setShapes(shs);
+  };
+  const addStar = () => {
+    const sta = {
+      x: getRandomInt(100),
+      y: getRandomInt(100),
+      width: 100,
+      height: 100,
+      numPoints: 5,
+      innerRadius: 30,
+      outerRadius: 70,
+      fill: color,
+      id: `sta${stars.length + 1}`,
+    };
+    const stas = stars.concat([sta]);
+    setStars(stas);
+    const shs = shapes.concat([`sta${stars.length + 1}`]);
+    setShapes(shs);
+  };
+
+  const drawLine = () => {
+    addLine(stageEl.current.getStage(), layerEl.current, "brush", color);
   };
   const eraseLine = () => {
     addLine(stageEl.current.getStage(), layerEl.current, "erase");
@@ -160,6 +198,7 @@ const drawLine = () => {
     setShapes(shapes);
     forceUpdate();
   };
+
   document.addEventListener("keydown", ev => {
     if (ev.code == "Delete") {
       let index = circles.findIndex(c => c.id == selectedId);
@@ -171,6 +210,16 @@ const drawLine = () => {
       if (index != -1) {
         rectangles.splice(index, 1);
         setRectangles(rectangles);
+      }
+      index = triangles.findIndex(r => r.id == selectedId);
+      if (index != -1) {
+        triangles.splice(index, 1);
+        setTriangles(triangles);
+      }
+      index = stars.findIndex(r => r.id == selectedId);
+      if (index != -1) {
+        stars.splice(index, 1);
+        setStars(stars);
       }
       index = images.findIndex(r => r.id == selectedId);
       if (index != -1) {
@@ -204,6 +253,7 @@ const drawLine = () => {
           {rectangles.map((rect, i) => {
             return (
               <Rectangle
+                fill= {props.color}
                 key={i}
                 shapeProps={rect}
                 isSelected={rect.id === selectedId}
@@ -214,6 +264,40 @@ const drawLine = () => {
                   const rects = rectangles.slice();
                   rects[i] = newAttrs;
                   setRectangles(rects);
+                }}
+              />
+            );
+          })}
+          {triangles.map((tri, i) => {
+            return (
+              <Triangle
+                key={i}
+                shapeProps={tri}
+                isSelected={tri.id === selectedId}
+                onSelect={() => {
+                  selectShape(tri.id);
+                }}
+                onChange={newAttrs => {
+                  const tris = triangles.slice();
+                  tris[i] = newAttrs;
+                  setTriangles(tris);
+                }}
+              />
+            );
+          })}
+          {stars.map((sta, i) => {
+            return (
+              <Star
+                key={i}
+                shapeProps={sta}
+                isSelected={sta.id === selectedId}
+                onSelect={() => {
+                  selectShape(sta.id);
+                }}
+                onChange={newAttrs => {
+                  const stas = stars.slice();
+                  stas[i] = newAttrs;
+                  setStars(stas);
                 }}
               />
             );
@@ -232,6 +316,7 @@ const drawLine = () => {
                   circs[i] = newAttrs;
                   setCircles(circs);
                 }}
+
               />
             );
           })}
@@ -251,13 +336,23 @@ const drawLine = () => {
               />
             );
           })}
+
         </Layer>
       </Stage>
+
       <Level number={number} ptype={ptype} num={num}/>
         <h1 id="editmode">Edit Mode</h1>
         <Info
           stuff="asdasdas"
           editmode="1"
+          addCircle={addCircle}
+          addRectangle={addRectangle}
+          addTriangle={addTriangle}
+          addStar={addStar}
+          drawLine={drawLine}
+          drawText={drawText}
+          drawImage={drawImage}
+          eraseLine={eraseLine}
           />
           <EditShapes
             choosecolor={handleColor}
@@ -270,10 +365,13 @@ const drawLine = () => {
             title="Edit Group Space"
             addCircle={addCircle}
             addRectangle={addRectangle}
+            addTriangle={addTriangle}
+            addStar={addStar}
             drawLine={drawLine}
             drawText={drawText}
             drawImage={drawImage}
             eraseLine={eraseLine}
+            choosecolor={handleColor}
             />
           <Pencil
             id="3"
@@ -298,6 +396,7 @@ const drawLine = () => {
             <Link to="/dashboard">
               <i id="editpagex" class="fas fa-times fa-3x"></i>
             </Link>
+
 
     </div>
   );

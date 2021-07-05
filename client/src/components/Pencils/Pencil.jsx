@@ -35,17 +35,27 @@ function Pencil(props) {
   function addRectangle(){
     props.addRectangle();
   }
+  function addTriangle(){
+    props.addTriangle();
+  }
+  function addStar(){
+    props.addStar();
+  }
   function drawLine(){
     props.drawLine();
   }
   function drawText(){
-    props.drawLine();
+    props.drawText();
   }
   function drawImage(){
-    props.drawLine();
+    props.drawImage();
   }
   function eraseLine(){
     props.eraseLine();
+  }
+
+  function handleColor(e){
+    props.choosecolor(e);
   }
 
   return (
@@ -70,10 +80,13 @@ function Pencil(props) {
         title={props.title}
         addCircle={addCircle}
         addRectangle={addRectangle}
+        addTriangle={addTriangle}
+        addStar={addStar}
         drawLine={drawLine}
         drawText={drawText}
         drawImage={drawImage}
         eraseLine={eraseLine}
+        choosecolor={handleColor}
       />
     ) : (
 

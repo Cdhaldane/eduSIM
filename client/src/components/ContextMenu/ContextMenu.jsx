@@ -1,53 +1,27 @@
-import React from 'react';
-import { render } from 'react-dom';
-import _ from 'lodash';
-import './ContextMenu.css';
-import {
-  ContextMenu,
-  MenuItem,
-  ContextMenuTrigger,
-} from "react-contextmenu";
+import React from "react";
+import "./ContextMenu.css";
 
-class El extends React.Component {
-  render() {
-    return (
-      <ContextMenuTrigger
-        id="some_unique_identifier"
-        i={this.props.i}
-        collect={p => p}
-      >
-        <div className='C'>
-          {this.props.i}
-        </div>
-      </ContextMenuTrigger>
-    );
-  }
-}
+const ContextMenu = ({ position, onOptionSelected }) => {
+  const handleOptionSelected = option => () => onOptionSelected(option);
 
-class ContextMenus extends React.Component {
-  componentDidMount() {
-  }
-  handleClick = (e, data, target) => {
-    console.log(e, data, target);
-  }
-  render() {
-    return (
-      <div className='A'>
-        <ContextMenu id="some_unique_identifier">
-          <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
-            ContextMenu Item 1
-        </MenuItem>
-          <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
-            ContextMenu Item 2
-        </MenuItem>
-          <MenuItem divider />
-          <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
-            ContextMenu Item 3
-        </MenuItem>
-        </ContextMenu>
-      </div>
-    );
-  }
-}
+  return (
+    <div
+      className="cmenu"
+      style={{
+        position: "absolute",
+        left: position.x,
+        top: position.y
+      }}
+    >
+      <ul>
+        <li onClick={handleOptionSelected("Cut")}>Cut</li>
+        <li onClick={handleOptionSelected("Copy")}>Copy</li>
+        <li onClick={handleOptionSelected("Paste")}>Paste</li>
+        <li onClick={handleOptionSelected("Delete")}>Delete</li>
+        <li onClick={handleOptionSelected("Undo")}>Undo</li>
+      </ul>
+    </div>
+  );
+};
 
-export default ContextMenus;
+export default ContextMenu;

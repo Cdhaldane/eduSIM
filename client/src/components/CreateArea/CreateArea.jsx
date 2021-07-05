@@ -75,7 +75,7 @@ const submitNote = async event => {
           console.log(localStorage.adminid);
          console.log(data);
       props.onAdd(note);
-      // window.location.reload();
+      window.location.reload();
   }
 
   function setNotes(event) {

@@ -6,15 +6,13 @@ import "./EditShapes.css";
 function EditShapes(props) {
   const [open, setOpen] = useState(0);
   const [state, setState] = useState(false);
-  const [colour, setColour] = useState("");
   const [value, setValue] = useState(0);
+  const [colour, setColour] = useState("");
 
   function handleChange(e){
     setColour(e);
     props.choosecolor(e);
   };
-
-
 
   return(
   <div>

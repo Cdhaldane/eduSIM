@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Note from "../Note/Note";
 import { CSSTransition } from 'react-transition-group';
 import Stages from "../Stage/Stage"
+import { SketchPicker, CirclePicker, ChromePicker } from 'react-color';
+import Switch from "react-switch"
 
 
 import "./Dropdown.css";
@@ -11,6 +13,14 @@ import "./Dropdown.css";
     const [menuHeight, setMenuHeight] = useState(null);
     const [ components, setComponents ] = useState();
     const dropdownRef = useRef(null);
+    const [colour, setColour] = useState("");
+    const [checkedd, setCheckedd] = useState(false);
+    const [checkede, setCheckede] = useState(false);
+
+    function handleChange(e){
+      setColour(e);
+      props.choosecolor(e);
+    };
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
@@ -21,6 +31,13 @@ import "./Dropdown.css";
     setMenuHeight(height);
   }
 
+  function handleDraw(){
+    setCheckedd(!checkedd)
+  }
+
+  function handleErase(){
+    setCheckede(!checkede)
+  }
 
   function DropdownItem(props) {
     return (
@@ -49,16 +66,24 @@ import "./Dropdown.css";
   function addRectangle(){
     props.addRectangle();
   }
+  function addTriangle(){
+    props.addTriangle();
+  }
+  function addStar(){
+    props.addStar();
+  }
   function drawLine(){
+    setCheckedd(!checkedd)
     props.drawLine();
   }
   function drawText(){
-    props.drawLine();
+    props.drawText();
   }
   function drawImage(){
-    props.drawLine();
+    props.drawImage();
   }
   function eraseLine(){
+    setCheckede(!checkede)
     props.eraseLine();
   }
 
@@ -105,11 +130,16 @@ import "./Dropdown.css";
           </DropdownItem>
           <DropdownItems  onClick={addRectangle} leftIcon={<i id="icons" class="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
           <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
-          <DropdownItems onClick="" leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick=""></i>}>Triangle</DropdownItems>
+        <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
           <DropdownItems onClick="" leftIcon={<i id="icons" class="fas fa-times" onClick=""></i>}>Cross</DropdownItems>
-          <DropdownItems onClick="" leftIcon={<i id="icons" class="fa fa-star" onClick=""></i>}>Star</DropdownItems>
-          <DropdownItems onClick={drawLine} leftIcon={<i id="icons" class="fas fa-marker" onClick={drawLine}></i>}>Draw</DropdownItems>
-        <DropdownItems onClick={eraseLine} leftIcon={<i id="icons" class="fas fa-eraser" onClick={eraseLine}></i>}>Eraser</DropdownItems>
+        <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
+          <DropdownItem
+            leftIcon={<i id="icons" class="fas fa-marker"></i>}
+            rightIcon=""
+            goToMenu="draw">
+            Drawing
+          </DropdownItem>
+
         </div>
       </CSSTransition>
 
@@ -123,11 +153,54 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>MEDIA!</h2>
           </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fa fa-picture-o" onClick={drawImage}></i>}>Image</DropdownItem>
-        <DropdownItem leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>}>Video</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItem>
-        <DropdownItem leftIcon={<i id="icons" class="fas fa-text" onClick={drawText}></i>}>Textbox</DropdownItem>
+          <DropdownItems onClick={drawImage} leftIcon={<i id="icons" class="fa fa-picture-o" onClick={drawImage}></i>}>Image</DropdownItems>
+          <DropdownItems leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>}>Video</DropdownItems>
+          <DropdownItems leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItems>
+          <DropdownItems leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItems>
+          <DropdownItems onClick={drawText} leftIcon={<i id="icons" class="fas fa-comment-alt" onClick={drawText}></i>}>Textbox</DropdownItems>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'draw'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="shapes" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>DRAW!</h2>
+          </DropdownItem>
+          <b id="colourp">
+            <ChromePicker
+              color={ colour }
+              disableAlpha={ true }
+              onChangeComplete={ handleChange }/>
+          </b>
+
+          <DropdownItems
+            onClick={drawLine}
+            leftIcon={<i id="icons" class="fas fa-marker" onClick={drawLine}></i>}>
+            Draw</DropdownItems>
+            <label id="dswitch">
+            <Switch
+              onChange={handleDraw}
+              checked={checkedd}
+              className="react-switch"
+            />
+          </label>
+          <DropdownItems
+             onClick={eraseLine}
+            leftIcon={<i id="icons" class="fas fa-eraser"
+            onClick={eraseLine}></i>}>Eraser</DropdownItems>
+            <label id="eswitch">
+            <Switch
+              onChange={handleErase}
+              checked={checkede}
+              className="react-switch"
+            />
+          </label>
+
         </div>
       </CSSTransition>
     </div>

@@ -182,6 +182,18 @@ a {
     bottom: 165px;
 }
 
+#dswitch{
+    position: absolute;
+    left: -120px;
+    bottom: 45px;
+}
+
+#eswitch{
+    position: absolute;
+    left: -120px;
+    bottom: -10px;
+}
+
 .dropdown button {
   position: relative;
   top: 0px;
@@ -234,4 +246,9 @@ a {
 #pagetype input::placeholder{
   opacity: 0.8;
   color: grey;
+}
+
+#colourp {
+  position: relative;
+  left: 35px;
 }
