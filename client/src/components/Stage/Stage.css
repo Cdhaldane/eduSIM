@@ -1,6 +1,7 @@
-#star{
-  z-index: 3000;
-  position: absolute;
+.header {
+  position: relative;
+  top: -150px;
+  left: -40px;
 }
 
 .drop{
@@ -9,6 +10,12 @@
   top: 0px;
 }
 
+#star{
+  z-index: 3000;
+  position: absolute;
+}
+
+
 #stuff {
   position: absolute;
   top:600px;
@@ -16,5 +23,10 @@
 
 #editpagex{
   position: relative;
-  top: 500px;
+  top: -910px;
+}
+
+#editmode {
+  top: -700px;
+  left: 1660px;
 }

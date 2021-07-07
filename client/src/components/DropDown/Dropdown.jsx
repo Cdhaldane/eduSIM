@@ -62,15 +62,19 @@ import "./Dropdown.css";
 
   function addCircle(){
     props.addCircle();
+    props.close();
   }
   function addRectangle(){
     props.addRectangle();
+    props.close();
   }
   function addTriangle(){
     props.addTriangle();
+    props.close();
   }
   function addStar(){
     props.addStar();
+    props.close();
   }
   function drawLine(){
     setCheckedd(!checkedd)
@@ -78,13 +82,16 @@ import "./Dropdown.css";
   }
   function drawText(){
     props.drawText();
+    props.close();
   }
   function drawImage(){
     props.drawImage();
+    props.close();
   }
   function eraseLine(){
     setCheckede(!checkede)
     props.eraseLine();
+
   }
 
  return (

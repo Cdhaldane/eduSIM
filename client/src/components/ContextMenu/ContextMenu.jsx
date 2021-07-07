@@ -1,26 +1,69 @@
-import React from "react";
+import React, {useState} from "react";
 import "./ContextMenu.css";
+import Dropdownedit from "../DropDown/Dropdownedit";
 
-const ContextMenu = ({ position, onOptionSelected }) => {
-  const handleOptionSelected = option => () => onOptionSelected(option);
+
+function ContextMenu(props){
+  const [drop, setDrop] = useState(false);
+
+  function handleColorF(e){
+    props.choosecolorf(e);
+  }
+
+  function handleColorS(e){
+    props.choosecolors(e);
+  }
+
+  function handleEdit(e) {
+    setDrop(!drop);
+  }
+
+  function handleWidth(e){
+    props.handleWidth(e);
+  }
+
+  function handleOpacity(e){
+    props.handleOpacity(e);
+  }
+
+
 
   return (
+
     <div
       className="cmenu"
       style={{
         position: "absolute",
-        left: position.x,
-        top: position.y
+        left: props.position.x,
+        top: props.position.y,
       }}
     >
       <ul>
-        <li onClick={handleOptionSelected("Cut")}>Cut</li>
-        <li onClick={handleOptionSelected("Copy")}>Copy</li>
-        <li onClick={handleOptionSelected("Paste")}>Paste</li>
-        <li onClick={handleOptionSelected("Delete")}>Delete</li>
-        <li onClick={handleOptionSelected("Undo")}>Undo</li>
+        <li onClick={""}>Cut</li>
+        <li onClick={props.copy}>Copy</li>
+        <li onClick={props.paste}>Paste</li>
+        <li onClick={props.delete}>Delete</li>
+        <li onClick={props.undo}>Undo</li>
+        <li onClick={props.redo}>Redo</li>
+        <li onClick={props.back}>Move back</li>
+        <li onClick={props.forward}>Move forward</li>
+        <li onClick={handleEdit}>Edit shape</li>
+      <hr />
+    <li onClick={props.close}>Close</li>
       </ul>
+
+
+      {drop && <div className="drop">
+        <Dropdownedit
+            title="Edit Shape"
+            choosecolorf={handleColorF}
+            choosecolors={handleColorS}
+            handleWidth={handleWidth}
+            handleOpacity={handleOpacity}
+          />
+      </div>}
     </div>
+
   );
 };
 

@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 
-import { Stage, Layer } from "react-konva";
+import { Stage, Layer, Text } from "react-konva";
 import Rectangle from "./Shapes/Rectangle";
 import Circle from "./Shapes/Circle";
 import Triangle from "./Shapes/Triangle"
@@ -23,6 +23,8 @@ import Header from "../SideBar/Header";
 import styled from "styled-components"
 
 import { Container, Row, Col } from "react-bootstrap";
+
+import "./Stage.css"
 
 
 function Stages(props) {
@@ -48,6 +50,17 @@ function Stages(props) {
   const stageEl = React.createRef();
   const layerEl = React.createRef();
   const fileUploadEl = React.createRef();
+
+  let history = [
+    {
+      x: 20,
+      y: 20
+    }
+  ];
+  let historyStep = 0;
+
+  const [ position, setPoistion ] = useState(history[0])
+
 
   function handleMvisible(e) {
     props.mvisible(e)
@@ -79,12 +92,17 @@ function Stages(props) {
   };
   const addRectangle = () => {
     const rect = {
-      x: getRandomInt(100),
-      y: getRandomInt(100),
+      x: 850,
+      y: 400,
       width: 100,
       height: 100,
       fill: color,
       id: `rect${rectangles.length + 1}`,
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 3.75, // border width
+      stroke:"black", // border color
+      opacity: 1
     };
     const rects = rectangles.concat([rect]);
     setRectangles(rects);
@@ -99,6 +117,7 @@ function Stages(props) {
       height: 100,
       fill: color,
       id: `circ${circles.length + 1}`,
+      zIndex: 1
     };
     const circs = circles.concat([circ]);
     setCircles(circs);
@@ -177,7 +196,7 @@ function Stages(props) {
       reader.readAsDataURL(file);
     }
   };
-  const undo = () => {
+  const handleDelete = () => {
     const lastId = shapes[shapes.length - 1];
     let index = circles.findIndex(c => c.id == lastId);
     if (index != -1) {
@@ -238,8 +257,8 @@ function Stages(props) {
         onChange={fileChange}
       />
       <Stage
-        width={window.innerWidth * 0.9}
-        height={window.innerHeight - 150}
+        width={window.innerWidth}
+        height={window.innerHeight}
         ref={stageEl}
         onMouseDown={e => {
           // deselect when clicked on empty area
@@ -339,7 +358,7 @@ function Stages(props) {
 
         </Layer>
       </Stage>
-
+      <div className="header">
       <Level number={number} ptype={ptype} num={num}/>
         <h1 id="editmode">Edit Mode</h1>
         <Info
@@ -354,9 +373,7 @@ function Stages(props) {
           drawImage={drawImage}
           eraseLine={eraseLine}
           />
-          <EditShapes
-            choosecolor={handleColor}
-          />
+
 
           <Pencil
             id="2"
@@ -396,6 +413,9 @@ function Stages(props) {
             <Link to="/dashboard">
               <i id="editpagex" class="fas fa-times fa-3x"></i>
             </Link>
+          </div>
+
+
 
 
     </div>
@@ -405,220 +425,6 @@ export default Stages;
 
 
 
-
-
-
-
-
-// import React, { useState } from 'react';
-// import { render } from 'react-dom';
-// import { Stage, Layer, Rect, Transformer, Circle, Star } from 'react-konva';
-// import Rectangle from "./Shapes/Rectangle"
-// import Stars from "./Shapes/Star"
-// import Dropdown from "../DropDown/Dropdown";
-// import "./Stage.css";
-// import ContextMenu from "../ContextMenu/ContextMenu"
-//
-//
-// function generateShapes() {
-//   return [...Array(1)].map((_, i) => ({
-//     id: i.toString(),
-//     x: 0.46 * window.innerWidth,
-//     y: 0.45 * window.innerHeight,
-//     width: 100,
-//     height: 100,
-//     // rotation: Math.random() * 180,
-//   }));
-// }
-//
-// const INITIAL_STATE = generateShapes();
-//
-// const Stages = (props) => {
-//   const [drop, setDrop] = useState(false);
-//   const [selectedId, selectShape] = React.useState(null);
-//   const [stars, setStars] = React.useState(INITIAL_STATE);
-//   const [rects, setRects] = React.useState(INITIAL_STATE);
-//
-//
-//
-//
-//   const initialRectangles = [
-//     {
-//       x: 10,
-//       y: 10,
-//       width: 100,
-//       height: 100,
-//       fill: props.color,
-//       id: 'rect1',
-//     },
-//     {
-//       x: 150,
-//       y: 150,
-//       width: 100,
-//       height: 100,
-//       fill: '#693434',
-//       id: 'rect2',
-//     },
-//   ];
-//
-//   const initialStars = [
-//     {
-//       numPoints: 5,
-//       innerRadius: 20,
-//       outerRadius: 40,
-//       x: 100,
-//       y: 100,
-//       width: 100,
-//       height: 100,
-//       fill: '#693434',
-//       id: 'star1',
-//     },
-//     {
-//       x: 150,
-//       y: 150,
-//       width: 100,
-//       height: 100,
-//       fill: '#693434',
-//       id: 'star2',
-//     },
-//   ];
-//
-//
-//   const [rectangles, setRectangles] = React.useState(initialRectangles);
-//   const [starss, setStarss] = React.useState(initialStars);
-//
-//
-//
-//   const handleDragStart = (e) => {
-//     const id = e.target.id();
-//       setStars(
-//         stars.map((star) => {
-//           return {
-//             ...star,
-//             isDragging: star.id === id,
-//           };
-//         })
-//       );
-//     setRects(
-//       rects.map((rect) => {
-//         return {
-//           ...rect,
-//           isDragging: rect.id === id,
-//         };
-//       })
-//     );
-//   };
-//     const handleDragEnd = (e) => {
-//
-//       setStars(
-//         stars.map((star) => {
-//           return {
-//             ...star,
-//             isDragging: false,
-//             fill: "yellow"
-//           };
-//         })
-//       );
-//       setRects(
-//         rects.map((rect) => {
-//           return {
-//             ...rect,
-//             isDragging: false,
-//           };
-//         })
-//       );
-//
-//     };
-//
-//   const checkDeselect = (e) => {
-//    // deselect when clicked on empty area
-//    const clickedOnEmpty = e.target === e.target.getStage();
-//    if (clickedOnEmpty) {
-//      selectShape(null);
-//    }
-//  }
-//
-//
-//   return (
-//     <div>
-//       <Stage
-//         width={window.innerWidth}
-//         height={window.innerHeight}
-//         onMouseDown={checkDeselect}
-//         onTouchStart={checkDeselect}
-//       >
-//       <Layer>
-//         {rectangles.map((rect, i) => {
-//             return (
-//               <Rectangle
-//                 key={i}
-//                 fill={props.color}
-//                 shapeProps={rect}
-//                 isSelected={rect.id === selectedId}
-//                 onSelect={() => {selectShape(rect.id);}}
-//                 onChange={(newAttrs) => {
-//                   const rects = rectangles.slice();
-//                   rects[i] = newAttrs;
-//                   setRectangles(rects);
-//                 }}
-//               />
-//             );
-//           })}
-//           {starss.map((star, i) => {
-//               return (
-//                 <Star
-//                   key={i}
-//                   numPoints={5}
-//                   innerRadius={20}
-//                   outerRadius={40}
-//                   fill={props.color}
-//                   shapeProps={star}
-//                   isSelected={star.id === selectedId}
-//                   onSelect={() => {selectShape(star.id);}}
-//                   onChange={(newAttrs) => {
-//                     const sta = starss.slice();
-//                     sta[i] = newAttrs;
-//                     setStarss(sta);
-//                   }}
-//                 />
-//               );
-//             })}
-//           {stars.map((star, i) => (
-//          <Star
-//            key={star.id}
-//            id={star.id}
-//            x={star.x}
-//            y={star.y}
-//            numPoints={5}
-//            innerRadius={20}
-//            outerRadius={40}
-//            fill={props.color}
-//            draggable
-//            rotation={star.rotation}
-//            shadowColor="black"
-//            shadowBlur={10}
-//            shadowOpacity={0.6}
-//            shadowOffsetX={star.isDragging ? 10 : 5}
-//            shadowOffsetY={star.isDragging ? 10 : 5}
-//            onDragStart={handleDragStart}
-//            onDragEnd={handleDragEnd}
-//            isSelected={star.id === selectedId}
-//            onSelect={() => {selectShape(star.id);}}
-//            onChange={(newAttrs) => {
-//              const star = stars.slice();
-//              star[i] = newAttrs;
-//              setStars(star);
-//            }}
-//          />
-//        ))}
-//       </Layer>
-//     </Stage>
-//     {drop && <div className="drop">
-//       <Dropdown />
-//   </div>
-//   }
-//   </div>
-//   );
-// };
-//
-// export default Stages;
+// <EditShapes
+//   choosecolor={handleColor}
+// />

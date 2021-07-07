@@ -16,3 +16,8 @@
   background-color: grey;
   cursor: pointer;
 }
+
+.drop {
+  opacity: 1;
+  width: 100px;
+}

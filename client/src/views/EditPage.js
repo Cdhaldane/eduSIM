@@ -6,6 +6,7 @@ import EditShapes from "../components/EditShapes/EditShapes";
 import Pencil from "../components/Pencils/Pencil";
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
+import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 import Stages from "../components/Stage/Stage";
 import { Container, Row, Col } from "react-bootstrap";

@@ -58,6 +58,10 @@ function Pencil(props) {
     props.choosecolor(e);
   }
 
+  function handleClose(e){
+    setDrop(!drop);
+  }
+
   return (
     <div className="pencil">
       <i
@@ -87,6 +91,7 @@ function Pencil(props) {
         drawImage={drawImage}
         eraseLine={eraseLine}
         choosecolor={handleColor}
+        close={handleClose}
       />
     ) : (
 
