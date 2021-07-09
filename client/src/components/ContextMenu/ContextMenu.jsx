@@ -34,8 +34,8 @@ function ContextMenu(props){
       className="cmenu"
       style={{
         position: "absolute",
-        left: props.position.x,
-        top: props.position.y,
+        left: props.position.x+100,
+        top: props.position.y-20,
       }}
     >
       <ul>
@@ -45,11 +45,9 @@ function ContextMenu(props){
         <li onClick={props.delete}>Delete</li>
         <li onClick={props.undo}>Undo</li>
         <li onClick={props.redo}>Redo</li>
-        <li onClick={props.back}>Move back</li>
-        <li onClick={props.forward}>Move forward</li>
         <li onClick={handleEdit}>Edit shape</li>
       <hr />
-    <li onClick={props.close}>Close</li>
+        <li onClick={props.close}>Close</li>
       </ul>
 
 

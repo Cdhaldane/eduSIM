@@ -1,16 +1,19 @@
 import React, { useState, useRef } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
+import { SelectableGroup } from 'react-selectable-fast'
 
-import { Stage, Layer, Text } from "react-konva";
+import { Stage, Layer, Text, Shape } from "react-konva";
 import Rectangle from "./Shapes/Rectangle";
 import Circle from "./Shapes/Circle";
 import Triangle from "./Shapes/Triangle"
 import Star from "./Shapes/Star"
+import Stick from "./Shapes/Stick"
 import { addLine } from "./Shapes/Line";
 import { addTextNode } from "./Shapes/Text";
 import Image from "./Shapes/Img";
 import { v1 as uuidv1 } from 'uuid';
+import Canvas from "./Canvas.js"
 
 
 import {Link } from "react-router-dom";
@@ -42,6 +45,8 @@ function Stages(props) {
   const [circles, setCircles] = useState([]);
   const [stars, setStars] = useState([]);
   const [triangles, setTriangles] = useState([]);
+  const [sticks, setSticks] = useState([]);
+  const [arrows, setArrows] = useState([]);
 
   const [images, setImages] = useState([]);
   const [selectedId, selectShape] = useState(null);
@@ -53,7 +58,7 @@ function Stages(props) {
 
   let history = [
     {
-      x: 20,
+      x: 21,
       y: 20
     }
   ];
@@ -90,34 +95,50 @@ function Stages(props) {
   const getRandomInt = max => {
     return Math.floor(Math.random() * Math.floor(max));
   };
-  const addRectangle = () => {
-    const rect = {
-      x: 850,
-      y: 400,
-      width: 100,
-      height: 100,
+
+  const draw = (context, shape) => {
+    context.beginPath();
+             context.moveTo(20, 50);
+             context.lineTo(220, 80);
+             context.quadraticCurveTo(150, 100, 260, 170);
+             context.closePath();
+             // (!) Konva specific method, it is very important
+             context.fillStrokeShape(shape);
+    console.log(8);
+  }
+  const addStick = () => {
+    const sti = {
+      x: getRandomInt(800,900),
+      y: getRandomInt(400, 500),
+      width: 3,
+      height: 300,
       fill: color,
-      id: `rect${rectangles.length + 1}`,
+      id: `sti${sticks.length + 1}`,
       visible: true,
       zIndex: 2,
       strokeWidth: 3.75, // border width
       stroke:"black", // border color
       opacity: 1
     };
-    const rects = rectangles.concat([rect]);
-    setRectangles(rects);
-    const shs = shapes.concat([`rect${rectangles.length + 1}`]);
+    const stis = sticks.concat([sti]);
+    setSticks(stis);
+    const shs = shapes.concat([`sti${sticks.length + 1}`]);
     setShapes(shs);
   };
   const addCircle = () => {
     const circ = {
-      x: getRandomInt(100),
-      y: getRandomInt(100),
+      x: getRandomInt(800,900),
+      y: getRandomInt(400, 500),
       width: 100,
       height: 100,
       fill: color,
       id: `circ${circles.length + 1}`,
-      zIndex: 1
+      zIndex: 3,
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 3.75, // border width
+      stroke:"black", // border color
+      opacity: 1
     };
     const circs = circles.concat([circ]);
     setCircles(circs);
@@ -126,24 +147,52 @@ function Stages(props) {
   };
   const addTriangle = () => {
     const tri = {
-      x: getRandomInt(100),
-      y: getRandomInt(100),
+      x: getRandomInt(800,900),
+      y: getRandomInt(400, 500),
       width: 100,
       height: 100,
       sides: 3,
       radius: 70,
       fill: color,
       id: `tri${triangles.length + 1}`,
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 3.75, // border width
+      stroke:"black", // border color
+      opacity: 1
     };
     const tris = triangles.concat([tri]);
     setTriangles(tris);
     const shs = shapes.concat([`tri${triangles.length + 1}`]);
     setShapes(shs);
   };
+  const addArrow = () => {
+    const arr = {
+      x: getRandomInt(800,900),
+      y: getRandomInt(400, 500),
+      width: 100,
+      height: 100,
+      numPoints: 5,
+      innerRadius: 30,
+      outerRadius: 70,
+      fill: color,
+      id: `arr${arrows.length + 1}`,
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 3.75, // border width
+      stroke:"black", // border color
+      opacity: 1
+    };
+    const arrs = arrows.concat([arr]);
+    setArrows(arrs);
+    const shs = shapes.concat([`arr${arrows.length + 1}`]);
+    setShapes(shs);
+  };
+
   const addStar = () => {
     const sta = {
-      x: getRandomInt(100),
-      y: getRandomInt(100),
+      x: getRandomInt(800,900),
+      y: getRandomInt(400, 500),
       width: 100,
       height: 100,
       numPoints: 5,
@@ -151,6 +200,11 @@ function Stages(props) {
       outerRadius: 70,
       fill: color,
       id: `sta${stars.length + 1}`,
+      visible: true,
+      zIndex: 2,
+      strokeWidth: 3.75, // border width
+      stroke:"black", // border color
+      opacity: 1
     };
     const stas = stars.concat([sta]);
     setStars(stas);
@@ -196,6 +250,7 @@ function Stages(props) {
       reader.readAsDataURL(file);
     }
   };
+
   const handleDelete = () => {
     const lastId = shapes[shapes.length - 1];
     let index = circles.findIndex(c => c.id == lastId);
@@ -256,6 +311,7 @@ function Stages(props) {
         ref={fileUploadEl}
         onChange={fileChange}
       />
+
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -268,6 +324,7 @@ function Stages(props) {
           }
         }}
       >
+
         <Layer ref={layerEl}>
           {rectangles.map((rect, i) => {
             return (
@@ -321,6 +378,40 @@ function Stages(props) {
               />
             );
           })}
+          {sticks.map((sti, i) => {
+            return (
+              <Stick
+                key={i}
+                shapeProps={sti}
+                isSelected={sti.id === selectedId}
+                onSelect={() => {
+                  selectShape(sti.id);
+                }}
+                onChange={newAttrs => {
+                  const stis = sticks.slice();
+                  stis[i] = newAttrs;
+                  setSticks(stis);
+                }}
+              />
+            );
+          })}
+          {arrows.map((sti, i) => {
+            return (
+              <Stick
+                key={i}
+                shapeProps={sti}
+                isSelected={sti.id === selectedId}
+                onSelect={() => {
+                  selectShape(sti.id);
+                }}
+                onChange={newAttrs => {
+                  const stis = sticks.slice();
+                  stis[i] = newAttrs;
+                  setSticks(stis);
+                }}
+              />
+            );
+          })}
           {circles.map((circle, i) => {
             return (
               <Circle
@@ -357,64 +448,12 @@ function Stages(props) {
           })}
 
         </Layer>
+
       </Stage>
-      <div className="header">
-      <Level number={number} ptype={ptype} num={num}/>
-        <h1 id="editmode">Edit Mode</h1>
-        <Info
-          stuff="asdasdas"
-          editmode="1"
-          addCircle={addCircle}
-          addRectangle={addRectangle}
-          addTriangle={addTriangle}
-          addStar={addStar}
-          drawLine={drawLine}
-          drawText={drawText}
-          drawImage={drawImage}
-          eraseLine={eraseLine}
-          />
 
-
-          <Pencil
-            id="2"
-            psize="3"
-            type="main"
-            title="Edit Group Space"
-            addCircle={addCircle}
-            addRectangle={addRectangle}
-            addTriangle={addTriangle}
-            addStar={addStar}
-            drawLine={drawLine}
-            drawText={drawText}
-            drawImage={drawImage}
-            eraseLine={eraseLine}
-            choosecolor={handleColor}
-            />
-          <Pencil
-            id="3"
-            psize="3"
-            type="info"
-            title=""
-            ptype={handleType}
-            num={handleNum}
-          />
-          <Pencil
-            id="4"
-            psize="2"
-            type="nav"
-            title=""
-            mvisible={handleMvisible}
-            avisible={handleAvisible}
-            pavisible={handlePavisible}
-            svisible={handleSvisible}
-            pevisible={handlePevisible}
-            />
-
-            <Link to="/dashboard">
-              <i id="editpagex" class="fas fa-times fa-3x"></i>
-            </Link>
-          </div>
-
+          <b id="canvas">
+          <Canvas/>
+        </b>
 
 
 

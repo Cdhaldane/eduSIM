@@ -1,7 +1,8 @@
 import React, { useState, useEffect  } from 'react';
-import { Rect, Transformer } from "react-konva";
+import { Rect , Transformer } from "react-konva";
 import ContextMenu from "../../ContextMenu/ContextMenu";
 import Portal from "./Portal"
+import Konva from "konva"
 
 let history = [
   {
@@ -11,13 +12,12 @@ let history = [
 ];
 let historyStep = 0;
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, forward}) => {
+const Stick = ({ shapeProps, isSelected, onSelect, onChange}) => {
   const shapeRef = React.useRef();
   const trRef = React.useRef();
   const [copy, setCopy] = useState();
   const [selectedContextMenu, setSelectedContextMenu] = useState(null);
   const [ position, setPosition ] = useState(history[0])
-  const [y, setY] = useState(window.scrollY);
 
   const useMousePosition = () => {
   const [mousePosition, setMousePosition] = useState({ x: null, y: null });
@@ -97,7 +97,7 @@ const mousePosition = useMousePosition()
         };
 
       const handlePaste= (e) => {
-          
+          setSelectedContextMenu(null);
         };
 
       const handleCut= (e) => {
@@ -120,6 +120,13 @@ const mousePosition = useMousePosition()
            setSelectedContextMenu(null);
         };
 
+      const handleForward= (e) => {
+        onChange({
+          ...shapeProps,
+          fill: e.hex
+        });
+          setSelectedContextMenu(null);
+        };
 
         const handleClose= (e) => {
             setSelectedContextMenu(null);
@@ -153,6 +160,8 @@ const mousePosition = useMousePosition()
         });
       }
 
+
+
   const handleDragEnd = (e) => {
     history = history.slice(0, historyStep + 1);
     const pos = {
@@ -161,26 +170,18 @@ const mousePosition = useMousePosition()
     };
     history = history.concat([pos]);
     historyStep += 1;
-    e.target.moveToTop();
   };
-
-  const handleForward= (e) => {
-    const window = e.currentTarget;
-    console.log(e.originalEvent.wheelDelta)
-    if (e.deltaY < 0){
-      e.target.moveToTop();
-    }
-    else if (e.deltaY > 0)
-    {
-      e.target.moveToBottom();
-    }
-    };
 
   React.useEffect(() => {
     if (isSelected) {
       // we need to attach transformer manually
+
+
       trRef.current.setNode(shapeRef.current);
       trRef.current.getLayer().batchDraw();
+    
+
+
     }
   }, [isSelected]);
   return (
@@ -188,7 +189,6 @@ const mousePosition = useMousePosition()
       <Rect
         onContextMenu={handleContextMenu}
         onClick={onSelect}
-        onWheel={handleForward}
         ref={shapeRef}
         {...shapeProps}
         draggable
@@ -209,8 +209,7 @@ const mousePosition = useMousePosition()
           });
         }}
       />
-      {isSelected && <Transformer ref={trRef} />}
-
+    {isSelected && <Transformer ref={trRef} />}
       {selectedContextMenu && (
            <Portal>
              <ContextMenu
@@ -235,4 +234,4 @@ const mousePosition = useMousePosition()
     </React.Fragment>
   );
 };
-export default Rectangle;
+export default Stick;

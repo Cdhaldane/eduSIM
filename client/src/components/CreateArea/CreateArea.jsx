@@ -58,7 +58,7 @@ const submitNote = async event => {
       setUploadPercentage(0)
     }
     console.log(uploadedFile.filePath)
-    props.onDelete(showNote);
+    
     let data = {
       gameinstance_name: title,
       gameinstance_photo_path: filename,

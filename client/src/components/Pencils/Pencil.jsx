@@ -41,6 +41,10 @@ function Pencil(props) {
   function addStar(){
     props.addStar();
   }
+
+  function addStick(){
+    props.addStick();
+  }
   function drawLine(){
     props.drawLine();
   }
@@ -86,6 +90,7 @@ function Pencil(props) {
         addRectangle={addRectangle}
         addTriangle={addTriangle}
         addStar={addStar}
+        addStick={addStick}
         drawLine={drawLine}
         drawText={drawText}
         drawImage={drawImage}

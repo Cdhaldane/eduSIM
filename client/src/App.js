@@ -47,7 +47,7 @@ class App extends React.Component {
               <Route path="/" exact component={Home} />
               <Route path="../components/Navbar" exact component={Navbar} />
               <Route path="/welcome" exact component={Welcome} />
-            <Route path="/homepage" exact component={Homepage} />
+              <Route path="/homepage" exact component={Homepage} />
               <Route path="/gamepage" exact component={GamePage} />
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />

@@ -76,6 +76,10 @@ import "./Dropdown.css";
     props.addStar();
     props.close();
   }
+  function addStick(){
+    props.addStick();
+    props.close();
+  }
   function drawLine(){
     setCheckedd(!checkedd)
     props.drawLine();
@@ -138,8 +142,8 @@ import "./Dropdown.css";
           <DropdownItems  onClick={addRectangle} leftIcon={<i id="icons" class="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
           <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
         <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
-          <DropdownItems onClick="" leftIcon={<i id="icons" class="fas fa-times" onClick=""></i>}>Cross</DropdownItems>
         <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
+      <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Stick</DropdownItems>
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-marker"></i>}
             rightIcon=""
