@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "prod": "cross-env NODE_ENV=production node ./index.js",
     "client": "npm start --prefix client",
     "server": "nodemon server",
     "test": "mocha 'test/test.js'"
