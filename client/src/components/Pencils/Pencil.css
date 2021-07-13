@@ -33,9 +33,9 @@
 
 #pencil4{
   z-index: 2000;
-  position: absolute;
-  left:-10px;
-  top:-770px;
+  position: fixed;
+  left:20px;
+  top:20px;
   color: #dcafb7;
 }
 

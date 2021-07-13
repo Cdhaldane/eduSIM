@@ -38,6 +38,7 @@ import {
   Ellipse,
   Star,
   Text,
+  RegularPolygon,
   Arrow
 } from "react-konva";
 import Connector from "./Connector.jsx";
@@ -142,6 +143,7 @@ class Graphics extends Component {
       rectangles: [],
       ellipses: [],
       stars: [],
+      triangles: [],
       texts: [],
       arrows: [],
       connectors: [],
@@ -179,7 +181,8 @@ class Graphics extends Component {
       starDeleteCount: 0,
       arrowDeleteCount: 0,
       textDeleteCount: 0,
-      rectDeleteCount: 0
+      rectDeleteCount: 0,
+      triangleDeleteCount: 0,
     };
 
     this.handleWheel = this.handleWheel.bind(this);
@@ -194,12 +197,13 @@ class Graphics extends Component {
       ellipses = this.state.ellipses,
       stars = this.state.stars,
       texts = this.state.texts,
-      arrows = this.state.arrows;
+      arrows = this.state.arrows,
+      triangles = this.state.triangles;
     if (
       JSON.stringify(this.state.saved) !==
-      JSON.stringify([rects, ellipses, stars, texts, arrows])
+      JSON.stringify([rects, ellipses, stars, texts, arrows, triangles])
     ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles] });
 
       let arrows1 = this.state.arrows;
       arrows1.forEach(eachArrow => {
@@ -404,6 +408,7 @@ class Graphics extends Component {
       this.state.ellipses.length === 0 &&
       this.state.stars.length === 0 &&
       this.state.texts.length === 0 &&
+      this.state.triangles.length == 0 &&
       this.state.arrows.length === 0
     ) {
     } else {
@@ -449,7 +454,8 @@ class Graphics extends Component {
       prevState.stars,
       prevState.arrows,
       prevState.connectors,
-      prevState.texts
+      prevState.texts,
+      prevState.triangles
     ];
     let currentMainShapes = [
       this.state.rectangles,
@@ -457,7 +463,8 @@ class Graphics extends Component {
       this.state.stars,
       this.state.arrows,
       this.state.connectors,
-      this.state.texts
+      this.state.texts,
+      this.state.triangles
     ];
 
     if (!this.state.redoing && !this.state.isTransforming)
@@ -496,6 +503,7 @@ class Graphics extends Component {
             rectangles: history[historyStep].rectangles,
             arrows: history[historyStep].arrows,
             ellipses: history[historyStep].ellipses,
+            triangles: history[historyStep].triangles,
             stars: history[historyStep].stars,
             texts: history[historyStep].texts,
             connectors: history[historyStep].connectors,
@@ -523,6 +531,7 @@ class Graphics extends Component {
         rectangles: next.rectangles,
         arrows: next.arrows,
         ellipses: next.ellipses,
+        triangles: next.triangles,
         stars: next.stars,
         texts: next.texts,
         redoing: true,
@@ -536,14 +545,417 @@ class Graphics extends Component {
     );
   };
 
+  handleCopy = () => {
+    if (this.state.selectedShapeName !== "") {
+      //find it
+      let name = this.state.selectedShapeName;
+      let copiedElement = null;
+      if (name.includes("rect")) {
+        copiedElement = this.state.rectangles.filter(function(
+          eachRect
+        ) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("ellipse")) {
+        copiedElement = this.state.ellipses.filter(function(
+          eachRect
+        ) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("triangle")) {
+        copiedElement = this.state.triangles.filter(function(
+          eachRect
+        ) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("star")) {
+        copiedElement = this.state.stars.filter(function(eachRect) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("text")) {
+        copiedElement = this.state.texts.filter(function(eachRect) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("arrow")) {
+        copiedElement = this.state.arrows.filter(function(eachRect) {
+          return eachRect.name === name;
+        });
+      }
+
+      this.setState({ copiedElement: copiedElement }, () => {
+        console.log("copied ele", this.state.copiedElement);
+      });
+    }
+  }
+
+  handlePaste = () => {
+    let copiedElement = this.state.copiedElement[0];
+    console.log(copiedElement);
+    var length;
+    if (copiedElement) {
+      if (copiedElement.attrs) {
+      } else {
+        if (copiedElement.name.includes("rectangle")) {
+          length =
+            this.state.rectangles.length +
+            1 +
+            this.state.rectDeleteCount;
+          var toPush = {
+            x: copiedElement.x + 10,
+            y: copiedElement.y + 10,
+            width: copiedElement.width,
+            height: copiedElement.height,
+            stroke: copiedElement.stroke,
+            strokeWidth: copiedElement.strokeWidth,
+            name:
+              "rectangle" +
+              (this.state.rectangles.length +
+                this.state.rectDeleteCount +
+                1),
+            ref:
+              "rectangle" +
+              (this.state.rectangles.length +
+                this.state.rectDeleteCount +
+                1),
+            fill: copiedElement.fill,
+            useImage: copiedElement.useImage,
+            link: copiedElement.link,
+            rotation: copiedElement.rotation
+          };
+          let newName = this.state.selectedShapeName;
+
+          this.setState(
+            prevState => ({
+              rectangles: [...prevState.rectangles, toPush]
+            }),
+            () => {
+              this.setState({
+                selectedShapeName:
+                  "rectangle" + this.state.rectangles.length
+              });
+            }
+          );
+        } else if (copiedElement.name.includes("arrow")) {
+          length =
+            this.state.arrows.length +
+            1 +
+            this.state.arrowDeleteCount;
+
+          if (copiedElement.to || copiedElement.from) {
+            this.setState(
+              {
+                errMsg: "Connectors cannot be pasted"
+              },
+              () => {
+                var that = this;
+                setTimeout(function() {
+                  that.setState({
+                    errMsg: ""
+                  });
+                }, 1000);
+              }
+            );
+          } else {
+            var toPush = {
+              points: [
+                copiedElement.points[0] + 30,
+                copiedElement.points[1] + 30,
+                copiedElement.points[2] + 30,
+                copiedElement.points[3] + 30
+              ],
+              fill: copiedElement.fill,
+              link: copiedElement.link,
+              stroke: copiedElement.stroke,
+              strokeWidth: copiedElement.strokeWidth,
+              name:
+                "arrow" +
+                (this.state.arrows.length +
+                  1 +
+                  this.state.arrowDeleteCount),
+              ref:
+                "arrow" +
+                (this.state.arrows.length +
+                  1 +
+                  this.state.arrowDeleteCount),
+              rotation: copiedElement.rotation
+            };
+
+            let newName = this.state.selectedShapeName;
+
+            this.setState(
+              prevState => ({
+                arrows: [...prevState.arrows, toPush]
+              }),
+              () => {
+                this.setState({
+                  selectedShapeName:
+                    "arrow" + this.state.arrows.length
+                });
+              }
+            );
+          }
+        } else if (copiedElement.name.includes("ellipse")) {
+          length =
+            this.state.ellipses.length +
+            1 +
+            this.state.ellipseDeleteCount;
+          var toPush = {
+            x: copiedElement.x + 10,
+            y: copiedElement.y + 10,
+            radiusX: copiedElement.radiusX,
+            radiusY: copiedElement.radiusY,
+            stroke: copiedElement.stroke,
+            strokeWidth: copiedElement.strokeWidth,
+            name:
+              "ellipse" +
+              (this.state.ellipses.length +
+                1 +
+                this.state.ellipseDeleteCount),
+            ref:
+              "ellipse" +
+              (this.state.ellipses.length +
+                1 +
+                this.state.ellipseDeleteCount),
+            fill: copiedElement.fill,
+            link: copiedElement.link,
+            useImage: copiedElement.useImage,
+            rotation: copiedElement.rotation
+          };
+          let newName = this.state.selectedShapeName;
+
+          this.setState(
+            prevState => ({
+              ellipses: [...prevState.ellipses, toPush]
+            }),
+            () => {
+              this.setState({
+                selectedShapeName:
+                  "ellipse" + this.state.ellipses.length
+              });
+            }
+          );
+        } else if (copiedElement.name.includes("triangle")) {
+        length =
+          this.state.triangles.length +
+          1 +
+          this.state.triangleDeleteCount;
+        var toPush = {
+          x: copiedElement.x + 10,
+          y: copiedElement.y + 10,
+          width: copiedElement.width,
+          height: copiedElement.height,
+          sides: copiedElement.sides,
+          radius: copiedElement.radius,
+          stroke: copiedElement.stroke,
+          strokeWidth: copiedElement.strokeWidth,
+          name:
+            "triangle" +
+            (this.state.triangles.length +
+              1 +
+              this.state.triangleDeleteCount),
+          ref:
+            "triangle" +
+            (this.state.triangles.length +
+              1 +
+              this.state.triangleDeleteCount),
+          fill: copiedElement.fill,
+          link: copiedElement.link,
+          useImage: copiedElement.useImage,
+          rotation: copiedElement.rotation
+        };
+        let newName = this.state.selectedShapeName;
+
+        this.setState(
+          prevState => ({
+            triangles: [...prevState.triangles, toPush]
+          }),
+          () => {
+            this.setState({
+              selectedShapeName:
+                "triangle" + this.state.triangles.length
+            });
+          }
+        );
+      } else if (copiedElement.name.includes("star")) {
+          length =
+            this.state.stars.length + 1 + this.state.starDeleteCount;
+          var toPush = {
+            x: copiedElement.x + 10,
+            y: copiedElement.y + 10,
+            link: copiedElement.link,
+            innerRadius: copiedElement.innerRadius,
+            outerRadius: copiedElement.outerRadius,
+            stroke: copiedElement.stroke,
+            strokeWidth: copiedElement.strokeWidth,
+            name:
+              "star" +
+              (this.state.stars.length +
+                1 +
+                this.state.starDeleteCount),
+            ref:
+              "star" +
+              (this.state.stars.length +
+                1 +
+                this.state.starDeleteCount),
+            fill: copiedElement.fill,
+            useImage: copiedElement.useImage,
+            rotation: copiedElement.rotation
+          };
+          let newName = this.state.selectedShapeName;
+
+          this.setState(
+            prevState => ({
+              stars: [...prevState.stars, toPush]
+            }),
+            () => {
+              this.setState({
+                selectedShapeName: "star" + this.state.stars.length
+              });
+            }
+          );
+        } else if (copiedElement.name.includes("text")) {
+          length =
+            this.state.texts.length + 1 + this.state.textDeleteCount;
+          var toPush = {
+            x: copiedElement.x + 10,
+            y: copiedElement.y + 10,
+            link: copiedElement.link,
+
+            name:
+              "text" +
+              (this.state.texts.length +
+                1 +
+                this.state.textDeleteCount),
+            ref:
+              "text" +
+              (this.state.texts.length +
+                1 +
+                this.state.textDeleteCount),
+            fill: copiedElement.fill,
+            fontSize: copiedElement.fontSize,
+            fontFamily: copiedElement.fontFamily,
+            useImage: copiedElement.useImage,
+            text: copiedElement.text,
+            width: copiedElement.width,
+            rotation: copiedElement.rotation
+          };
+          let newName = this.state.selectedShapeName;
+
+          this.setState(
+            prevState => ({
+              texts: [...prevState.texts, toPush]
+            }),
+            () => {
+              this.setState(
+                {
+                  selectedShapeName:
+                    "text" +
+                    (this.state.texts.length +
+                      this.state.textDeleteCount)
+                },
+                () => {
+                  console.log(this.state.selectedShapeName);
+                }
+              );
+            }
+          );
+        }
+      }
+    }
+  }
+
+  handleDelete = () => {
+    if (this.state.selectedShapeName !== "") {
+      var that = this;
+      //delete it from the state too
+      let name = this.state.selectedShapeName;
+      let rectDeleted = false,
+        ellipseDeleted = false,
+        starDeleted = false,
+        arrowDeleted = false,
+        textDeleted = false,
+        triangleDeleted = false;
+
+      var rects = this.state.rectangles.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            rectDeleteCount: that.state.rectDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      var ellipses = this.state.ellipses.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            ellipseDeleteCount: that.state.ellipseDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      var triangles = this.state.triangles.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            triangleDeleteCount: that.state.triangleDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      var stars = this.state.stars.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            starDeleteCount: that.state.starDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      var arrows = this.state.arrows.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            arrowDeleteCount: that.state.arrowDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      var texts = this.state.texts.filter(function(eachRect) {
+        if (eachRect.name === name) {
+          that.setState({
+            textDeleteCount: that.state.textDeleteCount + 1
+          });
+        }
+        return eachRect.name !== name;
+      });
+
+      this.setState({
+        rectangles: rects,
+        ellipses: ellipses,
+        triangles: triangles,
+        stars: stars,
+        arrows: arrows,
+        texts: texts,
+        selectedShapeName: ""
+      });
+    }
+  }
+
+  handleCut = () => {
+    this.handleDelete();
+    this.handleCopy();
+  }
+
   shapeIsGone = returnTo => {
     var toReturn = true;
     let currentShapeName = this.state.selectedShapeName;
-    let [rectangles, ellipses, stars, arrows, texts] = [
+    let [rectangles, ellipses, stars, arrows, texts, triangles] = [
       returnTo.rectangles,
       returnTo.ellipses,
       returnTo.stars,
       returnTo.arrows,
+      returnTo.triangles,
 
       returnTo.texts
     ];
@@ -554,6 +966,11 @@ class Graphics extends Component {
     });
     ellipses.map(eachEllipse => {
       if (eachEllipse.name === currentShapeName) {
+        toReturn = false;
+      }
+    });
+    triangles.map(eachTriangle => {
+      if (eachTriangle.name === currentShapeName) {
         toReturn = false;
       }
     });
@@ -607,7 +1024,7 @@ class Graphics extends Component {
       rotation: 0,
       name: name,
       ref: name,
-      fill: this.state.color,
+      fill: this.state.colorf,
       useImage: false
     };
     var layer = this.refs.layer2;
@@ -632,6 +1049,49 @@ class Graphics extends Component {
       selectedShapeName: toPush.name
     }));
     console.log(name)
+  };
+
+  addTriangle = () => {
+    var triName = this.state.triangles.length + 1 + this.state.triangleDeleteCount
+
+    let name = 'triangle' + triName
+    const tri = {
+      x: 800,
+      y: 400,
+      width: 100,
+      height:100,
+      height: 100,
+      sides: 3,
+      radius: 70,
+      stroke: 'black',
+      strokeWidth: 1.5,
+      rotation: 0,
+      name: name,
+      ref: name,
+      fill: this.state.colorf,
+      useImage: false
+    };
+    var layer = this.refs.layer2;
+    var toPush = tri;
+    var stage = this.refs.graphicStage;
+    var transform = this.refs.layer2
+      .getAbsoluteTransform()
+      .copy();
+    transform.invert();
+
+    var pos = transform.point({
+      x: toPush.x,
+      y: toPush.y
+    });
+
+    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
+      toPush.x = pos.x;
+      toPush.y = pos.y;
+    }
+    this.setState(prevState => ({
+      triangles: [...prevState.triangles, toPush],
+      selectedShapeName: toPush.name
+    }));
   };
 
   addCircle = () => {
@@ -673,32 +1133,222 @@ class Graphics extends Component {
     }))
   };
 
+  addStar = () => {
+    var starName = this.state.stars.length + 1 + this.state.starDeleteCount
+
+    let name = 'star' + starName
+    const star = {
+      x: 800,
+      y: 400,
+      width: 100,
+      height: 100,
+      numPoints: 5,
+      innerRadius: 30,
+      outerRadius: 70,
+      stroke: 'black',
+      strokeWidth: 1.5,
+      name: name,
+      fill: 'white',
+      ref: name,
+      rotation: 0
+    };
+    var layer = this.refs.layer2;
+    var toPush = star;
+    var stage = this.refs.graphicStage;
+    var transform = this.refs.layer2
+      .getAbsoluteTransform()
+      .copy();
+    transform.invert();
+
+    var pos = transform.point({
+      x: toPush.x,
+      y: toPush.y
+    });
+    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
+      toPush.x = pos.x;
+      toPush.y = pos.y;
+    }
+
+    this.setState(prevState => ({
+      stars: [...prevState.stars, toPush],
+      selectedShapeName: toPush.name
+    }))
+  };
+
   handleColorF = (e) =>{
-      this.setState({
-        colorf: e.hex
-      })
+    this.setState(prevState => ({
+      rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              fill: e.hex
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      triangles: prevState.triangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              fill: e.hex
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      ellipses: prevState.ellipses.map(eachCirc =>
+        eachCirc.name === this.state.selectedShapeName
+          ? {
+              ...eachCirc,
+              fill: e.hex
+            }
+          : eachCirc
+      )
+    }));
+    this.setState(prevState => ({
+      stars: prevState.stars.map(eachStar =>
+        eachStar.name === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              fill: e.hex
+            }
+          : eachStar
+      )
+    }));
   }
 
   handleColorS = (e) => {
-    this.setState({
-      colors: e.hex
-    })
+    this.setState(prevState => ({
+      rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              stroke: e.hex
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      triangles: prevState.triangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              stroke: e.hex
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      ellipses: prevState.ellipses.map(eachCirc =>
+        eachCirc.name === this.state.selectedShapeName
+          ? {
+              ...eachCirc,
+              stroke: e.hex
+            }
+          : eachCirc
+      )
+    }));
+    this.setState(prevState => ({
+      stars: prevState.stars.map(eachStar =>
+        eachStar.name === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              stroke: e.hex
+            }
+          : eachStar
+      )
+    }));
+
   }
 
   handleWidth = (e) =>{
-    this.setState({
-      strokeWidth: e/8
-    })
+    this.setState(prevState => ({
+      rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              strokeWidth: e/9
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      triangles: prevState.triangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              strokeWidth: e/9
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      ellipses: prevState.ellipses.map(eachCirc =>
+        eachCirc.name === this.state.selectedShapeName
+          ? {
+              ...eachCirc,
+              strokeWidth: e/9
+            }
+          : eachCirc
+      )
+    }));
+    this.setState(prevState => ({
+      stars: prevState.stars.map(eachStar =>
+        eachStar.name === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              strokeWidth: e/9
+            }
+          : eachStar
+      )
+    }));
   }
 
   handleOpacity = (e) => {
-    this.setState({
-      opacity: e
-    })
+    this.setState(prevState => ({
+      rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              opacity: e
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      triangles: prevState.triangles.map(eachRect =>
+        eachRect.name === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              opacity: e
+            }
+          : eachRect
+      )
+    }));
+    this.setState(prevState => ({
+      ellipses: prevState.ellipses.map(eachCirc =>
+        eachCirc.name === this.state.selectedShapeName
+          ? {
+              ...eachCirc,
+              opacity: e
+            }
+          : eachCirc
+      )
+    }));
+    this.setState(prevState => ({
+      stars: prevState.stars.map(eachStar =>
+        eachStar.name === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              opacity: e
+            }
+          : eachStar
+      )
+    }));
   }
 
   handleClose = (e) => {
-    console.log(8)
     this.setState({
       selectedContextMenu: false
     })
@@ -752,75 +1402,11 @@ class Graphics extends Component {
               paste = 86,
               z = 90,
               y = 89;
-            if (
-              ((event.ctrlKey && event.keyCode === x) ||
-                event.keyCode === deleteKey) &&
-              !this.state.isPasteDisabled
-            ) {
-              if (this.state.selectedShapeName !== "") {
-                var that = this;
-                //delete it from the state too
-                let name = this.state.selectedShapeName;
-                let rectDeleted = false,
-                  ellipseDeleted = false,
-                  starDeleted = false,
-                  arrowDeleted = false,
-                  textDeleted = false;
-
-                var rects = this.state.rectangles.filter(function(eachRect) {
-                  if (eachRect.name === name) {
-                    that.setState({
-                      rectDeleteCount: that.state.rectDeleteCount + 1
-                    });
-                  }
-                  return eachRect.name !== name;
-                });
-
-                var ellipses = this.state.ellipses.filter(function(eachRect) {
-                  if (eachRect.name === name) {
-                    that.setState({
-                      ellipseDeleteCount: that.state.ellipseDeleteCount + 1
-                    });
-                  }
-                  return eachRect.name !== name;
-                });
-
-                var stars = this.state.stars.filter(function(eachRect) {
-                  if (eachRect.name === name) {
-                    that.setState({
-                      starDeleteCount: that.state.starDeleteCount + 1
-                    });
-                  }
-                  return eachRect.name !== name;
-                });
-
-                var arrows = this.state.arrows.filter(function(eachRect) {
-                  if (eachRect.name === name) {
-                    that.setState({
-                      arrowDeleteCount: that.state.arrowDeleteCount + 1
-                    });
-                  }
-                  return eachRect.name !== name;
-                });
-
-                var texts = this.state.texts.filter(function(eachRect) {
-                  if (eachRect.name === name) {
-                    that.setState({
-                      textDeleteCount: that.state.textDeleteCount + 1
-                    });
-                  }
-                  return eachRect.name !== name;
-                });
-
-                this.setState({
-                  rectangles: rects,
-                  ellipses: ellipses,
-                  stars: stars,
-                  arrows: arrows,
-                  texts: texts,
-                  selectedShapeName: ""
-                });
-              }
+            if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
+                this.handleDelete();
+                this.handleCopy();
+            } else if (event.ctrlKey && event.keyCode === deleteKey  && !this.state.isPasteDisabled) {
+              this.handleDelete();
             } else if (event.shiftKey && event.ctrlKey && event.keyCode === z) {
               this.handleRedo();
             } else if (event.ctrlKey && event.keyCode === z) {
@@ -828,276 +1414,9 @@ class Graphics extends Component {
             } else if (event.ctrlKey && event.keyCode === y) {
               this.handleRedo();
             } else if (event.ctrlKey && event.keyCode === copy) {
-              if (this.state.selectedShapeName !== "") {
-                //find it
-                let name = this.state.selectedShapeName;
-                let copiedElement = null;
-                if (name.includes("rect")) {
-                  copiedElement = this.state.rectangles.filter(function(
-                    eachRect
-                  ) {
-                    return eachRect.name === name;
-                  });
-                } else if (name.includes("ellipse")) {
-                  copiedElement = this.state.ellipses.filter(function(
-                    eachRect
-                  ) {
-                    return eachRect.name === name;
-                  });
-                } else if (name.includes("star")) {
-                  copiedElement = this.state.stars.filter(function(eachRect) {
-                    return eachRect.name === name;
-                  });
-                } else if (name.includes("text")) {
-                  copiedElement = this.state.texts.filter(function(eachRect) {
-                    return eachRect.name === name;
-                  });
-                } else if (name.includes("arrow")) {
-                  copiedElement = this.state.arrows.filter(function(eachRect) {
-                    return eachRect.name === name;
-                  });
-                }
-
-                this.setState({ copiedElement: copiedElement }, () => {
-                  console.log("copied ele", this.state.copiedElement);
-                });
-              }
-            } else if (
-              event.ctrlKey &&
-              event.keyCode === paste &&
-              !this.state.isPasteDisabled
-            ) {
-              let copiedElement = this.state.copiedElement[0];
-              console.log(copiedElement);
-              var length;
-              if (copiedElement) {
-                if (copiedElement.attrs) {
-                } else {
-                  if (copiedElement.name.includes("rectangle")) {
-                    length =
-                      this.state.rectangles.length +
-                      1 +
-                      this.state.rectDeleteCount;
-                    var toPush = {
-                      x: copiedElement.x + 10,
-                      y: copiedElement.y + 10,
-                      width: copiedElement.width,
-                      height: copiedElement.height,
-                      stroke: copiedElement.stroke,
-                      strokeWidth: copiedElement.strokeWidth,
-                      name:
-                        "rectangle" +
-                        (this.state.rectangles.length +
-                          this.state.rectDeleteCount +
-                          1),
-                      ref:
-                        "rectangle" +
-                        (this.state.rectangles.length +
-                          this.state.rectDeleteCount +
-                          1),
-                      fill: copiedElement.fill,
-                      useImage: copiedElement.useImage,
-                      link: copiedElement.link,
-                      rotation: copiedElement.rotation
-                    };
-                    let newName = this.state.selectedShapeName;
-
-                    this.setState(
-                      prevState => ({
-                        rectangles: [...prevState.rectangles, toPush]
-                      }),
-                      () => {
-                        this.setState({
-                          selectedShapeName:
-                            "rectangle" + this.state.rectangles.length
-                        });
-                      }
-                    );
-                  } else if (copiedElement.name.includes("arrow")) {
-                    length =
-                      this.state.arrows.length +
-                      1 +
-                      this.state.arrowDeleteCount;
-
-                    if (copiedElement.to || copiedElement.from) {
-                      this.setState(
-                        {
-                          errMsg: "Connectors cannot be pasted"
-                        },
-                        () => {
-                          var that = this;
-                          setTimeout(function() {
-                            that.setState({
-                              errMsg: ""
-                            });
-                          }, 1000);
-                        }
-                      );
-                    } else {
-                      var toPush = {
-                        points: [
-                          copiedElement.points[0] + 30,
-                          copiedElement.points[1] + 30,
-                          copiedElement.points[2] + 30,
-                          copiedElement.points[3] + 30
-                        ],
-                        fill: copiedElement.fill,
-                        link: copiedElement.link,
-                        stroke: copiedElement.stroke,
-                        strokeWidth: copiedElement.strokeWidth,
-                        name:
-                          "arrow" +
-                          (this.state.arrows.length +
-                            1 +
-                            this.state.arrowDeleteCount),
-                        ref:
-                          "arrow" +
-                          (this.state.arrows.length +
-                            1 +
-                            this.state.arrowDeleteCount),
-                        rotation: copiedElement.rotation
-                      };
-
-                      let newName = this.state.selectedShapeName;
-
-                      this.setState(
-                        prevState => ({
-                          arrows: [...prevState.arrows, toPush]
-                        }),
-                        () => {
-                          this.setState({
-                            selectedShapeName:
-                              "arrow" + this.state.arrows.length
-                          });
-                        }
-                      );
-                    }
-                  } else if (copiedElement.name.includes("ellipse")) {
-                    length =
-                      this.state.ellipses.length +
-                      1 +
-                      this.state.ellipseDeleteCount;
-                    var toPush = {
-                      x: copiedElement.x + 10,
-                      y: copiedElement.y + 10,
-                      radiusX: copiedElement.radiusX,
-                      radiusY: copiedElement.radiusY,
-                      stroke: copiedElement.stroke,
-                      strokeWidth: copiedElement.strokeWidth,
-                      name:
-                        "ellipse" +
-                        (this.state.ellipses.length +
-                          1 +
-                          this.state.ellipseDeleteCount),
-                      ref:
-                        "ellipse" +
-                        (this.state.ellipses.length +
-                          1 +
-                          this.state.ellipseDeleteCount),
-                      fill: copiedElement.fill,
-                      link: copiedElement.link,
-                      useImage: copiedElement.useImage,
-                      rotation: copiedElement.rotation
-                    };
-                    let newName = this.state.selectedShapeName;
-
-                    this.setState(
-                      prevState => ({
-                        ellipses: [...prevState.ellipses, toPush]
-                      }),
-                      () => {
-                        this.setState({
-                          selectedShapeName:
-                            "ellipse" + this.state.ellipses.length
-                        });
-                      }
-                    );
-                  } else if (copiedElement.name.includes("star")) {
-                    length =
-                      this.state.stars.length + 1 + this.state.starDeleteCount;
-                    var toPush = {
-                      x: copiedElement.x + 10,
-                      y: copiedElement.y + 10,
-                      link: copiedElement.link,
-                      innerRadius: copiedElement.innerRadius,
-                      outerRadius: copiedElement.outerRadius,
-                      stroke: copiedElement.stroke,
-                      strokeWidth: copiedElement.strokeWidth,
-                      name:
-                        "star" +
-                        (this.state.stars.length +
-                          1 +
-                          this.state.starDeleteCount),
-                      ref:
-                        "star" +
-                        (this.state.stars.length +
-                          1 +
-                          this.state.starDeleteCount),
-                      fill: copiedElement.fill,
-                      useImage: copiedElement.useImage,
-                      rotation: copiedElement.rotation
-                    };
-                    let newName = this.state.selectedShapeName;
-
-                    this.setState(
-                      prevState => ({
-                        stars: [...prevState.stars, toPush]
-                      }),
-                      () => {
-                        this.setState({
-                          selectedShapeName: "star" + this.state.stars.length
-                        });
-                      }
-                    );
-                  } else if (copiedElement.name.includes("text")) {
-                    length =
-                      this.state.texts.length + 1 + this.state.textDeleteCount;
-                    var toPush = {
-                      x: copiedElement.x + 10,
-                      y: copiedElement.y + 10,
-                      link: copiedElement.link,
-
-                      name:
-                        "text" +
-                        (this.state.texts.length +
-                          1 +
-                          this.state.textDeleteCount),
-                      ref:
-                        "text" +
-                        (this.state.texts.length +
-                          1 +
-                          this.state.textDeleteCount),
-                      fill: copiedElement.fill,
-                      fontSize: copiedElement.fontSize,
-                      fontFamily: copiedElement.fontFamily,
-                      useImage: copiedElement.useImage,
-                      text: copiedElement.text,
-                      width: copiedElement.width,
-                      rotation: copiedElement.rotation
-                    };
-                    let newName = this.state.selectedShapeName;
-
-                    this.setState(
-                      prevState => ({
-                        texts: [...prevState.texts, toPush]
-                      }),
-                      () => {
-                        this.setState(
-                          {
-                            selectedShapeName:
-                              "text" +
-                              (this.state.texts.length +
-                                this.state.textDeleteCount)
-                          },
-                          () => {
-                            console.log(this.state.selectedShapeName);
-                          }
-                        );
-                      }
-                    );
-                  }
-                }
-              }
+              this.handleCopy();
+            } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
+              this.handlePaste();
             }
           }}
           tabIndex="0"
@@ -1208,7 +1527,8 @@ class Graphics extends Component {
                                   height: rect.height() * rect.scaleY(),
                                   rotation: rect.rotation(),
                                   x: rect.x(),
-                                  y: rect.y()
+                                  y: rect.y(),
+
                                 }
                               : eachRect
                           )
@@ -1223,15 +1543,15 @@ class Graphics extends Component {
                     }}
                     rotation={eachRect.rotation}
                     ref={eachRect.ref}
-                    fill={this.state.colorf}
-                    opacity={this.state.opacity}
+                    fill={eachRect.fill}
+                    opacity={eachRect.opacity}
                     name={eachRect.name}
                     x={eachRect.x}
                     y={eachRect.y}
                     width={eachRect.width}
                     height={eachRect.height}
-                    stroke={this.state.colors}
-                    strokeWidth={this.state.strokeWidth}
+                    stroke={eachRect.stroke}
+                    strokeWidth={eachRect.strokeWidth}
                     strokeScaleEnabled={false}
                     draggable
                     onDragMove={() => {
@@ -1280,14 +1600,15 @@ class Graphics extends Component {
                             ? {
                                 ...eachRect,
                                 x: event.target.x(),
-                                y: event.target.y()
+                                y: event.target.y(),
                               }
                             : eachRect
                         )
                       }));
                     }}
                     onContextMenu={e => {
-                      e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+
+                      e.evt.preventDefault(true);
                       const mousePosition = e.target.getStage().getPointerPosition();
 
                       this.setState({
@@ -1306,12 +1627,17 @@ class Graphics extends Component {
                 <Portal>
               <ContextMenu
                 {...this.state.selectedContextMenu}
+                selectedshape={this.state.selectedShapeName}
                 onOptionSelected={this.handleOptionSelected}
                 choosecolors={this.handleColorS}
                 choosecolorf={this.handleColorF}
                 handleWidth={this.handleWidth}
                 handleOpacity={this.handleOpacity}
                 close={this.handleClose}
+                copy={this.handleCopy}
+                cut={this.handleCut}
+                paste={this.handlePaste}
+                delete={this.handleDelete}
               />
               </Portal>
             )}
@@ -1321,11 +1647,12 @@ class Graphics extends Component {
                   name={eachEllipse.name}
                   x={eachEllipse.x}
                   y={eachEllipse.y}
+                  opacity={eachEllipse.opacity}
                   rotation={eachEllipse.rotation}
                   radiusX={eachEllipse.radiusX}
                   radiusY={eachEllipse.radiusY}
                   fill={eachEllipse.fill}
-                  stroke={this.state.colors}
+                  stroke={eachEllipse.stroke}
                   strokeWidth={eachEllipse.strokeWidth}
                   strokeScaleEnabled={false}
                   onClick={() => {
@@ -1480,18 +1807,166 @@ class Graphics extends Component {
                   }
                 />
               ))}
-              {this.state.selectedContextMenu && (
-                <Portal>
-              <ContextMenu
-                {...this.state.selectedContextMenu}
-                onOptionSelected={this.handleOptionSelected}
-                choosecolors={this.handleColorS}
-                choosecolorf={this.handleColorF}
-                handleWidth={this.handleWidth}
-                handleOpacity={this.handleOpacity}
-              />
-              </Portal>
-            )}
+              {this.state.triangles.map(eachEllipse => (
+                <RegularPolygon
+                  ref={eachEllipse.ref}
+                  name={eachEllipse.name}
+                  x={eachEllipse.x}
+                  y={eachEllipse.y}
+                  opacity={eachEllipse.opacity}
+                  rotation={eachEllipse.rotation}
+                  height={eachEllipse.height}
+                  sides={eachEllipse.sides}
+                  radius={eachEllipse.radius}
+                  fill={eachEllipse.fill}
+                  stroke={eachEllipse.stroke}
+                  strokeWidth={eachEllipse.strokeWidth}
+                  strokeScaleEnabled={false}
+                  onClick={() => {
+                    var that = this;
+                    if (
+                      eachEllipse.link !== undefined &&
+                      eachEllipse.link !== ""
+                    ) {
+                      this.setState(
+                        {
+                          errMsg: "Links will not be opened in create mode"
+                        },
+                        () => {
+                          setTimeout(function() {
+                            that.setState({
+                              errMsg: ""
+                            });
+                          }, 1000);
+                        }
+                      );
+                    }
+                  }}
+                  onTransformStart={() => {
+                    this.setState({ isTransforming: true });
+                    let triangle = this.refs[eachEllipse.ref];
+                    triangle.setAttr("lastRotation", triangle.rotation());
+                  }}
+                  onTransform={() => {
+                    let triangle = this.refs[eachEllipse.ref];
+
+                    if (triangle.attrs.lastRotation !== triangle.rotation()) {
+                      this.state.arrows.map(eachArrow => {
+                        if (
+                          eachArrow.to &&
+                          eachArrow.to.name() === triangle.name()
+                        ) {
+                          this.setState({
+                            errMsg:
+                              "Rotating ellipses with connectors might skew things up!"
+                          });
+                        }
+                        if (
+                          eachArrow.from &&
+                          eachArrow.from.name() === triangle.name()
+                        ) {
+                          this.setState({
+                            errMsg:
+                              "Rotating ellipses with connectors might skew things up!"
+                          });
+                        }
+                      });
+                    }
+
+                    triangle.setAttr("lastRotation", triangle.rotation());
+                  }}
+                  onTransformEnd={() => {
+                    this.setState({ isTransforming: false });
+                    let triangle = this.refs[eachEllipse.ref];
+                    let scaleX = triangle.scaleX(),
+                      scaleY = triangle.scaleY();
+
+                    this.setState(prevState => ({
+                      errMsg: "",
+                      triangles: prevState.triangles.map(eachEllipse =>
+                        eachEllipse.name === triangle.attrs.name
+                          ? {
+                              ...eachEllipse,
+
+                              width: triangle.width() * triangle.scaleX(),
+                              height: triangle.height() * triangle.scaleY(),
+                              rotation: triangle.rotation(),
+                              x: triangle.x(),
+                              y: triangle.y()
+                            }
+                          : eachEllipse
+                      )
+                    }));
+
+                    triangle.setAttr("scaleX", 1);
+                    triangle.setAttr("scaleY", 1);
+                    this.forceUpdate();
+                  }}
+                  draggable
+                  onDragMove={() => {
+                    this.state.arrows.map(eachArrow => {
+                      if (eachArrow.from !== undefined) {
+                        console.log("prevArrow: ", eachArrow.points);
+                        if (eachEllipse.name == eachArrow.from.attrs.name) {
+                          eachArrow.points = [
+                            eachEllipse.x,
+                            eachEllipse.y,
+                            eachArrow.points[2],
+                            eachArrow.points[3]
+                          ];
+                          this.forceUpdate();
+                          this.refs.graphicStage.draw();
+                        }
+                        console.log("new arrows:", eachArrow.points);
+                      }
+
+                      if (eachArrow.to !== undefined) {
+                        if (eachEllipse.name === eachArrow.to.attrs.name) {
+                          eachArrow.points = [
+                            eachArrow.points[0],
+                            eachArrow.points[1],
+                            eachEllipse.x,
+                            eachEllipse.y
+                          ];
+                          this.forceUpdate();
+                          this.refs.graphicStage.draw();
+                        }
+                      }
+                    });
+                  }}
+                  onDragEnd={event => {
+                    //cannot compare by name because currentSelected might not be the same
+                    //have to use ref, which appears to be overcomplicated
+                    var shape = this.refs[eachEllipse.ref];
+
+                    this.setState(prevState => ({
+                      triangles: prevState.triangles.map(eachEllipse =>
+                        eachEllipse.name === shape.attrs.name
+                          ? {
+                              ...eachEllipse,
+                              x: event.target.x(),
+                              y: event.target.y()
+                            }
+                          : eachEllipse
+                      )
+                    }));
+
+                    this.refs.graphicStage.draw();
+                  }}
+                  onContextMenu={e => {
+                    e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                    const mousePosition = e.target.getStage().getPointerPosition();
+
+                    this.setState({
+                      selectedContextMenu: {
+                        type: "START",
+                        position: mousePosition
+                      }
+                    });
+                  }
+                  }
+                />
+              ))}
               {this.state.stars.map(eachStar => (
                 <Star
                   ref={eachStar.ref}
@@ -1504,6 +1979,7 @@ class Graphics extends Component {
                   stroke={eachStar.stroke}
                   strokeWidth={eachStar.strokeWidth}
                   fill={eachStar.fill}
+                  opacity={eachStar.opacity}
                   strokeScaleEnabled={false}
                   rotation={eachStar.rotation}
                   onClick={() => {
@@ -1609,18 +2085,7 @@ class Graphics extends Component {
                   }
                 />
               ))}
-              {this.state.selectedContextMenu && (
-                <Portal>
-              <ContextMenu
-                {...this.state.selectedContextMenu}
-                onOptionSelected={this.handleOptionSelected}
-                choosecolors={this.handleColorS}
-                choosecolorf={this.handleColorF}
-                handleWidth={this.handleWidth}
-                handleOpacity={this.handleOpacity}
-              />
-              </Portal>
-            )}
+
               {this.state.texts.map(eachText => (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -1902,6 +2367,9 @@ class Graphics extends Component {
                 }
                 ellipseName={
                   this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
+                }
+                triangleName={
+                  this.state.triangles.length + 1 + this.state.triangleDeleteCount
                 }
                 starName={
                   this.state.stars.length + 1 + this.state.starDeleteCount
@@ -2233,6 +2701,8 @@ class Graphics extends Component {
               title="Edit Group Space"
               addRectangle={this.addRectangle}
               addCircle={this.addCircle}
+              addStar={this.addStar}
+              addTriangle={this.addTriangle}
               />
             <Pencil
               id="3"

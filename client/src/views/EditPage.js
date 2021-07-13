@@ -9,6 +9,7 @@ import Header from "../components/SideBar/Header";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 import Stages from "../components/Stage/Stage";
+
 import { Container, Row, Col } from "react-bootstrap";
 
 
@@ -52,6 +53,8 @@ function EditPage(props){
     const [num, setNum] = useState(6)
     const [color, setColor]= useState("white")
 
+    console.log(props.location.img)
+
     function handleMvisible(e) {
       setMvisible(e);
     }
@@ -78,6 +81,16 @@ function EditPage(props){
       console.log(color);
     }
 
+    if(props.location.img){
+      localStorage.setItem('simimg', props.location.img)
+      localStorage.setItem('simtitle', props.location.title)
+    }
+    const simimg = React.useState(
+      localStorage.getItem('simimg') || ''
+    );
+    console.log(simimg)
+
+
     const toggle = () => setShowNav(!showNav)
     return (
       <div className="editpage">
@@ -89,12 +102,14 @@ function EditPage(props){
                 avisible={avisible}
                 pavisible={pavisible}
                 svisible={svisible}
-                pevisible={pevisible} />
+                pevisible={pevisible}
+                img={props.location.img}
+                title={props.location.title}
+              />
           </GridNav>
 
           <GridMain>
-
-            <Stages
+            <Canvas
               color={color}
               mvisible={handleMvisible}
               avisible={handleAvisible}
@@ -103,6 +118,7 @@ function EditPage(props){
               pevisible={handlePevisible}
               ptype={handleType}
             />
+
 
           </GridMain>
         </Grid>

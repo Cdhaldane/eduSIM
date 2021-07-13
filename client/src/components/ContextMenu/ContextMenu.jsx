@@ -4,6 +4,7 @@ import Dropdownedit from "../DropDown/Dropdownedit";
 
 
 function ContextMenu(props){
+  console.log(props)
   const [drop, setDrop] = useState(false);
 
   function handleColorF(e){
@@ -28,6 +29,7 @@ function ContextMenu(props){
 
 
 
+
   return (
 
     <div
@@ -39,15 +41,13 @@ function ContextMenu(props){
       }}
     >
       <ul>
-        <li onClick={""}>Cut</li>
+        <li onClick={props.cut}>Cut</li>
         <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
-        <li onClick={props.undo}>Undo</li>
-        <li onClick={props.redo}>Redo</li>
         <li onClick={handleEdit}>Edit shape</li>
       <hr />
-        <li onClick={props.close}>Close</li>
+    <li onClick={props.close}>Close</li>
       </ul>
 
 

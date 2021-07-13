@@ -38,7 +38,17 @@ const DenseNavLinks = styled(NavLink)`
 
 function NavLinksGroup(props) {
 
+
+
   const links = [
+    {
+        to: "/editpage",
+        img: props.img,
+        label: props.title,
+
+        visible: props.pevisible,
+        icon: null
+    },
       {
           to: "/chat",
           icon:"fas fa-comment-dots",
@@ -70,6 +80,7 @@ function NavLinksGroup(props) {
           label:"Performance",
           visible: props.pevisible
       },
+
 
 
   ];

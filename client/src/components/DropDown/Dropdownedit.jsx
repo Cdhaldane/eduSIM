@@ -20,7 +20,7 @@ import "./Dropdownedit.css";
     const [colours, setColours] = useState("");
     const [checkedd, setCheckedd] = useState(false);
     const [checkede, setCheckede] = useState(false);
-    const [value, setValue] = React.useState(30);
+    const [value, setValue] = React.useState(20);
     const [valueO, setValueO] = React.useState(1);
 
     function handleChangeF(e){

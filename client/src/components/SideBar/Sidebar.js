@@ -53,7 +53,11 @@ function Sidebar (props) {
           avisible={props.avisible}
           pavisible={props.pavisible}
           svisible={props.svisible}
-          pevisible={props.pevisible} />
+          pevisible={props.pevisible}
+          img={props.img}
+          title={props.title}
+         />
+        
           {/* <NavLink
           compact={compact}
           to="/"

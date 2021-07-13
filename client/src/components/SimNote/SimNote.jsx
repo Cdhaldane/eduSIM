@@ -28,10 +28,14 @@ function SimNote(props) {
       <h1><strong>{props.title}</strong></h1>
     <img src={"/uploads/" + props.img}  alt="backdrop"/>
       <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
-      <Link to="/EditPage">
+    <Link to={{
+        pathname:"/editpage",
+        img: props.img,
+        title: props.title
+      }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
-      <Link to="/gamepage" params={{ img: props.img }}>
+      <Link to="/gamepage" >
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
     </div>

@@ -11,7 +11,7 @@ let history = [
 ];
 let historyStep = 0;
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, forward}) => {
+const Rectangle = (props) => {
   const shapeRef = React.useRef();
   const trRef = React.useRef();
   const [copy, setCopy] = useState();
@@ -51,183 +51,163 @@ const mousePosition = useMousePosition()
    });
  };
 
- const handleUndo = () => {
-    if (historyStep === 0) {
-      return;
-    }
-    historyStep -= 1;
-    const previous = history[historyStep];
-    onChange({
-      ...shapeProps,
-      x: previous.x,
-      y: previous.y,
-    });
-    setSelectedContextMenu(null);
-  };
+ // const handleUndo = () => {
+ //    if (historyStep === 0) {
+ //      return;
+ //    }
+ //    historyStep -= 1;
+ //    const previous = history[historyStep];
+ //    onChange({
+ //      ...shapeProps,
+ //      x: previous.x,
+ //      y: previous.y,
+ //    });
+ //    setSelectedContextMenu(null);
+ //  };
+ //
+ //  const handleRedo = () => {
+ //      if (historyStep === history.length - 1) {
+ //        return;
+ //      }
+ //      historyStep += 1;
+ //      const next = history[historyStep];
+ //      onChange({
+ //        ...shapeProps,
+ //        x: next.x,
+ //        y: next.y,
+ //      });
+ //      setSelectedContextMenu(null);
+ //    };
+ //
+ //    const handleDelete = (e) => {
+ //        historyStep += 1;
+ //        onChange({
+ //          ...shapeProps,
+ //          visible: false
+ //        });
+ //
+ //        setSelectedContextMenu(null);
+ //      };
+ //
+ //      const handleCopy= (e) => {
+ //        console.log(shapeRef)
+ //          historyStep += 1;
+ //          setCopy(shapeRef);
+ //            setSelectedContextMenu(null);
+ //        };
+ //
+ //      const handlePaste= (e) => {
+ //
+ //        };
+ //
+ //      const handleCut= (e) => {
+ //          setSelectedContextMenu(null);
+ //        };
+ //
+ //      const handleBack= (e) => {
+ //
+ //         const id = e.target.name();
+ //         const items = this.state.items.slice();
+ //         const item = items.find(i => i.id === id);
+ //         const index = items.indexOf(item);
+ //         // remove from the list:
+ //         items.splice(index, 1);
+ //         // add to the top
+ //         items.push(item);
+ //         this.setState({
+ //           items
+ //         });
+ //           setSelectedContextMenu(null);
+ //        };
+ //
+ //
+ //        const handleClose= (e) => {
+ //            setSelectedContextMenu(null);
+ //        }
+ //
+ //      function handleColorF(e){
+ //          onChange({
+ //            ...shapeProps,
+ //            fill: e.hex
+ //          });
+ //      }
+ //
+ //      function handleColorS(e){
+ //          onChange({
+ //            ...shapeProps,
+ //            stroke: e.hex
+ //          });
+ //      }
+ //
+ //      function handleWidth(e){
+ //        onChange({
+ //          ...shapeProps,
+ //          strokeWidth: e/8
+ //        });
+ //      }
+ //
+ //      function handleOpacity(e){
+ //        onChange({
+ //          ...shapeProps,
+ //          opacity: e
+ //        });
+ //      }
+ //
+ //  const handleDragEnd = (e) => {
+ //    history = history.slice(0, historyStep + 1);
+ //    const pos = {
+ //      x: e.target.x(),
+ //      y: e.target.y()
+ //    };
+ //    history = history.concat([pos]);
+ //    historyStep += 1;
+ //    e.target.moveToTop();
+ //  };
+ //
+ //  const handleForward= (e) => {
+ //    const window = e.currentTarget;
+ //    console.log(e.originalEvent.wheelDelta)
+ //    if (e.deltaY < 0){
+ //      e.target.moveToTop();
+ //    }
+ //    else if (e.deltaY > 0)
+ //    {
+ //      e.target.moveToBottom();
+ //    }
+ //    };
 
-  const handleRedo = () => {
-      if (historyStep === history.length - 1) {
-        return;
-      }
-      historyStep += 1;
-      const next = history[historyStep];
-      onChange({
-        ...shapeProps,
-        x: next.x,
-        y: next.y,
-      });
-      setSelectedContextMenu(null);
-    };
 
-    const handleDelete = (e) => {
-        historyStep += 1;
-        onChange({
-          ...shapeProps,
-          visible: false
-        });
-
-        setSelectedContextMenu(null);
-      };
-
-      const handleCopy= (e) => {
-        console.log(shapeRef)
-          historyStep += 1;
-          setCopy(shapeRef);
-            setSelectedContextMenu(null);
-        };
-
-      const handlePaste= (e) => {
-          
-        };
-
-      const handleCut= (e) => {
-          setSelectedContextMenu(null);
-        };
-
-      const handleBack= (e) => {
-
-         const id = e.target.name();
-         const items = this.state.items.slice();
-         const item = items.find(i => i.id === id);
-         const index = items.indexOf(item);
-         // remove from the list:
-         items.splice(index, 1);
-         // add to the top
-         items.push(item);
-         this.setState({
-           items
-         });
-           setSelectedContextMenu(null);
-        };
-
-
-        const handleClose= (e) => {
-            setSelectedContextMenu(null);
-        }
-
-      function handleColorF(e){
-          onChange({
-            ...shapeProps,
-            fill: e.hex
-          });
-      }
-
-      function handleColorS(e){
-          onChange({
-            ...shapeProps,
-            stroke: e.hex
-          });
-      }
-
-      function handleWidth(e){
-        onChange({
-          ...shapeProps,
-          strokeWidth: e/8
-        });
-      }
-
-      function handleOpacity(e){
-        onChange({
-          ...shapeProps,
-          opacity: e
-        });
-      }
-
-  const handleDragEnd = (e) => {
-    history = history.slice(0, historyStep + 1);
-    const pos = {
-      x: e.target.x(),
-      y: e.target.y()
-    };
-    history = history.concat([pos]);
-    historyStep += 1;
-    e.target.moveToTop();
-  };
-
-  const handleForward= (e) => {
-    const window = e.currentTarget;
-    console.log(e.originalEvent.wheelDelta)
-    if (e.deltaY < 0){
-      e.target.moveToTop();
-    }
-    else if (e.deltaY > 0)
-    {
-      e.target.moveToBottom();
-    }
-    };
-
-  React.useEffect(() => {
-    if (isSelected) {
-      // we need to attach transformer manually
-      trRef.current.setNode(shapeRef.current);
-      trRef.current.getLayer().batchDraw();
-    }
-  }, [isSelected]);
   return (
     <React.Fragment>
       <Rect
         onContextMenu={handleContextMenu}
-        onClick={onSelect}
-        onWheel={handleForward}
-        ref={shapeRef}
-        {...shapeProps}
+        onClick={props.onClick}
+        onTransformStart={props.onTransformStart}
+        onTransform={props.onTransform}
+        onTransformEnd={props.onTransformEnd}
+        rotation={props.rotation}
+        ref={props.ref}
+        fill={props.fill}
+        opacity={props.opacity}
+        name={props.name}
+        x={props.x}
+        y={props.y}
+        width={props.width}
+        height={props.height}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
+        strokeScaleEnabled={false}
         draggable
-        onDragEnd={handleDragEnd}
-        onTransformEnd={e => {
-          // transformer is changing scale
-          const node = shapeRef.current;
-          const scaleX = node.scaleX();
-          const scaleY = node.scaleY();
-          node.scaleX(1);
-          node.scaleY(1);
-          onChange({
-            ...shapeProps,
-            x: node.x(),
-            y: node.y(),
-            width: node.width() * scaleX,
-            height: node.height() * scaleY,
-          });
-        }}
+        onDragMove={props.onDragMove}
+        onDragEnd={props.onDragEnd}
       />
-      {isSelected && <Transformer ref={trRef} />}
+
 
       {selectedContextMenu && (
            <Portal>
              <ContextMenu
                {...selectedContextMenu}
                onOptionSelected={handleOptionSelected}
-               undo={handleUndo}
-               redo={handleRedo}
-               delete={handleDelete}
-               copy={handleCopy}
-               paste={handlePaste}
-               back={handleBack}
-               forward={handleForward}
-               choosecolors={handleColorS}
-               choosecolorf={handleColorF}
-               close={handleClose}
-               handleWidth={handleWidth}
-               handleOpacity={handleOpacity}
              />
 
            </Portal>
