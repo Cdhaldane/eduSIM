@@ -20,8 +20,9 @@
   position: relative;
   top: -40px;
   left: -12px;
-  color: #636363;
+  color: black;
   font-size: 1.5rem;
+
 }
 .notesim p {
   font-size: 1.1em;
@@ -52,7 +53,7 @@
   position: absolute;
   top: 8px;
   left: 10px;
-  opacity: 80%;
+  opacity: 70%;
   border-radius: 15%;
 }
 

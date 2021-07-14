@@ -32,24 +32,62 @@ const StyledLink = styled(Link)`
     background-color: rgba(255 255 255 / 5%);
   }
   &.active {
-    color: #ff6358;
+
   }
   @media (max-width: 960px) {
     span {
       opacity: 1;
     }
   }
-`; 
+  img{
+    position: relative;
+    margin-right: -15px;
+    left: -10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
 
-function NavLink({children, iconClassName, label, ...rest}) {
+function NavLink({children, iconClassName, img,  label,  ...rest}) {
+
+
+
+
+  const simimg = React.useState(
+    localStorage.getItem('simimg') || ''
+  );
+  const simtitle = React.useState(
+    localStorage.getItem('simtitle') || ''
+  );
+
+
+
+
+
+  console.log(simimg[0])
   return (
     <StyledLink to="/chat" {...rest}>
       {children || (
         <>
-          <i className={iconClassName}></i>
-          <span className="label">{label}</span>
+          {iconClassName !== null ? (
+            <>
+              <i className={iconClassName} ></i>
+              <span className="label">{label}</span>
+            </>
+          ) : (
+            <>
+              <img src={"/uploads/" + simimg[0]} ></img>
+              <span className="label">{simtitle[0]}</span>
+            </>
+          )}
         </>
       )}
+
     </StyledLink>
   );
 }

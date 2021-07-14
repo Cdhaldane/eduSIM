@@ -53,6 +53,13 @@ footer {
   margin-top: 100px;
   text-align: center;
 }
+.welcome a {
+  color: #0645AD;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2rem;
+  margin-top: 100px;
+  text-align: center;
+}
 .welcome p {
   color: white;
   font-family: "Montserrat", sans-serif;
@@ -236,4 +243,11 @@ footer {
 #save:hover{
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
+}
+
+#editpagex {
+  position: relative;
+  top: 0px;
+  color: #8f001a;
+  right: -1770px;
 }

@@ -4,18 +4,25 @@ const GameInstance = require("../models/GameInstances");
 //Get all the game instances that a specific admin has created
 // Request has an admin id
 exports.getGameInstances = async (req, res) => {
+<<<<<<< HEAD
 
   const id = req.query.id;
   const { Op } = require("sequelize");
 
+=======
+  const id = req.query.id;
+>>>>>>> editpage_v2
     try {
       let gameinstance = await GameInstance.findAll({
       where: {
         createdby_adminid: id,
+<<<<<<< HEAD
         game_parameters : {
           [Op.or] : [{"status":"created"} , {"status":"started"} , {"status":"ended"}]
         }
 
+=======
+>>>>>>> editpage_v2
       },
     });
       return res.send(gameinstance);
@@ -47,9 +54,13 @@ exports.getGameInstance = async (req, res) => {
 
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
+<<<<<<< HEAD
 
   const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, invite_url } = req.body;
 
+=======
+  const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, invite_url } = req.body;
+>>>>>>> editpage_v2
     try {
       let newGameInstance = await GameInstance.create({
         gameinstance_name,
@@ -65,6 +76,24 @@ exports.createGameInstance = async (req, res) => {
       });
     }
   };
+
+// exports.upload = async (req, res) => {
+//   if (req.files === null) {
+//     return res.status(400).json({ msg: 'No file uploaded' });
+//   }
+//
+//   const file = req.files.file;
+//
+//   file.mv(`${__dirname}../../../client/public/uploads/${file.name}`, err => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).send(err);
+//     }
+//
+//     res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+//   });
+// }
+
 
 //Update a game instance
 exports.updateGameInstance = async (req, res) => {
@@ -89,7 +118,10 @@ exports.updateGameInstance = async (req, res) => {
     }
     if (gameinstance_photo_path) {
       gameinstance.gameinstance_photo_path = gameinstance_photo_path;
+<<<<<<< HEAD
 
+=======
+>>>>>>> editpage_v2
     }
     if (game_parameters) {
       gameinstance.game_parameters = game_parameters;
@@ -108,6 +140,7 @@ exports.updateGameInstance = async (req, res) => {
     }
   };
 
+<<<<<<< HEAD
   //
   // exports.deleteGameInstance = async (req, res) => {
   //
@@ -165,6 +198,28 @@ exports.deleteGameInstance = async (req, res) => {
     return res.send({
       message: `Game ${id} has been deleted!`,
       gameinstance
+=======
+//Delete a game instance
+exports.deleteGameInstance = async (req, res) => {
+  const  id  = req.query.id;
+
+  const gameinstance = await GameInstance.findOne({
+    where: {
+      gameinstanceid: id,
+    },
+  });
+
+  if (!gameinstance) {
+    return res.status(400).send({
+      message: `No game instance found with the id ${id}`,
+    });
+  }
+
+  try {
+    await gameinstance.destroy();
+    return res.send({
+      message: `Game ${id} has been deleted!`,
+>>>>>>> editpage_v2
     });
   } catch (err) {
     return res.status(500).send({

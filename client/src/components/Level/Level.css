@@ -1,3 +1,8 @@
+#all {
+  position: relative;
+  top: 130px;
+}
+
 .ball1{
   position: relative;
   top:  -872px;
@@ -71,7 +76,7 @@
 
 .level button{
   position: relative;
-  top: -1000px;
+  top: -1010px;
   left: 1400px;
   width: 100px;
   height: 50px;
