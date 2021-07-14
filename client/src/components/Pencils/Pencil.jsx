@@ -51,20 +51,26 @@ function Pencil(props) {
   function drawText(){
     props.drawText();
   }
-  function drawImage(){
-    props.drawImage();
+  function addImage(){
+    props.addImage();
   }
   function eraseLine(){
     props.eraseLine();
   }
-
+  function stopDrawing(){
+    props.stopDrawing();
+  }
   function handleColor(e){
     props.choosecolor(e);
   }
-
   function handleClose(e){
     setDrop(!drop);
   }
+  function handleImage(e){
+    props.handleImage(e);
+  }
+
+
 
   return (
     <div className="pencil">
@@ -93,10 +99,12 @@ function Pencil(props) {
         addStick={addStick}
         drawLine={drawLine}
         drawText={drawText}
-        drawImage={drawImage}
+        stopDrawing={stopDrawing}
+        addImage={addImage}
         eraseLine={eraseLine}
         choosecolor={handleColor}
         close={handleClose}
+        handleImage={handleImage}
       />
     ) : (
 

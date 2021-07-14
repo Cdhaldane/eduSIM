@@ -218,6 +218,7 @@ function Stages(props) {
   const eraseLine = () => {
     addLine(stageEl.current.getStage(), layerEl.current, "erase");
   };
+
   const drawText = () => {
     const id = addTextNode(stageEl.current.getStage(), layerEl.current);
     const shs = shapes.concat([id]);

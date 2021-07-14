@@ -185,13 +185,13 @@ a {
 #dswitch{
     position: absolute;
     left: -120px;
-    bottom: 45px;
+    bottom: 97px;
 }
 
 #eswitch{
     position: absolute;
     left: -120px;
-    bottom: -10px;
+    bottom: 45px;
 }
 
 .dropdown button {

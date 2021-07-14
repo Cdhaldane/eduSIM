@@ -110,13 +110,11 @@ function EditPage(props){
 
           <GridMain>
             <Canvas
-              color={color}
               mvisible={handleMvisible}
               avisible={handleAvisible}
               pavisible={handlePavisible}
               svisible={handleSvisible}
               pevisible={handlePevisible}
-              ptype={handleType}
             />
 
 

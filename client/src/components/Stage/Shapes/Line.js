@@ -1,5 +1,6 @@
 import Konva from "konva";
-export const addLine = ( stage, layer, mode = "brush", color) => {
+export const addLine = ( stage, layer, mode = "brush", color, x) => {
+console.log(x)
   let colour = "green";
   let isPaint = false;
   let lastLine;
@@ -14,7 +15,10 @@ export const addLine = ( stage, layer, mode = "brush", color) => {
       points: [pos.x, pos.y],
       draggable: mode == "brush",
     });
-    layer.add(lastLine);
+    if(x == true){
+      layer.add(lastLine);
+    }
+
   });
   stage.on("mouseup touchend", function() {
     console.log(color)

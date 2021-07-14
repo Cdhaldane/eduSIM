@@ -16,6 +16,7 @@ import "./Dropdown.css";
     const [colour, setColour] = useState("");
     const [checkedd, setCheckedd] = useState(false);
     const [checkede, setCheckede] = useState(false);
+    const [imgsrc, setImgsrc] = useState("");
 
     function handleChange(e){
       setColour(e);
@@ -88,15 +89,23 @@ import "./Dropdown.css";
     props.drawText();
     props.close();
   }
-  function drawImage(){
-    props.drawImage();
+  function addImage(){
+    props.addImage();
     props.close();
   }
   function eraseLine(){
     setCheckede(!checkede)
     props.eraseLine();
-
   }
+  function stopDrawing(){
+    setCheckede(!checkede)
+    props.stopDrawing();
+  }
+  function handleImage(e){
+    setImgsrc(e.target.value)
+    props.handleImage(imgsrc)
+  }
+
 
  return (
      <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
@@ -164,11 +173,37 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>MEDIA!</h2>
           </DropdownItem>
-          <DropdownItems onClick={drawImage} leftIcon={<i id="icons" class="fa fa-picture-o" onClick={drawImage}></i>}>Image</DropdownItems>
+            <DropdownItem
+              leftIcon={<i id="icons" class="fa fa-picture-o"></i>}
+              rightIcon=""
+              goToMenu="image">
+              Image
+            </DropdownItem>
           <DropdownItems leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>}>Video</DropdownItems>
           <DropdownItems leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItems>
           <DropdownItems leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItems>
           <DropdownItems onClick={drawText} leftIcon={<i id="icons" class="fas fa-comment-alt" onClick={drawText}></i>}>Textbox</DropdownItems>
+        </div>
+      </CSSTransition>
+      <CSSTransition
+        in={activeMenu === 'image'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>Image</h2>
+          </DropdownItem>
+          <label htmlFor="some-id">
+          Image source ->
+          </label>
+          <input id="some-id" type="text"  onChange={handleImage} value={imgsrc} />
+          <DropdownItems
+            onClick={addImage}
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addImage}></i>}>Add</DropdownItems>
+
         </div>
       </CSSTransition>
 
@@ -193,24 +228,17 @@ import "./Dropdown.css";
             onClick={drawLine}
             leftIcon={<i id="icons" class="fas fa-marker" onClick={drawLine}></i>}>
             Draw</DropdownItems>
-            <label id="dswitch">
-            <Switch
-              onChange={handleDraw}
-              checked={checkedd}
-              className="react-switch"
-            />
-          </label>
+
+
           <DropdownItems
              onClick={eraseLine}
             leftIcon={<i id="icons" class="fas fa-eraser"
             onClick={eraseLine}></i>}>Eraser</DropdownItems>
-            <label id="eswitch">
-            <Switch
-              onChange={handleErase}
-              checked={checkede}
-              className="react-switch"
-            />
-          </label>
+
+          <DropdownItems
+             onClick={stopDrawing}
+            leftIcon={<i id="icons" class="fas fa-eraser"
+            onClick={stopDrawing}></i>}>Select</DropdownItems>
 
         </div>
       </CSSTransition>
