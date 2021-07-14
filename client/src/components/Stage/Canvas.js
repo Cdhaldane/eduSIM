@@ -1218,7 +1218,7 @@ class Graphics extends Component {
       rotation: 0,
       name: name,
       ref: name,
-      image: this.state.image,
+      fill: this.state.colorf,
       useImage: true
     };
     var layer = this.refs.layer2;
