@@ -116,8 +116,6 @@ function EditPage(props){
               svisible={handleSvisible}
               pevisible={handlePevisible}
             />
-
-
           </GridMain>
         </Grid>
       </Container>

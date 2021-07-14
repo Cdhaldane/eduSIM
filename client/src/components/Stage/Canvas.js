@@ -1703,13 +1703,13 @@ class Graphics extends Component {
               y={this.state.layerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              // draggable
-              // onDragEnd={() => {
-              //   this.setState({
-              //     layerX: this.refs.layer2.x(),
-              //     layerY: this.refs.layer2.y()
-              //   });
-              // }}
+              draggable
+              onDragEnd={() => {
+                this.setState({
+                  layerX: this.refs.layer2.x(),
+                  layerY: this.refs.layer2.y()
+                });
+              }}
               ref="layer2"
             >
               <Rect

@@ -14,10 +14,6 @@ const gameinstances = db.define('gameinstances', {
   },
   gameinstance_name: {
     type: Sequelize.STRING(250)
-<<<<<<< HEAD
-
-=======
->>>>>>> editpage_v2
   },
   gameinstance_photo_path: {
     type: Sequelize.STRING(250)
