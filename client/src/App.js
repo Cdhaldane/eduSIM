@@ -3,7 +3,7 @@ import { Route, Switch} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
 import Welcome from "./views/welcome.js";
-import Home from "./views/Home.js";
+import Home from "./views/home.js";
 import Profile from "./views/profile.js";
 import Dashboard from "./views/Dashboard";
 import Homepage from "./views/Homepage";
