@@ -4,7 +4,6 @@ import "./Level.css"
 function Level(props) {
   const [count, setCount] = useState(1);
   let items = [];
-  console.log(props)
 
   function createSelectItems() {
 
@@ -14,7 +13,6 @@ function Level(props) {
          //what props are currently passed to the parent component
     }
     return items;
-    console.log(items);
 }
 
   return (

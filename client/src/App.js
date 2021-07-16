@@ -2,11 +2,10 @@ import React from "react";
 import { Route, Switch} from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
-import Welcome from "./views/welcome.js";
+import Welcome from "./views/Welcome.js";
 import Home from "./views/Home.js";
-import Profile from "./views/profile.js";
+import Profile from "./views/Profile.js";
 import Dashboard from "./views/Dashboard";
-import Homepage from "./views/Homepage";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
 import { withAuth0 } from "@auth0/auth0-react";
@@ -29,7 +28,6 @@ class App extends React.Component {
               <Route path="/" exact component={Home} />
               <Route path="/welcome" exact component={Welcome} />
               <Route path="/gamepage" exact component={GamePage} />
-            <Route path="/homepage" exact component={Homepage} />
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />
               <ProtectedRoute path="/dashboard" component={Dashboard} />
@@ -47,7 +45,6 @@ class App extends React.Component {
               <Route path="/" exact component={Home} />
               <Route path="../components/Navbar" exact component={Navbar} />
               <Route path="/welcome" exact component={Welcome} />
-              <Route path="/homepage" exact component={Homepage} />
               <Route path="/gamepage" exact component={GamePage} />
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />

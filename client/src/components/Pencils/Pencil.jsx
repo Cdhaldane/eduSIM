@@ -49,10 +49,19 @@ function Pencil(props) {
     props.drawLine();
   }
   function drawText(){
-    props.drawText();
+    props.addText();
   }
   function addImage(){
     props.addImage();
+  }
+  function addVideo(){
+    props.addVideo();
+  }
+  function addAudio(){
+    props.addAudio();
+  }
+  function addDocument(){
+    props.addDocument();
   }
   function eraseLine(){
     props.eraseLine();
@@ -69,6 +78,13 @@ function Pencil(props) {
   function handleImage(e){
     props.handleImage(e);
   }
+  function handleVideo(e){
+    props.handleVideo(e);
+  }
+  function handleAudio(e){
+    props.handleAudio(e);
+  }
+
 
 
 
@@ -101,10 +117,15 @@ function Pencil(props) {
         drawText={drawText}
         stopDrawing={stopDrawing}
         addImage={addImage}
+        addVideo={addVideo}
+        addAudio={addAudio}
+        addDocument={addDocument}
         eraseLine={eraseLine}
         choosecolor={handleColor}
         close={handleClose}
         handleImage={handleImage}
+        handleVideo={handleVideo}
+        handleAudio={handleAudio}
       />
     ) : (
 

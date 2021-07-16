@@ -4,6 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import Stages from "../Stage/Stage"
 import { SketchPicker, CirclePicker, ChromePicker } from 'react-color';
 import Switch from "react-switch"
+import axios from "axios";
 
 
 import "./Dropdown.css";
@@ -12,11 +13,19 @@ import "./Dropdown.css";
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
     const [ components, setComponents ] = useState();
+    const [img, setImg] = useState();
     const dropdownRef = useRef(null);
     const [colour, setColour] = useState("");
     const [checkedd, setCheckedd] = useState(false);
     const [checkede, setCheckede] = useState(false);
-    const [imgsrc, setImgsrc] = useState("");
+    const [imgsrc, setImgsrc] = useState('');
+    const [vidsrc, setVidsrc] = useState('')
+    const [audiosrc, setAudiosrc] = useState('')
+    const [file, setFile] = useState('');
+    const [filename, setFilename] = useState("Choose File");
+    const [message, setMessage] = useState('');
+    const [uploadedFile, setUploadedFile] = useState({});
+    const [uploadPercentage, setUploadPercentage] = useState(0);
 
     function handleChange(e){
       setColour(e);
@@ -61,6 +70,58 @@ import "./Dropdown.css";
       );
     }
 
+    function DropdownItemImg(props) {
+      return (
+        <a href="#" className="menu-item">
+          <span className="icon-button">{props.leftIcon}</span>
+          {props.children}
+          <span className="icon-right">{props.rightIcon}</span>
+        </a>
+      );
+    }
+    const submitNote = async event => {
+        console.log(filename)
+        event.preventDefault();
+        setFilename(encodeURI(filename))
+        const formData = new FormData();
+        formData.append('file', file);
+
+        console.log(file)
+
+        try {
+          const res = await axios.post('http://localhost:5000/gameinstances/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+          });
+          console.log(res);
+          const { fileName, filePath } = res.data;
+
+          setUploadedFile({ fileName, filePath });
+
+          setMessage('File Uploaded');
+        } catch (err) {
+          if (err.response.status === 500) {
+            setMessage('There was a problem with the server');
+          } else {
+            setMessage(err.response.data.msg);
+          }
+          setUploadPercentage(0)
+        }
+        console.log(uploadedFile.filePath)
+      }
+
+      function handleImg(event){
+        var name = event.target.files[0].name
+        var files = event.target.files[0]
+        setFile(files);
+        setFilename(name);
+        setImg(URL.createObjectURL(event.target.files[0]))
+        name = "/uploads/" + name
+        props.handleImage(name)
+      }
+
+
   function addCircle(){
     props.addCircle();
     props.close();
@@ -89,8 +150,20 @@ import "./Dropdown.css";
     props.drawText();
     props.close();
   }
-  function addImage(){
+  function addImage(e){
     props.addImage();
+    props.close();
+  }
+  function addVideo(e){
+    props.addVideo();
+    props.close();
+  }
+  function addAudio(e){
+    props.addAudio();
+    props.close();
+  }
+  function addDocument(e){
+    props.addDocument();
     props.close();
   }
   function eraseLine(){
@@ -102,8 +175,21 @@ import "./Dropdown.css";
     props.stopDrawing();
   }
   function handleImage(e){
+    submitNote(e);
     setImgsrc(e.target.value)
     props.handleImage(imgsrc)
+  }
+  function handleVideo(e){
+    setVidsrc(e.target.value)
+    props.handleVideo(vidsrc);
+  }
+  function handleAudio(e){
+    setAudiosrc(e.target.value)
+    props.handleAudio(audiosrc);
+  }
+
+  function handleImgSubmit(e){
+    submitNote(e);
   }
 
 
@@ -179,9 +265,9 @@ import "./Dropdown.css";
               goToMenu="image">
               Image
             </DropdownItem>
-          <DropdownItems leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>}>Video</DropdownItems>
-          <DropdownItems leftIcon={<i id="icons" class="fas fa-volume-up"></i>}>Sound</DropdownItems>
-          <DropdownItems leftIcon={<i id="icons" class="fas fa-file"></i>}>Document</DropdownItems>
+          <DropdownItem leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>} goToMenu="video">Video</DropdownItem>
+        <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>} goToMenu="audio">Sound</DropdownItem>
+      <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>} goToMenu="docs" >Document</DropdownItem>
           <DropdownItems onClick={drawText} leftIcon={<i id="icons" class="fas fa-comment-alt" onClick={drawText}></i>}>Textbox</DropdownItems>
         </div>
       </CSSTransition>
@@ -193,17 +279,100 @@ import "./Dropdown.css";
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
-            <h2>Image</h2>
+            <h2>IMAGE!</h2>
           </DropdownItem>
-          <label htmlFor="some-id">
-          Image source ->
-          </label>
-          <input id="some-id" type="text"  onChange={handleImage} value={imgsrc} />
+          <DropdownItemImg
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={handleImgSubmit}></i>}>
+        </DropdownItemImg>
+            <input
+                  type="file"
+                  name="img"
+                  id="file"
+                  onChange={handleImg}
+                  />
+              <label id="fileI"for="file">From file</label>
+
+            <DropdownItemImg
+              leftIcon={<i id="icons" class="fas fa-plus"
+              onClick={addImage}></i>}>
+          </DropdownItemImg>
+          <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
           <DropdownItems
             onClick={addImage}
             leftIcon={<i id="icons" class="fas fa-plus"
             onClick={addImage}></i>}>Add</DropdownItems>
+        </div>
+      </CSSTransition>
+      <CSSTransition
+        in={activeMenu === 'video'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>VIDEO!</h2>
+          </DropdownItem>
+            <DropdownItems
+              leftIcon={<i id="icons" class="fas fa-plus"
+              onClick={addVideo}></i>}>
+          </DropdownItems>
+          <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
+          <DropdownItems
+            onClick={addVideo}
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addVideo}></i>}>Add</DropdownItems>
+        </div>
+      </CSSTransition>
+      <CSSTransition
+        in={activeMenu === 'audio'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>AUDIO!!</h2>
+          </DropdownItem>
+            <DropdownItems
+              leftIcon={<i id="icons" class="fas fa-plus"
+              onClick={addAudio}></i>}>
+          </DropdownItems>
+          <input id="imginputv" type="text" placeholder="Audio source..." onChange={handleAudio} value={audiosrc} />
+          <DropdownItems
+            onClick={addAudio}
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addAudio}></i>}>Add</DropdownItems>
+        </div>
+      </CSSTransition>
 
+      <CSSTransition
+        in={activeMenu === 'docs'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>DOCUMENTS!</h2>
+          </DropdownItem>
+          <DropdownItemImg
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={handleImgSubmit}></i>}>
+        </DropdownItemImg>
+            <input
+                  type="file"
+                  name="img"
+                  id="file"
+                  onChange={handleImg}
+                  />
+              <label id="fileI"for="file">From file</label>
+
+          <DropdownItems
+            onClick={addDocument}
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addDocument}></i>}>Add</DropdownItems>
         </div>
       </CSSTransition>
 

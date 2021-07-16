@@ -66,10 +66,6 @@ function NavLink({children, iconClassName, img,  label,  ...rest}) {
   );
 
 
-
-
-
-  console.log(simimg[0])
   return (
     <StyledLink to="/chat" {...rest}>
       {children || (

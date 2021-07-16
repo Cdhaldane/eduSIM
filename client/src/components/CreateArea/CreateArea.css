@@ -309,11 +309,11 @@ select#imgoptions option[value="img2"] { background-image:"temp.png"; }
 select#imgoptions option[value="img3"] { background-image:"temp.png"; }
 
 #file {
-  border: solid 3px black;
-  position: relative;
+  position: absolute;
   bottom: 70px;
   height: 0px;
-  color: black;
+  width: 0px;
+  color: white;
   font-family: 'Raleway';
   font-size: 2.0rem;
 }

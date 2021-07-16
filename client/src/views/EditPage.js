@@ -88,8 +88,6 @@ function EditPage(props){
     const simimg = React.useState(
       localStorage.getItem('simimg') || ''
     );
-    console.log(simimg)
-
 
     const toggle = () => setShowNav(!showNav)
     return (
