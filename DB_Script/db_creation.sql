@@ -147,8 +147,9 @@ CREATE TABLE public.gameplayers (
     gameinstanceid uuid NOT NULL,
     game_room character varying(250),
     player_email character varying(250),
-    gamestarttimestamp timestamp without time zone,
-    gamerole character varying(250)
+    gamerole character varying(250),
+    "createdAt" timestamp without time zone,
+    "updatedAt" timestamp with time zone NOT NULL 
 );
 
 
