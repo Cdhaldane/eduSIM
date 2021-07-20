@@ -145,10 +145,10 @@ CREATE TABLE public.gameplayers (
     fname character varying(250),
     lname character varying(250),
     gameinstanceid uuid NOT NULL,
-    gameroomid uuid,
+    game_room character varying(250),
     player_email character varying(250),
     gamestarttimestamp timestamp without time zone,
-    gamerole_id uuid
+    gamerole character varying(250)
 );
 
 
