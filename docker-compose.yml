@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  backend:
+    env_file:
+        "./.env"
+    build:
+      context: ./server
+      dockerfile: ./EduSimNodeDockerfile
+    image: "dev/edusim-backend"
+    ports:
+      - "5000:5000"
+  frontend:
+    build:
+      context: ./client
+      dockerfile: ./EduSimReactDockerfile
+    image: "dev/edusim-frontend"
+    ports:
+      - "3000:3000"
+    links:
+      - "backend:be"

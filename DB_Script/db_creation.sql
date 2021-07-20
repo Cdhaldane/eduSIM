@@ -142,6 +142,8 @@ ALTER TABLE public.gameroles OWNER TO postgres;
 
 CREATE TABLE public.gameplayers (
     gameplayerid uuid NOT NULL,
+    fname character varying(250),
+    lname character varying(250),
     gameinstanceid uuid NOT NULL,
     gameroomid uuid,
     player_email character varying(250),
