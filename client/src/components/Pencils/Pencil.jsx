@@ -84,6 +84,10 @@ function Pencil(props) {
   function handleAudio(e){
     props.handleAudio(e);
   }
+  function handleDocument(e){
+    props.handleDocument(e);
+  }
+
 
 
 
@@ -126,6 +130,7 @@ function Pencil(props) {
         handleImage={handleImage}
         handleVideo={handleVideo}
         handleAudio={handleAudio}
+        handleDocument={handleDocument}
       />
     ) : (
 

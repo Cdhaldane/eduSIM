@@ -107,7 +107,8 @@ return (
     height={props.height}
     image={videoElement}
     ref={props.ref}
-    name={props.name}
+    id={props.id}
+    name="shape"
     opacity={props.opacity}
     onClick={playAudio}
     onTransformStart={props.onTransformStart}
@@ -120,19 +121,7 @@ return (
     stroke={props.stroke}
     strokeWidth={props.strokeWidth}
   />
-<Rect
-   x={props.x}
-   y={props.y}
-   width={100}
-   height={100}
-   draggable
-   fill="red"
-   ref={props.ref}
-   name={props.name}
-   shadowBlur={10}
-   onDragMove={props.onDragMove}
-   onDragEnd={props.onDragEnd}
-   />
+
 
        </>
 );

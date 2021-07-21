@@ -53,8 +53,6 @@ function EditPage(props){
     const [num, setNum] = useState(6)
     const [color, setColor]= useState("white")
 
-    console.log(props.location.img)
-
     function handleMvisible(e) {
       setMvisible(e);
     }
@@ -82,12 +80,13 @@ function EditPage(props){
     }
 
     if(props.location.img){
+      localStorage.setItem('gameinstance', props.location.gameinstance)
+      localStorage.setItem('adminid', props.location.adminid)
       localStorage.setItem('simimg', props.location.img)
       localStorage.setItem('simtitle', props.location.title)
     }
-    const simimg = React.useState(
-      localStorage.getItem('simimg') || ''
-    );
+
+    console.log(localStorage.gameinstance)
 
     const toggle = () => setShowNav(!showNav)
     return (
@@ -102,12 +101,14 @@ function EditPage(props){
                 svisible={svisible}
                 pevisible={pevisible}
                 img={props.location.img}
-                title={props.location.title}
+                title={props.location.gameinstance}
               />
           </GridNav>
 
           <GridMain>
             <Canvas
+              adminid={localStorage.adminid}
+              gameinstance={localStorage.gameinstance}
               mvisible={handleMvisible}
               avisible={handleAvisible}
               pavisible={handlePavisible}

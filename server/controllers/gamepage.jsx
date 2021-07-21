@@ -22,7 +22,9 @@ exports.getGameInstances = async (req, res) => {
 ///Get a specific game instance that an admin has created
 // Request has an admin and a gameinstance id
 exports.getGameInstance = async (req, res) => {
-  const { adminid, gameid } = req.params;
+  const adminid = req.query.adminid;
+  const gameid = req.query.gameid;
+
     try {
       let gameinstance = await GameInstance.findOne({
         where: {
@@ -77,12 +79,12 @@ exports.createGameInstance = async (req, res) => {
 
 //Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
-  const { id } = req.params;
+  const { id, gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
+
 
   const gameinstance = await GameInstance.findOne({
     where: {
-      gameinstanceid: id,
+      gameinstanceid: id
     },
   });
 

@@ -7,7 +7,7 @@ import ImageLoader from 'react-image-file';
 function SimNote(props) {
 
   function handleClick() {
-    console.log(props.img)
+    console.log(props.gameid)
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
       props.onDelete(props.id)
       axios.delete('http://localhost:5000/gameinstances/delete/:id',{
@@ -31,7 +31,9 @@ function SimNote(props) {
     <Link to={{
         pathname:"/editpage",
         img: props.img,
-        title: props.title
+        title: props.title,
+        gameinstance: props.gameid,
+        adminid: props.adminid
       }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>

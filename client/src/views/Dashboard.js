@@ -83,6 +83,7 @@ function Dashboard(props) {
              id={index}
              gameid={noteItem.gameinstanceid}
              img={noteItem.gameinstance_photo_path}
+             adminid={noteItem.createdby_adminid}
              onDelete={deleteNote}
              title={noteItem.gameinstance_name}
             />

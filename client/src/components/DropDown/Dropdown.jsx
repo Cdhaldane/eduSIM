@@ -111,6 +111,38 @@ import "./Dropdown.css";
         console.log(uploadedFile.filePath)
       }
 
+      const filesubmitNote = async event => {
+          console.log(filename)
+          event.preventDefault();
+          setFilename(encodeURI(filename))
+          const formData = new FormData();
+          formData.append('file', file);
+
+          console.log(file)
+
+          try {
+            const res = await axios.post('http://localhost:5000/gameinstances/pdfs', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              },
+            });
+            console.log(res);
+            const { fileName, filePath } = res.data;
+
+            setUploadedFile({ fileName, filePath });
+
+            setMessage('File Uploaded');
+          } catch (err) {
+            if (err.response.status === 500) {
+              setMessage('There was a problem with the server');
+            } else {
+              setMessage(err.response.data.msg);
+            }
+            setUploadPercentage(0)
+          }
+          console.log(uploadedFile.filePath)
+        }
+
       function handleImg(event){
         var name = event.target.files[0].name
         var files = event.target.files[0]
@@ -119,6 +151,15 @@ import "./Dropdown.css";
         setImg(URL.createObjectURL(event.target.files[0]))
         name = "/uploads/" + name
         props.handleImage(name)
+      }
+
+      function handleFile(event){
+        var name = event.target.files[0].name
+        var files = event.target.files[0]
+        setFile(files);
+        setFilename(name);
+        name = "/pdfs/" + name
+        props.handleDocument(name)
       }
 
 
@@ -179,6 +220,7 @@ import "./Dropdown.css";
     setImgsrc(e.target.value)
     props.handleImage(imgsrc)
   }
+
   function handleVideo(e){
     setVidsrc(e.target.value)
     props.handleVideo(vidsrc);
@@ -190,6 +232,9 @@ import "./Dropdown.css";
 
   function handleImgSubmit(e){
     submitNote(e);
+  }
+  function handleFilesubmit(e){
+    filesubmitNote(e);
   }
 
 
@@ -359,13 +404,13 @@ import "./Dropdown.css";
           </DropdownItem>
           <DropdownItemImg
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={handleImgSubmit}></i>}>
+            onClick={handleFilesubmit}></i>}>
         </DropdownItemImg>
             <input
                   type="file"
                   name="img"
                   id="file"
-                  onChange={handleImg}
+                  onChange={handleFile}
                   />
               <label id="fileI"for="file">From file</label>
 

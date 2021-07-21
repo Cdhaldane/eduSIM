@@ -13,7 +13,8 @@ import { v1 as uuidv1 } from 'uuid';
 import Canvas from "./Canvas.js"
 import fileDownload from 'js-file-download'
 import axios from 'axios'
-
+import { pdf } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
 
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
@@ -96,7 +97,8 @@ class URLImage extends React.Component {
         height={this.props.height}
         image={this.state.image}
         ref={this.props.ref}
-        name={this.props.name}
+        id={this.props.id}
+        name="shape"
         opacity={this.props.opacity}
         onClick={this.props.onClick}
         onTransformStart={this.props.onTransformStart}
@@ -114,9 +116,6 @@ class URLImage extends React.Component {
   }
 }
 
-
-
-
 class TransformerComponent extends React.Component {
   componentDidMount() {
     this.checkNode();
@@ -125,24 +124,27 @@ class TransformerComponent extends React.Component {
     this.checkNode();
   }
   checkNode() {
-    const stage = this.transformer.getStage();
-
-    const { selectedShapeName } = this.props;
-    if (selectedShapeName === "") {
-      this.transformer.detach();
-      return;
-    }
-    const selectedNode = stage.findOne("." + selectedShapeName);
-    if (selectedNode === this.transformer.node()) {
-      return;
-    }
-
-    if (selectedNode) {
-      this.transformer.attachTo(selectedNode);
-    } else {
-      this.transformer.detach();
-    }
-    this.transformer.getLayer().batchDraw();
+    // const stage = this.transformer.getStage();
+    //
+    // const { selectedShapeName } = this.props;
+    // if (selectedShapeName === "") {
+    //   this.transformer.detach();
+    //   console.log(1)
+    //   return;
+    // }
+    // const selectedNode = stage.findOne("." + selectedShapeName);
+    // if (selectedNode === this.transformer.node()) {
+    //   return;
+    // }
+    //
+    // if (selectedNode) {
+    //   this.transformer.attachTo(selectedNode);
+    //   console.log(2)
+    // } else {
+    //   this.transformer.detach();
+    //   console.log(3)
+    // }
+    // this.transformer.getLayer().batchDraw();
   }
   render() {
     if (this.props.selectedShapeName.includes("text")) {
@@ -263,6 +265,10 @@ class Graphics extends Component {
       imageDeleteCount: 0,
       videoDeleteCount: 0,
       audioDeletedCount: 0,
+      gameinstanceid: this.props.gameinstance,
+      adminid: this.props.adminid,
+      savedstates: [],
+      draggable: false,
 
       ptype: "",
       pageNumber: 6,
@@ -272,10 +278,66 @@ class Graphics extends Component {
       imgsrc: "https://konvajs.org/assets/lion.png",
       audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
       docsrc: "",
-      docimage: null
-    };
+      docimage: null,
+      selection: {visible: false,
+                  x1: -100,
+                  y1: -100,
+                  x2: 0,
+                  y2: 0}
+                  };
 
     this.handleWheel = this.handleWheel.bind(this);
+    console.log(this.state.adminid)
+    console.log(this.state.gameinstanceid)
+
+    var data =  {
+          adminid: this.state.adminid,
+          gameid: this.state.gameinstanceid
+      }
+
+    axios.get('http://localhost:5000/gameinstances/getGameInstance/:adminid/:gameid', {
+      params: {
+            adminid: this.state.adminid,
+            gameid: this.state.gameinstanceid
+        }
+    })
+    .then((res) => {
+      const allData = res.data;
+      console.log(JSON.parse(allData.game_parameters));
+      this.setState({
+        rectangles: JSON.parse(allData.game_parameters)[0] || []
+      })
+      this.setState({
+        ellipses:JSON.parse(allData.game_parameters)[1] || []
+      })
+      this.setState({
+        stars: JSON.parse(allData.game_parameters)[2] || []
+      })
+      this.setState({
+        texts: JSON.parse(allData.game_parameters)[3] || []
+      })
+      this.setState({
+        arrows: JSON.parse(allData.game_parameters)[4] || []
+      })
+      this.setState({
+        triangles: JSON.parse(allData.game_parameters)[5] || []
+      })
+      this.setState({
+        images: JSON.parse(allData.game_parameters)[6] || []
+      })
+      this.setState({
+        videos: JSON.parse(allData.game_parameters)[7] || []
+      })
+      this.setState({
+        audios: JSON.parse(allData.game_parameters)[8] || []
+      })
+      this.setState({
+        documents: JSON.parse(allData.game_parameters)[9] || []
+      })
+    })
+    .catch(error => console.log(error.response));
+
+
 
   }
   handleType = (e) => {
@@ -315,10 +377,10 @@ class Graphics extends Component {
       videos = this.state.videos,
       audios = this.state.audios,
       documents = this.state.documents;
-    if (
-      JSON.stringify(this.state.saved) !==
-      JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
-    ) {
+    // if (
+    //   JSON.stringify(this.state.saved) !==
+    //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
+    // ) {
       this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents] });
 
       let arrows1 = this.state.arrows;
@@ -339,60 +401,82 @@ class Graphics extends Component {
         }
       });
 
-      if (this.state.roadmapId) {
+      // if (this.state.roadmapId) {
+
+              console.log(this.state.gameinstanceid)
+              var body = {
+                  id: this.state.gameinstanceid,
+                  game_parameters: JSON.stringify(this.state.saved),
+                  createdby_adminid: localStorage.adminid,
+                  invite_url: 'value'
+                }
+
+                console.log(this.state.saved)
+                console.log(this.props)
+
+                axios.put('http://localhost:5000/gameinstances/update/:id', body)
+                   .then((res) => {
+                      console.log(res)
+                     })
+                    .catch(error => console.log(error.response));
+                   console.log();
+
+              //if draft already exists
+
+
         //if draft already exists
-        this.setState({ saving: true });
-        fetch("", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            roadmapId: this.state.roadmapId,
-            data: {
-              rects: rects,
-              ellipses: ellipses,
-              stars: stars,
-              texts: texts,
-              arrows: arrows1,
-              triangles: triangles,
-              audios: audios,
-              documents: documents,
-              images: images,
-              vidoes: videos
-            }
-          })
-        }).then(res => {
-          this.setState({ saving: false });
-        });
-      } else {
-        //if first time pressing sav
-        this.setState({ saving: true });
-        fetch("", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: this.props.auth.user.id,
-            roadmapType: "draft",
-            data: {
-              rects: rects,
-              ellipses: ellipses,
-              stars: stars,
-              texts: texts,
-              arrows: arrows,
-              triangles: triangles,
-              audios: audios,
-              documents: documents,
-              images: images,
-              vidoes: videos
-            }
-          })
-        }).then(res =>
-          res.json().then(data => {
-            this.setState({ saving: false });
-            this.setState({ roadmapId: data.roadmapId });
-          })
-        );
-      }
-    }
+      //   this.setState({ saving: true });
+      //   fetch("", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       roadmapId: this.state.roadmapId,
+      //       data: {
+      //         rects: rects,
+      //         ellipses: ellipses,
+      //         stars: stars,
+      //         texts: texts,
+      //         arrows: arrows1,
+      //         triangles: triangles,
+      //         audios: audios,
+      //         documents: documents,
+      //         images: images,
+      //         vidoes: videos
+      //       }
+      //     })
+      //   }).then(res => {
+      //     this.setState({ saving: false });
+      //   });
+      // } else {
+      //   //if first time pressing sav
+      //   this.setState({ saving: true });
+      //   fetch("", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       userId: this.props.auth.user.id,
+      //       roadmapType: "draft",
+      //       data: {
+      //         rects: rects,
+      //         ellipses: ellipses,
+      //         stars: stars,
+      //         texts: texts,
+      //         arrows: arrows,
+      //         triangles: triangles,
+      //         audios: audios,
+      //         documents: documents,
+      //         images: images,
+      //         vidoes: videos
+      //       }
+      //     })
+      //   }).then(res =>
+      //     res.json().then(data => {
+      //       this.setState({ saving: false });
+      //       this.setState({ roadmapId: data.roadmapId });
+      //     })
+      //   );
+      // }
+    // }
   };
 
   handleStageClick = e => {
@@ -409,11 +493,10 @@ class Graphics extends Component {
     ) {
       this.setState(
         {
-          selectedShapeName: shape.name()
+          selectedShapeName: shape.id()
         },
         () => {
           this.refs.graphicStage.draw();
-          console.log(this.refs.graphicStage.current)
         }
       );
     }
@@ -453,11 +536,81 @@ class Graphics extends Component {
       });
     }
   };
+
+  updateSelectionRect = () => {
+
+    const node = this.refs.selectionRectRef;
+    node.setAttrs({
+      visible: this.state.selection.visible,
+      x: Math.min(this.state.selection.x1, this.state.selection.x2),
+      y: Math.min(this.state.selection.y1, this.state.selection.y2),
+      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
+      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
+      fill: "rgba(0, 161, 255, 0.3)"
+    });
+    node.getLayer().batchDraw();
+  };
+
+  onMouseDown = (e) => {
+    const isElement = e.target.findAncestor(".elements-container");
+    const isTransformer = e.target.findAncestor("Transformer");
+    if (isElement || isTransformer) {
+      return;
+    }
+    const pos = e.target.getStage().getPointerPosition();
+    this.state.selection.visible = true;
+    this.state.selection.x1 = pos.x;
+    this.state.selection.y1 = pos.y;
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRect();
+  };
+
+
+  handleMouseUp = () => {
+    this.setState({
+      draggable: false
+    })
+    if (!this.state.selection.visible) {
+      return;
+    }
+    const selBox = this.refs.selectionRectRef.getClientRect();
+    const elements = [];
+    this.refs.layer2.find(".shape").forEach((elementNode) => {
+      const elBox = elementNode.getClientRect();
+      if (Konva.Util.haveIntersection(selBox, elBox)) {
+        elements.push(elementNode);
+
+      }
+    });
+    console.log(this.refs.layer2.find(".rectangle"))
+    this.refs.trRef.transformer.nodes(elements);
+    this.state.selection.visible = false;
+    // disable click event
+    Konva.listenClickTap = false;
+    this.updateSelectionRect();
+  };
+
+  onMouseMove = (e) => {
+    const pos = e.target.getStage().getPointerPosition();
+
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRect();
+  };
+
   handleMouseOver = event => {
     //get the currennt arrow ref and modify its position by filtering & pushing again
     //console.log("lastFill: ", this.state.lastFill);
+    if (!this.state.selection.visible) {
+      return;
+    }
     var pos = this.refs.graphicStage.getPointerPosition();
     var shape = this.refs.graphicStage.getIntersection(pos);
+
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRect();
 
     if (shape && shape.attrs.link) {
       document.body.style.cursor = "pointer";
@@ -630,6 +783,7 @@ class Graphics extends Component {
   }
 
   handleUndo = () => {
+    this.handleSave()
     if (!this.state.isTransforming) {
       if (!this.state.textEditVisible) {
         if (historyStep === 0) {
@@ -704,6 +858,7 @@ class Graphics extends Component {
       let name = this.state.selectedShapeName;
       let copiedElement = null;
       if (name.includes("rect")) {
+        console.log(this.state.rectangles)
         copiedElement = this.state.rectangles.filter(function(
           eachRect
         ) {
@@ -722,6 +877,7 @@ class Graphics extends Component {
           return eachRect.name === name;
         });
       } else if (name.includes("image")) {
+        console.log(this.state.images)
         copiedElement = this.state.images.filter(function(
           eachRect
         ) {
@@ -787,7 +943,7 @@ class Graphics extends Component {
             height: copiedElement.height,
             stroke: copiedElement.stroke,
             strokeWidth: copiedElement.strokeWidth,
-            name:
+            id:
               "rectangle" +
               (this.state.rectangles.length +
                 this.state.rectDeleteCount +
@@ -847,7 +1003,7 @@ class Graphics extends Component {
               link: copiedElement.link,
               stroke: copiedElement.stroke,
               strokeWidth: copiedElement.strokeWidth,
-              name:
+              id:
                 "arrow" +
                 (this.state.arrows.length +
                   1 +
@@ -886,7 +1042,7 @@ class Graphics extends Component {
             radiusY: copiedElement.radiusY,
             stroke: copiedElement.stroke,
             strokeWidth: copiedElement.strokeWidth,
-            name:
+            id:
               "ellipse" +
               (this.state.ellipses.length +
                 1 +
@@ -924,11 +1080,10 @@ class Graphics extends Component {
           y: copiedElement.y + 10,
           width: copiedElement.width,
           height: copiedElement.height,
-          sides: copiedElement.sides,
-          radius: copiedElement.radius,
+          imgsrc: copiedElement.imgsrc,
           stroke: copiedElement.stroke,
           strokeWidth: copiedElement.strokeWidth,
-          name:
+          id:
             "image" +
             (this.state.images.length +
               1 +
@@ -966,11 +1121,10 @@ class Graphics extends Component {
         y: copiedElement.y + 10,
         width: copiedElement.width,
         height: copiedElement.height,
-        sides: copiedElement.sides,
-        radius: copiedElement.radius,
+        vidsrc: copiedElement.vidsrc,
         stroke: copiedElement.stroke,
         strokeWidth: copiedElement.strokeWidth,
-        name:
+        id:
           "video" +
           (this.state.videos.length +
             1 +
@@ -1008,11 +1162,10 @@ class Graphics extends Component {
       y: copiedElement.y + 10,
       width: copiedElement.width,
       height: copiedElement.height,
-      sides: copiedElement.sides,
-      radius: copiedElement.radius,
+      audsrc: copiedElement.audsrc,
       stroke: copiedElement.stroke,
       strokeWidth: copiedElement.strokeWidth,
-      name:
+      id:
         "audio" +
         (this.state.audios.length +
           1 +
@@ -1054,7 +1207,7 @@ class Graphics extends Component {
         radius: copiedElement.radius,
         stroke: copiedElement.stroke,
         strokeWidth: copiedElement.strokeWidth,
-        name:
+        id:
           "triangle" +
           (this.state.triangles.length +
             1 +
@@ -1096,7 +1249,7 @@ class Graphics extends Component {
           radius: copiedElement.radius,
           stroke: copiedElement.stroke,
           strokeWidth: copiedElement.strokeWidth,
-          name:
+          id:
             "document" +
             (this.state.documents.length +
               1 +
@@ -1135,7 +1288,7 @@ class Graphics extends Component {
             outerRadius: copiedElement.outerRadius,
             stroke: copiedElement.stroke,
             strokeWidth: copiedElement.strokeWidth,
-            name:
+            id:
               "star" +
               (this.state.stars.length +
                 1 +
@@ -1169,7 +1322,7 @@ class Graphics extends Component {
             y: copiedElement.y + 10,
             link: copiedElement.link,
 
-            name:
+            id:
               "text" +
               (this.state.texts.length +
                 1 +
@@ -1232,93 +1385,93 @@ class Graphics extends Component {
         documentsDeleted = false;
 
       var rects = this.state.rectangles.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             rectDeleteCount: that.state.rectDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var ellipses = this.state.ellipses.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             ellipseDeleteCount: that.state.ellipseDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var triangles = this.state.triangles.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             triangleDeleteCount: that.state.triangleDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var images = this.state.images.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             imageDeleteCount: that.state.imageDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var videos = this.state.videos.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             videoDeleteCount: that.state.videoDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var audios = this.state.audios.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             audioDeletedCount: that.state.audioDeletedCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var documents = this.state.documents.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             documentDeletedCount: that.state.documentDeletedCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var stars = this.state.stars.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             starDeleteCount: that.state.starDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var arrows = this.state.arrows.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             arrowDeleteCount: that.state.arrowDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       var texts = this.state.texts.filter(function(eachRect) {
-        if (eachRect.name === name) {
+        if (eachRect.id === name) {
           that.setState({
             textDeleteCount: that.state.textDeleteCount + 1
           });
         }
-        return eachRect.name !== name;
+        return eachRect.id !== name;
       });
 
       this.setState({
@@ -1371,53 +1524,53 @@ class Graphics extends Component {
       returnTo.texts
     ];
     rectangles.map(eachRect => {
-      if (eachRect.name === currentShapeName) {
+      if (eachRect.id === currentShapeName) {
         toReturn = false;
       }
     });
     ellipses.map(eachEllipse => {
-      if (eachEllipse.name === currentShapeName) {
+      if (eachEllipse.id === currentShapeName) {
         toReturn = false;
       }
     });
     triangles.map(eachTriangle => {
-      if (eachTriangle.name === currentShapeName) {
+      if (eachTriangle.id === currentShapeName) {
         toReturn = false;
       }
     });
     images.map(eachImage => {
-      if (eachImage.name === currentShapeName) {
+      if (eachImage.id === currentShapeName) {
         toReturn = false;
       }
     });
     videos.map(eachVideo => {
-      if (eachVideo.name === currentShapeName) {
+      if (eachVideo.id === currentShapeName) {
         toReturn = false;
       }
     });
     audios.map(eachAudio => {
-      if (eachAudio.name === currentShapeName) {
+      if (eachAudio.id === currentShapeName) {
         toReturn = false;
       }
     });
     documents.map(eachDocument => {
-      if (eachDocument.name === currentShapeName) {
+      if (eachDocument.id === currentShapeName) {
         toReturn = false;
       }
     });
     stars.map(eachStar => {
-      if (eachStar.name === currentShapeName) {
+      if (eachStar.id === currentShapeName) {
         toReturn = false;
       }
     });
     arrows.map(eachArrow => {
-      if (eachArrow.name === currentShapeName) {
+      if (eachArrow.id === currentShapeName) {
         toReturn = false;
       }
     });
 
     texts.map(eachText => {
-      if (eachText.name === currentShapeName) {
+      if (eachText.id === currentShapeName) {
         toReturn = false;
       }
     });
@@ -1453,10 +1606,11 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       rotation: 0,
-      name: name,
       ref: name,
+      name: name,
+      id: name,
       fill: this.state.colorf,
-      useImage: false
+      useImage: false,
     };
     var layer = this.refs.layer2;
     var toPush = rect;
@@ -1475,7 +1629,7 @@ class Graphics extends Component {
       toPush.x = pos.x;
       toPush.y = pos.y;
     }
-    console.log(this.state.rectangles)
+
     this.setState(prevState => ({
       rectangles: [...prevState.rectangles, toPush],
       selectedShapeName: toPush.name
@@ -1499,6 +1653,7 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       rotation: 0,
+      id: name,
       name: name,
       ref: name,
       fill: this.state.colorf,
@@ -1541,6 +1696,7 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       opacity: 1,
+      id: name,
       name: name,
       ref: name,
     };
@@ -1581,6 +1737,7 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       opacity: 1,
+      id: name,
       name: name,
       ref: name,
     };
@@ -1597,13 +1754,11 @@ class Graphics extends Component {
       y: toPush.y
     });
 
-
-
     if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
       toPush.x = pos.x;
       toPush.y = pos.y;
     }
-    console.log(this.state.videos)
+
     this.setState(prevState => ({
       videos: [...prevState.videos, toPush],
       selectedShapeName: toPush.name
@@ -1626,6 +1781,7 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 0,
       opacity: 1,
+      id: name,
       name: name,
       ref: name,
     };
@@ -1679,6 +1835,7 @@ class Graphics extends Component {
       fillPatternImage: this.state.docimage,
       fillPatternOffset: "",
       rotation: 0,
+      id: name,
       name: name,
       ref: name,
     };
@@ -1717,9 +1874,10 @@ class Graphics extends Component {
       radiusY: 50,
       stroke: 'black',
       strokeWidth: 1.5,
-      name: name,
+      id: name,
       fill: 'white',
       ref: name,
+      name: name,
       rotation: 0
     };
     var layer = this.refs.layer2;
@@ -1759,6 +1917,7 @@ class Graphics extends Component {
       outerRadius: 70,
       stroke: 'black',
       strokeWidth: 1.5,
+      id: name,
       name: name,
       fill: 'white',
       ref: name,
@@ -1800,6 +1959,7 @@ class Graphics extends Component {
       fontSize: 40,
       text: "Edit this",
       fontFamily: "Belgrano",
+      id: name,
       name: name,
       fill: 'black',
       ref: ref,
@@ -1838,7 +1998,7 @@ class Graphics extends Component {
   handleColorF = (e) =>{
     this.setState(prevState => ({
       rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               fill: e.hex
@@ -1848,7 +2008,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       triangles: prevState.triangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               fill: e.hex
@@ -1858,7 +2018,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.name === this.state.selectedShapeName
+        eachCirc.id === this.state.selectedShapeName
           ? {
               ...eachCirc,
               fill: e.hex
@@ -1868,7 +2028,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       stars: prevState.stars.map(eachStar =>
-        eachStar.name === this.state.selectedShapeName
+        eachStar.id === this.state.selectedShapeName
           ? {
               ...eachStar,
               fill: e.hex
@@ -1881,7 +2041,7 @@ class Graphics extends Component {
   handleColorS = (e) => {
     this.setState(prevState => ({
       rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               stroke: e.hex
@@ -1891,7 +2051,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       images: prevState.images.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               stroke: e.hex
@@ -1901,7 +2061,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       videos: prevState.videos.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               stroke: e.hex
@@ -1911,7 +2071,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       audios: prevState.audios.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               stroke: e.hex
@@ -1921,7 +2081,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       triangles: prevState.triangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               stroke: e.hex
@@ -1931,7 +2091,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.name === this.state.selectedShapeName
+        eachCirc.id === this.state.selectedShapeName
           ? {
               ...eachCirc,
               stroke: e.hex
@@ -1941,7 +2101,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       stars: prevState.stars.map(eachStar =>
-        eachStar.name === this.state.selectedShapeName
+        eachStar.id === this.state.selectedShapeName
           ? {
               ...eachStar,
               stroke: e.hex
@@ -1955,7 +2115,7 @@ class Graphics extends Component {
   handleWidth = (e) =>{
     this.setState(prevState => ({
       rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -1965,7 +2125,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       images: prevState.images.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -1975,7 +2135,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       videos: prevState.videos.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -1985,7 +2145,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       audios: prevState.audios.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -1995,7 +2155,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       documents: prevState.documents.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -2005,7 +2165,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       triangles: prevState.triangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               strokeWidth: e/9
@@ -2015,7 +2175,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.name === this.state.selectedShapeName
+        eachCirc.id === this.state.selectedShapeName
           ? {
               ...eachCirc,
               strokeWidth: e/9
@@ -2025,7 +2185,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       stars: prevState.stars.map(eachStar =>
-        eachStar.name === this.state.selectedShapeName
+        eachStar.id === this.state.selectedShapeName
           ? {
               ...eachStar,
               strokeWidth: e/9
@@ -2038,7 +2198,7 @@ class Graphics extends Component {
   handleOpacity = (e) => {
     this.setState(prevState => ({
       rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2048,7 +2208,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       images: prevState.images.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2058,7 +2218,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       documents: prevState.documents.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2068,7 +2228,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       videos: prevState.videos.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2078,7 +2238,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       audios: prevState.audios.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2088,7 +2248,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       triangles: prevState.triangles.map(eachRect =>
-        eachRect.name === this.state.selectedShapeName
+        eachRect.id === this.state.selectedShapeName
           ? {
               ...eachRect,
               opacity: e
@@ -2098,7 +2258,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.name === this.state.selectedShapeName
+        eachCirc.id === this.state.selectedShapeName
           ? {
               ...eachCirc,
               opacity: e
@@ -2108,7 +2268,7 @@ class Graphics extends Component {
     }));
     this.setState(prevState => ({
       stars: prevState.stars.map(eachStar =>
-        eachStar.name === this.state.selectedShapeName
+        eachStar.id === this.state.selectedShapeName
           ? {
               ...eachStar,
               opacity: e
@@ -2161,7 +2321,7 @@ class Graphics extends Component {
   };
   stopDrawing = () => {
     addLine(this.refs.graphicStage.getStage(), this.refs.layer2, "brush", this.state.colorf, false);
-  }
+  };
 
 
   render() {
@@ -2227,15 +2387,21 @@ class Graphics extends Component {
               this.handleCopy();
             } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
               this.handlePaste();
-            }
-          }}
+            } else if (event.ctrlKey) {
+              this.setState({
+                draggable: true
+              })
+            }}}
           tabIndex="0"
           style={{ outline: "none" }}
         >
           <Stage
             onClick={this.handleStageClick}
+            draggabble
             onMouseMove={this.handleMouseOver}
             onWheel={event => this.handleWheel(event)}
+            onMouseDown={this.onMouseDown}
+            onMouseUp={this.handleMouseUp}
             height={window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
@@ -2247,7 +2413,7 @@ class Graphics extends Component {
               y={this.state.layerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              draggable
+              draggable={this.state.draggable}
               onDragEnd={() => {
                 this.setState({
                   layerX: this.refs.layer2.x(),
@@ -2266,6 +2432,8 @@ class Graphics extends Component {
               />
 
 
+
+
               {this.state.rectangles.map(eachRect => {
                 return (
                   <Rect
@@ -2276,7 +2444,8 @@ class Graphics extends Component {
                   fillPatternOffset={eachRect.fillPatternOffset}
                   image={eachRect.image}
                   opacity={eachRect.opacity}
-                  name={eachRect.name}
+                  id={eachRect.id}
+                  name="shape"
                   x={eachRect.x}
                   y={eachRect.y}
                   width={eachRect.width}
@@ -2348,7 +2517,7 @@ class Graphics extends Component {
                         prevState => ({
                           errMsg: "",
                           rectangles: prevState.rectangles.map(eachRect =>
-                            eachRect.name === rect.attrs.name
+                            eachRect.id === rect.attrs.id
                               ? {
                                   ...eachRect,
                                   width: rect.width() * rect.scaleX(),
@@ -2412,7 +2581,7 @@ class Graphics extends Component {
 
                       this.setState(prevState => ({
                         rectangles: prevState.rectangles.map(eachRect =>
-                          eachRect.name === shape.attrs.name
+                          eachRect.id === shape.attrs.id
                             ? {
                                 ...eachRect,
                                 x: event.target.x(),
@@ -2461,7 +2630,8 @@ class Graphics extends Component {
               {this.state.ellipses.map(eachEllipse => (
                 <Ellipse
                   ref={eachEllipse.ref}
-                  name={eachEllipse.name}
+                  name="shape"
+                  id={eachEllipse.id}
                   x={eachEllipse.x}
                   y={eachEllipse.y}
                   opacity={eachEllipse.opacity}
@@ -2534,7 +2704,7 @@ class Graphics extends Component {
                     this.setState(prevState => ({
                       errMsg: "",
                       ellipses: prevState.ellipses.map(eachEllipse =>
-                        eachEllipse.name === ellipse.attrs.name
+                        eachEllipse.id === ellipse.attrs.id
                           ? {
                               ...eachEllipse,
 
@@ -2554,13 +2724,6 @@ class Graphics extends Component {
                   }}
                   draggable
                   onDragMove={() => {
-                    console.log(
-                      "name of ellipse moving: ",
-                      eachEllipse.name,
-                      "new x y",
-                      eachEllipse.x,
-                      eachEllipse.y
-                    );
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
                         console.log("prevArrow: ", eachArrow.points);
@@ -2599,7 +2762,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       ellipses: prevState.ellipses.map(eachEllipse =>
-                        eachEllipse.name === shape.attrs.name
+                        eachEllipse.id === shape.attrs.id
                           ? {
                               ...eachEllipse,
                               x: event.target.x(),
@@ -2633,7 +2796,8 @@ class Graphics extends Component {
                   src={eachImage.imgsrc}
                   image={eachImage.imgsrc}
                   ref={eachImage.ref}
-                  name={eachImage.name}
+                  name="shape"
+                  id={eachImage.id}
                   layer={this.refs.layer2}
                   x={eachImage.x}
                   y={eachImage.y}
@@ -2721,7 +2885,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       images: prevState.images.map(eachRect =>
-                        eachRect.name === shape.props.name
+                        eachRect.id === shape.props.id
                           ? {
                               ...eachRect,
                               x: event.target.x(),
@@ -2753,7 +2917,8 @@ class Graphics extends Component {
                   src={eachVideo.vidsrc}
                   image={eachVideo.vidsrc}
                   ref={eachVideo.ref}
-                  name={eachVideo.name}
+                  id={eachVideo.id}
+                  name="shape"
                   layer={this.refs.layer2}
                   x={eachVideo.x}
                   y={eachVideo.y}
@@ -2826,17 +2991,12 @@ class Graphics extends Component {
                   }}
                   onDragEnd={event => {
                     console.log(this.state.videos)
-
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
                     var shape = this.refs[eachVideo.ref];
-                    console.log(this.refs)
-
-
-
                     this.setState(prevState => ({
                       videos: prevState.videos.map(eachRect =>
-                        eachRect.name === this.currentSelected
+                        eachRect.id === this.state.currentSelected
                           ? {
                               ...eachRect,
                               x: event.target.x(),
@@ -2868,7 +3028,8 @@ class Graphics extends Component {
                   src={eachAudio.audsrc}
                   image={eachAudio.imgsrc}
                   ref={eachAudio.ref}
-                  name={eachAudio.name}
+                  id={eachAudio.id}
+                  name="shape"
                   layer={this.refs.layer2}
                   x={eachAudio.x}
                   y={eachAudio.y}
@@ -2951,7 +3112,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       videos: prevState.videos.map(eachRect =>
-                        eachRect.name === this.state.currentSelected
+                        eachRect.id === this.state.currentSelected
                           ? {
                               ...eachRect,
                               x: event.target.x(),
@@ -2988,7 +3149,8 @@ class Graphics extends Component {
                   fillPatternScaleX={0.2}
                   image={eachDoc.image}
                   opacity={eachDoc.opacity}
-                  name={eachDoc.name}
+                  id={eachDoc.id}
+                  name="shape"
                   x={eachDoc.x}
                   y={eachDoc.y}
                   width={eachDoc.width}
@@ -2996,10 +3158,38 @@ class Graphics extends Component {
                   stroke={eachDoc.stroke}
                   strokeWidth={eachDoc.strokeWidth}
                   onClick={() => {
-                  {if (window.confirm("Are you want to download?"))
-                    {this.handleDownload('http://localhost:5000/uploads', 'download.jpg')}
-                  }
-                  }}
+                    console.log(this.state.docsrc)
+                    fetch(this.state.docsrc, {
+                        method: 'GET',
+                        headers: {
+                          'Content-Type': 'application/pdf',
+                        },
+                      })
+                      .then((response) => response.blob())
+                      .then((blob) => {
+                        console.log(blob)
+
+                        // Create blob link to download
+                        const url = window.URL.createObjectURL(
+                          new Blob([blob]),
+                        );
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute(
+                          'download',
+                          this.state.docsrc,
+                        );
+
+                        // Append to html link element page
+                        document.body.appendChild(link);
+
+                        // Start download
+                        link.click();
+
+                        // Clean up and remove the link
+                        link.parentNode.removeChild(link);
+                      });
+                    }}
                   onTransformStart={() => {
                     this.setState({
                       isTransforming: true
@@ -3016,7 +3206,7 @@ class Graphics extends Component {
                     let triangle = this.refs[eachDoc.ref];
 
                 }}
-
+                draggable
                   onDragMove={() => {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
@@ -3060,8 +3250,8 @@ class Graphics extends Component {
 
 
                     this.setState(prevState => ({
-                      images: prevState.documents.map(eachRect =>
-                        eachRect.name === shape.props.name
+                      documents: prevState.documents.map(eachRect =>
+                        eachRect.id === this.state.currentSelected
                           ? {
                               ...eachRect,
                               x: event.target.x(),
@@ -3090,7 +3280,8 @@ class Graphics extends Component {
               {this.state.triangles.map(eachEllipse => (
                 <RegularPolygon
                   ref={eachEllipse.ref}
-                  name={eachEllipse.name}
+                  id={eachEllipse.id}
+                  name="shape"
                   x={eachEllipse.x}
                   y={eachEllipse.y}
                   opacity={eachEllipse.opacity}
@@ -3164,7 +3355,7 @@ class Graphics extends Component {
                     this.setState(prevState => ({
                       errMsg: "",
                       triangles: prevState.triangles.map(eachEllipse =>
-                        eachEllipse.name === triangle.attrs.name
+                        eachEllipse.id === triangle.attrs.id
                           ? {
                               ...eachEllipse,
 
@@ -3221,7 +3412,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       triangles: prevState.triangles.map(eachEllipse =>
-                        eachEllipse.name === shape.attrs.name
+                        eachEllipse.id === shape.attrs.id
                           ? {
                               ...eachEllipse,
                               x: event.target.x(),
@@ -3250,7 +3441,8 @@ class Graphics extends Component {
               {this.state.stars.map(eachStar => (
                 <Star
                   ref={eachStar.ref}
-                  name={eachStar.name}
+                  id={eachStar.id}
+                  name="shape"
                   x={eachStar.x}
                   y={eachStar.y}
                   innerRadius={eachStar.innerRadius}
@@ -3290,7 +3482,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       stars: prevState.stars.map(eachStar =>
-                        eachStar.name === star.attrs.name
+                        eachStar.id === star.attrs.id
                           ? {
                               ...eachStar,
                               innerRadius: star.innerRadius() * star.scaleX(),
@@ -3341,7 +3533,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       stars: prevState.stars.map(eachStar =>
-                        eachStar.name === shape.attrs.name
+                        eachStar.id === shape.attrs.id
                           ? {
                               ...eachStar,
                               x: event.target.x(),
@@ -3419,7 +3611,7 @@ class Graphics extends Component {
                     this.setState(prevState => ({
                       errMsg: "",
                       texts: prevState.texts.map(eachText =>
-                        eachText.name === this.state.selectedShapeName
+                        eachText.id === this.state.selectedShapeName
                           ? {
                               ...eachText,
                               width: currentText.width(),
@@ -3438,7 +3630,8 @@ class Graphics extends Component {
                   link={eachText.link}
                   width={eachText.width}
                   fill={eachText.fill}
-                  name={eachText.name}
+                  id={eachText.id}
+                  name="shape"
                   ref={eachText.ref}
                   rotation={eachText.rotation}
                   fontFamily={eachText.fontFamily}
@@ -3481,7 +3674,7 @@ class Graphics extends Component {
 
                     this.setState(prevState => ({
                       texts: prevState.texts.map(eachtext =>
-                        eachtext.name === shape.attrs.name
+                        eachtext.id === shape.attrs.id
                           ? {
                               ...eachtext,
                               x: event.target.x(),
@@ -3543,7 +3736,8 @@ class Graphics extends Component {
                   return (
                     <Arrow
                       ref={eachArrow.ref}
-                      name={eachArrow.name}
+                      id={eachArrow.id}
+                      name="shape"
                       points={[
                         eachArrow.points[0],
                         eachArrow.points[1],
@@ -3598,7 +3792,8 @@ class Graphics extends Component {
                 ) {
                   return (
                     <Connector
-                      name={eachArrow.name}
+                      id={eachArrow.id}
+                      name="shape"
                       from={eachArrow.from}
                       to={eachArrow.to}
                       arrowEndX={this.state.arrowEndX}
@@ -3612,7 +3807,8 @@ class Graphics extends Component {
                   //if arrow construction is completed
                   return (
                     <Connector
-                      name={eachArrow.name}
+                      id={eachArrow.id}
+                      name="shape"
                       from={eachArrow.from}
                       to={eachArrow.to}
                       points={eachArrow.points}
@@ -3631,8 +3827,18 @@ class Graphics extends Component {
               ) : (
                 <TransformerComponent
                   selectedShapeName={this.state.selectedShapeName}
+                  ref="trRef"
+
+                  boundBoxFunc={(oldBox, newBox) => {
+                      // limit resize
+                      if (newBox.width < 5 || newBox.height < 5) {
+                        return oldBox;
+                      }
+                      return newBox;
+                    }}
                 />
               )}
+              <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef" />
             </Layer>
 
             <Layer
@@ -3993,6 +4199,7 @@ class Graphics extends Component {
               handleImage={this.handleImage}
               handleVideo={this.handleVideo}
               handleAudio={this.handleAudio}
+              handleDocument={this.handleDocument}
 
               />
             <Pencil
