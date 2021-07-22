@@ -82,7 +82,8 @@ CREATE TABLE public.gameactions (
     gameinstanceid uuid NOT NULL,
     gameplayerid uuid NOT NULL,
     gameaction json,
-    createdtimestamp timestamp without time zone
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
 );
 
 

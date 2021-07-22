@@ -6,15 +6,15 @@ services:
         "./.env"
     build:
       context: ./server
-      dockerfile: ./EduSimNodeDockerfile
-    image: "dev/edusim-backend"
+      dockerfile: ./Dockerfile
+    image: "simapp"
     ports:
       - "5000:5000"
   frontend:
     build:
       context: ./client
-      dockerfile: ./EduSimReactDockerfile
-    image: "dev/edusim-frontend"
+      dockerfile: ./Dockerfile
+    image: "reactapp"
     ports:
       - "3000:3000"
     links:
