@@ -23,8 +23,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(fileUpload());
 
-app.use('/gameinstances', routes.gameinstance)
-app.use('/adminaccounts', routes.adminaccount)
+app.use('/api/gameinstances', routes.gameinstance)
+app.use('/api/adminaccounts', routes.adminaccount)
 
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
