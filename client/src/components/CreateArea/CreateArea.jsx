@@ -13,7 +13,7 @@ import "./CreateArea.css";
     const [title, setTitle] = useState();
     const [checked, setChecked] = useState(false);
     const [state, setState] = useState("");
-    const [gamedata, getGamedata] = useState([]);
+    const [selectValue, setSelectValue] = useState("");
     const [value, setValue] = React.useState(
     localStorage.getItem('adminid') || ''
   );
@@ -23,62 +23,12 @@ import "./CreateArea.css";
   const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
-
-
+  const [imageSelected, setImageSelected] = useState("");
+  const [imageId, setImageId] = useState();
   // sets all const
 
 
   //adds note to dahsboard by setting notes and sending to app
-const submitNote = async event => {
-    console.log(filename)
-    event.preventDefault();
-    setFilename(encodeURI(filename))
-    const formData = new FormData();
-    formData.append('file', file);
-
-    console.log(file)
-
-    try {
-      const res = await axios.post('http://localhost:5000/gameinstances/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-      });
-      console.log(res);
-      const { fileName, filePath } = res.data;
-
-      setUploadedFile({ fileName, filePath });
-
-      setMessage('File Uploaded');
-    } catch (err) {
-      if (err.response.status === 500) {
-        setMessage('There was a problem with the server');
-      } else {
-        setMessage(err.response.data.msg);
-      }
-      setUploadPercentage(0)
-    }
-    console.log(uploadedFile.filePath)
-
-    let data = {
-      gameinstance_name: title,
-      gameinstance_photo_path: filename,
-      game_parameters: 'value',
-      createdby_adminid: localStorage.adminid,
-      invite_url: 'value'
-    }
-
-      axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
-         .then((res) => {
-            console.log(res)
-           })
-          .catch(error => console.log(error.response));
-          console.log(localStorage.adminid);
-         console.log(data);
-      props.onAdd(note);
-      window.location.reload();
-  }
-
   function setNotes(event) {
    setNote({
      title: title,
@@ -87,16 +37,63 @@ const submitNote = async event => {
    event.preventDefault();
  }
 
+ const uploadImage = async event =>{
+   handleDuplicate()
+   event.preventDefault();
+   const formData = new FormData()
+   formData.append("file", imageSelected)
+   formData.append("upload_preset", "scyblt6a")
+   formData.append("folder", "images")
+   try {
+   await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+   .then((res) => {
+     console.log(res)
+     let data = {
+       gameinstance_name: title,
+       gameinstance_photo_path: res.data.public_id,
+       game_parameters: 'value',
+       createdby_adminid: localStorage.adminid,
+       invite_url: 'value'
+     }
+
+       axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
+          .then((res) => {
+             console.log(res)
+            })
+           .catch(error => console.log(error.response));
+          console.log(data);
+       props.onAdd(note);
+   });
+ } catch (error){
+   let data = {
+     gameinstance_name: title,
+     gameinstance_photo_path: filename,
+     game_parameters: 'value',
+     createdby_adminid: localStorage.adminid,
+     invite_url: 'value'
+   }
+
+     axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
+        .then((res) => {
+           console.log(res)
+          })
+         .catch(error => console.log(error.response));
+        console.log(data);
+     props.onAdd(note);
+ }
+ window.location.reload();
+ };
+
   //handles selection of img from file
   function onChange(event){
-    setFile(event.target.files[0]);
-    setFilename(event.target.files[0].name);
+    setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]))
     setNote({
       title: title,
       img: URL.createObjectURL(event.target.files[0])
     });
 }
+
 
 
   //handle input and adds title and img to notes array
@@ -109,6 +106,27 @@ const submitNote = async event => {
      event.preventDefault();
      setImg(!img)
   }
+
+  function createSelectItems() {
+    console.log(props.gamedata)
+    let items = [(<option value="">Select a previous sim</option>)];
+    for (let i = 0; i <=  props.gamedata.length -1; i++) {
+         //here I will be creating my options dynamically based on
+         items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
+         //what props are currently passed to the parent component
+    }
+    return items;
+}
+
+function handleDuplicate(){
+  console.log(selectValue)
+}
+
+  function handleCopySim(event) {
+    setSelectValue(event.target.value)
+    console.log(event.target.value)
+  }
+
 
   return (
       <div class="area" >
@@ -137,10 +155,8 @@ const submitNote = async event => {
 
         {checked && <div>
         <label for="PrevGame" id="prevgame">Select a previous simulation</label>
-        <select id="prevgames">
-          {gamedata.map(gamedata =>
-            <option value={gamedata.gameinstanceid}>{gamedata.gameinstance_name}</option>
-          )};
+      <select id="prevgames" onChange={handleCopySim}>
+          {createSelectItems()}
         </select>
           </div>}
 
@@ -166,19 +182,19 @@ const submitNote = async event => {
         }
         </p>
         <p>
-        <button id="add" onClick={submitNote}>Add</button>
+        <button id="add" onClick={uploadImage}>Add</button>
         </p>
         </form>
 
         {img && <div>
           <form id="imgs">
             <p id="box4" >
-              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
-              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
-              <img src="temp.png" onClick={() => {setFilename("temp.png"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("temp1.png"); setImg("temp1.png");}}/>
+              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
             <input
                   type="file"
                   name="img"

@@ -5,6 +5,20 @@ function Level(props) {
   const [count, setCount] = useState(1);
   let items = [];
 
+  function handleLevel(e){
+    props.level(e);
+  }
+
+  function handleCount(){
+    if(count > props.number -1){
+      setCount(1)
+      handleLevel(1)
+    } else {
+      setCount(count + 1)
+      handleLevel(count + 1)
+    }
+  }
+
   function createSelectItems() {
 
     for (let i = 1; i <=  props.number ; i++) {
@@ -21,12 +35,7 @@ function Level(props) {
     <div className = "level">
       <img id={"img" + props.number} src={"levelbar.png"} />
     <p>It's {props.ptype} {count}! </p>
-
-         {(count > props.number -1 )
-         ? <button onClick={() => setCount(1)}>Next</button>
-         : <button onClick={() => setCount(count + 1)}>Next</button>
-
-       }
+  <button onClick={handleCount}>Next</button>
        <select id="levels">
          {createSelectItems()}
        </select>

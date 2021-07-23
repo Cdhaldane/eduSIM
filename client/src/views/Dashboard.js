@@ -32,6 +32,7 @@ function Dashboard(props) {
       const allData = res.data;
       console.log(allData);
       setLogin(allData.adminid);
+
       localStorage.setItem('adminid', allData.adminid)
       console.log(localStorage)
     })
@@ -64,6 +65,8 @@ function Dashboard(props) {
     });
   }
 
+  console.log(gamedata)
+
   return (
     <div className="dashboard">
             <h1>Home</h1>
@@ -71,7 +74,7 @@ function Dashboard(props) {
             <hr />
               {showNote && <div>
                 <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
-              <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} />
+              <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} />
               </div>}
             <div className="dashsim">
             <h2>My simulations ️</h2>

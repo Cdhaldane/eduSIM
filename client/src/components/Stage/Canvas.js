@@ -91,6 +91,7 @@ class URLImage extends React.Component {
     return (
       <Image
         draggable
+        visible={this.props.visible}
         x={this.props.x}
         y={this.props.y}
         width={this.props.width}
@@ -269,6 +270,7 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       savedstates: [],
       draggable: false,
+      level: 1,
 
       ptype: "",
       pageNumber: 6,
@@ -1599,6 +1601,8 @@ class Graphics extends Component {
 
     let name = 'rectangle' + rectName
     const rect = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 100,
@@ -1643,6 +1647,8 @@ class Graphics extends Component {
 
     let name = 'triangle' + triName
     const tri = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 100,
@@ -1688,6 +1694,8 @@ class Graphics extends Component {
 
     let name = 'image' + imgName
     const img = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 200,
@@ -1729,6 +1737,8 @@ class Graphics extends Component {
 
     let name = 'video' + vidName
     const vid = {
+      level: this.state.level,
+      visible: true,
       x: 600,
       y: 100,
       width: 400,
@@ -1772,6 +1782,8 @@ class Graphics extends Component {
 
     let name = 'audio' + audName
     const aud = {
+      level: this.state.level,
+      visible: true,
       x: 600,
       y: 100,
       width: 100,
@@ -1826,6 +1838,8 @@ class Graphics extends Component {
 
     let name = 'document' + docName
     const doc = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 100,
@@ -1868,6 +1882,8 @@ class Graphics extends Component {
 
     let name = 'ellipse' + circName
     const circ = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       radiusX: 50,
@@ -1903,11 +1919,116 @@ class Graphics extends Component {
     }))
   };
 
+  addStick = () => {
+    var pos = this.refs.layer2
+        .getStage()
+        .getPointerPosition()
+    var shape = this.refs.layer2.getIntersection(
+        pos
+    )
+
+    let toPush = {
+        level: this.state.level,
+        visible: true,
+        x: pos.x,
+        y: pos.y,
+        points: [20, 475, 60, 475],
+        from: shape,
+        stroke: 'black',
+        strokeWidth: '1.5',
+        fill: 'black'
+    }
+
+      if (toPush.from !== undefined) {
+        //  console.log("we are making a connector");
+
+        var transform = this.refs.layer2
+          .getAbsoluteTransform()
+          .copy();
+        transform.invert();
+        let uh = transform.point({
+          x: toPush.x,
+          y: toPush.y
+        });
+        toPush.x = uh.x;
+        toPush.y = uh.y;
+
+        var newArrow = {
+          points: toPush.points,
+          ref:
+            "arrow" +
+            (this.state.arrows.length +
+              1 +
+              this.state.arrowDeleteCount),
+          name:
+            "arrow" +
+            (this.state.arrows.length +
+              1 +
+              this.state.arrowDeleteCount),
+          from: toPush.from,
+          stroke: toPush.stroke,
+          strokeWidth: toPush.strokeWidth,
+          fill: toPush.fill
+        };
+
+        //  console.log(newArrow);
+        this.setState(prevState => ({
+          arrows: [...prevState.arrows, newArrow],
+          newArrowDropped: true,
+          newArrowRef: newArrow.name,
+          arrowEndX: toPush.x,
+          arrowEndY: toPush.y
+        }));
+      } else {
+        //  console.log("we are making just an aarrow");
+        var transform = this.refs.layer2
+          .getAbsoluteTransform()
+          .copy();
+        transform.invert();
+        let uh = transform.point({
+          x: toPush.x,
+          y: toPush.y
+        });
+        toPush.x = uh.x;
+        toPush.y = uh.y;
+        var newArrow = {
+          points: [toPush.x, toPush.y, toPush.x, toPush.y],
+          ref:
+            "arrow" +
+            (this.state.arrows.length +
+              1 +
+              this.state.arrowDeleteCount),
+          name:
+            "arrow" +
+            (this.state.arrows.length +
+              1 +
+              this.state.arrowDeleteCount),
+          from: toPush.from,
+          stroke: toPush.stroke,
+          strokeWidth: toPush.strokeWidth,
+          fill: toPush.fill
+        };
+
+        this.setState(prevState => ({
+          arrows: [...prevState.arrows, newArrow],
+          newArrowDropped: true,
+          newArrowRef: newArrow.name,
+          arrowEndX: toPush.x,
+          arrowEndY: toPush.y
+        }));
+      }
+
+      //this.refs updates after forceUpdate (because arrow gets instantiated), might be risky in the future
+      //only this.state.arrows.length because it was pushed earlier, cancelling the +1
+  }
+
   addStar = () => {
     var starName = this.state.stars.length + 1 + this.state.starDeleteCount
 
     let name = 'star' + starName
     const star = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 100,
@@ -1952,6 +2073,8 @@ class Graphics extends Component {
     let name = 'text' + textName
     let ref = 'text' + textName
     const tex = {
+      level: this.state.level,
+      visible: true,
       x: 800,
       y: 400,
       width: 300,
@@ -2277,7 +2400,150 @@ class Graphics extends Component {
       )
     }));
   }
+  handleLevel = (e) => {
+    this.setState({
+      level: e
+    }, this.handleLevelUpdate)
+  }
 
+  handleLevelUpdate = () => {
+    this.setState(prevState => ({
+      rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.level === this.state.level
+          ? {
+              ...eachRect,
+              visible: true
+            }
+          : {
+              ...eachRect,
+              visible: false
+            }
+      )
+      }));
+      this.setState(prevState => ({
+        ellipses: prevState.ellipses.map(eachRect =>
+          eachRect.level === this.state.level
+            ? {
+                ...eachRect,
+                visible: true
+              }
+            : {
+                ...eachRect,
+                visible: false
+              }
+        )
+        }));
+        this.setState(prevState => ({
+          triangles: prevState.triangles.map(eachRect =>
+            eachRect.level === this.state.level
+              ? {
+                  ...eachRect,
+                  visible: true
+                }
+              : {
+                  ...eachRect,
+                  visible: false
+                }
+          )
+          }));
+          this.setState(prevState => ({
+            images: prevState.images.map(eachRect =>
+              eachRect.level === this.state.level
+                ? {
+                    ...eachRect,
+                    visible: true
+                  }
+                : {
+                    ...eachRect,
+                    visible: false
+                  }
+            )
+            }));
+            this.setState(prevState => ({
+              videos: prevState.videos.map(eachRect =>
+                eachRect.level === this.state.level
+                  ? {
+                      ...eachRect,
+                      visible: true
+                    }
+                  : {
+                      ...eachRect,
+                      visible: false
+                    }
+              )
+              }));
+              this.setState(prevState => ({
+                audios: prevState.audios.map(eachRect =>
+                  eachRect.level === this.state.level
+                    ? {
+                        ...eachRect,
+                        visible: true
+                      }
+                    : {
+                        ...eachRect,
+                        visible: false
+                      }
+                )
+                }));
+                this.setState(prevState => ({
+                  documents: prevState.documents.map(eachRect =>
+                    eachRect.level === this.state.level
+                      ? {
+                          ...eachRect,
+                          visible: true
+                        }
+                      : {
+                          ...eachRect,
+                          visible: false
+                        }
+                  )
+                  }));
+                  this.setState(prevState => ({
+                    stars: prevState.stars.map(eachRect =>
+                      eachRect.level === this.state.level
+                        ? {
+                            ...eachRect,
+                            visible: true
+                          }
+                        : {
+                            ...eachRect,
+                            visible: false
+                          }
+                    )
+                    }));
+                    this.setState(prevState => ({
+                      arrows: prevState.arrows.map(eachRect =>
+                        eachRect.level === this.state.level
+                          ? {
+                              ...eachRect,
+                              visible: true
+                            }
+                          : {
+                              ...eachRect,
+                              visible: false
+                            }
+                      )
+                      }));
+                      this.setState(prevState => ({
+                        texts: prevState.texts.map(eachRect =>
+                          eachRect.level === this.state.level
+                            ? {
+                                ...eachRect,
+                                visible: true
+                              }
+                            : {
+                                ...eachRect,
+                                visible: false
+                              }
+                        )
+                        }));
+  }
+  handleLayerClear = () => {
+    this.refs.layer2.clear();
+  }
+  handleLayerDraw = () => {
+    console.log(this.state.rectangles)
+  }
   handleImage = (e) => {
     this.setState({
       imgsrc: e
@@ -2395,6 +2661,8 @@ class Graphics extends Component {
           tabIndex="0"
           style={{ outline: "none" }}
         >
+          <button onClick={this.handleLayerClear}>Clear</button>
+        <button onClick={this.handleLayerDraw}>Draw</button>
           <Stage
             onClick={this.handleStageClick}
             draggabble
@@ -2437,6 +2705,7 @@ class Graphics extends Component {
               {this.state.rectangles.map(eachRect => {
                 return (
                   <Rect
+                  visible={eachRect.visible}
                   rotation={eachRect.rotation}
                   ref={eachRect.ref}
                   fill={eachRect.fill}
@@ -2629,6 +2898,7 @@ class Graphics extends Component {
 
               {this.state.ellipses.map(eachEllipse => (
                 <Ellipse
+                  visible={eachEllipse.visible}
                   ref={eachEllipse.ref}
                   name="shape"
                   id={eachEllipse.id}
@@ -2793,6 +3063,7 @@ class Graphics extends Component {
 
               {this.state.images.map(eachImage => (
                 <URLImage
+                  visible={eachImage.visible}
                   src={eachImage.imgsrc}
                   image={eachImage.imgsrc}
                   ref={eachImage.ref}
@@ -2914,6 +3185,7 @@ class Graphics extends Component {
               ))}
               {this.state.videos.map(eachVideo => (
                 <URLvideo
+                  visible={eachVideo.visible}
                   src={eachVideo.vidsrc}
                   image={eachVideo.vidsrc}
                   ref={eachVideo.ref}
@@ -3024,6 +3296,7 @@ class Graphics extends Component {
               ))}
               {this.state.audios.map(eachAudio => (
                 <URLvideo
+                  visible={eachAudio.visible}
                   fillPatternImage={true}
                   src={eachAudio.audsrc}
                   image={eachAudio.imgsrc}
@@ -3279,6 +3552,7 @@ class Graphics extends Component {
               ))}
               {this.state.triangles.map(eachEllipse => (
                 <RegularPolygon
+                  visible={eachEllipse.visible}
                   ref={eachEllipse.ref}
                   id={eachEllipse.id}
                   name="shape"
@@ -3440,6 +3714,7 @@ class Graphics extends Component {
               ))}
               {this.state.stars.map(eachStar => (
                 <Star
+                  visible={eachStar.visible}
                   ref={eachStar.ref}
                   id={eachStar.id}
                   name="shape"
@@ -3562,6 +3837,7 @@ class Graphics extends Component {
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
                 <Text
+                  visible={eachText.visible}
                   textDecoration={eachText.link ? "underline" : ""}
                   onTransformStart={() => {
                     var currentText = this.refs[this.state.selectedShapeName];
@@ -3735,6 +4011,7 @@ class Graphics extends Component {
                 if (!eachArrow.from && !eachArrow.to) {
                   return (
                     <Arrow
+                      visible={eachArrow.visible}
                       ref={eachArrow.ref}
                       id={eachArrow.id}
                       name="shape"
@@ -4171,7 +4448,7 @@ class Graphics extends Component {
           <div className="errMsg">{errDisplay}</div>
         </div>
         <div className="header">
-        <Level number={this.state.pageNumber} ptype={this.state.ptype}/>
+        <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
           <h1 id="editmode">Edit Mode</h1>
           <Info
             stuff="asdasdas"
@@ -4192,6 +4469,7 @@ class Graphics extends Component {
               addVideo={this.addVideo}
               addText={this.addText}
               addAudio={this.addAudio}
+              addStick={this.addStick}
               addDocument={this.addDocument}
               drawLine={this.drawLine}
               eraseLine={this.eraseLine}

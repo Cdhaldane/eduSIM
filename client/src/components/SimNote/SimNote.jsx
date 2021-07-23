@@ -3,9 +3,10 @@ import {Link } from "react-router-dom";
 import "./SimNote.css";
 import axios from "axios";
 import ImageLoader from 'react-image-file';
+import {Image} from "cloudinary-react";
 
 function SimNote(props) {
-
+  console.log("https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img + ".jpg")
   function handleClick() {
     console.log(props.gameid)
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
@@ -26,7 +27,9 @@ function SimNote(props) {
   return (
     <div className="notesim">
       <h1><strong>{props.title}</strong></h1>
-    <img src={"/uploads/" + props.img}  alt="backdrop"/>
+
+     <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img}  alt="backdrop"/>
+
       <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
     <Link to={{
         pathname:"/editpage",

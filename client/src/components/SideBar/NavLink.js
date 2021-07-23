@@ -1,6 +1,7 @@
 import {NavLink as Link} from "react-router-dom"
 import styled from "styled-components"
 import React from "react"
+import {Image} from "cloudinary-react";
 
 const StyledLink = styled(Link)`
   min-height: 56px;
@@ -77,7 +78,7 @@ function NavLink({children, iconClassName, img,  label,  ...rest}) {
             </>
           ) : (
             <>
-              <img src={"/uploads/" + simimg[0]} ></img>
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + simimg[0] + ".jpg"}  alt="backdrop"/>
               <span className="label">{simtitle[0]}</span>
             </>
           )}

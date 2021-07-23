@@ -97,6 +97,7 @@ return (
   <>
 
   <Image
+    visible={props.visible}
     fillPatternImage={fillPatternImage}
     fillPatternScaleY={0.4}
     fillPatternScaleX={0.4}

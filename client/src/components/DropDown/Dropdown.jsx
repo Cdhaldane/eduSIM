@@ -80,86 +80,49 @@ import "./Dropdown.css";
       );
     }
     const submitNote = async event => {
-        console.log(filename)
-        event.preventDefault();
-        setFilename(encodeURI(filename))
-        const formData = new FormData();
-        formData.append('file', file);
+      event.preventDefault();
+      const formData = new FormData()
+      formData.append("file", img)
+      formData.append("upload_preset", "scyblt6a")
+      formData.append("folder", "images")
+      try {
+      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+      .then((res) => {
+        console.log(res)
+        const allData = res.data.public_id
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg"
+        props.handleImage(name)
+      });
+    } catch (error){
+      console.log(error)
+    }
+  }
 
-        console.log(file)
-
-        try {
-          const res = await axios.post('http://localhost:5000/gameinstances/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            },
-          });
-          console.log(res);
-          const { fileName, filePath } = res.data;
-
-          setUploadedFile({ fileName, filePath });
-
-          setMessage('File Uploaded');
-        } catch (err) {
-          if (err.response.status === 500) {
-            setMessage('There was a problem with the server');
-          } else {
-            setMessage(err.response.data.msg);
-          }
-          setUploadPercentage(0)
-        }
-        console.log(uploadedFile.filePath)
-      }
-
-      const filesubmitNote = async event => {
-          console.log(filename)
-          event.preventDefault();
-          setFilename(encodeURI(filename))
-          const formData = new FormData();
-          formData.append('file', file);
-
-          console.log(file)
-
-          try {
-            const res = await axios.post('http://localhost:5000/gameinstances/pdfs', formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              },
-            });
-            console.log(res);
-            const { fileName, filePath } = res.data;
-
-            setUploadedFile({ fileName, filePath });
-
-            setMessage('File Uploaded');
-          } catch (err) {
-            if (err.response.status === 500) {
-              setMessage('There was a problem with the server');
-            } else {
-              setMessage(err.response.data.msg);
-            }
-            setUploadPercentage(0)
-          }
-          console.log(uploadedFile.filePath)
-        }
+    const filesubmitNote = async event => {
+      event.preventDefault();
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "scyblt6a")
+      formData.append("folder", "pdfs")
+      try {
+      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+      .then((res) => {
+        console.log(res)
+        const allData = res.data.public_id
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".pdf"
+        props.handleDocument(name)
+      });
+    } catch (error){
+      console.log(error)
+    }
+  }
 
       function handleImg(event){
-        var name = event.target.files[0].name
-        var files = event.target.files[0]
-        setFile(files);
-        setFilename(name);
-        setImg(URL.createObjectURL(event.target.files[0]))
-        name = "/uploads/" + name
-        props.handleImage(name)
+        setImg(event.target.files[0])
       }
 
       function handleFile(event){
-        var name = event.target.files[0].name
-        var files = event.target.files[0]
-        setFile(files);
-        setFilename(name);
-        name = "/pdfs/" + name
-        props.handleDocument(name)
+        setFile(event.target.files[0]);
       }
 
 
@@ -283,7 +246,7 @@ import "./Dropdown.css";
           <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
         <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
         <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
-      <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Stick</DropdownItems>
+      <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Arrow</DropdownItems>
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-marker"></i>}
             rightIcon=""
