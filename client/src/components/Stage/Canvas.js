@@ -28,7 +28,6 @@ import Konva from "konva"
 
 import { Container, Row, Col } from "react-bootstrap";
 
-import "./Stage.css"
 
 
 import React, { useState, useEffect, Component, useMemo } from 'react';
@@ -116,6 +115,53 @@ class URLImage extends React.Component {
     );
   }
 }
+  function Timer(props){
+    useEffect(() => {
+      const MINUTE_MS = 300000;
+      const interval = setInterval(() => {
+        console.log("Saves every 5 minutes.")
+        props.handleSave()
+      }, MINUTE_MS);
+
+      return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, [])
+
+    return (
+      <>
+       <Save />
+      </>
+    );
+  }
+
+  function Save(){
+    const [display, setDisplay] = useState(false);
+    useEffect(() => {
+      const MINUTE_MS = 300000;
+      const interval = setInterval(() => {
+        setDisplay(true)
+      }, MINUTE_MS);
+
+      return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, [])
+    useEffect(() => {
+      const MINUTE_MS = 306000;
+      const interval = setInterval(() => {
+        setDisplay(false)
+      }, MINUTE_MS);
+
+      return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    }, [])
+    return (
+      <>
+       {display && <div >
+         <p id="saved">
+          <h1>Auto saved!</h1>
+         </p>
+         </div>
+       }
+      </>
+    );
+  }
 
 class TransformerComponent extends React.Component {
   componentDidMount() {
@@ -585,7 +631,8 @@ class Graphics extends Component {
 
       }
     });
-    console.log(this.refs.layer2.find(".rectangle"))
+
+
     this.refs.trRef.transformer.nodes(elements);
     this.state.selection.visible = false;
     // disable click event
@@ -2407,8 +2454,99 @@ class Graphics extends Component {
   }
 
   handleLevelUpdate = () => {
-    this.setState(prevState => ({
-      rectangles: prevState.rectangles.map(eachRect =>
+        this.setState(prevState => ({
+        rectangles: prevState.rectangles.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+            ...eachRect,
+            visible: true
+            }
+            : {
+            ...eachRect,
+            visible: false
+        }
+        )
+        }));
+        this.setState(prevState => ({
+        ellipses: prevState.ellipses.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+            ...eachRect,
+            visible: true
+            }
+            : {
+            ...eachRect,
+            visible: false
+            }
+        )
+        }));
+        this.setState(prevState => ({
+        triangles: prevState.triangles.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+            ...eachRect,
+            visible: true
+            }
+            : {
+            ...eachRect,
+            visible: false
+            }
+        )
+        }));
+        this.setState(prevState => ({
+        images: prevState.images.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+            ...eachRect,
+            visible: true
+            }
+            : {
+            ...eachRect,
+            visible: false
+            }
+            )
+        }));
+        this.setState(prevState => ({
+        videos: prevState.videos.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+            ...eachRect,
+            visible: true
+            }
+            : {
+            ...eachRect,
+            visible: false
+            }
+            )
+        }));
+        this.setState(prevState => ({
+        audios: prevState.audios.map(eachRect =>
+        eachRect.level === this.state.level
+            ? {
+              ...eachRect,
+              visible: true
+            }
+            : {
+              ...eachRect,
+              visible: false
+            }
+            )
+        }));
+        this.setState(prevState => ({
+        documents: prevState.documents.map(eachRect =>
+        eachRect.level === this.state.level
+        ? {
+            ...eachRect,
+            visible: true
+          }
+        : {
+            ...eachRect,
+            visible: false
+          }
+        )
+        }));
+        this.setState(prevState => ({
+        stars: prevState.stars.map(eachRect =>
         eachRect.level === this.state.level
           ? {
               ...eachRect,
@@ -2418,10 +2556,10 @@ class Graphics extends Component {
               ...eachRect,
               visible: false
             }
-      )
-      }));
-      this.setState(prevState => ({
-        ellipses: prevState.ellipses.map(eachRect =>
+        )
+        }));
+        this.setState(prevState => ({
+        arrows: prevState.arrows.map(eachRect =>
           eachRect.level === this.state.level
             ? {
                 ...eachRect,
@@ -2434,7 +2572,7 @@ class Graphics extends Component {
         )
         }));
         this.setState(prevState => ({
-          triangles: prevState.triangles.map(eachRect =>
+          texts: prevState.texts.map(eachRect =>
             eachRect.level === this.state.level
               ? {
                   ...eachRect,
@@ -2446,97 +2584,6 @@ class Graphics extends Component {
                 }
           )
           }));
-          this.setState(prevState => ({
-            images: prevState.images.map(eachRect =>
-              eachRect.level === this.state.level
-                ? {
-                    ...eachRect,
-                    visible: true
-                  }
-                : {
-                    ...eachRect,
-                    visible: false
-                  }
-            )
-            }));
-            this.setState(prevState => ({
-              videos: prevState.videos.map(eachRect =>
-                eachRect.level === this.state.level
-                  ? {
-                      ...eachRect,
-                      visible: true
-                    }
-                  : {
-                      ...eachRect,
-                      visible: false
-                    }
-              )
-              }));
-              this.setState(prevState => ({
-                audios: prevState.audios.map(eachRect =>
-                  eachRect.level === this.state.level
-                    ? {
-                        ...eachRect,
-                        visible: true
-                      }
-                    : {
-                        ...eachRect,
-                        visible: false
-                      }
-                )
-                }));
-                this.setState(prevState => ({
-                  documents: prevState.documents.map(eachRect =>
-                    eachRect.level === this.state.level
-                      ? {
-                          ...eachRect,
-                          visible: true
-                        }
-                      : {
-                          ...eachRect,
-                          visible: false
-                        }
-                  )
-                  }));
-                  this.setState(prevState => ({
-                    stars: prevState.stars.map(eachRect =>
-                      eachRect.level === this.state.level
-                        ? {
-                            ...eachRect,
-                            visible: true
-                          }
-                        : {
-                            ...eachRect,
-                            visible: false
-                          }
-                    )
-                    }));
-                    this.setState(prevState => ({
-                      arrows: prevState.arrows.map(eachRect =>
-                        eachRect.level === this.state.level
-                          ? {
-                              ...eachRect,
-                              visible: true
-                            }
-                          : {
-                              ...eachRect,
-                              visible: false
-                            }
-                      )
-                      }));
-                      this.setState(prevState => ({
-                        texts: prevState.texts.map(eachRect =>
-                          eachRect.level === this.state.level
-                            ? {
-                                ...eachRect,
-                                visible: true
-                              }
-                            : {
-                                ...eachRect,
-                                visible: false
-                              }
-                        )
-                        }));
   }
   handleLayerClear = () => {
     this.refs.layer2.clear();
@@ -2630,6 +2677,7 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
+        <Timer handleSave={this.handleSave} />
         <div
           onKeyDown={event => {
             const x = 88,
@@ -2661,8 +2709,6 @@ class Graphics extends Component {
           tabIndex="0"
           style={{ outline: "none" }}
         >
-          <button onClick={this.handleLayerClear}>Clear</button>
-        <button onClick={this.handleLayerDraw}>Draw</button>
           <Stage
             onClick={this.handleStageClick}
             draggabble
@@ -4123,208 +4169,6 @@ class Graphics extends Component {
               width={window.innerWidth}
               ref="layer"
             >
-              <Toolbar
-                layer={this.refs.layer2}
-                rectName={
-                  this.state.rectangles.length + 1 + this.state.rectDeleteCount
-                }
-                ellipseName={
-                  this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
-                }
-                triangleName={
-                  this.state.triangles.length + 1 + this.state.triangleDeleteCount
-                }
-                starName={
-                  this.state.stars.length + 1 + this.state.starDeleteCount
-                }
-                textName={
-                  this.state.texts.length + 1 + this.state.textDeleteCount
-                }
-                newArrowOnDragEnd={toPush => {
-                  if (toPush.from !== undefined) {
-                    //  console.log("we are making a connector");
-
-                    var transform = this.refs.layer2
-                      .getAbsoluteTransform()
-                      .copy();
-                    transform.invert();
-                    let uh = transform.point({
-                      x: toPush.x,
-                      y: toPush.y
-                    });
-                    toPush.x = uh.x;
-                    toPush.y = uh.y;
-
-                    var newArrow = {
-                      points: toPush.points,
-                      ref:
-                        "arrow" +
-                        (this.state.arrows.length +
-                          1 +
-                          this.state.arrowDeleteCount),
-                      name:
-                        "arrow" +
-                        (this.state.arrows.length +
-                          1 +
-                          this.state.arrowDeleteCount),
-                      from: toPush.from,
-                      stroke: toPush.stroke,
-                      strokeWidth: toPush.strokeWidth,
-                      fill: toPush.fill
-                    };
-
-                    //  console.log(newArrow);
-                    this.setState(prevState => ({
-                      arrows: [...prevState.arrows, newArrow],
-                      newArrowDropped: true,
-                      newArrowRef: newArrow.name,
-                      arrowEndX: toPush.x,
-                      arrowEndY: toPush.y
-                    }));
-                  } else {
-                    //  console.log("we are making just an aarrow");
-                    var transform = this.refs.layer2
-                      .getAbsoluteTransform()
-                      .copy();
-                    transform.invert();
-                    let uh = transform.point({
-                      x: toPush.x,
-                      y: toPush.y
-                    });
-                    toPush.x = uh.x;
-                    toPush.y = uh.y;
-                    var newArrow = {
-                      points: [toPush.x, toPush.y, toPush.x, toPush.y],
-                      ref:
-                        "arrow" +
-                        (this.state.arrows.length +
-                          1 +
-                          this.state.arrowDeleteCount),
-                      name:
-                        "arrow" +
-                        (this.state.arrows.length +
-                          1 +
-                          this.state.arrowDeleteCount),
-                      from: toPush.from,
-                      stroke: toPush.stroke,
-                      strokeWidth: toPush.strokeWidth,
-                      fill: toPush.fill
-                    };
-
-                    this.setState(prevState => ({
-                      arrows: [...prevState.arrows, newArrow],
-                      newArrowDropped: true,
-                      newArrowRef: newArrow.name,
-                      arrowEndX: toPush.x,
-                      arrowEndY: toPush.y
-                    }));
-                  }
-
-                  //this.refs updates after forceUpdate (because arrow gets instantiated), might be risky in the future
-                  //only this.state.arrows.length because it was pushed earlier, cancelling the +1
-                }}
-                appendToRectangles={stuff => {
-                  var layer = this.refs.layer2;
-                  var toPush = stuff;
-                  var stage = this.refs.graphicStage;
-                  var transform = this.refs.layer2
-                    .getAbsoluteTransform()
-                    .copy();
-                  transform.invert();
-
-                  var pos = transform.point({
-                    x: toPush.x,
-                    y: toPush.y
-                  });
-
-                  if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-                    toPush.x = pos.x;
-                    toPush.y = pos.y;
-                  }
-
-                  this.setState(prevState => ({
-                    rectangles: [...prevState.rectangles, toPush],
-                    selectedShapeName: toPush.name
-                  }));
-                }}
-                appendToEllipses={stuff => {
-                  var layer = this.refs.layer2;
-                  var toPush = stuff;
-                  var stage = this.refs.graphicStage;
-                  var transform = this.refs.layer2
-                    .getAbsoluteTransform()
-                    .copy();
-                  transform.invert();
-
-                  var pos = transform.point({
-                    x: toPush.x,
-                    y: toPush.y
-                  });
-
-                  if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-                    toPush.x = pos.x;
-                    toPush.y = pos.y;
-                  }
-
-                  this.setState(prevState => ({
-                    ellipses: [...prevState.ellipses, toPush],
-                    selectedShapeName: toPush.name
-                  }));
-                }}
-                appendToStars={stuff => {
-                  var layer = this.refs.layer2;
-                  var toPush = stuff;
-                  var stage = this.refs.graphicStage;
-                  var transform = this.refs.layer2
-                    .getAbsoluteTransform()
-                    .copy();
-                  transform.invert();
-
-                  var pos = transform.point({
-                    x: toPush.x,
-                    y: toPush.y
-                  });
-
-                  if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-                    toPush.x = pos.x;
-                    toPush.y = pos.y;
-                  }
-                  this.setState(prevState => ({
-                    stars: [...prevState.stars, toPush],
-                    selectedShapeName: toPush.name
-                  }));
-                }}
-                appendToTexts={stuff => {
-                  var layer = this.refs.layer2;
-                  var toPush = stuff;
-                  var stage = this.refs.graphicStage;
-                  var transform = this.refs.layer2
-                    .getAbsoluteTransform()
-                    .copy();
-                  transform.invert();
-
-                  var pos = transform.point({
-                    x: toPush.x,
-                    y: toPush.y
-                  });
-
-                  if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-                    toPush.x = pos.x;
-                    toPush.y = pos.y;
-                  }
-
-                  this.setState(prevState => ({
-                    texts: [...prevState.texts, toPush]
-                  }));
-
-                  //we can also just get element by this.refs.toPush.ref
-
-                  //  let text = stage.findOne("." + toPush.name);
-                  let text = this.refs[toPush.ref];
-                  //this.setState({firstTimeTextEditing: true});
-                  text.fire("dblclick");
-                }}
-              />
             </Layer>
           </Stage>
 
@@ -4451,8 +4295,25 @@ class Graphics extends Component {
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
           <h1 id="editmode">Edit Mode</h1>
           <Info
-            stuff="asdasdas"
+            stuff=""
             editmode="1"
+            addRectangle={this.addRectangle}
+            addCircle={this.addCircle}
+            addStar={this.addStar}
+            addTriangle={this.addTriangle}
+            addImage={this.addImage}
+            addVideo={this.addVideo}
+            addText={this.addText}
+            addAudio={this.addAudio}
+            addStick={this.addStick}
+            addDocument={this.addDocument}
+            drawLine={this.drawLine}
+            eraseLine={this.eraseLine}
+            stopDrawing={this.stopDrawing}
+            handleImage={this.handleImage}
+            handleVideo={this.handleVideo}
+            handleAudio={this.handleAudio}
+            handleDocument={this.handleDocument}
             />
 
 

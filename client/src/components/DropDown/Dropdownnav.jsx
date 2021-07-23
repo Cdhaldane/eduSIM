@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Note from "../Note/Note";
 import { CSSTransition } from 'react-transition-group';
-import Stages from "../Stage/Stage"
 import Switch from "react-switch"
 import NavLinksGroup from "../SideBar/NavLinksGroup"
 

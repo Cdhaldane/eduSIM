@@ -19,15 +19,24 @@ function Level(props) {
     }
   }
 
+  function handleCount2(){
+      handleLevel(count + 1)
+  }
+
   function createSelectItems() {
 
     for (let i = 1; i <=  props.number ; i++) {
-         items.push(<option>{props.ptype} {i}</option>);
+         items.push(<option value={i}>{props.ptype} {i}</option>);
          //here I will be creating my options dynamically based on
          //what props are currently passed to the parent component
     }
     return items;
 }
+
+  function handleChange(event){
+    setCount(parseInt(event.target.value))
+    handleLevel(parseInt(event.target.value))
+  }
 
   return (
   <div id="all">
@@ -36,7 +45,7 @@ function Level(props) {
       <img id={"img" + props.number} src={"levelbar.png"} />
     <p>It's {props.ptype} {count}! </p>
   <button onClick={handleCount}>Next</button>
-       <select id="levels">
+       <select id="levels" onChange={handleChange}>
          {createSelectItems()}
        </select>
     </div>

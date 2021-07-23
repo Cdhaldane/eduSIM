@@ -46,7 +46,7 @@ function NavLinksGroup(props) {
         img: props.img,
         label: props.title,
 
-        visible: props.pevisible,
+        visible: true,
         icon: null
     },
       {

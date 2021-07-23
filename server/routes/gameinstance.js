@@ -85,6 +85,13 @@ router.put('/update/:id', gameinstance.updateGameInstance);
 
 //API Path to update a specific game instance
 
-router.delete('/delete/:id', gameinstance.deleteGameInstance);
+
+router.put('/delete/:id', gameinstance.deleteGameInstance);
+
+
+
+
+
+// router.put('/delete/:id', gameinstance.deleteGameInstance);
 
 export default router;

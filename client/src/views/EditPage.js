@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {Link } from "react-router-dom";
 import Level from "../components/Level/Level";
 import Info from "../components/Information/InformationPopup";
@@ -8,7 +8,6 @@ import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
-import Stages from "../components/Stage/Stage";
 
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -79,6 +78,7 @@ function EditPage(props){
       console.log(color);
     }
 
+
     if(props.location.img){
       localStorage.setItem('gameinstance', props.location.gameinstance)
       localStorage.setItem('adminid', props.location.adminid)
@@ -115,8 +115,6 @@ function EditPage(props){
               svisible={handleSvisible}
               pevisible={handlePevisible}
             />
-
-
           </GridMain>
         </Grid>
       </Container>

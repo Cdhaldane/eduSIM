@@ -1,6 +1,5 @@
 import Konva from "konva"
 import { Container, Row, Col } from "react-bootstrap";
-import "./Stage.css"
 import React, { useState, useEffect, Component, useMemo } from 'react';
 import {Image, Rect} from "react-konva";
 import useImage from "use-image";

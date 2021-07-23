@@ -1,7 +1,7 @@
 #pencil1{
   position: relative;
   left:10px;
-  top: -724px;
+  top: -725px;
   color: #8f001a;
 }
 
@@ -43,6 +43,10 @@
   cursor: pointer;
 }
 
+.header{
+  position: relative;
+  top: -150px;
+}
 
 .drop1{
   position: relative;

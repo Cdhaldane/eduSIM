@@ -4,7 +4,6 @@ import Info from "../components/Information/InformationPopup";
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import styled from "styled-components"
-import Stages from "../components/Stage/Stage";
 import axios from "axios";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 

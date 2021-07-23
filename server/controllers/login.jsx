@@ -29,7 +29,6 @@ const AdminAccount = require("../models/AdminAccounts");
           },
         });
           return res.send(adminaccount);
-
       }
       } catch (err) {
         return res.status(500).send({

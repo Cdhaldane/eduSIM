@@ -218,8 +218,8 @@ footer {
   opacity: 0.7;
   transform: rotate(45deg);
   position: absolute;
-  top: 60px;
-  left: 1740px;
+  top: -720px;
+  left: 1660px;
   font-family: 'Cedarville Cursive', cursive;
 }
 
@@ -247,7 +247,32 @@ footer {
 
 #editpagex {
   position: relative;
-  top: 0px;
+  top: -905px;
   color: #8f001a;
-  right: -1770px;
+  right: -1750px;
+}
+
+#saved {
+  position: absolute;
+  top: -15px;
+  left: 300px;
+  width: 200px;
+  height: 50px;
+  background-color: white;
+  border: solid #8f001a 2px ;
+  border-radius: 0%;
+
+  transform: translateX(-110%);
+  transition: all var(500ms) ease;
+}
+
+#saved h1 {
+  font-family:  "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  font-weight: 400;
+  color: #636363;
+  position: relative;
+  text-align: center;
+  top: 10px;
+
 }

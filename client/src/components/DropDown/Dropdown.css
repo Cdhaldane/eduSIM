@@ -83,6 +83,7 @@ a {
 .menu-item {
   height: 55px;
   display: flex;
+  color: #636363;
   align-items: center;
   border-radius: var(--border-radius);
   transition: background var(--speed);
