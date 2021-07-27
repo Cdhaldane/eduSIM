@@ -56,7 +56,7 @@ import "./CreateArea.css";
        invite_url: 'value'
      }
 
-       axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
+       axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
           .then((res) => {
              console.log(res)
             })
@@ -73,7 +73,7 @@ import "./CreateArea.css";
      invite_url: 'value'
    }
 
-     axios.post('http://localhost:5000/gameinstances/createGameInstance', data)
+     axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
         .then((res) => {
            console.log(res)
           })

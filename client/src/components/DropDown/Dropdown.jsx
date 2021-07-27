@@ -406,14 +406,14 @@ import "./Dropdown.css";
             Draw</DropdownItems>
 
 
-          <DropdownItems
+          {/* <DropdownItems
              onClick={eraseLine}
             leftIcon={<i id="icons" class="fas fa-eraser"
-            onClick={eraseLine}></i>}>Eraser</DropdownItems>
+            onClick={eraseLine}></i>}>Eraser</DropdownItems> */}
 
           <DropdownItems
              onClick={stopDrawing}
-            leftIcon={<i id="icons" class="fas fa-eraser"
+            leftIcon={<i id="icons" class="fas fa-mouse-pointer"
             onClick={stopDrawing}></i>}>Select</DropdownItems>
 
         </div>

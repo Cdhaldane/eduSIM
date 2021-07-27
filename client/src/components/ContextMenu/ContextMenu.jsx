@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import Dropdownedit from "../DropDown/Dropdownedit";
 
+import "./ContextMenu.css"
+
 
 function ContextMenu(props){
   console.log(props)
