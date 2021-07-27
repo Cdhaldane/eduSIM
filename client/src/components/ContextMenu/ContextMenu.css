@@ -19,5 +19,6 @@
 
 .drop {
   opacity: 1;
+  position: relative;
   width: 100px;
 }

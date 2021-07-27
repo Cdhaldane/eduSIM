@@ -270,6 +270,7 @@ class Graphics extends Component {
       audios: [],
       documents: [],
       texts: [],
+      lines: [],
       arrows: [],
       connectors: [],
       currentTextRef: "",
@@ -289,8 +290,10 @@ class Graphics extends Component {
       selectedContextMenu:null,
       colorf: "white",
       colors: "black",
+      color: "white",
       strokeWidth: 3.75,
       opacity: 1,
+
 
 
       saving: null,
@@ -311,12 +314,16 @@ class Graphics extends Component {
       triangleDeleteCount: 0,
       imageDeleteCount: 0,
       videoDeleteCount: 0,
+      linesDeleteCount: 0,
       audioDeletedCount: 0,
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
       savedstates: [],
       draggable: false,
       level: 1,
+      tool: 'pen',
+      isDrawing: false,
+      drawMode: false,
 
       ptype: "",
       pageNumber: 6,
@@ -343,7 +350,7 @@ class Graphics extends Component {
           gameid: this.state.gameinstanceid
       }
 
-    axios.get('http://localhost:5000/gameinstances/getGameInstance/:adminid/:gameid', {
+    axios.get('http://localhost:5000/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
             adminid: this.state.adminid,
             gameid: this.state.gameinstanceid
@@ -381,6 +388,9 @@ class Graphics extends Component {
       })
       this.setState({
         documents: JSON.parse(allData.game_parameters)[9] || []
+      })
+      this.setState({
+        lines: JSON.parse(allData.game_parameters)[10] || []
       })
     })
     .catch(error => console.log(error.response));
@@ -424,12 +434,14 @@ class Graphics extends Component {
       images = this.state.images,
       videos = this.state.videos,
       audios = this.state.audios,
-      documents = this.state.documents;
+      documents = this.state.documents,
+      lines = this.state.lines,
+      status = "";
     // if (
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines] });
 
       let arrows1 = this.state.arrows;
       arrows1.forEach(eachArrow => {
@@ -462,7 +474,7 @@ class Graphics extends Component {
                 console.log(this.state.saved)
                 console.log(this.props)
 
-                axios.put('http://localhost:5000/gameinstances/update/:id', body)
+                axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
                    .then((res) => {
                       console.log(res)
                      })
@@ -600,25 +612,38 @@ class Graphics extends Component {
   };
 
   onMouseDown = (e) => {
+    this.setState({
+      draggable: false
+    })
+    const pos = e.target.getStage().getPointerPosition();
+    if(this.state.drawMode == true) {
+    this.state.isDrawing = true;
+    const tool = this.state.tool;
+    this.setState({
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape"}]
+    })
+  } else {
+
     const isElement = e.target.findAncestor(".elements-container");
     const isTransformer = e.target.findAncestor("Transformer");
     if (isElement || isTransformer) {
       return;
     }
-    const pos = e.target.getStage().getPointerPosition();
+
     this.state.selection.visible = true;
     this.state.selection.x1 = pos.x;
     this.state.selection.y1 = pos.y;
     this.state.selection.x2 = pos.x;
     this.state.selection.y2 = pos.y;
     this.updateSelectionRect();
+  }
   };
 
 
   handleMouseUp = () => {
-    this.setState({
-      draggable: false
-    })
+    if(this.state.drawMode == true) {
+      this.state.isDrawing = false;
+    } else {
     if (!this.state.selection.visible) {
       return;
     }
@@ -638,19 +663,32 @@ class Graphics extends Component {
     // disable click event
     Konva.listenClickTap = false;
     this.updateSelectionRect();
-  };
-
-  onMouseMove = (e) => {
-    const pos = e.target.getStage().getPointerPosition();
-
-    this.state.selection.x2 = pos.x;
-    this.state.selection.y2 = pos.y;
-    this.updateSelectionRect();
+  }
   };
 
   handleMouseOver = event => {
+
     //get the currennt arrow ref and modify its position by filtering & pushing again
     //console.log("lastFill: ", this.state.lastFill);
+    if(this.state.drawMode == true) {
+    if (!this.state.isDrawing) {
+      return;
+   }
+
+   const stage = event.target.getStage();
+   const point = stage.getPointerPosition();
+   let lastLine = this.state.lines[this.state.lines.length - 1];
+   // add point
+   lastLine.points = lastLine.points.concat([point.x, point.y]);
+
+   // replace last
+   this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
+   this.setState({
+     lines: this.state.lines.concat()
+   })
+ } else {
+
+
     if (!this.state.selection.visible) {
       return;
     }
@@ -685,7 +723,7 @@ class Graphics extends Component {
             if (this.state.previousShape !== shape) {
               //arrow entered a new shape
 
-              //set current arrow to blue
+              //set arrow to blue
               if (this.state.previousShape.attrs.id !== "ContainerRect") {
                 this.state.arrows.map(eachArrow => {
                   if (eachArrow.name === this.state.newArrowRef) {
@@ -730,6 +768,7 @@ class Graphics extends Component {
         this.state.arrows[index] = currentArrow;
       }
     });
+  }
   };
   handleWheel(event) {
     if (
@@ -742,7 +781,8 @@ class Graphics extends Component {
       this.state.images.length === 0 &&
       this.state.videos.length === 0 &&
       this.state.audios.length === 0 &&
-      this.state.documents.length === 0
+      this.state.documents.length === 0 &&
+      this.state.lines.length === 0
     ) {
     } else {
       event.evt.preventDefault();
@@ -792,6 +832,7 @@ class Graphics extends Component {
       prevState.images,
       prevState.videos,
       prevState.audios,
+      prevState.lines,
       prevState.documents
     ];
     let currentMainShapes = [
@@ -805,6 +846,7 @@ class Graphics extends Component {
       this.state.images,
       this.state.videos,
       this.state.audios,
+      this.state.lines,
       this.state.documents
     ];
 
@@ -847,6 +889,7 @@ class Graphics extends Component {
             ellipses: history[historyStep].ellipses,
             triangles: history[historyStep].triangles,
             images: history[historyStep].images,
+            lines: history[historyStep].lines,
             videos: history[historyStep].videos,
             audios: history[historyStep].audios,
             stars: history[historyStep].stars,
@@ -885,6 +928,7 @@ class Graphics extends Component {
         videos: next.videos,
         audios: next.audios,
         documents: next.documents,
+        lines: next.lines,
         stars: next.stars,
         texts: next.texts,
         redoing: true,
@@ -960,6 +1004,10 @@ class Graphics extends Component {
         });
       } else if (name.includes("arrow")) {
         copiedElement = this.state.arrows.filter(function(eachRect) {
+          return eachRect.name === name;
+        });
+      } else if (name.includes("line")) {
+        copiedElement = this.state.lines.filter(function(eachRect) {
           return eachRect.name === name;
         });
       }
@@ -1326,7 +1374,49 @@ class Graphics extends Component {
             });
           }
         );
-      } else if (copiedElement.name.includes("star")) {
+      } else if (copiedElement.name.includes("line")) {
+          length =
+            this.state.lines.length +
+            1 +
+            this.state.linesDeleteCount;
+          var toPush = {
+            x: copiedElement.x + 10,
+            y: copiedElement.y + 10,
+            width: copiedElement.width,
+            height: copiedElement.height,
+            sides: copiedElement.sides,
+            radius: copiedElement.radius,
+            stroke: copiedElement.stroke,
+            strokeWidth: copiedElement.strokeWidth,
+            id:
+              "document" +
+              (this.state.lines.length +
+                1 +
+                this.state.linesDeleteCount),
+            ref:
+              "line" +
+              (this.state.lines.length +
+                1 +
+                this.state.linesDeleteCount),
+            fill: copiedElement.fill,
+            link: copiedElement.link,
+            useImage: copiedElement.useImage,
+            rotation: copiedElement.rotation
+          };
+          let newName = this.state.selectedShapeName;
+
+          this.setState(
+            prevState => ({
+              lines: [...prevState.lines, toPush]
+            }),
+            () => {
+              this.setState({
+                selectedShapeName:
+                  "line" + this.state.lines.length
+              });
+            }
+          );
+        } else if (copiedElement.name.includes("star")) {
           length =
             this.state.stars.length + 1 + this.state.starDeleteCount;
           var toPush = {
@@ -1431,6 +1521,7 @@ class Graphics extends Component {
         imageDeleted = false,
         videoDelete = false,
         audiosDeleted = false,
+        linesDeleted = false,
         documentsDeleted = false;
 
       var rects = this.state.rectangles.filter(function(eachRect) {
@@ -1464,6 +1555,15 @@ class Graphics extends Component {
         if (eachRect.id === name) {
           that.setState({
             imageDeleteCount: that.state.imageDeleteCount + 1
+          });
+        }
+        return eachRect.id !== name;
+      });
+
+      var lines = this.state.lines.filter(function(eachRect) {
+        if (eachRect.id === name) {
+          that.setState({
+            linesDeleteCount: that.state.imageDeleteCount + 1
           });
         }
         return eachRect.id !== name;
@@ -1534,6 +1634,7 @@ class Graphics extends Component {
         stars: stars,
         arrows: arrows,
         texts: texts,
+        lines: lines,
         selectedShapeName: ""
       });
       this.setState({
@@ -1559,13 +1660,14 @@ class Graphics extends Component {
   shapeIsGone = returnTo => {
     var toReturn = true;
     let currentShapeName = this.state.selectedShapeName;
-    let [rectangles, ellipses, stars, arrows, texts, triangles, images, videos, audios, documents] = [
+    let [rectangles, ellipses, stars, arrows, texts, triangles, images, videos, audios, documents, lines] = [
       returnTo.rectangles,
       returnTo.ellipses,
       returnTo.stars,
       returnTo.arrows,
       returnTo.triangles,
       returnTo.images,
+      returnTo.lines,
       returnTo.videos,
       returnTo.audios,
       returnTo.documents,
@@ -1589,6 +1691,11 @@ class Graphics extends Component {
     });
     images.map(eachImage => {
       if (eachImage.id === currentShapeName) {
+        toReturn = false;
+      }
+    });
+    lines.map(eachLine => {
+      if (eachLine.id === currentShapeName) {
         toReturn = false;
       }
     });
@@ -2453,138 +2560,6 @@ class Graphics extends Component {
     }, this.handleLevelUpdate)
   }
 
-  handleLevelUpdate = () => {
-        this.setState(prevState => ({
-        rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-            ...eachRect,
-            visible: true
-            }
-            : {
-            ...eachRect,
-            visible: false
-        }
-        )
-        }));
-        this.setState(prevState => ({
-        ellipses: prevState.ellipses.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-            ...eachRect,
-            visible: true
-            }
-            : {
-            ...eachRect,
-            visible: false
-            }
-        )
-        }));
-        this.setState(prevState => ({
-        triangles: prevState.triangles.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-            ...eachRect,
-            visible: true
-            }
-            : {
-            ...eachRect,
-            visible: false
-            }
-        )
-        }));
-        this.setState(prevState => ({
-        images: prevState.images.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-            ...eachRect,
-            visible: true
-            }
-            : {
-            ...eachRect,
-            visible: false
-            }
-            )
-        }));
-        this.setState(prevState => ({
-        videos: prevState.videos.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-            ...eachRect,
-            visible: true
-            }
-            : {
-            ...eachRect,
-            visible: false
-            }
-            )
-        }));
-        this.setState(prevState => ({
-        audios: prevState.audios.map(eachRect =>
-        eachRect.level === this.state.level
-            ? {
-              ...eachRect,
-              visible: true
-            }
-            : {
-              ...eachRect,
-              visible: false
-            }
-            )
-        }));
-        this.setState(prevState => ({
-        documents: prevState.documents.map(eachRect =>
-        eachRect.level === this.state.level
-        ? {
-            ...eachRect,
-            visible: true
-          }
-        : {
-            ...eachRect,
-            visible: false
-          }
-        )
-        }));
-        this.setState(prevState => ({
-        stars: prevState.stars.map(eachRect =>
-        eachRect.level === this.state.level
-          ? {
-              ...eachRect,
-              visible: true
-            }
-          : {
-              ...eachRect,
-              visible: false
-            }
-        )
-        }));
-        this.setState(prevState => ({
-        arrows: prevState.arrows.map(eachRect =>
-          eachRect.level === this.state.level
-            ? {
-                ...eachRect,
-                visible: true
-              }
-            : {
-                ...eachRect,
-                visible: false
-              }
-        )
-        }));
-        this.setState(prevState => ({
-          texts: prevState.texts.map(eachRect =>
-            eachRect.level === this.state.level
-              ? {
-                  ...eachRect,
-                  visible: true
-                }
-              : {
-                  ...eachRect,
-                  visible: false
-                }
-          )
-          }));
-  }
   handleLayerClear = () => {
     this.refs.layer2.clear();
   }
@@ -2627,14 +2602,27 @@ class Graphics extends Component {
 }
 
   drawLine = () => {
-    addLine(this.refs.graphicStage.getStage(), this.refs.layer2, "brush", this.state.colorf, true);
-  };
-  eraseLine = () => {
-    addLine(this.refs.graphicStage.getStage(), this.refs.layer2, "erase", this.state.colorf, true);
+    this.setState({
+      drawMode: true
+    })
+    this.setState({
+      tool: "pen"
+    })
+
   };
   stopDrawing = () => {
-    addLine(this.refs.graphicStage.getStage(), this.refs.layer2, "brush", this.state.colorf, false);
-  };
+    console.log(this.refs.layer2)
+    this.setState({
+      drawMode: false
+    })
+  }
+  chooseColor = (e) => {
+    this.setState({
+      color: e.hex
+    })
+  }
+
+
 
 
   render() {
@@ -2748,7 +2736,8 @@ class Graphics extends Component {
 
 
 
-              {this.state.rectangles.map(eachRect => {
+            {this.state.rectangles.map(eachRect => {
+              if(eachRect.level == this.state.level)
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -2942,7 +2931,9 @@ class Graphics extends Component {
               </Portal>
             )}
 
-              {this.state.ellipses.map(eachEllipse => (
+              {this.state.ellipses.map(eachEllipse => {
+                if(eachEllipse.level == this.state.level)
+                return (
                 <Ellipse
                   visible={eachEllipse.visible}
                   ref={eachEllipse.ref}
@@ -3105,9 +3096,30 @@ class Graphics extends Component {
                   }
                   }
                 />
-              ))}
+              );
+            })}
+              {this.state.lines.map((eachLine, i) => {
+                if(eachLine.level == this.state.level)
+                return(
+                  <Line
+                    id={eachLine.id}
+                    level={eachLine.level}
+                    key={i}
+                    points={eachLine.points}
+                    stroke={eachLine.color}
+                    strokeWidth={5}
+                    tension={0.5}
+                    lineCap="round"
+                    globalCompositeOperation={
+                      eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
+                    }
+                  />
+              );
+              })}
 
-              {this.state.images.map(eachImage => (
+              {this.state.images.map(eachImage => {
+                if(eachImage.level == this.state.level)
+                return (
                 <URLImage
                   visible={eachImage.visible}
                   src={eachImage.imgsrc}
@@ -3228,8 +3240,11 @@ class Graphics extends Component {
                   }
 
                 />
-              ))}
-              {this.state.videos.map(eachVideo => (
+            );
+            })}
+              {this.state.videos.map(eachVideo => {
+                if(eachVideo.level == this.state.level)
+                return (
                 <URLvideo
                   visible={eachVideo.visible}
                   src={eachVideo.vidsrc}
@@ -3339,8 +3354,11 @@ class Graphics extends Component {
                   }
 
                 />
-              ))}
-              {this.state.audios.map(eachAudio => (
+            );
+            })}
+              {this.state.audios.map(eachAudio => {
+                if(eachAudio.level == this.state.level)
+                return (
                 <URLvideo
                   visible={eachAudio.visible}
                   fillPatternImage={true}
@@ -3456,8 +3474,11 @@ class Graphics extends Component {
                   }
 
                 />
-              ))}
-              {this.state.documents.map(eachDoc => (
+            );
+            })}
+              {this.state.documents.map(eachDoc => {
+                if(eachDoc.level == this.state.level)
+                return (
                 <Rect
                   rotation={eachDoc.rotation}
                   ref={eachDoc.ref}
@@ -3595,8 +3616,11 @@ class Graphics extends Component {
                   }
 
                 />
-              ))}
-              {this.state.triangles.map(eachEllipse => (
+            );
+            })}
+              {this.state.triangles.map(eachEllipse => {
+                if(eachEllipse.level == this.state.level)
+                return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
                   ref={eachEllipse.ref}
@@ -3757,8 +3781,11 @@ class Graphics extends Component {
                   }
                   }
                 />
-              ))}
-              {this.state.stars.map(eachStar => (
+            );
+            })}
+              {this.state.stars.map(eachStar => {
+                if(eachStar.level == this.state.level)
+                return (
                 <Star
                   visible={eachStar.visible}
                   ref={eachStar.ref}
@@ -3877,9 +3904,12 @@ class Graphics extends Component {
                   }
                   }
                 />
-              ))}
+            );
+            })}
 
-              {this.state.texts.map(eachText => (
+              {this.state.texts.map(eachText => {
+                if(eachText.level == this.state.level)
+                return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
                 <Text
@@ -4030,6 +4060,7 @@ class Graphics extends Component {
                     // turn into textarea
                     var stage = this.refs.graphicStage;
                     var text = stage.findOne("." + eachText.name);
+                    console.log(stage.findOne(".text1"))
 
                     this.setState({
                       textX: text.absolutePosition().x,
@@ -4052,9 +4083,10 @@ class Graphics extends Component {
                     this.refs.layer2.draw();
                   }}
                 />
-              ))}
+            );
+            })}
               {this.state.arrows.map(eachArrow => {
-                if (!eachArrow.from && !eachArrow.to) {
+                if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level) {
                   return (
                     <Arrow
                       visible={eachArrow.visible}
@@ -4142,13 +4174,7 @@ class Graphics extends Component {
                   );
                 }
               })}
-
-              {this.state.selectedShapeName.includes("text") ? (
-                <TransformerComponent
-                  selectedShapeName={this.state.selectedShapeName}
-                />
-              ) : (
-                <TransformerComponent
+              <TransformerComponent
                   selectedShapeName={this.state.selectedShapeName}
                   ref="trRef"
 
@@ -4160,7 +4186,6 @@ class Graphics extends Component {
                       return newBox;
                     }}
                 />
-              )}
               <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef" />
             </Layer>
 
@@ -4339,6 +4364,7 @@ class Graphics extends Component {
               handleVideo={this.handleVideo}
               handleAudio={this.handleAudio}
               handleDocument={this.handleDocument}
+              choosecolor={this.chooseColor}
 
               />
             <Pencil

@@ -22,7 +22,7 @@ function Dashboard(props) {
    }, []);
 
   const getAllGamedata = () => {
-    axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name', {
+    axios.get('http://localhost:5000/api/adminaccounts/getAdminbyEmail/:email/:name', {
       params: {
             email: user.email,
             name: user.name
@@ -37,7 +37,7 @@ function Dashboard(props) {
       console.log(localStorage)
     })
     .catch(error => console.log(error.response));
-    axios.get('http://localhost:5000/gameinstances/getGameInstances/',
+    axios.get('http://localhost:5000/api/gameinstances/getGameInstances/',
     {
       params: {
             id: value
