@@ -436,13 +436,13 @@ class Graphics extends Component {
       audios = this.state.audios,
       documents = this.state.documents,
       lines = this.state.lines,
-      status = "";
+      status = "Up";
     // if (
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines] });
-
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, status: "up"] });
+      console.log(this.state.saved)
       let arrows1 = this.state.arrows;
       arrows1.forEach(eachArrow => {
         //for "from & to of each arrow"
@@ -2666,6 +2666,7 @@ class Graphics extends Component {
     return (
       <React.Fragment>
         <Timer handleSave={this.handleSave} />
+      <button onClick={this.handleSave}>Save</button>
         <div
           onKeyDown={event => {
             const x = 88,
@@ -4059,8 +4060,8 @@ class Graphics extends Component {
                   onDblClick={() => {
                     // turn into textarea
                     var stage = this.refs.graphicStage;
-                    var text = stage.findOne("." + eachText.name);
-                    console.log(stage.findOne(".text1"))
+                    var text = this.refs.layer2.findOne(".text1");
+
 
                     this.setState({
                       textX: text.absolutePosition().x,

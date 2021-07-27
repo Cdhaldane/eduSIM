@@ -15,7 +15,7 @@ function SimNote(props) {
       let data = {
         id: props.gameid
       }
-      axios.put('http://localhost:5000/gameinstances/delete/:id', data)
+      axios.put('http://localhost:5000/api/gameinstances/delete/:id', data)
       .then((res) => {
         const allData = res.data;
         console.log(allData);
