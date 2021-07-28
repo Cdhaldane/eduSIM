@@ -1,10 +1,8 @@
 import { Router } from 'express';
 const gameinstance = require('../controllers/gamepage.jsx');
+
 const router = Router();
 const multer = require('multer');
-
-const gameinstances = require('../models/GameInstances');
-
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -64,34 +62,11 @@ router.post('/upload', (req, res) => {
   });
 });
 
-router.post('/pdfs', (req, res) => {
-  if (req.files === null) {
-    return res.status(400).json({ msg: 'No file uploaded' });
-  }
-
-  const file = req.files.file;
-
-  file.mv(`${__dirname}../../../client/public/uploads/${file.name}`, err => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send(err);
-    }
-
-    res.json({ fileName: file.name, filePath: `/pdfs/${file.name}` });
-  });
-});
 //API Path to update a specific game instance
 router.put('/update/:id', gameinstance.updateGameInstance);
 
 //API Path to update a specific game instance
-
-
-router.put('/delete/:id', gameinstance.deleteGameInstance);
-
-
-
-
+router.put('/delete', gameinstance.deleteGameInstance);
 
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
-
 export default router;

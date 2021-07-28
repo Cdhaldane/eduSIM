@@ -4,26 +4,34 @@ const GameInstance = require("../models/GameInstances");
 //Get all the game instances that a specific admin has created
 // Request has an admin id
 exports.getGameInstances = async (req, res) => {
-  const id = req.query.id;
-    try {
-      let gameinstance = await GameInstance.findAll({
-      where: {
-        createdby_adminid: id,
-      },
-    });
-      return res.send(gameinstance);
-    } catch (err) {
-      return res.status(400).send({
-        message: `No game instance found with the id ${id}`,
-      });
-    }
+ 
+  const { id } = req.params;
+  try {
+  let gameinstance = await GameInstance.findAll({
+  where: {
+  createdby_adminid: id, 
+  }, 
+  });
+  var Array = [];
+  for(i=0; i< gameinstance.length; i++) { 
+  if(gameinstance[i].status==='created' || gameinstance[i].status==='started' || gameinstance[i].status==='ended'){
+  Array.push(gameinstance[i]) 
+  } 
+  }
+  return res.json(Array) 
+  } catch (err) {
+  //Might never get here
+  //Since empty array will be sent
+  return res.status(400).send({
+  message: `No active game instance found with the id ${id}`,
+  });
+  }
   };
 
 ///Get a specific game instance that an admin has created
 // Request has an admin and a gameinstance id
 exports.getGameInstance = async (req, res) => {
-  const adminid = req.query.adminid;
-  const gameid = req.query.gameid;
+  const { adminid, gameid } = req.params;
     try {
       let gameinstance = await GameInstance.findOne({
         where: {
@@ -39,16 +47,17 @@ exports.getGameInstance = async (req, res) => {
       }
   };
 
+
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
-  const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, invite_url } = req.body;
+  const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, status } = req.body;
     try {
       let newGameInstance = await GameInstance.create({
         gameinstance_name,
         gameinstance_photo_path,
         game_parameters,
         createdby_adminid,
-        invite_url
+        status
       });
       return res.send(newGameInstance);
     } catch (err) {
@@ -60,11 +69,12 @@ exports.createGameInstance = async (req, res) => {
 
 //Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { id, gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
+  const { gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
+  const { id } = req.params;
 
   const gameinstance = await GameInstance.findOne({
     where: {
-      gameinstanceid: id
+      gameinstanceid: id,
     },
   });
 
@@ -99,63 +109,36 @@ exports.updateGameInstance = async (req, res) => {
     }
   };
 
-//Delete a game instance
 exports.deleteGameInstance = async (req, res) => {
- const id = req.query.id;
-
- const gameinstance = await GameInstance.findOne({
-   where: {
-     gameinstanceid: id,
-   },
- });
-
- if (!gameinstance) {
-   return res.status(400).send({
-     message: `No game instance found with the id ${id}`,
-   });
- }
-
- try {
- //Updating a specific json field
+  const id = req.body.id;
+  
+  const gameinstance = await GameInstance.findOne({
+  where: {
+  gameinstanceid: id,
+  },
+  });
+  
+  if (!gameinstance) {
+  return res.status(400).send({
+  message: `No game instance found with the id ${id}`,
+  });
+  }
+  
+  try {
+  //Updating a specific json field
   gameinstance.set(
-    {
-      'game_parameters.status': 'deleted'
-    }
+  {
+  'status': 'deleted'
+  }
   )
   gameinstance.save();
   return res.send({
-    message: `Game ${id} has been deleted!`,
-    gameinstance
+  message: `Game ${id} has been deleted!`,
+  gameinstance
   });
   } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
+  return res.status(500).send({
+  message: `Error: ${err.message}`,
+  });
   }
-};
-// exports.deleteGameInstance = async (req, res) => {
-//   const  id  = req.query.id;
-//
-//   const gameinstance = await GameInstance.findOne({
-//     where: {
-//       gameinstanceid: id,
-//     },
-//   });
-//
-//   if (!gameinstance) {
-//     return res.status(400).send({
-//       message: `No game instance found with the id ${id}`,
-//     });
-//   }
-//
-//   try {
-//     await gameinstance.destroy();
-//     return res.send({
-//       message: `Game ${id} has been deleted!`,
-//     });
-//   } catch (err) {
-//     return res.status(500).send({
-//       message: `Error: ${err.message}`,
-//     });
-//   }
-// };
+ };
