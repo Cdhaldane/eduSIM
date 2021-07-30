@@ -24,11 +24,11 @@ const gameactions = db.define('gameactions', {
   createdtimestamp: {
     type: Sequelize.DATE,
     allowNull: false
-  }   
+  }
 });
 
 gameactions.sync().then(() => {
-  console.log('table created');
+  console.log('gameactions table created');
 });
 
 module.exports = gameactions;

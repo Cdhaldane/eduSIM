@@ -25,13 +25,13 @@ const gameinstances = db.define('gameinstances', {
     type: Sequelize.UUID,
     allowNull: false
   },
-  invite_url: {
-    type: Sequelize.STRING(250)
+  status: {
+    type: Sequelize.ENUM('created', 'started', 'ended', 'deleted')
   }
 });
 
 gameinstances.sync().then(() => {
-  console.log('table created');
+  console.log('gameinstance table created');
 });
 
 module.exports = gameinstances;

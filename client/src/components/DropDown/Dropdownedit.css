@@ -71,7 +71,6 @@ a {
 .menuedit {
   width: 100%;
   font-size: 1.3rem;
-  font-weight: 500;
   margin-bottom: 10px;
   color: black;
   padding: 5px;
@@ -80,7 +79,6 @@ a {
 .menuedit h1{
   padding: 10px;
   font-size: 1.5rem;
-  font-weight: 500;
 }
 
 .menuedit input {

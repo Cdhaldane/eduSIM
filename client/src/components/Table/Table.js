@@ -1,0 +1,220 @@
+import React, {useState, Fragment} from "react"
+import "./Table.css"
+import data from "./mock-data.json"
+import ReadOnlyRow from "../ReadOnlyRow";
+import EditableRow from "../EditableRow"
+import { parse } from "papaparse";
+import { nanoid } from "nanoid";
+import "./tailwind.css"
+
+
+const Table = () => {
+    const [highlighted, setHighlighted] = useState(false);
+    const [contacts, setContacts] = useState(data);
+    const [addFormData, setAddFormData] = useState({
+      firstName: "",
+      lastName: "",
+      email: "",
+      group: "",
+    });
+
+    const [editFormData, setEditFormData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        group: "",
+    });
+
+    const [editContactId, setEditContactId] = useState(null);
+
+    //Add change
+    const handleAddFormChange = (event) => {
+      event.preventDefault();
+
+      const fieldName = event.target.getAttribute("name");
+      const fieldValue = event.target.value;
+
+      const newFormData = { ...addFormData };
+      newFormData[fieldName] = fieldValue;
+
+      setAddFormData(newFormData);
+    };
+
+    const handleEditFormChange = (event) => {
+      event.preventDefault();
+
+      const fieldName = event.target.getAttribute("name");
+      const fieldValue = event.target.value;
+
+      const newFormData = { ...editFormData };
+      newFormData[fieldName] = fieldValue;
+
+      setEditFormData(newFormData);
+    };
+
+    //Add submit
+    const handleAddFormSubmit = (event) => {
+      event.preventDefault();
+
+      const newContact = {
+        id: nanoid,
+        firstName: addFormData.firstName,
+        lastName: addFormData.lastName,
+        email: addFormData.email,
+        group: addFormData.group,
+      };
+
+      const newContacts = [...contacts, newContact];
+      setContacts(newContacts);
+    };
+
+    const handleEditFormSubmit = (event) => {
+      event.preventDefault();
+
+      const editedContact = {
+        id: editContactId,
+        firstName: editFormData.firstName,
+        lastName: editFormData.lastName,
+        email: editFormData.email,
+        group: editFormData.group,
+      };
+
+      const newContacts = [...contacts];
+
+      const index = contacts.findIndex((contact) => contact.id === editContactId);
+
+      newContacts[index] = editedContact;
+
+      setContacts(newContacts);
+      setEditContactId(null);
+    };
+
+    const handleEditClick = (event, contact) => {
+      event.preventDefault();
+      setEditContactId(contact.id);
+
+      const formValues = {
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        email: contact.email,
+        group: contact.group,
+      };
+
+      setEditFormData(formValues);
+    };
+
+    const handleCancelClick = () => {
+      setEditContactId(null);
+    };
+
+    const handleDeleteClick = (contactId) => {
+      const newContacts = [...contacts];
+
+      const index = contacts.findIndex((contact) => contact.id === contactId);
+
+      newContacts.splice(index, 1);
+
+      setContacts(newContacts);
+    };
+
+    return (
+      <div className="app-container">
+      <div>
+      <h1 className="text-center text-4xl">Contact Import</h1>
+      <div
+        className={`p-6 my-2 mx-auto max-w-md border-2 ${
+          highlighted ? "border-green-600 bg-green-100" : "border-gray-600"
+        }`}
+        onDragEnter={() => {
+          setHighlighted(true);
+        }}
+        onDragLeave={() => {
+          setHighlighted(false);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setHighlighted(false);
+
+          Array.from(e.dataTransfer.files)
+            .filter((file) => file.type === "text/csv")
+            .forEach(async (file) => {
+              const text = await file.text();
+              const result = parse(text, { header: true });
+              setContacts((contact) => [...contact, ...result.data]);
+            });
+        }}
+      >
+        DROP HERE
+      </div>
+      </div>
+        <form onSubmit={handleEditFormSubmit}>
+          <table>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Group</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.map((contact) => (
+                <Fragment>
+                  {editContactId === contact.id ? (
+                    <EditableRow
+                      editFormData={editFormData}
+                      handleEditFormChange={handleEditFormChange}
+                      handleCancelClick={handleCancelClick}
+                    />
+                  ) : (
+                    <ReadOnlyRow
+                      contact={contact}
+                      handleEditClick={handleEditClick}
+                      handleDeleteClick={handleDeleteClick}
+                    />
+                  )}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
+        </form>
+
+        <h2>Add a Contact</h2>
+        <form onSubmit={handleAddFormSubmit}>
+          <input
+            type="text"
+            name="firstName"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            type="text"
+            name="lastName"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            type="text"
+            name="email"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            type="text"
+            name="group"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <button type="submit">Add</button>
+        </form>
+      </div>
+    );
+  };
+
+
+
+export default Table;

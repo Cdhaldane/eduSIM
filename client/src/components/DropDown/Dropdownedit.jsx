@@ -5,6 +5,7 @@ import { TwitterPicker } from 'react-color';
 import Switch from "react-switch"
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import FontPicker from "font-picker-react";
 
 
 
@@ -21,6 +22,8 @@ import "./Dropdownedit.css";
     const [checkede, setCheckede] = useState(false);
     const [value, setValue] = React.useState(20);
     const [valueO, setValueO] = React.useState(1);
+    const [font, setFont] = React.useState("Choose a font!")
+    const [fontSize, setFontSize] = useState("50")
 
     function handleChangeF(e){
       setColourf(e);
@@ -106,8 +109,13 @@ import "./Dropdownedit.css";
     setValueO(e);
     props.handleOpacity(e);
   };
+  function handleSize(e){
+    setFontSize(e.target.value);
+    props.handleSize(e.target.value);
+  }
 
- return (
+if(props.title == "Edit Shape") {
+return (
      <div className="dropdownedit" style={{ height: menuHeight }} ref={dropdownRef}>
        <CSSTransition
         in={activeMenu === 'main'}
@@ -161,7 +169,6 @@ import "./Dropdownedit.css";
               background: "red"
             }}
           />
-
         </b>
         <br />
         <b>
@@ -191,14 +198,10 @@ import "./Dropdownedit.css";
             background: "red"
           }}
         />
-
       </b>
       <br />
-
         </div>
-
       </CSSTransition>
-
       <CSSTransition
         in={activeMenu === 'shapes'}
         timeout={500}
@@ -209,18 +212,82 @@ import "./Dropdownedit.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" class="fas fa-arrow-left"></i>}>
             <h2>COLOUR!</h2>
           </DropdownItem>
-
-
-
-
-
-
-
-
         </div>
       </CSSTransition>
     </div>
-  );
+  )} else {
+    return (
+      <div className="dropdownedit" style={{ height: menuHeight }} ref={dropdownRef}>
+        <CSSTransition
+         in={activeMenu === 'main'}
+         timeout={500}
+         classNames="menu-primary"
+         unmountOnExit
+         onEnter={calcHeight}>
+         <div className="menuedit">
+           <h1>{props.title}</h1>
+           <b>
+           Text Color:
+           <TwitterPicker
+             colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
+             color={ colourf }
+             triangle="Fill"
+             width={350}
+             onChangeComplete={ handleChangeF }/>
+           </b>
+           <br />
+           <b>Text Font:</b>
+
+           <b id="fontpick">
+           <FontPicker
+                    apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
+                    activeFontFamily={font}
+                    onChange={(nextFont) => {
+                        setFont(nextFont.family)
+                        props.handleFont(nextFont.family)
+                    }}
+                    />
+                   </b>
+                <br />
+                <b id="text">
+                  <br />
+                  Opacity:
+                  <Slider
+                    className="slider"
+                    value={valueO}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onChange={onSliderChangeO}
+                    railStyle={{
+                      height: 4,
+                      marginTop: 14,
+                      width: 400
+                    }}
+                    handleStyle={{
+                      height: 28,
+                      width: 28,
+                      marginTop: 0,
+                      backgroundColor: "black",
+                      border: 0,
+
+                    }}
+                    trackStyle={{
+                      marginTop: 14,
+                      background: "red"
+                    }}
+                  />
+                </b>
+                <br />
+                <br />
+                <b>Text Size:</b>
+                <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
+         </div>
+       </CSSTransition>
+     </div>
+
+    )
+  }
 }
 
 export default DropdownMenu;

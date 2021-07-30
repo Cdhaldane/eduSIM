@@ -30,7 +30,7 @@ function Info(props) {
   function eraseLine(){
     props.eraseLine();
   }
-  
+
   return(
   <div>
   <div className={"info" + open}>
@@ -62,7 +62,6 @@ function Info(props) {
         </div>
       : ""
       }
-    }
     </div>
     )
   }

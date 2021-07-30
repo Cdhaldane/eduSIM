@@ -11,6 +11,8 @@ function NavBar(props) {
   const [clicked, setClicked] = useState(false);
   const { user } = props.auth0;
 
+
+
   function handleClick() {
     setClicked(!clicked);
   }
@@ -45,7 +47,7 @@ function NavBar(props) {
             : <h2>Nothing</h2>
           }
           <br />
-          <a href="/profile">Profile</a>
+          <a href="/profile">Profile </a>
           <br />
         <div className="pbut">
             <AuthenticationButton />

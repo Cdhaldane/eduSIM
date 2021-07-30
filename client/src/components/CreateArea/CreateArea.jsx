@@ -53,7 +53,7 @@ import "./CreateArea.css";
        gameinstance_photo_path: res.data.public_id,
        game_parameters: 'value',
        createdby_adminid: localStorage.adminid,
-       invite_url: 'value'
+       status: 'created'
      }
 
        axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)

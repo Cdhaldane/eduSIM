@@ -8,29 +8,28 @@ const gameplayers = db.define('gameplayers', {
     primaryKey: true,
     allowNull: false
   },
-  player_id: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
+  fname: {
+    type: Sequelize.STRING(250)
+  },
+  lname: {
+    type: Sequelize.STRING(250)
   },
   gameinstanceid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
+    type: Sequelize.UUID
   },
-  gamestarttimestamp: {
-    type: Sequelize.DATE,
-    allowNull: false
+  game_room: {
+    type: Sequelize.STRING(250)
   },
-  roleid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
-  }, 
+  player_email: {
+    type: Sequelize.STRING(250)
+  },
+  gamerole: {
+    type: Sequelize.STRING(250)
+  },
 });
 
-games.sync().then(() => {
-  console.log('table created');
+gameplayers.sync().then(() => {
+  console.log('gameplayers table created');
 });
 
 module.exports = gameplayers;

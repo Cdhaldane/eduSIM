@@ -7,15 +7,23 @@ exports.getGameInstances = async (req, res) => {
   const id = req.query.id;
     try {
       let gameinstance = await GameInstance.findAll({
-      where: {
-        createdby_adminid: id,
-      },
-    });
-      return res.send(gameinstance);
-    } catch (err) {
-      return res.status(400).send({
-        message: `No game instance found with the id ${id}`,
+        where: {
+          createdby_adminid: id,
+        },
       });
+      var Array = [];
+      for(i=0; i< gameinstance.length; i++) {
+        if(gameinstance[i].status==='created' || gameinstance[i].status==='started' || gameinstance[i].status==='ended'){
+          Array.push(gameinstance[i])
+        }
+      }
+      return res.json(Array)
+    } catch (err) {
+  //Might never get here
+  //Since empty array will be sent
+    return res.status(400).send({
+      message: `No active game instance found with the id ${id}`,
+    });
     }
   };
 
@@ -41,14 +49,14 @@ exports.getGameInstance = async (req, res) => {
 
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
-  const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, invite_url } = req.body;
+  const { gameinstance_name, gameinstance_photo_path,  game_parameters, createdby_adminid, status } = req.body;
     try {
       let newGameInstance = await GameInstance.create({
         gameinstance_name,
         gameinstance_photo_path,
         game_parameters,
         createdby_adminid,
-        invite_url
+        status
       });
       return res.send(newGameInstance);
     } catch (err) {
@@ -98,10 +106,9 @@ exports.updateGameInstance = async (req, res) => {
       });
     }
   };
-
-//Delete a game instance
+// Delete a game instance
 exports.deleteGameInstance = async (req, res) => {
- const id = req.query.id;
+ const { id } = req.body;
 
  const gameinstance = await GameInstance.findOne({
    where: {
@@ -119,7 +126,7 @@ exports.deleteGameInstance = async (req, res) => {
  //Updating a specific json field
   gameinstance.set(
     {
-      'game_parameters.status': 'deleted'
+      'status': 'deleted'
     }
   )
   gameinstance.save();

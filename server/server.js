@@ -6,6 +6,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const nodemailer = require('nodemailer');
 
 var cors = require('cors')
 
@@ -30,6 +31,45 @@ app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
 
+app.post("/api/form", (req,res) =>{
+  let data = req.body
+  let smtpTransport = nodemailer.createTransport({
+    service: 'hotmail',
+    auth: {
+      user: "edusimuottawa@outlook.com",
+      pass: "Legodinosaur"
+    }
+  });
+  var mailOptions = {
+    from: 'edusimuottawa@outlook.com',
+    to: 'xcdhaldane@gmail.com',
+    subject: 'EDUsim invite!',
+    html:`
+    <h3>You have been invited to a simulation!</h3>
+      <h1>Prof Information</h1>
+        <ul>
+          <li> Name: ${data.pname} </li>
+          <li> Email: ${data.pemail} </li>
+        </ul>
+      <h1>Information</h1>
+        <ul>
+          <li> Name: ${data.name} </li>
+          <li> Email: ${data.email} </li>
+          <li> Link: ${data.link} </li>
+          <li> Room Code: ${data.roomcode} </li>
+        </ul>
+    `
+  };
+  smtpTransport.sendMail(mailOptions, (error,response) =>{
+
+    if(error){
+      res.send(error)
+    } else {
+      res.send('Success')
+    }
+  })
+  smtpTransport.close();
+})
 
 
 app.listen(PORT, () => {

@@ -245,7 +245,7 @@ import "./Dropdown.css";
           <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
         <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
         <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
-      <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Arrow</DropdownItems>
+
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-marker"></i>}
             rightIcon=""
@@ -305,6 +305,11 @@ import "./Dropdown.css";
               onClick={addImage}></i>}>
           </DropdownItemImg>
           <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
+          <DropdownItemImg
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addImage}></i>}>
+        </DropdownItemImg>
+          <input id="imginputname" type="text" placeholder="Image name..." onChange={handleImage} value={imgsrc} />
           <DropdownItems
             onClick={addImage}
             leftIcon={<i id="icons" class="fas fa-plus"
@@ -326,6 +331,11 @@ import "./Dropdown.css";
               onClick={addVideo}></i>}>
           </DropdownItems>
           <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
+          <DropdownItems
+            leftIcon={<i id="icons" class="fas fa-plus"
+            onClick={addVideo}></i>}>
+        </DropdownItems>
+          <input id="imginputvname" type="text" placeholder="Video name..." onChange={handleVideo} value={vidsrc} />
           <DropdownItems
             onClick={addVideo}
             leftIcon={<i id="icons" class="fas fa-plus"
@@ -423,3 +433,5 @@ import "./Dropdown.css";
 }
 
 export default DropdownMenu;
+
+  // <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Arrow</DropdownItems>
