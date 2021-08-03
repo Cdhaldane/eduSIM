@@ -1,7 +1,7 @@
 #pencil1{
   position: relative;
   left:10px;
-  top: -725px;
+  top: -745px;
   color: #8f001a;
 }
 
@@ -12,7 +12,7 @@
 #pencil2{
   position: relative;
   left:140px;
-  top:-810px;
+  top:-790px;
   color: #8f001a;
 }
 
@@ -23,7 +23,7 @@
 #pencil3{
   position: relative;
   left:1590px;
-  top:-860px;
+  top:-840px;
   color: #8f001a;
 }
 
@@ -51,23 +51,23 @@
 .drop1{
   position: relative;
   left: -450px;
-  top: -500px;
+  top: -510px;
 }
 
 .drop2 {
   position: relative;
-  top: -300px;
-  left: -330px;
+  top: -280px;
+  left: -320px;
 }
 
 .drop3 {
   position: relative;
-  top: -348px;
-  left: 880px;
+  top: -328px;
+  left: 900px;
 }
 
 .drop4{
   position: relative;
-  top: -428px;
-  left: -400px;
+  top: -400px;
+  left: -420px;
 }

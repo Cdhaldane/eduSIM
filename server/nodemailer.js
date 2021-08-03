@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
 var mailOptions = {
   from: 'edusimuottawa@outlook.com',
   to: 'xcdhaldane@gmail.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
+  subject: 'EDUsim invite!',
+  text: 'Hello, _____. Your teacher for class _____ is inviting you to a simulation. Your link _____ & room code ______ .'
 };
 
 transporter.sendMail(mailOptions, function(error, info){

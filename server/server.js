@@ -7,6 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 
+
 var cors = require('cors')
 
 
@@ -25,6 +26,7 @@ app.use(fileUpload());
 
 app.use('/api/gameinstances', routes.gameinstance)
 app.use('/api/adminaccounts', routes.adminaccount)
+app.use('/api/email', routes.emailer)
 
 app.use((req, res) => {
   res.status(404).send('404: Page not found');

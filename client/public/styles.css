@@ -11,13 +11,13 @@ body {
 }
 
 html {
-  font-family: 'Raleway';
+  font-family: "Montserrat",
 }
 body {
   background-color: #636363;
   margin: 0;
   padding: 0;
-  font-family: 'Raleway';
+  font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: scroll;
@@ -167,7 +167,7 @@ footer {
   width: 600px;
   color: white;
   margin-bottom: 50px;
-  font-family: 'Raleway';
+  font-family: "Montserrat", sans-serif;
   font-size: 2.0rem;
   font-weight: bold;
   text-decoration: underline;
@@ -275,4 +275,92 @@ footer {
   text-align: center;
   top: 10px;
 
+}
+
+#joinimg {
+  position: relative;
+  top: 20px;
+  left: -350px;
+  height: 100px;
+  width: 120px;
+  border: 2px solid black;
+  border-radius: 30px;
+  opacity: 100%;
+}
+#jointitle{
+  position: absolute;
+  font-size: 1.5rem;
+  top: 0px;
+  left: 100px;
+  font-weight: 700;
+}
+
+.studentbutton {
+  position: relative;
+  top: -2px;
+  left: 200px;
+  width: 400px;
+  height: 50px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5rem;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px
+}
+.studentbutton:hover{
+  cursor: pointer;
+  box-shadow: 0 5px 10px grey;
+}
+
+.bimgjoin {
+  position: absolute;
+  left: -20px;
+  width: 1900px;
+  height: 937px;
+  z-index: 2000;
+  top: -100px;
+  right: 0px;
+  bottom: 0px;
+  opacity: 0.8;
+}
+
+.playbtn{
+  color: white;
+  font-size: 1.5rem;
+  position: relative;
+  bottom: 10px;
+  left: 762px;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  background-color: #8f001a;
+}
+.pausebtn{
+  color: white;
+  font-size: 1.5rem;
+  position: relative;
+  bottom: 10px;
+  left: 802px;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  background-color: #8f001a;
+}
+.refreshbtn{
+  color: white;
+  font-size: 1.5rem;
+  position: relative;
+  bottom: 10px;
+  left: 842px;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  background-color: #8f001a;
 }

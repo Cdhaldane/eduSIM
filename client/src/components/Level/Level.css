@@ -58,7 +58,7 @@
 }
 #levels{
   position: relative;
-  top:-1000px;
+  top:-1060px;
   left: 175px;
 }
 .level{
@@ -68,15 +68,14 @@
   position: relative;
   color: #636363;
   font-size: 2.2rem;
-  top: -1040px;
+  top: -1060px;
   left: 825px;
-  font-weight: 700;
   height: 0px;
 }
 
 .level button{
   position: relative;
-  top: -1010px;
+  top: -1070px;
   left: 1400px;
   width: 100px;
   height: 50px;

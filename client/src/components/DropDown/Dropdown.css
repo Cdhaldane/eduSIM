@@ -71,12 +71,12 @@ a {
 .menu {
   width: 100%;
   font-size: 1.3rem;
-  font-weight: 700;
 }
 
 .menu h1{
   padding: 10px;
   font-size: 1.5rem;
+  font-weight: 100;
   color: #636363;
 }
 
@@ -238,7 +238,7 @@ a {
   border: none;
   padding: 4px;
   outline: none;
-  font-family: 'Raleway';
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   border-radius: 10px;
   margin-bottom: 30px;
@@ -286,6 +286,45 @@ a {
   font-size: 1.0rem;
   color: #636363;
 }
+#imginputname {
+  position: absolute;
+  top: 173px;
+  left: 50px;
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  padding: 0.8em;
+  font-size: 0.7em;
+  padding-left: 1.5em;
+}
+
+#imginputname::placeholder {
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  color: #636363;
+}
+
+#sizeinput {
+  position: relative;
+  width: 200px;
+  left: 20px;
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  padding: 0.1em;
+  font-size: 1.2em;
+  padding-left: 3.0em;
+}
+
+#sizeinput::placeholder {
+  font-family:  "Montserrat", sans-serif;
+  font-size: 2.0rem;
+  color: #636363;
+}
+
+#sizeinput:target {
+  font-family:  "Montserrat", sans-serif;
+  font-size: 2.5rem;
+  color: #636363;
+}
 
 #imginputv {
   position: absolute;
@@ -304,9 +343,32 @@ a {
   color: #636363;
 }
 
+#imginputvname {
+  position: absolute;
+  top: 116px;
+  left: 50px;
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  padding: 0.8em;
+  font-size: 0.7em;
+  padding-left: 1.5em;
+}
+
+#imginputvname::placeholder {
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  color: #636363;
+}
+
 
 #imgsource {
   position: relative;
   top: 0px;
   left: 0px;
+}
+
+#fontpick {
+  position: relative;
+  left: 20px;
+  margin-bottom:  -100px;
 }

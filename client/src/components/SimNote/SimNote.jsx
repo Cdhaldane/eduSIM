@@ -7,15 +7,16 @@ import {Image} from "cloudinary-react";
 
 function SimNote(props) {
   console.log("https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img + ".jpg")
+  console.log(props.gameid)
   function handleClick() {
     console.log(props.gameid)
     {if (window.confirm('Are you sure you wish to delete this simulation?'))
       props.onDelete(props.id)
       console.log(props.gameid)
-      let data = {
+      var body = {
         id: props.gameid
       }
-      axios.put('http://localhost:5000/api/gameinstances/delete/:id', data)
+      axios.put('http://localhost:5000/api/gameinstances/delete/:id', body)
       .then((res) => {
         const allData = res.data;
         console.log(allData);
@@ -40,7 +41,7 @@ function SimNote(props) {
       }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
-      <Link to="/gamepage" >
+      <Link to="/join" >
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
     </div>

@@ -8,6 +8,7 @@ import Profile from "./views/Profile.js";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
+import Join from "./views/Join"
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import Footer from "./components/Footer";
@@ -31,6 +32,7 @@ class App extends React.Component {
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />
               <ProtectedRoute path="/dashboard" component={Dashboard} />
+              <ProtectedRoute path="/join" component={Join} />
           </Switch>
         </div>
       );
@@ -49,6 +51,7 @@ class App extends React.Component {
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />
               <ProtectedRoute path="/dashboard" component={Dashboard} />
+              <ProtectedRoute path="/join" component={Join} />
               </Switch>
               <div>
 

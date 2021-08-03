@@ -1,0 +1,150 @@
+.areacsv{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'Raleway';
+  font-size: 2.5rem;
+  position: absolute;
+  left: 700px;
+  top: -80px;
+  z-index: 20000;
+  border-radius: 10%;
+}
+
+.areacsv form:after{
+  --borderWidth: 3px;
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: black;
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+}
+
+
+@keyframes animatedgradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.areacsv p{
+  text-align: left;
+  font-size: 2.0rem;
+  padding: 30px;
+  font-weight: 700;
+}
+
+#areacsvform {
+  position: relative;
+  top: 100px;
+  right: 250px;
+  width: 1000px;
+  height: 450px;
+  margin: 30px auto 20px auto;
+  background: #fff;
+  padding: 15px;
+  box-shadow: 0 2px 5px #ccc;
+  text-align: center;
+  border: solid 2px #8f001a;
+}
+
+.areacsv input[type="file"] {
+  position: relative;
+  left: 0px;
+  font-size: 0rem;
+  width: 0.1px;
+	height: 0.1px;
+  opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+  text-align: left;
+}
+
+.areacsv label{
+  position: absolute;
+  left: 15px;
+  padding: 30px;
+  font-size: 2.0rem;
+  font-weight: 700;
+  color: black;
+  text-align: left;
+  cursor: pointer;
+}
+
+.areacsv select {
+  position: relative;
+  bottom: -17px;
+
+  padding: 10px;
+  font-size: 1.5rem;
+  font-weight: 200;
+  color: black;
+  text-align: left;
+  cursor: pointer;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+#boxj1 {
+  position: relative;
+  top: 0px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 1080px;
+  height: 100px;
+  color: black;
+  font-family: 'Raleway';
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+#csvfile {
+  color: blue;
+  text-decoration: underline;
+}
+#csvfile2 {
+  position: relative;
+  top: 20px;
+  left: 200px;
+  color: blue;
+  text-decoration: underline;
+}
+#addj {
+  color: white;
+  z-index: 2000;
+  font-size: 1.5rem;
+  position: absolute;
+  bottom: 40px;
+  left: 852px;
+  border-radius: 5%;
+  width: 100px;
+  height: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background-color: #8f001a;
+}
+#emailtable {
+  position: relative;
+  left: 0px;
+  width: 85%;
+  height: 100%;
+}

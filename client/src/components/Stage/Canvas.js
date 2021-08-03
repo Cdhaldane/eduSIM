@@ -33,6 +33,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import React, { useState, useEffect, Component, useMemo } from 'react';
 import useImage from "use-image";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
 
 import {
@@ -288,6 +289,7 @@ class Graphics extends Component {
       isTransforming: false,
       lastFill: null,
       selectedContextMenu:null,
+      selectedContextMenuText:null,
       colorf: "white",
       colors: "black",
       color: "white",
@@ -907,7 +909,8 @@ class Graphics extends Component {
         );
       }
       this.setState({
-        selectedContextMenu: false
+        selectedContextMenu: false,
+        selectedContextMenuText: false
       })
     }
   };
@@ -941,7 +944,8 @@ class Graphics extends Component {
       }
     );
     this.setState({
-      selectedContextMenu: false
+      selectedContextMenu: false,
+      selectedContextMenuText: false
     })
   };
 
@@ -1016,7 +1020,8 @@ class Graphics extends Component {
         console.log("copied ele", this.state.copiedElement);
       });
       this.setState({
-        selectedContextMenu: false
+        selectedContextMenu: false,
+        selectedContextMenuText: false
       })
     }
   }
@@ -1502,7 +1507,8 @@ class Graphics extends Component {
         }
       }
       this.setState({
-        selectedContextMenu: false
+        selectedContextMenu: false,
+        selectedContextMenuText: false
       })
     }
   }
@@ -1638,7 +1644,8 @@ class Graphics extends Component {
         selectedShapeName: ""
       });
       this.setState({
-        selectedContextMenu: false
+        selectedContextMenu: false,
+        selectedContextMenuText: false
       })
     }
   }
@@ -1647,13 +1654,15 @@ class Graphics extends Component {
     this.handleDelete();
     this.handleCopy();
     this.setState({
-      selectedContextMenu: false
+      selectedContextMenu: false,
+      selectedContextMenuText: false
     })
   }
 
   handleClose = (e) => {
     this.setState({
-      selectedContextMenu: false
+      selectedContextMenu: false,
+      selectedContextMenuText: false
     })
   }
 
@@ -2233,14 +2242,14 @@ class Graphics extends Component {
       y: 400,
       width: 300,
       height: 25,
-      fontSize: 40,
+      fontSize: 50,
       text: "Edit this",
       fontFamily: "Belgrano",
       id: name,
       name: name,
-      fill: 'black',
+      fill: this.state.colorf,
+      opacity: 1,
       ref: ref,
-
       rotation: 0
     };
 
@@ -2311,6 +2320,40 @@ class Graphics extends Component {
               fill: e.hex
             }
           : eachStar
+      )
+    }));
+    this.setState(prevState => ({
+      texts: prevState.texts.map(eachStar =>
+        eachStar.id === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              fill: e.hex
+            }
+          : eachStar
+      )
+    }));
+  }
+  handleFont = (e) => {
+    this.setState(prevState => ({
+      texts: prevState.texts.map(eachRect =>
+        eachRect.id === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+              fontFamily: e
+            }
+          : eachRect
+      )
+    }));
+  }
+  handleSize = (e) => {
+    this.setState(prevState => ({
+      texts: prevState.texts.map(eachRect =>
+        eachRect.id === this.state.selectedShapeName
+          ? {
+              ...eachRect,
+            fontSize  : e
+            }
+          : eachRect
       )
     }));
   }
@@ -2553,6 +2596,16 @@ class Graphics extends Component {
           : eachStar
       )
     }));
+    this.setState(prevState => ({
+      texts: prevState.texts.map(eachStar =>
+        eachStar.id === this.state.selectedShapeName
+          ? {
+              ...eachStar,
+              opacity: e
+            }
+          : eachStar
+      )
+    }));
   }
   handleLevel = (e) => {
     this.setState({
@@ -2666,7 +2719,6 @@ class Graphics extends Component {
     return (
       <React.Fragment>
         <Timer handleSave={this.handleSave} />
-      <button onClick={this.handleSave}>Save</button>
         <div
           onKeyDown={event => {
             const x = 88,
@@ -3083,8 +3135,7 @@ class Graphics extends Component {
                     this.refs.graphicStage.draw();
                   }}
                   onContextMenu={e => {
-                    var audio = new Audio("https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3")
-                    audio.play()
+
                     e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
                     const mousePosition = e.target.getStage().getPointerPosition();
 
@@ -3113,6 +3164,20 @@ class Graphics extends Component {
                     lineCap="round"
                     globalCompositeOperation={
                       eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
+                    }
+                    draggable
+                    onContextMenu={e => {
+
+                      e.evt.preventDefault(true);
+                      const mousePosition = e.target.getStage().getPointerPosition();
+
+                      this.setState({
+                        selectedContextMenu: {
+                          type: "START",
+                          position: mousePosition
+                        }
+                      });
+                    }
                     }
                   />
               );
@@ -3983,6 +4048,7 @@ class Graphics extends Component {
                   link={eachText.link}
                   width={eachText.width}
                   fill={eachText.fill}
+                  opacity={eachText.opacity}
                   id={eachText.id}
                   name="shape"
                   ref={eachText.ref}
@@ -4060,7 +4126,8 @@ class Graphics extends Component {
                   onDblClick={() => {
                     // turn into textarea
                     var stage = this.refs.graphicStage;
-                    var text = this.refs.layer2.findOne(".text1");
+                    let text = this.refs[eachText.ref];
+                    console.log(text)
 
 
                     this.setState({
@@ -4083,9 +4150,39 @@ class Graphics extends Component {
                     transformer.hide();
                     this.refs.layer2.draw();
                   }}
-                />
+                  onContextMenu={e => {
+                    e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                    const mousePosition = e.target.getStage().getPointerPosition();
+
+                    this.setState({
+                      selectedContextMenuText: {
+                        type: "START",
+                        position: mousePosition
+                      }
+                    });
+                  }
+                  }
+              />
             );
             })}
+            {this.state.selectedContextMenuText && (
+              <Portal>
+            <ContextMenuText
+              {...this.state.selectedContextMenuText}
+              selectedshape={this.state.selectedShapeName}
+              onOptionSelected={this.handleOptionSelected}
+              choosecolorf={this.handleColorF}
+              handleFont={this.handleFont}
+              handleSize={this.handleSize}
+              handleOpacity={this.handleOpacity}
+              close={this.handleClose}
+              copy={this.handleCopy}
+              cut={this.handleCut}
+              paste={this.handlePaste}
+              delete={this.handleDelete}
+            />
+            </Portal>
+          )}
               {this.state.arrows.map(eachArrow => {
                 if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level) {
                   return (
@@ -4189,13 +4286,6 @@ class Graphics extends Component {
                 />
               <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef" />
             </Layer>
-
-            <Layer
-              height={window.innerHeight}
-              width={window.innerWidth}
-              ref="layer"
-            >
-            </Layer>
           </Stage>
 
           <textarea
@@ -4252,6 +4342,7 @@ class Graphics extends Component {
               }
             }}
             onBlur={() => {
+              console.log(this.state.textareaFontSize)
               this.setState({
                 textEditVisible: false,
                 shouldTextUpdate: true
@@ -4260,16 +4351,17 @@ class Graphics extends Component {
               // get the current textNode we are editing, get the name from there
               //match name with elements in this.state.texts,
 
-              let node = this.refs.graphicStage.findOne(
-                "." + this.state.currentTextRef
-              );
-              let name = node.attrs.name;
+              console.log(this.state.currentTextRef)
+              let node = this.refs[this.state.currentTextRef];
 
+              let name = node.attrs.id;
+              console.log(name)
+              console.log(this.state.selectedShapeName)
               this.setState(
                 prevState => ({
                   selectedShapeName: name,
                   texts: prevState.texts.map(eachText =>
-                    eachText.name === name
+                    eachText.id === name
                       ? {
                           ...eachText,
                           text: this.state.text
@@ -4301,9 +4393,8 @@ class Graphics extends Component {
               position: "absolute",
               top: this.state.textY + 80 + "px",
               left: this.state.textX + "px",
-              width: "300px",
-              height: "300px",
-              overflow: "hidden",
+              width: this.state.textareaWidth,
+              height: this.state.textareaHeight,
               fontSize: this.state.textareaFontSize,
               fontFamily: this.state.textareaFontFamily,
               color: this.state.textareaFill,

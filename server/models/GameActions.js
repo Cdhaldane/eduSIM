@@ -24,7 +24,7 @@ const gameactions = db.define('gameactions', {
   createdtimestamp: {
     type: Sequelize.DATE,
     allowNull: false
-  }   
+  }
 });
 
 gameactions.sync().then(() => {
