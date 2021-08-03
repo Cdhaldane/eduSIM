@@ -121,13 +121,13 @@
   opacity: 1; /* Firefox */
 }
 
-.gradient-border {
+.gradientborder {
   --borderWidth: 1px;
   background: #1D1F20;
   position: relative;
   border-radius: var(--borderWidth);
 }
-.gradient-border:after {
+.gradientborder:after {
   content: '';
   position: absolute;
   top: calc(-1 * var(--borderWidth));

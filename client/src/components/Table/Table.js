@@ -3,14 +3,18 @@ import "./Table.css"
 import data from "./mock-data.json"
 import ReadOnlyRow from "../ReadOnlyRow";
 import EditableRow from "../EditableRow"
+import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import { parse } from "papaparse";
 import { nanoid } from "nanoid";
+import axios from "axios";
 import "./tailwind.css"
 
 
-const Table = () => {
+const Table = (props) => {
     const [highlighted, setHighlighted] = useState(false);
     const [contacts, setContacts] = useState(data);
+    const [sent, setSent] = useState(false)
+    const { user } = useAuth0();
     const [addFormData, setAddFormData] = useState({
       firstName: "",
       lastName: "",
@@ -117,10 +121,68 @@ const Table = () => {
       setContacts(newContacts);
     };
 
+    const handleAddStudent = () => {
+      return (
+        <div className="addstudent">
+        {/*<h2>Add a student</h2>*/}
+        <form onSubmit={handleAddFormSubmit}>
+          <input
+            id="firstname"
+            type="text"
+            name="firstName"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            id="lastname"
+            type="text"
+            name="lastName"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            id="email"
+            type="text"
+            name="email"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+          <input
+            id="groupnumber"
+            type="text"
+            name="group"
+            required="required"
+            onChange={handleAddFormChange}
+          />
+        <button type="submit" id="addstudent">Add</button>
+        </form>
+        </div>
+      )
+    }
+    const handleEmail = (e) => {
+      e.preventDefault();
+      {contacts.map((contact) => {
+        console.log(contact.firstName)
+        axios.post('http://localhost:5000/api/email/sendEmail', {
+          pname: user.name,
+          name: contact.firstName,
+          lastname: contact.lastName,
+          email: contact.email
+        })
+        .then((res) => {
+           console.log(res)
+           setSent(true)
+          })
+        .catch((error)=> {
+          console.log('email failed');
+          console.log(error.response)
+        })
+      })}
+    }
+
     return (
       <div className="app-container">
       <div>
-      <h1 className="text-center text-4xl">Contact Import</h1>
       <div
         className={`p-6 my-2 mx-auto max-w-md border-2 ${
           highlighted ? "border-green-600 bg-green-100" : "border-gray-600"
@@ -147,7 +209,6 @@ const Table = () => {
             });
         }}
       >
-        DROP HERE
       </div>
       </div>
         <form onSubmit={handleEditFormSubmit}>
@@ -183,34 +244,43 @@ const Table = () => {
           </table>
         </form>
 
-        <h2>Add a Contact</h2>
-        <form onSubmit={handleAddFormSubmit}>
-          <input
-            type="text"
-            name="firstName"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-            type="text"
-            name="lastName"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-            type="text"
-            name="email"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-            type="text"
-            name="group"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <button type="submit">Add</button>
-        </form>
+        {(props.addstudent)
+       ? (<div className="addstudent">
+       {/*<h2>Add a student</h2>*/}
+       <form onSubmit={handleAddFormSubmit}>
+         <input
+           id="firstname"
+           type="text"
+           name="firstName"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+         <input
+           id="lastname"
+           type="text"
+           name="lastName"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+         <input
+           id="email"
+           type="text"
+           name="email"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+         <input
+           id="groupnumber"
+           type="text"
+           name="group"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+       <button type="submit" id="addstudent">Add</button>
+       </form>
+       </div>)
+       : (<div> <button id="emailbutton" onClick={handleEmail}>Email</button> </div>)
+      }
       </div>
     );
   };

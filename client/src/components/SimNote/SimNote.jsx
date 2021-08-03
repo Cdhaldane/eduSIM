@@ -41,7 +41,7 @@ function SimNote(props) {
       }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
-      <Link to="/gamepage" >
+      <Link to="/join" >
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
     </div>

@@ -3,7 +3,7 @@ import Switch from "react-switch"
 import {Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
-import "./CreateArea.css";
+import styles from "./CreateArea.css";
 
   function CreateArea(props) {
     const [save, setSave] = useState("");

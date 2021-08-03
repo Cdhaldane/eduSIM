@@ -72,10 +72,11 @@ function Dashboard(props) {
             <h1>Home</h1>
           <a id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</a>
             <hr />
-              {showNote && <div>
-                <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
+          {showNote && <div className="dashboard">
+              <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
               <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} />
-              </div>}
+          </div>
+          }
             <div className="dashsim">
             <h2>My simulations ️</h2>
             {gamedata.map((noteItem, index) => {

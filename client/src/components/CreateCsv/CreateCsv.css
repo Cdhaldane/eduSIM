@@ -1,22 +1,20 @@
-@import url("https://fonts.googleapis.com/css?family=Raleway:200");
-
-.area {
+.areacsv{
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
-  font-family: "Raleway";
+  font-family: 'Raleway';
   font-size: 2.5rem;
   position: absolute;
   left: 700px;
-  top: 200px;
-  z-index: 2;
+  top: -80px;
+  z-index: 20000;
   border-radius: 10%;
 }
 
-.area form:after {
+.areacsv form:after{
   --borderWidth: 3px;
-  content: "";
+  content: '';
   position: absolute;
   top: calc(-1 * var(--borderWidth));
   left: calc(-1 * var(--borderWidth));
@@ -29,6 +27,7 @@
   background-size: 300% 300%;
 }
 
+
 @keyframes animatedgradient {
   0% {
     background-position: 0% 50%;
@@ -41,19 +40,19 @@
   }
 }
 
-.area p {
+.areacsv p{
   text-align: left;
-  font-size: 2rem;
+  font-size: 2.0rem;
   padding: 30px;
   font-weight: 700;
 }
 
-.area form {
+#areacsvform {
   position: relative;
-  top: -50px;
+  top: 100px;
   right: 250px;
   width: 1000px;
-  height: 650px;
+  height: 450px;
   margin: 30px auto 20px auto;
   background: #fff;
   padding: 15px;
@@ -62,46 +61,31 @@
   border: solid 2px #8f001a;
 }
 
-#add {
-  color: white;
-  z-index: 2000;
-  font-size: 1.5rem;
-  position: absolute;
-  bottom: 40px;
-  left: 832px;
-  border-radius: 5%;
-  width: 100px;
-  height: 50px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  background-color: #8f001a;
-}
-
-.area input[type="file"] {
+.areacsv input[type="file"] {
   position: relative;
   left: 0px;
   font-size: 0rem;
   width: 0.1px;
-  height: 0.1px;
+	height: 0.1px;
   opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
   text-align: left;
 }
 
-.area label {
+.areacsv label{
   position: absolute;
   left: 15px;
   padding: 30px;
-  font-size: 2rem;
+  font-size: 2.0rem;
   font-weight: 700;
   color: black;
   text-align: left;
   cursor: pointer;
 }
 
-.area select {
+.areacsv select {
   position: relative;
   bottom: -17px;
 
@@ -113,281 +97,54 @@
   cursor: pointer;
 }
 
-::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
   opacity: 1; /* Firefox */
 }
 
-.gradient-border {
-  --borderWidth: 1px;
-  background: #1d1f20;
+#boxj1 {
   position: relative;
-  border-radius: var(--borderWidth);
-}
-.gradient-border:after {
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--borderWidth));
-  left: calc(-1 * var(--borderWidth));
-  height: calc(100% + var(--borderWidth) * 2);
-  width: calc(100% + var(--borderWidth) * 2);
-  background: white;
-  border-radius: calc(2 * var(--borderWidth));
-  z-index: -1;
-  animation: animatedgradient 10s ease alternate infinite;
-  background-size: 300% 300%;
-}
-
-@keyframes animatedgradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-#box {
+  top: 0px;
   z-index: 200;
   display: flex;
-  align-items: left;
+  align-items: center;
   justify-content: left;
-  width: 500px;
+  width: 1080px;
   height: 100px;
   color: black;
-  font-family: "Raleway";
+  font-family: 'Raleway';
   font-size: 2.5rem;
-  font-weight: 2000;
+  font-weight: bold;
 }
 
-#box1 {
+#csvfile {
+  color: blue;
+  text-decoration: underline;
+}
+#csvfile2 {
   position: relative;
-  top: 40px;
-
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  width: 680px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box2 {
-  position: relative;
-  top: 100px;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  width: 400px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box3 {
-  position: relative;
-  left: 0px;
-  top: 100px;
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  width: 700px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box3 input,
-#box3 textarea {
-  position: relative;
-  left: 40px;
-  top: 0px;
-  color: grey;
-  font-weight: 700;
-  text-align: left;
-  width: 340px;
-  border: none;
-  padding: 4px;
-  outline: none;
-  font-family: "Raleway";
-  font-size: 2rem;
-  border: solid 2px black;
-}
-
-#box3 input::placeholder {
-  opacity: 0.8;
-}
-
-#box4 {
-  position: relative;
-  left: -15px;
-  top: -15px;
-  background-color: white;
-  height: 180px;
-  width: 1000px;
-  overflow: hidden;
-  padding: 5px;
-}
-
-#box4 img {
-  height: 100px;
-  width: 100px;
-  margin: 10px;
-  border: solid 1px black;
-  overflow: scroll;
-  direction: rtl;
-  border-radius: 10%;
-}
-
-#box4 img:hover {
-  cursor: pointer;
-  border-radius: 0%;
-}
-
-#box4 label {
-  position: relative;
-  left: 6px;
-  top: -50px;
-  border: dashed 1px black;
-  font-size: 1.7rem;
-  padding: 35px;
-  text-align: center;
-  border-radius: 10%;
-}
-
-#prevgame {
-  position: relative;
-  top: 70px;
-  left: -75px;
-  padding: 30px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: black;
-  text-align: left;
-  cursor: pointer;
-}
-
-#prevgames {
-  position: relative;
-  top: 70px;
-  left: -50px;
-  border-radius: 0;
-}
-
-#imgoptions {
-  position: relative;
-  top: 0px;
-  left: -0px;
-  border: solid white 3px;
-  width: 120px;
-  height: 80px;
-}
-
-#imgoptionst {
-  position: relative;
-  top: 0px;
-  left: -30px;
-  color: white;
-  font-size: 2.2rem;
-}
-
-select#imgoptions option[value="img2"] {
-  background-image: "temp.png";
-}
-select#imgoptions option[value="img3"] {
-  background-image: "temp.png";
-}
-
-#file {
-  border: solid 3px black;
-  position: relative;
-  bottom: 70px;
-  height: 0px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#switch {
-  position: relative;
-  left: -300px;
-  bottom: -20px;
-}
-
-#imgbutton {
-  position: relative;
-  left: -40px;
-  font-family: "Raleway";
-  font-size: 2rem;
-  font-weight: 700;
-  color: black;
-  border: none;
-  width: 300px;
-  height: 100px;
-  cursor: pointer;
-  outline: none;
-  background-color: white;
-}
-
-#imgs {
-  position: fixed;
-  top: 690px;
-  right: 433px;
-  background-color: white;
-  width: 1000px;
-  height: 140px;
-  overflow: hidden;
-  transform: translate(0%, 20%);
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  border-radius: 0%;
-}
-
-#plus {
-  position: absolute;
-  left: 320px;
-  width: 40px;
-}
-
-#plus:hover {
-  cursor: pointer;
-}
-
-#preview {
-  border: solid black 1px;
-  position: absolute;
-  left: 400px;
-  width: 90px;
-  height: 90px;
-  border-radius: 10%;
-}
-
-#games {
-  position: relative;
-  left: 0px;
   top: 20px;
-  border-radius: 0;
+  left: 200px;
+  color: blue;
+  text-decoration: underline;
 }
-
-#namei {
-  border: solid #181818 2px;
-  width: 200px;
+#addj {
+  color: white;
+  z-index: 2000;
+  font-size: 1.5rem;
+  position: absolute;
+  bottom: 40px;
+  left: 852px;
+  border-radius: 5%;
+  width: 100px;
+  height: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background-color: #8f001a;
 }
-
-.react-switch {
+#emailtable {
   position: relative;
-  top: -20px;
-  left: 330px;
-  vertical-align: middle;
-  margin-left: 4px;
+  left: 0px;
+  width: 85%;
+  height: 100%;
 }

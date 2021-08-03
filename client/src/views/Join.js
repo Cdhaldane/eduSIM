@@ -24,21 +24,23 @@ function Join(props) {
 
   return (
     <div className="dashboard">
-            <h1>Home</h1>
-          {/* <a id="new" onClick={() => setShowNote(!showNote)}>Upload a CSV File</a> */}
-          <Button onClick={()=>setIsOpen(true)} class="button">Add Student/Participant List +</Button>
-          {/* <CsvModal open={isOpen} onClose={()=>setIsOpen(false)}>
-          </CsvModal> */}
+          <h2 id="jointitle">Team Leadership Simulation 1</h2>
+          <button onClick={() => setIsOpen(!isOpen)} className="studentbutton">Add Student/Participant List +</button>
+          <img id="joinimg" src="temp1.png" />
+          <button class="playbtn"><i class="fa fa-play"></i></button>
+          <button class="pausebtn"><i class="fa fa-pause"></i></button>
+          <button class="refreshbtn"><i class="fa fa-retweet"></i></button>
             <hr />
-              {/* {showNote && <div>
-                <img className="bimg" src= "black.jpg" onClick={() => setShowNote(!showNote)} />
-              <CreateCsv />
-              </div>} */}
-            <div className="dashsim">
-            <h2>My simulations ️</h2>
+            { isOpen && <div>
+              <img className="bimgjoin" src= "black.jpg" onClick={() => setIsOpen(!isOpen)} />
+              <CreateCsv  />
+            </div>}
+
             <Tabs />
 
-    </div>
+
+
+
 
     </div>
   );

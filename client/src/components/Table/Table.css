@@ -1,41 +1,105 @@
 .app-container {
+  position: relative;
+  top: 0px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 1rem;
+  padding: 0rem;
+  height: 300px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-table {
+.app-container table {
   border-collapse: collapse;
   width: 100%;
 }
 
-th,
-td {
+.app-container th,
+.app-container td {
   border: 1px solid #ffffff;
   text-align: left;
   padding: 8px;
   font-size: 8px;
 }
 
-th {
+.app-container th {
   background-color: #e5e5e5;
 }
 
-td {
+.app-container td {
   background-color: #b0b0b0;
 }
 
-form {
+.app-container form {
   display: flex;
   gap: 5px;
 }
 
-form td:last-child {
+.app-container form td:last-child {
   display: flex;
   justify-content: space-evenly;
 }
 
-form * {
+.app-container form * {
   font-size: 22px;
+}
+
+.addstudent{
+  position: relative;
+  top: 5px;
+  color: black;
+}
+
+.addstudent h2 {
+  color: black;
+}
+
+#firstname {
+  width: 240px;
+}
+
+#lastname {
+  width: 235px;
+}
+
+#email {
+  width: 430px;
+}
+
+#groupnumber {
+  width: 180px;
+}
+
+#addstudent {
+  position: relative;
+  top: -5px;
+  left: 20px;
+  width: 100px;
+  height: 40px;
+  margin-bottom: -30px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5rem;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px
+}
+
+#emailbutton {
+  color: white;
+  z-index: 2000;
+  font-size: 1.5rem;
+  position: relative;
+  bottom: 10px;
+  left: 0px;
+  border-radius: 5%;
+  width: 100px;
+  height: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background-color: #8f001a;
 }
