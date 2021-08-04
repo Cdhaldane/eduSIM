@@ -132,12 +132,12 @@ exports.deleteGameInstance = async (req, res) => {
   )
   gameinstance.save();
   return res.send({
-  message: `Game ${id} has been deleted!`,
-  gameinstance
+    message: `Game ${id} has been deleted!`,
+    gameinstance
   });
   } catch (err) {
-  return res.status(500).send({
-  message: `Error: ${err.message}`,
-  });
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
   }
- };
+};
