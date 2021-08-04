@@ -10,7 +10,7 @@
   font-size: 2.5rem;
   position: absolute;
   left: 700px;
-  top: 200px;
+  top: 180px;
   z-index: 2;
   border-radius: 10%;
 }
@@ -340,9 +340,9 @@ select#imgoptions option[value="img3"] { background-image:"temp.png"; }
 }
 
 #imgs{
-  position: fixed;
-  top: 690px;
-  right: 433px;
+  position: relative;
+  top: -100px;
+  right: 250px;
   background-color: white;
   width: 1000px;
   height: 140px;

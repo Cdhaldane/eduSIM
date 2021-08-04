@@ -19,7 +19,7 @@ import styles from "./CreateArea.css";
   );
 
   const [file, setFile] = useState('');
-  const [filename, setFilename] = useState('Choose File');
+  const [filename, setFilename] = useState('');
   const [uploadedFile, setUploadedFile] = useState({});
   const [message, setMessage] = useState('');
   const [uploadPercentage, setUploadPercentage] = useState(0);
@@ -61,7 +61,6 @@ import styles from "./CreateArea.css";
              console.log(res)
             })
            .catch(error => console.log(error.response));
-          console.log(data);
        props.onAdd(note);
    });
  } catch (error){
@@ -70,7 +69,7 @@ import styles from "./CreateArea.css";
      gameinstance_photo_path: filename,
      game_parameters: 'value',
      createdby_adminid: localStorage.adminid,
-     invite_url: 'value'
+     status: 'created'
    }
 
      axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
@@ -78,7 +77,7 @@ import styles from "./CreateArea.css";
            console.log(res)
           })
          .catch(error => console.log(error.response));
-        console.log(data);
+         console.log(note)
      props.onAdd(note);
  }
  window.location.reload();

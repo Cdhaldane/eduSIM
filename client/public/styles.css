@@ -120,15 +120,16 @@ footer {
 
 .bimg {
   position: absolute;
-  left: -20px;
-  width: 1900px;
-  height: 987px;
+  left: -51px;
+  width: 105%;
+  height: 938px;
   z-index: 1;
-  top: -200px;
+  top: -320px;
   right: 0px;
   bottom: 0px;
   opacity: 0.8;
 }
+
 
 .dashboard hr {
   margin-top: 20px;
@@ -254,7 +255,7 @@ footer {
 
 #saved {
   position: absolute;
-  top: -15px;
+  top: -28px;
   left: 300px;
   width: 200px;
   height: 50px;
@@ -268,12 +269,12 @@ footer {
 
 #saved h1 {
   font-family:  "Montserrat", sans-serif;
-  font-size: 2.0rem;
-  font-weight: 400;
+  font-size: 1.45rem;
+  font-weight: 700;
   color: #636363;
   position: relative;
   text-align: center;
-  top: 10px;
+  top: 0px;
 
 }
 

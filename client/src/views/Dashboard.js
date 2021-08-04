@@ -52,6 +52,7 @@ function Dashboard(props) {
 }
 
   function addNote(newgamedata) {
+    console.log("added")
          getGamedata((prevgamedata) => {
           return [...prevgamedata, newgamedata];
         });
