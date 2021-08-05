@@ -722,7 +722,7 @@ class Graphics extends Component {
     this.state.isDrawing = true;
     const tool = this.state.tool;
     this.setState({
-      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel, rolelevel: this.state.rolelevel}]
     })
   } else {
 
@@ -2196,11 +2196,12 @@ class Graphics extends Component {
   };
 
   addStick = () => {
-    if(info)
+
     var pos = this.refs.layer2
         .getStage()
         .getPointerPosition()
     var shape = this.refs.layer2.getIntersection(pos)
+
 
     let toPush = {
         rolelevel: this.state.rolelevel,
