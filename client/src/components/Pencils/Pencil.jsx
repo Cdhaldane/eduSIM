@@ -87,6 +87,15 @@ function Pencil(props) {
   function handleDocument(e){
     props.handleDocument(e);
   }
+  function handleDrop(){
+    setDrop(!drop)
+    if(props.editModeToggle == true){
+      props.editMode();
+    }
+    if(props.editModeToggle == false) {
+      props.editMode();
+    }
+  }
 
 
 
@@ -98,7 +107,7 @@ function Pencil(props) {
         id={"pencil" + props.id}
         aria-hidden="true"
         class={"fa fa-pencil fa-" + props.psize + "x"}
-        onClick={() => setDrop(!drop)}
+        onClick={handleDrop}
         >
       </i>
 

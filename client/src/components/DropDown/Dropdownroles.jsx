@@ -14,6 +14,16 @@ import "./Dropdown.css";
     const dropdownRef = useRef(null);
     const [ptype, setType] = useState([]);
     const [numpages, setNumpages ] = useState();
+    const [rolename, setRolename] = useState("")
+    const [selectedRole, setSelectedRole] = useState("Select Role!");
+    const [roles, setRoles] = useState([
+      {
+        role: "The Scientist"
+      } ,
+      {
+        role: "The Engineer"
+      }
+    ])
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
@@ -42,6 +52,28 @@ import "./Dropdown.css";
       </a>
     );
   }
+  function DropdownItems(props) {
+    console.log(selectedRole)
+    return (
+      <a href="#" className="menu-item" onClick={() => handleRole(props.value)}>
+        <span className="icon-button">{props.leftIcon}</span>
+        {props.children}
+        <span className="icon-right">{props.rightIcon}</span>
+      </a>
+    );
+  }
+  function handleRole(e){
+    setSelectedRole(e)
+    props.roleLevel(e)
+  }
+  function handleAddRole(){
+    console.log(rolename)
+    setRoles([...roles, {role: rolename}])
+  }
+  function handleRoleChange(e){
+    setRolename(e.target.value)
+  }
+
 
 
  return (
@@ -57,7 +89,7 @@ import "./Dropdown.css";
               leftIcon={<i id="icons" class="fab fa-critical-role"></i>}
               rightIcon={""}
               goToMenu="roles">
-              Roles
+              {selectedRole}
             </DropdownItem>
         </div>
       </CSSTransition>
@@ -70,18 +102,36 @@ import "./Dropdown.css";
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
-            <h2>Roles!</h2>
+            <h2>{selectedRole}</h2>
           </DropdownItem>
-          <DropdownItem  onClick="" leftIcon={<i id="icons" class="fas fa-atom" onClick=""></i>}>The Scientist</DropdownItem>
-          <DropdownItem  onClick="" leftIcon={<i id="icons" class="fas fa-cogs" onClick=""></i>}>The Engineer</DropdownItem>
-          <DropdownItem  onClick="" leftIcon={<i id="icons" class="fas fa-balance-scale" onClick=""></i>}>The Politician</DropdownItem>
-          <DropdownItem  onClick="" leftIcon={<i id="icons" class="fas fa-user-plus" onClick=""></i>}>Add a role</DropdownItem>
-
-
-
-
+          {roles.map((index) => {
+            return(
+              <DropdownItems onClick="" value={index.role} leftIcon={<i id="icons" class="fas fa-atom" onClick=""></i>}>{index.role}</DropdownItems>
+            )
+          })}
+          <DropdownItem goToMenu="addrole" leftIcon={<i id="icons" class="fas fa-plus"></i>}>
+            Add Role
+          </DropdownItem>
         </div>
       </CSSTransition>
+
+      <CSSTransition
+       in={activeMenu === 'addrole'}
+       timeout={500}
+       classNames="menu-primary"
+       unmountOnExit
+       onEnter={calcHeight}>
+       <div className="menu">
+         <DropdownItem goToMenu="roles" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+           <h2>ROLES!</h2>
+         </DropdownItem>
+         <DropdownItem
+           leftIcon={<i id="icons" class="fas fa-plus"
+           onClick={handleAddRole}></i>}>
+       </DropdownItem>
+         <input id="rolenameinput" type="text" placeholder="Role Name!" onChange={handleRoleChange} value={rolename} />
+       </div>
+     </CSSTransition>
     </div>
   );
 }

@@ -291,11 +291,13 @@ class Graphics extends Component {
       lastFill: null,
       selectedContextMenu:null,
       selectedContextMenuText:null,
-      colorf: "white",
+      colorf: "black",
       colors: "black",
       color: "white",
       strokeWidth: 3.75,
       opacity: 1,
+      infolevel: false,
+      rolelevel: "",
 
       open: 0,
       state: false,
@@ -449,26 +451,6 @@ class Graphics extends Component {
     // ) {
       this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, status: "up"] });
       console.log(this.state.saved)
-      let arrows1 = this.state.arrows;
-      arrows1.forEach(eachArrow => {
-        //for "from & to of each arrow"
-        if (eachArrow.from && eachArrow.from.attrs) {
-          if (eachArrow.from.attrs.name.includes("text")) {
-            eachArrow.from.textWidth = eachArrow.from.textWidth;
-
-            eachArrow.from.textHeight = eachArrow.from.textHeight;
-          }
-        }
-        if (eachArrow.to && eachArrow.to.attrs) {
-          if (eachArrow.to.attrs.name.includes("text")) {
-            eachArrow.to.attrs.textWidth = eachArrow.to.textWidth;
-            eachArrow.to.attrs.textHeight = eachArrow.to.textHeight;
-          }
-        }
-      });
-
-      // if (this.state.roadmapId) {
-
               console.log(this.state.gameinstanceid)
               var body = {
                   id: this.state.gameinstanceid,
@@ -486,63 +468,6 @@ class Graphics extends Component {
                      })
                     .catch(error => console.log(error.response));
                    console.log();
-
-              //if draft already exists
-
-
-        //if draft already exists
-      //   this.setState({ saving: true });
-      //   fetch("", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       roadmapId: this.state.roadmapId,
-      //       data: {
-      //         rects: rects,
-      //         ellipses: ellipses,
-      //         stars: stars,
-      //         texts: texts,
-      //         arrows: arrows1,
-      //         triangles: triangles,
-      //         audios: audios,
-      //         documents: documents,
-      //         images: images,
-      //         vidoes: videos
-      //       }
-      //     })
-      //   }).then(res => {
-      //     this.setState({ saving: false });
-      //   });
-      // } else {
-      //   //if first time pressing sav
-      //   this.setState({ saving: true });
-      //   fetch("", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       userId: this.props.auth.user.id,
-      //       roadmapType: "draft",
-      //       data: {
-      //         rects: rects,
-      //         ellipses: ellipses,
-      //         stars: stars,
-      //         texts: texts,
-      //         arrows: arrows,
-      //         triangles: triangles,
-      //         audios: audios,
-      //         documents: documents,
-      //         images: images,
-      //         vidoes: videos
-      //       }
-      //     })
-      //   }).then(res =>
-      //     res.json().then(data => {
-      //       this.setState({ saving: false });
-      //       this.setState({ roadmapId: data.roadmapId });
-      //     })
-      //   );
-      // }
-    // }
   };
 
   handleStageClick = e => {
@@ -626,7 +551,7 @@ class Graphics extends Component {
     this.state.isDrawing = true;
     const tool = this.state.tool;
     this.setState({
-      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape"}]
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
     })
   } else {
 
@@ -635,7 +560,6 @@ class Graphics extends Component {
     if (isElement || isTransformer) {
       return;
     }
-
     this.state.selection.visible = true;
     this.state.selection.x1 = pos.x;
     this.state.selection.y1 = pos.y;
@@ -704,6 +628,177 @@ class Graphics extends Component {
     this.state.selection.x2 = pos.x;
     this.state.selection.y2 = pos.y;
     this.updateSelectionRect();
+
+    if (shape && shape.attrs.link) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "default";
+    }
+
+    //if we are moving an arrow
+    if (this.state.newArrowRef !== "") {
+      //filling color logic:
+
+      var transform = this.refs.layer2.getAbsoluteTransform().copy();
+      transform.invert();
+
+      pos = transform.point(pos);
+      this.setState({ arrowEndX: pos.x, arrowEndY: pos.y });
+      //last non arrow object
+      if (shape && shape.attrs && shape.attrs.name != undefined) {
+        //  console.log(shape);
+        if (!shape.attrs.name.includes("arrow")) {
+          //after first frame
+          if (this.state.previousShape)
+            if (this.state.previousShape !== shape) {
+              //arrow entered a new shape
+
+              //set arrow to blue
+              if (this.state.previousShape.attrs.id !== "ContainerRect") {
+                this.state.arrows.map(eachArrow => {
+                  if (eachArrow.name === this.state.newArrowRef) {
+                    eachArrow.fill = "black";
+                    eachArrow.stroke = "black";
+                  }
+                });
+                this.forceUpdate();
+              } else {
+                this.state.arrows.map(eachArrow => {
+                  if (eachArrow.name === this.state.newArrowRef) {
+                    eachArrow.fill = "#ccf5ff";
+                    eachArrow.stroke = "#ccf5ff";
+                  }
+                });
+                this.forceUpdate();
+              }
+            }
+          //if arrow is moving in a single shape
+        }
+
+        if (!shape.attrs.name.includes("arrow")) {
+          this.setState({ previousShape: shape });
+        }
+      }
+    }
+    var arrows = this.state.arrows;
+
+    arrows.map(eachArrow => {
+      if (eachArrow.name === this.state.newArrowRef) {
+        var index = arrows.indexOf(eachArrow);
+        let currentArrow = eachArrow;
+        currentArrow.points = [
+          currentArrow.points[0],
+          currentArrow.points[1],
+          pos.x,
+          pos.y
+          /*  event.evt.pageY -
+            document.getElementById("NavBar").getBoundingClientRect().height */
+        ];
+
+        this.state.arrows[index] = currentArrow;
+      }
+    });
+  }
+  };
+  updateSelectionRectInfo = () => {
+
+    const node = this.refs.selectionRectRef1;
+    node.setAttrs({
+      visible: this.state.selection.visible,
+      x: Math.min(this.state.selection.x1, this.state.selection.x2),
+      y: Math.min(this.state.selection.y1, this.state.selection.y2),
+      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
+      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
+      fill: "rgba(0, 161, 255, 0.3)"
+    });
+    node.getLayer().batchDraw();
+  };
+  onMouseDownInfo = (e) => {
+    this.setState({
+      draggable: false
+    })
+    const pos = e.target.getStage().getPointerPosition();
+    if(this.state.drawMode == true) {
+    this.state.isDrawing = true;
+    const tool = this.state.tool;
+    this.setState({
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
+    })
+  } else {
+
+    const isElement = e.target.findAncestor(".elements-container");
+    const isTransformer = e.target.findAncestor("Transformer");
+    if (isElement || isTransformer) {
+      return;
+    }
+    this.state.selection.visible = true;
+    this.state.selection.x1 = pos.x;
+    this.state.selection.y1 = pos.y;
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRectInfo();
+  }
+  };
+
+
+  handleMouseUpInfo = () => {
+    if(this.state.drawMode == true) {
+      this.state.isDrawing = false;
+    } else {
+    if (!this.state.selection.visible) {
+      return;
+    }
+    const selBox = this.refs.selectionRectRef1.getClientRect();
+    const elements = [];
+    this.refs.layer3.find(".shape").forEach((elementNode) => {
+      const elBox = elementNode.getClientRect();
+      if (Konva.Util.haveIntersection(selBox, elBox)) {
+        elements.push(elementNode);
+
+      }
+    });
+
+
+    this.refs.trRef1.transformer.nodes(elements);
+    this.state.selection.visible = false;
+    // disable click event
+    Konva.listenClickTap = false;
+    this.updateSelectionRectInfo();
+  }
+  };
+
+  handleMouseOverInfo = event => {
+
+    //get the currennt arrow ref and modify its position by filtering & pushing again
+    //console.log("lastFill: ", this.state.lastFill);
+    if(this.state.drawMode == true) {
+    if (!this.state.isDrawing) {
+      return;
+   }
+
+   const stage = event.target.getStage();
+   const point = stage.getPointerPosition();
+   let lastLine = this.state.lines[this.state.lines.length - 1];
+   // add point
+   lastLine.points = lastLine.points.concat([point.x, point.y]);
+
+   // replace last
+   this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
+   this.setState({
+     lines: this.state.lines.concat()
+   })
+ } else {
+
+
+    if (!this.state.selection.visible) {
+      return;
+    }
+    var pos = this.refs.graphicStage1.getPointerPosition();
+    var shape = this.refs.graphicStage1.getIntersection(pos);
+
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRectInfo();
 
     if (shape && shape.attrs.link) {
       document.body.style.cursor = "pointer";
@@ -1768,6 +1863,8 @@ class Graphics extends Component {
 
     let name = 'rectangle' + rectName
     const rect = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -1814,6 +1911,8 @@ class Graphics extends Component {
 
     let name = 'triangle' + triName
     const tri = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -1861,6 +1960,8 @@ class Graphics extends Component {
 
     let name = 'image' + imgName
     const img = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -1904,6 +2005,8 @@ class Graphics extends Component {
 
     let name = 'video' + vidName
     const vid = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 600,
@@ -1949,6 +2052,8 @@ class Graphics extends Component {
 
     let name = 'audio' + audName
     const aud = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 600,
@@ -2005,6 +2110,8 @@ class Graphics extends Component {
 
     let name = 'document' + docName
     const doc = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2049,6 +2156,8 @@ class Graphics extends Component {
 
     let name = 'ellipse' + circName
     const circ = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2058,7 +2167,7 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       id: name,
-      fill: 'white',
+      fill: this.state.colorf,
       ref: name,
       name: name,
       rotation: 0
@@ -2087,14 +2196,15 @@ class Graphics extends Component {
   };
 
   addStick = () => {
+    if(info)
     var pos = this.refs.layer2
         .getStage()
         .getPointerPosition()
-    var shape = this.refs.layer2.getIntersection(
-        pos
-    )
+    var shape = this.refs.layer2.getIntersection(pos)
 
     let toPush = {
+        rolelevel: this.state.rolelevel,
+        infolevel: this.state.infolevel,
         level: this.state.level,
         visible: true,
         x: pos.x,
@@ -2194,6 +2304,8 @@ class Graphics extends Component {
 
     let name = 'star' + starName
     const star = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2207,7 +2319,7 @@ class Graphics extends Component {
       strokeWidth: 1.5,
       id: name,
       name: name,
-      fill: 'white',
+      fill: this.state.colorf,
       ref: name,
       rotation: 0
     };
@@ -2240,6 +2352,8 @@ class Graphics extends Component {
     let name = 'text' + textName
     let ref = 'text' + textName
     const tex = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2678,6 +2792,23 @@ class Graphics extends Component {
       color: e.hex
     })
   }
+  editMode = () => {
+    console.log(4)
+    this.setState({
+      infolevel: true
+    })
+  }
+  editModeOff = () => {
+    this.setState({
+      infolevel: false
+    })
+  }
+  handleRoleLevel = (e) => {
+    this.setState({
+      rolelevel: e
+    })
+
+  }
 
 
 
@@ -2794,7 +2925,7 @@ class Graphics extends Component {
 
 
             {this.state.rectangles.map(eachRect => {
-              if(eachRect.level == this.state.level)
+              if(eachRect.level == this.state.level && eachRect.infolevel == false)
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -2989,7 +3120,7 @@ class Graphics extends Component {
             )}
 
               {this.state.ellipses.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level)
+                if(eachEllipse.level == this.state.level && eachEllipse.infolevel == false)
                 return (
                 <Ellipse
                   visible={eachEllipse.visible}
@@ -3155,7 +3286,7 @@ class Graphics extends Component {
               );
             })}
               {this.state.lines.map((eachLine, i) => {
-                if(eachLine.level == this.state.level)
+                if(eachLine.level == this.state.level && eachLine.infolevel == false)
                 return(
                   <Line
                     id={eachLine.id}
@@ -3188,7 +3319,7 @@ class Graphics extends Component {
               })}
 
               {this.state.images.map(eachImage => {
-                if(eachImage.level == this.state.level)
+                if(eachImage.level == this.state.level && eachImage.infolevel == false)
                 return (
                 <URLImage
                   visible={eachImage.visible}
@@ -3313,7 +3444,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.videos.map(eachVideo => {
-                if(eachVideo.level == this.state.level)
+                if(eachVideo.level == this.state.level && eachVideo.infolevel == false)
                 return (
                 <URLvideo
                   visible={eachVideo.visible}
@@ -3427,7 +3558,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.audios.map(eachAudio => {
-                if(eachAudio.level == this.state.level)
+                if(eachAudio.level == this.state.level && eachAudio.infolevel == false)
                 return (
                 <URLvideo
                   visible={eachAudio.visible}
@@ -3547,7 +3678,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.documents.map(eachDoc => {
-                if(eachDoc.level == this.state.level)
+                if(eachDoc.level == this.state.level && eachDoc.infolevel == false)
                 return (
                 <Rect
                   rotation={eachDoc.rotation}
@@ -3689,7 +3820,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.triangles.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level)
+                if(eachEllipse.level == this.state.level && eachEllipse.infolevel == false)
                 return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
@@ -3854,7 +3985,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.stars.map(eachStar => {
-                if(eachStar.level == this.state.level)
+                if(eachStar.level == this.state.level && eachStar.infolevel == false)
                 return (
                 <Star
                   visible={eachStar.visible}
@@ -3978,7 +4109,7 @@ class Graphics extends Component {
             })}
 
               {this.state.texts.map(eachText => {
-                if(eachText.level == this.state.level)
+                if(eachText.level == this.state.level && eachText.infolevel == false)
                 return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -4188,7 +4319,7 @@ class Graphics extends Component {
             </Portal>
           )}
               {this.state.arrows.map(eachArrow => {
-                if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level) {
+                if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level && eachArrow.infolevel == false) {
                   return (
                     <Arrow
                       visible={eachArrow.visible}
@@ -4419,10 +4550,16 @@ class Graphics extends Component {
               <div className={"info" + this.state.open}>
                 <div id="infostage">
                 <Stage width={1500} height={600}
-                  ref="graphicStage1">
+                  ref="graphicStage1"
+                  onClick={this.handleStageClickInfo}
+                  draggabble
+                  onMouseMove={this.handleMouseOverInfo}
+                  onMouseDown={this.onMouseDownInfo}
+                  onMouseUp={this.handleMouseUpInfo}
+                >
                   <Layer ref="layer3">
                     {this.state.rectangles.map(eachRect => {
-                      if(eachRect.level == this.state.level)
+                      if(eachRect.level == this.state.level && eachRect.infolevel == true && eachRect.rolelevel == this.state.rolelevel)
                         return (
                           <Rect
                           visible={eachRect.visible}
@@ -4583,7 +4720,7 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = this.refs.graphicStage1.getPointerPosition();
 
                               this.setState({
                                 selectedContextMenu: {
@@ -4617,7 +4754,7 @@ class Graphics extends Component {
                     )}
 
                       {this.state.ellipses.map(eachEllipse => {
-                        if(eachEllipse.level == this.state.level)
+                        if(eachEllipse.level == this.state.level && eachEllipse.infolevel == true && eachEllipse.rolelevel == this.state.rolelevel)
                         return (
                         <Ellipse
                           visible={eachEllipse.visible}
@@ -4783,7 +4920,7 @@ class Graphics extends Component {
                       );
                     })}
                       {this.state.lines.map((eachLine, i) => {
-                        if(eachLine.level == this.state.level)
+                        if(eachLine.level == this.state.level && eachLine.infolevel == true && eachLine.rolelevel == this.state.rolelevel)
                         return(
                           <Line
                             id={eachLine.id}
@@ -4816,7 +4953,7 @@ class Graphics extends Component {
                       })}
 
                       {this.state.images.map(eachImage => {
-                        if(eachImage.level == this.state.level)
+                        if(eachImage.level == this.state.level && eachImage.infolevel == true && eachImage.rolelevel == this.state.rolelevel)
                         return (
                         <URLImage
                           visible={eachImage.visible}
@@ -4941,7 +5078,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.videos.map(eachVideo => {
-                        if(eachVideo.level == this.state.level)
+                        if(eachVideo.level == this.state.level && eachVideo.infolevel == true && eachVideo.rolelevel == this.state.rolelevel)
                         return (
                         <URLvideo
                           visible={eachVideo.visible}
@@ -5055,7 +5192,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.audios.map(eachAudio => {
-                        if(eachAudio.level == this.state.level)
+                        if(eachAudio.level == this.state.level && eachAudio.infolevel == true && eachAudio.rolelevel == this.state.rolelevel)
                         return (
                         <URLvideo
                           visible={eachAudio.visible}
@@ -5175,7 +5312,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.documents.map(eachDoc => {
-                        if(eachDoc.level == this.state.level)
+                        if(eachDoc.level == this.state.level && eachDoc.infolevel == true && eachDoc.rolelevel == this.state.rolelevel)
                         return (
                         <Rect
                           rotation={eachDoc.rotation}
@@ -5317,7 +5454,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.triangles.map(eachEllipse => {
-                        if(eachEllipse.level == this.state.level)
+                        if(eachEllipse.level == this.state.level && eachEllipse.infolevel == true && eachEllipse.rolelevel == this.state.rolelevel)
                         return (
                         <RegularPolygon
                           visible={eachEllipse.visible}
@@ -5482,7 +5619,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.stars.map(eachStar => {
-                        if(eachStar.level == this.state.level)
+                        if(eachStar.level == this.state.level && eachStar.infolevel == true && eachStar.rolelevel == this.state.rolelevel)
                         return (
                         <Star
                           visible={eachStar.visible}
@@ -5606,7 +5743,7 @@ class Graphics extends Component {
                     })}
 
                       {this.state.texts.map(eachText => {
-                        if(eachText.level == this.state.level)
+                        if(eachText.level == this.state.level && eachText.infolevel == true && eachText.rolelevel == this.state.rolelevel)
                         return (
                         //perhaps this.state.texts only need to contain refs?
                         //so that we only need to store the refs to get more information
@@ -5816,7 +5953,7 @@ class Graphics extends Component {
                     </Portal>
                   )}
                       {this.state.arrows.map(eachArrow => {
-                        if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level) {
+                        if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level && eachArrow.infolevel == true && eachArrow.rolelevel == this.state.rolelevel) {
                           return (
                             <Arrow
                               visible={eachArrow.visible}
@@ -5906,7 +6043,7 @@ class Graphics extends Component {
                       })}
                       <TransformerComponent
                           selectedShapeName={this.state.selectedShapeName}
-                          ref="trRef"
+                          ref="trRef1"
 
                           boundBoxFunc={(oldBox, newBox) => {
                               // limit resize
@@ -5916,7 +6053,8 @@ class Graphics extends Component {
                               return newBox;
                             }}
                         />
-                      <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef" />
+                      <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef1" />
+
                   </Layer>
                 </Stage>
                 </div>
@@ -5925,7 +6063,9 @@ class Graphics extends Component {
                   : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
                 }
                 <p id="rolesdrop">
-                  <Dropdownroles />
+                  <Dropdownroles
+                    roleLevel={this.handleRoleLevel}
+                  />
                 </p>
                   <b>
 
@@ -5934,24 +6074,38 @@ class Graphics extends Component {
                 {(1 == 1 )
                   ? <div id={"pencili" + this.state.open}>
                       <Pencil
+                      editMode={this.editMode}
+                      editModeToggle={true}
                       id="1"
                       psize="2"
                       type="main"
                       title="Edit Personal Space"
-                      addCircle={this.addCircle}
                       addRectangle={this.addRectangle}
-                      addTriangle={this.addTriangle}
+                      addCircle={this.addCircle}
                       addStar={this.addStar}
+                      addTriangle={this.addTriangle}
+                      addImage={this.addImage}
+                      addVideo={this.addVideo}
+                      addText={this.addText}
+                      addAudio={this.addAudio}
+                      addStick={this.addStick}
+                      addDocument={this.addDocument}
                       drawLine={this.drawLine}
-                      drawText={this.drawText}
-                      drawImage={this.drawImage}
                       eraseLine={this.eraseLine}
+                      stopDrawing={this.stopDrawing}
+                      handleImage={this.handleImage}
+                      handleVideo={this.handleVideo}
+                      handleAudio={this.handleAudio}
+                      handleDocument={this.handleDocument}
+                      choosecolor={this.chooseColor}
                       />
                     </div>
                   : ""
                   }
               </div>
             <Pencil
+              editMode={this.editModeOff}
+              editModeToggle={false}
               id="2"
               psize="3"
               type="main"
