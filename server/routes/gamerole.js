@@ -6,4 +6,6 @@ router.get('/getGameRoles/:gameinstanceid', gamerole.getGameRoles);
 
 router.post('/createRole', gamerole.createRole);
 
+router.delete('/deleteRole/:gameroleid', gamerole.deleteRole);
+
 export default router;

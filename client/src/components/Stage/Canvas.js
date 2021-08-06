@@ -363,28 +363,11 @@ class Graphics extends Component {
     .catch(error => console.log(error.response));
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
-            gameinstanceid: localStorage.adminid,
+            gameinstanceid: this.state.gameinstanceid,
         }
     })
   }
 
-  async getRoles(){
-    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-            gameinstanceid: localStorage.adminid,
-        }
-    })
-    .then((res) => {
-      const allData = res.data;
-      console.log(allData)
-      this.setState({
-        gameroles: res.data
-      })
-    })
-    .catch(error => console.log(error.response));
-  }
-
- 
   handleType = (e) => {
     this.setState({
       ptype: e
@@ -5853,6 +5836,7 @@ class Graphics extends Component {
                   <Dropdownroles
                     roleLevel={this.handleRoleLevel}
                     gameroles={this.state.gameroles}
+                    gameid={this.state.gameinstanceid}
                   />
                 </p>
                   <b>
