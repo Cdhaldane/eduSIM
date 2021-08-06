@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import Switch from "react-switch"
-import Button from "../Buttons/Button"
-
+import axios from "axios"
 
 import "./Dropdown.css";
-
 
   function Dropdowninfo(props) {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
-    const [checked, setChecked] = useState(false);
     const dropdownRef = useRef(null);
-    const [ptype, setType] = useState([]);
-    const [numpages, setNumpages ] = useState();
     const [rolename, setRolename] = useState("")
     const [selectedRole, setSelectedRole] = useState("Select Role!");
     const [roles, setRoles] = useState([
@@ -24,25 +18,17 @@ import "./Dropdown.css";
         role: "The Engineer"
       }
     ])
-
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
+    console.log(props)
+    // setRoles(props.gameroles)
   }, [])
+
 
   function calcHeight(el) {
     const height = el.offsetHeight;
     setMenuHeight(height);
   }
-
-  function handleType(e){
-    props.ptype(e.target.value);
-  }
-
-  function handleNum(e){
-    console.log(e)
-    props.num(e.target.value);
-  }
-
   function DropdownItem(props) {
     return (
       <a href="#" className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
@@ -68,7 +54,17 @@ import "./Dropdown.css";
   }
   function handleAddRole(){
     console.log(rolename)
+    let data = {
+      gameinstanceid: localStorage.adminid,
+      gamerole: rolename
+    }
+      axios.post('http://localhost:5000/api/gameroles/createRole', data)
+         .then((res) => {
+            console.log(res)
+           })
+          .catch(error => console.log(error.response));
     setRoles([...roles, {role: rolename}])
+
   }
   function handleRoleChange(e){
     setRolename(e.target.value)

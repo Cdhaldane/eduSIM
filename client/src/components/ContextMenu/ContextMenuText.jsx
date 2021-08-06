@@ -1,38 +1,23 @@
 import React, {useState} from "react";
 import Dropdownedit from "../DropDown/Dropdownedit";
-
 import "./ContextMenu.css"
 
-
 function ContextMenuText(props){
-  console.log(props)
   const [drop, setDrop] = useState(false);
 
   function handleColorF(e){
     props.choosecolorf(e);
   }
-
-  function handleColorS(e){
-    props.choosecolors(e);
-  }
-
   function handleEdit(e) {
     setDrop(!drop);
   }
-
   function handleWidth(e){
     props.handleWidth(e);
   }
-
   function handleOpacity(e){
     props.handleOpacity(e);
   }
-
-
-
-
   return (
-
     <div
       className="cmenu"
       style={{
@@ -50,8 +35,6 @@ function ContextMenuText(props){
       <hr />
     <li onClick={props.close}>Close</li>
       </ul>
-
-
       {drop && <div className="drop">
         <Dropdownedit
             title="Edit Text"
@@ -63,7 +46,6 @@ function ContextMenuText(props){
           />
       </div>}
     </div>
-
   );
 };
 

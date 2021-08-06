@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from "react";
-import {Link } from "react-router-dom";
-import Level from "../components/Level/Level";
-import Info from "../components/Information/InformationPopup";
-import EditShapes from "../components/EditShapes/EditShapes";
-import Pencil from "../components/Pencils/Pencil";
+import React, { useState} from "react";
+
 import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 
 import { Container, Row, Col } from "react-bootstrap";
-
-
 const Grid = styled.div`
   display: grid;
   grid:
@@ -42,16 +36,12 @@ const GridMain = styled.main`
 
 function EditPage(props){
     const [showNav, setShowNav] = useState(false);
-    const [number, setNumber] = useState(6);
     const [mvisible, setMvisible] = useState("false")
     const [avisible, setAvisible] = useState("false")
     const [pavisible, setPavisible] = useState("false")
     const [svisible, setSvisible] = useState("false")
     const [pevisible, setPevisible] = useState("false")
-    const [ptype, setType] = useState("")
-    const [num, setNum] = useState(6)
-    const [color, setColor]= useState("white")
-
+    
     function handleMvisible(e) {
       setMvisible(e);
     }
@@ -67,17 +57,6 @@ function EditPage(props){
     function handlePevisible(e) {
       setPevisible(e);
     }
-    function handleType(e){
-      setType(e);
-    }
-    function handleNum(e){
-      setNum(e);
-    }
-    function handleColor(e){
-      setColor(e.hex);
-      console.log(color);
-    }
-
 
     if(props.location.img){
       localStorage.setItem('gameinstance', props.location.gameinstance)
@@ -85,9 +64,6 @@ function EditPage(props){
       localStorage.setItem('simimg', props.location.img)
       localStorage.setItem('simtitle', props.location.title)
     }
-
-    console.log(localStorage.gameinstance)
-
     const toggle = () => setShowNav(!showNav)
     return (
       <div className="editpage">
@@ -104,7 +80,6 @@ function EditPage(props){
                 title={props.location.gameinstance}
               />
           </GridNav>
-
           <GridMain>
             <Canvas
               adminid={localStorage.adminid}
@@ -123,7 +98,3 @@ function EditPage(props){
 }
 
 export default EditPage;
-
-// <GridHeader>
-//     <Header class="header" toggle={toggle} />
-// </GridHeader>

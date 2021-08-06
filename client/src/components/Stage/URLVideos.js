@@ -1,15 +1,8 @@
 import Konva from "konva"
-import { Container, Row, Col } from "react-bootstrap";
-import React, { useState, useEffect, Component, useMemo } from 'react';
-import {Image, Rect} from "react-konva";
-import useImage from "use-image";
-
-
+import React, { useState } from 'react';
+import {Image} from "react-konva";
 
 function URLvideo(props) {
-  const [image, setImage] = useState(null)
-  const [video, setVideo] = useState(null)
-  const [size, setSize] = React.useState({ width: 50, height: 50 });
   const [isPlaying, setIsPlaying] = useState(true)
   const [fillPatternImage, setFillPatternImage] = useState(null)
 
@@ -28,43 +21,9 @@ function URLvideo(props) {
     return element;
   }, [props.src]);
 
-  function componentDidMount() {
-    this.loadImage();
-  }
-  function componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
-      this.loadImage();
-    }
-  }
-  function componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-  function loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    const element = document.createElement("video");
-    element.src = this.props.src;
-    this.video = element
-    this.video.addEventListener('load', this.handleLoad);
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-    console.log(this.image)
-  }
-  function handleLoad() {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    setImage(this.image)
-    setVideo(this.video)
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
+
   React.useEffect(() => {
     const onload = function () {
-      setSize({
-        width: videoElement.videoWidth,
-        height: videoElement.videoHeight
-      });
     };
     videoElement.addEventListener("loadedmetadata", onload);
     return () => {
@@ -93,38 +52,35 @@ function URLvideo(props) {
 
   }
 return (
-  <>
-
-  <Image
-    visible={props.visible}
-    fillPatternImage={fillPatternImage}
-    fillPatternScaleY={0.4}
-    fillPatternScaleX={0.4}
-    draggable
-    x={props.x}
-    y={props.y}
-    width={props.width}
-    height={props.height}
-    image={videoElement}
-    ref={props.ref}
-    id={props.id}
-    name="shape"
-    opacity={props.opacity}
-    onClick={playAudio}
-    onTransformStart={props.onTransformStart}
-    onTransform={props.onTransform}
-    onTransformEnd={props.onTransformEnd}
-    onDragMove={props.onDragMove}
-    onDragEnd={props.onDragEnd}
-    onContextMenu={props.onContextMenu}
-    rotation={props.rotation}
-    stroke={props.stroke}
-    strokeWidth={props.strokeWidth}
-  />
-
-
-       </>
-);
+    <>
+    <Image
+      visible={props.visible}
+      fillPatternImage={fillPatternImage}
+      fillPatternScaleY={0.4}
+      fillPatternScaleX={0.4}
+      draggable
+      x={props.x}
+      y={props.y}
+      width={props.width}
+      height={props.height}
+      image={videoElement}
+      ref={props.ref}
+      id={props.id}
+      name="shape"
+      opacity={props.opacity}
+      onClick={playAudio}
+      onTransformStart={props.onTransformStart}
+      onTransform={props.onTransform}
+      onTransformEnd={props.onTransformEnd}
+      onDragMove={props.onDragMove}
+      onDragEnd={props.onDragEnd}
+      onContextMenu={props.onContextMenu}
+      rotation={props.rotation}
+      stroke={props.stroke}
+      strokeWidth={props.strokeWidth}
+    />
+  </>
+  );
 }
 
 export default URLvideo;

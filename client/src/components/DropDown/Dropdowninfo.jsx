@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import Switch from "react-switch"
-import Button from "../Buttons/Button"
+
 
 
 import "./Dropdown.css";
 
 
   function Dropdowninfo(props) {
-    const [activeMenu, setActiveMenu] = useState('main');
+    const [activeMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
     const [checked, setChecked] = useState(false);
     const dropdownRef = useRef(null);
-    const [ptype, setType] = useState([]);
-    const [numpages, setNumpages ] = useState();
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
@@ -31,16 +29,6 @@ import "./Dropdown.css";
   function handleNum(e){
     console.log(e)
     props.num(e.target.value);
-  }
-
-  function DropdownItem(props) {
-    return (
-      <a href="#" className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
-        <span className="icon-button">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-right">{props.rightIcon}</span>
-      </a>
-    );
   }
 
 

@@ -3,7 +3,7 @@ import "./Table.css"
 import data from "./mock-data.json"
 import ReadOnlyRow from "../ReadOnlyRow";
 import EditableRow from "../EditableRow"
-import { withAuth0, useAuth0 } from "@auth0/auth0-react";
+import {  useAuth0 } from "@auth0/auth0-react";
 import { parse } from "papaparse";
 import { nanoid } from "nanoid";
 import axios from "axios";

@@ -22,7 +22,7 @@ class App extends React.Component {
       return <Loading />;
     }
 
-    if (window.location.href == "http://localhost:3000/gamepage" || (window.location.href == "http://localhost:3000/EditPage")) {
+    if (window.location.href === "http://localhost:3000/gamepage" || (window.location.href === "http://localhost:3000/EditPage")) {
       return (
         <div>
           <Switch>

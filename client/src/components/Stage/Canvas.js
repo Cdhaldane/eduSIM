@@ -1,42 +1,16 @@
-//todo: allow for picture inside of rect/ellipse/stfar
-//todo: connect using arrow
-//todo: for rightToolBar, show fontSize,fontFamily for text for the rest allow to add pictures
-//todo: zoomable
-import ButtonGroup from "react-bootstrap/ButtonGroup";
+import React, { useState, useEffect, Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
-import Button from "react-bootstrap/Button";
-import { SelectableGroup } from 'react-selectable-fast'
-import { addLine } from "./Shapes/Line";
 import URLvideo from "./URLVideos";
-import { addTextNode } from "./Shapes/Text";
-// import Image from "./Shapes/Img";
 import { v1 as uuidv1 } from 'uuid';
-import Canvas from "./Canvas.js"
 import fileDownload from 'js-file-download'
 import axios from 'axios'
-import { pdf } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
-
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
-import Info from "../Information/InformationPopup";
-import EditShapes from "../EditShapes/EditShapes";
 import Pencil from "../Pencils/Pencil";
-import Sidebar from "../SideBar/Sidebar";
-import Header from "../SideBar/Header";
-import styled from "styled-components"
 import Konva from "konva"
-
-import { Container, Row, Col } from "react-bootstrap";
-
-
-
-import React, { useState, useEffect, Component, useMemo } from 'react';
-import useImage from "use-image";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
-
 import {
   Rect,
   Stage,
@@ -51,72 +25,66 @@ import {
   Image
 } from "react-konva";
 import Connector from "./Connector.jsx";
-import Toolbar from "./Toolbar.js";
 
-
-
-
-class URLImage extends React.Component {
-  state = {
-    image: null
-  };
-  componentDidMount() {
-    this.loadImage();
-  }
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
+  class URLImage extends React.Component {
+    state = {
+      image: null
+    };
+    componentDidMount() {
       this.loadImage();
     }
+    componentDidUpdate(oldProps) {
+      if (oldProps.src !== this.props.src) {
+        this.loadImage();
+      }
+    }
+    componentWillUnmount() {
+      this.image.removeEventListener('load', this.handleLoad);
+    }
+    loadImage() {
+      // save to "this" to remove "load" handler on unmount
+      this.image = new window.Image();
+      this.image.src = this.props.src;
+      this.image.addEventListener('load', this.handleLoad);
+    }
+    handleLoad = () => {
+      // after setState react-konva will update canvas and redraw the layer
+      // because "image" property is changed
+      this.setState({
+        image: this.image
+      });
+      // if you keep same image object during source updates
+      // you will have to update layer manually:
+      // this.imageNode.getLayer().batchDraw();
+    };
+    render() {
+      return (
+        <Image
+          draggable
+          visible={this.props.visible}
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height}
+          image={this.state.image}
+          ref={this.props.ref}
+          id={this.props.id}
+          name="shape"
+          opacity={this.props.opacity}
+          onClick={this.props.onClick}
+          onTransformStart={this.props.onTransformStart}
+          onTransform={this.props.onTransform}
+          onTransformEnd={this.props.onTransformEnd}
+          onDragMove={this.props.onDragMove}
+          onDragEnd={this.props.onDragEnd}
+          onContextMenu={this.props.onContextMenu}
+          rotation={this.props.rotation}
+          stroke={this.props.stroke}
+          strokeWidth={this.props.strokeWidth}
+        />
+      );
+    }
   }
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-  render() {
-
-    return (
-      <Image
-        draggable
-        visible={this.props.visible}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        image={this.state.image}
-        ref={this.props.ref}
-        id={this.props.id}
-        name="shape"
-        opacity={this.props.opacity}
-        onClick={this.props.onClick}
-        onTransformStart={this.props.onTransformStart}
-        onTransform={this.props.onTransform}
-        onTransformEnd={this.props.onTransformEnd}
-        onDragMove={this.props.onDragMove}
-        onDragEnd={this.props.onDragEnd}
-        onContextMenu={this.props.onContextMenu}
-        rotation={this.props.rotation}
-        stroke={this.props.stroke}
-        strokeWidth={this.props.strokeWidth}
-
-      />
-    );
-  }
-}
   function Timer(props){
     useEffect(() => {
       const MINUTE_MS = 300000;
@@ -134,7 +102,6 @@ class URLImage extends React.Component {
       </>
     );
   }
-
   function Save(){
     const [display, setDisplay] = useState(false);
     useEffect(() => {
@@ -275,6 +242,7 @@ class Graphics extends Component {
       lines: [],
       arrows: [],
       connectors: [],
+      gameroles: [],
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -332,10 +300,8 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-
       ptype: "",
       pageNumber: 6,
-      isDrawing: false,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: "https://konvajs.org/assets/lion.png",
@@ -350,13 +316,6 @@ class Graphics extends Component {
                   };
 
     this.handleWheel = this.handleWheel.bind(this);
-    console.log(this.state.adminid)
-    console.log(this.state.gameinstanceid)
-
-    var data =  {
-          adminid: this.state.adminid,
-          gameid: this.state.gameinstanceid
-      }
 
     axios.get('http://localhost:5000/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
@@ -402,10 +361,30 @@ class Graphics extends Component {
       })
     })
     .catch(error => console.log(error.response));
-
-
-
+    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+      params: {
+            gameinstanceid: localStorage.adminid,
+        }
+    })
   }
+
+  async getRoles(){
+    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+      params: {
+            gameinstanceid: localStorage.adminid,
+        }
+    })
+    .then((res) => {
+      const allData = res.data;
+      console.log(allData)
+      this.setState({
+        gameroles: res.data
+      })
+    })
+    .catch(error => console.log(error.response));
+  }
+
+ 
   handleType = (e) => {
     this.setState({
       ptype: e
@@ -491,41 +470,6 @@ class Graphics extends Component {
         }
       );
     }
-
-    //arrow logic
-    if (this.state.newArrowRef !== "") {
-      if (this.state.previousShape) {
-        if (this.state.previousShape.attrs.id !== "ContainerRect") {
-          //console.log(this.refs.graphicStage.findOne("." + this.state.newArrowRef));
-          //
-
-          this.state.arrows.map(eachArrow => {
-            if (eachArrow.name === this.state.newArrowRef) {
-              eachArrow.to = this.state.previousShape;
-            }
-          });
-
-          //console.log(newConnector, this.state.newArrowRef);
-          //newConnector.setAttr("to", this.state.previousShape);
-          //console.log(newConnector);
-        }
-      }
-
-      //handle connector more
-      //if the currentArrow ref has a from, and that e.target.attrs.id isn't containerRect,
-      //then find the current shape with stage find name and then yeah
-      this.state.arrows.map(eachArrow => {
-        if (eachArrow.name === this.state.newArrowRef) {
-          eachArrow.fill = "black";
-          eachArrow.stroke = "black";
-        }
-      });
-      //arrow logic, there's e.evt.pageX, pageY
-      this.setState({
-        arrowDraggable: false,
-        newArrowRef: ""
-      });
-    }
   };
 
   updateSelectionRect = () => {
@@ -547,7 +491,7 @@ class Graphics extends Component {
       draggable: false
     })
     const pos = e.target.getStage().getPointerPosition();
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     this.state.isDrawing = true;
     const tool = this.state.tool;
     this.setState({
@@ -571,7 +515,7 @@ class Graphics extends Component {
 
 
   handleMouseUp = () => {
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
       this.state.isDrawing = false;
     } else {
     if (!this.state.selection.visible) {
@@ -600,7 +544,7 @@ class Graphics extends Component {
 
     //get the currennt arrow ref and modify its position by filtering & pushing again
     //console.log("lastFill: ", this.state.lastFill);
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     if (!this.state.isDrawing) {
       return;
    }
@@ -634,70 +578,6 @@ class Graphics extends Component {
     } else {
       document.body.style.cursor = "default";
     }
-
-    //if we are moving an arrow
-    if (this.state.newArrowRef !== "") {
-      //filling color logic:
-
-      var transform = this.refs.layer2.getAbsoluteTransform().copy();
-      transform.invert();
-
-      pos = transform.point(pos);
-      this.setState({ arrowEndX: pos.x, arrowEndY: pos.y });
-      //last non arrow object
-      if (shape && shape.attrs && shape.attrs.name != undefined) {
-        //  console.log(shape);
-        if (!shape.attrs.name.includes("arrow")) {
-          //after first frame
-          if (this.state.previousShape)
-            if (this.state.previousShape !== shape) {
-              //arrow entered a new shape
-
-              //set arrow to blue
-              if (this.state.previousShape.attrs.id !== "ContainerRect") {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "black";
-                    eachArrow.stroke = "black";
-                  }
-                });
-                this.forceUpdate();
-              } else {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "#ccf5ff";
-                    eachArrow.stroke = "#ccf5ff";
-                  }
-                });
-                this.forceUpdate();
-              }
-            }
-          //if arrow is moving in a single shape
-        }
-
-        if (!shape.attrs.name.includes("arrow")) {
-          this.setState({ previousShape: shape });
-        }
-      }
-    }
-    var arrows = this.state.arrows;
-
-    arrows.map(eachArrow => {
-      if (eachArrow.name === this.state.newArrowRef) {
-        var index = arrows.indexOf(eachArrow);
-        let currentArrow = eachArrow;
-        currentArrow.points = [
-          currentArrow.points[0],
-          currentArrow.points[1],
-          pos.x,
-          pos.y
-          /*  event.evt.pageY -
-            document.getElementById("NavBar").getBoundingClientRect().height */
-        ];
-
-        this.state.arrows[index] = currentArrow;
-      }
-    });
   }
   };
   updateSelectionRectInfo = () => {
@@ -718,7 +598,7 @@ class Graphics extends Component {
       draggable: false
     })
     const pos = e.target.getStage().getPointerPosition();
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     this.state.isDrawing = true;
     const tool = this.state.tool;
     this.setState({
@@ -742,7 +622,7 @@ class Graphics extends Component {
 
 
   handleMouseUpInfo = () => {
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
       this.state.isDrawing = false;
     } else {
     if (!this.state.selection.visible) {
@@ -771,7 +651,7 @@ class Graphics extends Component {
 
     //get the currennt arrow ref and modify its position by filtering & pushing again
     //console.log("lastFill: ", this.state.lastFill);
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     if (!this.state.isDrawing) {
       return;
    }
@@ -805,70 +685,6 @@ class Graphics extends Component {
     } else {
       document.body.style.cursor = "default";
     }
-
-    //if we are moving an arrow
-    if (this.state.newArrowRef !== "") {
-      //filling color logic:
-
-      var transform = this.refs.layer2.getAbsoluteTransform().copy();
-      transform.invert();
-
-      pos = transform.point(pos);
-      this.setState({ arrowEndX: pos.x, arrowEndY: pos.y });
-      //last non arrow object
-      if (shape && shape.attrs && shape.attrs.name != undefined) {
-        //  console.log(shape);
-        if (!shape.attrs.name.includes("arrow")) {
-          //after first frame
-          if (this.state.previousShape)
-            if (this.state.previousShape !== shape) {
-              //arrow entered a new shape
-
-              //set arrow to blue
-              if (this.state.previousShape.attrs.id !== "ContainerRect") {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "black";
-                    eachArrow.stroke = "black";
-                  }
-                });
-                this.forceUpdate();
-              } else {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "#ccf5ff";
-                    eachArrow.stroke = "#ccf5ff";
-                  }
-                });
-                this.forceUpdate();
-              }
-            }
-          //if arrow is moving in a single shape
-        }
-
-        if (!shape.attrs.name.includes("arrow")) {
-          this.setState({ previousShape: shape });
-        }
-      }
-    }
-    var arrows = this.state.arrows;
-
-    arrows.map(eachArrow => {
-      if (eachArrow.name === this.state.newArrowRef) {
-        var index = arrows.indexOf(eachArrow);
-        let currentArrow = eachArrow;
-        currentArrow.points = [
-          currentArrow.points[0],
-          currentArrow.points[1],
-          pos.x,
-          pos.y
-          /*  event.evt.pageY -
-            document.getElementById("NavBar").getBoundingClientRect().height */
-        ];
-
-        this.state.arrows[index] = currentArrow;
-      }
-    });
   }
   };
   handleWheel(event) {
@@ -877,7 +693,7 @@ class Graphics extends Component {
       this.state.ellipses.length === 0 &&
       this.state.stars.length === 0 &&
       this.state.texts.length === 0 &&
-      this.state.triangles.length == 0 &&
+      this.state.triangles.length === 0 &&
       this.state.arrows.length === 0 &&
       this.state.images.length === 0 &&
       this.state.videos.length === 0 &&
@@ -1617,18 +1433,6 @@ class Graphics extends Component {
       var that = this;
       //delete it from the state too
       let name = this.state.selectedShapeName;
-      let rectDeleted = false,
-        ellipseDeleted = false,
-        starDeleted = false,
-        arrowDeleted = false,
-        textDeleted = false,
-        triangleDeleted = false,
-        imageDeleted = false,
-        videoDelete = false,
-        audiosDeleted = false,
-        linesDeleted = false,
-        documentsDeleted = false;
-
       var rects = this.state.rectangles.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
@@ -1854,9 +1658,7 @@ class Graphics extends Component {
     history.push(this.state);
     this.setState({ selectedShapeName: "" });
     //if draft
-
   }
-
   addRectangle = () => {
     var rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
 
@@ -1882,7 +1684,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = rect;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1919,7 +1720,6 @@ class Graphics extends Component {
       y: 400,
       width: 100,
       height:100,
-      height: 100,
       sides: 3,
       radius: 70,
       stroke: 'black',
@@ -1933,7 +1733,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = tri;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1978,7 +1777,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = img;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2023,7 +1821,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = vid;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2071,7 +1868,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = aud;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2089,14 +1885,10 @@ class Graphics extends Component {
       audios: [...prevState.audios, toPush],
       selectedShapeName: toPush.name
     }));
-
   };
 
   addDocument = () => {
     var docName = this.state.documents.length + 1 + this.state.documentDeleteCount
-    var audsrc = this.state.audsrc
-
-
     const bimage = new window.Image();
         bimage.onload = () => {
           this.setState({
@@ -2106,8 +1898,6 @@ class Graphics extends Component {
         bimage.src = 'downloadicon.png';
         bimage.width = 10;
         bimage.height = 10;
-
-
     let name = 'document' + docName
     const doc = {
       rolelevel: this.state.rolelevel,
@@ -2129,7 +1919,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = doc;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2174,7 +1963,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = circ;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2326,7 +2114,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = star;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2374,7 +2161,6 @@ class Graphics extends Component {
 
     var layer = this.refs.layer2;
     var toPush = tex;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2926,7 +2712,7 @@ class Graphics extends Component {
 
 
             {this.state.rectangles.map(eachRect => {
-              if(eachRect.level == this.state.level && eachRect.infolevel == false)
+              if(eachRect.level === this.state.level && eachRect.infolevel === false)
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -3047,7 +2833,7 @@ class Graphics extends Component {
                         }
 
                         if (eachArrow.to !== undefined) {
-                          if (eachRect.name == eachArrow.to.attrs.name) {
+                          if (eachRect.name === eachArrow.to.attrs.name) {
                             eachArrow.points = [
                               eachArrow.points[0],
                               eachArrow.points[1],
@@ -3121,7 +2907,7 @@ class Graphics extends Component {
             )}
 
               {this.state.ellipses.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level && eachEllipse.infolevel == false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
                 return (
                 <Ellipse
                   visible={eachEllipse.visible}
@@ -3223,7 +3009,7 @@ class Graphics extends Component {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
                         console.log("prevArrow: ", eachArrow.points);
-                        if (eachEllipse.name == eachArrow.from.attrs.name) {
+                        if (eachEllipse.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachEllipse.x,
                             eachEllipse.y,
@@ -3287,7 +3073,7 @@ class Graphics extends Component {
               );
             })}
               {this.state.lines.map((eachLine, i) => {
-                if(eachLine.level == this.state.level && eachLine.infolevel == false)
+                if(eachLine.level === this.state.level && eachLine.infolevel === false)
                 return(
                   <Line
                     id={eachLine.id}
@@ -3320,7 +3106,7 @@ class Graphics extends Component {
               })}
 
               {this.state.images.map(eachImage => {
-                if(eachImage.level == this.state.level && eachImage.infolevel == false)
+                if(eachImage.level === this.state.level && eachImage.infolevel === false)
                 return (
                 <URLImage
                   visible={eachImage.visible}
@@ -3387,7 +3173,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachImage.name == eachArrow.to.attrs.name) {
+                        if (eachImage.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3445,7 +3231,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.videos.map(eachVideo => {
-                if(eachVideo.level == this.state.level && eachVideo.infolevel == false)
+                if(eachVideo.level === this.state.level && eachVideo.infolevel === false)
                 return (
                 <URLvideo
                   visible={eachVideo.visible}
@@ -3512,7 +3298,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachVideo.name == eachArrow.to.attrs.name) {
+                        if (eachVideo.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3559,7 +3345,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.audios.map(eachAudio => {
-                if(eachAudio.level == this.state.level && eachAudio.infolevel == false)
+                if(eachAudio.level === this.state.level && eachAudio.infolevel === false)
                 return (
                 <URLvideo
                   visible={eachAudio.visible}
@@ -3629,7 +3415,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachAudio.name == eachArrow.to.attrs.name) {
+                        if (eachAudio.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3679,7 +3465,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.documents.map(eachDoc => {
-                if(eachDoc.level == this.state.level && eachDoc.infolevel == false)
+                if(eachDoc.level === this.state.level && eachDoc.infolevel === false)
                 return (
                 <Rect
                   rotation={eachDoc.rotation}
@@ -3764,7 +3550,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachDoc.name == eachArrow.to.attrs.name) {
+                        if (eachDoc.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3821,7 +3607,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.triangles.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level && eachEllipse.infolevel == false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
                 return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
@@ -3924,7 +3710,7 @@ class Graphics extends Component {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
                         console.log("prevArrow: ", eachArrow.points);
-                        if (eachEllipse.name == eachArrow.from.attrs.name) {
+                        if (eachEllipse.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachEllipse.x,
                             eachEllipse.y,
@@ -3986,7 +3772,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.stars.map(eachStar => {
-                if(eachStar.level == this.state.level && eachStar.infolevel == false)
+                if(eachStar.level === this.state.level && eachStar.infolevel === false)
                 return (
                 <Star
                   visible={eachStar.visible}
@@ -4052,7 +3838,7 @@ class Graphics extends Component {
                   onDragMove={() => {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
-                        if (eachStar.name == eachArrow.from.attrs.name) {
+                        if (eachStar.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachStar.x,
                             eachStar.y,
@@ -4110,7 +3896,7 @@ class Graphics extends Component {
             })}
 
               {this.state.texts.map(eachText => {
-                if(eachText.level == this.state.level && eachText.infolevel == false)
+                if(eachText.level === this.state.level && eachText.infolevel === false)
                 return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -4320,7 +4106,7 @@ class Graphics extends Component {
             </Portal>
           )}
               {this.state.arrows.map(eachArrow => {
-                if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level && eachArrow.infolevel == false) {
+                if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
                   return (
                     <Arrow
                       visible={eachArrow.visible}
@@ -4560,7 +4346,7 @@ class Graphics extends Component {
                 >
                   <Layer ref="layer3">
                     {this.state.rectangles.map(eachRect => {
-                      if(eachRect.level == this.state.level && eachRect.infolevel == true && eachRect.rolelevel == this.state.rolelevel)
+                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel)
                         return (
                           <Rect
                           visible={eachRect.visible}
@@ -4681,7 +4467,7 @@ class Graphics extends Component {
                                 }
 
                                 if (eachArrow.to !== undefined) {
-                                  if (eachRect.name == eachArrow.to.attrs.name) {
+                                  if (eachRect.name === eachArrow.to.attrs.name) {
                                     eachArrow.points = [
                                       eachArrow.points[0],
                                       eachArrow.points[1],
@@ -4755,7 +4541,7 @@ class Graphics extends Component {
                     )}
 
                       {this.state.ellipses.map(eachEllipse => {
-                        if(eachEllipse.level == this.state.level && eachEllipse.infolevel == true && eachEllipse.rolelevel == this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
                         return (
                         <Ellipse
                           visible={eachEllipse.visible}
@@ -4857,7 +4643,7 @@ class Graphics extends Component {
                             this.state.arrows.map(eachArrow => {
                               if (eachArrow.from !== undefined) {
                                 console.log("prevArrow: ", eachArrow.points);
-                                if (eachEllipse.name == eachArrow.from.attrs.name) {
+                                if (eachEllipse.name === eachArrow.from.attrs.name) {
                                   eachArrow.points = [
                                     eachEllipse.x,
                                     eachEllipse.y,
@@ -4921,7 +4707,7 @@ class Graphics extends Component {
                       );
                     })}
                       {this.state.lines.map((eachLine, i) => {
-                        if(eachLine.level == this.state.level && eachLine.infolevel == true && eachLine.rolelevel == this.state.rolelevel)
+                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel)
                         return(
                           <Line
                             id={eachLine.id}
@@ -4954,7 +4740,7 @@ class Graphics extends Component {
                       })}
 
                       {this.state.images.map(eachImage => {
-                        if(eachImage.level == this.state.level && eachImage.infolevel == true && eachImage.rolelevel == this.state.rolelevel)
+                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel)
                         return (
                         <URLImage
                           visible={eachImage.visible}
@@ -5021,7 +4807,7 @@ class Graphics extends Component {
                               }
 
                               if (eachArrow.to !== undefined) {
-                                if (eachImage.name == eachArrow.to.attrs.name) {
+                                if (eachImage.name === eachArrow.to.attrs.name) {
                                   eachArrow.points = [
                                     eachArrow.points[0],
                                     eachArrow.points[1],
@@ -5079,7 +4865,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.videos.map(eachVideo => {
-                        if(eachVideo.level == this.state.level && eachVideo.infolevel == true && eachVideo.rolelevel == this.state.rolelevel)
+                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel)
                         return (
                         <URLvideo
                           visible={eachVideo.visible}
@@ -5146,7 +4932,7 @@ class Graphics extends Component {
                               }
 
                               if (eachArrow.to !== undefined) {
-                                if (eachVideo.name == eachArrow.to.attrs.name) {
+                                if (eachVideo.name === eachArrow.to.attrs.name) {
                                   eachArrow.points = [
                                     eachArrow.points[0],
                                     eachArrow.points[1],
@@ -5193,7 +4979,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.audios.map(eachAudio => {
-                        if(eachAudio.level == this.state.level && eachAudio.infolevel == true && eachAudio.rolelevel == this.state.rolelevel)
+                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel)
                         return (
                         <URLvideo
                           visible={eachAudio.visible}
@@ -5263,7 +5049,7 @@ class Graphics extends Component {
                               }
 
                               if (eachArrow.to !== undefined) {
-                                if (eachAudio.name == eachArrow.to.attrs.name) {
+                                if (eachAudio.name === eachArrow.to.attrs.name) {
                                   eachArrow.points = [
                                     eachArrow.points[0],
                                     eachArrow.points[1],
@@ -5313,7 +5099,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.documents.map(eachDoc => {
-                        if(eachDoc.level == this.state.level && eachDoc.infolevel == true && eachDoc.rolelevel == this.state.rolelevel)
+                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel)
                         return (
                         <Rect
                           rotation={eachDoc.rotation}
@@ -5398,7 +5184,7 @@ class Graphics extends Component {
                               }
 
                               if (eachArrow.to !== undefined) {
-                                if (eachDoc.name == eachArrow.to.attrs.name) {
+                                if (eachDoc.name === eachArrow.to.attrs.name) {
                                   eachArrow.points = [
                                     eachArrow.points[0],
                                     eachArrow.points[1],
@@ -5455,7 +5241,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.triangles.map(eachEllipse => {
-                        if(eachEllipse.level == this.state.level && eachEllipse.infolevel == true && eachEllipse.rolelevel == this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
                         return (
                         <RegularPolygon
                           visible={eachEllipse.visible}
@@ -5558,7 +5344,7 @@ class Graphics extends Component {
                             this.state.arrows.map(eachArrow => {
                               if (eachArrow.from !== undefined) {
                                 console.log("prevArrow: ", eachArrow.points);
-                                if (eachEllipse.name == eachArrow.from.attrs.name) {
+                                if (eachEllipse.name === eachArrow.from.attrs.name) {
                                   eachArrow.points = [
                                     eachEllipse.x,
                                     eachEllipse.y,
@@ -5620,7 +5406,7 @@ class Graphics extends Component {
                     );
                     })}
                       {this.state.stars.map(eachStar => {
-                        if(eachStar.level == this.state.level && eachStar.infolevel == true && eachStar.rolelevel == this.state.rolelevel)
+                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel)
                         return (
                         <Star
                           visible={eachStar.visible}
@@ -5686,7 +5472,7 @@ class Graphics extends Component {
                           onDragMove={() => {
                             this.state.arrows.map(eachArrow => {
                               if (eachArrow.from !== undefined) {
-                                if (eachStar.name == eachArrow.from.attrs.name) {
+                                if (eachStar.name === eachArrow.from.attrs.name) {
                                   eachArrow.points = [
                                     eachStar.x,
                                     eachStar.y,
@@ -5744,7 +5530,7 @@ class Graphics extends Component {
                     })}
 
                       {this.state.texts.map(eachText => {
-                        if(eachText.level == this.state.level && eachText.infolevel == true && eachText.rolelevel == this.state.rolelevel)
+                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel)
                         return (
                         //perhaps this.state.texts only need to contain refs?
                         //so that we only need to store the refs to get more information
@@ -5954,7 +5740,7 @@ class Graphics extends Component {
                     </Portal>
                   )}
                       {this.state.arrows.map(eachArrow => {
-                        if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level && eachArrow.infolevel == true && eachArrow.rolelevel == this.state.rolelevel) {
+                        if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === true && eachArrow.rolelevel === this.state.rolelevel) {
                           return (
                             <Arrow
                               visible={eachArrow.visible}
@@ -6066,13 +5852,14 @@ class Graphics extends Component {
                 <p id="rolesdrop">
                   <Dropdownroles
                     roleLevel={this.handleRoleLevel}
+                    gameroles={this.state.gameroles}
                   />
                 </p>
                   <b>
 
                   </b>
                 </div>
-                {(1 == 1 )
+                {(1 === 1 )
                   ? <div id={"pencili" + this.state.open}>
                       <Pencil
                       editMode={this.editMode}
@@ -6157,8 +5944,4 @@ class Graphics extends Component {
     );
   }
 }
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
 export default Graphics;

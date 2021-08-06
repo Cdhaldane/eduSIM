@@ -27,6 +27,7 @@ app.use(fileUpload());
 app.use('/api/gameinstances', routes.gameinstance)
 app.use('/api/adminaccounts', routes.adminaccount)
 app.use('/api/email', routes.emailer)
+app.use('/api/gameroles', routes.gamerole)
 
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
