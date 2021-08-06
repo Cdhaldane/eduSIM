@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Note from "../Note/Note";
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
-import Switch from "react-switch"
-import Slider, { Range } from 'rc-slider';
+import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import FontPicker from "font-picker-react";
 
@@ -14,12 +12,9 @@ import "./Dropdownedit.css";
   function DropdownMenu(props) {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
-    const [ components, setComponents ] = useState();
     const dropdownRef = useRef(null);
     const [colourf, setColourf] = useState("");
     const [colours, setColours] = useState("");
-    const [checkedd, setCheckedd] = useState(false);
-    const [checkede, setCheckede] = useState(false);
     const [value, setValue] = React.useState(20);
     const [valueO, setValueO] = React.useState(1);
     const [font, setFont] = React.useState("Choose a font!")
@@ -29,38 +24,29 @@ import "./Dropdownedit.css";
       setColourf(e);
       props.choosecolorf(e);
     };
-
     function handleChangeS(e){
       setColours(e);
       props.choosecolors(e);
     };
 
-  useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
-  }, [])
+    useEffect(() => {
+      setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
+    }, [])
 
-  function calcHeight(el) {
-    const height = el.offsetHeight;
-    setMenuHeight(height);
-  }
+    function calcHeight(el) {
+      const height = el.offsetHeight;
+      setMenuHeight(height);
+    }
 
-  function handleDraw(){
-    setCheckedd(!checkedd)
-  }
-
-  function handleErase(){
-    setCheckede(!checkede)
-  }
-
-  function DropdownItem(props) {
-    return (
-      <a href="#" className="menu-itemedit" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
-        <span className="icon-buttonedit">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-righedit">{props.rightIcon}</span>
-      </a>
-    );
-  }
+    function DropdownItem(props) {
+      return (
+        <a href="#" className="menu-itemedit" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+          <span className="icon-buttonedit">{props.leftIcon}</span>
+          {props.children}
+          <span className="icon-righedit">{props.rightIcon}</span>
+        </a>
+      );
+    }
 
 
     function DropdownItems(props) {
@@ -72,33 +58,6 @@ import "./Dropdownedit.css";
         </a>
       );
     }
-
-  function addCircle(){
-    props.addCircle();
-  }
-  function addRectangle(){
-    props.addRectangle();
-  }
-  function addTriangle(){
-    props.addTriangle();
-  }
-  function addStar(){
-    props.addStar();
-  }
-  function drawLine(){
-    setCheckedd(!checkedd)
-    props.drawLine();
-  }
-  function drawText(){
-    props.drawText();
-  }
-  function drawImage(){
-    props.drawImage();
-  }
-  function eraseLine(){
-    setCheckede(!checkede)
-    props.eraseLine();
-  }
 
   function onSliderChange(e){
     setValue(e);
@@ -114,7 +73,7 @@ import "./Dropdownedit.css";
     props.handleSize(e.target.value);
   }
 
-if(props.title == "Edit Shape") {
+if(props.title === "Edit Shape") {
 return (
      <div className="dropdownedit" style={{ height: menuHeight }} ref={dropdownRef}>
        <CSSTransition

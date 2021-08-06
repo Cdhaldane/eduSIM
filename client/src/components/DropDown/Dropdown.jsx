@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Note from "../Note/Note";
 import { CSSTransition } from 'react-transition-group';
-import { SketchPicker, CirclePicker, ChromePicker } from 'react-color';
-import Switch from "react-switch"
+import {  ChromePicker } from 'react-color';
 import axios from "axios";
 
 
@@ -11,7 +9,6 @@ import "./Dropdown.css";
   function DropdownMenu(props) {
     const [activeMenu, setActiveMenu] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
-    const [ components, setComponents ] = useState();
     const [img, setImg] = useState();
     const dropdownRef = useRef(null);
     const [colour, setColour] = useState("");
@@ -21,10 +18,6 @@ import "./Dropdown.css";
     const [vidsrc, setVidsrc] = useState('')
     const [audiosrc, setAudiosrc] = useState('')
     const [file, setFile] = useState('');
-    const [filename, setFilename] = useState("Choose File");
-    const [message, setMessage] = useState('');
-    const [uploadedFile, setUploadedFile] = useState({});
-    const [uploadPercentage, setUploadPercentage] = useState(0);
 
     function handleChange(e){
       setColour(e);
@@ -38,14 +31,6 @@ import "./Dropdown.css";
   function calcHeight(el) {
     const height = el.offsetHeight;
     setMenuHeight(height);
-  }
-
-  function handleDraw(){
-    setCheckedd(!checkedd)
-  }
-
-  function handleErase(){
-    setCheckede(!checkede)
   }
 
   function DropdownItem(props) {
@@ -141,10 +126,6 @@ import "./Dropdown.css";
     props.addStar();
     props.close();
   }
-  function addStick(){
-    props.addStick();
-    props.close();
-  }
   function drawLine(){
     setCheckedd(!checkedd)
     props.drawLine();
@@ -168,10 +149,6 @@ import "./Dropdown.css";
   function addDocument(e){
     props.addDocument();
     props.close();
-  }
-  function eraseLine(){
-    setCheckede(!checkede)
-    props.eraseLine();
   }
   function stopDrawing(){
     setCheckede(!checkede)

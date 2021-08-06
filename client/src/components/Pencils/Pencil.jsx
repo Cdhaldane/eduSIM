@@ -87,6 +87,15 @@ function Pencil(props) {
   function handleDocument(e){
     props.handleDocument(e);
   }
+  function handleDrop(){
+    setDrop(!drop)
+    if(props.editModeToggle === true){
+      props.editMode();
+    }
+    if(props.editModeToggle === false) {
+      props.editMode();
+    }
+  }
 
 
 
@@ -98,18 +107,18 @@ function Pencil(props) {
         id={"pencil" + props.id}
         aria-hidden="true"
         class={"fa fa-pencil fa-" + props.psize + "x"}
-        onClick={() => setDrop(!drop)}
+        onClick={handleDrop}
         >
       </i>
 
       {drop && <div className={"drop" + props.id}>
 
-      {props.type == "info"  ? (
+      {props.type === "info"  ? (
         <Dropdowninfo ptype={handleType} num={handleNum}/>
     ) : (
       ""
     )}
-    {props.type == "main"  ? (
+    {props.type === "main"  ? (
       <Dropdown
         title={props.title}
         addCircle={addCircle}
@@ -136,7 +145,7 @@ function Pencil(props) {
 
     ""
     )}
-    {props.type == "nav"  ? (
+    {props.type === "nav"  ? (
     <Dropdownnav
       mvisible={handleMvisible}
       avisible={handleAvisible}

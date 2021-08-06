@@ -58,6 +58,22 @@
   right: -630px;
   top: 22px;
 }
+.nav-pic:hover{
+  background-color: grey;
+  border-radius:  4px;
+  transition: all 0.2s ease-out;
+}
+.nav-picbutton{
+  align-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  margin-left: 10px;
+  position: relative;
+  right: -600px;
+  top: -10px;
+}
+
 
 .profilevist{
   font-family:  "Montserrat", sans-serif;
@@ -111,12 +127,6 @@
   position: absolute;
   left: 450px;
   top: 200px;
-}
-
-.nav-pic:hover{
-  background-color: grey;
-  border-radius:  4px;
-  transition: all 0.2s ease-out;
 }
 
 .fa-bars{

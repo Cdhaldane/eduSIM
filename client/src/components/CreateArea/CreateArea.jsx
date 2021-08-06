@@ -1,42 +1,18 @@
 import React, { useState } from "react";
 import Switch from "react-switch"
-import {Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
-import styles from "./CreateArea.css";
+import "./CreateArea.css";
 
   function CreateArea(props) {
-    const [save, setSave] = useState("");
-    const [note, setNote,] = useState([]);
-    const [showNote, setShowNote] = useState(false);
-    const [img, setImg] = useState();
-    const [title, setTitle] = useState();
-    const [checked, setChecked] = useState(false);
-    const [state, setState] = useState("");
-    const [selectValue, setSelectValue] = useState("");
-    const [value, setValue] = React.useState(
-    localStorage.getItem('adminid') || ''
-  );
-
-  const [file, setFile] = useState('');
-  const [filename, setFilename] = useState('Choose File');
-  const [uploadedFile, setUploadedFile] = useState({});
-  const [message, setMessage] = useState('');
-  const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [note, setNote] = useState([]);
+  const [img, setImg] = useState();
+  const [title, setTitle] = useState();
+  const [checked, setChecked] = useState(false);
+  const [selectValue, setSelectValue] = useState("");
+  const [filename, setFilename] = useState('');
   const [imageSelected, setImageSelected] = useState("");
-  const [imageId, setImageId] = useState();
-  // sets all const
-
-
-  //adds note to dahsboard by setting notes and sending to app
-  function setNotes(event) {
-   setNote({
-     title: title,
-     img: img
-   });
-   event.preventDefault();
- }
-
+    // sets all const
  const uploadImage = async event =>{
    handleDuplicate()
    event.preventDefault();
@@ -47,7 +23,6 @@ import styles from "./CreateArea.css";
    try {
    await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
    .then((res) => {
-     console.log(res)
      let data = {
        gameinstance_name: title,
        gameinstance_photo_path: res.data.public_id,
@@ -55,13 +30,11 @@ import styles from "./CreateArea.css";
        createdby_adminid: localStorage.adminid,
        status: 'created'
      }
-
        axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
           .then((res) => {
              console.log(res)
             })
            .catch(error => console.log(error.response));
-          console.log(data);
        props.onAdd(note);
    });
  } catch (error){
@@ -72,18 +45,15 @@ import styles from "./CreateArea.css";
      createdby_adminid: localStorage.adminid,
      status: 'created'
    }
-
      axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
         .then((res) => {
            console.log(res)
           })
          .catch(error => console.log(error.response));
-        console.log(data);
      props.onAdd(note);
- }
- window.location.reload();
+   }
+   window.location.reload();
  };
-
   //handles selection of img from file
   function onChange(event){
     setImageSelected(event.target.files[0]);
@@ -92,15 +62,11 @@ import styles from "./CreateArea.css";
       title: title,
       img: URL.createObjectURL(event.target.files[0])
     });
-}
-
-
-
+  }
   //handle input and adds title and img to notes array
   function handleChange(event) {
     setTitle(event.target.value);
   }
-
   //handles showing of img overlay
   function handleImg(event){
      event.preventDefault();
@@ -116,18 +82,14 @@ import styles from "./CreateArea.css";
          //what props are currently passed to the parent component
     }
     return items;
-}
-
-function handleDuplicate(){
-  console.log(selectValue)
-}
-
+  }
+  function handleDuplicate(){
+    console.log(selectValue)
+  }
   function handleCopySim(event) {
     setSelectValue(event.target.value)
     console.log(event.target.value)
   }
-
-
   return (
       <div class="area" >
         <Container>
@@ -152,14 +114,12 @@ function handleDuplicate(){
           />
         </label>
         </p>
-
         {checked && <div>
-        <label for="PrevGame" id="prevgame">Select a previous simulation</label>
-      <select id="prevgames" onChange={handleCopySim}>
-          {createSelectItems()}
-        </select>
+            <label for="PrevGame" id="prevgame">Select a previous simulation</label>
+            <select id="prevgames" onChange={handleCopySim}>
+              {createSelectItems()}
+            </select>
           </div>}
-
           <p class="gradient-border" id="box3">
             Enter a ‎name‎‏‏‎ ‎
             <input
@@ -171,21 +131,19 @@ function handleDuplicate(){
            placeholder="                         "
          />
           </p>
+            <p class="gradient-border" id="box2" >
+              Choose an image
+              <img id="plus" src="plus.png" onClick={handleImg}/>
 
-        <p class="gradient-border" id="box2" >
-        Choose an image
-        <img id="plus" src="plus.png" onClick={handleImg}/>
-
-        {(img)
-        ?<img id="preview" src={img} />
-        :<img id="previewno" src={img} />
-        }
-        </p>
-        <p>
-        <button id="add" onClick={uploadImage}>Add</button>
-        </p>
-        </form>
-
+              {(img)
+              ?<img id="preview" src={img} />
+              :<img id="previewno" src={img} />
+              }
+            </p>
+            <p>
+              <button id="add" onClick={uploadImage}>Add</button>
+            </p>
+          </form>
         {img && <div>
           <form id="imgs">
             <p id="box4" >

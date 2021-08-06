@@ -5,7 +5,7 @@ import Sidebar from "../components/SideBar/Sidebar";
 import Header from "../components/SideBar/Header";
 import styled from "styled-components"
 import axios from "axios";
-import { withAuth0, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const Grid = styled.div`
@@ -36,13 +36,11 @@ const GridMain = styled.main`
 
 function Game(props){
       const [showNav, setShowNav] = useState(false);
-      const [number, setNumber] = useState(6)
-      const [value, setValue] = React.useState(
+      const [value] = React.useState(
       localStorage.getItem('adminid') || ''
       );
       const { user } = useAuth0();
       const [gamedata, getGamedata] = useState([]);
-      const [login, setLogin] = useState([]);
 
       useEffect(() => {
          getAllGamedata();
@@ -57,10 +55,7 @@ function Game(props){
         })
         .then((res) => {
           const allData = res.data;
-          console.log(allData);
-          setLogin(allData.adminid);
           localStorage.setItem('adminid', allData.adminid)
-          console.log(localStorage)
         })
         .catch(error => console.log(error.response));
         axios.get('http://localhost:5000/gameinstances/getGameInstances/',
@@ -91,10 +86,10 @@ function Game(props){
             {gamedata.map((noteItem, index) => {
 
           return (
-            <img src={noteItem.gameinstance_photo_path}/>
+            <img src={noteItem.gameinstance_photo_path} alt="sim photo"/>
           );
     })}
-            <Level number={number}/>
+            <Level number={6}/>
             <Info
               stuff=""
               editmode="0"

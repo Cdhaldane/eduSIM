@@ -1,39 +1,16 @@
 import React, { useState } from "react";
-import Switch from "react-switch"
-import {Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import axios from "axios";
 import "./CreateCsv.css";
 
   function CreateArea(props) {
-    const [save, setSave] = useState("");
-    const [note, setNote,] = useState([]);
-    const [showNote, setShowNote] = useState(false);
-    const [img, setImg] = useState();
-    const [title, setTitle] = useState();
-    const [checked, setChecked] = useState(false);
-    const [state, setState] = useState("");
-    const [gamedata, getGamedata] = useState([]);
-    const [value, setValue] = React.useState(
-    localStorage.getItem('adminid') || ''
-  );
-
   const [file, setFile] = useState('');
-  const [filename, setFilename] = useState('Choose File');
-  const [uploadedFile, setUploadedFile] = useState({});
-  const [message, setMessage] = useState('');
-  const [uploadPercentage, setUploadPercentage] = useState(0);
-
-
+  const [filename, setFileName] = useState('Upload a CSV file +');
   // sets all const
-
-
-  //adds note to dahsboard by setting notes and sending to app
+  
   function onChange(event){
     setFile(event.target.files[0]);
-}
-
-
+    setFileName(event.target.files[0].name);
+  }
   return (
       <div class="areacsv" >
         <Container>
@@ -45,7 +22,7 @@ import "./CreateCsv.css";
                 id="file"
                 onChange={onChange}
                 />
-              <label for="file" id="csvfile">Upload a CSV file +</label>
+              <label for="file" id="csvfile">{filename}</label>
                 <input
                   type="file"
                   name="img"
