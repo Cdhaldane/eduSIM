@@ -7,21 +7,21 @@
   font-size: 1.5rem;
 }
 
-.navbar-logo{
+.navbar-logo {
   color: white;
   justify-self: start;
   margin-left: 20px;
   cursor: pointer;
 }
 
-.img{
+.img {
   margin-left: 0.5rem;
   font-size: 2rem;
   height: 30px;
   vertical-align: middle;
 }
 
-.nav-menu{
+.nav-menu {
   display: grid;
   grid-template-columns: repeat(4, auto);
   grid-gap: 10px;
@@ -32,7 +32,7 @@
   margin-right: 2rem;
 }
 
-.nav-links{
+.nav-links {
   position: relative;
   top: 35px;
   color: white;
@@ -44,11 +44,11 @@
 
 .nav-links:hover {
   background-color: grey;
-  border-radius:  4px;
+  border-radius: 4px;
   transition: all 0.2s ease-out;
 }
 
-.nav-pic{
+.nav-pic {
   align-content: center;
   width: 60px;
   height: 60px;
@@ -58,12 +58,12 @@
   right: -630px;
   top: 22px;
 }
-.nav-pic:hover{
+.nav-pic:hover {
   background-color: grey;
-  border-radius:  4px;
+  border-radius: 4px;
   transition: all 0.2s ease-out;
 }
-.nav-picbutton{
+.nav-picbutton {
   align-content: center;
   width: 60px;
   height: 60px;
@@ -74,12 +74,11 @@
   top: -10px;
 }
 
-
-.profilevist{
-  font-family:  "Montserrat", sans-serif;
+.profilevist {
+  font-family: "Montserrat", sans-serif;
   z-index: 1;
   text-align: center;
-  font-size: 1.0rem;
+  font-size: 1rem;
   position: absolute;
   right: 50px;
   top: 80px;
@@ -88,28 +87,27 @@
   border-radius: 3px;
   color: #181818;
   background: white;
-
 }
 
-.profilevist h2{
- color: *181818;
- text-align: center;
- margin-top: 10px;
- font-size: 1.5rem;
+.profilevist h2 {
+  color: #181818;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1.5rem;
 }
 
-.profilevist a{
- color: #181818;
- text-align: center;
- font-size: 1.5rem;
+.profilevist a {
+  color: #181818;
+  text-align: center;
+  font-size: 1.5rem;
 }
 
-.pbut{
+.pbut {
   position: relative;
   bottom: -30px;
 }
 
-.profilevistf{
+.profilevistf {
   display: none;
 }
 
@@ -129,23 +127,23 @@
   top: 200px;
 }
 
-.fa-bars{
+.fa-bars {
   color: white;
 }
 
-.nav-links-mobile{
+.nav-links-mobile {
   display: none;
 }
 
-.menu-icon{
+.menu-icon {
   display: none;
 }
 
-@media screen and (max-width: 960px){
-  .NavbarItems{
+@media screen and (max-width: 960px) {
+  .NavbarItems {
     position: relative;
   }
-  .nav-menu{
+  .nav-menu {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -157,7 +155,7 @@
     transition: all 0.5s ease;
   }
 
-  .nav-menu.active{
+  .nav-menu.active {
     background: #181818;
     left: 0;
     opacity: 1;
@@ -165,31 +163,31 @@
     z-index: 1;
   }
 
-  .nav-links{
+  .nav-links {
     text-align: center;
     padding: 2rem;
     width: 100%;
     display: table;
   }
 
-  .nav-links:hover{
+  .nav-links:hover {
     background-color: grey;
     border-radius: 2;
   }
-  .nav-pics{
+  .nav-pics {
     text-align: center;
     padding: 2rem;
     width: 100%;
     display: table;
   }
-  .navbar-logo{
+  .navbar-logo {
     position: absolute;
     top: 0;
     left: 0;
     transform: translate(25%, 50%);
   }
 
-  .menu-icon{
+  .menu-icon {
     display: block;
     position: absolute;
     top: 0;
@@ -198,11 +196,11 @@
     font-size: 1.8rem;
     cursor: pointer;
   }
-  .fa-times{
+  .fa-times {
     color: white;
     font-size: 2rem;
   }
-  .nav-links-mobile{
+  .nav-links-mobile {
     position: relative;
     display: block;
     text-align: center;
@@ -213,7 +211,7 @@
     background: #8f001a;
     text-decoration: none;
     color: white;
-    font-size: 2.0rem;
+    font-size: 2rem;
   }
 
   .nav-links-mobile:hover {
@@ -223,6 +221,6 @@
   }
 
   Button {
-      display: none;
-    }
+    display: none;
   }
+}

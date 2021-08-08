@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import Switch from "react-switch"
-
-
-
 import "./Dropdown.css";
 
 

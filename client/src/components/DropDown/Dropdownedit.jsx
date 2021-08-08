@@ -4,9 +4,6 @@ import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import FontPicker from "font-picker-react";
-
-
-
 import "./Dropdownedit.css";
 
   function DropdownMenu(props) {

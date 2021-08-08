@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import {  ChromePicker } from 'react-color';
 import axios from "axios";
-
-
 import "./Dropdown.css";
 
   function DropdownMenu(props) {

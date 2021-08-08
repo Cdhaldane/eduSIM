@@ -3,8 +3,6 @@ import { withAuth0 } from "@auth0/auth0-react";
 import Tabs from "../components/Tabs/Tabs"
 import CreateCsv from "../components/CreateCsv/CreateCsv"
 
-
-
 function Join(props) {
   const [isOpen, setIsOpen] = useState(false)
 
