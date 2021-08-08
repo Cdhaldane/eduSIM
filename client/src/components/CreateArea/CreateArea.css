@@ -372,9 +372,6 @@ select#imgoptions option[value="img3"] {
   border-radius: 10%;
 }
 
-#previewno {
-}
-
 #games {
   position: relative;
   left: 0px;
