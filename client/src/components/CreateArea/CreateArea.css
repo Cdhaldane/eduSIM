@@ -2,17 +2,16 @@
 
 
 .area{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
   font-family: 'Raleway';
   font-size: 2.5rem;
-  position: absolute;
-  left: 700px;
-  top: 180px;
+  position: relative;
+  left: 250px;
+  top: 30px;
   z-index: 2;
   border-radius: 10%;
+  border: none;
+  margin-top: -9px;
+  margin-bottom: -40px;
 }
 
 .area form:after{
@@ -61,7 +60,7 @@
   padding: 15px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
-  border: solid 2px #8f001a;
+  border: solid 4px #8f001a;
 }
 
 #add {
@@ -141,6 +140,37 @@
   background-size: 300% 300%;
 }
 
+.createmodal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  overflow: hidden;
+  border: none;
+}
+.myoverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
 
 @keyframes animatedgradient {
 	0% {
@@ -171,7 +201,6 @@
 #box1 {
   position: relative;
   top: 40px;
-
   z-index: 200;
   display: flex;
   align-items: center;
@@ -351,6 +380,7 @@ select#imgoptions option[value="img3"] { background-image:"temp.png"; }
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   border-radius: 0%;
+  margin-bottom: -10px;
 }
 
 
@@ -373,11 +403,6 @@ select#imgoptions option[value="img3"] { background-image:"temp.png"; }
   border-radius: 10%;
 }
 
-#previewno{
-
-}
-
-
 #games{
   position: relative;
   left: 0px;
@@ -397,4 +422,359 @@ select#imgoptions option[value="img3"] { background-image:"temp.png"; }
   left: 330px;
   vertical-align: middle;
   margin-left: 4px;
+}
+
+@media screen and (max-width: 960px){
+
+  .area{
+    font-family: 'Raleway';
+    position: relative;
+    left: 250px;
+    top: 30px;
+    z-index: 2;
+    border-radius: 10%;
+    border: none;
+    margin-top: -9px;
+    margin-bottom: -40px;
+  }
+
+  .area p{
+    text-align: left;
+    padding: 20px;
+    font-weight: 700;
+  }
+
+  .area form {
+    position: relative;
+    font-size: 0.5rem;
+    top: -50px;
+    right: 250px;
+    width: 600px;
+    height: 500px;
+    margin: 30px auto 20px auto;
+    background: #fff;
+    padding: 15px;
+    box-shadow: 0 2px 5px #ccc;
+    text-align: center;
+    border: solid 4px #8f001a;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+
+  #add {
+    color: white;
+    z-index: 2000;
+    position: absolute;
+    bottom: 20px;
+    left: 480px;
+    border-radius: 5%;
+    width: 70px;
+    height: 35px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    background-color: #8f001a;
+    border: none;
+    font-size: 1.5rem;
+  }
+
+
+  .area input[type="file"] {
+    position: relative;
+    left: 0px;  width: 0.1px;
+  	height: 0.1px;
+    opacity: 0;
+  	overflow: hidden;
+  	position: absolute;
+  	z-index: -1;
+    text-align: left;
+  }
+
+  .area label{
+    position: absolute;
+    top: 80px;
+    left: 5px;
+    padding: 30px;
+    font-weight: 700;
+    color: black;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  .area select {
+    position: relative;
+    left: 50px;
+    bottom: 0px;
+    padding: 5px;
+    font-size: 1.5rem;
+    font-weight: 200;
+    color: black;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: black;
+    opacity: 1; /* Firefox */
+  }
+
+  .gradientborder {
+    --borderWidth: 1px;
+    background: #1D1F20;
+    position: relative;
+    border-radius: var(--borderWidth);
+  }
+  .gradientborder:after {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--borderWidth));
+    left: calc(-1 * var(--borderWidth));
+    height: calc(100% + var(--borderWidth) * 2);
+    width: calc(100% + var(--borderWidth) * 2);
+    background:  white;
+    border-radius: calc(2 * var(--borderWidth));
+    z-index: -1;
+    animation: animatedgradient 10s ease alternate infinite;
+    background-size: 300% 300%;
+  }
+
+  .createmodal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 4px;
+    overflow: hidden;
+    border: none;
+  }
+  .myoverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+
+  .ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 500ms ease-in-out;
+  }
+
+  .ReactModal__Overlay--after-open {
+    opacity: 1;
+  }
+
+  .ReactModal__Overlay--before-close {
+    opacity: 0;
+  }
+
+
+  @keyframes animatedgradient {
+  	0% {
+  		background-position: 0% 50%;
+  	}
+  	50% {
+  		background-position: 100% 50%;
+  	}
+  	100% {
+  		background-position: 0% 50%;
+  	}
+  }
+
+  #box {
+    z-index: 200;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    width: 500px;
+    height: 100px;
+    color: black;
+    font-weight: 2000;
+    font-size: 1.5rem;
+  }
+
+
+  #box1 {
+    position: relative;
+    top: 0px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 680px;
+    height: 100px;
+    font-size: 1.5rem;
+    color: black;
+  }
+
+  #box2{
+    position: relative;
+    top:-20px;
+    z-index: 200;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 400px;
+    height: 100px;
+    color: black;
+  }
+
+  #box3{
+    position: relative;
+    left: 0px;
+    top: 0px;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    width: 700px;
+    height: 100px;
+    color: black;
+    font-size: 1.5rem;
+  }
+
+  #box3 input, #box3 textarea {
+    position: relative;
+    left: 40px;
+    top: 0px;
+    color: grey;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: left;
+    width: 240px;
+    border: none;
+    padding: 4px;
+    outline: none;
+    border: solid 2px black;
+  }
+
+  #box3 input::placeholder{
+    opacity: 0.8;
+  }
+
+  #box4{
+    position: relative;
+    left: -15px;
+    top: -15px;
+    background-color: white;
+    height: 90px;
+    width: 1000px;
+    overflow: hidden;
+    padding: 5px;
+  }
+
+  #box4 img{
+    height: 50px;
+    width: 50px;
+    margin: 10px;
+    border: solid 1px black;
+    overflow: scroll;
+    direction: rtl;
+    border-radius: 10%;
+  }
+
+  #box4 img:hover{
+    cursor: pointer;
+    border-radius: 0%;
+  }
+
+  #box4 label{
+    position: relative;
+    left: 6px;
+    top: -25px;
+    border: dashed 1px black;
+    font-size: 1.5rem;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10%;
+  }
+
+  #prevgame{
+      position: relative;
+      top: 0px;
+      left: -15px;
+      padding: 30px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: black;
+      text-align: left;
+      cursor: pointer;
+  }
+
+  #prevgames {
+    position: relative;
+    font-size: 1.5rem;
+    width: 190px;
+    top: 0px;
+    left: -25px;
+    border-radius: 0;
+  }
+
+  #switch {
+    position: absolute;
+    left: 50px;
+    bottom: -15px;
+  }
+
+  #imgs{
+    position: relative;
+    top: -90px;
+    right: 250px;
+    background-color: white;
+    width: 600px;
+    height: 90px;
+    overflow: hidden;
+    transform: translate(0%, 20%);
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+    border-radius: 0%;
+    margin-bottom: -10px;
+  }
+
+  #imgs label {
+    width: 10px;
+  }
+
+
+  #plus{
+    position: absolute;
+    left: 260px;
+    width: 40px;
+  }
+
+  #plus:hover{
+    cursor: pointer;
+  }
+
+  #preview{
+    border: solid black 1px;
+    position: absolute;
+    left: 350px;
+    width: 90px;
+    height: 90px;
+    border-radius: 10%;
+  }
+
+  #previewno{
+    position: absolute;
+    left: 350px;
+    width: 90px;
+    height: 90px;
+    border-radius: 10%;
+  }
+
+  #games{
+    position: relative;
+    left: 90px;
+    top: -15px;
+  }
+
+  .react-switch {
+    position: relative;
+    top: -80px;
+    left: 330px;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
 }

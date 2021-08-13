@@ -57,25 +57,25 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 #levels{
-  position: relative;
-  top:-1060px;
-  left: 175px;
+  position: absolute;
+  top: -880px;
+  left: 300px;
 }
 .level{
   height: 0px;
 }
 .level p {
-  position: relative;
+  position: absolute;
   color: #636363;
   font-size: 2.2rem;
-  top: -1060px;
+  top: -940px;
   left: 825px;
   height: 0px;
 }
 
 .level button{
-  position: relative;
-  top: -1070px;
+  position: absolute;
+  top: -880px;
   left: 1400px;
   width: 100px;
   height: 50px;
@@ -91,12 +91,11 @@
 }
 
 .level img{
-  position: relative;
+  position: absolute;
   left: 450px;
-  top: -930px;
+  top: -890px;
   height:80px;
-  width:900px;
-
+  width:700px;
 }
 
 .level button:hover{
@@ -138,4 +137,64 @@
   object-position: left;
   object-fit: cover;
   width: 854px;
+}
+
+@media screen and (max-width: 960px){
+  .level p {
+    position: absolute;
+    color: #636363;
+    font-size: 2.2rem;
+    top: -940px;
+    left: 425px;
+    height: 0px;
+  }
+  #levels{
+    top: -876px;
+    left: 10px;
+  }
+  .level button{
+    position: absolute;
+    top: -880px;
+    left: 900px;
+    width: 55px;
+    font-size: 1.5vw;
+  }
+  .level img{
+    position: absolute;
+    left: 42px;
+    top: -890px;
+    height:80px;
+    width:700px;
+  }
+
+  .ball1{
+    top:  -872px;
+    left: 65px;
+  }
+
+  .ball2{
+    top: -872px;
+    left: 222px;
+  }
+
+  .ball3{
+    top:  -872px;
+    left: 382px;
+  }
+
+  .ball4{
+    top: -872px;
+    left: 541px;
+  }
+
+  .ball5{
+    top: -872px;
+    left: 699px;
+
+  }
+
+  .ball6{
+    top:  -872px;
+    left: 858px;
+  }
 }

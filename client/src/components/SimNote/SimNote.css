@@ -1,60 +1,44 @@
 .notesim {
   background: #fff;
+  z-index: 0;
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
   padding: 10px;
-  width: 200px;
-  height: 200px;
   float: left;
   position: relative;
-  left: 100px;
+  left: 4%;
   top: -0px;
-  margin-right: 145px;
+  margin-right: 5%;
   margin-top: 50px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 .notesim h1 {
-  z-index: 1;
   text-align: center;
   position: relative;
   top: -40px;
   left: -12px;
   color: black;
   font-size: 1.5rem;
-
-}
-.notesim p {
-  font-size: 1.1em;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.notesim button {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  right: 15px;
-  top: 187px;
-  color: white;
-  border: none;
-  width: 70px;
-  height: 30px;
-  cursor: pointer;
-  outline: none;
-  background-color: #8f001a;
 }
 
 .notesim img {
   border: solid 2px black;
-  z-index: 0;
+  margin-bottom: -50px;
+  z-index: -1;
   height: 150px;
   width: 180px;
-  position: absolute;
-  top: 8px;
-  left: 10px;
+  position: relative;
+  top: -77px;
+  left: 0px;
   opacity: 70%;
   border-radius: 15%;
+}
+
+#simicons {
+  position: relative;
+  top: 10px;
+  left: 5px;
 }
 
 
@@ -88,6 +72,80 @@
   right: 140px;
 }
 
-#garbage:play{
-  cursor: pointer;
+
+@media screen and (max-width: 960px){
+  .notesim {
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 2px 5px #ccc;
+    padding: 10px;
+    float: left;
+    position: relative;
+    height: 150px;
+    width: 150px;
+    left: 4%;
+    top: -0px;
+    margin-right: 5%;
+    margin-top: 50px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+  .notesim h1 {
+    z-index: 1;
+    text-align: center;
+    position: relative;
+    top: -40px;
+    left: -12px;
+    color: black;
+    font-size: 1.0rem;
+  }
+
+  .notesim img {
+    border: solid 2px black;
+    margin-bottom: -50px;
+    z-index: 0;
+    height: 110px;
+    width: 130px;
+    position: relative;
+    top: -77px;
+    left: 0px;
+    opacity: 70%;
+    border-radius: 15%;
+  }
+
+  #simicons {
+    position: relative;
+    top: 10px;
+    left: 30px;
+  }
+
+  #garbage{
+    color: #8f001a;
+    position: absolute;
+    bottom: 5px;
+    right: 40px;
+  }
+
+  #garbage:hover{
+    cursor: pointer;
+  }
+
+  #pencil{
+    color: #8f001a;
+    position: absolute;
+    bottom: 5px;
+    right: 76px;
+  }
+
+  #pencil:hover{
+    cursor: pointer;
+  }
+
+  #play{
+    color: #8f001a;
+    position: absolute;
+    bottom: 5px;
+    right: 120px;
+  }
+
 }

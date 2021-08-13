@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import SimNote from "../components/SimNote/SimNote";
 import CreateArea from "../components/CreateArea/CreateArea";
+import Modal from "react-modal";
 import axios from "axios";
 
 function Dashboard(props) {
   const { user } = useAuth0();
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState([]);
-  
+
   useEffect(() => {
      getAllGamedata();
    }, []);
@@ -55,18 +56,28 @@ function Dashboard(props) {
     });
   }
 
-  console.log(gamedata)
+  function toggleModal(e) {
+    e.preventDefault();
+    setShowNote(!showNote);
+  }
+
 
   return (
     <div className="dashboard">
             <h1>Home</h1>
           <a id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</a>
             <hr />
-          {showNote && <div className="dashboard">
-              <img className="bimg" src= "black.jpg" alt="modal" onClick={() => setShowNote(!showNote)} />
-              <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} />
-          </div>
-          }
+            <Modal
+              isOpen={showNote}
+              onRequestClose={toggleModal}
+              contentLabel="My dialog"
+              className="createmodal"
+              overlayClassName="myoverlay"
+              closeTimeoutMS={500}
+              >
+              <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} />
+            </Modal>
+
             <div className="dashsim">
             <h2>My simulations ️</h2>
             {gamedata.map((noteItem, index) => {

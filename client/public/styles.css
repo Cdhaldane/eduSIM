@@ -4,12 +4,6 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-  height: 100%;
-}
-
 html {
   font-family: "Montserrat",
 }
@@ -20,7 +14,9 @@ body {
   font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 code {
@@ -41,57 +37,64 @@ footer {
 .welcome {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 5rem;
-  margin-top: 100px;
+  margin-top: 50px;
+  font-size: 4.0vw;
   text-align: center;
+  display: flex;
+  flex-flow: column;
+  flex-grow: auto;
+  flex-wrap: wrap;
+  height: 100%;
 }
 
-.welcome h1 {
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 5rem;
-  margin-top: 100px;
-  text-align: center;
-}
+
 .welcome a {
   color: #0645AD;
   font-family: "Montserrat", sans-serif;
-  font-size: 2rem;
+  font-size: 2vw;
   margin-top: 100px;
   text-align: center;
 }
 .welcome p {
   color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 2rem;
-  margin-top: 70px;
+  font-size: 2vw;
+  margin-top: 20px;
   text-align: center;
 }
-.welcomep1 {
+.welcome input::placeholder {
+  color: grey;
+  opacity: 0.8;
+}
+
+.homebody{
+  margin-top: 7%;
+}
+.welcomep2 {
+  align-items: center;
+  display: inline-block;
+  flex-wrap: wrap;
+  margin-left: 20%;
+  margin-top: 5%;
   background: #fff;
   border-radius: 15px;
   box-shadow: 0 2px 5px #ccc;
-  padding: 10px;
-  width: 400px;
-  height: 400px;
-  margin: 30px;
-  margin-left: 355px;
-  margin-top: 100px;
-  float: left;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1rem;
-  position: relative;
+  padding: 30px;
+  width: 20%;
 }
 
-.welcomep1 h1 {
-  margin-top: -60px;
+.welcomep2 h1 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 2vw;
+  margin-top: 0px;
   color: #181818;
 }
 
-.welcomep1 img {
+.welcomep2 img {
   position: relative;
-  top: 40px;
+  top: 0px;
   height: 200px;
+  width: 100%;
 }
 
 .textbox {
@@ -115,13 +118,17 @@ footer {
   margin-left: 20px;
   margin-right: 20px;
   text-align: left;
+  display: block;
+  flex: wrap;
   position: relative;
+  height: 100%;
+  overflow:  hidden;
 }
 
 .bimg {
   position: absolute;
-  left: -51px;
-  width: 105%;
+  left: -40px;
+  width: 1700px;
   height: 938px;
   z-index: 1;
   top: -320px;
@@ -160,6 +167,10 @@ footer {
   text-align: left;
 }
 
+.dashsim {
+  height: 100%;
+}
+
 #new {
   display: flex;
   position: relative;
@@ -195,13 +206,20 @@ footer {
 
 /* edit page stuff */
 .editpage {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: #e5e5e5;
   overflow: hidden;
+  align-content: center;
+}
+
+.eheader {
+  position: absolute;
+  top: 800px;
+  width: 100vw;
 }
 
 #levels input, select{
@@ -247,10 +265,10 @@ footer {
 }
 
 #editpagex {
-  position: relative;
-  top: -905px;
+  position: absolute;
+  top: -750px;
   color: #8f001a;
-  right: -1750px;
+  left: 1760px;
 }
 
 #saved {
@@ -364,4 +382,35 @@ footer {
   height: 80px;
   cursor: pointer;
   background-color: #8f001a;
+}
+
+@media screen and (max-width: 960px){
+
+  .welcomep2 {
+    align-items: center;
+    display: inline-block;
+    flex-wrap: wrap;
+    margin-left: 20%;
+    margin-top: 5%;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px #ccc;
+    padding: 10px;
+    width: 20%;
+    height: 200px;
+  }
+
+  .welcomep2 h1 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+    margin-top: 0px;
+    color: #181818;
+  }
+
+  .welcomep2 img {
+    position: relative;
+    top: 0px;
+    height: 100px;
+    width: 80%;
+  }
 }

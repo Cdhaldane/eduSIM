@@ -4313,7 +4313,7 @@ class Graphics extends Component {
           />
           <div className="errMsg">{errDisplay}</div>
         </div>
-        <div className="header">
+        <div className="eheader">
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
           <h1 id="editmode">Edit Mode</h1>
             <div>

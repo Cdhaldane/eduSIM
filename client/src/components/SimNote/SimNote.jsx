@@ -28,6 +28,7 @@ function SimNote(props) {
     <div className="notesim">
       <h1><strong>{props.title}</strong></h1>
       <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img}  alt="backdrop"/>
+      <div id="simicons">
       <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
     <Link to={{
         pathname:"/editpage",
@@ -41,6 +42,7 @@ function SimNote(props) {
       <Link to="/join" >
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
+    </div>
     </div>
   );
 }
