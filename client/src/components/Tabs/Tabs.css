@@ -224,6 +224,7 @@
 .content h2 {
   padding: 0px 0 5px 0px;
   color: black;
+  font-size: 1.5vw;
 }
 .content p {
   width: 100%;
@@ -243,9 +244,9 @@
 }
 
 .simadv {
-  position: relative;
+  position: sticky;
   width: 300px;
-  left: 450px;
+  left: 750px;
   top: -30px;
 }
 
@@ -279,7 +280,7 @@
 }
 
 .addgroup {
-  position: absolute;
+  position: sticky;
   z-index: 1000;
   left: 1500px;
   top: 480px;
@@ -305,8 +306,43 @@
   margin-left:0px;
 }
 
+.createmodaltab {
+  position: fixed;
+  top: 50%;
+  left: 28%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  overflow: hidden;
+  border: none;
+}
+.myoverlaytab {
+  z-index: 100000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
 #chart {
-  position: relative;
-  left: 730px;
+  position: sticky;
+  left: 930px;
   top: -20px;
+  width: 500px;
+  height: 300px;
 }

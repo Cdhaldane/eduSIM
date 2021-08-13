@@ -6,7 +6,7 @@ import "./CreateCsv.css";
   const [file, setFile] = useState('');
   const [filename, setFileName] = useState('Upload a CSV file +');
   // sets all const
-  
+
   function onChange(event){
     setFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
@@ -30,7 +30,7 @@ import "./CreateCsv.css";
                   onChange={onChange}
                 />
               <label for="filedownload" id="csvfile2">Download CSV template</label>
-          <p class="gradient-border" id="box3">
+            <p class="gradient-border" id="boxtabs">
             File name
             <input
                type="text"

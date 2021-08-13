@@ -3,10 +3,11 @@ import { useState, Fragment } from "react";
 import "./Tabs.css";
 import Button from "../Buttons/Button"
 import Table from "../Table/Table"
-import Modal from "../Modal/Modal"
 import CreateEmail from "../CreateEmail/CreateEmail";
 import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import Modal from "react-modal";
+
 
 function Tabs() {
   const [toggleState, setToggleState] = useState(1);
@@ -29,6 +30,10 @@ function Tabs() {
     e.preventDefault();
     setNewGroup([e.target.value])
   }
+  const toggleModal = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  }
 
   return (
     <div class="tabs">
@@ -48,10 +53,17 @@ function Tabs() {
             >
               <h3>Settings:</h3>
               <button onClick={() => setIsOpen(!isOpen)} className="studentbuttonemail">Email Student/Participant</button>
-              { isOpen && <div>
-                <img className="bimgjoin" src= "black.jpg" onClick={() => setIsOpen(!isOpen)} />
-              <CreateEmail  />
-              </div>}
+              <Modal
+                isOpen={isOpen}
+                onRequestClose={toggleModal}
+                contentLabel="My dialog"
+                className="createmodaltab"
+                overlayClassName="myoverlaytab"
+                closeTimeoutMS={500}
+                >
+                  <CreateEmail  />
+              </Modal>
+
               <div class="simadv">
                 <h3>Simulation advancement</h3>
             <div>

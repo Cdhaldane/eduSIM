@@ -5,7 +5,7 @@
   height: 100%;
   font-family: 'Raleway';
   font-size: 2.5rem;
-  position: absolute;
+  position: relative;
   left: 700px;
   top: -80px;
   z-index: 20000;
@@ -103,7 +103,7 @@
 }
 
 #boxj1 {
-  position: relative;
+  position: absolute;
   top: 0px;
   z-index: 200;
   display: flex;
@@ -118,13 +118,16 @@
 }
 
 #csvfile {
+  position: absolute;
+  top: 120px;
+  left: 20px;
   color: blue;
   text-decoration: underline;
 }
 #csvfile2 {
-  position: relative;
-  top: 20px;
-  left: 200px;
+  position: absolute;
+  top: 120px;
+  left: 500px;
   color: blue;
   text-decoration: underline;
 }
@@ -143,8 +146,92 @@
   background-color: #8f001a;
 }
 #emailtable {
-  position: relative;
-  left: 0px;
+  position: absolute;
+  top: 100px;
+  left: 30px;
   width: 85%;
   height: 100%;
+}
+
+#boxtabs{
+  position: absolute;
+  left: 0px;
+  top: 230px;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  width: 700px;
+  height: 100px;
+  color: black;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+}
+
+#boxtabs input, #boxtabs textarea {
+  position: relative;
+  left: 40px;
+  top: 0px;
+  color: grey;
+  font-weight: 700;
+  text-align: left;
+  width: 340px;
+  border: none;
+  padding: 4px;
+  outline: none;
+  font-family: 'Raleway';
+  font-size: 2.0rem;
+  border: solid 2px black;
+}
+
+#boxtabs input::placeholder{
+  opacity: 0.8;
+}
+
+@media screen and (max-width: 960px){
+  #boxj1 {
+  left: -20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  #csvfile {
+    font-size: 1.3rem;
+    left: -20px;
+  }
+  #csvfile2 {
+    font-size: 1.3rem;
+    left: 230px;
+
+  }
+  #addj {
+    left: 362px;
+  }
+  #boxtabs{
+    position: absolute;
+    left: 0px;
+    top: 230px;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    width: 700px;
+    height: 100px;
+    color: black;
+    font-family: 'Raleway';
+    font-size: 1.3rem;
+  }
+
+  #boxtabs input, #boxtabs textarea {
+    position: relative;
+    left: 40px;
+    top: 0px;
+    color: grey;
+    font-weight: 700;
+    text-align: left;
+    width: 250px;
+    border: none;
+    padding: 4px;
+    outline: none;
+    font-family: 'Raleway';
+    font-size: 1.3rem;
+    border: solid 2px black;
+  }
 }

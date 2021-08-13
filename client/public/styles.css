@@ -385,7 +385,6 @@ footer {
 }
 
 @media screen and (max-width: 960px){
-
   .welcomep2 {
     align-items: center;
     display: inline-block;
@@ -399,18 +398,37 @@ footer {
     width: 20%;
     height: 200px;
   }
-
   .welcomep2 h1 {
     font-family: "Montserrat", sans-serif;
     font-size: 1rem;
     margin-top: 0px;
     color: #181818;
   }
-
   .welcomep2 img {
     position: relative;
     top: 0px;
     height: 100px;
     width: 80%;
+  }
+
+  .playbtn{
+
+    left: 132px;
+    width: 50px;
+    height: 50px;
+
+  }
+  .pausebtn{
+
+    left: 160px;
+    width: 50px;
+    height: 50px;
+  }
+  .refreshbtn{
+
+    left: 190px;
+    width: 50px;
+    height: 50px;
+
   }
 }
