@@ -5,7 +5,7 @@ import axios from "axios";
 import {Image} from "cloudinary-react";
 
 function SimNote(props) {
-  console.log(props.img)
+  console.log(props)
   function handleClick() {
     console.log(props.gameid)
     {if (window.confirm('Are you sure you wish to delete this simulation?')){
@@ -28,6 +28,7 @@ function SimNote(props) {
     <div className="notesim">
       <h1><strong>{props.title}</strong></h1>
       <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img}  alt="backdrop"/>
+      <div id="simicons">
       <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
     <Link to={{
         pathname:"/editpage",
@@ -38,9 +39,16 @@ function SimNote(props) {
       }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
-      <Link to="/join" >
+        <Link to={{
+        pathname:"/join",
+        img: props.img,
+        title: props.title,
+        gameinstance: props.gameid,
+        adminid: props.adminid
+        }}>
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
+    </div>
     </div>
   );
 }
