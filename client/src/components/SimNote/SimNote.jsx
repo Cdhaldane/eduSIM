@@ -5,7 +5,7 @@ import axios from "axios";
 import {Image} from "cloudinary-react";
 
 function SimNote(props) {
-  console.log(props.img)
+  console.log(props)
   function handleClick() {
     console.log(props.gameid)
     {if (window.confirm('Are you sure you wish to delete this simulation?')){
@@ -39,7 +39,13 @@ function SimNote(props) {
       }}>
         <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
-      <Link to="/join" >
+        <Link to={{
+        pathname:"/join",
+        img: props.img,
+        title: props.title,
+        gameinstance: props.gameid,
+        adminid: props.adminid
+        }}>
         <i id="play" class="fas fa-play-circle fa-2x"></i>
       </Link>
     </div>

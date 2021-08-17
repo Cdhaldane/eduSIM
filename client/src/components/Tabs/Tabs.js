@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useState, Fragment } from "react";
+import axios from "axios";
 import "./Tabs.css";
 import Button from "../Buttons/Button"
 import Table from "../Table/Table"
@@ -9,27 +10,58 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts'
 import Modal from "react-modal";
 
 
-function Tabs() {
+function Tabs(props) {
   const [toggleState, setToggleState] = useState(1);
   const [radio, setRadio] = useState("Teacher")
   const [isOpen, setIsOpen] = useState(false)
   const [newGroup, setNewGroup] = useState("")
-
-  const [tabs, setTabs] = useState([])
-
+  const [tabs, setTabs] = useState([]);
+  const [value, setValue] = useState([]);
   const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},{name: 'Page B', uv: 500, pv: 2400, amt: 2400}];
+
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid', {
+      params: {
+            gameinstanceid: ["8f5fd942-63c3-415c-a2c6-4e20fafb93b3"],
+        }
+    })
+       .then((res) => {
+          console.log(res)
+          let cart = []
+          for(let i = 0; i < res.data.length; i++){
+            cart.push(res.data[i].gameroom_name)
+            console.log(cart)
+          }
+          setTabs(cart)
+         })
+        .catch(error => console.log(error.response));
+  }, []);
 
   const toggleTab = (index) => {
     setToggleState(index);
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(tabs)
     setTabs([...tabs, newGroup])
+    let data = {
+      gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+      gameroom_name: newGroup
+    }
+      axios.post('http://localhost:5000/api/playerrecords/createRoom', data)
+         .then((res) => {
+            console.log(res)
+           })
+          .catch(error => console.log(error.response));
   }
+
   const handleChange = (e) => {
     e.preventDefault();
-    setNewGroup([e.target.value])
+    setNewGroup(e.target.value)
   }
+
   const toggleModal = (e) => {
     e.preventDefault();
     setIsOpen(!isOpen);
@@ -37,7 +69,6 @@ function Tabs() {
 
   return (
     <div class="tabs">
-
       <ul class="selected-tab">
         <li onClick={() => toggleTab(1)} class={toggleState === 1 ? "selected" : ""}>Overview</li>
         {tabs.map((i) => (
@@ -45,8 +76,6 @@ function Tabs() {
         ))}
        <li onClick={() => toggleTab(0)} class={toggleState === 4 ? "selected" : ""}>Add group</li>
      </ul>
-
-
        <div className="content-tabs">
             <div
               className={toggleState === 1 ? "content  active-content" : "content"}
@@ -63,7 +92,6 @@ function Tabs() {
                 >
                   <CreateEmail  />
               </Modal>
-
               <div class="simadv">
                 <h3>Simulation advancement</h3>
             <div>
@@ -104,12 +132,10 @@ function Tabs() {
           </LineChart>
         </div>
           <h3>Students / participants in room:</h3>
-        <Table addstudent={true}/>
-
+        <Table addstudent={true} gameroom={i}/>
       </div>
             </div>
         ))}
-
             <div
               className={toggleState === 0 ? "content  active-content" : "content"}
             >
@@ -120,10 +146,9 @@ function Tabs() {
               <input onChange={handleChange} type="text" class="textbox" placeholder="Group Name" id="code" />
               </p>
               <button className="addgroup" onClick={handleSubmit}>Add</button>
-
             </div>
           </div>
-</div>
+      </div>
 
   );
 }
