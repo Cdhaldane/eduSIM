@@ -19,7 +19,6 @@ function Tabs(props) {
   const [value, setValue] = useState([]);
   const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},{name: 'Page B', uv: 500, pv: 2400, amt: 2400}];
 
-
   useEffect(() => {
     axios.get('http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid', {
       params: {

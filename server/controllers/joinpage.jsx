@@ -82,7 +82,6 @@ const GamePlayer = require("../models/GamePlayers");
 
     exports.deletePlayers = async (req, res) => {
       const  id  = req.query.id;
-
       const gameplayers = await GamePlayer.findOne({
         where: {
           gameroleid: id,
@@ -109,7 +108,6 @@ const GamePlayer = require("../models/GamePlayers");
 
   exports.deleteRoom = async (req, res) => {
     const  id  = req.query.id;
-
     const gameroom = await GameRoom.findOne({
       where: {
         gameroleid: id,
@@ -138,7 +136,6 @@ const GamePlayer = require("../models/GamePlayers");
 
 // exports.createGamePlayer = async (req, res) => {
 //     const { fname, lname,  gameinstanceid, game_room, player_email, gamerole} = req.body;
-
 //       try {
 //         var items_room = JSON.stringify(req.body);
 //         console.log(items_room)
@@ -157,10 +154,8 @@ const GamePlayer = require("../models/GamePlayers");
 //             gamerole
 //           });
 //         }
-
 //         for (var item, i = 0; item = items_room[i++];) {
 //             var gameroom_name = item.game_room;
-
 //         if (!(gameroom_name in lookuproom)) {
 //         lookuproom[gameroom_name] = 1;
 //         console.log(lookuproom)
