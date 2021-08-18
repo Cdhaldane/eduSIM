@@ -37,10 +37,26 @@ const GamePlayer = require("../models/GamePlayers");
           return res.send(gameplayer);
         } catch (err) {
           return res.status(400).send({
-            message: `No plaers found with the game room ${game_room}`,
+            message: `No players found with the game room ${game_room}`,
           });
         }
       };
+
+      exports.getAllPlayers = async (req, res) => {
+        const gameinstanceid = req.query.id;
+        try {
+          let gameplayer = await GamePlayer.findAll({
+            where: {
+              gameinstanceid: gameinstanceid
+            },
+          });
+            return res.send(gameplayer);
+          } catch (err) {
+            return res.status(400).send({
+              message: `No players found with the gameid ${gameinstanceid}`,
+            });
+          }
+        };
 
   exports.createRoom = async (req, res) => {
     const { gameinstanceid, gameroom_name } = req.body;
@@ -85,7 +101,7 @@ const GamePlayer = require("../models/GamePlayers");
 
       const gameplayers = await GamePlayer.findOne({
         where: {
-          gameroleid: id,
+          gameplayerid: id,
         },
       });
 
@@ -112,7 +128,7 @@ const GamePlayer = require("../models/GamePlayers");
 
     const gameroom = await GameRoom.findOne({
       where: {
-        gameroleid: id,
+        gameroomid: id,
       },
     });
 
@@ -132,6 +148,46 @@ const GamePlayer = require("../models/GamePlayers");
         message: `Error: ${err.message}`,
       });
     }
+  };
+
+  exports.updatePlayer = async (req, res) => {
+    const { gameplayerid, fname, lname,  player_email, gamerole } = req.body;
+
+    const gameplayers = await GamePlayer.findOne({
+      where: {
+        gameplayerid: gameplayerid,
+      },
+    });
+
+    if (!gameplayers) {
+      return res.status(400).send({
+        message: `No game instance found with the id ${id}`,
+      });
+    }
+
+    try {
+      if (fname) {
+        gameplayers.fname = fname;
+      }
+      if (lname) {
+        gameplayers.lname = lname;
+      }
+      if (player_email) {
+        gameplayers.player_email = player_email;
+      }
+      if (gamerole) {
+        gameplayers.gamerole = gamerole;
+      }
+
+      gameplayers.save();
+      return res.send({
+        message: `Game Player has been updated!`,
+      });
+      } catch (err) {
+        return res.status(500).send({
+          message: `Error: ${err.message}`,
+        });
+      }
   };
 
 

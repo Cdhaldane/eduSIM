@@ -124,7 +124,7 @@ import Modal from "react-modal";
               <p class="gradient-border" id="box3">
                 Enter a ‎name‎‏‏‎ ‎
                 <input
-               tpye="text"
+               type="text"
                id="namei"
                name="title"
                onChange={handleChange}

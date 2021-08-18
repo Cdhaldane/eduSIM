@@ -12,11 +12,13 @@ import "./tailwind.css"
 
 const Table = (props) => {
     const [highlighted, setHighlighted] = useState(false);
+    const [groupOr, setGroupOr] = useState("set")
     const [contacts, setContacts] = useState([{
       firstName: "",
       lastName: "",
       email: "",
       group: "",
+      id: ""
     }]);
     const [sent, setSent] = useState(false)
     const [fname, setLname] = useState("")
@@ -42,6 +44,38 @@ const Table = (props) => {
 
 
     useEffect(() => {
+      if(props.addstudent === false){
+        setGroupOr("Group")
+        axios.get('http://localhost:5000/api/playerrecords/getAllPlayers/:gameinstanceid', {
+          params: {
+                id: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+            }
+        })
+           .then((res) => {
+              console.log(res)
+              let data = []
+              for(let i = 0; i < res.data.length; i++){
+                let cart = {
+                  firstName: "",
+                  lastName: "",
+                  email: "",
+                  group: "",
+                  id: ""
+                }
+                cart.firstName = (res.data[i].fname);
+                cart.lastName = (res.data[i].lname);
+                cart.email = (res.data[i].player_email);
+                cart.group = (res.data[i].game_room);
+                cart.id = (res.data[i].gameplayerid);
+                data.push(cart);
+                console.log(cart)
+                console.log(data)
+              }
+              setContacts(data)
+             })
+            .catch(error => console.log(error.response));
+      } else {
+        setGroupOr("Role")
       axios.get('http://localhost:5000/api/playerrecords/getPlayers/:game_room', {
         params: {
               game_room: props.gameroom,
@@ -56,11 +90,13 @@ const Table = (props) => {
                 lastName: "",
                 email: "",
                 group: "",
+                id: ""
               }
               cart.firstName = (res.data[i].fname);
               cart.lastName = (res.data[i].lname);
               cart.email = (res.data[i].player_email);
               cart.group = (res.data[i].gamerole);
+              cart.id = (res.data[i].gameplayerid);
               data.push(cart);
               console.log(cart)
               console.log(data)
@@ -68,6 +104,7 @@ const Table = (props) => {
             setContacts(data)
            })
           .catch(error => console.log(error.response));
+        }
     }, []);
 
     //Add change
@@ -98,12 +135,12 @@ const Table = (props) => {
     //Add submit
     const handleAddFormSubmit = (event) => {
       event.preventDefault();
-
+      console.log(props)
       var data = {
         gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
         fname: addFormData.firstName,
         lname: addFormData.lastName,
-        game_room: props.gameroom,
+        game_room: props.gameroom[0],
         player_email: addFormData.email,
         gamerole: "Dunno"
         }
@@ -141,14 +178,28 @@ const Table = (props) => {
       const index = contacts.findIndex((contact) => contact.id === editContactId);
 
       newContacts[index] = editedContact;
-
+      console.log(newContacts[index])
       setContacts(newContacts);
       setEditContactId(null);
+
+      let data = {
+        gameplayerid: newContacts[index].id,
+        fname: newContacts[index].firstName,
+        lname: newContacts[index].lastName,
+        player_email: newContacts[index].email,
+        gamerole: newContacts[index].gamerole,
+      }
+      axios.put('http://localhost:5000/api/playerrecords/updatePlayer', data)
+           .then((res) => {
+              console.log(res)
+             })
+            .catch(error => console.log(error.response));
     };
 
     const handleEditClick = (event, contact) => {
       event.preventDefault();
       setEditContactId(contact.id);
+      console.log(contact)
 
       const formValues = {
         firstName: contact.firstName,
@@ -166,13 +217,27 @@ const Table = (props) => {
 
     const handleDeleteClick = (contactId) => {
       const newContacts = [...contacts];
-
       const index = contacts.findIndex((contact) => contact.id === contactId);
-
       newContacts.splice(index, 1);
-
+      console.log(contactId)
       setContacts(newContacts);
+      axios.delete('http://localhost:5000/api/playerrecords/deletePlayers/:gameplayerid', {
+        params: {
+          id: contactId
+        }
+      })
+         .then((res) => {
+            console.log(res)
+
+           })
+          .catch(error => console.log(error.response));
+
     };
+
+    const handleUpdate = (contact) => {
+
+
+    }
 
     const handleAddStudent = () => {
       return (
@@ -273,7 +338,7 @@ const Table = (props) => {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
-                <th>Group</th>
+                <th>{groupOr}</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -285,12 +350,13 @@ const Table = (props) => {
                       editFormData={editFormData}
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
+                      handleUpdate={handleUpdate}
                     />
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
                       handleEditClick={handleEditClick}
-                      handleDeleteClick={handleDeleteClick}
+                      handleDeleteClick={() => handleDeleteClick(contact.id)}
                     />
                   )}
                 </Fragment>
@@ -334,7 +400,7 @@ const Table = (props) => {
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
-       : (<div> <button id="emailbutton" onClick={handleEmail}>Email</button> </div>)
+       : ""
       }
       </div>
     );

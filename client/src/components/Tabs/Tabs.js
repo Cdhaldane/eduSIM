@@ -12,6 +12,7 @@ import Modal from "react-modal";
 
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(1);
+  const [time, setTime] = useState(0);
   const [radio, setRadio] = useState("Teacher")
   const [isOpen, setIsOpen] = useState(false)
   const [newGroup, setNewGroup] = useState("")
@@ -30,7 +31,7 @@ function Tabs(props) {
           console.log(res)
           let cart = []
           for(let i = 0; i < res.data.length; i++){
-            cart.push(res.data[i].gameroom_name)
+            cart.push([res.data[i].gameroom_name, res.data[i].gameroomid])
             console.log(cart)
           }
           setTabs(cart)
@@ -67,12 +68,33 @@ function Tabs(props) {
     setIsOpen(!isOpen);
   }
 
+  const handleDeleteGroup = (e) => {
+    var index = tabs.indexOf(e);
+    console.log(tabs)
+    setToggleState(1)
+    axios.delete('http://localhost:5000/api/playerrecords/deleteRoom/:gameroomid', {
+      params: {
+        id: tabs[index][1]
+      }
+    })
+       .then((res) => {
+          console.log(res)
+
+         })
+        .catch(error => console.log(error.response));
+        delete tabs[index]
+  }
+
+  const handleTime = (e) => {
+    setTime(e.target.value)
+  }
+
   return (
     <div class="tabs">
       <ul class="selected-tab">
         <li onClick={() => toggleTab(1)} class={toggleState === 1 ? "selected" : ""}>Overview</li>
         {tabs.map((i) => (
-          <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i}</li>
+          <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i[0]}</li>
         ))}
        <li onClick={() => toggleTab(0)} class={toggleState === 4 ? "selected" : ""}>Add group</li>
      </ul>
@@ -101,8 +123,10 @@ function Tabs(props) {
             <input type="radio" checked={radio=="Student"} value="Student" onChange={(e)=>{setRadio(e.target.value)}}/> Student/Participants
             </div>
             <div>
-            <input type="radio" checked={radio=="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed
+            <input type="radio" checked={radio=="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed =
             </div>
+            <input onChange={handleTime} type="text" placeholder="Time" id="time" />
+            <p>min</p>
               </div>
               <h3>Student/participant list:</h3>
 
@@ -110,13 +134,14 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={true}/>
+              <Table addstudent={false}/>
             </div>
           {tabs.map((i) => (
             <div
               className={toggleState === i ? "content  active-content" : "content"}
             >
-              <h2>{i}</h2>
+            <button onClick={() => handleDeleteGroup(i)} className="deletegroup">Delete Group</button>
+              <h2>{i[0]}</h2>
               <hr />
             <div className="groupcontainer">
             <h3>Chat: </h3>
@@ -132,7 +157,7 @@ function Tabs(props) {
           </LineChart>
         </div>
           <h3>Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i}/>
+        <Table addstudent={true} gameroom={i} gameinstanceid={props.gameid}/>
       </div>
             </div>
         ))}
@@ -143,7 +168,7 @@ function Tabs(props) {
               <hr />
               <p>
                 Group name
-              <input onChange={handleChange} type="text" class="textbox" placeholder="Group Name" id="code" />
+              <input onChange={handleChange} type="text" class="textbox" placeholder="Group Name" id="namei" />
               </p>
               <button className="addgroup" onClick={handleSubmit}>Add</button>
             </div>
