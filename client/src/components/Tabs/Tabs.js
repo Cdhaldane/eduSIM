@@ -24,7 +24,7 @@ function Tabs(props) {
   useEffect(() => {
     axios.get('http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid', {
       params: {
-            gameinstanceid: ["8f5fd942-63c3-415c-a2c6-4e20fafb93b3"],
+            gameinstanceid: [props.gameid],
         }
     })
        .then((res) => {
@@ -48,7 +48,7 @@ function Tabs(props) {
     console.log(tabs)
     setTabs([...tabs, newGroup])
     let data = {
-      gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+      gameinstanceid: props.gameid,
       gameroom_name: newGroup
     }
       axios.post('http://localhost:5000/api/playerrecords/createRoom', data)
@@ -134,7 +134,7 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={false}/>
+              <Table addstudent={false} gameid={props.gameid}/>
             </div>
           {tabs.map((i) => (
             <div
@@ -157,7 +157,7 @@ function Tabs(props) {
           </LineChart>
         </div>
           <h3>Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i} gameinstanceid={props.gameid}/>
+        <Table addstudent={true} gameroom={i} gameid={props.gameid}/>
       </div>
             </div>
         ))}

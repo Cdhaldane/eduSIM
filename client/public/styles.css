@@ -270,21 +270,18 @@ footer {
   color: #8f001a;
   left: 1760px;
 }
-
 #saved {
   position: absolute;
-  top: -28px;
+  top: -8px;
   left: 300px;
   width: 200px;
   height: 50px;
   background-color: white;
   border: solid #8f001a 2px ;
   border-radius: 0%;
-
   transform: translateX(-110%);
   transition: all var(500ms) ease;
 }
-
 #saved h1 {
   font-family:  "Montserrat", sans-serif;
   font-size: 1.45rem;
@@ -293,13 +290,11 @@ footer {
   position: relative;
   text-align: center;
   top: 0px;
-
 }
-
 #joinimg {
-  position: relative;
+  position: absolute;
   top: 20px;
-  left: -350px;
+  left: 20px;
   height: 100px;
   width: 120px;
   border: 2px solid black;
@@ -309,14 +304,14 @@ footer {
 #jointitle{
   position: absolute;
   font-size: 1.5rem;
-  top: 0px;
+  top: 50px;
   left: 100px;
   font-weight: 700;
 }
 
 .studentbutton {
-  position: relative;
-  top: -2px;
+  position: sticky;
+  top: 10px;
   left: 200px;
   width: 400px;
   height: 50px;

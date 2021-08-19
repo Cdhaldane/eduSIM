@@ -4,7 +4,8 @@ const EditableRow = ({
   editFormData,
   handleEditFormChange,
   handleCancelClick,
-  handleUpdate
+  handleUpdate,
+  rolelist
 }) => {
   return (
     <tr>
@@ -36,16 +37,12 @@ const EditableRow = ({
         ></input>
       </td>
       <td>
-        <input
-          type="text"
-          required="required"
-          name="group"
-          value={editFormData.group}
-          onChange={handleEditFormChange}
-        ></input>
+        <select name="group" type="text" required="required" id="roledropdown" onChange={handleEditFormChange}>
+            {rolelist}
+          </select>
       </td>
       <td>
-        <button type="submit" onClick={handleUpdate}>Save</button>
+        <button type="submit" >Save</button>
         <button type="button" onClick={handleCancelClick}>
           Cancel
         </button>

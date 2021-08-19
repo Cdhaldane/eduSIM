@@ -107,6 +107,15 @@
   background-color: #8f001a;
 }
 
+#roledropdown {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  width: 220px;
+  border-radius: 2px;
+  border: 1px solid #767676;
+}
+
 @media screen and (max-width: 960px){
   .app-container {
     position: relative;

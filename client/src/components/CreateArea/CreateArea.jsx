@@ -81,6 +81,7 @@ import Modal from "react-modal";
     for (let i = 0; i <=  props.gamedata.length -1; i++) {
          //here I will be creating my options dynamically based on
          items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
+         console.log(items)
          //what props are currently passed to the parent component
     }
     return items;

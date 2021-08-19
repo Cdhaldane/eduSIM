@@ -12,6 +12,9 @@ import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
+
+import TicTacToe from "./GamePieces/TicTacToe"
+
 import {
   Rect,
   Stage,
@@ -267,6 +270,8 @@ class Graphics extends Component {
       opacity: 1,
       infolevel: false,
       rolelevel: "",
+
+      tic: false,
 
       open: 0,
       state: false,
@@ -1964,107 +1969,6 @@ class Graphics extends Component {
 
   addStick = () => {
 
-    var pos = this.refs.layer2
-        .getStage()
-        .getPointerPosition()
-    var shape = this.refs.layer2.getIntersection(pos)
-
-
-    let toPush = {
-        rolelevel: this.state.rolelevel,
-        infolevel: this.state.infolevel,
-        level: this.state.level,
-        visible: true,
-        x: pos.x,
-        y: pos.y,
-        points: [20, 475, 60, 475],
-        from: shape,
-        stroke: 'black',
-        strokeWidth: '1.5',
-        fill: 'black'
-    }
-
-      if (toPush.from !== undefined) {
-        //  console.log("we are making a connector");
-
-        var transform = this.refs.layer2
-          .getAbsoluteTransform()
-          .copy();
-        transform.invert();
-        let uh = transform.point({
-          x: toPush.x,
-          y: toPush.y
-        });
-        toPush.x = uh.x;
-        toPush.y = uh.y;
-
-        var newArrow = {
-          points: toPush.points,
-          ref:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          name:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          from: toPush.from,
-          stroke: toPush.stroke,
-          strokeWidth: toPush.strokeWidth,
-          fill: toPush.fill
-        };
-
-        //  console.log(newArrow);
-        this.setState(prevState => ({
-          arrows: [...prevState.arrows, newArrow],
-          newArrowDropped: true,
-          newArrowRef: newArrow.name,
-          arrowEndX: toPush.x,
-          arrowEndY: toPush.y
-        }));
-      } else {
-        //  console.log("we are making just an aarrow");
-        var transform = this.refs.layer2
-          .getAbsoluteTransform()
-          .copy();
-        transform.invert();
-        let uh = transform.point({
-          x: toPush.x,
-          y: toPush.y
-        });
-        toPush.x = uh.x;
-        toPush.y = uh.y;
-        var newArrow = {
-          points: [toPush.x, toPush.y, toPush.x, toPush.y],
-          ref:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          name:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          from: toPush.from,
-          stroke: toPush.stroke,
-          strokeWidth: toPush.strokeWidth,
-          fill: toPush.fill
-        };
-
-        this.setState(prevState => ({
-          arrows: [...prevState.arrows, newArrow],
-          newArrowDropped: true,
-          newArrowRef: newArrow.name,
-          arrowEndX: toPush.x,
-          arrowEndY: toPush.y
-        }));
-      }
-
-      //this.refs updates after forceUpdate (because arrow gets instantiated), might be risky in the future
-      //only this.state.arrows.length because it was pushed earlier, cancelling the +1
   }
 
   addStar = () => {
@@ -2158,11 +2062,18 @@ class Graphics extends Component {
     this.setState(prevState => ({
       texts: [...prevState.texts, toPush]
     }));
+  }
 
-    //we can also just get element by this.refs.toPush.ref
-
-    //  let text = stage.findOne("." + toPush.name);
-
+  addTic = (e) => {
+    console.log(this.state.tic)
+    if(e === "clicked"){
+      this.setState({
+        tic: true
+      })
+    }
+    if(this.state.tic === true){
+      return <TicTacToe />
+    }
   }
 
   handleColorF = (e) =>{
@@ -2618,6 +2529,7 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
+        {this.addTic()}
         <Timer handleSave={this.handleSave} />
         <div
           onKeyDown={event => {
@@ -5823,6 +5735,7 @@ class Graphics extends Component {
 
                   </Layer>
                 </Stage>
+
                 </div>
                 {(this.state.open !== 1)
                   ? <button onClick={() => this.setState({open: 1})}><i class="fas fa-caret-square-up fa-3x"></i></button>
@@ -5888,6 +5801,7 @@ class Graphics extends Component {
               addAudio={this.addAudio}
               addStick={this.addStick}
               addDocument={this.addDocument}
+              addTic={this.addTic}
               drawLine={this.drawLine}
               eraseLine={this.eraseLine}
               stopDrawing={this.stopDrawing}
@@ -5914,7 +5828,7 @@ class Graphics extends Component {
               avisible={this.handleAvisible}
               pavisible={this.handlePavisible}
               svisible={this.handleSvisible}
-              pevisible={this.handlePevisible}/>
+              pevisible={this.handlePevisible}
               />
               <Link to="/dashboard">
                 <i id="editpagex" class="fas fa-times fa-3x"></i>

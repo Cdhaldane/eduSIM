@@ -12,6 +12,7 @@ import "./tailwind.css"
 
 const Table = (props) => {
     const [highlighted, setHighlighted] = useState(false);
+    const [rolelist, setRolelist] = useState()
     const [groupOr, setGroupOr] = useState("set")
     const [contacts, setContacts] = useState([{
       firstName: "",
@@ -42,13 +43,12 @@ const Table = (props) => {
 
     const [editContactId, setEditContactId] = useState(null);
 
-
     useEffect(() => {
       if(props.addstudent === false){
         setGroupOr("Group")
         axios.get('http://localhost:5000/api/playerrecords/getAllPlayers/:gameinstanceid', {
           params: {
-                id: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+                id: props.gameid,
             }
         })
            .then((res) => {
@@ -105,11 +105,29 @@ const Table = (props) => {
            })
           .catch(error => console.log(error.response));
         }
+        axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+          params: {
+                gameinstanceid: props.gameid,
+            }
+        })
+        .then((res) => {
+          const allData = res.data;
+          console.log(allData)
+          let items = [(<option value="">Select a a role!</option>)];
+          for (let i = 0; i <=  allData.length -1; i++) {
+               //here I will be creating my options dynamically based on
+               items.push(<option value={allData[i].gamerole}>{allData[i].gamerole}</option>);
+               console.log(items)
+               //what props are currently passed to the parent component
+          }
+          setRolelist(items)
+        })
     }, []);
 
     //Add change
     const handleAddFormChange = (event) => {
       event.preventDefault();
+      console.log(event.target.value)
 
       const fieldName = event.target.getAttribute("name");
       const fieldValue = event.target.value;
@@ -137,29 +155,30 @@ const Table = (props) => {
       event.preventDefault();
       console.log(props)
       var data = {
-        gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+        gameinstanceid: props.gameid,
         fname: addFormData.firstName,
         lname: addFormData.lastName,
         game_room: props.gameroom[0],
         player_email: addFormData.email,
-        gamerole: "Dunno"
+        gamerole: addFormData.group
         }
         axios.post('http://localhost:5000/api/playerrecords/createPlayer', data)
            .then((res) => {
               console.log(res)
+              const newContact = {
+                id: res.data.gameplayerid,
+                firstName: addFormData.firstName,
+                lastName: addFormData.lastName,
+                email: addFormData.email,
+                group: addFormData.group,
+              };
+              console.log(newContact)
+              const newContacts = [...contacts, newContact];
+              setContacts(newContacts);
              })
             .catch(error => console.log(error.response));
 
-      const newContact = {
-        id: nanoid,
-        firstName: addFormData.firstName,
-        lastName: addFormData.lastName,
-        email: addFormData.email,
-        group: addFormData.group,
-      };
 
-      const newContacts = [...contacts, newContact];
-      setContacts(newContacts);
     };
 
     const handleEditFormSubmit = (event) => {
@@ -228,16 +247,9 @@ const Table = (props) => {
       })
          .then((res) => {
             console.log(res)
-
            })
           .catch(error => console.log(error.response));
-
     };
-
-    const handleUpdate = (contact) => {
-
-
-    }
 
     const handleAddStudent = () => {
       return (
@@ -266,12 +278,12 @@ const Table = (props) => {
             onChange={handleAddFormChange}
           />
           <input
-            id="groupnumber"
-            type="text"
-            name="group"
-            required="required"
-            onChange={handleAddFormChange}
-          />
+           id="groupnumber"
+           type="text"
+           name="group"
+           required="required"
+           onChange={handleAddFormChange}
+         />
         <button type="submit" id="addstudent">Add</button>
         </form>
         </div>
@@ -350,7 +362,7 @@ const Table = (props) => {
                       editFormData={editFormData}
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
-                      handleUpdate={handleUpdate}
+                      rolelist={rolelist}
                     />
                   ) : (
                     <ReadOnlyRow
@@ -390,13 +402,9 @@ const Table = (props) => {
            required="required"
            onChange={handleAddFormChange}
          />
-         <input
-           id="groupnumber"
-           type="text"
-           name="group"
-           required="required"
-           onChange={handleAddFormChange}
-         />
+       <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
+           {rolelist}
+         </select>
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
