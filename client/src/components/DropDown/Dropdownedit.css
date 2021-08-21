@@ -185,8 +185,8 @@ a {
 
 #switchtime{
     position: absolute;
-    left: -110px;
-    bottom: 165px;
+    left: -100px;
+    bottom: 205px;
 }
 
 #dswitch{
@@ -204,11 +204,11 @@ a {
 .dropdown button {
   position: relative;
   top: 0px;
-  left: 0px;
-  width: 35px;
-  height: 50px;
+  left: 10px;
+  width: 45px;
+  height: 60px;
   font-family:  "Montserrat", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: #8f001a;
   background-color: white;
   border: none;
@@ -232,9 +232,9 @@ a {
 }
 
 #pagetype input, #pagetype textarea {
-  position: relative;
+  position: absolute;
   left: 20px;
-  top: 10px;
+  top: 160px;
   color: grey;
   background-color: #f6f5f5;
   font-weight: 700;
@@ -247,7 +247,7 @@ a {
   font-family: 'Raleway';
   font-size: 1.5rem;
   border-radius: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 0px;
 }
 
 #pagetype input::placeholder{

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {MenuItems} from "./MenuItems";
 import AuthenticationButton from "../Auth0/AuthenticationButton"
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
-import DropdownMenu from "../DropDown/Dropdown"
 import "./Navbar.css";
 
 function NavBar(props) {
@@ -19,15 +18,15 @@ function NavBar(props) {
 
     return (
       <nav className="NavbarItems">
-        <h1 className="navbar-logo">eduSIM<img className="img" src="favicon.ico" ></img></h1>
+        <h1 className="navbar-logo">eduSIM<img className="img" alt="eduSIM logo"src="favicon.ico" ></img></h1>
         <div className="menu-icon" onClick={handleClick}>
         <i className={clicked ? "fas fa-times" : "fas fa-bars"}></i>
         </div>
       <ul className={clicked ? "nav-menu active" : "nav-menu"}>
         <div>
         {(isAuthenticated)
-        ? <img className="nav-pic" src={ user.picture } onClick={() => setCount(!count)}/>
-      : <p className="nav-pic" ><AuthenticationButton /></p>
+        ? <img className="nav-pic" src={ user.picture } alt="profile picture" onClick={() => setCount(!count)}/>
+      : <p className="nav-picbutton"><AuthenticationButton /></p>
     }
         </div>
         {MenuItems.map((item,index) =>{

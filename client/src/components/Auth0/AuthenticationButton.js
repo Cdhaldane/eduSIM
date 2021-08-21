@@ -6,10 +6,8 @@ import "../Buttons/Buttons.css";
 
 function AuthenticationButton(props) {
   const { isAuthenticated, loginWithRedirect, logout,  } = useAuth0();
-  const [ login, setLogin ] =useState([]);
   const { user } = useAuth0();
-
-
+  console.log(localStorage)
 
   function handleClick(){
     loginWithRedirect({redirectUri: "http://localhost:3000/",})
@@ -22,13 +20,10 @@ function AuthenticationButton(props) {
     })
     .then((res) => {
       const allData = res.data;
-      console.log(allData);
-      setLogin(allData.adminid);
       localStorage.setItem('adminid', allData.adminid)
-      console.log(localStorage)
+      console.log(localStorage.setItem('adminid', allData.adminid))
     })
     .catch(error => console.log(error.response));
-
   }
 
   function handleLogout(){
@@ -37,7 +32,6 @@ function AuthenticationButton(props) {
     })
     localStorage.clear();
   }
-
 
   return (
     isAuthenticated ?
@@ -53,28 +47,3 @@ function AuthenticationButton(props) {
 }
 
 export default AuthenticationButton;
-
-// let data = {
-//   email: "email",
-//   name: "name",
-//   picture: "picture"
-// }
-//
-// let config = {
-//   headers: {
-//     "Content-Type": "application/json",
-//     'Access-Control-Allow-Origin': '*',
-//     'Access-Control-Allow-Methods': 'HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS',
-//     'Access-Control-Allow-Headers': 'Content-Type'
-//     }
-//   }
-//
-//   axios.post('http://localhost:5000/adminaccounts/createAdmin', data, config)
-//      .then((res) => {
-//         console.log(res)
-//        })
-//       .catch((err) => {
-//         console.log(err.response.data)
-//      });
-//    }
-//

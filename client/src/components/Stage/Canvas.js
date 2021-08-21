@@ -1,41 +1,17 @@
-//todo: allow for picture inside of rect/ellipse/stfar
-//todo: connect using arrow
-//todo: for rightToolBar, show fontSize,fontFamily for text for the rest allow to add pictures
-//todo: zoomable
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Button from "react-bootstrap/Button";
-import { SelectableGroup } from 'react-selectable-fast'
-import { addLine } from "./Shapes/Line";
+import React, { useState, useEffect, Component } from 'react';
+import Dropdownroles from "../DropDown/Dropdownroles";
+import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
-import { addTextNode } from "./Shapes/Text";
-// import Image from "./Shapes/Img";
 import { v1 as uuidv1 } from 'uuid';
-import Canvas from "./Canvas.js"
 import fileDownload from 'js-file-download'
 import axios from 'axios'
-import { pdf } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
-
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
-import Info from "../Information/InformationPopup";
-import EditShapes from "../EditShapes/EditShapes";
 import Pencil from "../Pencils/Pencil";
-import Sidebar from "../SideBar/Sidebar";
-import Header from "../SideBar/Header";
-import styled from "styled-components"
 import Konva from "konva"
-
-import { Container, Row, Col } from "react-bootstrap";
-
-
-
-import React, { useState, useEffect, Component, useMemo } from 'react';
-import useImage from "use-image";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
-
 import {
   Rect,
   Stage,
@@ -50,72 +26,66 @@ import {
   Image
 } from "react-konva";
 import Connector from "./Connector.jsx";
-import Toolbar from "./Toolbar.js";
 
-
-
-
-class URLImage extends React.Component {
-  state = {
-    image: null
-  };
-  componentDidMount() {
-    this.loadImage();
-  }
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
+  class URLImage extends React.Component {
+    state = {
+      image: null
+    };
+    componentDidMount() {
       this.loadImage();
     }
+    componentDidUpdate(oldProps) {
+      if (oldProps.src !== this.props.src) {
+        this.loadImage();
+      }
+    }
+    componentWillUnmount() {
+      this.image.removeEventListener('load', this.handleLoad);
+    }
+    loadImage() {
+      // save to "this" to remove "load" handler on unmount
+      this.image = new window.Image();
+      this.image.src = this.props.src;
+      this.image.addEventListener('load', this.handleLoad);
+    }
+    handleLoad = () => {
+      // after setState react-konva will update canvas and redraw the layer
+      // because "image" property is changed
+      this.setState({
+        image: this.image
+      });
+      // if you keep same image object during source updates
+      // you will have to update layer manually:
+      // this.imageNode.getLayer().batchDraw();
+    };
+    render() {
+      return (
+        <Image
+          draggable
+          visible={this.props.visible}
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height}
+          image={this.state.image}
+          ref={this.props.ref}
+          id={this.props.id}
+          name="shape"
+          opacity={this.props.opacity}
+          onClick={this.props.onClick}
+          onTransformStart={this.props.onTransformStart}
+          onTransform={this.props.onTransform}
+          onTransformEnd={this.props.onTransformEnd}
+          onDragMove={this.props.onDragMove}
+          onDragEnd={this.props.onDragEnd}
+          onContextMenu={this.props.onContextMenu}
+          rotation={this.props.rotation}
+          stroke={this.props.stroke}
+          strokeWidth={this.props.strokeWidth}
+        />
+      );
+    }
   }
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-  render() {
-
-    return (
-      <Image
-        draggable
-        visible={this.props.visible}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        image={this.state.image}
-        ref={this.props.ref}
-        id={this.props.id}
-        name="shape"
-        opacity={this.props.opacity}
-        onClick={this.props.onClick}
-        onTransformStart={this.props.onTransformStart}
-        onTransform={this.props.onTransform}
-        onTransformEnd={this.props.onTransformEnd}
-        onDragMove={this.props.onDragMove}
-        onDragEnd={this.props.onDragEnd}
-        onContextMenu={this.props.onContextMenu}
-        rotation={this.props.rotation}
-        stroke={this.props.stroke}
-        strokeWidth={this.props.strokeWidth}
-
-      />
-    );
-  }
-}
   function Timer(props){
     useEffect(() => {
       const MINUTE_MS = 300000;
@@ -133,7 +103,6 @@ class URLImage extends React.Component {
       </>
     );
   }
-
   function Save(){
     const [display, setDisplay] = useState(false);
     useEffect(() => {
@@ -274,6 +243,7 @@ class Graphics extends Component {
       lines: [],
       arrows: [],
       connectors: [],
+      gameroles: [],
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -290,11 +260,16 @@ class Graphics extends Component {
       lastFill: null,
       selectedContextMenu:null,
       selectedContextMenuText:null,
-      colorf: "white",
+      colorf: "black",
       colors: "black",
       color: "white",
       strokeWidth: 3.75,
       opacity: 1,
+      infolevel: false,
+      rolelevel: "",
+
+      open: 0,
+      state: false,
 
 
 
@@ -326,10 +301,8 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-
       ptype: "",
       pageNumber: 6,
-      isDrawing: false,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: "https://konvajs.org/assets/lion.png",
@@ -344,13 +317,6 @@ class Graphics extends Component {
                   };
 
     this.handleWheel = this.handleWheel.bind(this);
-    console.log(this.state.adminid)
-    console.log(this.state.gameinstanceid)
-
-    var data =  {
-          adminid: this.state.adminid,
-          gameid: this.state.gameinstanceid
-      }
 
     axios.get('http://localhost:5000/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
@@ -396,10 +362,13 @@ class Graphics extends Component {
       })
     })
     .catch(error => console.log(error.response));
-
-
-
+    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+      params: {
+            gameinstanceid: this.state.gameinstanceid,
+        }
+    })
   }
+
   handleType = (e) => {
     this.setState({
       ptype: e
@@ -445,26 +414,6 @@ class Graphics extends Component {
     // ) {
       this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, status: "up"] });
       console.log(this.state.saved)
-      let arrows1 = this.state.arrows;
-      arrows1.forEach(eachArrow => {
-        //for "from & to of each arrow"
-        if (eachArrow.from && eachArrow.from.attrs) {
-          if (eachArrow.from.attrs.name.includes("text")) {
-            eachArrow.from.textWidth = eachArrow.from.textWidth;
-
-            eachArrow.from.textHeight = eachArrow.from.textHeight;
-          }
-        }
-        if (eachArrow.to && eachArrow.to.attrs) {
-          if (eachArrow.to.attrs.name.includes("text")) {
-            eachArrow.to.attrs.textWidth = eachArrow.to.textWidth;
-            eachArrow.to.attrs.textHeight = eachArrow.to.textHeight;
-          }
-        }
-      });
-
-      // if (this.state.roadmapId) {
-
               console.log(this.state.gameinstanceid)
               var body = {
                   id: this.state.gameinstanceid,
@@ -472,73 +421,11 @@ class Graphics extends Component {
                   createdby_adminid: localStorage.adminid,
                   invite_url: 'value'
                 }
-
-                console.log(this.state.saved)
-                console.log(this.props)
-
                 axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
                    .then((res) => {
                       console.log(res)
                      })
                     .catch(error => console.log(error.response));
-                   console.log();
-
-              //if draft already exists
-
-
-        //if draft already exists
-      //   this.setState({ saving: true });
-      //   fetch("", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       roadmapId: this.state.roadmapId,
-      //       data: {
-      //         rects: rects,
-      //         ellipses: ellipses,
-      //         stars: stars,
-      //         texts: texts,
-      //         arrows: arrows1,
-      //         triangles: triangles,
-      //         audios: audios,
-      //         documents: documents,
-      //         images: images,
-      //         vidoes: videos
-      //       }
-      //     })
-      //   }).then(res => {
-      //     this.setState({ saving: false });
-      //   });
-      // } else {
-      //   //if first time pressing sav
-      //   this.setState({ saving: true });
-      //   fetch("", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       userId: this.props.auth.user.id,
-      //       roadmapType: "draft",
-      //       data: {
-      //         rects: rects,
-      //         ellipses: ellipses,
-      //         stars: stars,
-      //         texts: texts,
-      //         arrows: arrows,
-      //         triangles: triangles,
-      //         audios: audios,
-      //         documents: documents,
-      //         images: images,
-      //         vidoes: videos
-      //       }
-      //     })
-      //   }).then(res =>
-      //     res.json().then(data => {
-      //       this.setState({ saving: false });
-      //       this.setState({ roadmapId: data.roadmapId });
-      //     })
-      //   );
-      // }
-    // }
   };
 
   handleStageClick = e => {
@@ -562,41 +449,6 @@ class Graphics extends Component {
         }
       );
     }
-
-    //arrow logic
-    if (this.state.newArrowRef !== "") {
-      if (this.state.previousShape) {
-        if (this.state.previousShape.attrs.id !== "ContainerRect") {
-          //console.log(this.refs.graphicStage.findOne("." + this.state.newArrowRef));
-          //
-
-          this.state.arrows.map(eachArrow => {
-            if (eachArrow.name === this.state.newArrowRef) {
-              eachArrow.to = this.state.previousShape;
-            }
-          });
-
-          //console.log(newConnector, this.state.newArrowRef);
-          //newConnector.setAttr("to", this.state.previousShape);
-          //console.log(newConnector);
-        }
-      }
-
-      //handle connector more
-      //if the currentArrow ref has a from, and that e.target.attrs.id isn't containerRect,
-      //then find the current shape with stage find name and then yeah
-      this.state.arrows.map(eachArrow => {
-        if (eachArrow.name === this.state.newArrowRef) {
-          eachArrow.fill = "black";
-          eachArrow.stroke = "black";
-        }
-      });
-      //arrow logic, there's e.evt.pageX, pageY
-      this.setState({
-        arrowDraggable: false,
-        newArrowRef: ""
-      });
-    }
   };
 
   updateSelectionRect = () => {
@@ -618,11 +470,11 @@ class Graphics extends Component {
       draggable: false
     })
     const pos = e.target.getStage().getPointerPosition();
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     this.state.isDrawing = true;
     const tool = this.state.tool;
     this.setState({
-      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape"}]
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
     })
   } else {
 
@@ -631,7 +483,6 @@ class Graphics extends Component {
     if (isElement || isTransformer) {
       return;
     }
-
     this.state.selection.visible = true;
     this.state.selection.x1 = pos.x;
     this.state.selection.y1 = pos.y;
@@ -643,7 +494,7 @@ class Graphics extends Component {
 
 
   handleMouseUp = () => {
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
       this.state.isDrawing = false;
     } else {
     if (!this.state.selection.visible) {
@@ -672,7 +523,7 @@ class Graphics extends Component {
 
     //get the currennt arrow ref and modify its position by filtering & pushing again
     //console.log("lastFill: ", this.state.lastFill);
-    if(this.state.drawMode == true) {
+    if(this.state.drawMode === true) {
     if (!this.state.isDrawing) {
       return;
    }
@@ -706,70 +557,113 @@ class Graphics extends Component {
     } else {
       document.body.style.cursor = "default";
     }
+  }
+  };
+  updateSelectionRectInfo = () => {
 
-    //if we are moving an arrow
-    if (this.state.newArrowRef !== "") {
-      //filling color logic:
+    const node = this.refs.selectionRectRef1;
+    node.setAttrs({
+      visible: this.state.selection.visible,
+      x: Math.min(this.state.selection.x1, this.state.selection.x2),
+      y: Math.min(this.state.selection.y1, this.state.selection.y2),
+      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
+      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
+      fill: "rgba(0, 161, 255, 0.3)"
+    });
+    node.getLayer().batchDraw();
+  };
+  onMouseDownInfo = (e) => {
+    this.setState({
+      draggable: false
+    })
+    const pos = e.target.getStage().getPointerPosition();
+    if(this.state.drawMode === true) {
+    this.state.isDrawing = true;
+    const tool = this.state.tool;
+    this.setState({
+      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel, rolelevel: this.state.rolelevel}]
+    })
+  } else {
 
-      var transform = this.refs.layer2.getAbsoluteTransform().copy();
-      transform.invert();
-
-      pos = transform.point(pos);
-      this.setState({ arrowEndX: pos.x, arrowEndY: pos.y });
-      //last non arrow object
-      if (shape && shape.attrs && shape.attrs.name != undefined) {
-        //  console.log(shape);
-        if (!shape.attrs.name.includes("arrow")) {
-          //after first frame
-          if (this.state.previousShape)
-            if (this.state.previousShape !== shape) {
-              //arrow entered a new shape
-
-              //set arrow to blue
-              if (this.state.previousShape.attrs.id !== "ContainerRect") {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "black";
-                    eachArrow.stroke = "black";
-                  }
-                });
-                this.forceUpdate();
-              } else {
-                this.state.arrows.map(eachArrow => {
-                  if (eachArrow.name === this.state.newArrowRef) {
-                    eachArrow.fill = "#ccf5ff";
-                    eachArrow.stroke = "#ccf5ff";
-                  }
-                });
-                this.forceUpdate();
-              }
-            }
-          //if arrow is moving in a single shape
-        }
-
-        if (!shape.attrs.name.includes("arrow")) {
-          this.setState({ previousShape: shape });
-        }
-      }
+    const isElement = e.target.findAncestor(".elements-container");
+    const isTransformer = e.target.findAncestor("Transformer");
+    if (isElement || isTransformer) {
+      return;
     }
-    var arrows = this.state.arrows;
+    this.state.selection.visible = true;
+    this.state.selection.x1 = pos.x;
+    this.state.selection.y1 = pos.y;
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRectInfo();
+  }
+  };
 
-    arrows.map(eachArrow => {
-      if (eachArrow.name === this.state.newArrowRef) {
-        var index = arrows.indexOf(eachArrow);
-        let currentArrow = eachArrow;
-        currentArrow.points = [
-          currentArrow.points[0],
-          currentArrow.points[1],
-          pos.x,
-          pos.y
-          /*  event.evt.pageY -
-            document.getElementById("NavBar").getBoundingClientRect().height */
-        ];
 
-        this.state.arrows[index] = currentArrow;
+  handleMouseUpInfo = () => {
+    if(this.state.drawMode === true) {
+      this.state.isDrawing = false;
+    } else {
+    if (!this.state.selection.visible) {
+      return;
+    }
+    const selBox = this.refs.selectionRectRef1.getClientRect();
+    const elements = [];
+    this.refs.layer3.find(".shape").forEach((elementNode) => {
+      const elBox = elementNode.getClientRect();
+      if (Konva.Util.haveIntersection(selBox, elBox)) {
+        elements.push(elementNode);
+
       }
     });
+
+
+    this.refs.trRef1.transformer.nodes(elements);
+    this.state.selection.visible = false;
+    // disable click event
+    Konva.listenClickTap = false;
+    this.updateSelectionRectInfo();
+  }
+  };
+
+  handleMouseOverInfo = event => {
+
+    //get the currennt arrow ref and modify its position by filtering & pushing again
+    //console.log("lastFill: ", this.state.lastFill);
+    if(this.state.drawMode === true) {
+    if (!this.state.isDrawing) {
+      return;
+   }
+
+   const stage = event.target.getStage();
+   const point = stage.getPointerPosition();
+   let lastLine = this.state.lines[this.state.lines.length - 1];
+   // add point
+   lastLine.points = lastLine.points.concat([point.x, point.y]);
+
+   // replace last
+   this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
+   this.setState({
+     lines: this.state.lines.concat()
+   })
+ } else {
+
+
+    if (!this.state.selection.visible) {
+      return;
+    }
+    var pos = this.refs.graphicStage1.getPointerPosition();
+    var shape = this.refs.graphicStage1.getIntersection(pos);
+
+    this.state.selection.x2 = pos.x;
+    this.state.selection.y2 = pos.y;
+    this.updateSelectionRectInfo();
+
+    if (shape && shape.attrs.link) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "default";
+    }
   }
   };
   handleWheel(event) {
@@ -778,7 +672,7 @@ class Graphics extends Component {
       this.state.ellipses.length === 0 &&
       this.state.stars.length === 0 &&
       this.state.texts.length === 0 &&
-      this.state.triangles.length == 0 &&
+      this.state.triangles.length === 0 &&
       this.state.arrows.length === 0 &&
       this.state.images.length === 0 &&
       this.state.videos.length === 0 &&
@@ -1518,18 +1412,6 @@ class Graphics extends Component {
       var that = this;
       //delete it from the state too
       let name = this.state.selectedShapeName;
-      let rectDeleted = false,
-        ellipseDeleted = false,
-        starDeleted = false,
-        arrowDeleted = false,
-        textDeleted = false,
-        triangleDeleted = false,
-        imageDeleted = false,
-        videoDelete = false,
-        audiosDeleted = false,
-        linesDeleted = false,
-        documentsDeleted = false;
-
       var rects = this.state.rectangles.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
@@ -1755,15 +1637,15 @@ class Graphics extends Component {
     history.push(this.state);
     this.setState({ selectedShapeName: "" });
     //if draft
-
   }
-
   addRectangle = () => {
     var rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
 
 
     let name = 'rectangle' + rectName
     const rect = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -1781,7 +1663,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = rect;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1810,13 +1691,14 @@ class Graphics extends Component {
 
     let name = 'triangle' + triName
     const tri = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
       y: 400,
       width: 100,
       height:100,
-      height: 100,
       sides: 3,
       radius: 70,
       stroke: 'black',
@@ -1830,7 +1712,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = tri;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1857,6 +1738,8 @@ class Graphics extends Component {
 
     let name = 'image' + imgName
     const img = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -1873,7 +1756,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = img;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1900,6 +1782,8 @@ class Graphics extends Component {
 
     let name = 'video' + vidName
     const vid = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 600,
@@ -1916,7 +1800,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = vid;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1945,6 +1828,8 @@ class Graphics extends Component {
 
     let name = 'audio' + audName
     const aud = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 600,
@@ -1962,7 +1847,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = aud;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -1980,14 +1864,10 @@ class Graphics extends Component {
       audios: [...prevState.audios, toPush],
       selectedShapeName: toPush.name
     }));
-
   };
 
   addDocument = () => {
     var docName = this.state.documents.length + 1 + this.state.documentDeleteCount
-    var audsrc = this.state.audsrc
-
-
     const bimage = new window.Image();
         bimage.onload = () => {
           this.setState({
@@ -1997,10 +1877,10 @@ class Graphics extends Component {
         bimage.src = 'downloadicon.png';
         bimage.width = 10;
         bimage.height = 10;
-
-
     let name = 'document' + docName
     const doc = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2018,7 +1898,6 @@ class Graphics extends Component {
     };
     var layer = this.refs.layer2;
     var toPush = doc;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2045,6 +1924,8 @@ class Graphics extends Component {
 
     let name = 'ellipse' + circName
     const circ = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2054,14 +1935,13 @@ class Graphics extends Component {
       stroke: 'black',
       strokeWidth: 1.5,
       id: name,
-      fill: 'white',
+      fill: this.state.colorf,
       ref: name,
       name: name,
       rotation: 0
     };
     var layer = this.refs.layer2;
     var toPush = circ;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2083,14 +1963,16 @@ class Graphics extends Component {
   };
 
   addStick = () => {
+
     var pos = this.refs.layer2
         .getStage()
         .getPointerPosition()
-    var shape = this.refs.layer2.getIntersection(
-        pos
-    )
+    var shape = this.refs.layer2.getIntersection(pos)
+
 
     let toPush = {
+        rolelevel: this.state.rolelevel,
+        infolevel: this.state.infolevel,
         level: this.state.level,
         visible: true,
         x: pos.x,
@@ -2190,6 +2072,8 @@ class Graphics extends Component {
 
     let name = 'star' + starName
     const star = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2203,13 +2087,12 @@ class Graphics extends Component {
       strokeWidth: 1.5,
       id: name,
       name: name,
-      fill: 'white',
+      fill: this.state.colorf,
       ref: name,
       rotation: 0
     };
     var layer = this.refs.layer2;
     var toPush = star;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2236,6 +2119,8 @@ class Graphics extends Component {
     let name = 'text' + textName
     let ref = 'text' + textName
     const tex = {
+      rolelevel: this.state.rolelevel,
+      infolevel: this.state.infolevel,
       level: this.state.level,
       visible: true,
       x: 800,
@@ -2255,7 +2140,6 @@ class Graphics extends Component {
 
     var layer = this.refs.layer2;
     var toPush = tex;
-    var stage = this.refs.graphicStage;
     var transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
@@ -2612,7 +2496,6 @@ class Graphics extends Component {
       level: e
     }, this.handleLevelUpdate)
   }
-
   handleLayerClear = () => {
     this.refs.layer2.clear();
   }
@@ -2673,6 +2556,23 @@ class Graphics extends Component {
     this.setState({
       color: e.hex
     })
+  }
+  editMode = () => {
+    console.log(4)
+    this.setState({
+      infolevel: true
+    })
+  }
+  editModeOff = () => {
+    this.setState({
+      infolevel: false
+    })
+  }
+  handleRoleLevel = (e) => {
+    this.setState({
+      rolelevel: e
+    })
+
   }
 
 
@@ -2790,7 +2690,7 @@ class Graphics extends Component {
 
 
             {this.state.rectangles.map(eachRect => {
-              if(eachRect.level == this.state.level)
+              if(eachRect.level === this.state.level && eachRect.infolevel === false)
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -2911,7 +2811,7 @@ class Graphics extends Component {
                         }
 
                         if (eachArrow.to !== undefined) {
-                          if (eachRect.name == eachArrow.to.attrs.name) {
+                          if (eachRect.name === eachArrow.to.attrs.name) {
                             eachArrow.points = [
                               eachArrow.points[0],
                               eachArrow.points[1],
@@ -2985,7 +2885,7 @@ class Graphics extends Component {
             )}
 
               {this.state.ellipses.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
                 return (
                 <Ellipse
                   visible={eachEllipse.visible}
@@ -3087,7 +2987,7 @@ class Graphics extends Component {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
                         console.log("prevArrow: ", eachArrow.points);
-                        if (eachEllipse.name == eachArrow.from.attrs.name) {
+                        if (eachEllipse.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachEllipse.x,
                             eachEllipse.y,
@@ -3151,7 +3051,7 @@ class Graphics extends Component {
               );
             })}
               {this.state.lines.map((eachLine, i) => {
-                if(eachLine.level == this.state.level)
+                if(eachLine.level === this.state.level && eachLine.infolevel === false)
                 return(
                   <Line
                     id={eachLine.id}
@@ -3184,7 +3084,7 @@ class Graphics extends Component {
               })}
 
               {this.state.images.map(eachImage => {
-                if(eachImage.level == this.state.level)
+                if(eachImage.level === this.state.level && eachImage.infolevel === false)
                 return (
                 <URLImage
                   visible={eachImage.visible}
@@ -3251,7 +3151,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachImage.name == eachArrow.to.attrs.name) {
+                        if (eachImage.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3309,7 +3209,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.videos.map(eachVideo => {
-                if(eachVideo.level == this.state.level)
+                if(eachVideo.level === this.state.level && eachVideo.infolevel === false)
                 return (
                 <URLvideo
                   visible={eachVideo.visible}
@@ -3376,7 +3276,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachVideo.name == eachArrow.to.attrs.name) {
+                        if (eachVideo.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3423,7 +3323,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.audios.map(eachAudio => {
-                if(eachAudio.level == this.state.level)
+                if(eachAudio.level === this.state.level && eachAudio.infolevel === false)
                 return (
                 <URLvideo
                   visible={eachAudio.visible}
@@ -3493,7 +3393,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachAudio.name == eachArrow.to.attrs.name) {
+                        if (eachAudio.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3543,7 +3443,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.documents.map(eachDoc => {
-                if(eachDoc.level == this.state.level)
+                if(eachDoc.level === this.state.level && eachDoc.infolevel === false)
                 return (
                 <Rect
                   rotation={eachDoc.rotation}
@@ -3628,7 +3528,7 @@ class Graphics extends Component {
                       }
 
                       if (eachArrow.to !== undefined) {
-                        if (eachDoc.name == eachArrow.to.attrs.name) {
+                        if (eachDoc.name === eachArrow.to.attrs.name) {
                           eachArrow.points = [
                             eachArrow.points[0],
                             eachArrow.points[1],
@@ -3685,7 +3585,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.triangles.map(eachEllipse => {
-                if(eachEllipse.level == this.state.level)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
                 return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
@@ -3788,7 +3688,7 @@ class Graphics extends Component {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
                         console.log("prevArrow: ", eachArrow.points);
-                        if (eachEllipse.name == eachArrow.from.attrs.name) {
+                        if (eachEllipse.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachEllipse.x,
                             eachEllipse.y,
@@ -3850,7 +3750,7 @@ class Graphics extends Component {
             );
             })}
               {this.state.stars.map(eachStar => {
-                if(eachStar.level == this.state.level)
+                if(eachStar.level === this.state.level && eachStar.infolevel === false)
                 return (
                 <Star
                   visible={eachStar.visible}
@@ -3916,7 +3816,7 @@ class Graphics extends Component {
                   onDragMove={() => {
                     this.state.arrows.map(eachArrow => {
                       if (eachArrow.from !== undefined) {
-                        if (eachStar.name == eachArrow.from.attrs.name) {
+                        if (eachStar.name === eachArrow.from.attrs.name) {
                           eachArrow.points = [
                             eachStar.x,
                             eachStar.y,
@@ -3974,7 +3874,7 @@ class Graphics extends Component {
             })}
 
               {this.state.texts.map(eachText => {
-                if(eachText.level == this.state.level)
+                if(eachText.level === this.state.level && eachText.infolevel === false)
                 return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -4184,7 +4084,7 @@ class Graphics extends Component {
             </Portal>
           )}
               {this.state.arrows.map(eachArrow => {
-                if (!eachArrow.from && !eachArrow.to && eachArrow.level == this.state.level) {
+                if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
                   return (
                     <Arrow
                       visible={eachArrow.visible}
@@ -4408,33 +4308,1572 @@ class Graphics extends Component {
           />
           <div className="errMsg">{errDisplay}</div>
         </div>
-        <div className="header">
+        <div className="eheader">
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
           <h1 id="editmode">Edit Mode</h1>
-          <Info
-            stuff=""
-            editmode="1"
-            addRectangle={this.addRectangle}
-            addCircle={this.addCircle}
-            addStar={this.addStar}
-            addTriangle={this.addTriangle}
-            addImage={this.addImage}
-            addVideo={this.addVideo}
-            addText={this.addText}
-            addAudio={this.addAudio}
-            addStick={this.addStick}
-            addDocument={this.addDocument}
-            drawLine={this.drawLine}
-            eraseLine={this.eraseLine}
-            stopDrawing={this.stopDrawing}
-            handleImage={this.handleImage}
-            handleVideo={this.handleVideo}
-            handleAudio={this.handleAudio}
-            handleDocument={this.handleDocument}
-            />
+            <div>
+              <div className={"info" + this.state.open}>
+                <div id="infostage">
+
+                <Stage width={1500} height={600}
+                  ref="graphicStage1"
+                  onClick={this.handleStageClickInfo}
+                  draggabble
+                  onMouseMove={this.handleMouseOverInfo}
+                  onMouseDown={this.onMouseDownInfo}
+                  onMouseUp={this.handleMouseUpInfo}
+                >
+                  <Layer ref="layer3">
+                    {this.state.rectangles.map(eachRect => {
+                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel)
+                        return (
+                          <Rect
+                          visible={eachRect.visible}
+                          rotation={eachRect.rotation}
+                          ref={eachRect.ref}
+                          fill={eachRect.fill}
+                          fillPatternImage={eachRect.fillPatternImage}
+                          fillPatternOffset={eachRect.fillPatternOffset}
+                          image={eachRect.image}
+                          opacity={eachRect.opacity}
+                          id={eachRect.id}
+                          name="shape"
+                          x={eachRect.x}
+                          y={eachRect.y}
+                          width={eachRect.width}
+                          height={eachRect.height}
+                          stroke={eachRect.stroke}
+                          strokeWidth={eachRect.strokeWidth}
+                          strokeScaleEnabled={false}
+                          draggable
+                            onClick={() => {
+                              var that = this;
+                              if (eachRect.link !== undefined && eachRect.link !== "") {
+                                this.setState(
+                                  {
+                                    errMsg: "Links will not be opened in create mode"
+                                  },
+                                  () => {
+                                    setTimeout(function() {
+                                      that.setState({
+                                        errMsg: ""
+                                      });
+                                    }, 1000);
+                                  }
+                                );
+                              }
+                            }}
+                            onTransformStart={() => {
+                              this.setState({
+                                isTransforming: true
+                              });
+                              let rect = this.refs[eachRect.ref];
+                              rect.setAttr("lastRotation", rect.rotation());
+                            }}
+                            onTransform={() => {
+                              let rect = this.refs[eachRect.ref];
+
+                              if (rect.attrs.lastRotation !== rect.rotation()) {
+                                this.state.arrows.map(eachArrow => {
+                                  if (
+                                    eachArrow.to &&
+                                    eachArrow.to.name() === rect.name()
+                                  ) {
+                                    this.setState({
+                                      errMsg:
+                                        "Rotating rects with connectors might skew things up!"
+                                    });
+                                  }
+                                  if (
+                                    eachArrow.from &&
+                                    eachArrow.from.name() === rect.name()
+                                  ) {
+                                    this.setState({
+                                      errMsg:
+                                        "Rotating rects with connectors might skew things up!"
+                                    });
+                                  }
+                                });
+                              }
+
+                              rect.setAttr("lastRotation", rect.rotation());
+                            }}
+                            onTransformEnd={() => {
+                              this.setState({
+                                isTransforming: false
+                              });
+
+                              let rect = this.refs[eachRect.ref];
+
+                              this.setState(
+                                prevState => ({
+                                  errMsg: "",
+                                  rectangles: prevState.rectangles.map(eachRect =>
+                                    eachRect.id === rect.attrs.id
+                                      ? {
+                                          ...eachRect,
+                                          width: rect.width() * rect.scaleX(),
+                                          height: rect.height() * rect.scaleY(),
+                                          rotation: rect.rotation(),
+                                          x: rect.x(),
+                                          y: rect.y(),
+
+                                        }
+                                      : eachRect
+                                  )
+                                }),
+                                () => {
+                                  this.forceUpdate();
+                                }
+                              );
+
+                              rect.setAttr("scaleX", 1);
+                              rect.setAttr("scaleY", 1);
+                            }}
+
+                            onDragMove={() => {
+                              this.state.arrows.map(eachArrow => {
+                                if (eachArrow.from !== undefined) {
+                                  if (eachRect.name === eachArrow.from.attrs.name) {
+                                    eachArrow.points = [
+                                      eachRect.x,
+                                      eachRect.y,
+                                      eachArrow.points[2],
+                                      eachArrow.points[3]
+                                    ];
+                                    this.forceUpdate();
+                                  }
+                                }
+
+                                if (eachArrow.to !== undefined) {
+                                  if (eachRect.name === eachArrow.to.attrs.name) {
+                                    eachArrow.points = [
+                                      eachArrow.points[0],
+                                      eachArrow.points[1],
+                                      eachRect.x,
+                                      eachRect.y
+                                    ];
+                                    this.forceUpdate();
+                                  }
+                                }
+                              });
+                            }}
+                            onDragEnd={event => {
+                              //cannot compare by name because currentSelected might not be the same
+                              //have to use ref, which appears to be overcomplicated
+                              var shape = this.refs[eachRect.ref];
+                              /*    this.state.rectangles.map(eachRect => {
+                                  if (eachRect.name === shape.attrs.name) {
+                                    shape.position({
+                                      x: event.target.x(),
+                                      y: event.target.y()
+                                    });
+                                  }
+                                });*/
+
+                              this.setState(prevState => ({
+                                rectangles: prevState.rectangles.map(eachRect =>
+                                  eachRect.id === shape.attrs.id
+                                    ? {
+                                        ...eachRect,
+                                        x: event.target.x(),
+                                        y: event.target.y(),
+                                      }
+                                    : eachRect
+                                )
+                              }));
+                            }}
+                            onContextMenu={e => {
+
+                              e.evt.preventDefault(true);
+                              const mousePosition = this.refs.graphicStage1.getPointerPosition();
+
+                              this.setState({
+                                selectedContextMenu: {
+                                  type: "START",
+                                  position: mousePosition
+                                }
+                              });
+                            }
+                            }
+
+                          />
+                        );
+                      })}
+                      {this.state.selectedContextMenu && (
+                        <Portal>
+                      <ContextMenu
+                        {...this.state.selectedContextMenu}
+                        selectedshape={this.state.selectedShapeName}
+                        onOptionSelected={this.handleOptionSelected}
+                        choosecolors={this.handleColorS}
+                        choosecolorf={this.handleColorF}
+                        handleWidth={this.handleWidth}
+                        handleOpacity={this.handleOpacity}
+                        close={this.handleClose}
+                        copy={this.handleCopy}
+                        cut={this.handleCut}
+                        paste={this.handlePaste}
+                        delete={this.handleDelete}
+                      />
+                      </Portal>
+                    )}
+
+                      {this.state.ellipses.map(eachEllipse => {
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        return (
+                        <Ellipse
+                          visible={eachEllipse.visible}
+                          ref={eachEllipse.ref}
+                          name="shape"
+                          id={eachEllipse.id}
+                          x={eachEllipse.x}
+                          y={eachEllipse.y}
+                          opacity={eachEllipse.opacity}
+                          rotation={eachEllipse.rotation}
+                          radiusX={eachEllipse.radiusX}
+                          radiusY={eachEllipse.radiusY}
+                          fill={eachEllipse.fill}
+                          stroke={eachEllipse.stroke}
+                          strokeWidth={eachEllipse.strokeWidth}
+                          strokeScaleEnabled={false}
+                          onClick={() => {
+                            var that = this;
+                            if (
+                              eachEllipse.link !== undefined &&
+                              eachEllipse.link !== ""
+                            ) {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({ isTransforming: true });
+                            let ellipse = this.refs[eachEllipse.ref];
+                            ellipse.setAttr("lastRotation", ellipse.rotation());
+                          }}
+                          onTransform={() => {
+                            let ellipse = this.refs[eachEllipse.ref];
+
+                            if (ellipse.attrs.lastRotation !== ellipse.rotation()) {
+                              this.state.arrows.map(eachArrow => {
+                                if (
+                                  eachArrow.to &&
+                                  eachArrow.to.name() === ellipse.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating ellipses with connectors might skew things up!"
+                                  });
+                                }
+                                if (
+                                  eachArrow.from &&
+                                  eachArrow.from.name() === ellipse.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating ellipses with connectors might skew things up!"
+                                  });
+                                }
+                              });
+                            }
+
+                            ellipse.setAttr("lastRotation", ellipse.rotation());
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({ isTransforming: false });
+                            let ellipse = this.refs[eachEllipse.ref];
+                            let scaleX = ellipse.scaleX(),
+                              scaleY = ellipse.scaleY();
+
+                            this.setState(prevState => ({
+                              errMsg: "",
+                              ellipses: prevState.ellipses.map(eachEllipse =>
+                                eachEllipse.id === ellipse.attrs.id
+                                  ? {
+                                      ...eachEllipse,
+
+                                      radiusX: ellipse.radiusX() * ellipse.scaleX(),
+                                      radiusY: ellipse.radiusY() * ellipse.scaleY(),
+                                      rotation: ellipse.rotation(),
+                                      x: ellipse.x(),
+                                      y: ellipse.y()
+                                    }
+                                  : eachEllipse
+                              )
+                            }));
+
+                            ellipse.setAttr("scaleX", 1);
+                            ellipse.setAttr("scaleY", 1);
+                            this.forceUpdate();
+                          }}
+                          draggable
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                console.log("prevArrow: ", eachArrow.points);
+                                if (eachEllipse.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachEllipse.x,
+                                    eachEllipse.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+
+                                  this.refs.graphicStage.draw();
+                                }
+                                console.log("new arrows:", eachArrow.points);
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachEllipse.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachEllipse.x,
+                                    eachEllipse.y
+                                  ];
+                                  this.forceUpdate();
+                                  this.refs.graphicStage.draw();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachEllipse.ref];
+
+                            this.setState(prevState => ({
+                              ellipses: prevState.ellipses.map(eachEllipse =>
+                                eachEllipse.id === shape.attrs.id
+                                  ? {
+                                      ...eachEllipse,
+                                      x: event.target.x(),
+                                      y: event.target.y()
+                                    }
+                                  : eachEllipse
+                              )
+                            }));
+
+                            this.refs.graphicStage.draw();
+                          }}
+                          onContextMenu={e => {
+
+                            e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+                        />
+                      );
+                    })}
+                      {this.state.lines.map((eachLine, i) => {
+                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel)
+                        return(
+                          <Line
+                            id={eachLine.id}
+                            level={eachLine.level}
+                            key={i}
+                            points={eachLine.points}
+                            stroke={eachLine.color}
+                            strokeWidth={5}
+                            tension={0.5}
+                            lineCap="round"
+                            globalCompositeOperation={
+                              eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
+                            }
+                            draggable
+                            onContextMenu={e => {
+
+                              e.evt.preventDefault(true);
+                              const mousePosition = e.target.getStage().getPointerPosition();
+
+                              this.setState({
+                                selectedContextMenu: {
+                                  type: "START",
+                                  position: mousePosition
+                                }
+                              });
+                            }
+                            }
+                          />
+                      );
+                      })}
+
+                      {this.state.images.map(eachImage => {
+                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel)
+                        return (
+                        <URLImage
+                          visible={eachImage.visible}
+                          src={eachImage.imgsrc}
+                          image={eachImage.imgsrc}
+                          ref={eachImage.ref}
+                          name="shape"
+                          id={eachImage.id}
+                          layer={this.refs.layer2}
+                          x={eachImage.x}
+                          y={eachImage.y}
+                          width={eachImage.width}
+                          height={eachImage.height}
+                          stroke={eachImage.stroke}
+                          strokeWidth={eachImage.strokeWidth}
+                          rotation={eachImage.rotation}
+                          opacity={eachImage.opacity}
+                          onClick={() => {
+                            var that = this;
+                            if (eachImage.link !== undefined && eachImage.link !== "") {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({
+                              isTransforming: true
+                            });
+
+                          }}
+                          onTransform={() => {
+
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({
+                              isTransforming: false
+                            });
+                            let triangle = this.refs[eachImage.ref];
+
+                        }}
+
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachImage.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachImage.x,
+                                    eachImage.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachImage.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachImage.x,
+                                    eachImage.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachImage.ref];
+                            /*    this.state.rectangles.map(eachRect => {
+                                if (eachRect.name === shape.attrs.name) {
+                                  shape.position({
+                                    x: event.target.x(),
+                                    y: event.target.y()
+                                  });
+                                }
+                              });*/
+                              console.log(this.refs)
+
+                            this.setState(prevState => ({
+                              images: prevState.images.map(eachRect =>
+                                eachRect.id === shape.props.id
+                                  ? {
+                                      ...eachRect,
+                                      x: event.target.x(),
+                                      y: event.target.y(),
+                                    }
+                                  : eachRect
+                              )
+                            }));
+
+                          }}
+                          onContextMenu={e => {
+
+                            e.evt.preventDefault(true);
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+
+                        />
+                    );
+                    })}
+                      {this.state.videos.map(eachVideo => {
+                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel)
+                        return (
+                        <URLvideo
+                          visible={eachVideo.visible}
+                          src={eachVideo.vidsrc}
+                          image={eachVideo.vidsrc}
+                          ref={eachVideo.ref}
+                          id={eachVideo.id}
+                          name="shape"
+                          layer={this.refs.layer2}
+                          x={eachVideo.x}
+                          y={eachVideo.y}
+                          width={eachVideo.width}
+                          height={eachVideo.height}
+                          stroke={eachVideo.stroke}
+                          strokeWidth={eachVideo.strokeWidth}
+                          rotation={eachVideo.rotation}
+                          opacity={eachVideo.opacity}
+                          onClick={() => {
+                            var that = this;
+                            if (eachVideo.link !== undefined && eachVideo.link !== "") {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({
+                              isTransforming: true
+                            });
+
+                          }}
+                          onTransform={() => {
+
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({
+                              isTransforming: false
+                            });
+                            let triangle = this.refs[eachVideo.ref];
+
+                        }}
+
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachVideo.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachVideo.x,
+                                    eachVideo.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachVideo.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachVideo.x,
+                                    eachVideo.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+                            console.log(this.state.videos)
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachVideo.ref];
+                            this.setState(prevState => ({
+                              videos: prevState.videos.map(eachRect =>
+                                eachRect.id === this.state.currentSelected
+                                  ? {
+                                      ...eachRect,
+                                      x: event.target.x(),
+                                      y: event.target.y(),
+                                    }
+                                  : eachRect
+                              )
+                            }));
+                          }}
+                          onContextMenu={e => {
+
+                            e.evt.preventDefault(true);
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+
+                        />
+                    );
+                    })}
+                      {this.state.audios.map(eachAudio => {
+                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel)
+                        return (
+                        <URLvideo
+                          visible={eachAudio.visible}
+                          fillPatternImage={true}
+                          src={eachAudio.audsrc}
+                          image={eachAudio.imgsrc}
+                          ref={eachAudio.ref}
+                          id={eachAudio.id}
+                          name="shape"
+                          layer={this.refs.layer2}
+                          x={eachAudio.x}
+                          y={eachAudio.y}
+                          width={eachAudio.width}
+                          height={eachAudio.height}
+                          stroke={eachAudio.stroke}
+                          strokeWidth={eachAudio.strokeWidth}
+                          rotation={eachAudio.rotation}
+                          opacity={eachAudio.opacity}
+                          onClick={() => {
+
+                            var that = this;
+                            if (eachAudio.link !== undefined && eachAudio.link !== "") {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({
+                              isTransforming: true
+                            });
+
+                          }}
+                          onTransform={() => {
+
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({
+                              isTransforming: false
+                            });
+                            let triangle = this.refs[eachAudio.ref];
+
+                        }}
+
+                          onDragMove={() => {
+
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachAudio.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachAudio.x,
+                                    eachAudio.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachAudio.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachAudio.x,
+                                    eachAudio.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachAudio.ref];
 
 
+
+                            this.setState(prevState => ({
+                              videos: prevState.videos.map(eachRect =>
+                                eachRect.id === this.state.currentSelected
+                                  ? {
+                                      ...eachRect,
+                                      x: event.target.x(),
+                                      y: event.target.y(),
+                                    }
+                                  : eachRect
+                              )
+                            }));
+                          }}
+                          onContextMenu={e => {
+
+                            e.evt.preventDefault(true);
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+
+                        />
+                    );
+                    })}
+                      {this.state.documents.map(eachDoc => {
+                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel)
+                        return (
+                        <Rect
+                          rotation={eachDoc.rotation}
+                          ref={eachDoc.ref}
+                          fill={eachDoc.fill}
+                          fillPatternImage={this.state.docimage}
+                          fillPatternOffset={eachDoc.fillPatternOffset}
+                          fillPatternScaleY={0.2}
+                          fillPatternScaleX={0.2}
+                          image={eachDoc.image}
+                          opacity={eachDoc.opacity}
+                          id={eachDoc.id}
+                          name="shape"
+                          x={eachDoc.x}
+                          y={eachDoc.y}
+                          width={eachDoc.width}
+                          height={eachDoc.height}
+                          stroke={eachDoc.stroke}
+                          strokeWidth={eachDoc.strokeWidth}
+                          onClick={() => {
+                            console.log(this.state.docsrc)
+                            fetch(this.state.docsrc, {
+                                method: 'GET',
+                                headers: {
+                                  'Content-Type': 'application/pdf',
+                                },
+                              })
+                              .then((response) => response.blob())
+                              .then((blob) => {
+                                console.log(blob)
+
+                                // Create blob link to download
+                                const url = window.URL.createObjectURL(
+                                  new Blob([blob]),
+                                );
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.setAttribute(
+                                  'download',
+                                  this.state.docsrc,
+                                );
+
+                                // Append to html link element page
+                                document.body.appendChild(link);
+
+                                // Start download
+                                link.click();
+
+                                // Clean up and remove the link
+                                link.parentNode.removeChild(link);
+                              });
+                            }}
+                          onTransformStart={() => {
+                            this.setState({
+                              isTransforming: true
+                            });
+
+                          }}
+                          onTransform={() => {
+
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({
+                              isTransforming: false
+                            });
+                            let triangle = this.refs[eachDoc.ref];
+
+                        }}
+                        draggable
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachDoc.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachDoc.x,
+                                    eachDoc.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachDoc.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachDoc.x,
+                                    eachDoc.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachDoc.ref];
+                            /*    this.state.rectangles.map(eachRect => {
+                                if (eachRect.name === shape.attrs.name) {
+                                  shape.position({
+                                    x: event.target.x(),
+                                    y: event.target.y()
+                                  });
+                                }
+                              });*/
+
+
+                            this.setState(prevState => ({
+                              documents: prevState.documents.map(eachRect =>
+                                eachRect.id === this.state.currentSelected
+                                  ? {
+                                      ...eachRect,
+                                      x: event.target.x(),
+                                      y: event.target.y(),
+                                    }
+                                  : eachRect
+                              )
+                            }));
+                          }}
+                          onContextMenu={e => {
+
+                            e.evt.preventDefault(true);
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+
+                        />
+                    );
+                    })}
+                      {this.state.triangles.map(eachEllipse => {
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        return (
+                        <RegularPolygon
+                          visible={eachEllipse.visible}
+                          ref={eachEllipse.ref}
+                          id={eachEllipse.id}
+                          name="shape"
+                          x={eachEllipse.x}
+                          y={eachEllipse.y}
+                          opacity={eachEllipse.opacity}
+                          rotation={eachEllipse.rotation}
+                          height={eachEllipse.height}
+                          sides={eachEllipse.sides}
+                          radius={eachEllipse.radius}
+                          fill={eachEllipse.fill}
+                          stroke={eachEllipse.stroke}
+                          strokeWidth={eachEllipse.strokeWidth}
+                          strokeScaleEnabled={false}
+                          onClick={() => {
+                            var that = this;
+                            if (
+                              eachEllipse.link !== undefined &&
+                              eachEllipse.link !== ""
+                            ) {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({ isTransforming: true });
+                            let triangle = this.refs[eachEllipse.ref];
+                            triangle.setAttr("lastRotation", triangle.rotation());
+                          }}
+                          onTransform={() => {
+                            let triangle = this.refs[eachEllipse.ref];
+
+                            if (triangle.attrs.lastRotation !== triangle.rotation()) {
+                              this.state.arrows.map(eachArrow => {
+                                if (
+                                  eachArrow.to &&
+                                  eachArrow.to.name() === triangle.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating ellipses with connectors might skew things up!"
+                                  });
+                                }
+                                if (
+                                  eachArrow.from &&
+                                  eachArrow.from.name() === triangle.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating ellipses with connectors might skew things up!"
+                                  });
+                                }
+                              });
+                            }
+
+                            triangle.setAttr("lastRotation", triangle.rotation());
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({ isTransforming: false });
+                            let triangle = this.refs[eachEllipse.ref];
+                            let scaleX = triangle.scaleX(),
+                                scaleY = triangle.scaleY();
+
+                            this.setState(prevState => ({
+                              errMsg: "",
+                              triangles: prevState.triangles.map(eachEllipse =>
+                                eachEllipse.id === triangle.attrs.id
+                                  ? {
+                                      ...eachEllipse,
+
+                                      width: triangle.width() * triangle.scaleX(),
+                                      height: triangle.height() * triangle.scaleY(),
+                                      rotation: triangle.rotation(),
+                                      x: triangle.x(),
+                                      y: triangle.y()
+                                    }
+                                  : eachEllipse
+                              )
+                            }));
+
+                            triangle.setAttr("scaleX", 1);
+                            triangle.setAttr("scaleY", 1);
+                            this.forceUpdate();
+                          }}
+                          draggable
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                console.log("prevArrow: ", eachArrow.points);
+                                if (eachEllipse.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachEllipse.x,
+                                    eachEllipse.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                  this.refs.graphicStage.draw();
+                                }
+                                console.log("new arrows:", eachArrow.points);
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachEllipse.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachEllipse.x,
+                                    eachEllipse.y
+                                  ];
+                                  this.forceUpdate();
+                                  this.refs.graphicStage.draw();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachEllipse.ref];
+
+                            this.setState(prevState => ({
+                              triangles: prevState.triangles.map(eachEllipse =>
+                                eachEllipse.id === shape.attrs.id
+                                  ? {
+                                      ...eachEllipse,
+                                      x: event.target.x(),
+                                      y: event.target.y()
+                                    }
+                                  : eachEllipse
+                              )
+                            }));
+
+                            this.refs.graphicStage.draw();
+                          }}
+                          onContextMenu={e => {
+                            e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+                        />
+                    );
+                    })}
+                      {this.state.stars.map(eachStar => {
+                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel)
+                        return (
+                        <Star
+                          visible={eachStar.visible}
+                          ref={eachStar.ref}
+                          id={eachStar.id}
+                          name="shape"
+                          x={eachStar.x}
+                          y={eachStar.y}
+                          innerRadius={eachStar.innerRadius}
+                          outerRadius={eachStar.outerRadius}
+                          numPoints={eachStar.numPoints}
+                          stroke={eachStar.stroke}
+                          strokeWidth={eachStar.strokeWidth}
+                          fill={eachStar.fill}
+                          opacity={eachStar.opacity}
+                          strokeScaleEnabled={false}
+                          rotation={eachStar.rotation}
+                          onClick={() => {
+                            var that = this;
+                            if (eachStar.link !== undefined && eachStar.link !== "") {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+                            }
+                          }}
+                          onTransformStart={() => {
+                            this.setState({ isTransforming: true });
+                          }}
+                          onTransformEnd={() => {
+                            this.setState({ isTransforming: false });
+                            let star = this.refs[eachStar.ref];
+                            let scaleX = star.scaleX(),
+                              scaleY = star.scaleY();
+
+                            this.setState(prevState => ({
+                              stars: prevState.stars.map(eachStar =>
+                                eachStar.id === star.attrs.id
+                                  ? {
+                                      ...eachStar,
+                                      innerRadius: star.innerRadius() * star.scaleX(),
+                                      outerRadius: star.outerRadius() * star.scaleX(),
+                                      rotation: star.rotation(),
+                                      x: star.x(),
+                                      y: star.y()
+                                    }
+                                  : eachStar
+                              )
+                            }));
+                            star.setAttr("scaleX", 1);
+                            star.setAttr("scaleY", 1);
+                            this.forceUpdate();
+                          }}
+                          draggable
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachStar.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachStar.x,
+                                    eachStar.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachStar.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachStar.x,
+                                    eachStar.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachStar.ref];
+
+                            this.setState(prevState => ({
+                              stars: prevState.stars.map(eachStar =>
+                                eachStar.id === shape.attrs.id
+                                  ? {
+                                      ...eachStar,
+                                      x: event.target.x(),
+                                      y: event.target.y()
+                                    }
+                                  : eachStar
+                              )
+                            }));
+                          }}
+                          onContextMenu={e => {
+                            e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenu: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+                        />
+                    );
+                    })}
+
+                      {this.state.texts.map(eachText => {
+                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel)
+                        return (
+                        //perhaps this.state.texts only need to contain refs?
+                        //so that we only need to store the refs to get more information
+                        <Text
+                          visible={eachText.visible}
+                          textDecoration={eachText.link ? "underline" : ""}
+                          onTransformStart={() => {
+                            var currentText = this.refs[this.state.selectedShapeName];
+                            currentText.setAttr("lastRotation", currentText.rotation());
+                          }}
+                          onTransform={() => {
+                            var currentText = this.refs[this.state.selectedShapeName];
+
+                            currentText.setAttr(
+                              "width",
+                              currentText.width() * currentText.scaleX()
+                            );
+                            currentText.setAttr("scaleX", 1);
+
+                            currentText.draw();
+
+                            if (
+                              currentText.attrs.lastRotation !== currentText.rotation()
+                            ) {
+                              this.state.arrows.map(eachArrow => {
+                                if (
+                                  eachArrow.to &&
+                                  eachArrow.to.name() === currentText.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating texts with connectors might skew things up!"
+                                  });
+                                }
+                                if (
+                                  eachArrow.from &&
+                                  eachArrow.from.name() === currentText.name()
+                                ) {
+                                  this.setState({
+                                    errMsg:
+                                      "Rotating texts with connectors might skew things up!"
+                                  });
+                                }
+                              });
+                            }
+
+                            currentText.setAttr("lastRotation", currentText.rotation());
+                          }}
+                          onTransformEnd={() => {
+                            var currentText = this.refs[this.state.selectedShapeName];
+
+                            this.setState(prevState => ({
+                              errMsg: "",
+                              texts: prevState.texts.map(eachText =>
+                                eachText.id === this.state.selectedShapeName
+                                  ? {
+                                      ...eachText,
+                                      width: currentText.width(),
+                                      rotation: currentText.rotation(),
+                                      textWidth: currentText.textWidth,
+                                      textHeight: currentText.textHeight,
+                                      x: currentText.x(),
+                                      y: currentText.y()
+                                    }
+                                  : eachText
+                              )
+                            }));
+                            currentText.setAttr("scaleX", 1);
+                            currentText.draw();
+                          }}
+                          link={eachText.link}
+                          width={eachText.width}
+                          fill={eachText.fill}
+                          opacity={eachText.opacity}
+                          id={eachText.id}
+                          name="shape"
+                          ref={eachText.ref}
+                          rotation={eachText.rotation}
+                          fontFamily={eachText.fontFamily}
+                          fontSize={eachText.fontSize}
+                          x={eachText.x}
+                          y={eachText.y}
+                          text={eachText.text}
+                          draggable
+                          onDragMove={() => {
+                            this.state.arrows.map(eachArrow => {
+                              if (eachArrow.from !== undefined) {
+                                if (eachText.name === eachArrow.from.attrs.name) {
+                                  eachArrow.points = [
+                                    eachText.x,
+                                    eachText.y,
+                                    eachArrow.points[2],
+                                    eachArrow.points[3]
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+
+                              if (eachArrow.to !== undefined) {
+                                if (eachText.name === eachArrow.to.attrs.name) {
+                                  eachArrow.points = [
+                                    eachArrow.points[0],
+                                    eachArrow.points[1],
+                                    eachText.x,
+                                    eachText.y
+                                  ];
+                                  this.forceUpdate();
+                                }
+                              }
+                            });
+                          }}
+                          onDragEnd={event => {
+                            //cannot compare by name because currentSelected might not be the same
+                            //have to use ref, which appears to be overcomplicated
+                            var shape = this.refs[eachText.ref];
+
+                            this.setState(prevState => ({
+                              texts: prevState.texts.map(eachtext =>
+                                eachtext.id === shape.attrs.id
+                                  ? {
+                                      ...eachtext,
+                                      x: event.target.x(),
+                                      y: event.target.y()
+                                    }
+                                  : eachtext
+                              )
+                            }));
+                          }}
+                          onClick={() => {
+                            var that = this;
+                            if (eachText.link !== undefined && eachText.link !== "") {
+                              this.setState(
+                                {
+                                  errMsg: "Links will not be opened in create mode"
+                                },
+                                () => {
+                                  setTimeout(function() {
+                                    that.setState({
+                                      errMsg: ""
+                                    });
+                                  }, 1000);
+                                }
+                              );
+
+                              //var win = window.open(eachText.link, "_blank");
+                              //win.focus();
+                            }
+                          }}
+                          onDblClick={() => {
+                            // turn into textarea
+                            var stage = this.refs.graphicStage;
+                            let text = this.refs[eachText.ref];
+                            console.log(text)
+
+
+                            this.setState({
+                              textX: text.absolutePosition().x,
+                              textY: text.absolutePosition().y,
+                              textEditVisible: !this.state.textEditVisible,
+                              text: eachText.text,
+                              textNode: eachText,
+                              currentTextRef: eachText.ref,
+                              textareaWidth: text.textWidth,
+                              textareaHeight: text.textHeight,
+                              textareaFill: text.attrs.fill,
+                              textareaFontFamily: text.attrs.fontFamily,
+                              textareaFontSize: text.attrs.fontSize
+                            });
+                            let textarea = this.refs.textarea;
+                            textarea.focus();
+                            text.hide();
+                            var transformer = stage.findOne(".transformer");
+                            transformer.hide();
+                            this.refs.layer2.draw();
+                          }}
+                          onContextMenu={e => {
+                            e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                            const mousePosition = e.target.getStage().getPointerPosition();
+
+                            this.setState({
+                              selectedContextMenuText: {
+                                type: "START",
+                                position: mousePosition
+                              }
+                            });
+                          }
+                          }
+                      />
+                    );
+                    })}
+                    {this.state.selectedContextMenuText && (
+                      <Portal>
+                    <ContextMenuText
+                      {...this.state.selectedContextMenuText}
+                      selectedshape={this.state.selectedShapeName}
+                      onOptionSelected={this.handleOptionSelected}
+                      choosecolorf={this.handleColorF}
+                      handleFont={this.handleFont}
+                      handleSize={this.handleSize}
+                      handleOpacity={this.handleOpacity}
+                      close={this.handleClose}
+                      copy={this.handleCopy}
+                      cut={this.handleCut}
+                      paste={this.handlePaste}
+                      delete={this.handleDelete}
+                    />
+                    </Portal>
+                  )}
+                      {this.state.arrows.map(eachArrow => {
+                        if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === true && eachArrow.rolelevel === this.state.rolelevel) {
+                          return (
+                            <Arrow
+                              visible={eachArrow.visible}
+                              ref={eachArrow.ref}
+                              id={eachArrow.id}
+                              name="shape"
+                              points={[
+                                eachArrow.points[0],
+                                eachArrow.points[1],
+                                eachArrow.points[2],
+                                eachArrow.points[3]
+                              ]}
+                              stroke={eachArrow.stroke}
+                              fill={eachArrow.fill}
+                              draggable
+                              onDragEnd={event => {
+                                //set new points to current position
+
+                                //usually: state => star => x & y
+                                //now: state => arrow => attr => x & y
+
+                                let oldPoints = [
+                                  eachArrow.points[0],
+                                  eachArrow.points[1],
+                                  eachArrow.points[2],
+                                  eachArrow.points[3]
+                                ];
+
+                                let shiftX = this.refs[eachArrow.ref].attrs.x;
+                                let shiftY = this.refs[eachArrow.ref].attrs.y;
+
+                                let newPoints = [
+                                  oldPoints[0] + shiftX,
+                                  oldPoints[1] + shiftY,
+                                  oldPoints[2] + shiftX,
+                                  oldPoints[3] + shiftY
+                                ];
+
+                                this.refs[eachArrow.ref].position({ x: 0, y: 0 });
+                                this.refs.layer2.draw();
+
+                                this.setState(prevState => ({
+                                  arrows: prevState.arrows.map(eachArr =>
+                                    eachArr.name === eachArrow.name
+                                      ? {
+                                          ...eachArr,
+                                          points: newPoints
+                                        }
+                                      : eachArr
+                                  )
+                                }));
+                              }}
+                            />
+                          );
+                        } else if (
+                          eachArrow.name === this.state.newArrowRef &&
+                          (eachArrow.from || eachArrow.to)
+                        ) {
+                          return (
+                            <Connector
+                              id={eachArrow.id}
+                              name="shape"
+                              from={eachArrow.from}
+                              to={eachArrow.to}
+                              arrowEndX={this.state.arrowEndX}
+                              arrowEndY={this.state.arrowEndY}
+                              current={true}
+                              stroke={eachArrow.stroke}
+                              fill={eachArrow.fill}
+                            />
+                          );
+                        } else if (eachArrow.from || eachArrow.to) {
+                          //if arrow construction is completed
+                          return (
+                            <Connector
+                              id={eachArrow.id}
+                              name="shape"
+                              from={eachArrow.from}
+                              to={eachArrow.to}
+                              points={eachArrow.points}
+                              current={false}
+                              stroke={eachArrow.stroke}
+                              fill={eachArrow.fill}
+                            />
+                          );
+                        }
+                      })}
+                      <TransformerComponent
+                          selectedShapeName={this.state.selectedShapeName}
+                          ref="trRef1"
+
+                          boundBoxFunc={(oldBox, newBox) => {
+                              // limit resize
+                              if (newBox.width < 5 || newBox.height < 5) {
+                                return oldBox;
+                              }
+                              return newBox;
+                            }}
+                        />
+                      <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef1" />
+
+                  </Layer>
+                </Stage>
+                </div>
+                {(this.state.open !== 1)
+                  ? <button onClick={() => this.setState({open: 1})}><i class="fas fa-caret-square-up fa-3x"></i></button>
+                  : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
+                }
+                <p id="rolesdrop">
+                  <Dropdownroles
+                    roleLevel={this.handleRoleLevel}
+                    gameroles={this.state.gameroles}
+                    gameid={this.state.gameinstanceid}
+                  />
+                </p>
+                  <b>
+
+                  </b>
+                </div>
+                {(1 === 1 )
+                  ? <div id={"pencili" + this.state.open}>
+                      <Pencil
+                      editMode={this.editMode}
+                      editModeToggle={true}
+                      id="1"
+                      psize="2"
+                      type="main"
+                      title="Edit Personal Space"
+                      addRectangle={this.addRectangle}
+                      addCircle={this.addCircle}
+                      addStar={this.addStar}
+                      addTriangle={this.addTriangle}
+                      addImage={this.addImage}
+                      addVideo={this.addVideo}
+                      addText={this.addText}
+                      addAudio={this.addAudio}
+                      addStick={this.addStick}
+                      addDocument={this.addDocument}
+                      drawLine={this.drawLine}
+                      eraseLine={this.eraseLine}
+                      stopDrawing={this.stopDrawing}
+                      handleImage={this.handleImage}
+                      handleVideo={this.handleVideo}
+                      handleAudio={this.handleAudio}
+                      handleDocument={this.handleDocument}
+                      choosecolor={this.chooseColor}
+                      />
+                    </div>
+                  : ""
+                  }
+              </div>
             <Pencil
+              editMode={this.editModeOff}
+              editModeToggle={false}
               id="2"
               psize="3"
               type="main"
@@ -4457,7 +5896,6 @@ class Graphics extends Component {
               handleAudio={this.handleAudio}
               handleDocument={this.handleDocument}
               choosecolor={this.chooseColor}
-
               />
             <Pencil
               id="3"
@@ -4478,7 +5916,6 @@ class Graphics extends Component {
               svisible={this.handleSvisible}
               pevisible={this.handlePevisible}/>
               />
-
               <Link to="/dashboard">
                 <i id="editpagex" class="fas fa-times fa-3x"></i>
               </Link>
@@ -4487,8 +5924,4 @@ class Graphics extends Component {
     );
   }
 }
-const mapStateToProps = state => ({
-  auth: state.auth
-});
-
 export default Graphics;

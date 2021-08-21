@@ -1,8 +1,6 @@
 import React, {useState} from 'react'
 import ReactDom from 'react-dom'
 import Button from "../Buttons/Button"
-import { nanoid } from "nanoid";
-import data from "../Table/mock-data.json";
 import "../CsvModal/CsvModal.css";
 import Papa from 'papaparse';
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Level from "../components/Level/Level";
-import Info from "../components/Information/InformationPopup";
-import Sidebar from "../components/SideBar/Sidebar";
-import Header from "../components/SideBar/Header";
+import CanvasGame from "../components/Stage/CanvasGame";
 import styled from "styled-components"
+import Sidebar from "../components/SideBar/Sidebar";
 import axios from "axios";
-import { withAuth0, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
+
+import { Container, Row, Col } from "react-bootstrap";
 
 
 const Grid = styled.div`
@@ -34,73 +34,39 @@ const GridMain = styled.main`
 
 
 
+
 function Game(props){
-      const [showNav, setShowNav] = useState(false);
-      const [number, setNumber] = useState(6)
-      const [value, setValue] = React.useState(
-      localStorage.getItem('adminid') || ''
-      );
-      const { user } = useAuth0();
-      const [gamedata, getGamedata] = useState([]);
-      const [login, setLogin] = useState([]);
+  const [showNav, setShowNav] = useState(false);
+  const toggle = () => setShowNav(!showNav)
+  console.log(props.location.img)
 
-      useEffect(() => {
-         getAllGamedata();
-       }, []);
-
-      const getAllGamedata = () => {
-        axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name', {
-          params: {
-                email: user.email,
-                name: user.name
-            }
-        })
-        .then((res) => {
-          const allData = res.data;
-          console.log(allData);
-          setLogin(allData.adminid);
-          localStorage.setItem('adminid', allData.adminid)
-          console.log(localStorage)
-        })
-        .catch(error => console.log(error.response));
-        axios.get('http://localhost:5000/gameinstances/getGameInstances/',
-        {
-          params: {
-                id: value
-            }
-        })
-        .then((res) => {
-        const allData = res.data;
-        console.log(allData);
-        getGamedata(allData);
-        })
-        .catch(error => console.log(error.response));
+      if(props.location.img){
+        localStorage.setItem('gameinstance', props.location.gameinstance)
+        localStorage.setItem('adminid', props.location.adminid)
+        localStorage.setItem('simimg', props.location.img)
+        localStorage.setItem('simtitle', props.location.title)
       }
-      const toggle = () => setShowNav(!showNav)
-      console.log(props.img)
+      console.log(localStorage.simimg);
+
+
       return (
         <div className="editpage">
-        <Grid>
-          <GridNav>
-              <Sidebar class="grid-sidebar" visible={showNav} close={toggle}/>
-          </GridNav>
-          <GridHeader>
-              <Header class="header" toggle={toggle} />
-          </GridHeader>
-          <GridMain>
-            {gamedata.map((noteItem, index) => {
-
-          return (
-            <img src={noteItem.gameinstance_photo_path}/>
-          );
-    })}
-            <Level number={number}/>
-            <Info
-              stuff=""
-              editmode="0"
-              />
-          </GridMain>
-        </Grid>
+          <Container>
+            <Grid>
+              <GridNav>
+                  <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
+                    img={localStorage.simimg}
+                    title={props.location.gameinstance}
+                  />
+              </GridNav>
+              <GridMain>
+                <CanvasGame
+                  adminid={localStorage.adminid}
+                  gameinstance={localStorage.gameinstance}
+                />
+              </GridMain>
+            </Grid>
+          </Container>
         </div>
     );
 }

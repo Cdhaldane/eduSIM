@@ -9,7 +9,6 @@ const gamerooms = db.define('gamerooms', {
   },
   gameinstanceid: {
     type: Sequelize.UUID,
-
   },
   gameroom_name: {
     type: Sequelize.STRING(250)
