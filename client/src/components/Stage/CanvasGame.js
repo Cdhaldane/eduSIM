@@ -1,17 +1,9 @@
 import React, { useState, useEffect, Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
-import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
-import { v1 as uuidv1 } from 'uuid';
-import fileDownload from 'js-file-download'
-import axios from 'axios'
+import axios from "axios";
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
-import Pencil from "../Pencils/Pencil";
-import Konva from "konva"
-import ContextMenu from "../ContextMenu/ContextMenu";
-import ContextMenuText from "../ContextMenu/ContextMenuText";
-import Portal from "./Shapes/Portal"
 import {
   Rect,
   Stage,
@@ -82,11 +74,6 @@ class Graphics extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      layerX: 0,
-      layerY: 0,
-      layerScale: 1,
-      selectedShapeName: "",
-      errMsg: "",
       rectangles: [],
       ellipses: [],
       stars: [],
@@ -100,77 +87,14 @@ class Graphics extends Component {
       arrows: [],
       connectors: [],
       gameroles: [],
-      currentTextRef: "",
-      shouldTextUpdate: true,
-      textX: 0,
-      textY: 0,
-      textEditVisible: false,
-      arrowDraggable: false,
-      newArrowRef: "",
-      count: 0,
-      newArrowDropped: false,
-      newConnectorDropped: false,
-      arrowEndX: 0,
-      arrowEndY: 0,
-      isTransforming: false,
-      lastFill: null,
-      selectedContextMenu:null,
-      selectedContextMenuText:null,
-      colorf: "black",
-      colors: "black",
-      color: "white",
-      strokeWidth: 3.75,
-      opacity: 1,
-      infolevel: false,
-      rolelevel: "",
-
       open: 0,
       state: false,
-
-
-
-      saving: null,
-      saved: [],
-      roadmapId: null,
-      alreadyCreated: false,
-      publishing: false,
-      title: "",
-      category: "",
-      description: "",
-      thumbnail: "",
-      isPasteDisabled: false,
-      ellipseDeleteCount: 0,
-      starDeleteCount: 0,
-      arrowDeleteCount: 0,
-      textDeleteCount: 0,
-      rectDeleteCount: 0,
-      triangleDeleteCount: 0,
-      imageDeleteCount: 0,
-      videoDeleteCount: 0,
-      linesDeleteCount: 0,
-      audioDeletedCount: 0,
+      selectrole: true,
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
-      savedstates: [],
-      draggable: false,
       level: 1,
-      tool: 'pen',
-      isDrawing: false,
-      drawMode: false,
-      ptype: "",
       pageNumber: 6,
-      imagesrc: null,
-      vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
-      imgsrc: "https://konvajs.org/assets/lion.png",
-      audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
-      docsrc: "",
-      docimage: null,
-      selection: {visible: false,
-                  x1: -100,
-                  y1: -100,
-                  x2: 0,
-                  y2: 0}
-                  };
+      };
 
 
     axios.get('http://localhost:5000/api/gameinstances/getGameInstance/:adminid/:gameid', {
@@ -228,7 +152,7 @@ class Graphics extends Component {
       level: e
     }, this.handleLevelUpdate)
   }
-  
+
   render() {
     let saveText;
 
@@ -268,6 +192,13 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
+        {this.state.selectrole && <div className="selectrole-container">
+          Please select your role!
+          <button onClick={() => this.setState({
+              selectrole: false
+            })}>Done!</button>
+        </div>
+      }
         <div>
           <Stage
             height={window.innerHeight}

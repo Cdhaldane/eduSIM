@@ -12,6 +12,10 @@ import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
+
+import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
+import Connect4 from "./GamePieces/Connect4/Board"
+
 import {
   Rect,
   Stage,
@@ -244,6 +248,8 @@ class Graphics extends Component {
       arrows: [],
       connectors: [],
       gameroles: [],
+      tics: [],
+      connect4: [],
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -267,6 +273,8 @@ class Graphics extends Component {
       opacity: 1,
       infolevel: false,
       rolelevel: "",
+
+      tic: false,
 
       open: 0,
       state: false,
@@ -360,6 +368,13 @@ class Graphics extends Component {
       this.setState({
         lines: JSON.parse(allData.game_parameters)[10] || []
       })
+      this.setState({
+        tics: JSON.parse(allData.game_parameters)[11] || []
+      })
+      this.setState({
+        connect4: JSON.parse(allData.game_parameters)[11] || []
+      })
+
     })
     .catch(error => console.log(error.response));
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -402,6 +417,8 @@ class Graphics extends Component {
       texts = this.state.texts,
       arrows = this.state.arrows,
       triangles = this.state.triangles,
+      tics= this.state.tics,
+      connect4 = this.state.connect4,
       images = this.state.images,
       videos = this.state.videos,
       audios = this.state.audios,
@@ -412,7 +429,7 @@ class Graphics extends Component {
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, status: "up"] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status: "up"] });
       console.log(this.state.saved)
               console.log(this.state.gameinstanceid)
               var body = {
@@ -1964,107 +1981,6 @@ class Graphics extends Component {
 
   addStick = () => {
 
-    var pos = this.refs.layer2
-        .getStage()
-        .getPointerPosition()
-    var shape = this.refs.layer2.getIntersection(pos)
-
-
-    let toPush = {
-        rolelevel: this.state.rolelevel,
-        infolevel: this.state.infolevel,
-        level: this.state.level,
-        visible: true,
-        x: pos.x,
-        y: pos.y,
-        points: [20, 475, 60, 475],
-        from: shape,
-        stroke: 'black',
-        strokeWidth: '1.5',
-        fill: 'black'
-    }
-
-      if (toPush.from !== undefined) {
-        //  console.log("we are making a connector");
-
-        var transform = this.refs.layer2
-          .getAbsoluteTransform()
-          .copy();
-        transform.invert();
-        let uh = transform.point({
-          x: toPush.x,
-          y: toPush.y
-        });
-        toPush.x = uh.x;
-        toPush.y = uh.y;
-
-        var newArrow = {
-          points: toPush.points,
-          ref:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          name:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          from: toPush.from,
-          stroke: toPush.stroke,
-          strokeWidth: toPush.strokeWidth,
-          fill: toPush.fill
-        };
-
-        //  console.log(newArrow);
-        this.setState(prevState => ({
-          arrows: [...prevState.arrows, newArrow],
-          newArrowDropped: true,
-          newArrowRef: newArrow.name,
-          arrowEndX: toPush.x,
-          arrowEndY: toPush.y
-        }));
-      } else {
-        //  console.log("we are making just an aarrow");
-        var transform = this.refs.layer2
-          .getAbsoluteTransform()
-          .copy();
-        transform.invert();
-        let uh = transform.point({
-          x: toPush.x,
-          y: toPush.y
-        });
-        toPush.x = uh.x;
-        toPush.y = uh.y;
-        var newArrow = {
-          points: [toPush.x, toPush.y, toPush.x, toPush.y],
-          ref:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          name:
-            "arrow" +
-            (this.state.arrows.length +
-              1 +
-              this.state.arrowDeleteCount),
-          from: toPush.from,
-          stroke: toPush.stroke,
-          strokeWidth: toPush.strokeWidth,
-          fill: toPush.fill
-        };
-
-        this.setState(prevState => ({
-          arrows: [...prevState.arrows, newArrow],
-          newArrowDropped: true,
-          newArrowRef: newArrow.name,
-          arrowEndX: toPush.x,
-          arrowEndY: toPush.y
-        }));
-      }
-
-      //this.refs updates after forceUpdate (because arrow gets instantiated), might be risky in the future
-      //only this.state.arrows.length because it was pushed earlier, cancelling the +1
   }
 
   addStar = () => {
@@ -2158,11 +2074,58 @@ class Graphics extends Component {
     this.setState(prevState => ({
       texts: [...prevState.texts, toPush]
     }));
+  }
 
-    //we can also just get element by this.refs.toPush.ref
+  addTic = (e) => {
+    var ticName = this.state.tics.length
 
-    //  let text = stage.findOne("." + toPush.name);
+    let name = 'tic' + ticName
+    let ref = ticName
+    const tac = {
+      level: this.state.level,
+      visible: true,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      opacity: 1,
+      i: ref,
+    };
 
+    var toPush = tac;
+
+    this.setState(prevState => ({
+      tics: [...prevState.tics, toPush]
+    }));
+  }
+
+  handleTicDelete = (index) => {
+    this.setState({
+      tics: this.state.tics.filter((_, i) => i !== index)
+    })
+  }
+
+  addConnect4 = (e) => {
+    var conName = this.state.connect4.length + 1
+
+    let name = 'con' + conName
+    let ref = 'con' + conName
+    const conn = {
+      level: this.state.level,
+      visible: true,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      opacity: 1,
+      ref: ref,
+    };
+
+    var toPush = conn;
+
+    this.setState(prevState => ({
+      connect4: [...prevState.connect4, toPush]
+    }));
   }
 
   handleColorF = (e) =>{
@@ -2618,6 +2581,23 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
+        {this.state.tics.map(eachTic => {
+          if(eachTic.level === this.state.level)
+          return(
+          <TicTacToe
+            i={eachTic.i}
+            handleTicDelete={this.handleTicDelete}
+          />
+        )
+        })}
+        {this.state.connect4.map(eachConnect => {
+          if(eachConnect.level === this.state.level)
+          return(
+          <Connect4 />
+        )
+        })}
+
+
         <Timer handleSave={this.handleSave} />
         <div
           onKeyDown={event => {
@@ -5823,6 +5803,7 @@ class Graphics extends Component {
 
                   </Layer>
                 </Stage>
+
                 </div>
                 {(this.state.open !== 1)
                   ? <button onClick={() => this.setState({open: 1})}><i class="fas fa-caret-square-up fa-3x"></i></button>
@@ -5888,6 +5869,8 @@ class Graphics extends Component {
               addAudio={this.addAudio}
               addStick={this.addStick}
               addDocument={this.addDocument}
+              addTic={this.addTic}
+              addConnect={this.addConnect4}
               drawLine={this.drawLine}
               eraseLine={this.eraseLine}
               stopDrawing={this.stopDrawing}
@@ -5914,7 +5897,7 @@ class Graphics extends Component {
               avisible={this.handleAvisible}
               pavisible={this.handlePavisible}
               svisible={this.handleSvisible}
-              pevisible={this.handlePevisible}/>
+              pevisible={this.handlePevisible}
               />
               <Link to="/dashboard">
                 <i id="editpagex" class="fas fa-times fa-3x"></i>

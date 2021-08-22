@@ -11,13 +11,14 @@ exports.getGameRoles = async (req, res) => {
       return res.send(gamerole);
     } catch (err) {
       return res.status(400).send({
-        message: `No game roles found with the id ${gameid}`,
+        message: `No game roles found with the id ${gameinstanceid}`,
       });
     }
   };
 
   exports.createRole = async (req, res) => {
-    const { gameinstanceid, gamerole } = req.body;
+    const gameinstanceid = req.body.gameinstanceid;
+    const gamerole = req.body.gamerole.toLowerCase();
       try {
         let newGameInstance = await GameRole.create({
           gameinstanceid,

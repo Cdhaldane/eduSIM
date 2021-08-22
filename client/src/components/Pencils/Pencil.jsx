@@ -60,6 +60,12 @@ function Pencil(props) {
   function addAudio(){
     props.addAudio();
   }
+  function addTic(e){
+    props.addTic(e)
+  }
+  function addConnect(){
+    props.addConnect();
+  }
   function addDocument(){
     props.addDocument();
   }
@@ -133,6 +139,8 @@ function Pencil(props) {
         addVideo={addVideo}
         addAudio={addAudio}
         addDocument={addDocument}
+        addTic={addTic}
+        addConnect={addConnect}
         eraseLine={eraseLine}
         choosecolor={handleColor}
         close={handleClose}

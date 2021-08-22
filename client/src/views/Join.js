@@ -4,12 +4,22 @@ import Tabs from "../components/Tabs/Tabs"
 import CreateCsv from "../components/CreateCsv/CreateCsv"
 import {Link } from "react-router-dom";
 import Modal from "react-modal";
+import {Image} from "cloudinary-react";
 
 function Join(props) {
   console.log(props)
   const [isOpen, setIsOpen] = useState(false)
   const [showNote, setShowNote] = useState(false)
-  localStorage.setItem('gameid', props.location.gameinstance);
+
+  if(props.location.gameinstanceid !== undefined){
+    localStorage.setItem('gameid', props.location.gameinstance);
+  }
+  if(props.location.title !== undefined){
+    localStorage.setItem('title', props.location.title);
+  }
+  if(props.location.img !== undefined){
+    localStorage.setItem('img', props.location.img);
+  }
 
   function toggleModal(e) {
     e.preventDefault();
@@ -18,9 +28,11 @@ function Join(props) {
 
   return (
     <div className="dashboard">
-          <h2 id="jointitle">Team Leadership Simulation 1</h2>
+          <h2 id="jointitle">{localStorage.title}</h2>
         <button onClick={() => setShowNote(!showNote)} className="studentbutton">Add Student/Participant List +</button>
-          <img id="joinimg" src="temp1.png" />
+      <div class="joinimg">
+      <Image id="joinimg" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.img}  alt="backdrop"/>
+    </div>
           <Link to={{
               pathname:"/gamepage",
               img: props.location.img,
@@ -45,7 +57,7 @@ function Join(props) {
             </Modal>
 
             <Tabs
-              gameid={props.location.gameinstance}
+              gameid={localStorage.gameid}
             />
     </div>
   );

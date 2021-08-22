@@ -61,6 +61,7 @@
     "react-color": "^2.19.3",
     "react-contextmenu": "^2.14.0",
     "react-drag-to-select": "^1.0.2",
+    "react-draggable": "^4.4.3",
     "react-icons": "^4.2.0",
     "react-image-file": "^0.3.0",
     "react-konva": "^17.0.2-4",

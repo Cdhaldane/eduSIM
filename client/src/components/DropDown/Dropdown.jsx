@@ -148,6 +148,14 @@ import "./Dropdown.css";
     props.addDocument();
     props.close();
   }
+  function addTic(e){
+    props.addTic("clicked");
+    props.close();
+  }
+  function addConnect(){
+    props.addConnect();
+    props.close();
+  }
   function stopDrawing(){
     setCheckede(!checkede)
     props.stopDrawing();
@@ -400,6 +408,31 @@ import "./Dropdown.css";
              onClick={stopDrawing}
             leftIcon={<i id="icons" class="fas fa-mouse-pointer"
             onClick={stopDrawing}></i>}>Select</DropdownItems>
+
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'pieces'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>PIECES!</h2>
+          </DropdownItem>
+          <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addTic}></i>}>Tic-Tac-Toe</DropdownItems>
+          <DropdownItems onClick={addConnect} leftIcon={<i id="icons" class="fa fa-circle" onClick={addConnect}></i>}>Connect-Four</DropdownItems>
+        <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
+        <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
+
+          <DropdownItem
+            leftIcon={<i id="icons" class="fas fa-marker"></i>}
+            rightIcon=""
+            goToMenu="draw">
+            Drawing
+          </DropdownItem>
 
         </div>
       </CSSTransition>

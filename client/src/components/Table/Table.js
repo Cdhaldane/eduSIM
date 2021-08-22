@@ -12,11 +12,14 @@ import "./tailwind.css"
 
 const Table = (props) => {
     const [highlighted, setHighlighted] = useState(false);
+    const [rolelist, setRolelist] = useState()
+    const [groupOr, setGroupOr] = useState("set")
     const [contacts, setContacts] = useState([{
       firstName: "",
       lastName: "",
       email: "",
       group: "",
+      id: ""
     }]);
     const [sent, setSent] = useState(false)
     const [fname, setLname] = useState("")
@@ -40,8 +43,39 @@ const Table = (props) => {
 
     const [editContactId, setEditContactId] = useState(null);
 
-
     useEffect(() => {
+      if(props.addstudent === false){
+        setGroupOr("Group")
+        axios.get('http://localhost:5000/api/playerrecords/getAllPlayers/:gameinstanceid', {
+          params: {
+                id: props.gameid,
+            }
+        })
+           .then((res) => {
+              console.log(res)
+              let data = []
+              for(let i = 0; i < res.data.length; i++){
+                let cart = {
+                  firstName: "",
+                  lastName: "",
+                  email: "",
+                  group: "",
+                  id: ""
+                }
+                cart.firstName = (res.data[i].fname);
+                cart.lastName = (res.data[i].lname);
+                cart.email = (res.data[i].player_email);
+                cart.group = (res.data[i].game_room);
+                cart.id = (res.data[i].gameplayerid);
+                data.push(cart);
+                console.log(cart)
+                console.log(data)
+              }
+              setContacts(data)
+             })
+            .catch(error => console.log(error.response));
+      } else {
+        setGroupOr("Role")
       axios.get('http://localhost:5000/api/playerrecords/getPlayers/:game_room', {
         params: {
               game_room: props.gameroom,
@@ -56,11 +90,13 @@ const Table = (props) => {
                 lastName: "",
                 email: "",
                 group: "",
+                id: ""
               }
               cart.firstName = (res.data[i].fname);
               cart.lastName = (res.data[i].lname);
               cart.email = (res.data[i].player_email);
               cart.group = (res.data[i].gamerole);
+              cart.id = (res.data[i].gameplayerid);
               data.push(cart);
               console.log(cart)
               console.log(data)
@@ -68,11 +104,30 @@ const Table = (props) => {
             setContacts(data)
            })
           .catch(error => console.log(error.response));
+        }
+        axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+          params: {
+                gameinstanceid: props.gameid,
+            }
+        })
+        .then((res) => {
+          const allData = res.data;
+          console.log(allData)
+          let items = [(<option value="">Select a a role!</option>)];
+          for (let i = 0; i <=  allData.length -1; i++) {
+               //here I will be creating my options dynamically based on
+               items.push(<option value={allData[i].gamerole}>{allData[i].gamerole}</option>);
+               console.log(items)
+               //what props are currently passed to the parent component
+          }
+          setRolelist(items)
+        })
     }, []);
 
     //Add change
     const handleAddFormChange = (event) => {
       event.preventDefault();
+      console.log(event.target.value)
 
       const fieldName = event.target.getAttribute("name");
       const fieldValue = event.target.value;
@@ -98,31 +153,32 @@ const Table = (props) => {
     //Add submit
     const handleAddFormSubmit = (event) => {
       event.preventDefault();
-
+      console.log(props)
       var data = {
-        gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+        gameinstanceid: props.gameid,
         fname: addFormData.firstName,
         lname: addFormData.lastName,
-        game_room: props.gameroom,
+        game_room: props.gameroom[0],
         player_email: addFormData.email,
-        gamerole: "Dunno"
+        gamerole: addFormData.group
         }
         axios.post('http://localhost:5000/api/playerrecords/createPlayer', data)
            .then((res) => {
               console.log(res)
+              const newContact = {
+                id: res.data.gameplayerid,
+                firstName: addFormData.firstName,
+                lastName: addFormData.lastName,
+                email: addFormData.email,
+                group: addFormData.group,
+              };
+              console.log(newContact)
+              const newContacts = [...contacts, newContact];
+              setContacts(newContacts);
              })
             .catch(error => console.log(error.response));
 
-      const newContact = {
-        id: nanoid,
-        firstName: addFormData.firstName,
-        lastName: addFormData.lastName,
-        email: addFormData.email,
-        group: addFormData.group,
-      };
 
-      const newContacts = [...contacts, newContact];
-      setContacts(newContacts);
     };
 
     const handleEditFormSubmit = (event) => {
@@ -141,14 +197,28 @@ const Table = (props) => {
       const index = contacts.findIndex((contact) => contact.id === editContactId);
 
       newContacts[index] = editedContact;
-
+      console.log(newContacts[index])
       setContacts(newContacts);
       setEditContactId(null);
+
+      let data = {
+        gameplayerid: newContacts[index].id,
+        fname: newContacts[index].firstName,
+        lname: newContacts[index].lastName,
+        player_email: newContacts[index].email,
+        gamerole: newContacts[index].gamerole,
+      }
+      axios.put('http://localhost:5000/api/playerrecords/updatePlayer', data)
+           .then((res) => {
+              console.log(res)
+             })
+            .catch(error => console.log(error.response));
     };
 
     const handleEditClick = (event, contact) => {
       event.preventDefault();
       setEditContactId(contact.id);
+      console.log(contact)
 
       const formValues = {
         firstName: contact.firstName,
@@ -166,12 +236,19 @@ const Table = (props) => {
 
     const handleDeleteClick = (contactId) => {
       const newContacts = [...contacts];
-
       const index = contacts.findIndex((contact) => contact.id === contactId);
-
       newContacts.splice(index, 1);
-
+      console.log(contactId)
       setContacts(newContacts);
+      axios.delete('http://localhost:5000/api/playerrecords/deletePlayers/:gameplayerid', {
+        params: {
+          id: contactId
+        }
+      })
+         .then((res) => {
+            console.log(res)
+           })
+          .catch(error => console.log(error.response));
     };
 
     const handleAddStudent = () => {
@@ -201,12 +278,12 @@ const Table = (props) => {
             onChange={handleAddFormChange}
           />
           <input
-            id="groupnumber"
-            type="text"
-            name="group"
-            required="required"
-            onChange={handleAddFormChange}
-          />
+           id="groupnumber"
+           type="text"
+           name="group"
+           required="required"
+           onChange={handleAddFormChange}
+         />
         <button type="submit" id="addstudent">Add</button>
         </form>
         </div>
@@ -273,7 +350,7 @@ const Table = (props) => {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
-                <th>Group</th>
+                <th>{groupOr}</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -285,12 +362,13 @@ const Table = (props) => {
                       editFormData={editFormData}
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
+                      rolelist={rolelist}
                     />
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
                       handleEditClick={handleEditClick}
-                      handleDeleteClick={handleDeleteClick}
+                      handleDeleteClick={() => handleDeleteClick(contact.id)}
                     />
                   )}
                 </Fragment>
@@ -324,17 +402,13 @@ const Table = (props) => {
            required="required"
            onChange={handleAddFormChange}
          />
-         <input
-           id="groupnumber"
-           type="text"
-           name="group"
-           required="required"
-           onChange={handleAddFormChange}
-         />
+       <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
+           {rolelist}
+         </select>
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
-       : (<div> <button id="emailbutton" onClick={handleEmail}>Email</button> </div>)
+       : ""
       }
       </div>
     );
