@@ -19,6 +19,11 @@
 
 .statustic {
   margin-bottom: 10px;
+  position: relative;
+  top: 340px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.4vw;
+  font-weight: 700;
 }
 
 .squaretic {
@@ -48,4 +53,24 @@
 
 .game-info {
   margin-left: 20px;
+}
+
+.edit-container{
+  background-color: white;
+  border: 1px solid black;
+  width: 20%;
+  height: 20%;
+  position: relative;
+  left: 300px;
+  top: -346px;
+}
+
+#resetbutton {
+  position: relative;
+  top: 10px;
+}
+
+#ticeditbutton {
+  position: relative;
+  top: 10px;
 }

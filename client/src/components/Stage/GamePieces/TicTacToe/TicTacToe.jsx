@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState} from 'react'
 import ReactDOM from 'react-dom'
 import './TicTacToe.css'
 import calculateWinner from './calculate-winner'
@@ -11,7 +11,7 @@ function getStatus(squares, xIsNext) {
   } else if (squares.every(Boolean)) {
     return `Scratch: Cat's game`
   } else {
-    return `Next player: ${xIsNext ? 'X' : '0'}`
+    return `Player ${xIsNext ? 'X' : '0'}`
   }
 }
 
@@ -31,6 +31,9 @@ function gameReducer(state, action) {
         xIsNext: !xIsNext,
       }
     }
+    case 'RESET': {
+      return {squares: Array(9).fill(null)}
+    }
     default: {
       throw new Error(
         `Unhandled action type: ${action.type}. Please fix it. Thank you.`,
@@ -39,7 +42,8 @@ function gameReducer(state, action) {
   }
 }
 
-function Board() {
+function Board(props) {
+
   const [state, dispatch] = React.useReducer(gameReducer, {
     squares: Array(9).fill(null),
     xIsNext: true,
@@ -53,12 +57,18 @@ function Board() {
       </button>
     )
   }
+  function handleReset(){
+    for(let i = 0; i < 9; i++){
+      dispatch({type: 'RESET', i})
+  }
+  }
 
   function selectSquare(square) {
     dispatch({type: 'SELECT_SQUARE', square})
   }
 
   const status = getStatus(squares, xIsNext)
+  var show = true;
 
   return (
     <div>
@@ -78,21 +88,32 @@ function Board() {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
+      <button id="resetbutton" onClick={handleReset}>Reset</button>
+      <button id="ticeditbutton" onClick={props.handleShow}>Edit</button>
+      {props.show && <div className="edit-container">
+      <button onClick={props.handleTicDelete}>Delete</button>
+        </div>
+      }
     </div>
   )
 }
 
-function Game() {
+function Game(props) {
+  const [show, setShow] = useState(false)
+  function handleShow(){
+    setShow(!show)
+  }
+  function handleDelete(){
+    props.handleTicDelete(props.i);
+  }
   return (
     <Draggable>
     <div className="gametic">
       <Board
-        onContextMenu={e => {
-
-        console.log(1)
-        }
-      }
-       />
+      show={show}
+      handleShow={handleShow}
+      handleTicDelete={handleDelete}
+      />
     </div>
   </Draggable>
   )

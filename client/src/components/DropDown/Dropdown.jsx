@@ -154,6 +154,10 @@ import "./Dropdown.css";
     props.addTic("clicked");
     props.close();
   }
+  function addConnect(){
+    props.addConnect();
+    props.close();
+  }
   function stopDrawing(){
     setCheckede(!checkede)
     props.stopDrawing();
@@ -420,8 +424,8 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>PIECES!</h2>
           </DropdownItem>
-          <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addRectangle}></i>}>Tic-Tac-Toe</DropdownItems>
-          <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
+          <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addTic}></i>}>Tic-Tac-Toe</DropdownItems>
+          <DropdownItems onClick={addConnect} leftIcon={<i id="icons" class="fa fa-circle" onClick={addConnect}></i>}>Connect-Four</DropdownItems>
         <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
         <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
 

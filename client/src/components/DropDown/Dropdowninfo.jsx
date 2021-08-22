@@ -33,7 +33,7 @@ import "./Dropdown.css";
 
 
  return (
-     <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
+     <div className="dropdown" style={{ height: menuHeight + 50 }} ref={dropdownRef}>
        <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}

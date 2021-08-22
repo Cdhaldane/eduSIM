@@ -13,7 +13,8 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
 
-import TicTacToe from "./GamePieces/TicTacToe"
+import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
+import Connect4 from "./GamePieces/Connect4/Board"
 
 import {
   Rect,
@@ -247,6 +248,8 @@ class Graphics extends Component {
       arrows: [],
       connectors: [],
       gameroles: [],
+      tics: [],
+      connect4: [],
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -365,6 +368,13 @@ class Graphics extends Component {
       this.setState({
         lines: JSON.parse(allData.game_parameters)[10] || []
       })
+      this.setState({
+        tics: JSON.parse(allData.game_parameters)[11] || []
+      })
+      this.setState({
+        connect4: JSON.parse(allData.game_parameters)[11] || []
+      })
+
     })
     .catch(error => console.log(error.response));
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -407,6 +417,8 @@ class Graphics extends Component {
       texts = this.state.texts,
       arrows = this.state.arrows,
       triangles = this.state.triangles,
+      tics= this.state.tics,
+      connect4 = this.state.connect4,
       images = this.state.images,
       videos = this.state.videos,
       audios = this.state.audios,
@@ -417,7 +429,7 @@ class Graphics extends Component {
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, status: "up"] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status: "up"] });
       console.log(this.state.saved)
               console.log(this.state.gameinstanceid)
               var body = {
@@ -2065,15 +2077,55 @@ class Graphics extends Component {
   }
 
   addTic = (e) => {
-    console.log(this.state.tic)
-    if(e === "clicked"){
-      this.setState({
-        tic: true
-      })
-    }
-    if(this.state.tic === true){
-      return <TicTacToe />
-    }
+    var ticName = this.state.tics.length
+
+    let name = 'tic' + ticName
+    let ref = ticName
+    const tac = {
+      level: this.state.level,
+      visible: true,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      opacity: 1,
+      i: ref,
+    };
+
+    var toPush = tac;
+
+    this.setState(prevState => ({
+      tics: [...prevState.tics, toPush]
+    }));
+  }
+
+  handleTicDelete = (index) => {
+    this.setState({
+      tics: this.state.tics.filter((_, i) => i !== index)
+    })
+  }
+
+  addConnect4 = (e) => {
+    var conName = this.state.connect4.length + 1
+
+    let name = 'con' + conName
+    let ref = 'con' + conName
+    const conn = {
+      level: this.state.level,
+      visible: true,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      opacity: 1,
+      ref: ref,
+    };
+
+    var toPush = conn;
+
+    this.setState(prevState => ({
+      connect4: [...prevState.connect4, toPush]
+    }));
   }
 
   handleColorF = (e) =>{
@@ -2529,7 +2581,23 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
-        {this.addTic()}
+        {this.state.tics.map(eachTic => {
+          if(eachTic.level === this.state.level)
+          return(
+          <TicTacToe
+            i={eachTic.i}
+            handleTicDelete={this.handleTicDelete}
+          />
+        )
+        })}
+        {this.state.connect4.map(eachConnect => {
+          if(eachConnect.level === this.state.level)
+          return(
+          <Connect4 />
+        )
+        })}
+
+
         <Timer handleSave={this.handleSave} />
         <div
           onKeyDown={event => {
@@ -5802,6 +5870,7 @@ class Graphics extends Component {
               addStick={this.addStick}
               addDocument={this.addDocument}
               addTic={this.addTic}
+              addConnect={this.addConnect4}
               drawLine={this.drawLine}
               eraseLine={this.eraseLine}
               stopDrawing={this.stopDrawing}
