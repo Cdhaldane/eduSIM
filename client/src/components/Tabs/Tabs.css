@@ -218,6 +218,7 @@
   text-align: left;
 }
 .content h3 {
+  position: relative;
   color: black;
   margin-right: 500px;
 }
@@ -255,7 +256,6 @@
   left: 750px;
   top: -30px;
 }
-
 
 .simadv h3 {
   font-size: 1.2rem;
@@ -370,8 +370,8 @@
 }
 
 #chart {
-  position: sticky;
-  left: 930px;
+  position: relative;
+  left: 750px;
   top: -20px;
   width: 500px;
   height: 300px;
@@ -384,4 +384,9 @@
   top: 53px;
   width: 100px;
   height: 20px;
+}
+#roomh3 {
+  position: relative;
+  top: 250px;
+  left: -500px;
 }

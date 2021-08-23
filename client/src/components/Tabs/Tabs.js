@@ -156,7 +156,7 @@ function Tabs(props) {
             <Tooltip />
           </LineChart>
         </div>
-          <h3>Students / participants in room:</h3>
+          <h3 id="roomh3">Students / participants in room:</h3>
         <Table addstudent={true} gameroom={i} gameid={props.gameid}/>
       </div>
             </div>
