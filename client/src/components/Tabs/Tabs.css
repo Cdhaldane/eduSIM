@@ -214,6 +214,7 @@
   text-align: left;
 }
 .content h3 {
+  position: relative;
   color: black;
   margin-right: 500px;
 }
@@ -336,9 +337,23 @@
 }
 
 #chart {
-  position: sticky;
-  left: 930px;
+  position: relative;
+  left: 750px;
   top: -20px;
   width: 500px;
   height: 300px;
+}
+
+#time {
+  display: flex;
+  position: absolute;
+  left:110px;
+  top: 53px;
+  width: 100px;
+  height: 20px;
+}
+#roomh3 {
+  position: relative;
+  top: 250px;
+  left: -500px;
 }
