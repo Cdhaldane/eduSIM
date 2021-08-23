@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import axios from "axios"
+
 import "./Dropdown.css";
 
   function Dropdowninfo(props) {
@@ -174,8 +175,8 @@ import "./Dropdown.css";
            leftIcon={<i id="icons" class="fas fa-plus"
            onClick={handleAddRole}
            ></i>}
-           goToMenu="roles">
-          
+           goToMenu="main">
+
        </DropdownItem>
          <input id="rolenameinput" type="text" placeholder="Role Name!" onChange={handleRoleChange} value={rolename} />
        </div>
