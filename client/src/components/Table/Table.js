@@ -1,6 +1,6 @@
 import React, {useState, Fragment, useEffect} from "react"
 import "./Table.css"
-import data from "./mock-data.json"
+//import data from "./mock-data.json"
 import ReadOnlyRow from "../ReadOnlyRow";
 import EditableRow from "../EditableRow"
 import {  useAuth0 } from "@auth0/auth0-react";

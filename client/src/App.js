@@ -11,7 +11,7 @@ import EditPage from "./views/EditPage";
 import Join from "./views/Join"
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
-import Footer from "./components/Footer";
+//import Footer from "./components/Footer";
 
 class App extends React.Component {
 

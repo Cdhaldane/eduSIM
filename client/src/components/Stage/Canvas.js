@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
-import Info  from "../Information/InformationPopup";
+//import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
-import { v1 as uuidv1 } from 'uuid';
+//import { v1 as uuidv1 } from 'uuid';
 import fileDownload from 'js-file-download'
 import axios from 'axios'
 import {Link } from "react-router-dom";
