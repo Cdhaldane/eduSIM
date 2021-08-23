@@ -419,25 +419,19 @@ footer {
     height: 100px;
     width: 80%;
   }
-
   .playbtn{
-
     left: 132px;
     width: 50px;
     height: 50px;
-
   }
   .pausebtn{
-
     left: 160px;
     width: 50px;
     height: 50px;
   }
   .refreshbtn{
-
     left: 190px;
     width: 50px;
     height: 50px;
-
   }
 }

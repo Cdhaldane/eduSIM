@@ -9,7 +9,6 @@ import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@ma
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import Modal from "react-modal";
 
-
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(1);
   const [time, setTime] = useState(0);
