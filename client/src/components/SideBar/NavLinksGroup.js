@@ -42,7 +42,7 @@ function NavLinksGroup(props) {
 
   const links = [
     {
-        to: "/editpage",
+        to: "/dashboard",
         img: props.img,
         label: props.title,
 
