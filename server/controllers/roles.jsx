@@ -3,7 +3,7 @@ const GameRole = require("../models/GameRoles");
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
   try {
-    let gamerole = await GameRole.findAll({
+    let gamerole = await GameRole.findOne({
       where: {
         gameinstanceid: gameinstanceid
       },
@@ -17,13 +17,14 @@ exports.getGameRoles = async (req, res) => {
   };
 
   exports.createRole = async (req, res) => {
-    const { gameinstanceid, gamerole } = req.body;
+    const gameinstanceid = req.body.gameinstanceid;
+    const gamerole = req.body.gamerole.toLowerCase();
       try {
-        let newGameInstance = await GameRole.create({
+        let newGameRole = await GameRole.create({
           gameinstanceid,
           gamerole
         });
-        return res.send(newGameInstance);
+        return res.send(newGameRole);
       } catch (err) {
         return res.status(500).send({
           message: `Error: ${err.message}`,

@@ -1,0 +1,193 @@
+//Logic when the server is involved
+var uuid = require('uuid');
+const GameRoom = require("../models/GameRoom");
+const GameRole = require("../models/GameRoles");
+const GamePlayer = require("../models/GamePlayers");
+const SocketServer = require('socket.io')
+// const socket = require('../utils/socket')
+
+//Create a new game player
+//Player created
+//create a socket room and url for it
+//Have to look up the issue for the roles
+
+//Create Players using csv
+exports.createGamePlayers = async (req, res) => {
+    try {
+      const lookuproom = [];
+      for(var i=0; i<req.body.data.length; i++){
+        const fname = req.body.data[i].fname;
+        const lname = req.body.data[i].lname;
+        const gameinstanceid = req.body.data[i].gameinstanceid;
+        const game_room = req.body.data[i].game_room.toLowerCase();
+        const player_email = req.body.data[i].player_email;
+        const gamerole =req.body.data[i].gamerole.toLowerCase();
+        //Game role validation
+        //Check it against game instance id
+        const gameroles = await GameRole.findOne({
+          where: {
+            gameinstanceid: gameinstanceid,
+            gamerole: gamerole,
+          },
+        });
+        if (!gameroles) {
+          return res.status(400).send({
+            message: `No game role found: ${gamerole} found for this game`,
+          });
+        }
+        let newGamePlayer = await GamePlayer.create({
+          fname,
+          lname,
+          gameinstanceid,
+          game_room,
+          player_email,
+          gamerole
+        });  
+        if(lookuproom.indexOf(game_room) === -1) {
+          lookuproom.push(game_room);
+          const gameroom_name = game_room
+          const gameroomid = uuid.v4();
+          const gameroom_url = "http://localhost:3000/gamepage?"+gameroomid+"&"+gameroom_name+"&"+fname;
+          let newGameRoom =  await GameRoom.create({
+            gameroomid,
+            gameinstanceid,
+            gameroom_name,
+            gameroom_url
+          });
+          //How to emit states on websockets
+          //Add professor
+      }
+      }
+      return res.send("Success");  
+    } catch (err) {
+      return res.status(500).send({
+        message: `Error: ${err.message}`,
+      });
+    }
+  };
+
+  //Get all players for a single game instance to populate the table
+  exports.getGamePlayers = async (req, res) => {
+     const gameinstanceid = req.params.id;
+    try {
+      let gameplayer = await GamePlayer.findAll({
+        where: {
+          gameinstanceid: gameinstanceid
+        },
+      });
+        return res.send(gameplayer);
+      } catch (err) {
+        return res.status(400).send({
+          message: `No game instance found with the id ${id}`,
+        });
+      }
+    };
+
+  //Get all rooms for a gameinstance id
+  exports.getRooms = async (req, res) => {
+    const gameinstanceid = req.query.gameinstanceid;
+    try {
+      let gameroom = await GameRoom.findAll({
+        where: {
+          gameinstanceid: gameinstanceid
+        },
+      });
+        return res.send(gameroom);
+      } catch (err) {
+        return res.status(400).send({
+          message: `No game rooms found with the id ${gameinstanceid}`,
+        });
+      }
+    };
+    //Get players for a particular tab or room
+    exports.getPlayers = async (req, res) => {
+      const game_room = req.query.game_room;
+      try {
+        let gameplayer = await GamePlayer.findAll({
+          where: {
+            game_room: game_room
+          },
+        });
+          return res.send(gameplayer);
+        } catch (err) {
+          return res.status(400).send({
+            message: `No plaers found with the game room ${game_room}`,
+          });
+        }
+      };
+
+  //Create a single player
+  exports.createPlayer = async (req, res) => {
+    const { game_room, gameinstanceid, fname, lname, gamerole, player_email } = req.body;
+      try {
+        let gameplayer = await GamePlayer.create({
+          gameinstanceid,
+          fname,
+          lname,
+          game_room,
+          player_email,
+          gamerole
+        });
+        return res.send(gameplayer);
+      } catch (err) {
+        return res.status(500).send({
+          message: `Error: ${err.message}`,
+        });
+      }
+    };
+
+    //Delete a player
+    exports.deletePlayers = async (req, res) => {
+      const  id  = req.query.id;
+
+      const gameplayers = await GamePlayer.findOne({
+        where: {
+          gameplayerid: id,
+        },
+      });
+
+      if (!gameplayers) {
+        return res.status(400).send({
+          message: `No game player found with the id ${id}`,
+        });
+      }
+
+      try {
+        await gameplayers.destroy();
+        return res.send({
+          message: `Player ${id} has been deleted!`,
+        });
+      } catch (err) {
+        return res.status(500).send({
+          message: `Error: ${err.message}`,
+        });
+      }
+    };
+
+  //Delete a room
+  exports.deleteRoom = async (req, res) => {
+    const  id  = req.query.id;
+
+    const gameroom = await GameRoom.findOne({
+      where: {
+        gameroomid: id,
+      },
+    });
+
+    if (!gameroom) {
+      return res.status(400).send({
+        message: `No game instance found with the id ${id}`,
+      });
+    }
+
+    try {
+      await gameroom.destroy();
+      return res.send({
+        message: `Room ${id} has been deleted!`,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        message: `Error: ${err.message}`,
+      });
+    }
+  };
