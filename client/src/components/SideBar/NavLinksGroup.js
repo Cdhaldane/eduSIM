@@ -45,7 +45,6 @@ function NavLinksGroup(props) {
         to: "/editpage",
         img: props.img,
         label: props.title,
-
         visible: true,
         icon: null
     },
