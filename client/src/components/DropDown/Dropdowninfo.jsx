@@ -53,8 +53,6 @@ import "./Dropdown.css";
             <button onClick={handleNum} value="4">4</button>
             <button onClick={handleNum} value="5">5</button>
             <button onClick={handleNum} value="6">6</button>
-            <button onClick={handleNum} value="7">7</button>
-            <button onClick={handleNum} value="8">8</button>
           <p id="pagetype">
         <input
              type="text"

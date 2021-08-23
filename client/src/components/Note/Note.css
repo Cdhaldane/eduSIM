@@ -2,11 +2,6 @@
   background: #fff;
   border-radius: 7px;
   box-shadow: 0 2px 5px #ccc;
-  padding: 10px;
-  width: 340px;
-  height: 150px;
-  margin: 30px;
-  margin-left: 100px;
   float: left;
   font-family: "Montserrat", sans-serif;
   text-align: center;
@@ -20,7 +15,7 @@
   margin-top: 0px;
   margin-left: 0px;
   text-align: center;
-  padding: 5px;
+  padding: 10px;
 }
 .note p {
   font-size: 1.0em;
@@ -32,6 +27,7 @@
 .note img{
   height: 30px;
   margin-top: 5px;
+  padding: 30px;
 }
 
 .note input {

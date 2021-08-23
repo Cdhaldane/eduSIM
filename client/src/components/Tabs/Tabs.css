@@ -12,13 +12,15 @@
 }
 .selected-tab li {
   border: 3px solid #636363;
-  padding: 10px 28px 8px;
-  background-color: #fff;
-  margin-right: 5px;
+  padding: 6px;
+  background-color: #FFF;
+  margin-right: 10px;
   display: inline-block;
   position: relative;
   z-index: 0;
   color: #636363;
+  width: 12%;
+  font-size: 1.0vw;
 }
 
 .selected-tab li.selected {
@@ -211,8 +213,14 @@
   border-radius: 10px;
   text-align: left;
 }
+.content h3 {
+  color: black;
+  margin-right: 500px;
+}
 .content h2 {
   padding: 0px 0 5px 0px;
+  color: black;
+  font-size: 1.5vw;
 }
 .content p {
   width: 100%;
@@ -222,15 +230,19 @@
 .active-content {
   display: block;
 }
+.active-content input::placeholder {
+  color: grey;
+  opacity: 0.8;
+}
 
 .h3 button {
   display: inline-block;
 }
 
 .simadv {
-  position: relative;
+  position: sticky;
   width: 300px;
-  left: 450px;
+  left: 750px;
   top: -30px;
 }
 
@@ -242,15 +254,14 @@
 }
 
 .studentbuttonemail {
-  position: relative;
+  position: sticky;
   z-index: 1000;
-  top: -30px;
-  left: 900px;
-  width: 400px;
+  left: 1100px;
+  width: 30%;
   height: 50px;
   margin-bottom: -30px;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1.5rem;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5vw;
   color: white;
   background-color: #8f001a;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -262,4 +273,72 @@
 .studentbuttonemail:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
+}
+
+.addgroup {
+  position: sticky;
+  z-index: 1000;
+  left: 1500px;
+  top: 480px;
+  width: 5%;
+  height: 50px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.3vw;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 10px
+}
+.addgroup:hover{
+  cursor: pointer;
+  box-shadow: 0 5px 10px grey;
+}
+
+.groupcontainer{
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+  margin-left:0px;
+}
+
+.createmodaltab {
+  position: fixed;
+  top: 50%;
+  left: 28%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  overflow: hidden;
+  border: none;
+}
+.myoverlaytab {
+  z-index: 100000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+#chart {
+  position: sticky;
+  left: 930px;
+  top: -20px;
+  width: 500px;
+  height: 300px;
 }

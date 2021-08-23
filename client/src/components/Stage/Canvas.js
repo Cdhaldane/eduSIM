@@ -1,7 +1,8 @@
 import React, { useState, useEffect, Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
+//import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
-import { v1 as uuidv1 } from 'uuid';
+//import { v1 as uuidv1 } from 'uuid';
 import fileDownload from 'js-file-download'
 import axios from 'axios'
 import {Link } from "react-router-dom";
@@ -420,16 +421,11 @@ class Graphics extends Component {
                   createdby_adminid: localStorage.adminid,
                   invite_url: 'value'
                 }
-
-                console.log(this.state.saved)
-                console.log(this.props)
-
                 axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
                    .then((res) => {
                       console.log(res)
                      })
                     .catch(error => console.log(error.response));
-                   console.log();
   };
 
   handleStageClick = e => {
@@ -2500,7 +2496,6 @@ class Graphics extends Component {
       level: e
     }, this.handleLevelUpdate)
   }
-
   handleLayerClear = () => {
     this.refs.layer2.clear();
   }
@@ -4313,12 +4308,13 @@ class Graphics extends Component {
           />
           <div className="errMsg">{errDisplay}</div>
         </div>
-        <div className="header">
+        <div className="eheader">
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
           <h1 id="editmode">Edit Mode</h1>
             <div>
               <div className={"info" + this.state.open}>
                 <div id="infostage">
+
                 <Stage width={1500} height={600}
                   ref="graphicStage1"
                   onClick={this.handleStageClickInfo}

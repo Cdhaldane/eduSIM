@@ -3,6 +3,8 @@ import Switch from "react-switch"
 import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./CreateArea.css";
+import Modal from "react-modal";
+
 
   function CreateArea(props) {
   const [note, setNote] = useState([]);
@@ -92,79 +94,77 @@ import "./CreateArea.css";
   }
   return (
       <div class="area" >
-        <Container>
-      <form>
-        <p class="gradient-border" id="box">
-        Add New Simulation
-        </p>
-        <label for="Game">Choose a game</label>
-        <select id="games">
-          <option value="Team Leadership">Team Leadership</option>
-          <option value="Project Management">Project Management</option>
-          <option value="">...</option>
-          <option value="blank">Create a blank simulation</option>
-        </select>
-        <p class="gradient-border" id="box1">
-          Duplicate a previous simulation
-          <label id="switch">
-          <Switch
-            onChange={() => setChecked(!checked)}
-            checked={checked}
-            className="react-switch"
-          />
-        </label>
-        </p>
-        {checked && <div>
-            <label for="PrevGame" id="prevgame">Select a previous simulation</label>
-            <select id="prevgames" onChange={handleCopySim}>
-              {createSelectItems()}
+          <form>
+            <p class="gradient-border" id="box">
+            Add New Simulation
+            </p>
+            <label for="Game">Choose a game</label>
+            <select id="games">
+              <option value="Team Leadership">Team Leadership</option>
+              <option value="Project Management">Project Management</option>
+              <option value="">...</option>
+              <option value="blank">Create a blank simulation</option>
             </select>
-          </div>}
-          <p class="gradient-border" id="box3">
-            Enter a ‎name‎‏‏‎ ‎
-            <input
-           tpye="text"
-           id="namei"
-           name="title"
-           onChange={handleChange}
-           value={note.title}
-           placeholder="                         "
-         />
-          </p>
-            <p class="gradient-border" id="box2" >
-              Choose an image
-              <img id="plus" src="plus.png" onClick={handleImg}/>
+            <p class="gradient-border" id="box1">
+              Duplicate a previous simulation
+              <label id="switch">
+              <Switch
+                onChange={() => setChecked(!checked)}
+                checked={checked}
+                className="react-switch"
+              />
+            </label>
+            </p>
+            {checked && <div>
+                <label for="PrevGame" id="prevgame">Select a previous simulation</label>
+                <select id="prevgames" onChange={handleCopySim}>
+                  {createSelectItems()}
+                </select>
+              </div>}
+              <p class="gradient-border" id="box3">
+                Enter a ‎name‎‏‏‎ ‎
+                <input
+               tpye="text"
+               id="namei"
+               name="title"
+               onChange={handleChange}
+               value={note.title}
+               placeholder="                         "
+             />
+              </p>
+                <p class="gradient-border" id="box2" >
+                  Choose an image
+                  <img id="plus" src="plus.png" onClick={handleImg}/>
 
-              {(img)
-              ?<img id="preview" src={img} />
-              :<img id="previewno" src={img} />
-              }
-            </p>
-            <p>
-              <button id="add" onClick={uploadImage}>Add</button>
-            </p>
-          </form>
-        {img && <div>
-          <form id="imgs">
-            <p id="box4" >
-              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-              <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-              <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-            <input
-                  type="file"
-                  name="img"
-                  id="file"
-                  onChange={onChange}
-                  />
-                <label for="file">From file</label>
-            </p>
-          </form>
-          </div>
-        }
-        </Container>
+                  {(img)
+                  ?<img id="preview" src={img} />
+                  :<img id="previewno" src={img} />
+                  }
+                </p>
+                <p>
+                  <button id="add" onClick={uploadImage}>Add</button>
+                </p>
+              </form>
+            {img && <div>
+              <form id="imgs">
+                <p id="box4" >
+                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                <input
+                      type="file"
+                      name="img"
+                      id="file"
+                      onChange={onChange}
+                      />
+                    <label for="file">From file</label>
+                </p>
+              </form>
+              </div>
+            }
     </div>
   );
 }

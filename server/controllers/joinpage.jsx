@@ -3,7 +3,6 @@ var uuid = require('uuid');
 const GameRoom = require("../models/GameRoom");
 const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
-const SocketServer = require('socket.io')
 // const socket = require('../utils/socket')
 
 //Create a new game player
@@ -116,7 +115,25 @@ exports.createGamePlayers = async (req, res) => {
         }
       };
 
-  //Create a single player
+  exports.createRoom = async (req, res) => {
+    const { gameinstanceid, gameroom_name } = req.body;
+    var gameroom_url = "hello"
+    const gameroomid = uuid.v4();
+      try {
+        let gameroom = await GameRoom.create({
+          gameinstanceid,
+          gameroom_name,
+          gameroomid,
+          gameroom_url
+        });
+        return res.send(gameroom);
+      } catch (err) {
+        return res.status(500).send({
+          message: `Error: ${err.message}`,
+        });
+      }
+    };
+
   exports.createPlayer = async (req, res) => {
     const { game_room, gameinstanceid, fname, lname, gamerole, player_email } = req.body;
       try {

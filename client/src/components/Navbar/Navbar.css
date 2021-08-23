@@ -155,7 +155,11 @@
     transition: all 0.5s ease;
   }
 
-  .nav-menu.active {
+  .nav-pic{
+    opacity: 0;
+  }
+
+  .nav-menu.active{
     background: #181818;
     left: 0;
     opacity: 1;
@@ -165,6 +169,8 @@
 
   .nav-links {
     text-align: center;
+    position: relative;
+    top: -50px;
     padding: 2rem;
     width: 100%;
     display: table;
@@ -202,6 +208,7 @@
   }
   .nav-links-mobile {
     position: relative;
+    top: -100px;
     display: block;
     text-align: center;
     padding: 1rem;
@@ -218,9 +225,5 @@
     background: white;
     color: black;
     transition: 250ms;
-  }
-
-  Button {
-    display: none;
   }
 }

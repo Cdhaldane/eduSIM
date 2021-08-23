@@ -7,10 +7,8 @@ function Note(props) {
 return (
   <Link to={props.url}>
   <button  className={props.class} type="button" alt="sim background" onClick={props.onClick} >
-    <div>
     <h1>{props.title}</h1>
-    <img src={props.img}/>
-    </div>
+    <img src={props.img}/>  
   </button>
   </Link>
 );

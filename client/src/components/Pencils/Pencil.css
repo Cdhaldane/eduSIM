@@ -1,18 +1,11 @@
-#pencil1{
-  position: relative;
-  left:10px;
-  top: -745px;
-  color: #8f001a;
-}
-
 #pencil1:hover{
   cursor: pointer;
 }
 
 #pencil2{
-  position: relative;
+  position: absolute;
   left:140px;
-  top:-790px;
+  top:-750px;
   color: #8f001a;
 }
 
@@ -21,9 +14,9 @@
 }
 
 #pencil3{
-  position: relative;
+  position: absolute;
   left:1590px;
-  top:-840px;
+  top:-750px;;
   color: #8f001a;
 }
 
@@ -49,25 +42,45 @@
 }
 
 .drop1{
-  position: relative;
+  position: absolute;
   left: -450px;
-  top: -510px;
+  top: 250px;
 }
 
 .drop2 {
-  position: relative;
-  top: -280px;
+  position: absolute;
+  top: -180px;
   left: -320px;
 }
 
 .drop3 {
-  position: relative;
-  top: -328px;
+  position: absolute;
+  top: -180px;
   left: 900px;
 }
 
 .drop4{
-  position: relative;
-  top: -400px;
+  position: absolute;
+  top: -270px;
   left: -420px;
+}
+
+@media screen and (max-width: 960px){
+  #pencil2{
+    top:-650px;
+    left: 60px;
+  }
+  #pencil3{
+    left:800px;
+    top:-650px;;
+  }
+  #pencil4{
+    opacity: 0;
+  }
+  .drop3 {
+    position: absolute;
+    top: -180px;
+    left:40px;
+  }
+
 }
