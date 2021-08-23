@@ -172,6 +172,7 @@ import "./Dropdown.css";
            <h2>ROLES!</h2>
          </DropdownItem>
          <DropdownItem
+           goToMenu="roles"
            leftIcon={<i id="icons" class="fas fa-plus"
            onClick={handleAddRole}></i>}>
        </DropdownItem>
