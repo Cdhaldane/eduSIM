@@ -208,3 +208,42 @@ exports.createGamePlayers = async (req, res) => {
       });
     }
   };
+  exports.updatePlayer = async (req, res) => {
+    const { gameplayerid, fname, lname,  player_email, gamerole } = req.body;
+
+    const gameplayers = await GamePlayer.findOne({
+      where: {
+        gameplayerid: gameplayerid,
+      },
+    });
+
+    if (!gameplayers) {
+      return res.status(400).send({
+        message: `No game instance found with the id ${id}`,
+      });
+    }
+
+    try {
+      if (fname) {
+        gameplayers.fname = fname;
+      }
+      if (lname) {
+        gameplayers.lname = lname;
+      }
+      if (player_email) {
+        gameplayers.player_email = player_email;
+      }
+      if (gamerole) {
+        gameplayers.gamerole = gamerole;
+      }
+
+      gameplayers.save();
+      return res.send({
+        message: `Game Player has been updated!`,
+      });
+      } catch (err) {
+        return res.status(500).send({
+          message: `Error: ${err.message}`,
+        });
+      }
+  };
