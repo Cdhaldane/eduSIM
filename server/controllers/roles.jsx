@@ -11,7 +11,7 @@ exports.getGameRoles = async (req, res) => {
       return res.send(gamerole);
     } catch (err) {
       return res.status(400).send({
-        message: `No game roles found with the id ${gameid}`,
+        message: `No game roles found with the id ${gameinstanceid}`,
       });
     }
   };
