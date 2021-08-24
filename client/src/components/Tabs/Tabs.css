@@ -337,10 +337,10 @@
 }
 
 .createmodaltab {
-  position: fixed;
+  position: absolute;
   top: 50%;
-  left: 28%;
-  width: 100%;
+  left: 50%;
+  width: 53%;
   transform: translate(-50%, -50%);
   border-radius: 4px;
   overflow: hidden;

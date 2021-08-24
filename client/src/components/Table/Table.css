@@ -5,7 +5,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 0rem;
-  height: 110%;
+  height: 120%;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -102,6 +102,21 @@
   border-radius: 5%;
   width: 100px;
   height: 50px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background-color: #8f001a;
+}
+
+#emailstudent {
+  color: white;
+  z-index: 2000000;
+  font-size: 1.0rem;
+  position: sticky;
+  bottom: 310px;
+  left: 130px;
+  border-radius: 5%;
+  width: 500px;
+  height: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   background-color: #8f001a;
