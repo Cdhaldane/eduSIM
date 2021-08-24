@@ -4,6 +4,12 @@ import URLvideo from "./URLVideos";
 import axios from "axios";
 import {Link } from "react-router-dom";
 import Level from "../Level/Level";
+import Modal from "react-modal";
+import CreateRole from "../CreateRoleSelection/CreateRole";
+
+import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
+import Connect4 from "./GamePieces/Connect4/Board"
+
 import {
   Rect,
   Stage,
@@ -84,10 +90,11 @@ class Graphics extends Component {
       documents: [],
       texts: [],
       lines: [],
-      arrows: [],
-      connectors: [],
+      tics: [],
+      connect4: [],
       gameroles: [],
       open: 0,
+      isOpen: true,
       state: false,
       selectrole: true,
       gameinstanceid: this.props.gameinstance,
@@ -139,6 +146,13 @@ class Graphics extends Component {
       this.setState({
         lines: JSON.parse(allData.game_parameters)[10] || []
       })
+      this.setState({
+        tics: JSON.parse(allData.game_parameters)[11] || []
+      })
+      this.setState({
+        connect4: JSON.parse(allData.game_parameters)[12] || []
+      })
+
     })
     .catch(error => console.log(error.response));
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -151,6 +165,12 @@ class Graphics extends Component {
     this.setState({
       level: e
     }, this.handleLevelUpdate)
+  }
+  toggleModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      isOpen: !this.state.isOpen
+    })
   }
 
   render() {
@@ -192,13 +212,35 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
-        {this.state.selectrole && <div className="selectrole-container">
-          Please select your role!
-          <button onClick={() => this.setState({
-              selectrole: false
-            })}>Done!</button>
+        {this.state.selectrole && <div>
+          <Modal
+            isOpen={this.state.isOpen}
+            onRequestClose={this.toggleModal}
+            contentLabel="My dialog"
+            className="createmodaltab"
+            overlayClassName="myoverlaytab"
+            closeTimeoutMS={500}
+            >
+              <CreateRole gameid={this.state.gameinstanceid}/>
+          </Modal>
         </div>
       }
+
+      {this.state.tics.map(eachTic => {
+        if(eachTic.level === this.state.level)
+        return(
+        <TicTacToe
+          i={eachTic.i}
+          handleTicDelete={this.handleTicDelete}
+        />
+      )
+      })}
+      {this.state.connect4.map(eachConnect => {
+        if(eachConnect.level === this.state.level)
+        return(
+        <Connect4 />
+      )
+      })}
         <div>
           <Stage
             height={window.innerHeight}

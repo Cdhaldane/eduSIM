@@ -112,7 +112,7 @@ function Tabs(props) {
                 overlayClassName="myoverlaytab"
                 closeTimeoutMS={500}
                 >
-                  <CreateEmail  />
+                  <CreateEmail addstudent={true} gameid={props.gameid} title={props.title}/>
               </Modal>
               <div class="simadv">
                 <h3>Simulation advancement</h3>
@@ -134,7 +134,7 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={false} gameid={props.gameid}/>
+              <Table addstudent={false} gameid={props.gameid} title={props.title}/>
             </div>
           {tabs.map((i) => (
             <div
@@ -156,8 +156,8 @@ function Tabs(props) {
             <Tooltip />
           </LineChart>
         </div>
-          <h3 id="roomh3">Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i} gameid={props.gameid}/>
+          <h3 >Students / participants in room:</h3>
+        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title}/>
       </div>
             </div>
         ))}

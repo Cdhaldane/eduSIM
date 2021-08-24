@@ -26,7 +26,6 @@ const Table = (props) => {
     const [lname, setFname] = useState("")
     const [email, setEmail] = useState("")
     const [role, setRole] = useState("")
-    const { user } = useAuth0();
     const [addFormData, setAddFormData] = useState({
       firstName: "",
       lastName: "",
@@ -42,6 +41,8 @@ const Table = (props) => {
     });
 
     const [editContactId, setEditContactId] = useState(null);
+
+    const { user } = useAuth0()
 
     useEffect(() => {
       if(props.addstudent === false){
@@ -294,6 +295,7 @@ const Table = (props) => {
       {contacts.map((contact) => {
         console.log(contact.firstName)
         axios.post('http://localhost:5000/api/email/sendEmail', {
+          simname: props.title,
           pname: user.name,
           name: contact.firstName,
           lastname: contact.lastName,
@@ -408,7 +410,7 @@ const Table = (props) => {
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
-       : ""
+       : <div>{(() => {if(props.email){return(<button id="emailstudent" onClick={handleEmail}>Email</button>)}})()}</div>
       }
       </div>
     );

@@ -60,6 +60,7 @@ function Join(props) {
 
             <Tabs
               gameid={localStorage.gameid}
+              title={props.location.title}
             />
     </div>
   );

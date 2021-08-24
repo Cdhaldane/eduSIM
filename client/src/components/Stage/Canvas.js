@@ -372,7 +372,7 @@ class Graphics extends Component {
         tics: JSON.parse(allData.game_parameters)[11] || []
       })
       this.setState({
-        connect4: JSON.parse(allData.game_parameters)[11] || []
+        connect4: JSON.parse(allData.game_parameters)[12] || []
       })
 
     })
@@ -5812,7 +5812,7 @@ class Graphics extends Component {
                 <p id="rolesdrop">
                   <Dropdownroles
                     roleLevel={this.handleRoleLevel}
-                    gameroles={this.state.gameroles}
+
                     gameid={this.state.gameinstanceid}
                   />
                 </p>

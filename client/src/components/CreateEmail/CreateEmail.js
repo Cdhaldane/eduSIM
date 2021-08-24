@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 
 
   function CreateEmail(props) {
-  // sets all const
+
 
 
   return (
@@ -14,7 +14,7 @@ import { Container, Row, Col } from "react-bootstrap";
       <form id="areacsvform">
         <p id="boxj1"> Email Room Codes to Students/Participants </p>
           <div id="emailtable">
-          <Table addtsudent={false}/>
+          <Table email={true} addstudent={false} gameid={props.gameid} title={props.title}/>
           </div>
         </form>
         </Container>
