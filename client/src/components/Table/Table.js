@@ -153,6 +153,7 @@ const Table = (props) => {
 
     //Add submit
     const handleAddFormSubmit = (event) => {
+      window.location.reload();
       event.preventDefault();
       console.log(props)
       var data = {

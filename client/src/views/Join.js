@@ -9,10 +9,10 @@ import {Image} from "cloudinary-react";
 
 
 function Join(props) {
-  console.log(props)
+  console.log(props.location.gameinstance)
   const [isOpen, setIsOpen] = useState(false)
   const [showNote, setShowNote] = useState(false)
-
+  
   if(props.location.gameinstanceid !== undefined){
     localStorage.setItem('gameid', props.location.gameinstance);
   }
@@ -22,6 +22,7 @@ function Join(props) {
   if(props.location.img !== undefined){
     localStorage.setItem('img', props.location.img);
   }
+
 
   function toggleModal(e) {
     e.preventDefault();

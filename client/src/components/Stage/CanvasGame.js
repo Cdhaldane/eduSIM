@@ -96,7 +96,7 @@ class Graphics extends Component {
       open: 0,
       isOpen: true,
       state: false,
-      selectrole: true,
+      selectrole: false,
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
       level: 1,
@@ -161,6 +161,13 @@ class Graphics extends Component {
         }
     })
   }
+
+  componentDidMount() {
+    this.setState({
+      selectrole: true
+    })
+  }
+
   handleLevel = (e) => {
     this.setState({
       level: e
