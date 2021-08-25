@@ -80,6 +80,7 @@ function Dashboard(props) {
 
             <div className="dashsim">
             <h2>My simulations ️</h2>
+
             {gamedata.map((noteItem, index) => {
 
           return (

@@ -46,7 +46,7 @@ function SimNote(props) {
         gameinstance: props.gameid,
         adminid: props.adminid
         }}>
-        <i id="play" class="fas fa-play-circle fa-2x"></i>
+        <i id="play" class="fas fa-play-circle fa-2x" onClick={() => localStorage.setItem('gameid', props.gameid)}></i>
       </Link>
     </div>
     </div>

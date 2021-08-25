@@ -3,7 +3,7 @@ const GameRole = require("../models/GameRoles");
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
   try {
-    let gamerole = await GameRole.findOne({
+    let gamerole = await GameRole.findAll({
       where: {
         gameinstanceid: gameinstanceid
       },
@@ -11,7 +11,7 @@ exports.getGameRoles = async (req, res) => {
       return res.send(gamerole);
     } catch (err) {
       return res.status(400).send({
-        message: `No game roles found with the id ${gameid}`,
+        message: `No game roles found with the id ${gameinstanceid}`,
       });
     }
   };
@@ -20,11 +20,11 @@ exports.getGameRoles = async (req, res) => {
     const gameinstanceid = req.body.gameinstanceid;
     const gamerole = req.body.gamerole.toLowerCase();
       try {
-        let newGameRole = await GameRole.create({
+        let newGameInstance = await GameRole.create({
           gameinstanceid,
           gamerole
         });
-        return res.send(newGameRole);
+        return res.send(newGameInstance);
       } catch (err) {
         return res.status(500).send({
           message: `Error: ${err.message}`,

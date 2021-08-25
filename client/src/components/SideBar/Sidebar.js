@@ -42,7 +42,6 @@ const StyledNav = styled.nav`
 
 function Sidebar (props) {
   const [compact, setCompact] = useState(0);
-  console.log(props.img)
     return (
       <>
         <Backdrop visible={props.visible} onClick={props.close}/>

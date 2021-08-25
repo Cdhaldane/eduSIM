@@ -2,16 +2,17 @@ import React, { useEffect, useRef } from "react";
 import { useState, Fragment } from "react";
 import axios from "axios";
 import "./Tabs.css";
-//import Button from "../Buttons/Button"
+import Button from "../Buttons/Button"
 import Table from "../Table/Table"
 import CreateEmail from "../CreateEmail/CreateEmail";
-//import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import Modal from "react-modal";
 
 
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(1);
+  const [time, setTime] = useState(0);
   const [radio, setRadio] = useState("Teacher")
   const [isOpen, setIsOpen] = useState(false)
   const [newGroup, setNewGroup] = useState("")
@@ -23,14 +24,14 @@ function Tabs(props) {
   useEffect(() => {
     axios.get('http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid', {
       params: {
-            gameinstanceid: ["8f5fd942-63c3-415c-a2c6-4e20fafb93b3"],
+            gameinstanceid: [props.gameid],
         }
     })
        .then((res) => {
           console.log(res)
           let cart = []
           for(let i = 0; i < res.data.length; i++){
-            cart.push(res.data[i].gameroom_name)
+            cart.push([res.data[i].gameroom_name, res.data[i].gameroomid])
             console.log(cart)
           }
           setTabs(cart)
@@ -47,7 +48,7 @@ function Tabs(props) {
     console.log(tabs)
     setTabs([...tabs, newGroup])
     let data = {
-      gameinstanceid: "8f5fd942-63c3-415c-a2c6-4e20fafb93b3",
+      gameinstanceid: props.gameid,
       gameroom_name: newGroup
     }
       axios.post('http://localhost:5000/api/playerrecords/createRoom', data)
@@ -67,12 +68,33 @@ function Tabs(props) {
     setIsOpen(!isOpen);
   }
 
+  const handleDeleteGroup = (e) => {
+    var index = tabs.indexOf(e);
+    console.log(tabs)
+    setToggleState(1)
+    axios.delete('http://localhost:5000/api/playerrecords/deleteRoom/:gameroomid', {
+      params: {
+        id: tabs[index][1]
+      }
+    })
+       .then((res) => {
+          console.log(res)
+
+         })
+        .catch(error => console.log(error.response));
+        delete tabs[index]
+  }
+
+  const handleTime = (e) => {
+    setTime(e.target.value)
+  }
+
   return (
     <div class="tabs">
       <ul class="selected-tab">
         <li onClick={() => toggleTab(1)} class={toggleState === 1 ? "selected" : ""}>Overview</li>
         {tabs.map((i) => (
-          <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i}</li>
+          <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i[0]}</li>
         ))}
        <li onClick={() => toggleTab(0)} class={toggleState === 4 ? "selected" : ""}>Add group</li>
      </ul>
@@ -90,7 +112,7 @@ function Tabs(props) {
                 overlayClassName="myoverlaytab"
                 closeTimeoutMS={500}
                 >
-                  <CreateEmail  />
+                  <CreateEmail addstudent={true} gameid={props.gameid} title={props.title}/>
               </Modal>
               <div class="simadv">
                 <h3>Simulation advancement</h3>
@@ -101,8 +123,10 @@ function Tabs(props) {
             <input type="radio" checked={radio=="Student"} value="Student" onChange={(e)=>{setRadio(e.target.value)}}/> Student/Participants
             </div>
             <div>
-            <input type="radio" checked={radio=="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed
+            <input type="radio" checked={radio=="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed =
             </div>
+            <input onChange={handleTime} type="text" placeholder="Time" id="time" />
+            <p>min</p>
               </div>
               <h3>Student/participant list:</h3>
 
@@ -110,13 +134,14 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={true}/>
+              <Table addstudent={false} gameid={props.gameid} title={props.title}/>
             </div>
           {tabs.map((i) => (
             <div
               className={toggleState === i ? "content  active-content" : "content"}
             >
-              <h2>{i}</h2>
+            <button onClick={() => handleDeleteGroup(i)} className="deletegroup">Delete Group</button>
+              <h2>{i[0]}</h2>
               <hr />
             <div className="groupcontainer">
             <h3>Chat: </h3>
@@ -131,8 +156,8 @@ function Tabs(props) {
             <Tooltip />
           </LineChart>
         </div>
-          <h3 id="roomh3">Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i} gameid={props.gameid}/>
+          <h3 >Students / participants in room:</h3>
+        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title}/>
       </div>
             </div>
         ))}
@@ -143,7 +168,7 @@ function Tabs(props) {
               <hr />
               <p>
                 Group name
-              <input onChange={handleChange} type="text" class="textbox" placeholder="Group Name" id="code" />
+              <input onChange={handleChange} type="text" class="textbox" placeholder="Group Name" id="namei" />
               </p>
               <button className="addgroup" onClick={handleSubmit}>Add</button>
             </div>

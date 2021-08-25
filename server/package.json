@@ -63,7 +63,19 @@
     "roughjs": "^4.4.1",
     "sequelize": "^6.6.2",
     "use-image": "^1.0.7",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+
+    "@react-pdf/renderer": "^2.0.16",
+    "cloudinary-react": "^1.7.0",
+    "detect-browser-language": "0.0.2",
+    "file-saver": "^2.0.5",
+    "font-picker-react": "^3.5.2",
+    "js-file-download": "^0.4.12",
+    "nodemailer": "^6.6.3",
+    "papaparse": "^5.3.1",
+    "react-draggable": "^4.4.3",
+    "react-modal": "^3.14.3",
+    "recharts": "^2.1.0"
   },
   "devDependencies": {
     "concurrently": "^6.1.0",

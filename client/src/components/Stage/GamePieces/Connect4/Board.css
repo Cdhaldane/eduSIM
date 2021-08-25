@@ -1,0 +1,37 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+.connectcontainer{
+  z-index: 20000;
+  position: absolute;
+  left: 500px;
+  font-family:  "Montserrat", sans-serif;
+}
+.board {
+  margin: auto;
+  display: grid;
+  justify-content: stretch;
+  min-width: 300px;
+  height: 300px;
+  background: black;
+}
+.drop-button {
+  background-color: white;
+}
+
+.cell {
+  width: 100%;
+  border: 1px solid #999;
+  border-radius: 50%;
+}
+
+.xo-container {
+  position: relative;
+  left: -150px;
+  top: 300px;
+  height: 300px;
+  width: 100px;
+  background-color: white;
+  border: 1px solid black;
+}

@@ -30,7 +30,8 @@ exports.getGameInstances = async (req, res) => {
 ///Get a specific game instance that an admin has created
 // Request has an admin and a gameinstance id
 exports.getGameInstance = async (req, res) => {
-  const { adminid, gameid } = req.params;
+  const adminid = req.query.adminid;
+  const gameid = req.query.gameid;
     try {
       let gameinstance = await GameInstance.findOne({
         where: {
@@ -45,7 +46,6 @@ exports.getGameInstance = async (req, res) => {
         });
       }
   };
-
 
 //Create a new game instance
 exports.createGameInstance = async (req, res) => {
@@ -68,12 +68,11 @@ exports.createGameInstance = async (req, res) => {
 
 //Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
-  const { id } = req.params;
+  const { id, gameinstance_name, gameinstance_photo_path,  game_parameters, invite_url } = req.body;
 
   const gameinstance = await GameInstance.findOne({
     where: {
-      gameinstanceid: id,
+      gameinstanceid: id
     },
   });
 
@@ -141,3 +140,29 @@ exports.deleteGameInstance = async (req, res) => {
     });
   }
 };
+// exports.deleteGameInstance = async (req, res) => {
+//   const  id  = req.query.id;
+//
+//   const gameinstance = await GameInstance.findOne({
+//     where: {
+//       gameinstanceid: id,
+//     },
+//   });
+//
+//   if (!gameinstance) {
+//     return res.status(400).send({
+//       message: `No game instance found with the id ${id}`,
+//     });
+//   }
+//
+//   try {
+//     await gameinstance.destroy();
+//     return res.send({
+//       message: `Game ${id} has been deleted!`,
+//     });
+//   } catch (err) {
+//     return res.status(500).send({
+//       message: `Error: ${err.message}`,
+//     });
+//   }
+// };

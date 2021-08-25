@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css?family=Lobster");
+@import url('https://fonts.googleapis.com/css?family=Lobster');
+
 
 .selected-tab {
   text-align: center;
@@ -9,9 +10,10 @@
   line-height: 24px;
   overflow: hidden;
   position: relative;
+
 }
 .selected-tab li {
-  border: 3px solid #636363;
+  border: 2px solid #636363;
   padding: 6px;
   background-color: #FFF;
   margin-right: 10px;
@@ -24,9 +26,9 @@
 }
 
 .selected-tab li.selected {
-  background: #fff;
+  background: #FFF;
   z-index: 2;
-  border-bottom-color: #fff;
+  border-bottom-color: #FFF;
 }
 
 .selected-tab li:before,
@@ -37,7 +39,8 @@
   top: 0;
   height: 100%;
   width: 44px;
-  background-color: #fff;
+  background-color: #FFF;
+
 }
 .selected-tab li:before {
   left: -24px;
@@ -58,8 +61,8 @@
 }
 
 .selected-tab li.selected:before,
-.selected-tab li.selected:after {
-  background: #fff;
+.selected-tab li.selected:after{
+  background: #FFF;
   border-bottom: 3px solid #ffffff;
 }
 
@@ -71,7 +74,7 @@
   cursor: pointer;
   border-bottom-color: #636363;
 }
-.tabs {
+.tabs{
   width: 75%;
   margin: 0 auto;
   text-align: center;
@@ -79,7 +82,7 @@
 
 .tabs:after {
   clear: both;
-  content: "";
+  content: '';
   display: table;
 }
 
@@ -90,10 +93,10 @@
 .tabs .tab-label {
   font-size: 18px;
   vertical-align: bottom;
-  font-family: "Lobster", cursive;
+  font-family: 'Lobster', cursive;
   border: 3px solid #636363;
   padding: 15px 22px 8px;
-  background-color: #fff;
+  background-color: #FFF;
   margin-right: -9px;
   display: inline-block;
   position: relative;
@@ -109,7 +112,8 @@
   top: 0;
   height: 100%;
   width: 33px;
-  background-color: #fff;
+  background-color: #FFF;
+
 }
 .tabs .tab-label:before {
   left: -17px;
@@ -130,8 +134,8 @@
 }
 
 .selected-tab li.selected:before,
-.selected-tab li.selected:after {
-  background: #fff;
+.selected-tab li.selected:after{
+  background: #FFF;
   border-bottom: 3px solid #ffffff;
 }
 
@@ -176,9 +180,9 @@
   text-align: left;
 }
 
-.tabs .tab-content h2 {
+.tabs .tab-content h2{
   text-align: center;
-  margin-bottom: 45px;
+  margin-bottom:45px;
 }
 
 .tabs .tab [type="radio"]:checked + .tab-label {
@@ -188,12 +192,12 @@
   z-index: 1;
 }
 
-.tabs .tab .tab-label .word-selected {
-  display: none;
+.tabs .tab .tab-label .word-selected{
+ display:none;
 }
 
-.tabs .tab [type="radio"]:checked + .tab-label .word-selected {
-  display: inline;
+.tabs .tab [type="radio"]:checked + .tab-label .word-selected{
+  display:inline;
 }
 
 .tabs .tab [type="radio"]:checked ~ .tab-panel {
@@ -222,18 +226,24 @@
   padding: 0px 0 5px 0px;
   color: black;
   font-size: 1.5vw;
+  position: sticky;
 }
 .content p {
   width: 100%;
   height: 100%;
   padding: 0px 0 5px 0px;
+  position: relative;
+  left: 210px;
+  top: -25px;
 }
+
 .active-content {
   display: block;
 }
 .active-content input::placeholder {
   color: grey;
   opacity: 0.8;
+  font-size: 1.0vw;
 }
 
 .h3 button {
@@ -249,15 +259,15 @@
 
 .simadv h3 {
   font-size: 1.2rem;
-  position: relative;
-  left: -300px;
-  top: 24px;
+  position: absolute;
+  left: -200px;
+  top: 0px;
 }
 
 .studentbuttonemail {
   position: sticky;
   z-index: 1000;
-  left: 1100px;
+  left: 1200px;
   width: 30%;
   height: 50px;
   margin-bottom: -30px;
@@ -269,9 +279,32 @@
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 10px;
+  border-radius: 10px
 }
-.studentbuttonemail:hover {
+.studentbuttonemail:hover{
+  cursor: pointer;
+  box-shadow: 0 5px 10px grey;
+}
+
+.deletegroup {
+  position: sticky;
+  z-index: 1000;
+  left: 1300px;
+  top: -10px;
+  width: 20%;
+  height: 50px;
+  margin-bottom: -30px;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5vw;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px
+}
+.deletegroup:hover{
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
@@ -304,10 +337,10 @@
 }
 
 .createmodaltab {
-  position: fixed;
+  position: absolute;
   top: 50%;
-  left: 28%;
-  width: 100%;
+  left: 50%;
+  width: 53%;
   transform: translate(-50%, -50%);
   border-radius: 4px;
   overflow: hidden;
