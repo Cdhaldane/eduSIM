@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Switch from "react-switch"
-import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./CreateArea.css";
-import Modal from "react-modal";
+
 
 
   function CreateArea(props) {
