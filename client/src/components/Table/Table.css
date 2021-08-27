@@ -20,7 +20,7 @@
   border: 1px solid #ffffff;
   text-align: left;
   padding: 8px;
-  font-size: 8px;
+  font-size: 1vw;
   width: 10%;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .app-container form * {
-  font-size: 22px;
+  font-size: 1vw;
 }
 
 .addstudent{
@@ -139,18 +139,9 @@
     flex-direction: column;
     gap: 10px;
     padding: 0rem;
-    height: 300px;
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
-  }
-
-  .app-container table {
-    border-collapse: collapse;
-    width: 30%;
-  }
-  .app-container form * {
-    font-size: 14px;
   }
   #emailbutton {
     font-size: 1.0rem;

@@ -15,7 +15,7 @@ function Home(props){
           title="Are you a Teacher / Facillitator?"
           url="/dashboard"
           img="teacher.png"
-          class="welcomep2"
+          class="welcomep3"
         />
       </div>
     );

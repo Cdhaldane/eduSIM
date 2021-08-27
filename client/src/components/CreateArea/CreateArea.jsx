@@ -8,15 +8,17 @@ import Modal from "react-modal";
 
   function CreateArea(props) {
   const [note, setNote] = useState([]);
-  const [img, setImg] = useState();
-  const [title, setTitle] = useState();
+  const [img, setImg] = useState("Demo.jpg");
+  const [title, setTitle] = useState("Untitled");
   const [checked, setChecked] = useState(false);
   const [selectValue, setSelectValue] = useState("");
-  const [filename, setFilename] = useState('');
+  const [filename, setFilename] = useState('images/ujjtehlwjgsfqngxesnd');
   const [imageSelected, setImageSelected] = useState("");
+  const [sims, setSims] = useState(createSelectItems());
+  const [copy, setCopy] = useState(0);
+  const [copiedParams, setCopiedParams] = useState()
     // sets all const
  const uploadImage = async event =>{
-   handleDuplicate()
    event.preventDefault();
    const formData = new FormData()
    formData.append("file", imageSelected)
@@ -47,13 +49,33 @@ import Modal from "react-modal";
      createdby_adminid: localStorage.adminid,
      status: 'created'
    }
-     axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
+   if(copy === 1){
+     await axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
+        .then((res) => {
+          var body = {
+              id: res.data.gameinstanceid,
+              game_parameters: copiedParams,
+              createdby_adminid: localStorage.adminid,
+              invite_url: 'value'
+            }
+            axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
+               .then((res) => {
+                  console.log(res)
+                 })
+                .catch(error => console.log(error.response));
+          })
+         .catch(error => console.log(error.response));
+     props.onAdd(note);
+   } else {
+      await axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
         .then((res) => {
            console.log(res)
           })
          .catch(error => console.log(error.response));
      props.onAdd(note);
    }
+   }
+
    window.location.reload();
  };
   //handles selection of img from file
@@ -76,21 +98,26 @@ import Modal from "react-modal";
   }
 
   function createSelectItems() {
-    console.log(props.gamedata)
     let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <=  props.gamedata.length -1; i++) {
          //here I will be creating my options dynamically based on
          items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
+
          //what props are currently passed to the parent component
     }
     return items;
   }
-  function handleDuplicate(){
-    console.log(selectValue)
-  }
+
   function handleCopySim(event) {
-    setSelectValue(event.target.value)
-    console.log(event.target.value)
+    //setting copy to 1 so when we add we can also update the params to copiedParams
+    setCopy(1)
+    setTitle(props.gamedata[event.target.value].gameinstance_name)
+    setFilename(props.gamedata[event.target.value].gameinstance_photo_path)
+    setNote({
+      title: props.gamedata[event.target.value].gameinstance_name,
+      img: props.gamedata[event.target.value].gameinstance_photo_path
+    });
+    setCopiedParams(props.gamedata[event.target.value].game_parameters)
   }
   return (
       <div class="area" >

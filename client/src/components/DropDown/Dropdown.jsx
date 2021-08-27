@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import {  ChromePicker } from 'react-color';
 import axios from "axios";
+
+
 import "./Dropdown.css";
 
   function DropdownMenu(props) {
@@ -146,6 +148,14 @@ import "./Dropdown.css";
   }
   function addDocument(e){
     props.addDocument();
+    props.close();
+  }
+  function addTic(e){
+    props.addTic("clicked");
+    props.close();
+  }
+  function addConnect(){
+    props.addConnect();
     props.close();
   }
   function stopDrawing(){
@@ -403,10 +413,25 @@ import "./Dropdown.css";
 
         </div>
       </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'pieces'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+            <h2>PIECES!</h2>
+          </DropdownItem>
+          <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addTic}></i>}>Tic-Tac-Toe</DropdownItems>
+          <DropdownItems onClick={addConnect} leftIcon={<i id="icons" class="fa fa-circle" onClick={addConnect}></i>}>Connect-Four</DropdownItems>
+
+
+        </div>
+      </CSSTransition>
     </div>
   );
 }
 
 export default DropdownMenu;
-
-  // <DropdownItems onClick={addStick} leftIcon={<i id="icons" class="fa fa-minus" onClick={addStick}></i>}>Arrow</DropdownItems>

@@ -32,6 +32,10 @@ function Level(props) {
 
   return (
   <div id="all">
+    <a href="/dashboard">
+      <i class="fas fa-times fa-3x"></i>
+    </a>
+    <h1>Edit Mode</h1>
       <img className= {"ball" + count}  src={"ball.png"} alt="level counter"/>
     <div className = "level">
       <img id={"img" + props.number} src={"levelbar.png"} alt="levelbar" />
