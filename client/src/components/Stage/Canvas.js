@@ -4290,7 +4290,6 @@ class Graphics extends Component {
         </div>
         <div className="eheader">
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
-          <h1 id="editmode">Edit Mode</h1>
             <div>
               <div className={"info" + this.state.open}>
                 <div id="infostage">
@@ -5899,9 +5898,7 @@ class Graphics extends Component {
               svisible={this.handleSvisible}
               pevisible={this.handlePevisible}
               />
-              <Link to="/dashboard">
-                <i id="editpagex" class="fas fa-times fa-3x"></i>
-              </Link>
+              
             </div>
       </React.Fragment>
     );

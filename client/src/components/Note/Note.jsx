@@ -8,7 +8,7 @@ return (
   <Link to={props.url}>
   <button  className={props.class} type="button" alt="sim background" onClick={props.onClick} >
     <h1>{props.title}</h1>
-    <img src={props.img}/>  
+    <img src={props.img} alt="note background"/>  
   </button>
   </Link>
 );

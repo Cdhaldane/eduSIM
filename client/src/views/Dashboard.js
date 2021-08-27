@@ -71,7 +71,7 @@ function Dashboard(props) {
               isOpen={showNote}
               onRequestClose={toggleModal}
               contentLabel="My dialog"
-              className="createmodal"
+              className="createmodalarea"
               overlayClassName="myoverlay"
               closeTimeoutMS={500}
               >

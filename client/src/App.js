@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
 import Welcome from "./views/welcome.js";
 import Home from "./views/home.js";
+import About from "./views/about.js";
 import Profile from "./views/Profile.js";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
@@ -28,6 +29,7 @@ class App extends React.Component {
           <Switch>
               <Route path="/" exact component={Home} />
               <Route path="/welcome" exact component={Welcome} />
+              <Route path="/about" exact component={About} />
               <Route path="/gamepage" exact component={GamePage} />
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />
@@ -47,6 +49,7 @@ class App extends React.Component {
               <Route path="/" exact component={Home} />
               <Route path="../components/Navbar" exact component={Navbar} />
               <Route path="/welcome" exact component={Welcome} />
+              <Route path="/about" exact component={About} />
               <Route path="/gamepage" exact component={GamePage} />
               <Route path="/editpage" exact component={EditPage} />
               <ProtectedRoute path="/profile" component={Profile} />

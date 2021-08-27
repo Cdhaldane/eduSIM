@@ -88,11 +88,14 @@ function Tabs(props) {
   const handleTime = (e) => {
     setTime(e.target.value)
   }
+  const handleTabs = (e) => {
+    toggleTab(1)
+  }
 
   return (
     <div class="tabs">
       <ul class="selected-tab">
-        <li onClick={() => toggleTab(1)} class={toggleState === 1 ? "selected" : ""}>Overview</li>
+        <li onClick={handleTabs} class={toggleState === 1 ? "selected" : ""}>Overview</li>
         {tabs.map((i) => (
           <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i[0]}</li>
         ))}
@@ -134,7 +137,7 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={false} gameid={props.gameid} title={props.title}/>
+              <Table addstudent={false} gameid={props.gameid} title={props.title} value={value}/>
             </div>
           {tabs.map((i) => (
             <div
@@ -157,7 +160,7 @@ function Tabs(props) {
           </LineChart>
         </div>
           <h3 >Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title}/>
+        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title} value={value}/>
       </div>
             </div>
         ))}
