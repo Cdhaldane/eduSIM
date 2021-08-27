@@ -26,7 +26,7 @@ function NavBar(props) {
       <ul className={clicked ? "nav-menu active" : "nav-menu"}>
         <div>
         {(isAuthenticated)
-        ? <img className="nav-pic" src={ user.picture } alt="profile picture" onClick={() => setCount(!count)}/>
+        ? <img className="nav-pic" src={ user.picture } alt="profile" onClick={() => setCount(!count)}/>
       : <p className="nav-picbutton"><AuthenticationButton /></p>
     }
         </div>

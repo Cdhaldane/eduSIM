@@ -10,7 +10,6 @@ import {Image} from "cloudinary-react";
 
 function Join(props) {
   console.log(props.location.gameinstance)
-  const [isOpen, setIsOpen] = useState(false)
   const [showNote, setShowNote] = useState(false)
 
 

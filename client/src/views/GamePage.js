@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
 import styled from "styled-components"
 import Sidebar from "../components/SideBar/Sidebar";
-import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
-
-
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 
 const Grid = styled.div`
@@ -23,18 +19,15 @@ const GridNav = styled.div`
   z-index: 2000;
 `;
 
-const GridHeader = styled.header`
-  grid-area: header;
-  background-color: #E5E5E5;
-`;
+// const GridHeader = styled.header`
+//   grid-area: header;
+//   background-color: #E5E5E5;
+// `;
 
 const GridMain = styled.main`
   grid-area: main;
   background-color: #e5e5e5;
 `;
-
-
-
 
 function Game(props){
   const [showNav, setShowNav] = useState(false);

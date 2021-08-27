@@ -2,10 +2,8 @@ import React, { useState, useEffect, Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
 import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
-import { v1 as uuidv1 } from 'uuid';
 import fileDownload from 'js-file-download'
 import axios from 'axios'
-import {Link } from "react-router-dom";
 import Level from "../Level/Level";
 import Pencil from "../Pencils/Pencil";
 import Konva from "konva"
@@ -29,7 +27,7 @@ import {
   Arrow,
   Image
 } from "react-konva";
-import Connector from "./Connector.jsx";
+
 
   class URLImage extends React.Component {
     state = {
@@ -1586,7 +1584,8 @@ class Graphics extends Component {
       if (eachRect.id === currentShapeName) {
         toReturn = false;
       }
-    });
+    }
+  );
     ellipses.map(eachEllipse => {
       if (eachEllipse.id === currentShapeName) {
         toReturn = false;
@@ -2542,59 +2541,28 @@ class Graphics extends Component {
 
 
   render() {
-    let saveText;
-
-    let saving = this.state.saving;
-    if (saving !== null) {
-      if (saving) {
-        saveText = <div style={{ color: "white" }}>Saving</div>;
-      } else {
-        saveText = <div style={{ color: "white" }}>Saved</div>;
-      }
-    }
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    var gradient = ctx.createLinearGradient(0, 0, 100, 100);
-    gradient.addColorStop(0.0, "red");
-    gradient.addColorStop(1 / 6, "orange");
-    gradient.addColorStop(2 / 6, "yellow");
-    gradient.addColorStop(3 / 6, "green");
-    gradient.addColorStop(4 / 6, "aqua");
-    gradient.addColorStop(5 / 6, "blue");
-    gradient.addColorStop(1.0, "purple");
-
-    const errMsg = this.state.errMsg;
-    let errDisplay;
-    if (errMsg !== "") {
-      errDisplay = (
-        <div className="errMsginner">
-          <span style={{ color: "white" }}>
-            {errMsg !== "" ? errMsg : null}
-          </span>
-        </div>
-      );
-    } else {
-    }
-
-
     return (
       <React.Fragment>
         {this.state.tics.map(eachTic => {
-          if(eachTic.level === this.state.level)
+          if(eachTic.level === this.state.level) {
           return(
           <TicTacToe
             i={eachTic.i}
             handleTicDelete={this.handleTicDelete}
           />
         )
+      } else {
+        return null
+      }
         })}
         {this.state.connect4.map(eachConnect => {
-          if(eachConnect.level === this.state.level)
+          if(eachConnect.level === this.state.level) {
           return(
           <Connect4 />
         )
+      } else {
+        return null
+      }
         })}
 
 
@@ -2670,7 +2638,7 @@ class Graphics extends Component {
 
 
             {this.state.rectangles.map(eachRect => {
-              if(eachRect.level === this.state.level && eachRect.infolevel === false)
+              if(eachRect.level === this.state.level && eachRect.infolevel === false){
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -2844,7 +2812,9 @@ class Graphics extends Component {
 
                   />
                 );
-              })}
+              } else {
+                return null
+              }              })}
               {this.state.selectedContextMenu && (
                 <Portal>
               <ContextMenu
@@ -2865,7 +2835,7 @@ class Graphics extends Component {
             )}
 
               {this.state.ellipses.map(eachEllipse => {
-                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false){
                 return (
                 <Ellipse
                   visible={eachEllipse.visible}
@@ -3028,10 +2998,13 @@ class Graphics extends Component {
                   }
                   }
                 />
-              );
+              )
+            } else {
+              return null
+            }
             })}
               {this.state.lines.map((eachLine, i) => {
-                if(eachLine.level === this.state.level && eachLine.infolevel === false)
+                if(eachLine.level === this.state.level && eachLine.infolevel === false){
                 return(
                   <Line
                     id={eachLine.id}
@@ -3061,10 +3034,12 @@ class Graphics extends Component {
                     }
                   />
               );
-              })}
+            } else {
+              return null
+            }              })}
 
               {this.state.images.map(eachImage => {
-                if(eachImage.level === this.state.level && eachImage.infolevel === false)
+                if(eachImage.level === this.state.level && eachImage.infolevel === false){
                 return (
                 <URLImage
                   visible={eachImage.visible}
@@ -3186,10 +3161,13 @@ class Graphics extends Component {
                   }
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.videos.map(eachVideo => {
-                if(eachVideo.level === this.state.level && eachVideo.infolevel === false)
+                if(eachVideo.level === this.state.level && eachVideo.infolevel === false){
                 return (
                 <URLvideo
                   visible={eachVideo.visible}
@@ -3300,10 +3278,13 @@ class Graphics extends Component {
                   }
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.audios.map(eachAudio => {
-                if(eachAudio.level === this.state.level && eachAudio.infolevel === false)
+                if(eachAudio.level === this.state.level && eachAudio.infolevel === false){
                 return (
                 <URLvideo
                   visible={eachAudio.visible}
@@ -3420,10 +3401,13 @@ class Graphics extends Component {
                   }
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.documents.map(eachDoc => {
-                if(eachDoc.level === this.state.level && eachDoc.infolevel === false)
+                if(eachDoc.level === this.state.level && eachDoc.infolevel === false){
                 return (
                 <Rect
                   rotation={eachDoc.rotation}
@@ -3562,10 +3546,13 @@ class Graphics extends Component {
                   }
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.triangles.map(eachEllipse => {
-                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false){
                 return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
@@ -3727,10 +3714,13 @@ class Graphics extends Component {
                   }
                   }
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.stars.map(eachStar => {
-                if(eachStar.level === this.state.level && eachStar.infolevel === false)
+                if(eachStar.level === this.state.level && eachStar.infolevel === false){
                 return (
                 <Star
                   visible={eachStar.visible}
@@ -3850,11 +3840,14 @@ class Graphics extends Component {
                   }
                   }
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
 
               {this.state.texts.map(eachText => {
-                if(eachText.level === this.state.level && eachText.infolevel === false)
+                if(eachText.level === this.state.level && eachText.infolevel === false){
                 return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -4043,7 +4036,10 @@ class Graphics extends Component {
                   }
                   }
               />
-            );
+            )
+          } else {
+            return null
+          }
             })}
             {this.state.selectedContextMenuText && (
               <Portal>
@@ -4064,7 +4060,7 @@ class Graphics extends Component {
             </Portal>
           )}
               {this.state.arrows.map(eachArrow => {
-                if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
+                if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false){
                   return (
                     <Arrow
                       visible={eachArrow.visible}
@@ -4124,31 +4120,12 @@ class Graphics extends Component {
                   (eachArrow.from || eachArrow.to)
                 ) {
                   return (
-                    <Connector
-                      id={eachArrow.id}
-                      name="shape"
-                      from={eachArrow.from}
-                      to={eachArrow.to}
-                      arrowEndX={this.state.arrowEndX}
-                      arrowEndY={this.state.arrowEndY}
-                      current={true}
-                      stroke={eachArrow.stroke}
-                      fill={eachArrow.fill}
-                    />
+                    ""
                   );
                 } else if (eachArrow.from || eachArrow.to) {
                   //if arrow construction is completed
                   return (
-                    <Connector
-                      id={eachArrow.id}
-                      name="shape"
-                      from={eachArrow.from}
-                      to={eachArrow.to}
-                      points={eachArrow.points}
-                      current={false}
-                      stroke={eachArrow.stroke}
-                      fill={eachArrow.fill}
-                    />
+                    ""
                   );
                 }
               })}
@@ -4286,7 +4263,7 @@ class Graphics extends Component {
               background: "none"
             }}
           />
-          <div className="errMsg">{errDisplay}</div>
+
         </div>
         <div className="eheader">
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
@@ -5758,31 +5735,12 @@ class Graphics extends Component {
                           (eachArrow.from || eachArrow.to)
                         ) {
                           return (
-                            <Connector
-                              id={eachArrow.id}
-                              name="shape"
-                              from={eachArrow.from}
-                              to={eachArrow.to}
-                              arrowEndX={this.state.arrowEndX}
-                              arrowEndY={this.state.arrowEndY}
-                              current={true}
-                              stroke={eachArrow.stroke}
-                              fill={eachArrow.fill}
-                            />
+                            ""
                           );
                         } else if (eachArrow.from || eachArrow.to) {
                           //if arrow construction is completed
                           return (
-                            <Connector
-                              id={eachArrow.id}
-                              name="shape"
-                              from={eachArrow.from}
-                              to={eachArrow.to}
-                              points={eachArrow.points}
-                              current={false}
-                              stroke={eachArrow.stroke}
-                              fill={eachArrow.fill}
-                            />
+                        ""
                           );
                         }
                       })}
@@ -5898,7 +5856,7 @@ class Graphics extends Component {
               svisible={this.handleSvisible}
               pevisible={this.handlePevisible}
               />
-              
+
             </div>
       </React.Fragment>
     );

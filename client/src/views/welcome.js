@@ -9,7 +9,7 @@ function Welcome(props){
         <h1>Welcome!</h1>
         <p>Already have a room code?</p>
         <p><form action = {"http://localhost:3000/" + document.getElementById.value}><label>Join!<input type="text" class="textbox" placeholder="Room Code" id="code" /></label></form></p>
-        <p>If not, get one from your teacher / facilitator, <br/> or <a href="#" onClick={() => loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})}> setup / create your own simulation</a></p>
+      <p>If not, get one from your teacher / facilitator, <br/> or <button id="link" onClick={() => loginWithRedirect({redirectUri: "http://localhost:3000/dashboard",})}> setup / create your own simulation</button></p>
       </div>
     );
 }

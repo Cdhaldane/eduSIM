@@ -11,35 +11,35 @@ function Dashboard(props) {
   const [gamedata, getGamedata] = useState([]);
 
   useEffect(() => {
-     getAllGamedata();
-   }, []);
-
-  const getAllGamedata = async () => {
-    axios.get('http://localhost:5000/api/adminaccounts/getAdminbyEmail/:email/:name', {
-      params: {
-            email: user.email,
-            name: user.name
-        }
-    })
-    .then((res) => {
-      const allData = res.data;
-      localStorage.setItem('adminid', allData.adminid)
-      axios.get('http://localhost:5000/api/gameinstances/getGameInstances/',
-      {
+    const getAllGamedata = async () => {
+      axios.get('http://localhost:5000/api/adminaccounts/getAdminbyEmail/:email/:name', {
         params: {
-              id: allData.adminid
+              email: user.email,
+              name: user.name
           }
       })
       .then((res) => {
-      const allData = res.data;
-      console.log(allData);
-      getGamedata(allData);
+        const allData = res.data;
+        localStorage.setItem('adminid', allData.adminid)
+        axios.get('http://localhost:5000/api/gameinstances/getGameInstances/',
+        {
+          params: {
+                id: allData.adminid
+            }
+        })
+        .then((res) => {
+        const allData = res.data;
+        console.log(allData);
+        getGamedata(allData);
+        })
+        .catch(error => console.log(error.response));
       })
       .catch(error => console.log(error.response));
-    })
-    .catch(error => console.log(error.response));
+    }
+     getAllGamedata();
+   }, [user]);
 
-}
+
 
   function addNote(newgamedata) {
     console.log("added")
@@ -65,7 +65,7 @@ function Dashboard(props) {
   return (
     <div className="dashboard">
             <h1>Home</h1>
-          <a id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</a>
+          <button id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</button>
             <hr />
             <Modal
               isOpen={showNote}
@@ -80,7 +80,7 @@ function Dashboard(props) {
 
             <div className="dashsim">
             <h2>My simulations ️</h2>
-        
+
             {gamedata.map((noteItem, index) => {
 
           return (

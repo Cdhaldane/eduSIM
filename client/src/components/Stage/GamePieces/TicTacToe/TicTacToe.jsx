@@ -1,5 +1,4 @@
 import React, { useState} from 'react'
-import ReactDOM from 'react-dom'
 import './TicTacToe.css'
 import calculateWinner from './calculate-winner'
 import Draggable from 'react-draggable'; // The default
@@ -68,8 +67,6 @@ function Board(props) {
   }
 
   const status = getStatus(squares, xIsNext)
-  var show = true;
-
   return (
     <div>
       <div className="statustic">{status}</div>

@@ -39,7 +39,7 @@ function URLvideo(props) {
     anim.start();
 
     return () => anim.stop();
-  }, [videoElement]);
+  }, [videoElement, props.layer]);
 
   function playAudio() {
     if(isPlaying){

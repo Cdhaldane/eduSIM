@@ -35,7 +35,7 @@ import "./Dropdown.css";
       // setRoles(res.data)
     })
     .catch(error => console.log(error.response));
-  }, [])
+  }, [props])
 
   function updateGameRoles(){
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -54,8 +54,7 @@ import "./Dropdown.css";
         });
       console.log(stuff)
       setRoles(stuff);
-    }
-      // setRoles(res.data)
+      }  // setRoles(res.data)
     })
     .catch(error => console.log(error.response));
   }
@@ -175,8 +174,8 @@ import "./Dropdown.css";
            leftIcon={<i id="icons" class="fas fa-plus"
            onClick={handleAddRole}
            ></i>}
-           goToMenu="roles">
-          
+           goToMenu="main">
+
        </DropdownItem>
          <input id="rolenameinput" type="text" placeholder="Role Name!" onChange={handleRoleChange} value={rolename} />
        </div>

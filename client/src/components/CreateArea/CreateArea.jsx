@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Switch from "react-switch"
-import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import "./CreateArea.css";
-import Modal from "react-modal";
+
 
 
   function CreateArea(props) {
@@ -11,10 +10,8 @@ import Modal from "react-modal";
   const [img, setImg] = useState("Demo.jpg");
   const [title, setTitle] = useState("Untitled");
   const [checked, setChecked] = useState(false);
-  const [selectValue, setSelectValue] = useState("");
   const [filename, setFilename] = useState('images/ujjtehlwjgsfqngxesnd');
   const [imageSelected, setImageSelected] = useState("");
-  const [sims, setSims] = useState(createSelectItems());
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState()
     // sets all const
@@ -161,11 +158,11 @@ import Modal from "react-modal";
               </p>
                 <p class="gradient-border" id="box2" >
                   Choose an image
-                  <img id="plus" src="plus.png" onClick={handleImg}/>
+                  <img id="plus" src="plus.png" alt="add" onClick={handleImg}/>
 
                   {(img)
-                  ?<img id="preview" src={img} />
-                  :<img id="previewno" src={img} />
+                  ?<img id="preview" alt="preview" src={img} />
+                  :<img id="previewno" alt="preview"src={img} />
                   }
                 </p>
                 <p>
@@ -175,12 +172,12 @@ import Modal from "react-modal";
             {img && <div>
               <form id="imgs">
                 <p id="box4" >
-                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-                  <img src="temp.png" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png" onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
+                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
+                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
                 <input
                       type="file"
                       name="img"

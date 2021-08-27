@@ -29,6 +29,7 @@ footer {
   position: absolute;
   text-align: center;
   bottom: 0;
+  opacity: 0;
   width: 100%;
   height: 2.5rem;
   background-color: inherit;
@@ -214,15 +215,15 @@ footer {
 #new {
   display: flex;
   position: relative;
-  top: 20px;
+  top: 10px;
   left: 100px;
-  width: 600px;
   color: white;
-  margin-bottom: 50px;
-  font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
-  font-weight: bold;
-  text-decoration: underline;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  background: inherit;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 2.45rem;
 }
 
 #new:hover {
@@ -343,6 +344,18 @@ footer {
   top: 50px;
   left: 100px;
   font-weight: 700;
+}
+#link {
+  color: blue;
+  border: none;
+  outline: none;
+  background: inherit;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 2.45rem;
+}
+#link:hover{
+  cursor: pointer;
+  font-size: 2.55rem;
 }
 
 .studentbutton {
@@ -493,9 +506,7 @@ footer {
     width: 50px;
     height: 50px;
   }
-  #new {
-    font-size: 1.5rem;
-  }
+
   .dashsim h2{
     font-size: 1.5rem;
   }

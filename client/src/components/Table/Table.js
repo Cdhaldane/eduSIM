@@ -1,11 +1,9 @@
 import React, {useState, Fragment, useEffect} from "react"
 import "./Table.css"
-import data from "./mock-data.json"
 import ReadOnlyRow from "../ReadOnlyRow";
 import EditableRow from "../EditableRow"
 import {  useAuth0 } from "@auth0/auth0-react";
 import { parse } from "papaparse";
-import { nanoid } from "nanoid";
 import axios from "axios";
 import "./tailwind.css"
 
@@ -21,11 +19,6 @@ const Table = (props) => {
       group: "",
       id: ""
     }]);
-    const [sent, setSent] = useState(false)
-    const [fname, setLname] = useState("")
-    const [lname, setFname] = useState("")
-    const [email, setEmail] = useState("")
-    const [role, setRole] = useState("")
     const [addFormData, setAddFormData] = useState({
       firstName: "",
       lastName: "",
@@ -123,7 +116,7 @@ const Table = (props) => {
           }
           setRolelist(items)
         })
-    }, []);
+    }, [props]);
 
     //Add change
     const handleAddFormChange = (event) => {
@@ -253,47 +246,10 @@ const Table = (props) => {
           .catch(error => console.log(error.response));
     };
 
-    const handleAddStudent = () => {
-      return (
-        <div className="addstudent">
-        {/*<h2>Add a student</h2>*/}
-        <form onSubmit={handleAddFormSubmit}>
-          <input
-            id="firstname"
-            type="text"
-            name="firstName"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-            id="lastname"
-            type="text"
-            name="lastName"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-            id="email"
-            type="text"
-            name="email"
-            required="required"
-            onChange={handleAddFormChange}
-          />
-          <input
-           id="groupnumber"
-           type="text"
-           name="group"
-           required="required"
-           onChange={handleAddFormChange}
-         />
-        <button type="submit" id="addstudent">Add</button>
-        </form>
-        </div>
-      )
-    }
+
     const handleEmail = (e) => {
       e.preventDefault();
-      {contacts.map((contact) => {
+      contacts.map((contact) => {
         console.log(contact.firstName)
         axios.post('http://localhost:5000/api/email/sendEmail', {
           simname: props.title,
@@ -304,13 +260,12 @@ const Table = (props) => {
         })
         .then((res) => {
            console.log(res)
-           setSent(true)
           })
         .catch((error)=> {
           console.log('email failed');
           console.log(error.response)
         })
-      })}
+      })
     }
 
 

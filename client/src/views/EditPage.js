@@ -1,11 +1,9 @@
 import React, { useState} from "react";
-
 import Sidebar from "../components/SideBar/Sidebar";
-import Header from "../components/SideBar/Header";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 const Grid = styled.div`
   display: grid;
   grid:
@@ -20,10 +18,10 @@ const GridNav = styled.div`
   z-index: 2000;
 `;
 
-const GridHeader = styled.header`
-  grid-area: header;
-  background-color: #e5e5e5;
-`;
+// const GridHeader = styled.header`
+//   grid-area: header;
+//   background-color: #e5e5e5;
+// `;
 
 const GridMain = styled.main`
   grid-area: main;
@@ -41,7 +39,7 @@ function EditPage(props){
     const [pavisible, setPavisible] = useState("false")
     const [svisible, setSvisible] = useState("false")
     const [pevisible, setPevisible] = useState("false")
-    
+
     function handleMvisible(e) {
       setMvisible(e);
     }
