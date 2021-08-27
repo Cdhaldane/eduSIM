@@ -156,6 +156,9 @@
     left:830px;
     top:-700px;;
   }
+  #pencil4{
+    opacity: 0;
+  }
   .drop3 {
     top: -190px;
     left: 80px;
