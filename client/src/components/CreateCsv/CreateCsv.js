@@ -18,17 +18,19 @@ import axios from 'axios';
     //Put a check here
     //Gets here after pressing add button, so it should also add the file name
     event.preventDefault();
-    console.log("game"+props.gameid)
     axios.post('http://localhost:5000/api/playerrecords/createGamePlayers', result, {
       headers: {
         'Content-Type': "application/json"
+      },
+      params: {
+        id: props.gameid
       }
     })
     .then(response => {
       console.log(response.data);
     })
     .catch(err => {
-      console.log(err);
+      console.log(err.response);
     })
   }
 
@@ -41,8 +43,10 @@ import axios from 'axios';
       Array.from(event.target.files).forEach(
         async (file) => {
           const text = await file.text();
-          const results = parse(text, {header: true})
+          var results = parse(text, {header: true})
           setResult(results)
+          
+          
         }
       );
     }

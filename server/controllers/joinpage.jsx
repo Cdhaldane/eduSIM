@@ -5,24 +5,26 @@ const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
 // const socket = require('../utils/socket')
 
-//Create a new game player
-//Player created
-//create a socket room and url for it
-//Have to look up the issue for the roles
-
 //Create Players using csv
 exports.createGamePlayers = async (req, res) => {
     try {
       const lookuproom = [];
+      const gameinstanceid = req.query.id;
+      //Destroys previously existing csv file
+      GamePlayer.destroy({
+        where: {
+         gameinstanceid: gameinstanceid
+       }
+      })
       for(var i=0; i<req.body.data.length; i++){
-        const fname = req.body.data[i].fname;
-        const lname = req.body.data[i].lname;
-        const gameinstanceid = req.body.data[i].gameinstanceid;
-        const game_room = req.body.data[i].game_room.toLowerCase();
-        const player_email = req.body.data[i].player_email;
-        const gamerole =req.body.data[i].gamerole.toLowerCase();
+        const fname = req.body.data[i].First_Name ;
+        const lname = req.body.data[i].Last_Name;
+        const game_room = req.body.data[i].Room.toLowerCase();
+        const player_email = req.body.data[i].Email;
+        const gamerole =req.body.data[i].Role.toLowerCase();
+        // const gameinstanceid = req.body.data[i].gameinstanceid;
         //Game role validation
-        //Check it against game instance id
+        //Check it against game instance id 
         const gameroles = await GameRole.findOne({
           where: {
             gameinstanceid: gameinstanceid,
