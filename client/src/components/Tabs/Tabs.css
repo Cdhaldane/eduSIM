@@ -265,9 +265,11 @@
 }
 
 .studentbuttonemail {
-  position: sticky;
+  position: inherit;
   z-index: 1000;
-  left: 1200px;
+  margin-left: 70%;
+  margin-top: -80px;
+  left: 100px;
   width: 30%;
   height: 50px;
   margin-bottom: -30px;

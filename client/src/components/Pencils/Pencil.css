@@ -1,3 +1,7 @@
+.pencil {
+  position: absolute;
+}
+
 #pencil1:hover{
   cursor: pointer;
 }
@@ -5,8 +9,10 @@
 #pencil2{
   position: absolute;
   left:140px;
-  top:-750px;
+  top:-790px;
   color: #8f001a;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #pencil2:hover{
@@ -16,8 +22,10 @@
 #pencil3{
   position: absolute;
   left:1590px;
-  top:-750px;;
+  top:-790px;;
   color: #8f001a;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #pencil3:hover{
@@ -30,6 +38,8 @@
   left:20px;
   top:20px;
   color: #dcafb7;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #pencil4:hover{
@@ -65,22 +75,93 @@
   left: -420px;
 }
 
-@media screen and (max-width: 960px){
+@media screen and (max-width: 1860px){
   #pencil2{
-    top:-650px;
-    left: 60px;
+    left:470px;
+    top:-720px;
   }
   #pencil3{
-    left:800px;
-    top:-650px;;
-  }
-  #pencil4{
-    opacity: 0;
+    left:1250px;
+    top:-720px;;
   }
   .drop3 {
-    position: absolute;
-    top: -180px;
-    left:40px;
+    top: -220px;
+    left: 500px;
   }
-
+  .drop2 {
+    top: -220px;
+    left: 80px;
+  }
+}
+@media screen and (max-width: 1560px){
+  #pencil2{
+    left:350px;
+    top:-700px;
+  }
+  #pencil3{
+    left:1130px;
+    top:-700px;;
+  }
+  .drop3 {
+    top: -190px;
+    left: 380px;
+  }
+  .drop2 {
+    top: -190px;
+    left: -40px;
+  }
+}
+@media screen and (max-width: 1460px){
+  #pencil2{
+    left:250px;
+    top:-700px;
+  }
+  #pencil3{
+    left:1030px;
+    top:-700px;;
+  }
+  .drop3 {
+    top: -190px;
+    left: 280px;
+  }
+  .drop2 {
+    top: -190px;
+    left: -140px;
+  }
+}
+@media screen and (max-width: 1360px){
+  #pencil2{
+    left:150px;
+    top:-700px;
+  }
+  #pencil3{
+    left:930px;
+    top:-700px;;
+  }
+  .drop3 {
+    top: -190px;
+    left: 180px;
+  }
+  .drop2 {
+    top: -190px;
+    left: -240px;
+  }
+}
+@media screen and (max-width: 1160px){
+  #pencil2{
+    left:50px;
+    top:-700px;
+  }
+  #pencil3{
+    left:830px;
+    top:-700px;;
+  }
+  .drop3 {
+    top: -190px;
+    left: 80px;
+  }
+  .drop2 {
+    top: -190px;
+    left: -340px;
+  }
 }

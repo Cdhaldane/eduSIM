@@ -426,16 +426,8 @@ import "./Dropdown.css";
           </DropdownItem>
           <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addTic}></i>}>Tic-Tac-Toe</DropdownItems>
           <DropdownItems onClick={addConnect} leftIcon={<i id="icons" class="fa fa-circle" onClick={addConnect}></i>}>Connect-Four</DropdownItems>
-        <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
-        <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
 
-          <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-marker"></i>}
-            rightIcon=""
-            goToMenu="draw">
-            Drawing
-          </DropdownItem>
-
+        
         </div>
       </CSSTransition>
     </div>

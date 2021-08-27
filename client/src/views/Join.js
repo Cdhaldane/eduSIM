@@ -12,8 +12,9 @@ function Join(props) {
   console.log(props.location.gameinstance)
   const [isOpen, setIsOpen] = useState(false)
   const [showNote, setShowNote] = useState(false)
-  
-  if(props.location.gameinstanceid !== undefined){
+
+
+  if(props.location.gameinstance !== undefined){
     localStorage.setItem('gameid', props.location.gameinstance);
   }
   if(props.location.title !== undefined){

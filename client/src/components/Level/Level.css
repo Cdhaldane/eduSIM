@@ -1,6 +1,25 @@
 #all {
   position: relative;
   top: 130px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+#all h1 {
+  position: absolute;
+  top: -850px;
+  left: 1650px;
+  width: 200px;
+  opacity: 0.7;
+  transform: rotate(45deg);
+  font-family: 'Cedarville Cursive', cursive;
+}
+
+#all a {
+  position: absolute;
+  top: -880px;
+  color: #8f001a;
+  left: 1760px;
 }
 
 .ball1{
@@ -60,9 +79,13 @@
   position: absolute;
   top: -880px;
   left: 300px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 .level{
   height: 0px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 .level p {
   position: absolute;
@@ -71,6 +94,9 @@
   top: -920px;
   left: 825px;
   height: 0px;
+  width: 100px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .level button{
@@ -87,7 +113,9 @@
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 10px
+  border-radius: 10px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .level img{
@@ -96,6 +124,8 @@
   top: -890px;
   height:80px;
   width:700px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .level button:hover{
@@ -107,94 +137,163 @@
   object-fit: cover;
   width: 900px;
   height: 10px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #img2 {
   object-position: left;
   object-fit: cover;
   width: 220px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #img3 {
   object-position: left;
   object-fit: cover;
   width: 379px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #img4 {
   object-position: left;
   object-fit: cover;
   width: 537px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #img5 {
   object-position: left;
   object-fit: cover;
   width: 694px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #img6 {
   object-position: left;
   object-fit: cover;
   width: 854px;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-@media screen and (max-width: 960px){
-  .level p {
+
+@media screen and (max-width: 1860px){
+  #all h1 {
+    top: -850px;
+    left: 1550px;
+  }
+  #all a {
+    top: -880px;
+    left: 1660px;
+  }
+}
+@media screen and (max-width: 1760px){
+  #all h1 {
+    top: -850px;
+    left: 1450px;
+  }
+  #all a {
+    top: -880px;
+    left: 1560px;
+  }
+  .level button{
+    left: 1350px;
+  }
+  #levels{
+    left: 380px;
+  }
+}
+@media screen and (max-width: 1660px){
+  #all h1 {
+    top: -930px;
+    left: 970px;
+    transform: rotate(0);
+  }
+  #all a {
+    top: -920px;
+    left: 1160px;
+  }
+}
+@media screen and (max-width: 1560px){
+  #all {
     position: absolute;
-    color: #636363;
-    font-size: 2.2rem;
-    top: -940px;
-    left: 425px;
-    height: 0px;
+    left: -120px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+}
+@media screen and (max-width: 1450px){
+  #all {
+    position: absolute;
+    left: -220px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  }
+}
+@media screen and (max-width: 1350px){
+  #all {
+    position: absolute;
+    left: -320px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
   #levels{
     top: -876px;
-    left: 10px;
+    left: 400px;
   }
   .level button{
     position: absolute;
     top: -880px;
-    left: 900px;
+    left: 1330px;
     width: 55px;
     font-size: 1.5vw;
   }
-  .level img{
+}
+@media screen and (max-width: 1150px){
+  #all {
     position: absolute;
-    left: 42px;
-    top: -890px;
-    height:80px;
-    width:700px;
+    left: -420px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
-
-  .ball1{
-    top:  -872px;
-    left: 65px;
+  #levels{
+    top: -920px;
+    left: 470px;
   }
-
-  .ball2{
-    top: -872px;
-    left: 222px;
+  .level button{
+    position: absolute;
+    top: -925px;
+    left: 1250px;
+    width: 55px;
+    font-size: 1.5vw;
   }
-
-  .ball3{
-    top:  -872px;
-    left: 382px;
+}
+@media screen and (max-width: 960px){
+  #all {
+    position: absolute;
+    left: -420px;
+    transition-duration: 0.3s !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
-
-  .ball4{
-    top: -872px;
-    left: 541px;
+  #levels{
+    top: -920px;
+    left: 470px;
   }
-
-  .ball5{
-    top: -872px;
-    left: 699px;
-
+  .level button{
+    position: absolute;
+    top: -925px;
+    left: 1250px;
+    width: 55px;
+    font-size: 1.5vw;
   }
-
-  .ball6{
-    top:  -872px;
-    left: 858px;
+  #all a {
+    top: -920px;
+    left: 1160px;
+    color: #8f001a;
   }
 }
