@@ -57,7 +57,7 @@ function Join(props) {
               overlayClassName="myoverlaytab"
               closeTimeoutMS={500}
               >
-              <CreateCsv isOpen={showNote} />
+              <CreateCsv gameid={props.location.gameinstance} isOpen={showNote} />
             </Modal>
 
             <Tabs
