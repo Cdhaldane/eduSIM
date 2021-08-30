@@ -1,23 +1,19 @@
-import React, { useEffect, useRef } from "react";
-import { useState, Fragment } from "react";
+import React, { useEffect, useState  } from "react";
 import axios from "axios";
 import "./Tabs.css";
-import Button from "../Buttons/Button"
 import Table from "../Table/Table"
 import CreateEmail from "../CreateEmail/CreateEmail";
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import Modal from "react-modal";
 
 
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(1);
-  const [time, setTime] = useState(0);
   const [radio, setRadio] = useState("Teacher")
   const [isOpen, setIsOpen] = useState(false)
   const [newGroup, setNewGroup] = useState("")
   const [tabs, setTabs] = useState([]);
-  const [value, setValue] = useState([]);
+  const [time, setTime] = useState(0);
   const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},{name: 'Page B', uv: 500, pv: 2400, amt: 2400}];
 
 
@@ -37,7 +33,7 @@ function Tabs(props) {
           setTabs(cart)
          })
         .catch(error => console.log(error.response));
-  }, []);
+  }, [props.gameid]);
 
   const toggleTab = (index) => {
     setToggleState(index);
@@ -120,13 +116,13 @@ function Tabs(props) {
               <div class="simadv">
                 <h3>Simulation advancement</h3>
             <div>
-            <input type="radio" checked={radio=="Teacher"} value="Teacher" onChange={(e)=>{setRadio(e.target.value)}} /> Teacher/Facilitator
+            <input type="radio" checked={radio==="Teacher"} value="Teacher" onChange={(e)=>{setRadio(e.target.value)}} /> Teacher/Facilitator
             </div>
             <div>
-            <input type="radio" checked={radio=="Student"} value="Student" onChange={(e)=>{setRadio(e.target.value)}}/> Student/Participants
+            <input type="radio" checked={radio==="Student"} value="Student" onChange={(e)=>{setRadio(e.target.value)}}/> Student/Participants
             </div>
             <div>
-            <input type="radio" checked={radio=="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed =
+            <input type="radio" checked={radio==="Timed"} value="Timed"  onChange={(e)=>{setRadio(e.target.value)}}/> Timed =
             </div>
             <input onChange={handleTime} type="text" placeholder="Time" id="time" />
             <p>min</p>
@@ -137,7 +133,7 @@ function Tabs(props) {
               {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
               <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
               </Modal> */}
-              <Table addstudent={false} gameid={props.gameid} title={props.title} value={value}/>
+              <Table addstudent={false} gameid={props.gameid} title={props.title} />
             </div>
           {tabs.map((i) => (
             <div
@@ -160,7 +156,7 @@ function Tabs(props) {
           </LineChart>
         </div>
           <h3 >Students / participants in room:</h3>
-        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title} value={value}/>
+        <Table addstudent={true} gameroom={i} gameid={props.gameid} title={props.title}/>
       </div>
             </div>
         ))}

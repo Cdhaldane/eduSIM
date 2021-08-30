@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { Component } from 'react';
 import Dropdownroles from "../DropDown/Dropdownroles";
 import URLvideo from "./URLVideos";
 import axios from "axios";
@@ -14,13 +14,11 @@ import {
   Rect,
   Stage,
   Layer,
-  Transformer,
   Ellipse,
   Star,
   Text,
   RegularPolygon,
   Line,
-  Arrow,
   Image
 } from "react-konva";
 
@@ -181,16 +179,6 @@ class Graphics extends Component {
   }
 
   render() {
-    let saveText;
-
-    let saving = this.state.saving;
-    if (saving !== null) {
-      if (saving) {
-        saveText = <div style={{ color: "white" }}>Saving</div>;
-      } else {
-        saveText = <div style={{ color: "white" }}>Saved</div>;
-      }
-    }
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -203,19 +191,6 @@ class Graphics extends Component {
     gradient.addColorStop(4 / 6, "aqua");
     gradient.addColorStop(5 / 6, "blue");
     gradient.addColorStop(1.0, "purple");
-
-    const errMsg = this.state.errMsg;
-    let errDisplay;
-    if (errMsg !== "") {
-      errDisplay = (
-        <div className="errMsginner">
-          <span style={{ color: "white" }}>
-            {errMsg !== "" ? errMsg : null}
-          </span>
-        </div>
-      );
-    } else {
-    }
 
     return (
       <React.Fragment>
@@ -234,19 +209,25 @@ class Graphics extends Component {
       }
 
       {this.state.tics.map(eachTic => {
-        if(eachTic.level === this.state.level)
+        if(eachTic.level === this.state.level) {
         return(
         <TicTacToe
           i={eachTic.i}
           handleTicDelete={this.handleTicDelete}
         />
       )
+    } else {
+      return null
+    }
       })}
       {this.state.connect4.map(eachConnect => {
-        if(eachConnect.level === this.state.level)
+        if(eachConnect.level === this.state.level) {
         return(
         <Connect4 />
       )
+    } else {
+      return null
+    }
       })}
         <div>
           <Stage
@@ -272,7 +253,7 @@ class Graphics extends Component {
                 id="ContainerRect"
               />
             {this.state.rectangles.map(eachRect => {
-              if(eachRect.level === this.state.level && eachRect.infolevel === false)
+              if(eachRect.level === this.state.level && eachRect.infolevel === false) {
                 return (
                   <Rect
                   visible={eachRect.visible}
@@ -293,11 +274,14 @@ class Graphics extends Component {
                   strokeWidth={eachRect.strokeWidth}
                   strokeScaleEnabled={false}
                 />
-              );
+              )
+            } else {
+              return null
+            }
               })}
 
               {this.state.ellipses.map(eachEllipse => {
-                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
                 return (
                 <Ellipse
                   visible={eachEllipse.visible}
@@ -315,10 +299,13 @@ class Graphics extends Component {
                   strokeWidth={eachEllipse.strokeWidth}
                   strokeScaleEnabled={false}
                   />
-              );
+              )
+            } else {
+              return null
+            }
             })}
               {this.state.lines.map((eachLine, i) => {
-                if(eachLine.level === this.state.level && eachLine.infolevel === false)
+                if(eachLine.level === this.state.level && eachLine.infolevel === false) {
                 return(
                   <Line
                     id={eachLine.id}
@@ -333,11 +320,14 @@ class Graphics extends Component {
                       eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                     }
                   />
-              );
+              )
+            } else {
+                return null
+              }
               })}
 
               {this.state.images.map(eachImage => {
-                if(eachImage.level === this.state.level && eachImage.infolevel === false)
+                if(eachImage.level === this.state.level && eachImage.infolevel === false) {
                 return (
                 <URLImage
                   visible={eachImage.visible}
@@ -357,10 +347,13 @@ class Graphics extends Component {
                   opacity={eachImage.opacity}
 
                 />
-            );
+            )
+          } else {
+              return null
+            }
             })}
               {this.state.videos.map(eachVideo => {
-                if(eachVideo.level === this.state.level && eachVideo.infolevel === false)
+                if(eachVideo.level === this.state.level && eachVideo.infolevel === false) {
                 return (
                 <URLvideo
                   visible={eachVideo.visible}
@@ -380,10 +373,13 @@ class Graphics extends Component {
                   opacity={eachVideo.opacity}
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.audios.map(eachAudio => {
-                if(eachAudio.level === this.state.level && eachAudio.infolevel === false)
+                if(eachAudio.level === this.state.level && eachAudio.infolevel === false) {
                 return (
                 <URLvideo
                   visible={eachAudio.visible}
@@ -404,10 +400,13 @@ class Graphics extends Component {
                   opacity={eachAudio.opacity}
 
                 />
-            );
+            )
+          } else {
+              return null
+            }
             })}
               {this.state.documents.map(eachDoc => {
-                if(eachDoc.level === this.state.level && eachDoc.infolevel === false)
+                if(eachDoc.level === this.state.level && eachDoc.infolevel === false) {
                 return (
                 <Rect
                   rotation={eachDoc.rotation}
@@ -429,10 +428,13 @@ class Graphics extends Component {
                   strokeWidth={eachDoc.strokeWidth}
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.triangles.map(eachEllipse => {
-                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false)
+                if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
                 return (
                 <RegularPolygon
                   visible={eachEllipse.visible}
@@ -452,10 +454,13 @@ class Graphics extends Component {
                   strokeScaleEnabled={false}
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
               {this.state.stars.map(eachStar => {
-                if(eachStar.level === this.state.level && eachStar.infolevel === false)
+                if(eachStar.level === this.state.level && eachStar.infolevel === false) {
                 return (
                 <Star
                   visible={eachStar.visible}
@@ -475,11 +480,14 @@ class Graphics extends Component {
                   rotation={eachStar.rotation}
 
                 />
-            );
+            )
+          } else {
+            return null
+          }
             })}
 
               {this.state.texts.map(eachText => {
-                if(eachText.level === this.state.level && eachText.infolevel === false)
+                if(eachText.level === this.state.level && eachText.infolevel === false) {
                 return (
                 //perhaps this.state.texts only need to contain refs?
                 //so that we only need to store the refs to get more information
@@ -502,7 +510,10 @@ class Graphics extends Component {
                   text={eachText.text}
 
               />
-            );
+            )
+          } else {
+            return null
+          }
             })}
 
             </Layer>
@@ -519,7 +530,7 @@ class Graphics extends Component {
                 >
                   <Layer ref="layer3">
                     {this.state.rectangles.map(eachRect => {
-                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel)
+                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel){
                         return (
                           <Rect
                           visible={eachRect.visible}
@@ -540,11 +551,14 @@ class Graphics extends Component {
                           strokeWidth={eachRect.strokeWidth}
                           strokeScaleEnabled={false}
                         />
-                        );
+                        )
+                      } else {
+                        return null
+                      }
                       })}
 
                       {this.state.ellipses.map(eachEllipse => {
-                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel){
                         return (
                         <Ellipse
                           visible={eachEllipse.visible}
@@ -563,10 +577,13 @@ class Graphics extends Component {
                           strokeScaleEnabled={false}
 
                         />
-                      );
+                      )
+                    } else {
+                      return null
+                    }
                     })}
                       {this.state.lines.map((eachLine, i) => {
-                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel)
+                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel){
                         return(
                           <Line
                             id={eachLine.id}
@@ -582,11 +599,14 @@ class Graphics extends Component {
                             }
 
                           />
-                      );
+                      )
+                    } else {
+                      return null
+                    }
                       })}
 
                       {this.state.images.map(eachImage => {
-                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel)
+                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel){
                         return (
                         <URLImage
                           visible={eachImage.visible}
@@ -606,10 +626,13 @@ class Graphics extends Component {
                           opacity={eachImage.opacity}
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.videos.map(eachVideo => {
-                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel)
+                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel){
                         return (
                         <URLvideo
                           visible={eachVideo.visible}
@@ -629,10 +652,13 @@ class Graphics extends Component {
                           opacity={eachVideo.opacity}
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.audios.map(eachAudio => {
-                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel)
+                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel){
                         return (
                         <URLvideo
                           visible={eachAudio.visible}
@@ -654,10 +680,13 @@ class Graphics extends Component {
 
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.documents.map(eachDoc => {
-                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel)
+                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel){
                         return (
                         <Rect
                           rotation={eachDoc.rotation}
@@ -679,10 +708,13 @@ class Graphics extends Component {
                           strokeWidth={eachDoc.strokeWidth}
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.triangles.map(eachEllipse => {
-                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel){
                         return (
                         <RegularPolygon
                           visible={eachEllipse.visible}
@@ -702,10 +734,13 @@ class Graphics extends Component {
                           strokeScaleEnabled={false}
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.stars.map(eachStar => {
-                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel)
+                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel){
                         return (
                         <Star
                           visible={eachStar.visible}
@@ -725,11 +760,14 @@ class Graphics extends Component {
                           rotation={eachStar.rotation}
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
 
                       {this.state.texts.map(eachText => {
-                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel)
+                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel){
                         return (
                         //perhaps this.state.texts only need to contain refs?
                         //so that we only need to store the refs to get more information
@@ -751,7 +789,10 @@ class Graphics extends Component {
                           text={eachText.text}
 
                       />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
 
 

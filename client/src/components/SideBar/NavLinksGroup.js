@@ -1,6 +1,5 @@
-import React, { useState} from "react";
+import React from "react";
 import styled from "styled-components"
-import Pencil from "../Pencils/Pencil";
 import NavLink from "./NavLink"
 
 const LinksGroup = styled.div`
@@ -94,8 +93,7 @@ function NavLinksGroup(props) {
             iconClassName={link.icon}
             label={link.label}
           />
-          :
-          <h1></h1>
+        : ""
           })}
       </LinksGroup>
     );

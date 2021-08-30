@@ -8,7 +8,7 @@ function SimNote(props) {
   console.log(props)
   function handleClick() {
     console.log(props.gameid)
-    {if (window.confirm('Are you sure you wish to delete this simulation?')){
+    if (window.confirm('Are you sure you wish to delete this simulation?')){
       props.onDelete(props.id)
       console.log(props.gameid)
       var body = {
@@ -21,7 +21,6 @@ function SimNote(props) {
       })
       .catch(error => console.log(error.response));
     }
-  }
   }
 
   return (

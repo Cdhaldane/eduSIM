@@ -35,7 +35,7 @@ import "./Dropdown.css";
       // setRoles(res.data)
     })
     .catch(error => console.log(error.response));
-  }, [])
+  }, [props])
 
   function updateGameRoles(){
     axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -54,8 +54,7 @@ import "./Dropdown.css";
         });
       console.log(stuff)
       setRoles(stuff);
-    }
-      // setRoles(res.data)
+      }  // setRoles(res.data)
     })
     .catch(error => console.log(error.response));
   }

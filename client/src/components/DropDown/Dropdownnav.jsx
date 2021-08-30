@@ -4,7 +4,7 @@ import Switch from "react-switch"
 import "./Dropdown.css";
 
   function DropdownNav(props) {
-    const [activeMenu, setActiveMenu] = useState('main');
+    const [activeMenu ] = useState('main');
     const [menuHeight, setMenuHeight] = useState(null);
     const [checked1, setChecked1] = useState(true);
     const [checked2, setChecked2] = useState(true);
