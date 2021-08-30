@@ -57,7 +57,7 @@ class App extends React.Component {
               <ProtectedRoute path="/join" component={Join} />
               </Switch>
               <div>
-                <Footer />
+                
               </div>
             </div>
           </div>
