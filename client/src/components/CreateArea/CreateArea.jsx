@@ -73,7 +73,7 @@ import "./CreateArea.css";
    }
    }
 
-   window.location.reload();
+  //window.location.reload();
  };
   //handles selection of img from file
   function onChange(event){
