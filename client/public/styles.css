@@ -357,7 +357,10 @@ footer {
   cursor: pointer;
   font-size: 2.55rem;
 }
-
+#authbutton {
+  position: relative;
+  left: -200px;
+}
 .studentbutton {
   position: sticky;
   top: 10px;

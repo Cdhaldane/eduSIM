@@ -265,7 +265,7 @@ const Table = (props) => {
           console.log('email failed');
           console.log(error.response)
         })
-      })
+      }) 
     }
 
 

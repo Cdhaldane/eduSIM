@@ -4281,7 +4281,7 @@ class Graphics extends Component {
                 >
                   <Layer ref="layer3">
                     {this.state.rectangles.map(eachRect => {
-                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel)
+                      if(eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel){
                         return (
                           <Rect
                           visible={eachRect.visible}
@@ -4454,7 +4454,10 @@ class Graphics extends Component {
                             }
 
                           />
-                        );
+                        )
+                      } else {
+                        return null
+                      }
                       })}
                       {this.state.selectedContextMenu && (
                         <Portal>
@@ -4476,7 +4479,7 @@ class Graphics extends Component {
                     )}
 
                       {this.state.ellipses.map(eachEllipse => {
-                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel){
                         return (
                         <Ellipse
                           visible={eachEllipse.visible}
@@ -4639,10 +4642,13 @@ class Graphics extends Component {
                           }
                           }
                         />
-                      );
+                      )
+                    } else {
+                      return null
+                    }
                     })}
                       {this.state.lines.map((eachLine, i) => {
-                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel)
+                        if(eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel){
                         return(
                           <Line
                             id={eachLine.id}
@@ -4671,11 +4677,14 @@ class Graphics extends Component {
                             }
                             }
                           />
-                      );
+                      )
+                    } else {
+                      return null
+                    }
                       })}
 
                       {this.state.images.map(eachImage => {
-                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel)
+                        if(eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel){
                         return (
                         <URLImage
                           visible={eachImage.visible}
@@ -4797,10 +4806,13 @@ class Graphics extends Component {
                           }
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.videos.map(eachVideo => {
-                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel)
+                        if(eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel){
                         return (
                         <URLvideo
                           visible={eachVideo.visible}
@@ -4911,10 +4923,13 @@ class Graphics extends Component {
                           }
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.audios.map(eachAudio => {
-                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel)
+                        if(eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel){
                         return (
                         <URLvideo
                           visible={eachAudio.visible}
@@ -5031,10 +5046,13 @@ class Graphics extends Component {
                           }
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.documents.map(eachDoc => {
-                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel)
+                        if(eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel){
                         return (
                         <Rect
                           rotation={eachDoc.rotation}
@@ -5173,10 +5191,13 @@ class Graphics extends Component {
                           }
 
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.triangles.map(eachEllipse => {
-                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel)
+                        if(eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel){
                         return (
                         <RegularPolygon
                           visible={eachEllipse.visible}
@@ -5338,10 +5359,13 @@ class Graphics extends Component {
                           }
                           }
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                       {this.state.stars.map(eachStar => {
-                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel)
+                        if(eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel){
                         return (
                         <Star
                           visible={eachStar.visible}
@@ -5461,11 +5485,14 @@ class Graphics extends Component {
                           }
                           }
                         />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
 
                       {this.state.texts.map(eachText => {
-                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel)
+                        if(eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel){
                         return (
                         //perhaps this.state.texts only need to contain refs?
                         //so that we only need to store the refs to get more information
@@ -5654,7 +5681,10 @@ class Graphics extends Component {
                           }
                           }
                       />
-                    );
+                    )
+                  } else {
+                    return null
+                  }
                     })}
                     {this.state.selectedContextMenuText && (
                       <Portal>
@@ -5777,8 +5807,7 @@ class Graphics extends Component {
 
                   </b>
                 </div>
-                {(1 === 1 )
-                  ? <div id={"pencili" + this.state.open}>
+               <div id={"pencili" + this.state.open}>
                       <Pencil
                       editMode={this.editMode}
                       editModeToggle={true}
@@ -5806,8 +5835,7 @@ class Graphics extends Component {
                       choosecolor={this.chooseColor}
                       />
                     </div>
-                  : ""
-                  }
+
               </div>
             <Pencil
               editMode={this.editModeOff}
