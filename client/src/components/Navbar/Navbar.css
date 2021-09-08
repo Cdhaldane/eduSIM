@@ -148,7 +148,7 @@
     width: calc(100% + 20px);
     position: absolute;
     top: 80px;
-    left: -20px;
+    transform: translateX(-20px);
     opacity: 0;
     padding: 20px 0;
   }
@@ -163,7 +163,7 @@
   }
 
   .nav-menu.active {
-    left: 0;
+    transform: none;
     opacity: 1;
     transition: all 0.3s;
     z-index: 1;
