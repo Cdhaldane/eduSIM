@@ -438,6 +438,7 @@ footer {
   .joinboard-info {
     margin-top: 20px;
     max-width: 100%;
+    margin-left: 0;
   }
   .joinboard-buttons {
     margin-left: unset;

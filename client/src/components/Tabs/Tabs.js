@@ -84,22 +84,19 @@ function Tabs(props) {
   const handleTime = (e) => {
     setTime(e.target.value)
   }
-  const handleTabs = (e) => {
-    toggleTab(1)
-  }
 
   return (
-    <div class="tabs">
+    <div class="page-margin tabs">
       <ul class="selected-tab">
-        <li onClick={handleTabs} class={toggleState === 1 ? "selected" : ""}>Overview</li>
+        <li onClick={() => toggleTab(0)} class={toggleState === 0 && "selected"}><p>Overview</p></li>
         {tabs.map((i) => (
-          <li onClick={() => toggleTab(i)} class={toggleState === 2 ? "selected" : ""}>{i[0]}</li>
+          <li onClick={() => toggleTab(i+1)} class={toggleState === (i+1) && "selected"}>{i[0]}</li>
         ))}
-       <li onClick={() => toggleTab(0)} class={toggleState === 4 ? "selected" : ""}>Add group</li>
+       <li onClick={() => toggleTab(tabs.length+1)} class={toggleState === (tabs.length+1) && "selected"}>Add group</li>
      </ul>
        <div className="content-tabs">
             <div
-              className={toggleState === 1 ? "content  active-content" : "content"}
+              className={toggleState === 0 ? "content  active-content" : "content"}
             >
               <h3>Settings:</h3>
               <button onClick={() => setIsOpen(!isOpen)} className="studentbuttonemail">Email Student/Participant</button>
@@ -137,7 +134,7 @@ function Tabs(props) {
             </div>
           {tabs.map((i) => (
             <div
-              className={toggleState === i ? "content  active-content" : "content"}
+              className={toggleState === (i+1) ? "content  active-content" : "content"}
             >
             <button onClick={() => handleDeleteGroup(i)} className="deletegroup">Delete Group</button>
               <h2>{i[0]}</h2>
@@ -161,7 +158,7 @@ function Tabs(props) {
             </div>
         ))}
             <div
-              className={toggleState === 0 ? "content  active-content" : "content"}
+              className={toggleState === (tabs.length+1) ? "content  active-content" : "content"}
             >
               <h2>Add Group!</h2>
               <hr />
