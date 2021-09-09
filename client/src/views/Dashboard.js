@@ -64,39 +64,49 @@ function Dashboard(props) {
 
   return (
     <div className="dashboard">
-            <h1>Home</h1>
-          <button id="new" onClick={() => setShowNote(!showNote)}>Add a new simulation +</button>
-            <hr />
-            <Modal
-              isOpen={showNote}
-              onRequestClose={toggleModal}
-              contentLabel="My dialog"
-              className="createmodalarea"
-              overlayClassName="myoverlay"
-              closeTimeoutMS={500}
-              >
-              <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} />
-            </Modal>
+      <i
+        class="fa fa-home fa-2x dashboard-home"
+        aria-hidden="true"
+      ></i>
 
-            <div className="dashsim">
-            <h2>My simulations ️</h2>
+      <div className="page-margin">
+        <button className="addbutton" onClick={() => setShowNote(!showNote)}>
+          Add a new simulation +
+        </button>
+      </div>
 
-            {gamedata.map((noteItem, index) => {
+      <hr />
 
-          return (
-            <SimNote className="notesim"
-             key={index}
-             id={index}
-             gameid={noteItem.gameinstanceid}
-             img={noteItem.gameinstance_photo_path}
-             adminid={noteItem.createdby_adminid}
-             onDelete={deleteNote}
-             title={noteItem.gameinstance_name}
-            />
-          );
-    })}
-    </div>
+      <div className="page-margin">
+        <h2>My simulations</h2>
+        <div className="dashsim">
+          {gamedata.map((noteItem, index) => {
+            return (
+              <div key={index}>
+                <SimNote
+                  id={index}
+                  gameid={noteItem.gameinstanceid}
+                  img={noteItem.gameinstance_photo_path}
+                  adminid={noteItem.createdby_adminid}
+                  onDelete={deleteNote}
+                  title={noteItem.gameinstance_name}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
+      <Modal
+        isOpen={showNote}
+        onRequestClose={toggleModal}
+        contentLabel="My dialog"
+        className="createmodalarea"
+        overlayClassName="myoverlay"
+        closeTimeoutMS={500}
+        >
+        <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} />
+      </Modal>
     </div>
   );
 }

@@ -129,19 +129,113 @@ footer {
 }
 
 .dashboard {
-  color: #181818;
+  color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
-  margin-top: 0px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin: 20px;
   text-align: left;
-  display: block;
-  flex: wrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
+  height: 100%; 
+  overflow: hidden;
+  /* animation: 1s ease-out 0s 1 slideInFromLeft; */
+}
+.dashboard > hr {
+  align-self: stretch;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-width: 1px;
+}
+.dashboard-home {
+  align-self: flex-start;
+  margin-bottom: 10px;
+}
+.page-margin {
+  width: 85%;
+}
+
+.dashsim {
   height: 100%;
-  overflow:  hidden;
-  animation: 1s ease-out 0s 1 slideInFromLeft;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.dashboard-new {
+  display: flex;
+  color: white;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  background: inherit;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.dashboard-new > span {
+  text-decoration: underline;
+  margin-right: 10px;
+}
+
+.addbutton {
+  padding: 5px 10px;
+  align-self: flex-start;
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.3rem;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px
+}
+.addbutton:hover{
+  cursor: pointer;
+  box-shadow: 0 5px 10px grey;
+}
+
+.joinboard-header {
+  display: flex;
+  align-items: flex-end;
+}
+.joinboard-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: auto 0 auto 10px;
+  min-width:0;
+}
+.joinboard-image {
+  height: 100px;
+  width: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+  opacity: 100%;
+}
+.joinboard-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  word-break:break-word;
+}
+.joinboard-buttons {
+  margin-left: auto;
+  display: flex;
+}
+.joinboard-button {
+  color: white;
+  font-size: 1.5rem;
+  position: relative;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-left: 10px;
+  cursor: pointer;
+  background-color: #8f001a;
 }
 
 .bimg {
@@ -156,52 +250,9 @@ footer {
   opacity: 0.8;
 }
 
-
-.dashboard hr {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-width: 1px;
-}
-
 #under_menu_line {
   margin-top: 30px;
   margin-bottom: 30px;
-}
-
-.dashboard h1 {
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 3rem;
-  margin-top: 50px;
-  margin-left: 25px;
-  text-align: left;
-}
-
-.dashboard h2 {
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 2rem;
-  margin-top: 25px;
-  margin-left: 100px;
-  text-align: left;
-}
-
-.dashsim {
-  height: 100%;
-}
-
-#new {
-  display: flex;
-  position: relative;
-  top: 10px;
-  left: 100px;
-  color: white;
-  font-weight: 700;
-  border: none;
-  outline: none;
-  background: inherit;
-  font-family:  "Montserrat", sans-serif;
-  font-size: 2.45rem;
 }
 
 #new:hover {
@@ -306,23 +357,6 @@ footer {
   text-align: center;
   top: 0px;
 }
-#joinimg {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  height: 100px;
-  width: 120px;
-  border: 2px solid black;
-  border-radius: 30px;
-  opacity: 100%;
-}
-#jointitle{
-  position: absolute;
-  font-size: 1.5rem;
-  top: 50px;
-  left: 100px;
-  font-weight: 700;
-}
 #link {
   color: blue;
   border: none;
@@ -339,26 +373,6 @@ footer {
   position: relative;
   left: -200px;
 }
-.studentbutton {
-  position: sticky;
-  top: 10px;
-  left: 200px;
-  width: 400px;
-  height: 50px;
-  font-family:  "Montserrat", sans-serif;
-  font-size: 1.5rem;
-  color: white;
-  background-color: #8f001a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: none;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 10px
-}
-.studentbutton:hover{
-  cursor: pointer;
-  box-shadow: 0 5px 10px grey;
-}
 
 .bimgjoin {
   position: absolute;
@@ -372,42 +386,6 @@ footer {
   opacity: 0.8;
 }
 
-.playbtn{
-  color: white;
-  font-size: 1.5rem;
-  position: relative;
-  bottom: 10px;
-  left: 782px;
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  cursor: pointer;
-  background-color: #8f001a;
-}
-.pausebtn{
-  color: white;
-  font-size: 1.5rem;
-  position: relative;
-  bottom: 10px;
-  left: 822px;
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  cursor: pointer;
-  background-color: #8f001a;
-}
-.refreshbtn{
-  color: white;
-  font-size: 1.5rem;
-  position: relative;
-  bottom: 10px;
-  left: 862px;
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  cursor: pointer;
-  background-color: #8f001a;
-}
 .selectrole-container{
   position: absolute;
   left: 10%;
@@ -436,11 +414,13 @@ footer {
     height: 50px;
   }
 
-  .dashsim h2{
-    font-size: 1.5rem;
+  .page-margin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  .dashboard h1{
-    font-size: 2.0rem;
+  .dashsim {
+    justify-content: center;
   }
 
   .welcome-nav {
@@ -448,5 +428,23 @@ footer {
   }
   .welcome-navbutton {
     max-width: 60%;
+    min-width: 450px;
+  }
+
+  .addbutton {
+    align-self: unset;
+  }
+
+  .joinboard-info {
+    margin-top: 20px;
+    max-width: 100%;
+  }
+  .joinboard-buttons {
+    margin-left: unset;
+    margin-top: 20px;
+    justify-content: center;
+  }
+  .joinboard-title {
+    text-align: center;
   }
 }

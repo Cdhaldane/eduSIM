@@ -6,146 +6,53 @@
   padding: 10px;
   float: left;
   position: relative;
-  left: 4%;
-  top: -0px;
-  margin-right: 5%;
-  margin-top: 50px;
+  margin: 0 10px 10px 0;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 .notesim h1 {
   text-align: center;
-  position: relative;
-  top: -40px;
-  left: -12px;
-  color: black;
+  color: rgba(0,0,0,0.8);
   font-size: 1.5rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
-.notesim img {
-  border: solid 2px black;
-  margin-bottom: -50px;
+.notesim-thumbnail {
   z-index: -1;
   height: 150px;
   width: 180px;
-  position: relative;
-  top: -77px;
-  left: 0px;
-  opacity: 70%;
-  border-radius: 15%;
 }
 
-#simicons {
-  position: relative;
-  top: 10px;
-  left: 5px;
-}
-
-
-
-#garbage{
-  color: #8f001a;
+.notesim-name {
   position: absolute;
-  bottom: 3px;
-  right: 27px;
+  width: inherit;
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 5px white;
 }
 
-#garbage:hover{
+.notesim-thumbnail img {
+  opacity: 40%;
+  width: inherit;
+  height: inherit;
+  border-radius: 10px;
+  object-fit: cover;
+  position: absolute;
+}
+
+.notesim-icons {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px 0px;
+}
+
+.notesim-icon {
+  color: #8f001a;
+}
+
+.notesim-icon:hover {
   cursor: pointer;
-}
-
-#pencil{
-  color: #8f001a;
-  position: absolute;
-  bottom: 3px;
-  right: 82px;
-}
-
-#pencil:hover{
-  cursor: pointer;
-}
-
-#play{
-  color: #8f001a;
-  position: absolute;
-  bottom: 3px;
-  right: 140px;
-}
-
-
-@media screen and (max-width: 960px){
-  .notesim {
-    background: #fff;
-    border-radius: 7px;
-    box-shadow: 0 2px 5px #ccc;
-    padding: 10px;
-    float: left;
-    position: relative;
-    height: 150px;
-    width: 150px;
-    left: 4%;
-    top: -0px;
-    margin-right: 5%;
-    margin-top: 50px;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-  .notesim h1 {
-    z-index: 1;
-    text-align: center;
-    position: relative;
-    top: -40px;
-    left: -12px;
-    color: black;
-    font-size: 1.0rem;
-  }
-
-  .notesim img {
-    border: solid 2px black;
-    margin-bottom: -50px;
-    z-index: 0;
-    height: 110px;
-    width: 130px;
-    position: relative;
-    top: -77px;
-    left: 0px;
-    opacity: 70%;
-    border-radius: 15%;
-  }
-
-  #simicons {
-    position: relative;
-    top: 10px;
-    left: 30px;
-  }
-
-  #garbage{
-    color: #8f001a;
-    position: absolute;
-    bottom: 5px;
-    right: 40px;
-  }
-
-  #garbage:hover{
-    cursor: pointer;
-  }
-
-  #pencil{
-    color: #8f001a;
-    position: absolute;
-    bottom: 5px;
-    right: 76px;
-  }
-
-  #pencil:hover{
-    cursor: pointer;
-  }
-
-  #play{
-    color: #8f001a;
-    position: absolute;
-    bottom: 5px;
-    right: 120px;
-  }
-
 }
