@@ -5,18 +5,20 @@ function Home(props){
     return (
       <div>
         <h1 class="welcome">Welcome!</h1>
-        <Note
-          title="Are you a Student / Participant?"
-          url="/welcome"
-          img="student.png"
-          class="welcomep2"
-        />
-        <Note
-          title="Are you a Teacher / Facillitator?"
-          url="/dashboard"
-          img="teacher.png"
-          class="welcomep3"
-        />
+        <div class="welcome-nav">
+          <Note
+            title="Are you a Student / Participant?"
+            url="/welcome"
+            img="student.png"
+            class="welcome-navbutton"
+          />
+          <Note
+            title="Are you a Teacher / Facilitator?"
+            url="/dashboard"
+            img="teacher.png"
+            class="welcome-navbutton"
+          />
+        </div>
       </div>
     );
 }

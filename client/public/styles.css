@@ -19,10 +19,6 @@ body {
   width: 100%;
 }
 
-code {
-
-}
-
 footer {
   color: white;
   font-size: 1.2rem;
@@ -48,7 +44,7 @@ footer {
   color: white;
   font-family: "Montserrat", sans-serif;
   margin-top: 50px;
-  font-size: 4.0vw;
+  font-size: 3em;
   text-align: center;
   display: flex;
   flex-flow: column;
@@ -81,60 +77,42 @@ footer {
 .homebody{
   margin-top: 7%;
 }
-.welcomep2 {
+
+.welcome-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.welcome-navbutton {
   align-items: center;
   display: inline-block;
   flex-wrap: wrap;
-  margin-left: 20%;
-  margin-top: 5%;
   background: #fff;
+  border: none;
   border-radius: 15px;
   box-shadow: 0 2px 5px #ccc;
   padding: 30px;
-  width: 20%;
+  margin: 20px 50px;
+  max-width: 350px;
+  text-align: center;
+  flex: 1;
 }
 
-.welcomep2 h1 {
+.welcome-navbutton h1 {
   font-family: "Montserrat", sans-serif;
-  font-size: 2vw;
-  margin-top: 0px;
+  font-size: 1.5em;
+  margin-bottom: 20px;
   color: #181818;
 }
 
-.welcomep2 img {
+.welcome-navbutton img {
   position: relative;
   top: 0px;
   height: 200px;
   width: 100%;
-}
-
-
-.welcomep3 {
-  align-items: center;
-  display: inline-block;
-  flex-wrap: wrap;
-  margin-left: 20%;
-  margin-top: 5%;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 2px 5px #ccc;
-  padding: 30px;
-  width: 20%;
-}
-
-.welcomep3 h1 {
-  font-family: "Montserrat", sans-serif;
-  font-size: 2vw;
-  margin-top: 0px;
-  color: #181818;
-}
-
-
-.welcomep3 img {
-  position: relative;
-  top: 0px;
-  height: 200px;
-  width: 70%;
+  object-fit: contain;
 }
 
 .textbox {
@@ -441,59 +419,7 @@ footer {
   border: 2px solid black;
 }
 
-@media screen and (max-width: 960px){
-  .welcomep2 {
-    align-items: center;
-    display: inline-block;
-    flex-wrap: wrap;
-    margin-top: 5%;
-    margin-left: 15vw;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px #ccc;
-    padding: 10px;
-    width: 200px;
-    height: 200px;
-  }
-  .welcomep2 h1 {
-    display: flex;
-    align-self: center;
-    font-family: "Montserrat", sans-serif;
-    font-size: 1rem;
-    margin-top: 0px;
-    color: #181818;
-  }
-  .welcomep2 img {
-    position: relative;
-    top: 0px;
-    height: 100px;
-    width: 80%;
-  }
-  .welcomep3 {
-    align-items: center;
-    display: inline-block;
-    flex-wrap: wrap;
-    margin-left: 20%;
-    margin-top: 5%;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px #ccc;
-    padding: 10px;
-    width: 200px;
-    height: 200px;
-  }
-  .welcomep3 h1 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 1rem;
-    margin-top: 0px;
-    color: #181818;
-  }
-  .welcomep3 img {
-    position: relative;
-    top: 0px;
-    height: 100px;
-    width: 50%;
-  }
+@media screen and (orientation: portrait) {
   .playbtn{
     left: 132px;
     width: 50px;
@@ -515,5 +441,12 @@ footer {
   }
   .dashboard h1{
     font-size: 2.0rem;
+  }
+
+  .welcome-nav {
+    flex-direction: column;
+  }
+  .welcome-navbutton {
+    max-width: 60%;
   }
 }
