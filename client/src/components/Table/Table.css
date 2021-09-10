@@ -5,7 +5,6 @@
   flex-direction: column;
   gap: 10px;
   padding: 0rem;
-  height: 120%;
 }
 
 .app-container table {
@@ -35,7 +34,7 @@
   gap: 5px;
 }
 
-.app-container form td:last-child {
+.app-container form td:last-child > div {
   display: flex;
   justify-content: space-evenly;
   margin-left: 0px;
@@ -44,6 +43,10 @@
 
 .app-container form * {
   font-size: 1vw;
+}
+
+.app-container input[type="text"] {
+  width: 100%;
 }
 
 .addstudent{
@@ -124,7 +127,6 @@
   position: relative;
   top: 0px;
   left: 0px;
-  width: 220px;
   border-radius: 2px;
   border: 1px solid #767676;
 }

@@ -272,7 +272,7 @@ const Table = (props) => {
 
 
     return (
-      <div className="app-container">
+      <div className={`app-container ${props?.className}`}>
       <div>
       <div
         className={`p-6 my-2 mx-auto max-w-md border-2 ${
@@ -367,7 +367,7 @@ const Table = (props) => {
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
-       : <div>{(() => {if(props.email){return(<button id="emailstudent" onClick={handleEmail}>Email</button>)}})()}</div>
+       : <>{(() => {if(props.email){return(<button className="modal-bottomright-button" onClick={handleEmail}>Email</button>)}})()}</>
       }
       </div>
     );

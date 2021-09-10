@@ -353,11 +353,10 @@ hr {
 }
 
 .createmodaltab {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 53%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   border-radius: 4px;
   overflow: hidden;
   border: none;

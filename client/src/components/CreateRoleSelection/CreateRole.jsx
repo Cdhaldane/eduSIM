@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container } from "react-bootstrap";
 import Dropdownroles from "../DropDown/Dropdownroles";
 
 
@@ -8,8 +7,7 @@ import Dropdownroles from "../DropDown/Dropdownroles";
     console.log(props)
   return (
       <div class="areacsv" >
-        <Container>
-      <form id="areacsvform">
+      <form className="areacsvform">
         <p id="boxj1"> Select the role you wish to play! </p>
       <p id="rolesdrops">
           <Dropdownroles
@@ -17,7 +15,6 @@ import Dropdownroles from "../DropDown/Dropdownroles";
           />
         </p>
         </form>
-        </Container>
 
     </div>
   );
