@@ -185,7 +185,7 @@
 
 .tabs .tab-content h2{
   text-align: center;
-  margin-bottom:45px;
+  margin-bottom: 45px;
 }
 
 .tabs .tab [type="radio"]:checked + .tab-label {
@@ -210,6 +210,7 @@
 .content-tabs {
   flex-grow: 1;
   font-size: 1.3rem;
+  max-height: 550px;
 }
 .content {
   background: white;
@@ -217,6 +218,8 @@
   padding: 20px;
   width: 100%;
   height: 100%;
+  max-height: inherit;
+  overflow-y: auto;
   display: none;
   border-radius: 10px;
   text-align: left;
@@ -229,10 +232,6 @@
 .content > h3 {
   margin-top: 20px;
 }
-.content h2 {
-  padding: 0px 0 5px 0px;
-  color: black;
-}
 .content p {
   width: 100%;
   height: 100%;
@@ -242,6 +241,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 .content-settings {
   display: flex;
@@ -301,23 +305,21 @@
   box-shadow: 0 5px 10px grey;
 }
 
+hr {
+  margin: 10px 0;
+}
+
 .deletegroup {
-  position: sticky;
-  z-index: 1000;
-  left: 1300px;
-  top: -10px;
-  width: 20%;
-  height: 50px;
-  margin-bottom: -30px;
   font-family:  "Montserrat", sans-serif;
-  font-size: 1.5vw;
+  padding: 10px 20px;
+  font-size: 1em;
   color: white;
   background-color: #8f001a;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 10px
+  border-radius: 10px;
 }
 .deletegroup:hover{
   cursor: pointer;
@@ -325,7 +327,6 @@
 }
 
 .addgroup {
-  z-index: 1000;
   font-family:  "Montserrat", sans-serif;
   padding: 10px 20px;
   font-size: 1em;
@@ -343,9 +344,12 @@
 
 .groupcontainer{
   display: flex;
-  flex-wrap: wrap;
-  align-self: center;
-  margin-left:0px;
+}
+.group-column {
+  flex: 1;
+}
+.group-table {
+  padding-bottom: 20px;
 }
 
 .createmodaltab {
@@ -381,12 +385,9 @@
   opacity: 0;
 }
 
-#chart {
-  position: relative;
-  left: 750px;
-  top: -20px;
-  width: 500px;
-  height: 300px;
+.chart {
+  margin-top: 10px;
+  font-size: 1rem;
 }
 
 #roomh3 {
@@ -408,5 +409,8 @@
   }
   .content-radiobuttons {
     margin: 0 0 0 20px;
+  }
+  .groupcontainer {
+    flex-direction: column;
   }
 }

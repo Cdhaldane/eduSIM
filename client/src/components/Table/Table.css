@@ -6,8 +6,6 @@
   gap: 10px;
   padding: 0rem;
   height: 120%;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .app-container table {
@@ -140,8 +138,6 @@
     gap: 10px;
     padding: 0rem;
     width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
   }
   #emailbutton {
     font-size: 1.0rem;

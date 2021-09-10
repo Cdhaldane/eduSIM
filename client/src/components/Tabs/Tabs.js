@@ -6,6 +6,7 @@ import CreateEmail from "../CreateEmail/CreateEmail";
 import {
   LineChart,
   Line,
+  ResponsiveContainer,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -209,33 +210,40 @@ function Tabs(props) {
               toggleState === i + 1 ? "content  active-content" : "content"
             }
           >
-            <button
-              onClick={() => handleDeleteGroup(i)}
-              className="deletegroup"
-            >
-              Delete Group
-            </button>
-            <h2>{i[0]}</h2>
+            <div className="content-header">
+              <h2>{i[0]}</h2>
+              <button
+                onClick={() => handleDeleteGroup(i)}
+                className="deletegroup"
+              >
+                Delete Group
+              </button>
+            </div>
             <hr />
             <div className="groupcontainer">
-              <h3>Chat: </h3>
-
-              <h3>Performance:</h3>
-              <div id="chart">
-                <LineChart
-                  width={600}
-                  height={300}
-                  data={data}
-                  margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
-                >
-                  <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-                  <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                </LineChart>
+              <div className="group-column">
+                <h3>Chat: </h3>
               </div>
-              <h3>Students / participants in room:</h3>
+              <div className="group-column">
+                <h3>Performance:</h3>
+                <div className="chart">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart
+                      data={data}
+                      margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                    >
+                      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+            <h3>Students / participants in room:</h3>
+            <div class="group-table">
               <Table
                 addstudent={true}
                 gameroom={i}
