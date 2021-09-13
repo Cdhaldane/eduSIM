@@ -17,7 +17,7 @@ import axios from 'axios';
     //Put a check here
     //Gets here after pressing add button, so it should also add the file name
     event.preventDefault();
-    axios.post('http://localhost:5000/api/playerrecords/createGamePlayers', result, {
+    axios.post(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/createGamePlayers', result, {
       headers: {
         'Content-Type': "application/json"
       },

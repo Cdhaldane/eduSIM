@@ -11,84 +11,67 @@ function CreateArea(props) {
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
   const [imageSelected, setImageSelected] = useState("");
   const [copy, setCopy] = useState(0);
-  const [copiedParams, setCopiedParams] = useState();
+  const [copiedParams, setCopiedParams] = useState()
   // sets all const
-  const uploadImage = async (event) => {
+  const uploadImage = async event => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", imageSelected);
-    formData.append("upload_preset", "scyblt6a");
-    formData.append("folder", "images");
+    const formData = new FormData()
+    formData.append("file", imageSelected)
+    formData.append("upload_preset", "scyblt6a")
+    formData.append("folder", "images")
     try {
-      await axios
-        .post(
-          "https://api.cloudinary.com/v1_1/uottawaedusim/image/upload",
-          formData
-        )
+      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
         .then((res) => {
           let data = {
             gameinstance_name: title,
             gameinstance_photo_path: res.data.public_id,
-            game_parameters: "value",
+            game_parameters: 'value',
             createdby_adminid: localStorage.adminid,
-            status: "created",
-          };
-          axios
-            .post(
-              "http://localhost:5000/api/gameinstances/createGameInstance",
-              data
-            )
+            status: 'created'
+          }
+          axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
             .then((res) => {
-              console.log(res);
+              console.log(res)
             })
-            .catch((error) => console.log(error.response));
+            .catch(error => console.log(error.response));
           props.onAdd(note);
         });
     } catch (error) {
       let data = {
         gameinstance_name: title,
         gameinstance_photo_path: filename,
-        game_parameters: "value",
+        game_parameters: 'value',
         createdby_adminid: localStorage.adminid,
-        status: "created",
-      };
+        status: 'created'
+      }
       if (copy === 1) {
-        await axios
-          .post(
-            "http://localhost:5000/api/gameinstances/createGameInstance",
-            data
-          )
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
           .then((res) => {
             var body = {
               id: res.data.gameinstanceid,
               game_parameters: copiedParams,
               createdby_adminid: localStorage.adminid,
-              invite_url: "value",
-            };
-            axios
-              .put("http://localhost:5000/api/gameinstances/update/:id", body)
+              invite_url: 'value'
+            }
+            axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body)
               .then((res) => {
-                console.log(res);
+                console.log(res)
               })
-              .catch((error) => console.log(error.response));
+              .catch(error => console.log(error.response));
           })
-          .catch((error) => console.log(error.response));
+          .catch(error => console.log(error.response));
         props.onAdd(note);
       } else {
-        await axios
-          .post(
-            "http://localhost:5000/api/gameinstances/createGameInstance",
-            data
-          )
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
           .then((res) => {
-            console.log(res);
+            console.log(res)
           })
-          .catch((error) => console.log(error.response));
+          .catch(error => console.log(error.response));
         props.onAdd(note);
       }
     }
 
-    //window.location.reload();
+    window.location.reload();
   };
   //handles selection of img from file
   function onChange(event) {
@@ -106,16 +89,14 @@ function CreateArea(props) {
   //handles showing of img overlay
   function handleImg(event) {
     event.preventDefault();
-    setImg(!img);
+    setImg(!img)
   }
 
   function createSelectItems() {
-    let items = [<option value="">Select a previous sim</option>];
+    let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       //here I will be creating my options dynamically based on
-      items.push(
-        <option value={i}>{props.gamedata[i].gameinstance_name}</option>
-      );
+      items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
 
       //what props are currently passed to the parent component
     }

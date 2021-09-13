@@ -324,7 +324,7 @@ class Graphics extends Component {
 
     this.handleWheel = this.handleWheel.bind(this);
 
-    axios.get('http://localhost:5000/api/gameinstances/getGameInstance/:adminid/:gameid', {
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
             adminid: this.state.adminid,
             gameid: this.state.gameinstanceid
@@ -375,7 +375,7 @@ class Graphics extends Component {
 
     })
     .catch(error => console.log(error.response));
-    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
             gameinstanceid: this.state.gameinstanceid,
         }
@@ -436,7 +436,7 @@ class Graphics extends Component {
                   createdby_adminid: localStorage.adminid,
                   invite_url: 'value'
                 }
-                axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
+                axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body)
                    .then((res) => {
                       console.log(res)
                      })

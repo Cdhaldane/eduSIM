@@ -28,7 +28,7 @@ function Tabs(props) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid", {
+      .get(process.env.REACT_APP_API_ORIGIN+"/api/playerrecords/getRooms/:gameinstanceid", {
         params: {
           gameinstanceid: [props.gameid],
         },
@@ -55,15 +55,14 @@ function Tabs(props) {
     setTabs([...tabs, newGroup]);
     let data = {
       gameinstanceid: props.gameid,
-      gameroom_name: newGroup,
-    };
-    axios
-      .post("http://localhost:5000/api/playerrecords/createRoom", data)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => console.log(error.response));
-  };
+      gameroom_name: newGroup
+    }
+      axios.post(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/createRoom', data)
+         .then((res) => {
+            console.log(res)
+           })
+          .catch(error => console.log(error.response));
+  }
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -77,23 +76,20 @@ function Tabs(props) {
 
   const handleDeleteGroup = (e) => {
     var index = tabs.indexOf(e);
-    console.log(tabs);
-    setToggleState(0);
-    axios
-      .delete(
-        "http://localhost:5000/api/playerrecords/deleteRoom/:gameroomid",
-        {
-          params: {
-            id: tabs[index][1],
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => console.log(error.response));
-    delete tabs[index];
-  };
+    console.log(tabs)
+    setToggleState(1)
+    axios.delete(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/deleteRoom/:gameroomid', {
+      params: {
+        id: tabs[index][1]
+      }
+    })
+       .then((res) => {
+          console.log(res)
+
+         })
+        .catch(error => console.log(error.response));
+        delete tabs[index]
+  }
 
   const handleTime = (e) => {
     setTime(e.target.value);

@@ -12,41 +12,41 @@ function Dashboard(props) {
 
   useEffect(() => {
     const getAllGamedata = async () => {
-      axios.get('http://localhost:5000/api/adminaccounts/getAdminbyEmail/:email/:name', {
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
         params: {
-              email: user.email,
-              name: user.name
-          }
+          email: user.email,
+          name: user.name
+        }
       })
-      .then((res) => {
-        const allData = res.data;
-        localStorage.setItem('adminid', allData.adminid)
-        axios.get('http://localhost:5000/api/gameinstances/getGameInstances/',
-        {
-          params: {
-                id: allData.adminid
-            }
-        })
         .then((res) => {
-        const allData = res.data;
-        console.log(allData);
-        getGamedata(allData);
+          const allData = res.data;
+          localStorage.setItem('adminid', allData.adminid)
+          axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
+            {
+              params: {
+                id: allData.adminid
+              }
+            })
+            .then((res) => {
+              const allData = res.data;
+              console.log(allData);
+              getGamedata(allData);
+            })
+            .catch(error => console.log(error.response));
         })
         .catch(error => console.log(error.response));
-      })
-      .catch(error => console.log(error.response));
     }
-     getAllGamedata();
-   }, [user]);
+    getAllGamedata();
+  }, [user]);
 
 
 
   function addNote(newgamedata) {
     console.log("added")
-         getGamedata((prevgamedata) => {
-          return [...prevgamedata, newgamedata];
-        });
-       }
+    getGamedata((prevgamedata) => {
+      return [...prevgamedata, newgamedata];
+    });
+  }
 
   function deleteNote(id) {
     getGamedata((prevgamedata) => {

@@ -5,30 +5,28 @@ import axios from "axios";
 import "../Buttons/Buttons.css";
 
 function AuthenticationButton(props) {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, } = useAuth0();
   const { user } = useAuth0();
-  console.log(localStorage);
 
   function handleClick() {
-    loginWithRedirect({ redirectUri: "http://localhost:3000/" });
-    axios
-      .get("http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name", {
-        params: {
-          email: user.email,
-          name: user.name,
-        },
-      })
-      .then((res) => {
-        const allData = res.data;
-        localStorage.setItem("adminid", allData.adminid);
-        console.log(localStorage.setItem("adminid", allData.adminid));
-      })
-      .catch((error) => console.log(error.response));
+    loginWithRedirect({ redirectUri: window.location.origin });
+    axios.get(process.env.REACT_APP_API_ORIGIN + '/adminaccounts/getAdminbyEmail/:email/:name', {
+      params: {
+        email: user.email,
+        name: user.name
+      }
+    }).then((res) => {
+      const allData = res.data;
+      localStorage.setItem('adminid', allData.adminid);
+      console.log(localStorage.setItem('adminid', allData.adminid));
+    }).catch(error => {
+      console.error(error);
+    });
   }
 
   function handleLogout() {
     logout({
-      returnTo: "http://localhost:3000/",
+      returnTo: window.location.origin,
     });
     localStorage.clear();
   }

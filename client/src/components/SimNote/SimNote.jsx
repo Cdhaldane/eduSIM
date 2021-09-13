@@ -12,15 +12,14 @@ function SimNote(props) {
       props.onDelete(props.id);
       console.log(props.gameid);
       var body = {
-        id: props.gameid,
-      };
-      axios
-        .put("http://localhost:5000/api/gameinstances/delete/:id", body)
-        .then((res) => {
-          const allData = res.data;
-          console.log(allData);
-        })
-        .catch((error) => console.log(error.response));
+        id: props.gameid
+      }
+      axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/delete/:id', body)
+      .then((res) => {
+        const allData = res.data;
+        console.log(allData);
+      })
+      .catch(error => console.log(error.response));
     }
   }
 
