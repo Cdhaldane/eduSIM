@@ -5,7 +5,7 @@ import Loading from "./components/Loading/Loading";
 import Welcome from "./views/welcome.js";
 import Home from "./views/home.js";
 import About from "./views/about.js";
-import Profile from "./views/Profile.js";
+import Profile from "./views/profile.js";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
@@ -23,7 +23,7 @@ class App extends React.Component {
       return <Loading />;
     }
 
-    if (window.location.href === "http://localhost:3000/gamepage" || (window.location.href === "http://localhost:3000/EditPage")) {
+    if (window.location.pathname === "/gamepage" || (window.location.pathname === "/editpage")) {
       return (
         <div>
           <Switch>

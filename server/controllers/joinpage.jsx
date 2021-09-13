@@ -48,7 +48,7 @@ exports.createGamePlayers = async (req, res) => {
           lookuproom.push(game_room);
           const gameroom_name = game_room
           const gameroomid = uuid.v4();
-          const gameroom_url = "http://localhost:3000/gamepage?"+gameroomid+"&"+gameroom_name+"&"+fname;
+          const gameroom_url = req.headers.origin+"/gamepage?"+gameroomid+"&"+gameroom_name+"&"+fname;
           let newGameRoom =  await GameRoom.create({
             gameroomid,
             gameinstanceid,

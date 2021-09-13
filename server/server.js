@@ -7,13 +7,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 
-
 var cors = require('cors')
 
-
-
 const ENV = process.env.NODE_ENV  //Tells us if we're working in development or production
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 //Initialising express and registering the basic middleware
 const app = express();
@@ -33,8 +30,6 @@ app.use('/api/playerrecords', routes.playerrecord)
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);

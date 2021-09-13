@@ -18,7 +18,7 @@ function Tabs(props) {
 
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/playerrecords/getRooms/:gameinstanceid', {
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/getRooms/:gameinstanceid', {
       params: {
             gameinstanceid: [props.gameid],
         }
@@ -47,7 +47,7 @@ function Tabs(props) {
       gameinstanceid: props.gameid,
       gameroom_name: newGroup
     }
-      axios.post('http://localhost:5000/api/playerrecords/createRoom', data)
+      axios.post(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/createRoom', data)
          .then((res) => {
             console.log(res)
            })
@@ -68,7 +68,7 @@ function Tabs(props) {
     var index = tabs.indexOf(e);
     console.log(tabs)
     setToggleState(1)
-    axios.delete('http://localhost:5000/api/playerrecords/deleteRoom/:gameroomid', {
+    axios.delete(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/deleteRoom/:gameroomid', {
       params: {
         id: tabs[index][1]
       }

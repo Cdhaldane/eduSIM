@@ -15,7 +15,7 @@ import "./Dropdown.css";
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
     console.log(props)
-    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
             gameinstanceid: props.gameid,
         }
@@ -38,7 +38,7 @@ import "./Dropdown.css";
   }, [props])
 
   function updateGameRoles(){
-    axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
             gameinstanceid: props.gameid,
         }
@@ -93,7 +93,7 @@ import "./Dropdown.css";
       gameinstanceid: props.gameid,
       gamerole: rolename
     }
-      axios.post('http://localhost:5000/api/gameroles/createRole', data)
+      axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/createRole', data)
          .then((res) => {
             console.log(res)
             updateGameRoles();
@@ -106,7 +106,7 @@ import "./Dropdown.css";
   }
 
   function handleDelete(e){
-    axios.delete('http://localhost:5000/api/gameroles/deleteRole/:gameroleid', {
+    axios.delete(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/deleteRole/:gameroleid', {
       params: {
         id: roles[e].gameroleid
       }
