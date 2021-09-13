@@ -303,7 +303,7 @@ const Table = (props) => {
       </div>
       </div>
         <form onSubmit={handleEditFormSubmit}>
-          <table>
+          <table className="table-el">
             <thead>
               <tr>
                 <th>First Name</th>
