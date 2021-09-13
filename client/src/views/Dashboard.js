@@ -12,7 +12,7 @@ function Dashboard(props) {
 
   useEffect(() => {
     const getAllGamedata = async () => {
-      axios.get('http://localhost:5000/api/adminaccounts/getAdminbyEmail/:email/:name', {
+      axios.get(process.env.REACT_APP_API_ORIGIN+'/api/adminaccounts/getAdminbyEmail/:email/:name', {
         params: {
               email: user.email,
               name: user.name
@@ -21,7 +21,7 @@ function Dashboard(props) {
       .then((res) => {
         const allData = res.data;
         localStorage.setItem('adminid', allData.adminid)
-        axios.get('http://localhost:5000/api/gameinstances/getGameInstances/',
+        axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/getGameInstances/',
         {
           params: {
                 id: allData.adminid

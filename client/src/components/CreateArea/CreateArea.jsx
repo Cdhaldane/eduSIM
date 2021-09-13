@@ -31,7 +31,7 @@ import "./CreateArea.css";
        createdby_adminid: localStorage.adminid,
        status: 'created'
      }
-       axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
+       axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
           .then((res) => {
              console.log(res)
             })
@@ -47,7 +47,7 @@ import "./CreateArea.css";
      status: 'created'
    }
    if(copy === 1){
-     await axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
+     await axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
         .then((res) => {
           var body = {
               id: res.data.gameinstanceid,
@@ -55,7 +55,7 @@ import "./CreateArea.css";
               createdby_adminid: localStorage.adminid,
               invite_url: 'value'
             }
-            axios.put('http://localhost:5000/api/gameinstances/update/:id', body)
+            axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body)
                .then((res) => {
                   console.log(res)
                  })
@@ -64,7 +64,7 @@ import "./CreateArea.css";
          .catch(error => console.log(error.response));
      props.onAdd(note);
    } else {
-      await axios.post('http://localhost:5000/api/gameinstances/createGameInstance', data)
+      await axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
         .then((res) => {
            console.log(res)
           })

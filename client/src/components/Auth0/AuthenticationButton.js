@@ -12,7 +12,7 @@ function AuthenticationButton(props) {
   function handleClick(){
     loginWithRedirect({redirectUri: "http://localhost:3000/",})
     console.log(user.email)
-    axios.get('http://localhost:5000/adminaccounts/getAdminbyEmail/:email/:name',{
+    axios.get(process.env.REACT_APP_API_ORIGIN+'/adminaccounts/getAdminbyEmail/:email/:name',{
       params: {
             email: user.email,
             name: user.name

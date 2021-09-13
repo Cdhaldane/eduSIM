@@ -41,7 +41,7 @@ const Table = (props) => {
     useEffect(() => {
       if(props.addstudent === false){
         setGroupOr("Group")
-        axios.get('http://localhost:5000/api/playerrecords/getAllPlayers/:gameinstanceid', {
+        axios.get(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/getAllPlayers/:gameinstanceid', {
           params: {
                 id: props.gameid,
             }
@@ -71,7 +71,7 @@ const Table = (props) => {
             .catch(error => console.log(error.response));
       } else {
         setGroupOr("Role")
-      axios.get('http://localhost:5000/api/playerrecords/getPlayers/:game_room', {
+      axios.get(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/getPlayers/:game_room', {
         params: {
               game_room: props.gameroom,
           }
@@ -100,7 +100,7 @@ const Table = (props) => {
            })
           .catch(error => console.log(error.response));
         }
-        axios.get('http://localhost:5000/api/gameroles/getGameRoles/:gameinstanceid', {
+        axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/getGameRoles/:gameinstanceid', {
           params: {
                 gameinstanceid: props.gameid,
             }
@@ -158,7 +158,7 @@ const Table = (props) => {
         player_email: addFormData.email,
         gamerole: addFormData.group
         }
-        axios.post('http://localhost:5000/api/playerrecords/createPlayer', data)
+        axios.post(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/createPlayer', data)
            .then((res) => {
               console.log(res)
               const newContact = {
@@ -204,7 +204,7 @@ const Table = (props) => {
         player_email: newContacts[index].email,
         gamerole: newContacts[index].gamerole,
       }
-      axios.put('http://localhost:5000/api/playerrecords/updatePlayer', data)
+      axios.put(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/updatePlayer', data)
            .then((res) => {
               console.log(res)
              })
@@ -236,7 +236,7 @@ const Table = (props) => {
       newContacts.splice(index, 1);
       console.log(contactId)
       setContacts(newContacts);
-      axios.delete('http://localhost:5000/api/playerrecords/deletePlayers/:gameplayerid', {
+      axios.delete(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/deletePlayers/:gameplayerid', {
         params: {
           id: contactId
         }
@@ -252,7 +252,7 @@ const Table = (props) => {
       e.preventDefault();
       contacts.map((contact) => {
         console.log(contact.firstName)
-        axios.post('http://localhost:5000/api/email/sendEmail', {
+        axios.post(process.env.REACT_APP_API_ORIGIN+'/api/email/sendEmail', {
           simname: props.title,
           pname: user.name,
           name: contact.firstName,
