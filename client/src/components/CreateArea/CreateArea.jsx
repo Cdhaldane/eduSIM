@@ -3,9 +3,7 @@ import Switch from "react-switch"
 import axios from "axios";
 import "./CreateArea.css";
 
-
-
-  function CreateArea(props) {
+function CreateArea(props) {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
   const [title, setTitle] = useState("Untitled");
@@ -14,69 +12,69 @@ import "./CreateArea.css";
   const [imageSelected, setImageSelected] = useState("");
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState()
-    // sets all const
- const uploadImage = async event =>{
-   event.preventDefault();
-   const formData = new FormData()
-   formData.append("file", imageSelected)
-   formData.append("upload_preset", "scyblt6a")
-   formData.append("folder", "images")
-   try {
-   await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
-   .then((res) => {
-     let data = {
-       gameinstance_name: title,
-       gameinstance_photo_path: res.data.public_id,
-       game_parameters: 'value',
-       createdby_adminid: localStorage.adminid,
-       status: 'created'
-     }
-       axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
-          .then((res) => {
-             console.log(res)
-            })
-           .catch(error => console.log(error.response));
-       props.onAdd(note);
-   });
- } catch (error){
-   let data = {
-     gameinstance_name: title,
-     gameinstance_photo_path: filename,
-     game_parameters: 'value',
-     createdby_adminid: localStorage.adminid,
-     status: 'created'
-   }
-   if(copy === 1){
-     await axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
+  // sets all const
+  const uploadImage = async event => {
+    event.preventDefault();
+    const formData = new FormData()
+    formData.append("file", imageSelected)
+    formData.append("upload_preset", "scyblt6a")
+    formData.append("folder", "images")
+    try {
+      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
         .then((res) => {
-          var body = {
+          let data = {
+            gameinstance_name: title,
+            gameinstance_photo_path: res.data.public_id,
+            game_parameters: 'value',
+            createdby_adminid: localStorage.adminid,
+            status: 'created'
+          }
+          axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
+            .then((res) => {
+              console.log(res)
+            })
+            .catch(error => console.log(error.response));
+          props.onAdd(note);
+        });
+    } catch (error) {
+      let data = {
+        gameinstance_name: title,
+        gameinstance_photo_path: filename,
+        game_parameters: 'value',
+        createdby_adminid: localStorage.adminid,
+        status: 'created'
+      }
+      if (copy === 1) {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
+          .then((res) => {
+            var body = {
               id: res.data.gameinstanceid,
               game_parameters: copiedParams,
               createdby_adminid: localStorage.adminid,
               invite_url: 'value'
             }
-            axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body)
-               .then((res) => {
-                  console.log(res)
-                 })
-                .catch(error => console.log(error.response));
+            axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body)
+              .then((res) => {
+                console.log(res)
+              })
+              .catch(error => console.log(error.response));
           })
-         .catch(error => console.log(error.response));
-     props.onAdd(note);
-   } else {
-      await axios.post(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/createGameInstance', data)
-        .then((res) => {
-           console.log(res)
+          .catch(error => console.log(error.response));
+        props.onAdd(note);
+      } else {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
+          .then((res) => {
+            console.log(res)
           })
-         .catch(error => console.log(error.response));
-     props.onAdd(note);
-   }
-   }
+          .catch(error => console.log(error.response));
+        props.onAdd(note);
+      }
+    }
 
-  window.location.reload();
- };
+    window.location.reload();
+  };
   //handles selection of img from file
-  function onChange(event){
+  function onChange(event) {
     setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]))
     setNote({
@@ -89,18 +87,18 @@ import "./CreateArea.css";
     setTitle(event.target.value);
   }
   //handles showing of img overlay
-  function handleImg(event){
-     event.preventDefault();
-     setImg(!img)
+  function handleImg(event) {
+    event.preventDefault();
+    setImg(!img)
   }
 
   function createSelectItems() {
     let items = [(<option value="">Select a previous sim</option>)];
-    for (let i = 0; i <=  props.gamedata.length -1; i++) {
-         //here I will be creating my options dynamically based on
-         items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
+    for (let i = 0; i <= props.gamedata.length - 1; i++) {
+      //here I will be creating my options dynamically based on
+      items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
 
-         //what props are currently passed to the parent component
+      //what props are currently passed to the parent component
     }
     return items;
   }
@@ -117,78 +115,78 @@ import "./CreateArea.css";
     setCopiedParams(props.gamedata[event.target.value].game_parameters)
   }
   return (
-      <div class="area" >
-          <form>
-            <p class="gradient-border" id="box">
-            Add New Simulation
-            </p>
-            <label for="Game">Choose a game</label>
-            <select id="games">
-              <option value="Team Leadership">Team Leadership</option>
-              <option value="Project Management">Project Management</option>
-              <option value="">...</option>
-              <option value="blank">Create a blank simulation</option>
-            </select>
-            <p class="gradient-border" id="box1">
-              Duplicate a previous simulation
-              <label id="switch">
-              <Switch
-                onChange={() => setChecked(!checked)}
-                checked={checked}
-                className="react-switch"
-              />
-            </label>
-            </p>
-            {checked && <div>
-                <label for="PrevGame" id="prevgame">Select a previous simulation</label>
-                <select id="prevgames" onChange={handleCopySim}>
-                  {createSelectItems()}
-                </select>
-              </div>}
-              <p class="gradient-border" id="box3">
-                Enter a ‎name‎‏‏‎ ‎
-                <input
-               tpye="text"
-               id="namei"
-               name="title"
-               onChange={handleChange}
-               value={note.title}
-               placeholder="                         "
-             />
-              </p>
-                <p class="gradient-border" id="box2" >
-                  Choose an image
-                  <img id="plus" src="plus.png" alt="add" onClick={handleImg}/>
+    <div class="area" >
+      <form>
+        <p class="gradient-border" id="box">
+          Add New Simulation
+        </p>
+        <label for="Game">Choose a game</label>
+        <select id="games">
+          <option value="Team Leadership">Team Leadership</option>
+          <option value="Project Management">Project Management</option>
+          <option value="">...</option>
+          <option value="blank">Create a blank simulation</option>
+        </select>
+        <p class="gradient-border" id="box1">
+          Duplicate a previous simulation
+          <label id="switch">
+            <Switch
+              onChange={() => setChecked(!checked)}
+              checked={checked}
+              className="react-switch"
+            />
+          </label>
+        </p>
+        {checked && <div>
+          <label for="PrevGame" id="prevgame">Select a previous simulation</label>
+          <select id="prevgames" onChange={handleCopySim}>
+            {createSelectItems()}
+          </select>
+        </div>}
+        <p class="gradient-border" id="box3">
+          Enter a ‎name‎‏‏‎ ‎
+          <input
+            tpye="text"
+            id="namei"
+            name="title"
+            onChange={handleChange}
+            value={note.title}
+            placeholder="                         "
+          />
+        </p>
+        <p class="gradient-border" id="box2" >
+          Choose an image
+          <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
 
-                  {(img)
-                  ?<img id="preview" alt="preview" src={img} />
-                  :<img id="previewno" alt="preview"src={img} />
-                  }
-                </p>
-                <p>
-                  <button id="add" onClick={uploadImage}>Add</button>
-                </p>
-              </form>
-            {img && <div>
-              <form id="imgs">
-                <p id="box4" >
-                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-                  <img src="temp.png" alt="temp" onClick={() => {setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png");}}/>
-                  <img src="temp1.png"alt="temp"  onClick={() => {setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png");}}/>
-                <input
-                      type="file"
-                      name="img"
-                      id="file"
-                      onChange={onChange}
-                      />
-                    <label for="file">From file</label>
-                </p>
-              </form>
-              </div>
-            }
+          {(img)
+            ? <img id="preview" alt="preview" src={img} />
+            : <img id="previewno" alt="preview" src={img} />
+          }
+        </p>
+        <p>
+          <button id="add" onClick={uploadImage}>Add</button>
+        </p>
+      </form>
+      {img && <div>
+        <form id="imgs">
+          <p id="box4" >
+            <img src="temp.png" alt="temp" onClick={() => { setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png"); }} />
+            <img src="temp1.png" alt="temp" onClick={() => { setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png"); }} />
+            <img src="temp.png" alt="temp" onClick={() => { setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png"); }} />
+            <img src="temp1.png" alt="temp" onClick={() => { setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png"); }} />
+            <img src="temp.png" alt="temp" onClick={() => { setFilename("images/lhd0g0spuityr8xps7vn"); setImg("temp.png"); }} />
+            <img src="temp1.png" alt="temp" onClick={() => { setFilename("images/i50xq1m2llbrg625zf9j"); setImg("temp1.png"); }} />
+            <input
+              type="file"
+              name="img"
+              id="file"
+              onChange={onChange}
+            />
+            <label for="file">From file</label>
+          </p>
+        </form>
+      </div>
+      }
     </div>
   );
 }
