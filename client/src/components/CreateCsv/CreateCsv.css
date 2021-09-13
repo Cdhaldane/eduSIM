@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50%;
+  width: 60%;
+  max-width: 900px;
   font-family: 'Raleway';
   font-size: 1rem;
   position: relative;
@@ -60,6 +61,7 @@
   font-size: 2rem;
   font-weight: bold;
   text-align: left;
+  width: 100%;
 }
 
 .areacsv-filename {
