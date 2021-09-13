@@ -33,7 +33,7 @@ footer {
 
 @keyframes slideInFromLeft {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(-100vw);
   }
   100% {
     transform: translateX(0);
@@ -45,30 +45,28 @@ footer {
   font-family: "Montserrat", sans-serif;
   margin-top: 50px;
   font-size: 3em;
-  text-align: center;
-  display: flex;
-  flex-flow: column;
-  flex-grow: auto;
-  flex-wrap: wrap;
   height: 100%;
   animation: 1s ease-out 0s 1 slideInFromLeft;
 }
-
-
-.welcome a {
-  color: #0645AD;
-  font-family: "Montserrat", sans-serif;
-  font-size: 2vw;
-  margin-top: 100px;
-  text-align: center;
+.welcome-noanim {
+  animation: unset;
 }
-.welcome p {
+.welcome-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 2vw;
-  margin-top: 20px;
-  text-align: center;
+  font-size: 1.5em;
 }
+.welcome-container > * {
+  margin-bottom: 10px;
+}
+.welcome-join {
+  display: flex;
+  align-items: center;
+}
+
 .welcome input::placeholder {
   color: grey;
   opacity: 0.8;
@@ -82,7 +80,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 10px;
 }
 
 .welcome-navbutton {
@@ -102,7 +100,7 @@ footer {
 
 .welcome-navbutton h1 {
   font-family: "Montserrat", sans-serif;
-  font-size: 1.5em;
+  font-size: 1em;
   margin-bottom: 20px;
   color: #181818;
 }
@@ -118,10 +116,11 @@ footer {
 .textbox {
   border-radius: 2em;
   border: none;
-  margin: 2em;
+  margin: 1em;
   padding: 0.8em;
   color: #181818;
   font-size: 0.7em;
+  font-family: inherit;
   padding-left: 1.5em;
   outline: none;
   box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%),
@@ -358,16 +357,14 @@ footer {
   top: 0px;
 }
 #link {
-  color: blue;
+  color: white;
+  font-size: inherit;
+  text-decoration: underline;
   border: none;
   outline: none;
   background: inherit;
   font-family:  "Montserrat", sans-serif;
-  font-size: 2.45rem;
-}
-#link:hover{
   cursor: pointer;
-  font-size: 2.55rem;
 }
 #authbutton {
   position: relative;

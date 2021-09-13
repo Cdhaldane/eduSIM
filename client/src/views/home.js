@@ -3,7 +3,7 @@ import Note from "../components/Note/Note";
 
 function Home(props){
     return (
-      <div>
+      <div className="welcome-container">
         <h1 class="welcome">Welcome!</h1>
         <div class="welcome-nav">
           <Note
