@@ -27,6 +27,17 @@ function DropdownAddObjects(props) {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
   }, []);
 
+  const handleClickOutside = e => {
+    if (!dropdownRef.current.contains(e.target)) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  });
+
   function calcHeight(el) {
     const height = el.offsetHeight;
     setMenuHeight(height);

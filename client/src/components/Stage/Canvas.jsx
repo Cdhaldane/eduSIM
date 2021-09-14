@@ -2499,49 +2499,46 @@ class Graphics extends Component {
     fileDownload(res.data, filename)
     console.log(res)
   })
-  console.log(8)
 }
 
   drawLine = () => {
     this.setState({
       drawMode: true
-    })
+    });
     this.setState({
       tool: "pen"
-    })
+    });
+  }
 
-  };
   stopDrawing = () => {
-    console.log(this.refs.layer2)
     this.setState({
       drawMode: false
-    })
+    });
   }
+
   chooseColor = (e) => {
     this.setState({
       color: e.hex
-    })
+    });
   }
+
   editMode = () => {
-    console.log(4)
     this.setState({
       infolevel: true
-    })
+    });
   }
+
   editModeOff = () => {
     this.setState({
       infolevel: false
-    })
+    });
   }
+
   handleRoleLevel = (e) => {
     this.setState({
       rolelevel: e
-    })
-
+    });
   }
-
-
-
 
   render() {
     return (

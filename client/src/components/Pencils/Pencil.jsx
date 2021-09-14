@@ -139,7 +139,7 @@ function Pencil(props) {
 
       {drop && <div className={"drop" + props.id}>
         {props.type === "info" && (
-          <DropdownTimelineBar ptype={handleType} num={handleNum} />
+          <DropdownTimelineBar ptype={handleType} num={handleNum} close={handleClose} />
         )}
 
         {props.type === "main" && (
@@ -175,7 +175,8 @@ function Pencil(props) {
             avisible={handleAvisible}
             pavisible={handlePavisible}
             svisible={handleSvisible}
-            pevisible={handlePevisible} />
+            pevisible={handlePevisible}
+            close={handleClose} />
         )}
       </div>}
     </div>
