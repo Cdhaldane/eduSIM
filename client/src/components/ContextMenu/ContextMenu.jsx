@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import Dropdownedit from "../DropDown/Dropdownedit";
+import DropdownEditObject from "../DropDown/DropdownEditObject";
 import "./ContextMenu.css"
 
 function ContextMenu(props) {
@@ -64,7 +64,7 @@ function ContextMenu(props) {
       </ul>
 
       {drop && <div className="drop">
-        <Dropdownedit
+        <DropdownEditObject
           title="Edit Shape"
           choosecolorf={handleColorF}
           choosecolors={handleColorS}

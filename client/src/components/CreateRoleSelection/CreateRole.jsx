@@ -1,24 +1,20 @@
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
-import Dropdownroles from "../DropDown/Dropdownroles";
+import DropdownRoles from "../DropDown/DropdownRoles";
 
-
-
-  function CreateRole(props) {
-    console.log(props)
+function CreateRole(props) {
   return (
-      <div class="areacsv" >
-        <Container>
-      <form id="areacsvform">
-        <p id="boxj1"> Select the role you wish to play! </p>
-      <p id="rolesdrops">
-          <Dropdownroles
-            gameid={props.gameid}
-          />
-        </p>
+    <div className="areacsv" >
+      <Container>
+        <form id="areacsvform">
+          <p id="boxj1">Select the role you wish to play!</p>
+          <p id="rolesdrops">
+            <DropdownRoles
+              gameid={props.gameid}
+            />
+          </p>
         </form>
-        </Container>
-
+      </Container>
     </div>
   );
 }

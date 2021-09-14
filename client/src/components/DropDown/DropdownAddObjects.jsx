@@ -1,32 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import {  ChromePicker } from 'react-color';
+import { ChromePicker } from 'react-color';
 import axios from "axios";
-
 
 import "./Dropdown.css";
 
-  function DropdownMenu(props) {
-    const [activeMenu, setActiveMenu] = useState('main');
-    const [menuHeight, setMenuHeight] = useState(null);
-    const [img, setImg] = useState();
-    const dropdownRef = useRef(null);
-    const [colour, setColour] = useState("");
-    const [checkedd, setCheckedd] = useState(false);
-    const [checkede, setCheckede] = useState(false);
-    const [imgsrc, setImgsrc] = useState('');
-    const [vidsrc, setVidsrc] = useState('')
-    const [audiosrc, setAudiosrc] = useState('')
-    const [file, setFile] = useState('');
+function DropdownAddObjects(props) {
+  const [activeMenu, setActiveMenu] = useState("main");
+  const [menuHeight, setMenuHeight] = useState(null);
+  const [img, setImg] = useState();
+  const dropdownRef = useRef(null);
+  const [colour, setColour] = useState("");
+  const [checkedd, setCheckedd] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [imgsrc, setImgsrc] = useState("");
+  const [vidsrc, setVidsrc] = useState("");
+  const [audiosrc, setAudiosrc] = useState("");
+  const [file, setFile] = useState("");
 
-    function handleChange(e){
-      setColour(e);
-      props.choosecolor(e);
-    };
+  function handleChange(e) {
+    setColour(e);
+    props.choosecolor(e);
+  }
 
   useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
-  }, [])
+    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+  }, []);
 
   function calcHeight(el) {
     const height = el.offsetHeight;
@@ -44,150 +43,164 @@ import "./Dropdown.css";
   }
 
 
-    function DropdownItems(props) {
-      return (
-        <a href="#" className="menu-item" onClick={props.onClick}>
-          <span className="icon-button">{props.leftIcon}</span>
-          {props.children}
-          <span className="icon-right">{props.rightIcon}</span>
-        </a>
-      );
-    }
+  function DropdownItems(props) {
+    return (
+      <a href="#" className="menu-item" onClick={props.onClick}>
+        <span className="icon-button">{props.leftIcon}</span>
+        {props.children}
+        <span className="icon-right">{props.rightIcon}</span>
+      </a>
+    );
+  }
 
-    function DropdownItemImg(props) {
-      return (
-        <a href="#" className="menu-item">
-          <span className="icon-button">{props.leftIcon}</span>
-          {props.children}
-          <span className="icon-right">{props.rightIcon}</span>
-        </a>
-      );
-    }
-    const submitNote = async event => {
-      event.preventDefault();
-      const formData = new FormData()
-      formData.append("file", img)
-      formData.append("upload_preset", "scyblt6a")
-      formData.append("folder", "images")
-      try {
+  function DropdownItemImg(props) {
+    return (
+      <a href="#" className="menu-item">
+        <span className="icon-button">{props.leftIcon}</span>
+        {props.children}
+        <span className="icon-right">{props.rightIcon}</span>
+      </a>
+    );
+  }
+
+  const submitNote = async event => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("file", img);
+    formData.append("upload_preset", "scyblt6a");
+    formData.append("folder", "images");
+
+    try {
       await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
-      .then((res) => {
-        console.log(res)
-        const allData = res.data.public_id
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg"
-        props.handleImage(name)
-      });
-    } catch (error){
-      console.log(error)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+          props.handleImage(name);
+        });
+    } catch (error) {
+      console.log(error);
     }
   }
 
-    const filesubmitNote = async event => {
-      event.preventDefault();
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("upload_preset", "scyblt6a")
-      formData.append("folder", "pdfs")
-      try {
+  const filesubmitNote = async event => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "scyblt6a");
+    formData.append("folder", "pdfs");
+
+    try {
       await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
-      .then((res) => {
-        console.log(res)
-        const allData = res.data.public_id
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".pdf"
-        props.handleDocument(name)
-      });
-    } catch (error){
-      console.log(error)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".pdf";
+          props.handleDocument(name);
+        });
+    } catch (error) {
+      console.log(error);
     }
   }
 
-      function handleImg(event){
-        setImg(event.target.files[0])
-      }
+  function handleImg(event) {
+    setImg(event.target.files[0]);
+  }
 
-      function handleFile(event){
-        setFile(event.target.files[0]);
-      }
+  function handleFile(event) {
+    setFile(event.target.files[0]);
+  }
 
-
-  function addCircle(){
+  function addCircle() {
     props.addCircle();
     props.close();
   }
-  function addRectangle(){
+
+  function addRectangle() {
     props.addRectangle();
     props.close();
   }
-  function addTriangle(){
+
+  function addTriangle() {
     props.addTriangle();
     props.close();
   }
-  function addStar(){
+
+  function addStar() {
     props.addStar();
     props.close();
   }
-  function drawLine(){
+
+  function drawLine() {
     setCheckedd(!checkedd)
     props.drawLine();
   }
-  function drawText(){
+
+  function drawText() {
     props.drawText();
     props.close();
   }
-  function addImage(e){
+
+  function addImage(e) {
     props.addImage();
     props.close();
   }
-  function addVideo(e){
+
+  function addVideo(e) {
     props.addVideo();
     props.close();
   }
-  function addAudio(e){
+
+  function addAudio(e) {
     props.addAudio();
     props.close();
   }
-  function addDocument(e){
+
+  function addDocument(e) {
     props.addDocument();
     props.close();
   }
-  function addTic(e){
+
+  function addTic(e) {
     props.addTic("clicked");
     props.close();
   }
-  function addConnect(){
+
+  function addConnect() {
     props.addConnect();
     props.close();
   }
-  function stopDrawing(){
-    setCheckede(!checkede)
+
+  function stopDrawing() {
+    setChecked(!checked);
     props.stopDrawing();
   }
-  function handleImage(e){
+
+  function handleImage(e) {
     submitNote(e);
-    setImgsrc(e.target.value)
-    props.handleImage(imgsrc)
+    setImgsrc(e.target.value);
+    props.handleImage(imgsrc);
   }
 
-  function handleVideo(e){
-    setVidsrc(e.target.value)
+  function handleVideo(e) {
+    setVidsrc(e.target.value);
     props.handleVideo(vidsrc);
   }
-  function handleAudio(e){
-    setAudiosrc(e.target.value)
+
+  function handleAudio(e) {
+    setAudiosrc(e.target.value);
     props.handleAudio(audiosrc);
   }
 
-  function handleImgSubmit(e){
+  function handleImgSubmit(e) {
     submitNote(e);
   }
-  function handleFilesubmit(e){
+
+  function handleFilesubmit(e) {
     filesubmitNote(e);
   }
 
-
- return (
-     <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
-       <CSSTransition
+  return (
+    <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
+      <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
         classNames="menu-primary"
@@ -226,10 +239,10 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>SHAPES!</h2>
           </DropdownItem>
-          <DropdownItems  onClick={addRectangle} leftIcon={<i id="icons" class="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
+          <DropdownItems onClick={addRectangle} leftIcon={<i id="icons" class="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
           <DropdownItems onClick={addCircle} leftIcon={<i id="icons" class="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
-        <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
-        <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
+          <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" class="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
+          <DropdownItems onClick={addStar} leftIcon={<i id="icons" class="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
 
           <DropdownItem
             leftIcon={<i id="icons" class="fas fa-marker"></i>}
@@ -251,15 +264,15 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>MEDIA!</h2>
           </DropdownItem>
-            <DropdownItem
-              leftIcon={<i id="icons" class="fa fa-picture-o"></i>}
-              rightIcon=""
-              goToMenu="image">
-              Image
-            </DropdownItem>
+          <DropdownItem
+            leftIcon={<i id="icons" class="fa fa-picture-o"></i>}
+            rightIcon=""
+            goToMenu="image">
+            Image
+          </DropdownItem>
           <DropdownItem leftIcon={<i id="icons" class="fas fa-video" onClick=""></i>} goToMenu="video">Video</DropdownItem>
-        <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>} goToMenu="audio">Sound</DropdownItem>
-      <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>} goToMenu="docs" >Document</DropdownItem>
+          <DropdownItem leftIcon={<i id="icons" class="fas fa-volume-up"></i>} goToMenu="audio">Sound</DropdownItem>
+          <DropdownItem leftIcon={<i id="icons" class="fas fa-file"></i>} goToMenu="docs" >Document</DropdownItem>
           <DropdownItems onClick={drawText} leftIcon={<i id="icons" class="fas fa-comment-alt" onClick={drawText}></i>}>Textbox</DropdownItems>
         </div>
       </CSSTransition>
@@ -275,30 +288,30 @@ import "./Dropdown.css";
           </DropdownItem>
           <DropdownItemImg
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={handleImgSubmit}></i>}>
-        </DropdownItemImg>
-            <input
-                  type="file"
-                  name="img"
-                  id="file"
-                  onChange={handleImg}
-                  />
-              <label id="fileI"for="file">From file</label>
+              onClick={handleImgSubmit}></i>}>
+          </DropdownItemImg>
+          <input
+            type="file"
+            name="img"
+            id="file"
+            onChange={handleImg}
+          />
+          <label id="fileI" for="file">From file</label>
 
-            <DropdownItemImg
-              leftIcon={<i id="icons" class="fas fa-plus"
+          <DropdownItemImg
+            leftIcon={<i id="icons" class="fas fa-plus"
               onClick={addImage}></i>}>
           </DropdownItemImg>
           <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
           <DropdownItemImg
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addImage}></i>}>
-        </DropdownItemImg>
+              onClick={addImage}></i>}>
+          </DropdownItemImg>
           <input id="imginputname" type="text" placeholder="Image name..." onChange={handleImage} value={imgsrc} />
           <DropdownItems
             onClick={addImage}
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addImage}></i>}>Add</DropdownItems>
+              onClick={addImage}></i>}>Add</DropdownItems>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -311,20 +324,20 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>VIDEO!</h2>
           </DropdownItem>
-            <DropdownItems
-              leftIcon={<i id="icons" class="fas fa-plus"
+          <DropdownItems
+            leftIcon={<i id="icons" class="fas fa-plus"
               onClick={addVideo}></i>}>
           </DropdownItems>
           <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
           <DropdownItems
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addVideo}></i>}>
-        </DropdownItems>
+              onClick={addVideo}></i>}>
+          </DropdownItems>
           <input id="imginputvname" type="text" placeholder="Video name..." onChange={handleVideo} value={vidsrc} />
           <DropdownItems
             onClick={addVideo}
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addVideo}></i>}>Add</DropdownItems>
+              onClick={addVideo}></i>}>Add</DropdownItems>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -337,15 +350,15 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="media" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>AUDIO!!</h2>
           </DropdownItem>
-            <DropdownItems
-              leftIcon={<i id="icons" class="fas fa-plus"
+          <DropdownItems
+            leftIcon={<i id="icons" class="fas fa-plus"
               onClick={addAudio}></i>}>
           </DropdownItems>
           <input id="imginputv" type="text" placeholder="Audio source..." onChange={handleAudio} value={audiosrc} />
           <DropdownItems
             onClick={addAudio}
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addAudio}></i>}>Add</DropdownItems>
+              onClick={addAudio}></i>}>Add</DropdownItems>
         </div>
       </CSSTransition>
 
@@ -361,20 +374,20 @@ import "./Dropdown.css";
           </DropdownItem>
           <DropdownItemImg
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={handleFilesubmit}></i>}>
-        </DropdownItemImg>
-            <input
-                  type="file"
-                  name="img"
-                  id="file"
-                  onChange={handleFile}
-                  />
-              <label id="fileI"for="file">From file</label>
+              onClick={handleFilesubmit}></i>}>
+          </DropdownItemImg>
+          <input
+            type="file"
+            name="img"
+            id="file"
+            onChange={handleFile}
+          />
+          <label id="fileI" for="file">From file</label>
 
           <DropdownItems
             onClick={addDocument}
             leftIcon={<i id="icons" class="fas fa-plus"
-            onClick={addDocument}></i>}>Add</DropdownItems>
+              onClick={addDocument}></i>}>Add</DropdownItems>
         </div>
       </CSSTransition>
 
@@ -390,9 +403,9 @@ import "./Dropdown.css";
           </DropdownItem>
           <b id="colourp">
             <ChromePicker
-              color={ colour }
-              disableAlpha={ true }
-              onChangeComplete={ handleChange }/>
+              color={colour}
+              disableAlpha={true}
+              onChangeComplete={handleChange} />
           </b>
 
           <DropdownItems
@@ -400,16 +413,10 @@ import "./Dropdown.css";
             leftIcon={<i id="icons" class="fas fa-marker" onClick={drawLine}></i>}>
             Draw</DropdownItems>
 
-
-          {/* <DropdownItems
-             onClick={eraseLine}
-            leftIcon={<i id="icons" class="fas fa-eraser"
-            onClick={eraseLine}></i>}>Eraser</DropdownItems> */}
-
           <DropdownItems
-             onClick={stopDrawing}
+            onClick={stopDrawing}
             leftIcon={<i id="icons" class="fas fa-mouse-pointer"
-            onClick={stopDrawing}></i>}>Select</DropdownItems>
+              onClick={stopDrawing}></i>}>Select</DropdownItems>
 
         </div>
       </CSSTransition>
@@ -424,14 +431,20 @@ import "./Dropdown.css";
           <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
             <h2>PIECES!</h2>
           </DropdownItem>
-          <DropdownItems  onClick={addTic} leftIcon={<i id="icons" class="fas fa-times" onClick={addTic}></i>}>Tic-Tac-Toe</DropdownItems>
-          <DropdownItems onClick={addConnect} leftIcon={<i id="icons" class="fa fa-circle" onClick={addConnect}></i>}>Connect-Four</DropdownItems>
-
-
+          <DropdownItems
+            onClick={addTic}
+            leftIcon={<i id="icons" class="fas fa-times"
+              onClick={addTic}></i>}>
+            Tic-Tac-Toe</DropdownItems>
+          <DropdownItems
+            onClick={addConnect}
+            leftIcon={<i id="icons" class="fa fa-circle"
+              onClick={addConnect}></i>}>
+            Connect-Four</DropdownItems>
         </div>
       </CSSTransition>
     </div>
   );
 }
 
-export default DropdownMenu;
+export default DropdownAddObjects;

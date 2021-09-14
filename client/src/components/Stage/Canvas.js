@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import Dropdownroles from "../DropDown/Dropdownroles";
+import DropdownRoles from "../DropDown/DropdownRoles";
 import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
 import fileDownload from 'js-file-download'
@@ -5797,9 +5797,8 @@ class Graphics extends Component {
                   : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
                 }
                 <p id="rolesdrop">
-                  <Dropdownroles
+                  <DropdownRoles
                     roleLevel={this.handleRoleLevel}
-
                     gameid={this.state.gameinstanceid}
                   />
                 </p>

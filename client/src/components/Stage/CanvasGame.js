@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Dropdownroles from "../DropDown/Dropdownroles";
+import DropdownRoles from "../DropDown/DropdownRoles";
 import URLvideo from "./URLVideos";
 import axios from "axios";
 import {Link } from "react-router-dom";
@@ -805,7 +805,7 @@ class Graphics extends Component {
                   : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
                 }
                 <p id="rolesdrop">
-                  <Dropdownroles
+                  <DropdownRoles
                     roleLevel={this.handleRoleLevel}
                     gameroles={this.state.gameroles}
                     gameid={this.state.gameinstanceid}

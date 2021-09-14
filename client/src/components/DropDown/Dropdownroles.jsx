@@ -4,7 +4,7 @@ import axios from "axios"
 
 import "./Dropdown.css";
 
-function Dropdowninfo(props) {
+function DropdownRoles(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
   const dropdownRef = useRef(null);
@@ -32,7 +32,7 @@ function Dropdowninfo(props) {
     }).catch(error => {
       console.log(error);
     });
-  }, [props])
+  }, [props]);
 
   function updateGameRoles() {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -69,6 +69,7 @@ function Dropdowninfo(props) {
       </a>
     );
   }
+
   function DropdownItems(props) {
     return (
       <a href="#" className="menu-item" onClick={props.onClack}>
@@ -107,9 +108,8 @@ function Dropdowninfo(props) {
         id: roles[e].gameroleid
       }
     }).then((res) => {
-      console.log(res)
-      setSelectedRole("Select Role!")
-      props.roleLevel("Select Role!")
+      setSelectedRole("Select Role!");
+      props.roleLevel("Select Role!");
     }).catch(error => {
       console.log(error);
     });
@@ -122,7 +122,7 @@ function Dropdowninfo(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        classNames="menu-primary"
+        className="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -138,7 +138,7 @@ function Dropdowninfo(props) {
       <CSSTransition
         in={activeMenu === 'roles'}
         timeout={500}
-        classNames="menu-secondary"
+        className="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -147,7 +147,7 @@ function Dropdowninfo(props) {
           </DropdownItem>
           {roles.map((index) => {
             return (
-              <DropdownItems onClack={() => handleRole(index.role)} value={index.index} leftIcon={<i id="icons" class="fa fa-trash" onClick={() => handleDelete(index.index)}></i>}>{index.role}</DropdownItems>
+              <DropdownItems onClick={() => handleRole(index.role)} value={index.index} leftIcon={<i id="icons" class="fa fa-trash" onClick={() => handleDelete(index.index)}></i>}>{index.role}</DropdownItems>
             )
           })}
           <DropdownItem goToMenu="addrole" leftIcon={<i id="icons" class="fas fa-plus"></i>}>
@@ -180,4 +180,4 @@ function Dropdowninfo(props) {
   );
 }
 
-export default Dropdowninfo;
+export default DropdownRoles;
