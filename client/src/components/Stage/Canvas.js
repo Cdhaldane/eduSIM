@@ -1553,7 +1553,7 @@ class Graphics extends Component {
     this.setState({
       selectedContextMenu: false,
       selectedContextMenuText: false
-    })
+    });
   }
 
   handleClose = (e) => {

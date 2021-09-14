@@ -1,27 +1,27 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import Dropdownedit from "../DropDown/Dropdownedit";
 import "./ContextMenu.css"
 
 function ContextMenu(props) {
-  console.log(props);
-
   const [drop, setDrop] = useState(false);
-  const [clickedOutside, setClickedOutside] = React.useState(false);
-  const myRef = React.useRef();
+  const [menuWidth, setMenuWidth] = useState(0);
+  const menu = React.useRef();
 
   const handleClickOutside = e => {
-    if (!myRef.current.contains(e.target)) {
-      setClickedOutside(true);
+    if (!menu.current.contains(e.target)) {
+      props.close();
     }
   };
 
-  const handleClickInside = () => setClickedOutside(false);
-
-  // https://stackoverflow.com/a/50558760 For tommorrow!
   React.useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   });
+
+  React.useEffect(() => {
+    setMenuWidth(menu.current.clientWidth);
+  }, []);
 
   function handleColorF(e) {
     props.choosecolorf(e);
@@ -45,23 +45,22 @@ function ContextMenu(props) {
 
   return (
     <div
-      ref={myRef} 
-      onClick={handleClickInside}
+      ref={menu}
       className="cmenu"
       style={{
         position: "absolute",
-        left: props.position.x + 100,
-        top: props.position.y - 20,
+        left: props.position.x + menuWidth/2,
+        top: props.position.y + 2,
+        borderRadius: "5px",
+        boxShadow: "rgba(0,0,0,0.25) 4px 4px 4px 0px",
       }}
     >
       <ul>
-        <li onClick={props.cut}>Cut1</li>
-        <li onClick={props.copy}>Copy2</li>
+        <li onClick={props.cut}>Cut</li>
+        <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>Edit shape</li>
-        <hr />
-        <li onClick={props.close}>Close</li>
       </ul>
 
       {drop && <div className="drop">
