@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const gameinstance = require('../controllers/gamepage.jsx');
+const gameinstance = require('../controllers/gamepage');
 
 const router = Router();
 const multer = require('multer');

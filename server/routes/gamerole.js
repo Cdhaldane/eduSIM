@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const gamerole = require('../controllers/roles.jsx');
+const gamerole = require('../controllers/roles');
 const router = Router();
 
 router.get('/getGameRoles/:gameinstanceid', gamerole.getGameRoles);
