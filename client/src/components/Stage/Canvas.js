@@ -125,12 +125,11 @@ import {
     }, [])
     return (
       <>
-       {display && <div >
-         <p id="saved">
-          <h1>Auto saved!</h1>
-         </p>
-         </div>
-       }
+        <div >
+          <p className={`saved ${display ? "saved-active" : ""}`}>
+            <h1>Auto saved!</h1>
+          </p>
+        </div>
       </>
     );
   }

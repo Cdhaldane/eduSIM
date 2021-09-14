@@ -36,7 +36,7 @@ function Level(props) {
       <div className="level">
         <h1>Edit Mode</h1>
         <div className="level-nav">
-          <select className="level-select" onChange={handleChange}>
+          <select className="level-select" onChange={handleChange} value={count}>
             {createSelectItems()}
           </select>
           

@@ -335,19 +335,23 @@ footer {
 }
 
 
-#saved {
-  position: absolute;
+.saved {
+  position: fixed;
   top: -8px;
-  left: 300px;
-  width: 200px;
-  height: 50px;
+  left: 90px;
+  z-index: 1;
+  padding: 1.5em;
   background-color: white;
   border: solid #8f001a 2px ;
-  border-radius: 0%;
-  transform: translateX(-110%);
-  transition: all var(500ms) ease;
+  border-radius: 8px;
+  transform: translateY(-100%);
+  transition: transform .3s;
 }
-#saved h1 {
+.saved-active {
+  transform: translateY(0);
+
+}
+.saved h1 {
   font-family:  "Montserrat", sans-serif;
   font-size: 1.45rem;
   font-weight: 700;
@@ -409,6 +413,11 @@ footer {
     left: 190px;
     width: 50px;
     height: 50px;
+  }
+
+  .saved {
+    left: 200px;
+    padding: 1em;
   }
 
   .page-margin {
