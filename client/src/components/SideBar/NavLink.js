@@ -1,7 +1,7 @@
-import {NavLink as Link} from "react-router-dom"
+import { NavLink as Link } from "react-router-dom"
 import styled from "styled-components"
 import React from "react"
-import {Image} from "cloudinary-react";
+import { Image } from "cloudinary-react";
 
 const StyledLink = styled(Link)`
   min-height: 56px;
@@ -25,7 +25,7 @@ const StyledLink = styled(Link)`
     padding-left: 14px;
     line-height: 19px;
     white-space: nowrap;
-    opacity: ${(p) => Number(!p.compact)};
+    opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
   &:hover {
@@ -54,31 +54,28 @@ const StyledLink = styled(Link)`
   }
 `;
 
-function NavLink({children, iconClassName, img,  label,  ...rest}) {
-
-
-
+function NavLink(props) {
 
   const simimg = React.useState(
     localStorage.getItem('simimg') || ''
   );
+
   const simtitle = React.useState(
     localStorage.getItem('simtitle') || ''
   );
 
-
   return (
-    <StyledLink to="/chat" {...rest}>
-      {children || (
+    <StyledLink to="/chat" textopacity={props.compact ? 0 : 1}>
+      {props.children || (
         <>
-          {iconClassName !== null ? (
+          {props.iconClassName !== null ? (
             <>
-              <i className={iconClassName} ></i>
-              <span className="label">{label}</span>
+              <i className={props.iconClassName} ></i>
+              <span className="label">{props.label}</span>
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + simimg[0] + ".jpg"}  alt="backdrop"/>
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + simimg[0] + ".jpg"} alt="backdrop" />
               <span className="label">{simtitle[0]}</span>
             </>
           )}

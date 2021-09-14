@@ -10,7 +10,7 @@ function DropdownTimelineBar(props) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight)
+    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
   }, []);
 
   function calcHeight(el) {
@@ -31,7 +31,7 @@ function DropdownTimelineBar(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        classNames="menu-primary"
+        className="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">

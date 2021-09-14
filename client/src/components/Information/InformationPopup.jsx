@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Pencil from "../Pencils/Pencil";
-import DropdownRoles from "../DropDown/DropdownRoles";
+import DropdownRoles from "../Dropdown/DropdownRoles";
 import "./Info.css";
 
 function Info(props) {
@@ -42,8 +42,8 @@ function Info(props) {
     <div>
       <div className={"info" + open}>
         {(open !== 1)
-          ? <button onClick={() => setOpen(1)}><i class="fas fa-caret-square-up fa-3x"></i></button>
-          : <button onClick={() => setOpen(0)}><i class="fas fa-caret-square-down fa-3x"></i></button>
+          ? <button onClick={() => setOpen(1)}><i className="fas fa-caret-square-up fa-3x"></i></button>
+          : <button onClick={() => setOpen(0)}><i className="fas fa-caret-square-down fa-3x"></i></button>
         }
         <p id="rolesdrop">
           <DropdownRoles />

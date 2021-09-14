@@ -62,21 +62,21 @@ function DropdownRoles(props) {
 
   function DropdownItem(props) {
     return (
-      <a href="#" className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <div className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         <span className="icon-button">{props.leftIcon}</span>
         {props.children}
         <span className="icon-right">{props.rightIcon}</span>
-      </a>
+      </div>
     );
   }
 
   function DropdownItems(props) {
     return (
-      <a href="#" className="menu-item" onClick={props.onClack}>
+      <div className="menu-item" onClick={props.onClack}>
         <span className="icon-button">{props.leftIcon}</span>
         {props.children}
         <span className="icon-right">{props.rightIcon}</span>
-      </a>
+      </div>
     );
   }
 
@@ -127,7 +127,7 @@ function DropdownRoles(props) {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i id="icons" class="fab fa-critical-role"></i>}
+            leftIcon={<i id="icons" className="fab fa-critical-role"></i>}
             rightIcon={""}
             goToMenu="roles">
             {selectedRole}
@@ -142,15 +142,15 @@ function DropdownRoles(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+          <DropdownItem goToMenu="main" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
             <h2>{selectedRole}</h2>
           </DropdownItem>
           {roles.map((index) => {
             return (
-              <DropdownItems onClick={() => handleRole(index.role)} value={index.index} leftIcon={<i id="icons" class="fa fa-trash" onClick={() => handleDelete(index.index)}></i>}>{index.role}</DropdownItems>
+              <DropdownItems onClick={() => handleRole(index.role)} value={index.index} leftIcon={<i id="icons" className="fa fa-trash" onClick={() => handleDelete(index.index)}></i>}>{index.role}</DropdownItems>
             )
           })}
-          <DropdownItem goToMenu="addrole" leftIcon={<i id="icons" class="fas fa-plus"></i>}>
+          <DropdownItem goToMenu="addrole" leftIcon={<i id="icons" className="fas fa-plus"></i>}>
             Add Role
           </DropdownItem>
         </div>
@@ -163,11 +163,11 @@ function DropdownRoles(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="roles" leftIcon={<i id="icons" class="fas fa-arrow-left"></i>}>
+          <DropdownItem goToMenu="roles" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
             <h2>ROLES!</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-plus"
+            leftIcon={<i id="icons" className="fas fa-plus"
               onClick={handleAddRole}
             ></i>}
             goToMenu="main">

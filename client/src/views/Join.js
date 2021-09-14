@@ -33,7 +33,7 @@ function Join(props) {
     <div className="dashboard">
           <h2 id="jointitle">{localStorage.title}</h2>
         <button onClick={() => setShowNote(!showNote)} className="studentbutton">Add Student/Participant List +</button>
-      <div class="joinimg">
+      <div className="joinimg">
       <Image id="joinimg" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.img}  alt="backdrop"/>
     </div>
           <Link to={{
@@ -43,10 +43,10 @@ function Join(props) {
               gameinstance: props.location.gameinstance,
               adminid: props.location.adminid
             }}>
-          <button class="playbtn"><i class="fa fa-play"></i></button>
+          <button className="playbtn"><i className="fa fa-play"></i></button>
           </Link>
-          <button class="pausebtn"><i class="fa fa-pause"></i></button>
-          <button class="refreshbtn"><i class="fa fa-retweet"></i></button>
+          <button className="pausebtn"><i className="fa fa-pause"></i></button>
+          <button className="refreshbtn"><i className="fa fa-retweet"></i></button>
             <hr />
             <Modal
               isOpen={showNote}

@@ -115,9 +115,9 @@ function CreateArea(props) {
     setCopiedParams(props.gamedata[event.target.value].game_parameters)
   }
   return (
-    <div class="area" >
+    <div className="area" >
       <form>
-        <p class="gradient-border" id="box">
+        <p className="gradient-border" id="box">
           Add New Simulation
         </p>
         <label for="Game">Choose a game</label>
@@ -127,7 +127,7 @@ function CreateArea(props) {
           <option value="">...</option>
           <option value="blank">Create a blank simulation</option>
         </select>
-        <p class="gradient-border" id="box1">
+        <p className="gradient-border" id="box1">
           Duplicate a previous simulation
           <label id="switch">
             <Switch
@@ -143,7 +143,7 @@ function CreateArea(props) {
             {createSelectItems()}
           </select>
         </div>}
-        <p class="gradient-border" id="box3">
+        <p className="gradient-border" id="box3">
           Enter a ‎name‎‏‏‎ ‎
           <input
             tpye="text"
@@ -154,7 +154,7 @@ function CreateArea(props) {
             placeholder="                         "
           />
         </p>
-        <p class="gradient-border" id="box2" >
+        <p className="gradient-border" id="box2" >
           Choose an image
           <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
 

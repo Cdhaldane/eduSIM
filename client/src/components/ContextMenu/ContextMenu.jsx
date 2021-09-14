@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import DropdownEditObject from "../DropDown/DropdownEditObject";
+import DropdownEditObject from "../Dropdown/DropdownEditObject";
 import "./ContextMenu.css"
 
 function ContextMenu(props) {
@@ -49,7 +48,7 @@ function ContextMenu(props) {
       className="cmenu"
       style={{
         position: "absolute",
-        left: props.position.x + menuWidth/2,
+        left: props.position.x + menuWidth / 2,
         top: props.position.y + 2,
         borderRadius: "5px",
         boxShadow: "rgba(0,0,0,0.25) 4px 4px 4px 0px",

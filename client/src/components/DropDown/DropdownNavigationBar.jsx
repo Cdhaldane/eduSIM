@@ -24,11 +24,11 @@ function DropdownNavigationBar(props) {
 
   function DropdownItem(props) {
     return (
-      <a href="#" className="menu-item" onClick={props.onClick}>
+      <div className="menu-item" onClick={props.onClick}>
         <span className="icon-button">{props.leftIcon}</span>
         {props.children}
         <span className="icon-right">{props.rightIcon}</span>
-      </a>
+      </div>
     );
   }
 
@@ -62,13 +62,13 @@ function DropdownNavigationBar(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        classNames="menu-primary"
+        className="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
           <h1>Edit Navigation Bar</h1>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-comment-dots"></i>}
+            leftIcon={<i id="icons" className="fas fa-comment-dots"></i>}
             onClick={handleMessage}
           >
             Messaging
@@ -81,7 +81,7 @@ function DropdownNavigationBar(props) {
             />
           </label>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-bell"></i>}
+            leftIcon={<i id="icons" className="fas fa-bell"></i>}
             rightIcon=""
             onClick={handleAlerts}>
             Alerts
@@ -94,7 +94,7 @@ function DropdownNavigationBar(props) {
             />
           </label>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-sliders-h"></i>}
+            leftIcon={<i id="icons" className="fas fa-sliders-h"></i>}
             rightIcon=""
             onClick={handleParameters}>
             Parameters
@@ -107,7 +107,7 @@ function DropdownNavigationBar(props) {
             />
           </label>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-cog"></i>}
+            leftIcon={<i id="icons" className="fas fa-cog"></i>}
             rightIcon=""
             onClick={handleSettings}>
             Settings
@@ -120,7 +120,7 @@ function DropdownNavigationBar(props) {
             />
           </label>
           <DropdownItem
-            leftIcon={<i id="icons" class="fas fa-chart-bar"></i>}
+            leftIcon={<i id="icons" className="fas fa-chart-bar"></i>}
             rightIcon=""
             onClick={handlePerformance}>
             Performance

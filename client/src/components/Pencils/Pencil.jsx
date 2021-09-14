@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import DropdownAddObjects from "../DropDown/DropdownAddObjects";
-import DropdownTimelineBar from "../DropDown/DropdownTimelineBar";
-import DropdownNavigationBar from "../DropDown/DropdownNavigationBar";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
+import DropdownTimelineBar from "../Dropdown/DropdownTimelineBar";
+import DropdownNavigationBar from "../Dropdown/DropdownNavigationBar";
 import "./Pencil.css";
 
 function Pencil(props) {
@@ -133,7 +133,7 @@ function Pencil(props) {
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
-        class={"fa fa-pencil fa-" + props.psize + "x"}
+        className={"fa fa-pencil fa-" + props.psize + "x"}
         onClick={handleDrop}
       />
 

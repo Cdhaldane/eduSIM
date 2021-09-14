@@ -48,7 +48,7 @@ function Game(props){
           <Container>
             <Grid>
               <GridNav>
-                  <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
+                  <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
                     img={localStorage.simimg}
                     title={props.location.gameinstance}
                   />

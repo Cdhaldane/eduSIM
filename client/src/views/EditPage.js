@@ -68,7 +68,7 @@ function EditPage(props){
       <Container>
         <Grid>
           <GridNav>
-              <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
+              <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
                 mvisible={mvisible}
                 avisible={avisible}
                 pavisible={pavisible}

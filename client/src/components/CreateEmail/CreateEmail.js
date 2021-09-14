@@ -7,7 +7,7 @@ import { Container } from "react-bootstrap";
 
 
   return (
-      <div class="areacsv" >
+      <div className="areacsv" >
         <Container>
       <form id="areacsvform">
         <p id="boxj1"> Email Room Codes to Students/Participants </p>

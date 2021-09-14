@@ -38,23 +38,23 @@ function DropdownEditObject(props) {
 
   function DropdownItem(props) {
     return (
-      <a href="#" className="menu-itemedit" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <div className="menu-itemedit" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         <span className="icon-buttonedit">{props.leftIcon}</span>
         {props.children}
         <span className="icon-righedit">{props.rightIcon}</span>
-      </a>
+      </div>
     );
   }
 
-  function DropdownItems(props) {
+  /*function DropdownItems(props) {
     return (
-      <a href="#" className="menu-itemedit" onClick={props.onClick}>
+      <div className="menu-itemedit" onClick={props.onClick}>
         <span className="icon-buttonedit">{props.leftIcon}</span>
         {props.children}
         <span className="icon-rightedit">{props.rightIcon}</span>
-      </a>
+      </div>
     );
-  }
+  }*/
 
   function onSliderChange(e) {
     setValue(e);
@@ -163,11 +163,11 @@ function DropdownEditObject(props) {
         <CSSTransition
           in={activeMenu === 'shapes'}
           timeout={500}
-          classNames="menu-secondary"
+          className="menu-secondary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menuedit">
-            <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" class="fas fa-arrow-left"></i>}>
+            <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" className="fas fa-arrow-left"></i>}>
               <h2>COLOUR!</h2>
             </DropdownItem>
           </div>
@@ -181,7 +181,7 @@ function DropdownEditObject(props) {
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
-          classNames="menu-primary"
+          className="menu-primary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menuedit">

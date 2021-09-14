@@ -229,7 +229,7 @@ const Table = (props) => {
 
   const handleEmail = (e) => {
     e.preventDefault();
-    contacts.map((contact) => {
+    contacts.forEach((contact) => {
       axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendEmail', {
         simname: props.title,
         pname: user.name,
@@ -241,7 +241,7 @@ const Table = (props) => {
       }).catch((error) => {
         console.log('Email Failed');
         console.log(error);
-      })
+      });
     });
   }
 

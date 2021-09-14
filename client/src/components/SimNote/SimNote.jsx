@@ -28,7 +28,7 @@ function SimNote(props) {
       <h1><strong>{props.title}</strong></h1>
       <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img}  alt="backdrop"/>
       <div id="simicons">
-      <i id="garbage" class="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
+      <i id="garbage" className="fa fa-trash fa-2x" aria-hidden="true" onClick={handleClick}></i>
     <Link to={{
         pathname:"/editpage",
         img: props.img,
@@ -36,7 +36,7 @@ function SimNote(props) {
         gameinstance: props.gameid,
         adminid: props.adminid
       }}>
-        <i id="pencil" class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+        <i id="pencil" className="fa fa-pencil fa-2x" aria-hidden="true"></i>
       </Link>
         <Link to={{
         pathname:"/join",
@@ -45,7 +45,7 @@ function SimNote(props) {
         gameinstance: props.gameid,
         adminid: props.adminid
         }}>
-        <i id="play" class="fas fa-play-circle fa-2x" onClick={() => localStorage.setItem('gameid', props.gameid)}></i>
+        <i id="play" className="fas fa-play-circle fa-2x" onClick={() => localStorage.setItem('gameid', props.gameid)}></i>
       </Link>
     </div>
     </div>

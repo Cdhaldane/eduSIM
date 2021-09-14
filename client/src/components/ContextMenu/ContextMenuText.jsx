@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DropdownEditObject from "../DropDown/DropdownEditObject";
+import DropdownEditObject from "../Dropdown/DropdownEditObject";
 import "./ContextMenu.css"
 
 function ContextMenuText(props) {

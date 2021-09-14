@@ -12,4 +12,4 @@ function About(props){
 export default About;
 
 /*<HomeContent />*/
-//<input type="submit" class="textbox" /
+//<input type="submit" className="textbox" /

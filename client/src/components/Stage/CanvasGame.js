@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DropdownRoles from "../DropDown/DropdownRoles";
+import DropdownRoles from "../Dropdown/DropdownRoles";
 import URLvideo from "./URLVideos";
 import axios from "axios";
 import {Link } from "react-router-dom";
@@ -801,8 +801,8 @@ class Graphics extends Component {
                 </Stage>
                 </div>
                 {(this.state.open !== 1)
-                  ? <button onClick={() => this.setState({open: 1})}><i class="fas fa-caret-square-up fa-3x"></i></button>
-                  : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
+                  ? <button onClick={() => this.setState({open: 1})}><i className="fas fa-caret-square-up fa-3x"></i></button>
+                  : <button onClick={() => this.setState({open: 0})}><i className="fas fa-caret-square-down fa-3x"></i></button>
                 }
                 <p id="rolesdrop">
                   <DropdownRoles
@@ -816,7 +816,7 @@ class Graphics extends Component {
               </div>
 
               <Link to="/dashboard">
-                <i id="editpagex" class="fas fa-times fa-3x"></i>
+                <i id="editpagex" className="fas fa-times fa-3x"></i>
               </Link>
             </div>
       </React.Fragment>

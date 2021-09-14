@@ -56,13 +56,6 @@ function Sidebar (props) {
           img={props.img}
           title={props.title}
          />
-
-          {/* <NavLink
-          compact={compact}
-          to="/"
-          iconClassName="far fa-copyright"
-          label="Copyright 2021"
-          />  */}
           <NavToggle compact={!compact} setCompact={setCompact} />
         </StyledNav>
       </>

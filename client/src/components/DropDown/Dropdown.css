@@ -84,6 +84,7 @@ a {
   transition: background var(--speed);
   padding: 0.5rem;
   margin-bottom: 0px;
+  cursor: pointer;
 }
 
 .menu-item .icon-button {

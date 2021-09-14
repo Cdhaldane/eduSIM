@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import DropdownRoles from "../DropDown/DropdownRoles";
+import DropdownRoles from "../Dropdown/DropdownRoles";
 import Info  from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
 import fileDownload from 'js-file-download'
@@ -143,31 +143,34 @@ class TransformerComponent extends React.Component {
     this.checkNode();
   }
   checkNode() {
-    // const stage = this.transformer.getStage();
-    //
-    // const { selectedShapeName } = this.props;
-    // if (selectedShapeName === "") {
-    //   this.transformer.detach();
-    //   console.log(1)
-    //   return;
-    // }
-    // const selectedNode = stage.findOne("." + selectedShapeName);
-    // if (selectedNode === this.transformer.node()) {
-    //   return;
-    // }
-    //
-    // if (selectedNode) {
-    //   this.transformer.attachTo(selectedNode);
-    //   console.log(2)
-    // } else {
-    //   this.transformer.detach();
-    //   console.log(3)
-    // }
-    // this.transformer.getLayer().batchDraw();
+    /*
+     const stage = this.transformer.getStage();
+    
+     const { selectedShapeName } = this.props;
+     if (selectedShapeName === "") {
+       this.transformer.detach();
+       console.log(1)
+       return;
+     }
+     const selectedNode = stage.findOne("." + selectedShapeName);
+     if (selectedNode === this.transformer.node()) {
+       return;
+     }
+    
+     if (selectedNode) {
+       this.transformer.attachTo(selectedNode);
+       console.log(2)
+     } else {
+       this.transformer.detach();
+       console.log(3)
+     }
+     this.transformer.getLayer().batchDraw();
+     */
   }
   render() {
+    let stuff = null;
     if (this.props.selectedShapeName.includes("text")) {
-      var stuff = (
+      stuff = (
         <Transformer
           ref={node => {
             this.transformer = node;
@@ -181,7 +184,7 @@ class TransformerComponent extends React.Component {
         />
       );
     } else if (this.props.selectedShapeName.includes("star")) {
-      var stuff = (
+      stuff = (
         <Transformer
           ref={node => {
             this.transformer = node;
@@ -196,7 +199,7 @@ class TransformerComponent extends React.Component {
         />
       );
     } else if (this.props.selectedShapeName.includes("arrow")) {
-      var stuff = (
+      stuff = (
         <Transformer
           ref={node => {
             this.transformer = node;
@@ -207,7 +210,7 @@ class TransformerComponent extends React.Component {
         />
       );
     } else {
-      var stuff = (
+      stuff = (
         <Transformer
           ref={node => {
             this.transformer = node;
@@ -271,14 +274,9 @@ class Graphics extends Component {
       opacity: 1,
       infolevel: false,
       rolelevel: "",
-
       tic: false,
-
       open: 0,
       state: false,
-
-
-
       saving: null,
       saved: [],
       roadmapId: null,
@@ -329,10 +327,8 @@ class Graphics extends Component {
             adminid: this.state.adminid,
             gameid: this.state.gameinstanceid
         }
-    })
-    .then((res) => {
+    }).then((res) => {
       const allData = res.data;
-      console.log(JSON.parse(allData.game_parameters));
       this.setState({
         rectangles: JSON.parse(allData.game_parameters)[0] || []
       })
@@ -373,8 +369,7 @@ class Graphics extends Component {
         connect4: JSON.parse(allData.game_parameters)[12] || []
       })
 
-    })
-    .catch(error => console.log(error.response));
+    }).catch(error => console.log(error.response));
     axios.get(process.env.REACT_APP_API_ORIGIN+'/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
             gameinstanceid: this.state.gameinstanceid,
@@ -387,25 +382,31 @@ class Graphics extends Component {
       ptype: e
     })
   }
+
   handleNum = (e) => {
     this.setState({
       pageNumber: e
     })
   }
+
   handleMvisible = (e) => {
-    this.props.mvisible(e)
+    this.props.mvisible(e);
   }
+
    handleAvisible = (e) => {
-    this.props.avisible(e)
+    this.props.avisible(e);
   }
+
    handlePavisible = (e) => {
-    this.props.pavisible(e)
+    this.props.pavisible(e);
   }
+
    handleSvisible = (e) => {
-    this.props.svisible(e)
+    this.props.svisible(e);
   }
+
    handlePevisible = (e) => {
-    this.props.pevisible(e)
+    this.props.pevisible(e);
   }
 
   handleSave = () => {
@@ -427,27 +428,21 @@ class Graphics extends Component {
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status: "up"] });
-      console.log(this.state.saved)
-              console.log(this.state.gameinstanceid)
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, "up"] });
               var body = {
                   id: this.state.gameinstanceid,
                   game_parameters: JSON.stringify(this.state.saved),
                   createdby_adminid: localStorage.adminid,
                   invite_url: 'value'
                 }
-                axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body)
-                   .then((res) => {
-                      console.log(res)
-                     })
-                    .catch(error => console.log(error.response));
+                axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body).then((res) => {
+                  console.log(res);
+                     }).catch(error => console.log(error.response));
   };
 
   handleStageClick = e => {
     var pos = this.refs.layer2.getStage().getPointerPosition();
     var shape = this.refs.layer2.getIntersection(pos);
-
-    console.log("texts", this.state.texts);
 
     if (
       shape !== null &&
@@ -486,23 +481,28 @@ class Graphics extends Component {
     })
     const pos = e.target.getStage().getPointerPosition();
     if(this.state.drawMode === true) {
-    this.state.isDrawing = true;
-    const tool = this.state.tool;
-    this.setState({
-      lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
-    })
+      this.setState({
+        isDrawing: true
+      });
+      const tool = this.state.tool;
+      this.setState({
+        lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel}]
+      });
   } else {
-
     const isElement = e.target.findAncestor(".elements-container");
     const isTransformer = e.target.findAncestor("Transformer");
     if (isElement || isTransformer) {
       return;
     }
-    this.state.selection.visible = true;
-    this.state.selection.x1 = pos.x;
-    this.state.selection.y1 = pos.y;
-    this.state.selection.x2 = pos.x;
-    this.state.selection.y2 = pos.y;
+    this.setState({
+      selection: {
+        visible: true,
+        x1: pos.x,
+        y1: pos.y,
+        x2: pos.x,
+        y2: pos.y
+      }
+    });
     this.updateSelectionRect();
   }
   };
@@ -510,7 +510,9 @@ class Graphics extends Component {
 
   handleMouseUp = () => {
     if(this.state.drawMode === true) {
-      this.state.isDrawing = false;
+      this.setState({
+        isDrawing: false
+      });
     } else {
     if (!this.state.selection.visible) {
       return;
@@ -3551,10 +3553,11 @@ class Graphics extends Component {
             return null
           }
             })}
-              {this.state.triangles.map(eachEllipse => {
+              {this.state.triangles.map((eachEllipse, index) => {
                 if(eachEllipse.level === this.state.level && eachEllipse.infolevel === false){
                 return (
                 <RegularPolygon
+                  key={index}
                   visible={eachEllipse.visible}
                   ref={eachEllipse.ref}
                   id={eachEllipse.id}
@@ -3719,10 +3722,11 @@ class Graphics extends Component {
             return null
           }
             })}
-              {this.state.stars.map(eachStar => {
+              {this.state.stars.map((eachStar, index) => {
                 if(eachStar.level === this.state.level && eachStar.infolevel === false){
                 return (
                 <Star
+                  key={index}
                   visible={eachStar.visible}
                   ref={eachStar.ref}
                   id={eachStar.id}
@@ -5793,18 +5797,15 @@ class Graphics extends Component {
 
                 </div>
                 {(this.state.open !== 1)
-                  ? <button onClick={() => this.setState({open: 1})}><i class="fas fa-caret-square-up fa-3x"></i></button>
-                  : <button onClick={() => this.setState({open: 0})}><i class="fas fa-caret-square-down fa-3x"></i></button>
+                  ? <button onClick={() => this.setState({open: 1})}><i className="fas fa-caret-square-up fa-3x"></i></button>
+                  : <button onClick={() => this.setState({open: 0})}><i className="fas fa-caret-square-down fa-3x"></i></button>
                 }
-                <p id="rolesdrop">
+                <div id="rolesdrop">
                   <DropdownRoles
                     roleLevel={this.handleRoleLevel}
                     gameid={this.state.gameinstanceid}
                   />
-                </p>
-                  <b>
-
-                  </b>
+                </div>
                 </div>
                <div id={"pencili" + this.state.open}>
                       <Pencil
