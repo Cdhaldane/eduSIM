@@ -19,6 +19,8 @@ class Auth0ProviderWithHistory extends React.Component {
         redirectUri={window.location.origin}
         onRedirectCallback={this.onRedirectCallback}
         audience={this.audience}
+        useRefreshTokens
+        cacheLocation="localstorage"
       >
         {this.props.children}
       </Auth0Provider>
