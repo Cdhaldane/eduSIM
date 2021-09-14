@@ -1,5 +1,5 @@
 //Logic when the server is involved
-var uuid = require('uuid');
+let uuid = require('uuid');
 const GameRoom = require("../models/GameRoom");
 const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
@@ -16,7 +16,7 @@ exports.createGamePlayers = async (req, res) => {
          gameinstanceid: gameinstanceid
        }
       })
-      for(var i=0; i<req.body.data.length; i++){
+      for(let i=0; i<req.body.data.length; i++){
         const fname = req.body.data[i].First_Name ;
         const lname = req.body.data[i].Last_Name;
         const game_room = req.body.data[i].Room.toLowerCase();
@@ -135,7 +135,7 @@ exports.createGamePlayers = async (req, res) => {
 
   exports.createRoom = async (req, res) => {
     const { gameinstanceid, gameroom_name } = req.body;
-    var gameroom_url = "hello"
+    let gameroom_url = "hello"
     const gameroomid = uuid.v4();
       try {
         let gameroom = await GameRoom.create({

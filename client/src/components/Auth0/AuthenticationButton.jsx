@@ -18,7 +18,6 @@ function AuthenticationButton(props) {
     }).then((res) => {
       const allData = res.data;
       localStorage.setItem('adminid', allData.adminid);
-      console.log(localStorage.setItem('adminid', allData.adminid));
     }).catch(error => {
       console.error(error);
     });

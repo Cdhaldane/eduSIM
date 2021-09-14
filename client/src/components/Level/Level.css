@@ -22,16 +22,16 @@
   left: 1760px;
 }
 
-.ball1{
+.ball1 {
   position: relative;
-  top:  -872px;
+  top: -872px;
   left: 473px;
   z-index: 1;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ball2{
+.ball2 {
   position: relative;
   top: -872px;
   left: 631px;
@@ -40,16 +40,16 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ball3{
+.ball3 {
   position: relative;
-  top:  -872px;
+  top: -872px;
   left: 792px;
   z-index: 1;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ball4{
+.ball4 {
   position: relative;
   top: -872px;
   left: 948px;
@@ -58,7 +58,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ball5{
+.ball5 {
   position: relative;
   top: -872px;
   left: 1106px;
@@ -67,26 +67,29 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.ball6{
+.ball6 {
   position: relative;
-  top:  -872px;
+  top: -872px;
   left: 1266px;
   z-index: 1;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
-#levels{
+
+#levels {
   position: absolute;
   top: -880px;
   left: 300px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
-.level{
+
+.level {
   height: 0px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
+
 .level p {
   position: absolute;
   color: #636363;
@@ -99,13 +102,13 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level button{
+.level button {
   position: absolute;
   top: -880px;
   left: 1400px;
   width: 100px;
   height: 50px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
   background-color: #8f001a;
@@ -118,20 +121,21 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level img{
+.level img {
   position: absolute;
   left: 450px;
   top: -890px;
-  height:80px;
-  width:700px;
+  height: 80px;
+  width: 700px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level button:hover{
+.level button:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
+
 #img1 {
   object-position: left;
   object-fit: cover;
@@ -181,8 +185,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-
-@media screen and (max-width: 1860px){
+@media screen and (max-width: 1860px) {
   #all h1 {
     top: -850px;
     left: 1550px;
@@ -192,7 +195,8 @@
     left: 1660px;
   }
 }
-@media screen and (max-width: 1760px){
+
+@media screen and (max-width: 1760px) {
   #all h1 {
     top: -850px;
     left: 1450px;
@@ -201,14 +205,15 @@
     top: -880px;
     left: 1560px;
   }
-  .level button{
+  .level button {
     left: 1350px;
   }
-  #levels{
+  #levels {
     left: 380px;
   }
 }
-@media screen and (max-width: 1660px){
+
+@media screen and (max-width: 1660px) {
   #all h1 {
     top: -930px;
     left: 970px;
@@ -219,7 +224,8 @@
     left: 1160px;
   }
 }
-@media screen and (max-width: 1560px){
+
+@media screen and (max-width: 1560px) {
   #all {
     position: absolute;
     left: -120px;
@@ -227,7 +233,8 @@
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
 }
-@media screen and (max-width: 1450px){
+
+@media screen and (max-width: 1450px) {
   #all {
     position: absolute;
     left: -220px;
@@ -235,18 +242,19 @@
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
 }
-@media screen and (max-width: 1350px){
+
+@media screen and (max-width: 1350px) {
   #all {
     position: absolute;
     left: -320px;
     transition-duration: 0.3s !important;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
-  #levels{
+  #levels {
     top: -876px;
     left: 400px;
   }
-  .level button{
+  .level button {
     position: absolute;
     top: -880px;
     left: 1330px;
@@ -254,18 +262,19 @@
     font-size: 1.5vw;
   }
 }
-@media screen and (max-width: 1150px){
+
+@media screen and (max-width: 1150px) {
   #all {
     position: absolute;
     left: -420px;
     transition-duration: 0.3s !important;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
-  #levels{
+  #levels {
     top: -920px;
     left: 470px;
   }
-  .level button{
+  .level button {
     position: absolute;
     top: -925px;
     left: 1250px;
@@ -273,18 +282,19 @@
     font-size: 1.5vw;
   }
 }
-@media screen and (max-width: 960px){
+
+@media screen and (max-width: 960px) {
   #all {
     position: absolute;
     left: -420px;
     transition-duration: 0.3s !important;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
-  #levels{
+  #levels {
     top: -920px;
     left: 470px;
   }
-  .level button{
+  .level button {
     position: absolute;
     top: -925px;
     left: 1250px;
@@ -295,5 +305,5 @@
     top: -920px;
     left: 1160px;
     color: #8f001a;
-    }
+  }
 }

@@ -17,32 +17,28 @@ function Dashboard(props) {
           email: user.email,
           name: user.name
         }
-      })
-        .then((res) => {
-          const allData = res.data;
-          localStorage.setItem('adminid', allData.adminid)
-          axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
-            {
-              params: {
-                id: allData.adminid
-              }
-            })
-            .then((res) => {
-              const allData = res.data;
-              console.log(allData);
-              getGamedata(allData);
-            })
-            .catch(error => console.log(error.response));
-        })
-        .catch(error => console.log(error.response));
+      }).then((res) => {
+        const allData = res.data;
+        localStorage.setItem('adminid', allData.adminid)
+        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
+          {
+            params: {
+              id: allData.adminid
+            }
+          }).then((res) => {
+            const allData = res.data;
+            getGamedata(allData);
+          }).catch(error => {
+            console.log(error);
+          });
+      }).catch(error => {
+        console.log(error);
+      });
     }
     getAllGamedata();
   }, [user]);
 
-
-
   function addNote(newgamedata) {
-    console.log("added")
     getGamedata((prevgamedata) => {
       return [...prevgamedata, newgamedata];
     });
@@ -60,7 +56,6 @@ function Dashboard(props) {
     e.preventDefault();
     setShowNote(!showNote);
   }
-
 
   return (
     <div className="dashboard">
@@ -80,9 +75,7 @@ function Dashboard(props) {
 
       <div className="dashsim">
         <h2>My simulations ️</h2>
-
         {gamedata.map((noteItem, index) => {
-
           return (
             <SimNote className="notesim"
               key={index}
@@ -96,7 +89,6 @@ function Dashboard(props) {
           );
         })}
       </div>
-
     </div>
   );
 }

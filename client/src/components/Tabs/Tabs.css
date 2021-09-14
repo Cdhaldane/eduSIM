@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 
-
 .selected-tab {
   text-align: center;
   list-style: none;
@@ -10,8 +9,8 @@
   line-height: 24px;
   overflow: hidden;
   position: relative;
-
 }
+
 .selected-tab li {
   border: 2px solid #636363;
   padding: 6px;
@@ -31,8 +30,7 @@
   border-bottom-color: #FFF;
 }
 
-.selected-tab li:before,
-.selected-tab li:after {
+.selected-tab li:before, .selected-tab li:after {
   display: block;
   content: " ";
   position: absolute;
@@ -40,13 +38,14 @@
   height: 100%;
   width: 44px;
   background-color: #FFF;
-
 }
+
 .selected-tab li:before {
   left: -24px;
   transform: skew(-25deg, 0deg);
   border-left: 3px solid #636363;
 }
+
 .selected-tab li:after {
   right: -24px;
   transform: skew(25deg, 0deg);
@@ -56,25 +55,24 @@
 .selected-tab li:before {
   border-radius: 8px 0 0 0;
 }
+
 .selected-tab li:after {
   border-radius: 0 8px 0 0;
 }
 
-.selected-tab li.selected:before,
-.selected-tab li.selected:after{
+.selected-tab li.selected:before, .selected-tab li.selected:after {
   background: #FFF;
   border-bottom: 3px solid #ffffff;
 }
 
-.selected-tab li:hover,
-.selected-tab li:hover:before,
-.selected-tab li:hover:after {
+.selected-tab li:hover, .selected-tab li:hover:before, .selected-tab li:hover:after {
   background-color: #636363;
   color: white;
   cursor: pointer;
   border-bottom-color: #636363;
 }
-.tabs{
+
+.tabs {
   width: 75%;
   margin: 0 auto;
   text-align: center;
@@ -104,8 +102,7 @@
   color: #636363;
 }
 
-.tabs .tab-label:before,
-.tabs .tab-label:after {
+.tabs .tab-label:before, .tabs .tab-label:after {
   display: block;
   content: " ";
   position: absolute;
@@ -113,13 +110,14 @@
   height: 100%;
   width: 33px;
   background-color: #FFF;
-
 }
+
 .tabs .tab-label:before {
   left: -17px;
   transform: skew(-25deg, 0deg);
   border-left: 3px solid #636363;
 }
+
 .tabs .tab-label:after {
   right: -17px;
   transform: skew(25deg, 0deg);
@@ -129,27 +127,24 @@
 .tabs .tab-label:before {
   border-radius: 8px 0 0 0;
 }
+
 .tabs .tab-label:after {
   border-radius: 0 8px 0 0;
 }
 
-.selected-tab li.selected:before,
-.selected-tab li.selected:after{
+.selected-tab li.selected:before, .selected-tab li.selected:after {
   background: #FFF;
   border-bottom: 3px solid #ffffff;
 }
 
-.tabs .tab [type="radio"]:hover:checked + .tab-label,
-.tabs .tab-label:hover,
-.tabs .tab-label:hover:before,
-.tabs .tab-label:hover:after {
+.tabs .tab [type="radio"]:hover:checked+.tab-label, .tabs .tab-label:hover, .tabs .tab-label:hover:before, .tabs .tab-label:hover:after {
   background-color: #636363;
   color: black;
   cursor: pointer;
   border-bottom-color: #636363;
 }
 
-.tabs .tab > [type="radio"] {
+.tabs .tab>[type="radio"] {
   clip: rect(0 0 0 0);
   height: 1px;
   opacity: 0;
@@ -180,27 +175,27 @@
   text-align: left;
 }
 
-.tabs .tab-content h2{
+.tabs .tab-content h2 {
   text-align: center;
-  margin-bottom:45px;
+  margin-bottom: 45px;
 }
 
-.tabs .tab [type="radio"]:checked + .tab-label {
+.tabs .tab [type="radio"]:checked+.tab-label {
   background: white;
   border-bottom-width: 0;
   padding-bottom: 11px;
   z-index: 1;
 }
 
-.tabs .tab .tab-label .word-selected{
- display:none;
+.tabs .tab .tab-label .word-selected {
+  display: none;
 }
 
-.tabs .tab [type="radio"]:checked + .tab-label .word-selected{
-  display:inline;
+.tabs .tab [type="radio"]:checked+.tab-label .word-selected {
+  display: inline;
 }
 
-.tabs .tab [type="radio"]:checked ~ .tab-panel {
+.tabs .tab [type="radio"]:checked~.tab-panel {
   display: inline;
 }
 
@@ -208,6 +203,7 @@
   flex-grow: 1;
   font-size: 1.3rem;
 }
+
 .content {
   background: white;
   padding: 20px;
@@ -217,17 +213,20 @@
   border-radius: 10px;
   text-align: left;
 }
+
 .content h3 {
   position: relative;
   color: black;
   margin-right: 500px;
 }
+
 .content h2 {
   padding: 0px 0 5px 0px;
   color: black;
   font-size: 1.5vw;
   position: sticky;
 }
+
 .content p {
   width: 100%;
   height: 100%;
@@ -240,6 +239,7 @@
 .active-content {
   display: block;
 }
+
 .active-content input::placeholder {
   color: grey;
   opacity: 0.8;
@@ -273,7 +273,7 @@
   width: 30%;
   height: 50px;
   margin-bottom: -30px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5vw;
   color: white;
   background-color: #8f001a;
@@ -283,7 +283,8 @@
   vertical-align: middle;
   border-radius: 10px
 }
-.studentbuttonemail:hover{
+
+.studentbuttonemail:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
@@ -296,7 +297,7 @@
   width: 20%;
   height: 50px;
   margin-bottom: -30px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5vw;
   color: white;
   background-color: #8f001a;
@@ -306,7 +307,8 @@
   vertical-align: middle;
   border-radius: 10px
 }
-.deletegroup:hover{
+
+.deletegroup:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
@@ -318,7 +320,7 @@
   top: 480px;
   width: 5%;
   height: 50px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.3vw;
   color: white;
   background-color: #8f001a;
@@ -326,16 +328,17 @@
   border: none;
   border-radius: 10px
 }
-.addgroup:hover{
+
+.addgroup:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
 
-.groupcontainer{
+.groupcontainer {
   display: flex;
   flex-wrap: wrap;
   align-self: center;
-  margin-left:0px;
+  margin-left: 0px;
 }
 
 .createmodaltab {
@@ -348,6 +351,7 @@
   overflow: hidden;
   border: none;
 }
+
 .myoverlaytab {
   z-index: 100000;
   position: fixed;
@@ -382,11 +386,12 @@
 #time {
   display: flex;
   position: absolute;
-  left:110px;
+  left: 110px;
   top: 53px;
   width: 100px;
   height: 20px;
 }
+
 #roomh3 {
   position: relative;
   top: 250px;

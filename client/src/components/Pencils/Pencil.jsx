@@ -86,7 +86,7 @@ function Pencil(props) {
   function addConnect() {
     props.addConnect();
   }
-  
+
   function eraseLine() {
     props.eraseLine();
   }

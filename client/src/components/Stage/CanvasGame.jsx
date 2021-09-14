@@ -26,23 +26,28 @@ class URLImage extends React.Component {
   state = {
     image: null
   };
+
   componentDidMount() {
     this.loadImage();
   }
+
   componentDidUpdate(oldProps) {
     if (oldProps.src !== this.props.src) {
       this.loadImage();
     }
   }
+
   componentWillUnmount() {
     this.image.removeEventListener('load', this.handleLoad);
   }
+
   loadImage() {
     // save to "this" to remove "load" handler on unmount
     this.image = new window.Image();
     this.image.src = this.props.src;
     this.image.addEventListener('load', this.handleLoad);
   }
+
   handleLoad = () => {
     // after setState react-konva will update canvas and redraw the layer
     // because "image" property is changed
@@ -53,6 +58,7 @@ class URLImage extends React.Component {
     // you will have to update layer manually:
     // this.imageNode.getLayer().batchDraw();
   };
+  
   render() {
     return (
       <Image
@@ -183,7 +189,7 @@ class Graphics extends Component {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    var gradient = ctx.createLinearGradient(0, 0, 100, 100);
+    let gradient = ctx.createLinearGradient(0, 0, 100, 100);
     gradient.addColorStop(0.0, "red");
     gradient.addColorStop(1 / 6, "orange");
     gradient.addColorStop(2 / 6, "yellow");

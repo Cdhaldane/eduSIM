@@ -1,4 +1,4 @@
-.areacsv{
+.areacsv {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +12,7 @@
   border-radius: 10%;
 }
 
-.areacsv form:after{
+.areacsv form:after {
   --borderWidth: 3px;
   content: '';
   position: absolute;
@@ -27,7 +27,6 @@
   background-size: 300% 300%;
 }
 
-
 @keyframes animatedgradient {
   0% {
     background-position: 0% 50%;
@@ -40,7 +39,7 @@
   }
 }
 
-.areacsv p{
+.areacsv p {
   text-align: left;
   font-size: 2.0rem;
   padding: 30px;
@@ -66,15 +65,15 @@
   left: 0px;
   font-size: 0rem;
   width: 0.1px;
-	height: 0.1px;
+  height: 0.1px;
   opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
   text-align: left;
 }
 
-.areacsv label{
+.areacsv label {
   position: absolute;
   left: 15px;
   padding: 30px;
@@ -88,7 +87,6 @@
 .areacsv select {
   position: relative;
   bottom: -17px;
-
   padding: 10px;
   font-size: 1.5rem;
   font-weight: 200;
@@ -97,9 +95,11 @@
   cursor: pointer;
 }
 
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
-  opacity: 1; /* Firefox */
+  opacity: 1;
+  /* Firefox */
 }
 
 #boxj1 {
@@ -124,6 +124,7 @@
   color: blue;
   text-decoration: underline;
 }
+
 #csvfile2 {
   position: absolute;
   top: 120px;
@@ -131,6 +132,7 @@
   color: blue;
   text-decoration: underline;
 }
+
 #addj {
   color: white;
   z-index: 2000;
@@ -145,6 +147,7 @@
   cursor: pointer;
   background-color: #8f001a;
 }
+
 #emailtable {
   position: absolute;
   top: 100px;
@@ -153,7 +156,7 @@
   height: 100%;
 }
 
-#boxtabs{
+#boxtabs {
   position: absolute;
   left: 0px;
   top: 230px;
@@ -183,23 +186,23 @@
   border: solid 2px black;
 }
 
-#boxtabs input::placeholder{
+#boxtabs input::placeholder {
   opacity: 0.8;
 }
 
-#roles-selection{
+#roles-selection {
   position: relative;
 }
 
-#rolesdrops{
+#rolesdrops {
   position: relative;
   left: -420px;
   top: 600px;
 }
 
-@media screen and (max-width: 960px){
+@media screen and (max-width: 960px) {
   #boxj1 {
-  left: -20px;
+    left: -20px;
     font-size: 1.5rem;
     font-weight: bold;
   }
@@ -210,12 +213,11 @@
   #csvfile2 {
     font-size: 1.3rem;
     left: 230px;
-
   }
   #addj {
     left: 362px;
   }
-  #boxtabs{
+  #boxtabs {
     position: absolute;
     left: 0px;
     top: 230px;
@@ -228,7 +230,6 @@
     font-family: 'Raleway';
     font-size: 1.3rem;
   }
-
   #boxtabs input, #boxtabs textarea {
     position: relative;
     left: 40px;

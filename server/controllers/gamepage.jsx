@@ -11,7 +11,7 @@ exports.getGameInstances = async (req, res) => {
           createdby_adminid: id,
         },
       });
-      var Array = [];
+      let Array = [];
       for(i=0; i< gameinstance.length; i++) {
         if(gameinstance[i].status==='created' || gameinstance[i].status==='started' || gameinstance[i].status==='ended'){
           Array.push(gameinstance[i])

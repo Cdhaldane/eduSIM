@@ -7,6 +7,7 @@ const EditableRow = ({
   handleUpdate,
   rolelist
 }) => {
+  
   return (
     <tr>
       <td>
@@ -38,8 +39,8 @@ const EditableRow = ({
       </td>
       <td>
         <select name="group" type="text" required="required" id="roledropdown" onChange={handleEditFormChange}>
-            {rolelist}
-          </select>
+          {rolelist}
+        </select>
       </td>
       <td>
         <button type="submit" >Save</button>

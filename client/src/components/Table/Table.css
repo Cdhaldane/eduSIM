@@ -15,8 +15,7 @@
   width: 100%;
 }
 
-.app-container th,
-.app-container td {
+.app-container th, .app-container td {
   border: 1px solid #ffffff;
   text-align: left;
   padding: 8px;
@@ -48,7 +47,7 @@
   font-size: 1vw;
 }
 
-.addstudent{
+.addstudent {
   position: relative;
   top: 5px;
   color: black;
@@ -81,7 +80,7 @@
   width: 100px;
   height: 40px;
   margin-bottom: -30px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
   background-color: #8f001a;
@@ -131,7 +130,7 @@
   border: 1px solid #767676;
 }
 
-@media screen and (max-width: 960px){
+@media screen and (max-width: 960px) {
   .app-container {
     position: relative;
     top: 0px;

@@ -1,4 +1,3 @@
-
 :root {
   --bg: white;
   --bg-accent: white;
@@ -17,19 +16,20 @@ ul {
 
 a {
   color: var(--text-color);
-  text-decoration: none;;
+  text-decoration: none;
+  ;
 }
 
 /* Top Navigation Bar */
 
 /* <nav> */
 
-
 /* Icon Button */
+
 .icon-button {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
-  height: var(--button-size );
+  height: var(--button-size);
   background-color: #8f001a;
   border-radius: 50%;
   padding: 5px;
@@ -49,7 +49,6 @@ a {
   width: 20px;
   height: 20px;
 }
-
 
 /* Dropdown Menu */
 
@@ -76,7 +75,7 @@ a {
   padding: 5px;
 }
 
-.menuedit h1{
+.menuedit h1 {
   padding: 10px;
   font-size: 1.5rem;
 }
@@ -101,7 +100,6 @@ a {
   margin-right: 0.5rem;
 }
 
-
 .menu-itemedit .icon-buttonedit:hover {
   filter: none;
 }
@@ -115,33 +113,37 @@ a {
 }
 
 /* CSSTransition classes  */
+
 .menu-primary-enter {
   position: absolute;
   transform: translateX(-110%);
 }
+
 .menu-primary-enter-active {
   transform: translateX(300%);
   transition: all var(--speed) ease;
 }
+
 .menu-primary-exit {
   position: absolute;
 }
+
 .menu-primary-exit-active {
   transform: translateX(-110%);
   transition: all var(--speed) ease;
 }
 
-
 .menu-secondary-enter {
   transform: translateX(110%);
 }
+
 .menu-secondary-enter-active {
   transform: translateX(0%);
   transition: all var(--speed) ease;
 }
-.menu-secondary-exit {
 
-}
+.menu-secondary-exit {}
+
 .menu-secondary-exit-active {
   transform: translateX(110%);
   transition: all var(--speed) ease;
@@ -157,48 +159,52 @@ a {
   font-size: 2.0rem;
 }
 
-#switch1{
-    position: absolute;
-    left: -120px;
-    bottom: 210px;
-}
-#switch2{
-    position: absolute;
-    left: -120px;
-    bottom: 155px;
-}
-#switch3{
-    position: absolute;
-    left: -120px;
-    bottom: 100px;
-}
-#switch4{
-    position: absolute;
-    left: -120px;
-    bottom: 45px;
-}
-#switch5{
-    position: absolute;
-    left: -120px;
-    bottom: -10px;
+#switch1 {
+  position: absolute;
+  left: -120px;
+  bottom: 210px;
 }
 
-#switchtime{
-    position: absolute;
-    left: -100px;
-    bottom: 205px;
+#switch2 {
+  position: absolute;
+  left: -120px;
+  bottom: 155px;
 }
 
-#dswitch{
-    position: absolute;
-    left: -120px;
-    bottom: 45px;
+#switch3 {
+  position: absolute;
+  left: -120px;
+  bottom: 100px;
 }
 
-#eswitch{
-    position: absolute;
-    left: -120px;
-    bottom: -10px;
+#switch4 {
+  position: absolute;
+  left: -120px;
+  bottom: 45px;
+}
+
+#switch5 {
+  position: absolute;
+  left: -120px;
+  bottom: -10px;
+}
+
+#switchtime {
+  position: absolute;
+  left: -100px;
+  bottom: 205px;
+}
+
+#dswitch {
+  position: absolute;
+  left: -120px;
+  bottom: 45px;
+}
+
+#eswitch {
+  position: absolute;
+  left: -120px;
+  bottom: -10px;
 }
 
 .dropdown button {
@@ -207,7 +213,7 @@ a {
   left: 10px;
   width: 45px;
   height: 60px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.8rem;
   color: #8f001a;
   background-color: white;
@@ -227,9 +233,7 @@ a {
   color: white;
 }
 
-#pagetype{
-
-}
+#pagetype {}
 
 #pagetype input, #pagetype textarea {
   position: absolute;
@@ -250,7 +254,7 @@ a {
   margin-bottom: 0px;
 }
 
-#pagetype input::placeholder{
+#pagetype input::placeholder {
   opacity: 0.8;
   color: grey;
 }

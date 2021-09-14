@@ -13,6 +13,7 @@
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
+
 .notesim h1 {
   text-align: center;
   position: relative;
@@ -41,39 +42,36 @@
   left: 5px;
 }
 
-
-
-#garbage{
+#garbage {
   color: #8f001a;
   position: absolute;
   bottom: 3px;
   right: 27px;
 }
 
-#garbage:hover{
+#garbage:hover {
   cursor: pointer;
 }
 
-#pencil{
+#pencil {
   color: #8f001a;
   position: absolute;
   bottom: 3px;
   right: 82px;
 }
 
-#pencil:hover{
+#pencil:hover {
   cursor: pointer;
 }
 
-#play{
+#play {
   color: #8f001a;
   position: absolute;
   bottom: 3px;
   right: 140px;
 }
 
-
-@media screen and (max-width: 960px){
+@media screen and (max-width: 960px) {
   .notesim {
     background: #fff;
     border-radius: 7px;
@@ -99,7 +97,6 @@
     color: black;
     font-size: 1.0rem;
   }
-
   .notesim img {
     border: solid 2px black;
     margin-bottom: -50px;
@@ -112,40 +109,33 @@
     opacity: 70%;
     border-radius: 15%;
   }
-
   #simicons {
     position: relative;
     top: 10px;
     left: 30px;
   }
-
-  #garbage{
+  #garbage {
     color: #8f001a;
     position: absolute;
     bottom: 5px;
     right: 40px;
   }
-
-  #garbage:hover{
+  #garbage:hover {
     cursor: pointer;
   }
-
-  #pencil{
+  #pencil {
     color: #8f001a;
     position: absolute;
     bottom: 5px;
     right: 76px;
   }
-
-  #pencil:hover{
+  #pencil:hover {
     cursor: pointer;
   }
-
-  #play{
+  #play {
     color: #8f001a;
     position: absolute;
     bottom: 5px;
     right: 120px;
   }
-
 }

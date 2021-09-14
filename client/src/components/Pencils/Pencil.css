@@ -2,56 +2,56 @@
   position: absolute;
 }
 
-#pencil1:hover{
+#pencil1:hover {
   cursor: pointer;
 }
 
-#pencil2{
+#pencil2 {
   position: absolute;
-  left:140px;
-  top:-790px;
+  left: 140px;
+  top: -790px;
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil2:hover{
+#pencil2:hover {
   cursor: pointer;
 }
 
-#pencil3{
+#pencil3 {
   position: absolute;
-  left:1590px;
-  top:-790px;;
+  left: 1590px;
+  top: -790px;
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil3:hover{
+#pencil3:hover {
   cursor: pointer;
 }
 
-#pencil4{
+#pencil4 {
   z-index: 2000;
   position: fixed;
-  left:20px;
-  top:20px;
+  left: 20px;
+  top: 20px;
   color: #dcafb7;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil4:hover{
+#pencil4:hover {
   cursor: pointer;
 }
 
-.header{
+.header {
   position: relative;
   top: -150px;
 }
 
-.drop1{
+.drop1 {
   position: absolute;
   left: -450px;
   top: 250px;
@@ -69,20 +69,21 @@
   left: 900px;
 }
 
-.drop4{
+.drop4 {
   position: absolute;
   top: -270px;
   left: -420px;
 }
 
-@media screen and (max-width: 1860px){
-  #pencil2{
-    left:470px;
-    top:-720px;
+@media screen and (max-width: 1860px) {
+  #pencil2 {
+    left: 470px;
+    top: -720px;
   }
-  #pencil3{
-    left:1250px;
-    top:-720px;;
+  #pencil3 {
+    left: 1250px;
+    top: -720px;
+    ;
   }
   .drop3 {
     top: -220px;
@@ -93,14 +94,15 @@
     left: 80px;
   }
 }
-@media screen and (max-width: 1560px){
-  #pencil2{
-    left:350px;
-    top:-700px;
+
+@media screen and (max-width: 1560px) {
+  #pencil2 {
+    left: 350px;
+    top: -700px;
   }
-  #pencil3{
-    left:1130px;
-    top:-700px;;
+  #pencil3 {
+    left: 1130px;
+    top: -700px;
   }
   .drop3 {
     top: -190px;
@@ -111,14 +113,15 @@
     left: -40px;
   }
 }
-@media screen and (max-width: 1460px){
-  #pencil2{
-    left:250px;
-    top:-700px;
+
+@media screen and (max-width: 1460px) {
+  #pencil2 {
+    left: 250px;
+    top: -700px;
   }
-  #pencil3{
-    left:1030px;
-    top:-700px;;
+  #pencil3 {
+    left: 1030px;
+    top: -700px;
   }
   .drop3 {
     top: -190px;
@@ -129,14 +132,15 @@
     left: -140px;
   }
 }
-@media screen and (max-width: 1360px){
-  #pencil2{
-    left:150px;
-    top:-700px;
+
+@media screen and (max-width: 1360px) {
+  #pencil2 {
+    left: 150px;
+    top: -700px;
   }
-  #pencil3{
-    left:930px;
-    top:-700px;;
+  #pencil3 {
+    left: 930px;
+    top: -700px;
   }
   .drop3 {
     top: -190px;
@@ -147,16 +151,17 @@
     left: -240px;
   }
 }
-@media screen and (max-width: 1160px){
-  #pencil2{
-    left:50px;
-    top:-700px;
+
+@media screen and (max-width: 1160px) {
+  #pencil2 {
+    left: 50px;
+    top: -700px;
   }
-  #pencil3{
-    left:830px;
-    top:-700px;;
+  #pencil3 {
+    left: 830px;
+    top: -700px;
   }
-  #pencil4{
+  #pencil4 {
     opacity: 0;
   }
   .drop3 {

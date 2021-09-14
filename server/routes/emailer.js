@@ -13,7 +13,7 @@ router.post("/sendEmail", (req,res) =>{
       pass: "Legodinosaur"
     }
   });
-  var mailOptions = {
+  let mailOptions = {
     from: 'edusimuottawa@outlook.com',
     to: data.email,
     subject: 'EDUsim invite!',

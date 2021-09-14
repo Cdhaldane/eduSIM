@@ -40,7 +40,7 @@ function CreateCsv(props) {
       Array.from(event.target.files).forEach(
         async (file) => {
           const text = await file.text();
-          var results = parse(text, { header: true });
+          let results = parse(text, { header: true });
           setResult(results);
         }
       );

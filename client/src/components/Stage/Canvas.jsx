@@ -92,7 +92,7 @@ import {
     useEffect(() => {
       const MINUTE_MS = 300000;
       const interval = setInterval(() => {
-        console.log("Saves every 5 minutes.")
+        console.log("SAVED (Saves every 5 minutes)");
         props.handleSave()
       }, MINUTE_MS);
 
@@ -224,8 +224,8 @@ class TransformerComponent extends React.Component {
   }
 }
 
-var history = [];
-var historyStep = 0;
+let history = [];
+let historyStep = 0;
 
 class Graphics extends Component {
   constructor(props) {
@@ -429,20 +429,21 @@ class Graphics extends Component {
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
       this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, "up"] });
-              var body = {
+              let body = {
                   id: this.state.gameinstanceid,
                   game_parameters: JSON.stringify(this.state.saved),
                   createdby_adminid: localStorage.adminid,
                   invite_url: 'value'
                 }
-                axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body).then((res) => {
-                  console.log(res);
-                     }).catch(error => console.log(error.response));
+                axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/update/:id', body)
+                .catch(error => {
+                  console.log(error);
+                });
   };
 
   handleStageClick = e => {
-    var pos = this.refs.layer2.getStage().getPointerPosition();
-    var shape = this.refs.layer2.getIntersection(pos);
+    let pos = this.refs.layer2.getStage().getPointerPosition();
+    let shape = this.refs.layer2.getIntersection(pos);
 
     if (
       shape !== null &&
@@ -562,8 +563,8 @@ class Graphics extends Component {
     if (!this.state.selection.visible) {
       return;
     }
-    var pos = this.refs.graphicStage.getPointerPosition();
-    var shape = this.refs.graphicStage.getIntersection(pos);
+    let pos = this.refs.graphicStage.getPointerPosition();
+    let shape = this.refs.graphicStage.getIntersection(pos);
 
     this.state.selection.x2 = pos.x;
     this.state.selection.y2 = pos.y;
@@ -669,8 +670,8 @@ class Graphics extends Component {
     if (!this.state.selection.visible) {
       return;
     }
-    var pos = this.refs.graphicStage1.getPointerPosition();
-    var shape = this.refs.graphicStage1.getIntersection(pos);
+    let pos = this.refs.graphicStage1.getPointerPosition();
+    let shape = this.refs.graphicStage1.getIntersection(pos);
 
     this.state.selection.x2 = pos.x;
     this.state.selection.y2 = pos.y;
@@ -770,10 +771,10 @@ class Graphics extends Component {
         ) {
           //if text shouldn't update, don't append to  history
           if (this.state.shouldTextUpdate) {
-            var uh = history;
+            let uh = history;
             history = uh.slice(0, historyStep + 1);
             //console.log("sliced", history);
-            var toAppend = this.state;
+            let toAppend = this.state;
             history = history.concat(toAppend);
             //console.log("new", history);
             historyStep += 1;
@@ -940,7 +941,7 @@ class Graphics extends Component {
   handlePaste = () => {
     let copiedElement = this.state.copiedElement[0];
     console.log(copiedElement);
-    var length;
+    let length;
     if (copiedElement) {
       if (copiedElement.attrs) {
       } else {
@@ -949,7 +950,7 @@ class Graphics extends Component {
             this.state.rectangles.length +
             1 +
             this.state.rectDeleteCount;
-          var toPush = {
+          let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
             width: copiedElement.width,
@@ -996,7 +997,7 @@ class Graphics extends Component {
                 errMsg: "Connectors cannot be pasted"
               },
               () => {
-                var that = this;
+                let that = this;
                 setTimeout(function() {
                   that.setState({
                     errMsg: ""
@@ -1005,7 +1006,7 @@ class Graphics extends Component {
               }
             );
           } else {
-            var toPush = {
+            let toPush = {
               points: [
                 copiedElement.points[0] + 30,
                 copiedElement.points[1] + 30,
@@ -1048,7 +1049,7 @@ class Graphics extends Component {
             this.state.ellipses.length +
             1 +
             this.state.ellipseDeleteCount;
-          var toPush = {
+          let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
             radiusX: copiedElement.radiusX,
@@ -1088,7 +1089,7 @@ class Graphics extends Component {
           this.state.images.length +
           1 +
           this.state.imageDeleteCount;
-        var toPush = {
+        let toPush = {
           x: copiedElement.x + 10,
           y: copiedElement.y + 10,
           width: copiedElement.width,
@@ -1129,7 +1130,7 @@ class Graphics extends Component {
         this.state.videos.length +
         1 +
         this.state.videoDeleteCount;
-      var toPush = {
+      let toPush = {
         x: copiedElement.x + 10,
         y: copiedElement.y + 10,
         width: copiedElement.width,
@@ -1170,7 +1171,7 @@ class Graphics extends Component {
       this.state.audios.length +
       1 +
       this.state.audioDeletedCount;
-    var toPush = {
+    let toPush = {
       x: copiedElement.x + 10,
       y: copiedElement.y + 10,
       width: copiedElement.width,
@@ -1211,7 +1212,7 @@ class Graphics extends Component {
         this.state.triangles.length +
         1 +
         this.state.triangleDeleteCount;
-      var toPush = {
+      let toPush = {
         x: copiedElement.x + 10,
         y: copiedElement.y + 10,
         width: copiedElement.width,
@@ -1253,7 +1254,7 @@ class Graphics extends Component {
           this.state.documents.length +
           1 +
           this.state.documentDeleteCount;
-        var toPush = {
+        let toPush = {
           x: copiedElement.x + 10,
           y: copiedElement.y + 10,
           width: copiedElement.width,
@@ -1295,7 +1296,7 @@ class Graphics extends Component {
             this.state.lines.length +
             1 +
             this.state.linesDeleteCount;
-          var toPush = {
+          let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
             width: copiedElement.width,
@@ -1335,7 +1336,7 @@ class Graphics extends Component {
         } else if (copiedElement.name.includes("star")) {
           length =
             this.state.stars.length + 1 + this.state.starDeleteCount;
-          var toPush = {
+          let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
             link: copiedElement.link,
@@ -1372,7 +1373,7 @@ class Graphics extends Component {
         } else if (copiedElement.name.includes("text")) {
           length =
             this.state.texts.length + 1 + this.state.textDeleteCount;
-          var toPush = {
+          let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
             link: copiedElement.link,
@@ -1426,10 +1427,10 @@ class Graphics extends Component {
 
   handleDelete = () => {
     if (this.state.selectedShapeName !== "") {
-      var that = this;
+      let that = this;
       //delete it from the state too
       let name = this.state.selectedShapeName;
-      var rects = this.state.rectangles.filter(function(eachRect) {
+      let rects = this.state.rectangles.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             rectDeleteCount: that.state.rectDeleteCount + 1
@@ -1438,7 +1439,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var ellipses = this.state.ellipses.filter(function(eachRect) {
+      let ellipses = this.state.ellipses.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             ellipseDeleteCount: that.state.ellipseDeleteCount + 1
@@ -1447,7 +1448,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var triangles = this.state.triangles.filter(function(eachRect) {
+      let triangles = this.state.triangles.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             triangleDeleteCount: that.state.triangleDeleteCount + 1
@@ -1456,7 +1457,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var images = this.state.images.filter(function(eachRect) {
+      let images = this.state.images.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             imageDeleteCount: that.state.imageDeleteCount + 1
@@ -1465,7 +1466,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var lines = this.state.lines.filter(function(eachRect) {
+      let lines = this.state.lines.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             linesDeleteCount: that.state.imageDeleteCount + 1
@@ -1474,7 +1475,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var videos = this.state.videos.filter(function(eachRect) {
+      let videos = this.state.videos.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             videoDeleteCount: that.state.videoDeleteCount + 1
@@ -1483,7 +1484,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var audios = this.state.audios.filter(function(eachRect) {
+      let audios = this.state.audios.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             audioDeletedCount: that.state.audioDeletedCount + 1
@@ -1492,7 +1493,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var documents = this.state.documents.filter(function(eachRect) {
+      let documents = this.state.documents.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             documentDeletedCount: that.state.documentDeletedCount + 1
@@ -1501,7 +1502,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var stars = this.state.stars.filter(function(eachRect) {
+      let stars = this.state.stars.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             starDeleteCount: that.state.starDeleteCount + 1
@@ -1510,7 +1511,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var arrows = this.state.arrows.filter(function(eachRect) {
+      let arrows = this.state.arrows.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             arrowDeleteCount: that.state.arrowDeleteCount + 1
@@ -1519,7 +1520,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      var texts = this.state.texts.filter(function(eachRect) {
+      let texts = this.state.texts.filter(function(eachRect) {
         if (eachRect.id === name) {
           that.setState({
             textDeleteCount: that.state.textDeleteCount + 1
@@ -1566,7 +1567,7 @@ class Graphics extends Component {
   }
 
   shapeIsGone = returnTo => {
-    var toReturn = true;
+    let toReturn = true;
     let currentShapeName = this.state.selectedShapeName;
     let [rectangles, ellipses, stars, arrows, texts, triangles, images, videos, audios, documents, lines] = [
       returnTo.rectangles,
@@ -1657,7 +1658,7 @@ class Graphics extends Component {
     //if draft
   }
   addRectangle = () => {
-    var rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
+    let rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
 
 
     let name = 'rectangle' + rectName
@@ -1679,14 +1680,14 @@ class Graphics extends Component {
       fill: this.state.colorf,
       useImage: false,
     };
-    var layer = this.refs.layer2;
-    var toPush = rect;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = rect;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1705,7 +1706,7 @@ class Graphics extends Component {
 
   addTriangle = () => {
 
-    var triName = this.state.triangles.length + 1 + this.state.triangleDeleteCount
+    let triName = this.state.triangles.length + 1 + this.state.triangleDeleteCount
 
     let name = 'triangle' + triName
     const tri = {
@@ -1728,14 +1729,14 @@ class Graphics extends Component {
       fill: this.state.colorf,
       useImage: false
     };
-    var layer = this.refs.layer2;
-    var toPush = tri;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = tri;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1751,8 +1752,8 @@ class Graphics extends Component {
   };
 
   addImage = () => {
-    var imgName = this.state.images.length + 1 + this.state.imageDeleteCount
-    var imgsrc = this.state.imgsrc
+    let imgName = this.state.images.length + 1 + this.state.imageDeleteCount
+    let imgsrc = this.state.imgsrc
 
     let name = 'image' + imgName
     const img = {
@@ -1772,14 +1773,14 @@ class Graphics extends Component {
       name: name,
       ref: name,
     };
-    var layer = this.refs.layer2;
-    var toPush = img;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = img;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1795,8 +1796,8 @@ class Graphics extends Component {
   };
 
   addVideo = () => {
-    var vidName = this.state.videos.length + 1 + this.state.videoDeleteCount
-    var vidsrc = this.state.vidsrc
+    let vidName = this.state.videos.length + 1 + this.state.videoDeleteCount
+    let vidsrc = this.state.vidsrc
 
     let name = 'video' + vidName
     const vid = {
@@ -1816,14 +1817,14 @@ class Graphics extends Component {
       name: name,
       ref: name,
     };
-    var layer = this.refs.layer2;
-    var toPush = vid;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = vid;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1840,8 +1841,8 @@ class Graphics extends Component {
   };
 
   addAudio = () => {
-    var audName = this.state.audios.length + 1 + this.state.audioDeletedCount
-    var audsrc = this.state.audsrc
+    let audName = this.state.audios.length + 1 + this.state.audioDeletedCount
+    let audsrc = this.state.audsrc
 
 
     let name = 'audio' + audName
@@ -1863,14 +1864,14 @@ class Graphics extends Component {
       name: name,
       ref: name,
     };
-    var layer = this.refs.layer2;
-    var toPush = aud;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = aud;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1885,7 +1886,7 @@ class Graphics extends Component {
   };
 
   addDocument = () => {
-    var docName = this.state.documents.length + 1 + this.state.documentDeleteCount
+    let docName = this.state.documents.length + 1 + this.state.documentDeleteCount
     const bimage = new window.Image();
         bimage.onload = () => {
           this.setState({
@@ -1914,14 +1915,14 @@ class Graphics extends Component {
       name: name,
       ref: name,
     };
-    var layer = this.refs.layer2;
-    var toPush = doc;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = doc;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1938,7 +1939,7 @@ class Graphics extends Component {
 
 
   addCircle = () => {
-    var circName = this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
+    let circName = this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
 
     let name = 'ellipse' + circName
     const circ = {
@@ -1958,14 +1959,14 @@ class Graphics extends Component {
       name: name,
       rotation: 0
     };
-    var layer = this.refs.layer2;
-    var toPush = circ;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = circ;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -1985,7 +1986,7 @@ class Graphics extends Component {
   }
 
   addStar = () => {
-    var starName = this.state.stars.length + 1 + this.state.starDeleteCount
+    let starName = this.state.stars.length + 1 + this.state.starDeleteCount
 
     let name = 'star' + starName
     const star = {
@@ -2008,14 +2009,14 @@ class Graphics extends Component {
       ref: name,
       rotation: 0
     };
-    var layer = this.refs.layer2;
-    var toPush = star;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = star;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -2031,7 +2032,7 @@ class Graphics extends Component {
   };
 
   addText = () => {
-    var textName = this.state.texts.length + 1 + this.state.textDeleteCount
+    let textName = this.state.texts.length + 1 + this.state.textDeleteCount
 
     let name = 'text' + textName
     let ref = 'text' + textName
@@ -2055,14 +2056,14 @@ class Graphics extends Component {
       rotation: 0
     };
 
-    var layer = this.refs.layer2;
-    var toPush = tex;
-    var transform = this.refs.layer2
+    let layer = this.refs.layer2;
+    let toPush = tex;
+    let transform = this.refs.layer2
       .getAbsoluteTransform()
       .copy();
     transform.invert();
 
-    var pos = transform.point({
+    let pos = transform.point({
       x: toPush.x,
       y: toPush.y
     });
@@ -2078,7 +2079,7 @@ class Graphics extends Component {
   }
 
   addTic = (e) => {
-    var ticName = this.state.tics.length
+    let ticName = this.state.tics.length
 
     let name = 'tic' + ticName
     let ref = ticName
@@ -2093,7 +2094,7 @@ class Graphics extends Component {
       i: ref,
     };
 
-    var toPush = tac;
+    let toPush = tac;
 
     this.setState(prevState => ({
       tics: [...prevState.tics, toPush]
@@ -2107,7 +2108,7 @@ class Graphics extends Component {
   }
 
   addConnect4 = (e) => {
-    var conName = this.state.connect4.length + 1
+    let conName = this.state.connect4.length + 1
 
     let name = 'con' + conName
     let ref = 'con' + conName
@@ -2122,7 +2123,7 @@ class Graphics extends Component {
       ref: ref,
     };
 
-    var toPush = conn;
+    let toPush = conn;
 
     this.setState(prevState => ({
       connect4: [...prevState.connect4, toPush]
@@ -2662,7 +2663,7 @@ class Graphics extends Component {
                   strokeScaleEnabled={false}
                   draggable
                     onClick={() => {
-                      var that = this;
+                      let that = this;
                       if (eachRect.link !== undefined && eachRect.link !== "") {
                         this.setState(
                           {
@@ -2776,7 +2777,7 @@ class Graphics extends Component {
                     onDragEnd={event => {
                       //cannot compare by name because currentSelected might not be the same
                       //have to use ref, which appears to be overcomplicated
-                      var shape = this.refs[eachRect.ref];
+                      let shape = this.refs[eachRect.ref];
                       /*    this.state.rectangles.map(eachRect => {
                           if (eachRect.name === shape.attrs.name) {
                             shape.position({
@@ -2855,7 +2856,7 @@ class Graphics extends Component {
                   strokeWidth={eachEllipse.strokeWidth}
                   strokeScaleEnabled={false}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (
                       eachEllipse.link !== undefined &&
                       eachEllipse.link !== ""
@@ -2970,7 +2971,7 @@ class Graphics extends Component {
                   onDragEnd={event => {
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachEllipse.ref];
+                    let shape = this.refs[eachEllipse.ref];
 
                     this.setState(prevState => ({
                       ellipses: prevState.ellipses.map(eachEllipse =>
@@ -3060,7 +3061,7 @@ class Graphics extends Component {
                   rotation={eachImage.rotation}
                   opacity={eachImage.opacity}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (eachImage.link !== undefined && eachImage.link !== "") {
                       this.setState(
                         {
@@ -3124,7 +3125,7 @@ class Graphics extends Component {
 
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachImage.ref];
+                    let shape = this.refs[eachImage.ref];
                     /*    this.state.rectangles.map(eachRect => {
                         if (eachRect.name === shape.attrs.name) {
                           shape.position({
@@ -3188,7 +3189,7 @@ class Graphics extends Component {
                   rotation={eachVideo.rotation}
                   opacity={eachVideo.opacity}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (eachVideo.link !== undefined && eachVideo.link !== "") {
                       this.setState(
                         {
@@ -3252,7 +3253,7 @@ class Graphics extends Component {
                     console.log(this.state.videos)
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachVideo.ref];
+                    let shape = this.refs[eachVideo.ref];
                     this.setState(prevState => ({
                       videos: prevState.videos.map(eachRect =>
                         eachRect.id === this.state.currentSelected
@@ -3307,7 +3308,7 @@ class Graphics extends Component {
                   opacity={eachAudio.opacity}
                   onClick={() => {
 
-                    var that = this;
+                    let that = this;
                     if (eachAudio.link !== undefined && eachAudio.link !== "") {
                       this.setState(
                         {
@@ -3372,7 +3373,7 @@ class Graphics extends Component {
 
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachAudio.ref];
+                    let shape = this.refs[eachAudio.ref];
 
 
 
@@ -3510,7 +3511,7 @@ class Graphics extends Component {
 
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachDoc.ref];
+                    let shape = this.refs[eachDoc.ref];
                     /*    this.state.rectangles.map(eachRect => {
                         if (eachRect.name === shape.attrs.name) {
                           shape.position({
@@ -3574,7 +3575,7 @@ class Graphics extends Component {
                   strokeWidth={eachEllipse.strokeWidth}
                   strokeScaleEnabled={false}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (
                       eachEllipse.link !== undefined &&
                       eachEllipse.link !== ""
@@ -3688,7 +3689,7 @@ class Graphics extends Component {
                   onDragEnd={event => {
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachEllipse.ref];
+                    let shape = this.refs[eachEllipse.ref];
 
                     this.setState(prevState => ({
                       triangles: prevState.triangles.map(eachEllipse =>
@@ -3743,7 +3744,7 @@ class Graphics extends Component {
                   strokeScaleEnabled={false}
                   rotation={eachStar.rotation}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (eachStar.link !== undefined && eachStar.link !== "") {
                       this.setState(
                         {
@@ -3817,7 +3818,7 @@ class Graphics extends Component {
                   onDragEnd={event => {
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachStar.ref];
+                    let shape = this.refs[eachStar.ref];
 
                     this.setState(prevState => ({
                       stars: prevState.stars.map(eachStar =>
@@ -3859,11 +3860,11 @@ class Graphics extends Component {
                   visible={eachText.visible}
                   textDecoration={eachText.link ? "underline" : ""}
                   onTransformStart={() => {
-                    var currentText = this.refs[this.state.selectedShapeName];
+                    let currentText = this.refs[this.state.selectedShapeName];
                     currentText.setAttr("lastRotation", currentText.rotation());
                   }}
                   onTransform={() => {
-                    var currentText = this.refs[this.state.selectedShapeName];
+                    let currentText = this.refs[this.state.selectedShapeName];
 
                     currentText.setAttr(
                       "width",
@@ -3901,7 +3902,7 @@ class Graphics extends Component {
                     currentText.setAttr("lastRotation", currentText.rotation());
                   }}
                   onTransformEnd={() => {
-                    var currentText = this.refs[this.state.selectedShapeName];
+                    let currentText = this.refs[this.state.selectedShapeName];
 
                     this.setState(prevState => ({
                       errMsg: "",
@@ -3966,7 +3967,7 @@ class Graphics extends Component {
                   onDragEnd={event => {
                     //cannot compare by name because currentSelected might not be the same
                     //have to use ref, which appears to be overcomplicated
-                    var shape = this.refs[eachText.ref];
+                    let shape = this.refs[eachText.ref];
 
                     this.setState(prevState => ({
                       texts: prevState.texts.map(eachtext =>
@@ -3981,7 +3982,7 @@ class Graphics extends Component {
                     }));
                   }}
                   onClick={() => {
-                    var that = this;
+                    let that = this;
                     if (eachText.link !== undefined && eachText.link !== "") {
                       this.setState(
                         {
@@ -3996,13 +3997,13 @@ class Graphics extends Component {
                         }
                       );
 
-                      //var win = window.open(eachText.link, "_blank");
+                      //let win = window.open(eachText.link, "_blank");
                       //win.focus();
                     }
                   }}
                   onDblClick={() => {
                     // turn into textarea
-                    var stage = this.refs.graphicStage;
+                    let stage = this.refs.graphicStage;
                     let text = this.refs[eachText.ref];
                     console.log(text)
 
@@ -4023,7 +4024,7 @@ class Graphics extends Component {
                     let textarea = this.refs.textarea;
                     textarea.focus();
                     text.hide();
-                    var transformer = stage.findOne(".transformer");
+                    let transformer = stage.findOne(".transformer");
                     transformer.hide();
                     this.refs.layer2.draw();
                   }}
@@ -4307,7 +4308,7 @@ class Graphics extends Component {
                           strokeScaleEnabled={false}
                           draggable
                             onClick={() => {
-                              var that = this;
+                              let that = this;
                               if (eachRect.link !== undefined && eachRect.link !== "") {
                                 this.setState(
                                   {
@@ -4421,7 +4422,7 @@ class Graphics extends Component {
                             onDragEnd={event => {
                               //cannot compare by name because currentSelected might not be the same
                               //have to use ref, which appears to be overcomplicated
-                              var shape = this.refs[eachRect.ref];
+                              let shape = this.refs[eachRect.ref];
                               /*    this.state.rectangles.map(eachRect => {
                                   if (eachRect.name === shape.attrs.name) {
                                     shape.position({
@@ -4501,7 +4502,7 @@ class Graphics extends Component {
                           strokeWidth={eachEllipse.strokeWidth}
                           strokeScaleEnabled={false}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (
                               eachEllipse.link !== undefined &&
                               eachEllipse.link !== ""
@@ -4616,7 +4617,7 @@ class Graphics extends Component {
                           onDragEnd={event => {
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachEllipse.ref];
+                            let shape = this.refs[eachEllipse.ref];
 
                             this.setState(prevState => ({
                               ellipses: prevState.ellipses.map(eachEllipse =>
@@ -4707,7 +4708,7 @@ class Graphics extends Component {
                           rotation={eachImage.rotation}
                           opacity={eachImage.opacity}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (eachImage.link !== undefined && eachImage.link !== "") {
                               this.setState(
                                 {
@@ -4771,7 +4772,7 @@ class Graphics extends Component {
 
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachImage.ref];
+                            let shape = this.refs[eachImage.ref];
                             /*    this.state.rectangles.map(eachRect => {
                                 if (eachRect.name === shape.attrs.name) {
                                   shape.position({
@@ -4835,7 +4836,7 @@ class Graphics extends Component {
                           rotation={eachVideo.rotation}
                           opacity={eachVideo.opacity}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (eachVideo.link !== undefined && eachVideo.link !== "") {
                               this.setState(
                                 {
@@ -4899,7 +4900,7 @@ class Graphics extends Component {
                             console.log(this.state.videos)
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachVideo.ref];
+                            let shape = this.refs[eachVideo.ref];
                             this.setState(prevState => ({
                               videos: prevState.videos.map(eachRect =>
                                 eachRect.id === this.state.currentSelected
@@ -4954,7 +4955,7 @@ class Graphics extends Component {
                           opacity={eachAudio.opacity}
                           onClick={() => {
 
-                            var that = this;
+                            let that = this;
                             if (eachAudio.link !== undefined && eachAudio.link !== "") {
                               this.setState(
                                 {
@@ -5019,7 +5020,7 @@ class Graphics extends Component {
 
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachAudio.ref];
+                            let shape = this.refs[eachAudio.ref];
 
 
 
@@ -5157,7 +5158,7 @@ class Graphics extends Component {
 
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachDoc.ref];
+                            let shape = this.refs[eachDoc.ref];
                             /*    this.state.rectangles.map(eachRect => {
                                 if (eachRect.name === shape.attrs.name) {
                                   shape.position({
@@ -5220,7 +5221,7 @@ class Graphics extends Component {
                           strokeWidth={eachEllipse.strokeWidth}
                           strokeScaleEnabled={false}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (
                               eachEllipse.link !== undefined &&
                               eachEllipse.link !== ""
@@ -5334,7 +5335,7 @@ class Graphics extends Component {
                           onDragEnd={event => {
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachEllipse.ref];
+                            let shape = this.refs[eachEllipse.ref];
 
                             this.setState(prevState => ({
                               triangles: prevState.triangles.map(eachEllipse =>
@@ -5388,7 +5389,7 @@ class Graphics extends Component {
                           strokeScaleEnabled={false}
                           rotation={eachStar.rotation}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (eachStar.link !== undefined && eachStar.link !== "") {
                               this.setState(
                                 {
@@ -5462,7 +5463,7 @@ class Graphics extends Component {
                           onDragEnd={event => {
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachStar.ref];
+                            let shape = this.refs[eachStar.ref];
 
                             this.setState(prevState => ({
                               stars: prevState.stars.map(eachStar =>
@@ -5504,11 +5505,11 @@ class Graphics extends Component {
                           visible={eachText.visible}
                           textDecoration={eachText.link ? "underline" : ""}
                           onTransformStart={() => {
-                            var currentText = this.refs[this.state.selectedShapeName];
+                            let currentText = this.refs[this.state.selectedShapeName];
                             currentText.setAttr("lastRotation", currentText.rotation());
                           }}
                           onTransform={() => {
-                            var currentText = this.refs[this.state.selectedShapeName];
+                            let currentText = this.refs[this.state.selectedShapeName];
 
                             currentText.setAttr(
                               "width",
@@ -5546,7 +5547,7 @@ class Graphics extends Component {
                             currentText.setAttr("lastRotation", currentText.rotation());
                           }}
                           onTransformEnd={() => {
-                            var currentText = this.refs[this.state.selectedShapeName];
+                            let currentText = this.refs[this.state.selectedShapeName];
 
                             this.setState(prevState => ({
                               errMsg: "",
@@ -5611,7 +5612,7 @@ class Graphics extends Component {
                           onDragEnd={event => {
                             //cannot compare by name because currentSelected might not be the same
                             //have to use ref, which appears to be overcomplicated
-                            var shape = this.refs[eachText.ref];
+                            let shape = this.refs[eachText.ref];
 
                             this.setState(prevState => ({
                               texts: prevState.texts.map(eachtext =>
@@ -5626,7 +5627,7 @@ class Graphics extends Component {
                             }));
                           }}
                           onClick={() => {
-                            var that = this;
+                            let that = this;
                             if (eachText.link !== undefined && eachText.link !== "") {
                               this.setState(
                                 {
@@ -5641,13 +5642,13 @@ class Graphics extends Component {
                                 }
                               );
 
-                              //var win = window.open(eachText.link, "_blank");
+                              //let win = window.open(eachText.link, "_blank");
                               //win.focus();
                             }
                           }}
                           onDblClick={() => {
                             // turn into textarea
-                            var stage = this.refs.graphicStage;
+                            let stage = this.refs.graphicStage;
                             let text = this.refs[eachText.ref];
                             console.log(text)
 
@@ -5668,7 +5669,7 @@ class Graphics extends Component {
                             let textarea = this.refs.textarea;
                             textarea.focus();
                             text.hide();
-                            var transformer = stage.findOne(".transformer");
+                            let transformer = stage.findOne(".transformer");
                             transformer.hide();
                             this.refs.layer2.draw();
                           }}

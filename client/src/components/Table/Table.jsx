@@ -137,7 +137,7 @@ const Table = (props) => {
   const handleAddFormSubmit = (event) => {
     window.location.reload();
     event.preventDefault();
-    var data = {
+    let data = {
       gameinstanceid: props.gameid,
       fname: addFormData.firstName,
       lname: addFormData.lastName,
@@ -345,7 +345,5 @@ const Table = (props) => {
     </div>
   );
 };
-
-
 
 export default Table;

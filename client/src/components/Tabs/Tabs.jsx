@@ -61,7 +61,7 @@ function Tabs(props) {
   }
 
   const handleDeleteGroup = (e) => {
-    var index = tabs.indexOf(e);
+    let index = tabs.indexOf(e);
     setToggleState(1);
 
     axios.delete(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/deleteRoom/:gameroomid', {
@@ -125,11 +125,6 @@ function Tabs(props) {
             <p>min</p>
           </div>
           <h3>Student/participant list:</h3>
-
-
-          {/* <Button onClick={()=>setIsOpen(true)} className="button">Add</Button>
-              <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
-              </Modal> */}
           <Table addstudent={false} gameid={props.gameid} title={props.title} />
         </div>
         {tabs.map((i) => (
@@ -170,7 +165,6 @@ function Tabs(props) {
         </div>
       </div>
     </div>
-
   );
 }
 

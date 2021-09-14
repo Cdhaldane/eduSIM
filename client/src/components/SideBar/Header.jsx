@@ -23,14 +23,14 @@ const Grid = styled.div`
     } 
 `;
 
-function Header({toggle}){
-    return (
-        <Grid>
-            <div onClick={toggle}>
-                <i className="fas fa-bars toggle-button" />
-            </div>
-        </Grid>
-    );
+function Header({ toggle }) {
+  return (
+    <Grid>
+      <div onClick={toggle}>
+        <i className="fas fa-bars toggle-button" />
+      </div>
+    </Grid>
+  );
 }
 
 export default Header;

@@ -30,7 +30,7 @@ const StyledNav = styled.nav`
     width: 256px;
     transform: translate3d(
       ${(p) =>
-        p.visible ? 0 : "-260px"},
+    p.visible ? 0 : "-260px"},
       0,
       0
     );
@@ -39,14 +39,15 @@ const StyledNav = styled.nav`
   }
 `;
 
-function Sidebar (props) {
+function Sidebar(props) {
   const [compact, setCompact] = useState(0);
-    return (
-      <>
-        <Backdrop visible={props.visible} onClick={props.close}/>
-        <StyledNav compact={!compact} {...props}>
-          <br />
-          <br />
+  
+  return (
+    <>
+      <Backdrop visible={props.visible} onClick={props.close} />
+      <StyledNav compact={!compact} {...props}>
+        <br />
+        <br />
         <NavLinksGroup compact={!compact}
           mvisible={props.mvisible}
           avisible={props.avisible}
@@ -55,10 +56,10 @@ function Sidebar (props) {
           pevisible={props.pevisible}
           img={props.img}
           title={props.title}
-         />
-          <NavToggle compact={!compact} setCompact={setCompact} />
-        </StyledNav>
-      </>
-    );
+        />
+        <NavToggle compact={!compact} setCompact={setCompact} />
+      </StyledNav>
+    </>
+  );
 }
 export default Sidebar;

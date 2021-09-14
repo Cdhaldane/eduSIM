@@ -1,11 +1,11 @@
-var supertest = require("supertest");
+let supertest = require("supertest");
 
 const express = require('express');
 const gameinstances = require("../models/GameInstances");
 
 const app = express();
 
-var server = supertest.agent("http://localhost:5050");
+let server = supertest.agent("http://localhost:5050");
 
 //==================== user API test ====================
 
