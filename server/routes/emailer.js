@@ -1,9 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-const multer = require('multer');
 const nodemailer = require('nodemailer');
 
-router.post("/sendEmail", (req,res) =>{
+router.post("/sendEmail", (req, res) => {
   let data = req.body
 
   let smtpTransport = nodemailer.createTransport({
@@ -13,16 +12,17 @@ router.post("/sendEmail", (req,res) =>{
       pass: "Legodinosaur"
     }
   });
+
   let mailOptions = {
     from: 'edusimuottawa@outlook.com',
     to: data.email,
     subject: 'EDUsim invite!',
-    html:`
+    html: `
     <div style="background-color: #fff; color: #8f001a;">
     <h1 style="margin: 0;">Hi ${data.name} ${data.lastname}</h1>
     <br />
     <h2 style="margin: 0;">${data.pname} is inviting you to join
-    ${data.title } on [Date] at [Time].
+    ${data.title} on [Date] at [Time].
      To join the simulation please click the personalized link below:</h2>
      <br />
      <h2 style="margin: 0;">Link</h2>
@@ -33,17 +33,17 @@ router.post("/sendEmail", (req,res) =>{
      <br />
      <h2 style="margin: 0;">The eduSIM Team</h2>
     </div>
-
-
     `
   };
-  smtpTransport.sendMail(mailOptions, (error,response) =>{
-    if(error){
+
+  smtpTransport.sendMail(mailOptions, (error, response) => {
+    if (error) {
       res.send(error)
     } else {
       res.send('Email sent: ' + response.response)
     }
-  })
+  });
+
   smtpTransport.close();
 })
 

@@ -1,4 +1,3 @@
-// Logic when the server is involved
 const AdminAccount = require("../models/AdminAccounts");
 
 // Get admin

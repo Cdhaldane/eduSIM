@@ -1,11 +1,10 @@
-let { Pool } = require('pg');
+const { Pool } = require('pg');
 
 const CONNECTION_STRING = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/simulatordb';
 const SSL = process.env.NODE_ENV === 'production';
 
-
 class Database {
-  constructor () {
+  constructor() {
     this._pool = new Pool({
       connectionString: CONNECTION_STRING,
       ssl: SSL
@@ -15,10 +14,9 @@ class Database {
       console.error('Unexpected error on idle PostgreSQL client.', err);
       process.exit(-1);
     });
-
   }
 
-  query (query, ...args) {
+  query(query, ...args) {
     this._pool.connect((err, client, done) => {
       if (err) throw err;
       const params = args.length === 2 ? args[0] : [];
@@ -33,10 +31,9 @@ class Database {
         callback({}, res.rows);
       });
     });
-
   }
 
-  end () {
+  end() {
     this._pool.end();
   }
 }
