@@ -427,7 +427,7 @@ class Graphics extends Component {
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status: "up"] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status || "up"] });
       console.log(this.state.saved)
               console.log(this.state.gameinstanceid)
               var body = {

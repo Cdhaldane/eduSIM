@@ -21,7 +21,7 @@ function NavBar(props) {
         <h4 className="navbar-logo">eduSIM - Educational Simulator Tool</h4>
       </a>
       <div className="menu-icon" onClick={toggleContextMenu}>
-        <i className={menuOpen ? "fas fa-times" : "fas fa-bars"}></i>
+        <i className={menuOpen ? "menu-close fas fa-times" : "menu-close fas fa-bars"}></i>
       </div>
       <div className={menuOpen ? "nav-menu active" : "nav-menu"}>
         {isAuthenticated && (
