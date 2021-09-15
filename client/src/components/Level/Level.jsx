@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Level.css"
 import { times } from "lodash";
+import { Link } from "react-router-dom";
 
 function Level(props) {
   const [count, setCount] = useState(1);
@@ -51,9 +52,9 @@ function Level(props) {
           {/* <p>It's {props.ptype} {count}! </p> */}
           <button onClick={handleCount}>Next</button>
         </div>
-        <a href="/dashboard" className="level-close">
+        <Link to="/dashboard" className="level-close">
           <i class="fas fa-times fa-3x"></i>
-        </a>
+        </Link>
       </div>
     </div>
   );

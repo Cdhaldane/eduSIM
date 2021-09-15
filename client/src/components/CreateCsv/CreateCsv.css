@@ -97,13 +97,11 @@
 }
 
 #boxj1 {
-  position: absolute;
   top: 0px;
   z-index: 200;
   display: flex;
   align-items: center;
   justify-content: left;
-  width: 1080px;
   height: 100px;
   color: black;
   font-family: 'Raleway';
@@ -201,7 +199,6 @@
 
 @media screen and (orientation: portrait) {
   #boxj1 {
-  left: -20px;
     font-size: 1.5rem;
     font-weight: bold;
   }
