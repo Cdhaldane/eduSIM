@@ -35,11 +35,6 @@ const StyledLink = styled(Link)`
   &.active {
 
   }
-  @media (max-width: 960px) {
-    span {
-      opacity: 1;
-    }
-  }
   img{
     position: relative;
     margin-right: -15px;
@@ -51,6 +46,11 @@ const StyledLink = styled(Link)`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  @media screen and (orientation: portrait) {
+      span {
+        opacity: 1;
+      }
   }
 `;
 

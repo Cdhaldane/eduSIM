@@ -391,21 +391,6 @@ class Graphics extends Component {
       pageNumber: e
     })
   }
-  handleMvisible = (e) => {
-    this.props.mvisible(e)
-  }
-   handleAvisible = (e) => {
-    this.props.avisible(e)
-  }
-   handlePavisible = (e) => {
-    this.props.pavisible(e)
-  }
-   handleSvisible = (e) => {
-    this.props.svisible(e)
-  }
-   handlePevisible = (e) => {
-    this.props.pevisible(e)
-  }
 
   handleSave = () => {
     const rects = this.state.rectangles,
@@ -5872,17 +5857,6 @@ class Graphics extends Component {
               ptype={this.handleType}
               num={this.handleNum}
             />
-            <Pencil
-              id="4"
-              psize="2"
-              type="nav"
-              title=""
-              mvisible={this.handleMvisible}
-              avisible={this.handleAvisible}
-              pavisible={this.handlePavisible}
-              svisible={this.handleSvisible}
-              pevisible={this.handlePevisible}
-              />
 
             </div>
       </React.Fragment>

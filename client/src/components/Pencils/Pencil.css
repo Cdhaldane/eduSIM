@@ -70,9 +70,9 @@
 }
 
 .drop4{
-  position: absolute;
-  top: -270px;
-  left: -420px;
+  position: fixed;
+  top: 20px;
+  left: 270px;
 }
 
 @media screen and (orientation: portrait) {
@@ -89,5 +89,10 @@
   }
   .drop3 {
     top: 210px;
+  }
+
+  .pencil-hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 }

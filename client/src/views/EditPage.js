@@ -25,36 +25,19 @@ const GridNav = styled.div`
 
 const GridMain = styled.main`
   grid-area: main;
+  margin-left: 70px;
   background-color: #e5e5e5;
   background-size: 40px 40px;
   background-image:
   linear-gradient(to right, grey 1px, transparent 1px),
   linear-gradient(to bottom, grey 1px, transparent 1px);
+  @media screen and (orientation: portrait) {
+    margin-left: 0px;
+  }
 `;
 
 function EditPage(props){
     const [showNav, setShowNav] = useState(false);
-    const [mvisible, setMvisible] = useState("false")
-    const [avisible, setAvisible] = useState("false")
-    const [pavisible, setPavisible] = useState("false")
-    const [svisible, setSvisible] = useState("false")
-    const [pevisible, setPevisible] = useState("false")
-
-    function handleMvisible(e) {
-      setMvisible(e);
-    }
-    function handleAvisible(e) {
-      setAvisible(e);
-    }
-    function handlePavisible(e) {
-      setPavisible(e);
-    }
-    function handleSvisible(e) {
-      setSvisible(e);
-    }
-    function handlePevisible(e) {
-      setPevisible(e);
-    }
 
     if(props.location.img){
       localStorage.setItem('gameinstance', props.location.gameinstance)
@@ -69,11 +52,6 @@ function EditPage(props){
         <Grid>
           <GridNav>
               <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
-                mvisible={mvisible}
-                avisible={avisible}
-                pavisible={pavisible}
-                svisible={svisible}
-                pevisible={pevisible}
                 img={props.location.img}
                 title={props.location.gameinstance}
               />
@@ -82,11 +60,6 @@ function EditPage(props){
             <Canvas
               adminid={localStorage.adminid}
               gameinstance={localStorage.gameinstance}
-              mvisible={handleMvisible}
-              avisible={handleAvisible}
-              pavisible={handlePavisible}
-              svisible={handleSvisible}
-              pevisible={handlePevisible}
             />
           </GridMain>
         </Grid>

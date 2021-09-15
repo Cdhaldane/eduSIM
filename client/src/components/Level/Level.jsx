@@ -37,9 +37,11 @@ function Level(props) {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && <h1>Edit Mode</h1>}
         <div className="level-nav">
-          <select className="level-select" onChange={handleChange} value={count}>
-            {createSelectItems()}
-          </select>
+          {!props.gamepage && (
+            <select className="level-select" onChange={handleChange} value={count}>
+              {createSelectItems()}
+            </select>
+          )}
           
           <div className="level-bar">
               {times(props.number, (num) => ( // dynamically scaling level bar
