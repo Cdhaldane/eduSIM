@@ -114,37 +114,37 @@ a {
 
 /* CSSTransition classes  */
 
-.menu-primary-enter {
+.edit-menu-primary-enter {
   position: absolute;
   transform: translateX(-110%);
 }
 
-.menu-primary-enter-active {
+.edit-menu-primary-enter-active {
   transform: translateX(300%);
   transition: all var(--speed) ease;
 }
 
-.menu-primary-exit {
+.edit-menu-primary-exit {
   position: absolute;
 }
 
-.menu-primary-exit-active {
+.edit-menu-primary-exit-active {
   transform: translateX(-110%);
   transition: all var(--speed) ease;
 }
 
-.menu-secondary-enter {
+.edit-menu-secondary-enter {
   transform: translateX(110%);
 }
 
-.menu-secondary-enter-active {
+.edit-menu-secondary-enter-active {
   transform: translateX(0%);
   transition: all var(--speed) ease;
 }
 
-.menu-secondary-exit {}
+.edit-menu-secondary-exit {}
 
-.menu-secondary-exit-active {
+.edit-menu-secondary-exit-active {
   transform: translateX(110%);
   transition: all var(--speed) ease;
 }

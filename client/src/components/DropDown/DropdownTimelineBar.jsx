@@ -42,7 +42,7 @@ function DropdownTimelineBar(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        className="menu-primary"
+        classNames="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">

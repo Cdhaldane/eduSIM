@@ -214,7 +214,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        className="menu-primary"
+        classNames="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -243,7 +243,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'shapes'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -268,7 +268,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'media'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -290,7 +290,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'image'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -328,7 +328,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'video'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -354,7 +354,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'audio'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -376,7 +376,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'docs'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -405,7 +405,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'draw'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
@@ -435,7 +435,7 @@ function DropdownAddObjects(props) {
       <CSSTransition
         in={activeMenu === 'pieces'}
         timeout={500}
-        className="menu-secondary"
+        classNames="menu-secondary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">

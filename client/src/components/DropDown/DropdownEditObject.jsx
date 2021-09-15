@@ -78,7 +78,7 @@ function DropdownEditObject(props) {
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
-          className="menu-primary"
+          classNames="edit-menu-primary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menuedit">
@@ -163,7 +163,7 @@ function DropdownEditObject(props) {
         <CSSTransition
           in={activeMenu === 'shapes'}
           timeout={500}
-          className="menu-secondary"
+          classNames="edit-menu-secondary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menuedit">
@@ -181,7 +181,7 @@ function DropdownEditObject(props) {
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
-          className="menu-primary"
+          classNames="edit-menu-primary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menuedit">

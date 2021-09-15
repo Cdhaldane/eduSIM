@@ -18,6 +18,7 @@ function DropdownNavigationBar(props) {
   }, []);
 
   const handleClickOutside = e => {
+    console.log("NAV");
     if (!dropdownRef.current.contains(e.target)) {
       props.close();
     }
@@ -25,7 +26,9 @@ function DropdownNavigationBar(props) {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   });
 
   function calcHeight(el) {
@@ -73,7 +76,7 @@ function DropdownNavigationBar(props) {
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
-        className="menu-primary"
+        classNames="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">

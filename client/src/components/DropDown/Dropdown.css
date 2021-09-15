@@ -108,33 +108,46 @@ a {
 
 .menu-primary-enter {
   position: absolute;
+  opacity: 0.5;
   transform: translateX(-110%);
 }
 
 .menu-primary-enter-active {
-  transform: translateX(300%);
+  opacity: 1;
+  transform: translateX(0%);
   transition: all var(--speed) ease;
 }
 
 .menu-primary-exit {
+  opacity: 1;
   position: absolute;
 }
 
 .menu-primary-exit-active {
+  opacity: 0.5;
   transform: translateX(-110%);
   transition: all var(--speed) ease;
 }
 
 .menu-secondary-enter {
+  opacity: 0.5;
+  position: absolute;
   transform: translateX(110%);
 }
 
 .menu-secondary-enter-active {
+  opacity: 1;
   transform: translateX(0%);
   transition: all var(--speed) ease;
 }
 
+.menu-secondary-exit {
+  opacity: 1;
+  position: absolute;
+}
+
 .menu-secondary-exit-active {
+  opacity: 0.5;
   transform: translateX(110%);
   transition: all var(--speed) ease;
 }
@@ -344,7 +357,22 @@ a {
   color: #636363;
 }
 
-#rolenameinput {
+.role-name-input2 {
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  font-size: 0.9em;
+  padding-left: 0.25em;
+  width: 80%;
+  height: 100%;
+}
+
+.role-name-input2::placeholder {
+  font-size: 0.8em;
+  font-family: "Montserrat", sans-serif;
+  color: #636363;
+}
+
+.role-name-input {
   position: absolute;
   top: 60px;
   left: 50px;
@@ -355,7 +383,7 @@ a {
   padding-left: 1.5em;
 }
 
-#rolenameinput::placeholder {
+.role-name-input::placeholder {
   font-family: "Montserrat", sans-serif;
   font-size: 1.0rem;
   color: #636363;

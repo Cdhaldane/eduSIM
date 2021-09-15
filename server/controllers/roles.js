@@ -19,7 +19,7 @@ exports.getGameRoles = async (req, res) => {
 
 exports.createRole = async (req, res) => {
   const gameinstanceid = req.body.gameinstanceid;
-  const gamerole = req.body.gamerole.toLowerCase();
+  const gamerole = req.body.gamerole;
   
   try {
     let newGameInstance = await GameRole.create({

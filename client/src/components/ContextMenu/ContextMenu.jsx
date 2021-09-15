@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import DropdownEditObject from "../Dropdown/DropdownEditObject";
+import * as $ from "jquery";
+
 import "./ContextMenu.css"
 
 function ContextMenu(props) {
@@ -8,12 +10,14 @@ function ContextMenu(props) {
   const menu = React.useRef();
 
   const handleClickOutside = e => {
+    console.log("RIGHT CLICK");
     if (!menu.current.contains(e.target)) {
       props.close();
     }
   };
 
   React.useEffect(() => {
+    console.log($(".cmenu"));
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   });
