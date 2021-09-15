@@ -188,8 +188,11 @@
 
 #rolesdrops{
   position: relative;
-  left: -420px;
-  top: 600px;
+  width: 300px;
+}
+
+.modal-role-select {
+  align-items: center;
 }
 
 .emailmodal-table {

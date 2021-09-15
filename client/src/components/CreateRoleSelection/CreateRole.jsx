@@ -3,18 +3,18 @@ import Dropdownroles from "../DropDown/Dropdownroles";
 
 
 
-  function CreateRole(props) {
-    console.log(props)
+function CreateRole(props) {
+  console.log(props)
   return (
-      <div class="areacsv" >
-      <form className="areacsvform">
+    <div class="areacsv" >
+      <form className="areacsvform modal-role-select">
         <p id="boxj1"> Select the role you wish to play! </p>
-      <p id="rolesdrops">
+        <p id="rolesdrops">
           <Dropdownroles
             gameid={props.gameid}
           />
         </p>
-        </form>
+      </form>
 
     </div>
   );

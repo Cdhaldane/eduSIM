@@ -107,7 +107,7 @@
   width: 60px;
 }
 
-@media screen and (max-width: 960px) {
+@media screen and (orientation: portrait) {
   .level {
     flex-direction: column;
     align-items: stretch;
@@ -122,6 +122,14 @@
   }
   .level-bar {
     padding: 5px 20px;
+  }
+
+  .level-gamepage .level-nav {
+    margin-top: 20px;
+    margin-right: 60px;
+  }
+  .level-gamepage .level-close {
+    margin-top: 15px;
   }
 
   #all {

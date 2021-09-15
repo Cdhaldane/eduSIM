@@ -81,20 +81,13 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-
-#rolesdrop{
-  position: absolute;
-  left: -420px;
-  top: 520px;
-}
-
 #infostage {
   position: absolute;
   left: 0px;
   top: 0px;
 }
 
-@media screen and (max-width: 960px){
+@media screen and (orientation: portrait) {
   .info0 {
     width: calc(100% - 60px);
     left: 30px;

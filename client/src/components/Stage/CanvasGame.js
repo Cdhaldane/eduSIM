@@ -520,7 +520,7 @@ class Graphics extends Component {
           </Stage>
         </div>
         <div className="eheader">
-        <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
+        <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel} gamepage/>
             <div>
               <div className={"info" + this.state.open}>
                 <div id="infostage">

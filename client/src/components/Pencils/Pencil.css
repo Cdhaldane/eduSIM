@@ -59,14 +59,14 @@
 
 .drop2 {
   position: fixed;
-  top: 640px;
-  left: -360px;
+  top: 150px;
+  left: 90px;
 }
 
 .drop3 {
   position: fixed;
-  top: 640px;
-  right: 760px;
+  top: 150px;
+  right: 320px;
 }
 
 .drop4{
@@ -75,19 +75,19 @@
   left: -420px;
 }
 
-@media screen and (max-width: 960px){
+@media screen and (orientation: portrait) {
   #pencil2 {
     left: 20px;
     top: 140px;
   }
   .drop2 {
-    top: 700px;
-    left: -430px;
+    top: 210px;
+    left: 20px;
   }
   #pencil3 {
     top: 140px;
   }
   .drop3 {
-    top: 700px;
+    top: 210px;
   }
 }
