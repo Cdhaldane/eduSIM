@@ -80,6 +80,11 @@
   top: -270px;
   left: unset;
 }
+.drop4.hidden {
+  position: fixed;
+  top: 20px;
+  left: 90px;
+}
 
 @media screen and (orientation: portrait) {
   #pencil2 {

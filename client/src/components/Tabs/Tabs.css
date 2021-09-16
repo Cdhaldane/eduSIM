@@ -347,6 +347,7 @@ hr {
 }
 .group-column {
   flex: 1;
+  min-width: 0;
 }
 .group-table {
   padding-bottom: 20px;

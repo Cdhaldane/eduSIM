@@ -117,7 +117,7 @@ function Pencil(props) {
         >
       </i>
 
-      {drop && <div className={"drop" + props.id}>
+      {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
 
       {props.type === "info"  ? (
         <Dropdowninfo ptype={handleType} num={handleNum}/>

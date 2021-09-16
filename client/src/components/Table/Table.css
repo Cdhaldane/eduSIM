@@ -46,6 +46,7 @@
 .app-container form td:last-child > div > button {
   flex: 1;
   margin: 0 2px;
+  font-family: inherit;
 }
 
 .app-container form * {
