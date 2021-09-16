@@ -28,13 +28,7 @@ const StyledNav = styled.nav`
   }
   @media screen and (orientation: portrait) {
     width: 256px;
-    transform: translate3d(
-      ${(p) =>
-    p.visible ? 0 : "-260px"},
-      0,
-      0
-    );
-    transition: transform 0.3s
+    transition: left 0.3s
       ${(p) => p.visible ? "cubic-bezier(0.4, 0, 1, 1)" : "cubic-bezier(0, 0, 0.2, 1)"} !important;
     left: ${(p) => (p.compact ? "-256px" : "0")};
   }

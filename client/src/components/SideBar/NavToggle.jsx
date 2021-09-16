@@ -15,9 +15,8 @@ const Button = styled.button`
         transform: rotate(${p => p.compact ? "180deg" : "0deg"});
     }
     @media screen and (orientation: portrait) {
-      transition-property: left !important;
-      transition-duration: 0.3s !important;
-      transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+      transition: left 0.3s
+        ${(p) => p.visible ? "cubic-bezier(0.4, 0, 1, 1)" : "cubic-bezier(0, 0, 0.2, 1)"} !important;
       position: fixed;
       left: ${p => p.compact ? '0px' : '256px'};
       top: calc(50% - 50px);
