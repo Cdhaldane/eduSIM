@@ -8,15 +8,17 @@ const ReadOnlyRow = ({ contact, handleEditClick, handleDeleteClick }) => {
       <td>{contact.email}</td>
       <td>{contact.group}</td>
       <td>
-        <button
-          type="button"
-          onClick={(event) => handleEditClick(event, contact)}
-        >
-          Edit
-        </button>
-        <button type="button" onClick={() => handleDeleteClick(contact.id)}>
-          Delete
-        </button>
+        <div>
+          <button
+            type="button"
+            onClick={(event) => handleEditClick(event, contact)}
+          >
+            Edit
+          </button>
+          <button type="button" onClick={() => handleDeleteClick(contact.id)}>
+            Delete
+          </button>
+        </div>
       </td>
     </tr>
   );

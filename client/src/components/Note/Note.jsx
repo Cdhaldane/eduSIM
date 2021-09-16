@@ -5,12 +5,17 @@ import "./Note.css";
 
 function Note(props) {
   return (
-    <Link to={props.url}>
-      <button className={props.btnClass} type="button" alt="sim background" onClick={props.onClick} >
+    props.onClick ? (
+      <button className={props.class} type="button" alt="sim background" onClick={props.onClick} >
         <h1>{props.title}</h1>
-        <img src={props.img} alt="note background" />
+        <img src={props.img} alt="note background"/>  
       </button>
-    </Link>
+    ) : (
+      <Link to={props.url} className={props.class} >
+        <h1>{props.title}</h1>
+        <img src={props.img} alt="note background"/>  
+      </Link>
+    )
   );
 }
 

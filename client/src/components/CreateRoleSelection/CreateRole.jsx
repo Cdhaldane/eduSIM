@@ -1,20 +1,18 @@
 import React from "react";
-import { Container } from "react-bootstrap";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 
 function CreateRole(props) {
+  console.log(props)
   return (
-    <div className="areacsv" >
-      <Container>
-        <form id="areacsvform">
-          <p id="boxj1">Select the role you wish to play!</p>
-          <p id="rolesdrops">
-            <DropdownRoles
-              gameid={props.gameid}
-            />
-          </p>
-        </form>
-      </Container>
+    <div class="areacsv" >
+      <form className="areacsvform modal-role-select">
+        <p id="boxj1"> Select the role you wish to play! </p>
+        <p id="rolesdrops">
+          <DropdownRoles
+            gameid={props.gameid}
+          />
+        </p>
+      </form>
     </div>
   );
 }

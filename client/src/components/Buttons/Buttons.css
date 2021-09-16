@@ -18,6 +18,7 @@
     background-color: #8f001a;
     font-size: 1.3rem;
     transition: transform 0.3s ease;
+    font-family: inherit;
 }
 
 .btn:hover {

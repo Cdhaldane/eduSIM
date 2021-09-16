@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import URLvideo from "./URLVideos";
 import axios from "axios";
-import {Link } from "react-router-dom";
+// import {Link } from "react-router-dom";
 import Level from "../Level/Level";
 import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
@@ -526,7 +526,7 @@ class Graphics extends Component {
           </Stage>
         </div>
         <div className="eheader">
-        <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel}/>
+        <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel} gamepage/>
             <div>
               <div className={"info" + this.state.open}>
                 <div id="infostage">
@@ -821,9 +821,9 @@ class Graphics extends Component {
 
               </div>
 
-              <Link to="/dashboard">
-                <i id="editpagex" className="fas fa-times fa-3x"></i>
-              </Link>
+              {/* <Link to="/dashboard">
+                <i id="editpagex" class="fas fa-times fa-3x"></i>
+              </Link> */}
             </div>
       </React.Fragment>
     );

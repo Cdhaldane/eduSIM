@@ -2,12 +2,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50%;
+  width: 60%;
+  max-width: 900px;
   font-family: 'Raleway';
-  font-size: 2.5rem;
+  font-size: 1rem;
   position: relative;
-  left: 500px;
-  top: -100px;
   z-index: 20000;
   border-radius: 10%;
 }
@@ -39,57 +38,53 @@
   }
 }
 
-.areacsv p {
-  text-align: left;
-  font-size: 2.0rem;
-  padding: 30px;
-  font-weight: 700;
-}
-
-#areacsvform {
+.areacsvform {
   position: relative;
-  top: 100px;
-  right: 250px;
-  width: 1000px;
+  width: 100%;
   height: 450px;
   margin: 30px auto 20px auto;
   background: #fff;
-  padding: 15px;
+  padding: 30px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
   border: solid 2px #8f001a;
+  display: flex;
+  flex-direction: column;
 }
 
-.areacsv input[type="file"] {
-  position: relative;
-  left: 0px;
-  font-size: 0rem;
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-  text-align: left;
+.areacsvform input[type="file"] {
+  display: none; 
 }
 
-.areacsv label {
-  position: absolute;
-  left: 15px;
-  padding: 30px;
-  font-size: 2.0rem;
-  font-weight: 700;
-  color: black;
+.modal-title {
+  font-size: 2rem;
+  font-weight: bold;
   text-align: left;
-  cursor: pointer;
+  width: 100%;
+}
+
+.areacsv-filename {
+  display: flex;
+  font-size: 1.2rem;
+  margin: 0 20px;
+}
+.areacsv-filename > p {
+  margin-right: 20px;
+}
+.areacsv-filename > input {
+  flex: 1;
+  font-size: 1.2rem;
+}
+.areacsv-links {
+  display: flex;
+  margin: 40px 20px;
+  justify-content: space-between;
 }
 
 .areacsv select {
   position: relative;
   bottom: -17px;
-  padding: 10px;
-  font-size: 1.5rem;
-  font-weight: 200;
+  
   color: black;
   text-align: left;
   cursor: pointer;
@@ -103,13 +98,11 @@
 }
 
 #boxj1 {
-  position: absolute;
   top: 0px;
   z-index: 200;
   display: flex;
   align-items: center;
   justify-content: left;
-  width: 1080px;
   height: 100px;
   color: black;
   font-family: 'Raleway';
@@ -117,20 +110,28 @@
   font-weight: bold;
 }
 
-#csvfile {
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  color: blue;
-  text-decoration: underline;
+.modal-bottomright-button {
+  font-family: inherit;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background-color: #8f001a;
+  border: none;
+  font-size: 1.5rem;
+  align-self: flex-end;
+  margin-top: auto;
 }
 
-#csvfile2 {
-  position: absolute;
-  top: 120px;
-  left: 500px;
+.csv-link {
   color: blue;
   text-decoration: underline;
+  font-size: 1.5rem;
+  cursor: pointer;
+  max-width: 50%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 #addj {
@@ -146,14 +147,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   background-color: #8f001a;
-}
-
-#emailtable {
-  position: absolute;
-  top: 100px;
-  left: 30px;
-  width: 85%;
-  height: 100%;
 }
 
 #boxtabs {
@@ -196,24 +189,43 @@
 
 #rolesdrops {
   position: relative;
-  left: -420px;
-  top: 600px;
+  width: 300px;
 }
 
-@media screen and (max-width: 960px) {
+.modal-role-select {
+  align-items: center;
+}
+
+.emailmodal-table {
+  flex: 1;
+  margin-top: 10px;
+}
+
+@media screen and (orientation: portrait) {
   #boxj1 {
-    left: -20px;
     font-size: 1.5rem;
     font-weight: bold;
   }
-  #csvfile {
-    font-size: 1.3rem;
-    left: -20px;
+
+  .areacsv-filename {
+    flex-direction: column;
   }
-  #csvfile2 {
-    font-size: 1.3rem;
-    left: 230px;
+  .areacsv-filename > p {
+    margin-right: 0;
+    margin-bottom: 5px;
   }
+  .areacsv-links {
+    flex-direction: column;
+    margin: 20px 10px;
+    align-items: center;
+  }
+  .areacsv-links > label {
+    margin: 10px 0;
+  }
+  .modal-title {
+    text-align: center;
+  }
+
   #addj {
     left: 362px;
   }

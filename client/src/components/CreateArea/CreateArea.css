@@ -3,17 +3,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   height: 900px;
+  width: 100%;
   font-family: "Raleway";
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   position: relative;
-  left: 250px;
-  top: -20px;
   z-index: 2;
   border-radius: 10%;
   border: none;
-  margin-top: -9px;
-  margin-bottom: -40px;
 }
 
 .area form:after {
@@ -43,25 +41,36 @@
   }
 }
 
-.area p {
+/* .area p {
   text-align: left;
   font-size: 2rem;
   padding: 30px;
   font-weight: 700;
-}
+} */
 
 .area form {
   position: relative;
-  top: -50px;
-  right: 250px;
-  width: 1000px;
-  height: 650px;
-  margin: 30px auto 20px auto;
   background: #fff;
-  padding: 15px;
+  width: 60%;
+  max-width: 900px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
   border: solid 4px #8f001a;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  align-items: flex-start;
+}
+.form-input > div {
+  margin: 10px 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
 }
 
 #add {
@@ -92,26 +101,15 @@
   text-align: left;
 }
 
-.area label {
-  position: absolute;
-  left: 15px;
-  padding: 30px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: black;
-  text-align: left;
-  cursor: pointer;
-}
-
-.area select {
+.area select,
+#namei {
   position: relative;
-  bottom: -17px;
   padding: 10px;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 200;
   color: black;
   text-align: left;
-  cursor: pointer;
+  font-family: inherit;
 }
 
 ::placeholder {
@@ -153,10 +151,10 @@
 }
 
 .createmodalarea {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   border-radius: 4px;
   overflow: hidden;
   border: none;
@@ -198,134 +196,9 @@
   }
 }
 
-#box {
-  z-index: 200;
-  display: flex;
-  align-items: left;
-  justify-content: left;
-  width: 500px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2.5rem;
-  font-weight: 2000;
-}
-
-#box1 {
-  position: relative;
-  top: 40px;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  width: 680px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box2 {
-  position: relative;
-  top: 100px;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  width: 400px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box3 {
-  position: relative;
-  left: 0px;
-  top: 100px;
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  width: 700px;
-  height: 100px;
-  color: black;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#box3 input, #box3 textarea {
-  position: relative;
-  left: 40px;
-  top: 0px;
-  color: grey;
-  font-weight: 700;
-  text-align: left;
-  width: 340px;
-  border: none;
-  padding: 4px;
-  outline: none;
-  font-family: "Raleway";
-  font-size: 2rem;
-  border: solid 2px black;
-}
-
-#box3 input::placeholder {
-  opacity: 0.8;
-}
-
-#box4 {
-  position: relative;
-  left: -15px;
-  top: -15px;
-  background-color: white;
-  height: 180px;
-  width: 1000px;
-  overflow: hidden;
-  padding: 5px;
-}
-
-#box4 img {
-  height: 100px;
-  width: 100px;
-  margin: 10px;
-  border: solid 1px black;
-  overflow: scroll;
-  direction: rtl;
-  border-radius: 10%;
-}
-
-#box4 img:hover {
-  cursor: pointer;
-  border-radius: 0%;
-}
-
-#box4 label {
-  position: relative;
-  left: 6px;
-  top: -50px;
-  border: dashed 1px black;
-  font-size: 1.7rem;
-  padding: 35px;
-  text-align: center;
-  border-radius: 10%;
-}
-
-#prevgame {
-  position: relative;
-  top: 70px;
-  left: -75px;
-  padding: 30px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: black;
-  text-align: left;
-  cursor: pointer;
-}
-
 #prevgames {
-  position: relative;
-  top: 70px;
-  left: -50px;
+  top: 0px;
+  left: 0px;
   border-radius: 0;
 }
 
@@ -364,12 +237,6 @@ select#imgoptions option[value="img3"] {
   font-size: 2rem;
 }
 
-#switch {
-  position: relative;
-  left: -300px;
-  bottom: -20px;
-}
-
 #imgbutton {
   position: relative;
   left: -40px;
@@ -385,24 +252,51 @@ select#imgoptions option[value="img3"] {
   background-color: white;
 }
 
-#imgs {
-  position: absolute;
-  top: 680px;
-  right: 250px;
+.form-imgs {
   background-color: white;
-  width: 1000px;
-  height: 140px;
   overflow: hidden;
-  transform: translate(0%, 20%);
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   border-radius: 0%;
-  margin-bottom: -10px;
+  margin-top: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+.form-imgs img {
+  height: 100px;
+  width: 100px;
+  border: solid 1px black;
+  overflow: scroll;
+  direction: rtl;
+  border-radius: 10%;
+  cursor: pointer;
+  margin: 5px;
+  object-fit: cover;
+}
+.form-imgs img:hover {
+  border-radius: 0;
+}
+.form-imgsubmit {
+  border: dashed 1px black;
+  font-size: 1.5rem;
+  padding: 15px;
+  text-align: center;
+  border-radius: 10%;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  height: 100px;
+  margin: 5px;
+}
+.form-imgpreview {
+  display: flex;
+  align-items: center;
 }
 
 #plus {
-  position: absolute;
-  left: 320px;
   width: 40px;
 }
 
@@ -410,19 +304,18 @@ select#imgoptions option[value="img3"] {
   cursor: pointer;
 }
 
-#preview {
+#preview, #previewno {
   border: solid black 1px;
-  position: absolute;
-  left: 400px;
   width: 90px;
   height: 90px;
   border-radius: 10%;
+  margin-left: 10px;
 }
 
 #games {
   position: relative;
   left: 0px;
-  top: 20px;
+  top: 0px;
   border-radius: 0;
 }
 
@@ -431,94 +324,17 @@ select#imgoptions option[value="img3"] {
   width: 200px;
 }
 
-.react-switch {
-  position: relative;
-  top: -20px;
-  left: 330px;
-  vertical-align: middle;
-  margin-left: 4px;
-}
+@media screen and (orientation: portrait) {
 
-@media screen and (max-width: 960px) {
   .area {
-    font-family: 'Raleway';
-    position: relative;
-    left: 250px;
-    top: 30px;
-    z-index: 2;
-    border-radius: 10%;
-    border: none;
-    margin-top: -9px;
-    margin-bottom: -40px;
+    font-size: 1.2rem;
   }
-  .area p {
-    text-align: left;
-    padding: 20px;
-    font-weight: 700;
+  
+  .form-input > div {
+    flex-direction: column;
   }
-  .area form {
-    position: relative;
-    font-size: 0.5rem;
-    top: -50px;
-    right: 250px;
-    width: 600px;
-    height: 500px;
-    margin: 30px auto 20px auto;
-    background: #fff;
-    padding: 15px;
-    box-shadow: 0 2px 5px #ccc;
-    text-align: center;
-    border: solid 4px #8f001a;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-  #add {
-    color: white;
-    z-index: 2000;
-    position: absolute;
-    bottom: 20px;
-    left: 480px;
-    border-radius: 5%;
-    width: 70px;
-    height: 35px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    background-color: #8f001a;
-    border: none;
-    font-size: 1.5rem;
-  }
-  .area input[type="file"] {
-    position: relative;
-    left: 0px;
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
-    text-align: left;
-  }
-  .area label {
-    position: absolute;
-    top: 80px;
-    left: 5px;
-    padding: 30px;
-    font-weight: 700;
-    color: black;
-    text-align: left;
-    cursor: pointer;
-    font-size: 1.5rem;
-  }
-  .area select {
-    position: relative;
-    left: 50px;
-    bottom: 0px;
-    padding: 5px;
-    font-size: 1.5rem;
-    font-weight: 200;
-    color: black;
-    text-align: left;
-    cursor: pointer;
+  .form-input > div > * {
+    margin-top: 10px;
   }
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -544,15 +360,6 @@ select#imgoptions option[value="img3"] {
     z-index: -1;
     animation: animatedgradient 10s ease alternate infinite;
     background-size: 300% 300%;
-  }
-  .createmodal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 4px;
-    overflow: hidden;
-    border: none;
   }
   .myoverlay {
     position: fixed;
@@ -583,177 +390,8 @@ select#imgoptions option[value="img3"] {
       background-position: 0% 50%;
     }
   }
-  #box {
-    z-index: 200;
-    display: flex;
-    align-items: left;
-    justify-content: left;
-    width: 500px;
-    height: 100px;
-    color: black;
-    font-weight: 2000;
-    font-size: 1.5rem;
-  }
-  #box1 {
-    position: relative;
-    top: 0px;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    width: 680px;
-    height: 100px;
-    font-size: 1.5rem;
-    color: black;
-  }
-  #box2 {
-    position: relative;
-    top: -20px;
-    z-index: 200;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    width: 400px;
-    height: 100px;
-    color: black;
-  }
-  #box3 {
-    position: relative;
-    left: 0px;
-    top: 0px;
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    width: 700px;
-    height: 100px;
-    color: black;
-    font-size: 1.5rem;
-  }
-  #box3 input, #box3 textarea {
-    position: relative;
-    left: 40px;
-    top: 0px;
-    color: grey;
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-align: left;
-    width: 240px;
-    border: none;
-    padding: 4px;
-    outline: none;
-    border: solid 2px black;
-  }
-  #box3 input::placeholder {
-    opacity: 0.8;
-  }
-  #box4 {
-    position: relative;
-    left: -15px;
-    top: -15px;
-    background-color: white;
-    height: 90px;
-    width: 1000px;
-    overflow: hidden;
-    padding: 5px;
-  }
-  #box4 img {
-    height: 50px;
-    width: 50px;
-    margin: 10px;
-    border: solid 1px black;
-    overflow: scroll;
-    direction: rtl;
-    border-radius: 10%;
-  }
-  #box4 img:hover {
-    cursor: pointer;
-    border-radius: 0%;
-  }
-  #box4 label {
-    position: relative;
-    left: 6px;
-    top: -25px;
-    border: dashed 1px black;
-    font-size: 1.5rem;
-    padding: 10px;
-    text-align: center;
-    border-radius: 10%;
-  }
-  #prevgame {
-    position: relative;
-    top: 0px;
-    left: -15px;
-    padding: 30px;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: black;
-    text-align: left;
-    cursor: pointer;
-  }
-  #prevgames {
-    position: relative;
-    font-size: 1.5rem;
-    width: 190px;
-    top: 0px;
-    left: -25px;
-    border-radius: 0;
-  }
-  #switch {
-    position: absolute;
-    left: 50px;
-    bottom: -15px;
-  }
-  #imgs {
-    position: relative;
-    top: -90px;
-    right: 250px;
-    background-color: white;
-    width: 600px;
-    height: 90px;
-    overflow: hidden;
-    transform: translate(0%, 20%);
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-    border-radius: 0%;
-    margin-bottom: -10px;
-  }
+
   #imgs label {
     width: 10px;
-  }
-  #plus {
-    position: absolute;
-    left: 260px;
-    width: 40px;
-  }
-  #plus:hover {
-    cursor: pointer;
-  }
-  #preview {
-    border: solid black 1px;
-    position: absolute;
-    left: 350px;
-    width: 90px;
-    height: 90px;
-    border-radius: 10%;
-  }
-  #previewno {
-    position: absolute;
-    left: 350px;
-    width: 90px;
-    height: 90px;
-    border-radius: 10%;
-  }
-  #games {
-    position: relative;
-    left: 90px;
-    top: -15px;
-  }
-  .react-switch {
-    position: relative;
-    top: -80px;
-    left: 330px;
-    vertical-align: middle;
-    margin-left: 4px;
   }
 }

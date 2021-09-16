@@ -1,96 +1,37 @@
 #all {
-  position: relative;
-  top: 130px;
+  position: fixed;
+  top: 0px;
+  left: 70px;
+  height: 160px;
+  background: linear-gradient(0deg, rgba(229, 229, 229, 0), rgba(229, 229, 229));
+  width: calc(100% - 70px);
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 #all h1 {
-  position: absolute;
-  top: -850px;
-  left: 1650px;
   width: 200px;
   opacity: 0.7;
-  transform: rotate(45deg);
   font-family: 'Cedarville Cursive', cursive;
 }
 
-#all a {
-  position: absolute;
-  top: -880px;
+.level-close {
+  margin-left: 40px;
   color: #8f001a;
-  left: 1760px;
-}
-
-.ball1 {
-  position: relative;
-  top: -872px;
-  left: 473px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.ball2 {
-  position: relative;
-  top: -872px;
-  left: 631px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.ball3 {
-  position: relative;
-  top: -872px;
-  left: 792px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.ball4 {
-  position: relative;
-  top: -872px;
-  left: 948px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.ball5 {
-  position: relative;
-  top: -872px;
-  left: 1106px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-.ball6 {
-  position: relative;
-  top: -872px;
-  left: 1266px;
-  z-index: 1;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-#levels {
-  position: absolute;
-  top: -880px;
-  left: 300px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .level {
-  height: 0px;
+  position: absolute;
+  top: 0;
+  padding: 0 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level p {
+/* .level p {
   position: absolute;
   color: #636363;
   font-size: 2.2rem;
@@ -100,12 +41,9 @@
   width: 100px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
+} */
 
 .level button {
-  position: absolute;
-  top: -880px;
-  left: 1400px;
   width: 100px;
   height: 50px;
   font-family: "Montserrat", sans-serif;
@@ -121,189 +59,88 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level img {
-  position: absolute;
-  left: 450px;
-  top: -890px;
-  height: 80px;
-  width: 700px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
 .level button:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
 
-#img1 {
-  object-position: left;
-  object-fit: cover;
-  width: 900px;
-  height: 10px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-nav {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  margin: auto;
+  max-width: 1000px;
 }
 
-#img2 {
-  object-position: left;
-  object-fit: cover;
-  width: 220px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-bar {
+  flex: 1;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
 }
 
-#img3 {
-  object-position: left;
-  object-fit: cover;
-  width: 379px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-bar-section:not(:last-child) {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
-#img4 {
-  object-position: left;
-  object-fit: cover;
-  width: 537px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-bar-section {
+  transition: all .3s;
 }
 
-#img5 {
-  object-position: left;
-  object-fit: cover;
-  width: 694px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-bar-node {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 5px solid #8f001a;
+  background-color: rgb(150, 150, 150);
+  transition: background-color .3s;
 }
 
-#img6 {
-  object-position: left;
-  object-fit: cover;
-  width: 854px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+.level-bar-node-active {
+  background-color: white;
 }
 
-@media screen and (max-width: 1860px) {
-  #all h1 {
-    top: -850px;
-    left: 1550px;
+.level-bar-line {
+  height: 8px;
+  flex: 1;
+  background-color: #8f001a;
+}
+
+.level-select {
+  top: unset;
+  left: unset;
+  width: 60px;
+}
+
+@media screen and (orientation: portrait) {
+  .level {
+    flex-direction: column;
+    align-items: stretch;
   }
-  #all a {
-    top: -880px;
-    left: 1660px;
+  .level-nav {
+    margin: 0;
   }
-}
-
-@media screen and (max-width: 1760px) {
-  #all h1 {
-    top: -850px;
-    left: 1450px;
-  }
-  #all a {
-    top: -880px;
-    left: 1560px;
-  }
-  .level button {
-    left: 1350px;
-  }
-  #levels {
-    left: 380px;
-  }
-}
-
-@media screen and (max-width: 1660px) {
-  #all h1 {
-    top: -930px;
-    left: 970px;
-    transform: rotate(0);
-  }
-  #all a {
-    top: -920px;
-    left: 1160px;
-  }
-}
-
-@media screen and (max-width: 1560px) {
-  #all {
+  .level-close {
     position: absolute;
-    left: -120px;
+    right: 20px;
+    top: 5px;
+  }
+  .level-bar {
+    padding: 5px 20px;
+  }
+  .level-gamepage .level-nav {
+    margin-top: 20px;
+    margin-right: 60px;
+  }
+  .level-gamepage .level-close {
+    margin-top: 15px;
+  }
+  #all {
+    left: 0px;
+    width: 100%;
     transition-duration: 0.3s !important;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-}
-
-@media screen and (max-width: 1450px) {
-  #all {
-    position: absolute;
-    left: -220px;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-}
-
-@media screen and (max-width: 1350px) {
-  #all {
-    position: absolute;
-    left: -320px;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-  #levels {
-    top: -876px;
-    left: 400px;
-  }
-  .level button {
-    position: absolute;
-    top: -880px;
-    left: 1330px;
-    width: 55px;
-    font-size: 1.5vw;
-  }
-}
-
-@media screen and (max-width: 1150px) {
-  #all {
-    position: absolute;
-    left: -420px;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-  #levels {
-    top: -920px;
-    left: 470px;
-  }
-  .level button {
-    position: absolute;
-    top: -925px;
-    left: 1250px;
-    width: 55px;
-    font-size: 1.5vw;
-  }
-}
-
-@media screen and (max-width: 960px) {
-  #all {
-    position: absolute;
-    left: -420px;
-    transition-duration: 0.3s !important;
-    transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-  }
-  #levels {
-    top: -920px;
-    left: 470px;
-  }
-  .level button {
-    position: absolute;
-    top: -925px;
-    left: 1250px;
-    width: 55px;
-    font-size: 1.5vw;
-  }
-  #all a {
-    top: -920px;
-    left: 1160px;
-    color: #8f001a;
   }
 }
