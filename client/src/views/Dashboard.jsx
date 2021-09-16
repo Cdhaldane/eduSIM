@@ -52,8 +52,7 @@ function Dashboard(props) {
     });
   }
 
-  function toggleModal(e) {
-    e.preventDefault();
+  function toggleModal() {
     setShowNote(!showNote);
   }
 
@@ -100,7 +99,7 @@ function Dashboard(props) {
         overlayClassName="myoverlay"
         closeTimeoutMS={500}
       >
-        <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} />
+        <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} close={toggleModal} />
       </Modal>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { parse } from "papaparse"
 import "./CreateCsv.css";
 import axios from 'axios';
@@ -8,6 +8,18 @@ function CreateCsv(props) {
   //const [highlighted, setHighlighted] = React.useState(false);
   const [fileName, setFileName] = useState('Upload a CSV file +');
   const [result, setResult] = useState('');
+  const form = useRef();
+
+  const handleClickOutside = e => {
+    if (!form.current.contains(e.target)) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   function handleTitleChange(e) {
     setFileName(e.target.value)
@@ -49,7 +61,7 @@ function CreateCsv(props) {
   }
   return (
     <div className="areacsv">
-      <form className="areacsvform">
+      <form ref={form} className="areacsvform">
         <p className="modal-title"> Add Student / Participant List </p>
         <div className="areacsv-links">
           <input type="file" name="img" id="csv-file" onChange={onChange} />

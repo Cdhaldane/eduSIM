@@ -7,23 +7,21 @@ import Modal from "react-modal";
 import { Image } from "cloudinary-react";
 
 function Join(props) {
-  console.log(props.location.gameinstance)
-  const [showNote, setShowNote] = useState(false)
-
+  const [showNote, setShowNote] = useState(false);
 
   if (props.location.gameinstance !== undefined) {
     localStorage.setItem('gameid', props.location.gameinstance);
   }
+
   if (props.location.title !== undefined) {
     localStorage.setItem('title', props.location.title);
   }
+
   if (props.location.img !== undefined) {
     localStorage.setItem('img', props.location.img);
   }
 
-
-  function toggleModal(e) {
-    e.preventDefault();
+  function toggleModal() {
     setShowNote(!showNote);
   }
 
@@ -76,7 +74,7 @@ function Join(props) {
         overlayClassName="myoverlaytab"
         closeTimeoutMS={500}
       >
-        <CreateCsv gameid={localStorage.gameid} isOpen={showNote} />
+        <CreateCsv gameid={localStorage.gameid} isOpen={showNote} close={toggleModal} />
       </Modal>
 
       <Tabs gameid={localStorage.gameid} title={props.location.title} />

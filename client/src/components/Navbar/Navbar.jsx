@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MenuItems } from "./MenuItems";
 import AuthenticationButton from "../Auth0/AuthenticationButton";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
@@ -10,10 +10,27 @@ function NavBar(props) {
   const { isAuthenticated } = useAuth0();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
+  const profileDropdown = useRef();
 
   function toggleContextMenu() {
     setMenuOpen(!menuOpen);
+    if (!menuOpen === true) {
+      document.addEventListener('click', handleClickOutside);
+    } else {
+      document.removeEventListener('click', handleClickOutside);
+    }
   }
+
+  const handleClickOutside = e => {
+    if (!profileDropdown.current.contains(e.target)) {
+      setMenuOpen(false);
+      document.removeEventListener('click', handleClickOutside);
+    }
+  };
+
+  useEffect(() => {
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <nav className="NavbarItems">
@@ -26,8 +43,8 @@ function NavBar(props) {
       <div className={menuOpen ? "nav-menu active" : "nav-menu"}>
         {isAuthenticated && (
           <div
-            className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"
-              }`}
+            ref={profileDropdown}
+            className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
             <ButtonLink

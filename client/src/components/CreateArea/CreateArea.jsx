@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import "./CreateArea.css";
@@ -12,6 +12,19 @@ function CreateArea(props) {
   const [imageSelected, setImageSelected] = useState("");
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
+  const detailsArea = new useRef();
+  const imageArea = new useRef();
+
+  const handleClickOutside = e => {
+    if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const uploadImage = async event => {
     event.preventDefault();
@@ -118,7 +131,7 @@ function CreateArea(props) {
   }
   return (
     <div class="area">
-      <form className="form-input">
+      <form ref={detailsArea} className="form-input">
         <p className="gradient-border modal-title">Add New Simulation</p>
         <div>
           Choose a game
@@ -174,7 +187,7 @@ function CreateArea(props) {
         </button>
       </form>
       {img && (
-        <form className="form-imgs">
+        <form ref={imageArea} className="form-imgs">
           <img
             src="temp.png"
             alt="temp"
