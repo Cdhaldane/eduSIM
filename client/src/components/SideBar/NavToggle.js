@@ -6,6 +6,7 @@ const Button = styled.button`
     border: none;
     min-height: 42px;
     color: rgba(255,255,255, .7);
+    cursor: pointer;
     padding: 0 24px;
     box-shadow: 0 -1px 0 0 rgba(255 255 255 / 10%);
     text-align: ${p => p.compact ? 'center' : 'right'};

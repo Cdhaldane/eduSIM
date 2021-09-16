@@ -31,7 +31,6 @@
 
 .app-container form {
   display: flex;
-  gap: 5px;
 }
 
 .app-container form td:last-child {
@@ -67,29 +66,20 @@
   color: black;
 }
 
-#firstname {
-  width: 20%;
+.addstudent-form {
+  display: flex;
 }
-
-#lastname {
-  width: 20%;
-}
-
-#email {
-  width: 20%;
-}
-
-#groupnumber {
-  width: 20%;
+.addstudent-form > * {
+  flex: 1;
+  margin: 2px;
+  padding: 2px;
+  font-family: inherit;
 }
 
 #addstudent {
   position: relative;
-  top: -5px;
-  left: 20px;
   width: 100px;
   height: 40px;
-  margin-bottom: -30px;
   font-family:  "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;

@@ -151,6 +151,7 @@
     transform: translateX(-20px);
     opacity: 0;
     padding: 20px 0;
+    pointer-events: none;
   }
 
   .nav-menu > a,
@@ -168,6 +169,7 @@
     transition: all 0.3s;
     z-index: 1;
     width: 100%;
+    pointer-events: unset;
   }
 
   .nav-links {

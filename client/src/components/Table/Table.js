@@ -98,7 +98,7 @@ const Table = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      let items = [(<option value="">Select a a role!</option>)];
+      let items = [(<option value="">Select a role</option>)];
       for (let i = 0; i <= allData.length - 1; i++) {
         // Here I will be creating my options dynamically based on
         items.push(<option value={allData[i].gamerole}>{allData[i].gamerole}</option>);
@@ -312,8 +312,9 @@ const Table = (props) => {
         {(props.addstudent)
        ? (<div className="addstudent">
        {/*<h2>Add a student</h2>*/}
-       <form onSubmit={handleAddFormSubmit}>
+       <form onSubmit={handleAddFormSubmit} className="addstudent-form">
          <input
+           placeholder="First name"
            id="firstname"
            type="text"
            name="firstName"
@@ -321,6 +322,7 @@ const Table = (props) => {
            onChange={handleAddFormChange}
          />
          <input
+           placeholder="Last name"
            id="lastname"
            type="text"
            name="lastName"
@@ -328,6 +330,7 @@ const Table = (props) => {
            onChange={handleAddFormChange}
          />
          <input
+           placeholder="Email address"
            id="email"
            type="text"
            name="email"

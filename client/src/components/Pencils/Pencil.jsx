@@ -112,7 +112,7 @@ function Pencil(props) {
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
-        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " pencil-hidden" : "")}
+        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "")}
         onClick={handleDrop}
         >
       </i>

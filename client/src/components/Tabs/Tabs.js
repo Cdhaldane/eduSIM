@@ -77,7 +77,7 @@ function Tabs(props) {
   const handleDeleteGroup = (e) => {
     var index = tabs.indexOf(e);
     console.log(tabs)
-    setToggleState(1)
+    setToggleState(0);
     axios.delete(process.env.REACT_APP_API_ORIGIN+'/api/playerrecords/deleteRoom/:gameroomid', {
       params: {
         id: tabs[index][1]

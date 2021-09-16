@@ -53,8 +53,8 @@
 
 .drop1{
   position: absolute;
-  left: -450px;
-  top: 250px;
+  left: -10px;
+  top: 50px;
 }
 
 .drop2 {
@@ -75,6 +75,12 @@
   left: 270px;
 }
 
+#pencili0 .drop1 {
+  position: absolute;
+  top: -270px;
+  left: unset;
+}
+
 @media screen and (orientation: portrait) {
   #pencil2 {
     left: 20px;
@@ -91,7 +97,7 @@
     top: 210px;
   }
 
-  .pencil-hidden {
+  #pencil4.hidden {
     opacity: 0;
     pointer-events: none;
   }
