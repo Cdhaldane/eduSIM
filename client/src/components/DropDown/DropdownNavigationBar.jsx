@@ -1,80 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import Switch from "react-switch"
+import Switch from "react-switch";
+import DropdownItem from "./DropdownItem";
+
 import "./Dropdown.css";
 
-function DropdownNavigationBar(props) {
-  const [activeMenu] = useState('main');
+const DropdownNavigationBar = (props) => {
+
   const [menuHeight, setMenuHeight] = useState(null);
-  const [checked1, setChecked1] = useState(true);
-  const [checked2, setChecked2] = useState(true);
-  const [checked3, setChecked3] = useState(true);
-  const [checked4, setChecked4] = useState(true);
-  const [checked5, setChecked5] = useState(true);
-  const dropdownRef = useRef(null);
+  const [messagesChecked, setMessagesChecked] = useState(true);
+  const [alertsChecked, setAlertsChecked] = useState(true);
+  const [parametersChecked, setParametersChecked] = useState(true);
+  const [settingsChecked, setSettingsChecked] = useState(true);
+  const [performanceChecked, setPerformanceChecked] = useState(true);
+  const dropdownRef = useRef();
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleClickOutside = e => {
-    console.log("NAV");
     if (!dropdownRef.current.contains(e.target)) {
       props.close();
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  });
-
-  function calcHeight(el) {
+  const calcHeight = (el) => {
     const height = el.offsetHeight;
     setMenuHeight(height);
   }
 
-  function DropdownItem(props) {
-    return (
-      <div className="menu-item" onClick={props.onClick}>
-        <span className="icon-button">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-right">{props.rightIcon}</span>
-      </div>
-    );
+  const handleMessage = () => {
+    setMessagesChecked(!messagesChecked);
+    props.mvisible(!messagesChecked);
   }
 
-  function handleMessage() {
-    setChecked1(!checked1);
-    props.mvisible(!checked1);
+  const handleAlerts = () => {
+    setAlertsChecked(!alertsChecked);
+    props.avisible(!alertsChecked);
   }
 
-  function handleAlerts() {
-    setChecked2(!checked2);
-    props.avisible(!checked2);
+  const handleParameters = () => {
+    setParametersChecked(!parametersChecked);
+    props.pavisible(!parametersChecked);
   }
 
-  function handleParameters() {
-    setChecked3(!checked3);
-    props.pavisible(!checked3);
+  const handleSettings = () => {
+    setSettingsChecked(!settingsChecked);
+    props.svisible(!settingsChecked);
   }
 
-  function handleSettings() {
-    setChecked4(!checked4);
-    props.svisible(!checked4);
-  }
-
-  function handlePerformance() {
-    setChecked5(!checked5);
-    props.pevisible(!checked5);
+  const handlePerformance = () => {
+    setPerformanceChecked(!performanceChecked);
+    props.pevisible(!performanceChecked);
   }
 
   return (
     <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
       <CSSTransition
-        in={activeMenu === 'main'}
+        in={true}
         timeout={500}
         classNames="menu-primary"
         unmountOnExit
@@ -83,66 +70,61 @@ function DropdownNavigationBar(props) {
           <h1>Edit Navigation Bar</h1>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-comment-dots"></i>}
-            onClick={handleMessage}
-          >
+            onClick={handleMessage}>
             Messaging
           </DropdownItem>
           <label id="switch1">
             <Switch
               onChange={handleMessage}
-              checked={checked1}
+              checked={messagesChecked}
               className="react-switch"
             />
           </label>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-bell"></i>}
-            rightIcon=""
             onClick={handleAlerts}>
             Alerts
           </DropdownItem>
           <label id="switch2">
             <Switch
               onChange={handleAlerts}
-              checked={checked2}
+              checked={alertsChecked}
               className="react-switch"
             />
           </label>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-sliders-h"></i>}
-            rightIcon=""
             onClick={handleParameters}>
             Parameters
           </DropdownItem>
           <label id="switch3">
             <Switch
               onChange={handleParameters}
-              checked={checked3}
+              checked={parametersChecked}
               className="react-switch"
             />
           </label>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-cog"></i>}
-            rightIcon=""
             onClick={handleSettings}>
             Settings
           </DropdownItem>
           <label id="switch4">
             <Switch
               onChange={handleSettings}
-              checked={checked4}
+              checked={settingsChecked}
               className="react-switch"
             />
           </label>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-chart-bar"></i>}
-            rightIcon=""
             onClick={handlePerformance}>
             Performance
           </DropdownItem>
           <label id="switch5">
             <Switch
               onChange={handlePerformance}
-              checked={checked5}
+              checked={performanceChecked}
               className="react-switch"
             />
           </label>

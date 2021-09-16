@@ -1,29 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DropdownEditObject from "../Dropdown/DropdownEditObject";
-import * as $ from "jquery";
 
 import "./ContextMenu.css"
 
 function ContextMenu(props) {
   const [drop, setDrop] = useState(false);
   const [menuWidth, setMenuWidth] = useState(0);
-  const menu = React.useRef();
+  const menu = useRef();
 
   const handleClickOutside = e => {
-    console.log("RIGHT CLICK");
     if (!menu.current.contains(e.target)) {
       props.close();
     }
   };
 
-  React.useEffect(() => {
-    console.log($(".cmenu"));
+  useEffect(() => {
+    setMenuWidth(menu.current.clientWidth);
+
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  });
-
-  React.useEffect(() => {
-    setMenuWidth(menu.current.clientWidth);
   }, []);
 
   function handleColorF(e) {

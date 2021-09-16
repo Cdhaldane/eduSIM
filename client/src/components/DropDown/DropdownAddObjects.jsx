@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ChromePicker } from 'react-color';
 import axios from "axios";
+import DropdownItem from "./DropdownItem";
 
 import "./Dropdown.css";
 
-function DropdownAddObjects(props) {
+const DropdownAddObjects = (props) => {
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(null);
   const [img, setImg] = useState();
@@ -25,53 +26,20 @@ function DropdownAddObjects(props) {
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleClickOutside = e => {
     if (!dropdownRef.current.contains(e.target)) {
       props.close();
     }
-  };
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  });
+  }
 
   function calcHeight(el) {
     const height = el.offsetHeight;
     setMenuHeight(height);
-  }
-
-  function DropdownItem(props) {
-    return (
-      <div className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
-        <span className="icon-button">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-right">{props.rightIcon}</span>
-      </div>
-    );
-  }
-
-
-  function DropdownItems(props) {
-    return (
-      <div className="menu-item" onClick={props.onClick}>
-        <span className="icon-button">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-right">{props.rightIcon}</span>
-      </div>
-    );
-  }
-
-  function DropdownItemImg(props) {
-    return (
-      <div className="menu-item">
-        <span className="icon-button">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-right">{props.rightIcon}</span>
-      </div>
-    );
   }
 
   const submitNote = async event => {
@@ -221,20 +189,17 @@ function DropdownAddObjects(props) {
           <h1>{props.title}</h1>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-shapes"></i>}
-            rightIcon={""}
-            goToMenu="shapes">
+            onClick={() => setActiveMenu("shapes")}>
             Add shapes
           </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-camera"></i>}
-            rightIcon=""
-            goToMenu="media">
+            onClick={() => setActiveMenu("media")}>
             Add Media
           </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-puzzle-piece"></i>}
-            rightIcon=""
-            goToMenu="pieces">
+            onClick={() => setActiveMenu("pieces")}>
             Game Piece
           </DropdownItem>
         </div>
@@ -247,18 +212,19 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
             <h2>SHAPES!</h2>
           </DropdownItem>
-          <DropdownItems onClick={addRectangle} leftIcon={<i id="icons" className="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItems>
-          <DropdownItems onClick={addCircle} leftIcon={<i id="icons" className="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItems>
-          <DropdownItems onClick={addTriangle} leftIcon={<i id="iconst" className="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItems>
-          <DropdownItems onClick={addStar} leftIcon={<i id="icons" className="fa fa-star" onClick={addStar}></i>}>Star</DropdownItems>
+          <DropdownItem onClick={addRectangle} leftIcon={<i id="icons" className="fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
+          <DropdownItem onClick={addCircle} leftIcon={<i id="icons" className="fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i id="iconst" className="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
+          <DropdownItem onClick={addStar} leftIcon={<i id="icons" className="fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
 
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-marker"></i>}
-            rightIcon=""
-            goToMenu="draw">
+            onClick={() => setActiveMenu("draw")}>
             Drawing
           </DropdownItem>
 
@@ -272,19 +238,36 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
             <h2>MEDIA!</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fa fa-picture-o"></i>}
-            rightIcon=""
-            goToMenu="image">
+            onClick={() => setActiveMenu("image")}>
             Image
           </DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" className="fas fa-video" onClick=""></i>} goToMenu="video">Video</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" className="fas fa-volume-up"></i>} goToMenu="audio">Sound</DropdownItem>
-          <DropdownItem leftIcon={<i id="icons" className="fas fa-file"></i>} goToMenu="docs" >Document</DropdownItem>
-          <DropdownItems onClick={drawText} leftIcon={<i id="icons" className="fas fa-comment-alt" onClick={drawText}></i>}>Textbox</DropdownItems>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-video" onClick=""></i>}
+            onClick={() => setActiveMenu("video")}>
+            Video
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-volume-up"></i>}
+            onClick={() => setActiveMenu("audio")}>
+            Sound
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-file"></i>}
+            onClick={() => setActiveMenu("docs")}>
+            Document
+          </DropdownItem>
+          <DropdownItem
+            onClick={drawText}
+            leftIcon={<i id="icons" className="fas fa-comment-alt" onClick={drawText}></i>}>
+            Textbox
+          </DropdownItem>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -294,13 +277,15 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="media" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("media")}>
             <h2>IMAGE!</h2>
           </DropdownItem>
-          <DropdownItemImg
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={handleImgSubmit}></i>}>
-          </DropdownItemImg>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={handleImgSubmit}></i>}>
+          </DropdownItem>
+
           <input
             type="file"
             name="img"
@@ -308,21 +293,20 @@ function DropdownAddObjects(props) {
             onChange={handleImg}
           />
           <label id="fileI" for="file">From file</label>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={addImage}></i>}>
+          </DropdownItem>
 
-          <DropdownItemImg
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addImage}></i>}>
-          </DropdownItemImg>
           <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
-          <DropdownItemImg
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addImage}></i>}>
-          </DropdownItemImg>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={addImage}></i>}>
+          </DropdownItem>
+
           <input id="imginputname" type="text" placeholder="Image name..." onChange={handleImage} value={imgsrc} />
-          <DropdownItems
+          <DropdownItem
             onClick={addImage}
             leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addImage}></i>}>Add</DropdownItems>
+              onClick={addImage}></i>}>Add</DropdownItem>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -332,23 +316,24 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="media" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("media")}>
             <h2>VIDEO!</h2>
           </DropdownItem>
-          <DropdownItems
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addVideo}></i>}>
-          </DropdownItems>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={addVideo}></i>}>
+          </DropdownItem>
           <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
-          <DropdownItems
+          <DropdownItem
             leftIcon={<i id="icons" className="fas fa-plus"
               onClick={addVideo}></i>}>
-          </DropdownItems>
+          </DropdownItem>
           <input id="imginputvname" type="text" placeholder="Video name..." onChange={handleVideo} value={vidsrc} />
-          <DropdownItems
+          <DropdownItem
             onClick={addVideo}
             leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addVideo}></i>}>Add</DropdownItems>
+              onClick={addVideo}></i>}>Add</DropdownItem>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -358,18 +343,20 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="media" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("media")}>
             <h2>AUDIO!!</h2>
           </DropdownItem>
-          <DropdownItems
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addAudio}></i>}>
-          </DropdownItems>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={addAudio}></i>}>
+          </DropdownItem>
           <input id="imginputv" type="text" placeholder="Audio source..." onChange={handleAudio} value={audiosrc} />
-          <DropdownItems
+          <DropdownItem
             onClick={addAudio}
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addAudio}></i>}>Add</DropdownItems>
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={addAudio}></i>}>
+            Add
+          </DropdownItem>
         </div>
       </CSSTransition>
 
@@ -380,13 +367,14 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="media" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("media")}>
             <h2>DOCUMENTS!</h2>
           </DropdownItem>
-          <DropdownItemImg
-            leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={handleFilesubmit}></i>}>
-          </DropdownItemImg>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-plus" onClick={handleFilesubmit}></i>}>
+          </DropdownItem>
           <input
             type="file"
             name="img"
@@ -395,10 +383,10 @@ function DropdownAddObjects(props) {
           />
           <label id="fileI" for="file">From file</label>
 
-          <DropdownItems
+          <DropdownItem
             onClick={addDocument}
             leftIcon={<i id="icons" className="fas fa-plus"
-              onClick={addDocument}></i>}>Add</DropdownItems>
+              onClick={addDocument}></i>}>Add</DropdownItem>
         </div>
       </CSSTransition>
 
@@ -409,7 +397,9 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="shapes" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("shapes")}>
             <h2>DRAW!</h2>
           </DropdownItem>
           <b id="colourp">
@@ -419,15 +409,15 @@ function DropdownAddObjects(props) {
               onChangeComplete={handleChange} />
           </b>
 
-          <DropdownItems
+          <DropdownItem
             onClick={drawLine}
             leftIcon={<i id="icons" className="fas fa-marker" onClick={drawLine}></i>}>
-            Draw</DropdownItems>
+            Draw</DropdownItem>
 
-          <DropdownItems
+          <DropdownItem
             onClick={stopDrawing}
             leftIcon={<i id="icons" className="fas fa-mouse-pointer"
-              onClick={stopDrawing}></i>}>Select</DropdownItems>
+              onClick={stopDrawing}></i>}>Select</DropdownItem>
 
         </div>
       </CSSTransition>
@@ -439,19 +429,21 @@ function DropdownAddObjects(props) {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <DropdownItem goToMenu="main" leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}>
+          <DropdownItem
+            leftIcon={<i id="icons" className="fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
             <h2>PIECES!</h2>
           </DropdownItem>
-          <DropdownItems
+          <DropdownItem
             onClick={addTic}
             leftIcon={<i id="icons" className="fas fa-times"
               onClick={addTic}></i>}>
-            Tic-Tac-Toe</DropdownItems>
-          <DropdownItems
+            Tic-Tac-Toe</DropdownItem>
+          <DropdownItem
             onClick={addConnect}
             leftIcon={<i id="icons" className="fa fa-circle"
               onClick={addConnect}></i>}>
-            Connect-Four</DropdownItems>
+            Connect-Four</DropdownItem>
         </div>
       </CSSTransition>
     </div>

@@ -4,7 +4,7 @@ import axios from "axios"
 
 import "./Dropdown.css";
 
-function DropdownRoles(props) {
+const DropdownRoles = (props) => {
 
   const PLACEHOLDER_TEXT = "Select Role!";
 
@@ -35,8 +35,16 @@ function DropdownRoles(props) {
     });
   }
 
+  const handleClickOutside = e => {
+    if (!menuElem.current.contains(e.target)) {
+      handleActiveMenuChange('main');
+    }
+  }
+
   useEffect(() => {
     updateRolesData();
+    
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -46,25 +54,23 @@ function DropdownRoles(props) {
     }
   }, [roles]);
 
-  const handleClickOutside = e => {
-    if (!menuElem.current.contains(e.target)) {
-      setActiveMenu('main');
-    }
-  };
-
-  useEffect(() => {
-    //document.addEventListener('click', handleClickOutside);
-    //return () => document.removeEventListener('click', handleClickOutside);
-  });
-
   const calcHeight = (el) => {
     let height = el.offsetHeight;
     setMenuHeight(height);
   }
 
+  const handleActiveMenuChange = (newMenu) => {
+    if (newMenu !== "main") {
+      document.addEventListener('click', handleClickOutside);
+    } else {
+      document.removeEventListener('click', handleClickOutside);
+    }
+    setActiveMenu(newMenu);
+  }
+
   const DropdownItem = (props) => {
     return (
-      <div className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+      <div className="menu-item" onClick={() => props.goToMenu && handleActiveMenuChange(props.goToMenu)}>
         <span className="icon-button">{props.icon}</span>
         {props.children}
       </div>

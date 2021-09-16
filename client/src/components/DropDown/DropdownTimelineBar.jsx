@@ -11,6 +11,9 @@ function DropdownTimelineBar(props) {
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleClickOutside = e => {
@@ -18,11 +21,6 @@ function DropdownTimelineBar(props) {
       props.close();
     }
   };
-
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  });
 
   function calcHeight(el) {
     const height = el.offsetHeight;
