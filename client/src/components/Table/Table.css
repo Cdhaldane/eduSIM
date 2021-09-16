@@ -5,9 +5,6 @@
   flex-direction: column;
   gap: 10px;
   padding: 0rem;
-  height: 120%;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .app-container table {
@@ -34,18 +31,30 @@
 
 .app-container form {
   display: flex;
-  gap: 5px;
 }
 
 .app-container form td:last-child {
+  padding: 4px 2px;
+}
+.app-container form td:last-child > div {
   display: flex;
   justify-content: space-evenly;
   margin-left: 0px;
   width: 100%;
+  height: 100%;
+}
+.app-container form td:last-child > div > button {
+  flex: 1;
+  margin: 0 2px;
+  font-family: inherit;
 }
 
 .app-container form * {
   font-size: 1vw;
+}
+
+.app-container input[type="text"] {
+  width: 100%;
 }
 
 .addstudent{
@@ -58,29 +67,20 @@
   color: black;
 }
 
-#firstname {
-  width: 20%;
+.addstudent-form {
+  display: flex;
 }
-
-#lastname {
-  width: 20%;
-}
-
-#email {
-  width: 20%;
-}
-
-#groupnumber {
-  width: 20%;
+.addstudent-form > * {
+  flex: 1;
+  margin: 2px;
+  padding: 2px;
+  font-family: inherit;
 }
 
 #addstudent {
   position: relative;
-  top: -5px;
-  left: 20px;
   width: 100px;
   height: 40px;
-  margin-bottom: -30px;
   font-family:  "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
@@ -126,9 +126,12 @@
   position: relative;
   top: 0px;
   left: 0px;
-  width: 220px;
   border-radius: 2px;
   border: 1px solid #767676;
+}
+
+.table-el {
+  height: 100%;
 }
 
 @media screen and (max-width: 960px){
@@ -140,8 +143,6 @@
     gap: 10px;
     padding: 0rem;
     width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
   }
   #emailbutton {
     font-size: 1.0rem;

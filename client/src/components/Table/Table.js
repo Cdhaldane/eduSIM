@@ -98,7 +98,7 @@ const Table = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      let items = [(<option value="">Select a a role!</option>)];
+      let items = [(<option value="">Select a role</option>)];
       for (let i = 0; i <= allData.length - 1; i++) {
         // Here I will be creating my options dynamically based on
         items.push(<option value={allData[i].gamerole}>{allData[i].gamerole}</option>);
@@ -246,7 +246,7 @@ const Table = (props) => {
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${props?.className}`}>
       <div>
         <div
           className={`p-6 my-2 mx-auto max-w-md border-2 ${highlighted ? "border-green-600 bg-green-100" : "border-gray-600"
@@ -275,72 +275,75 @@ const Table = (props) => {
         >
         </div>
       </div>
-      <form onSubmit={handleEditFormSubmit}>
-        <table>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Email</th>
-              <th>{groupOr}</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contacts.map((contact) => (
-              <Fragment>
-                {editContactId === contact.id ? (
-                  <EditableRow
-                    editFormData={editFormData}
-                    handleEditFormChange={handleEditFormChange}
-                    handleCancelClick={handleCancelClick}
-                    rolelist={rolelist}
-                  />
-                ) : (
-                  <ReadOnlyRow
-                    contact={contact}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={() => handleDeleteClick(contact.id)}
-                  />
-                )}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
-      </form>
+        <form onSubmit={handleEditFormSubmit}>
+          <table className="table-el">
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>{groupOr}</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.map((contact) => (
+                <Fragment>
+                  {editContactId === contact.id ? (
+                    <EditableRow
+                      editFormData={editFormData}
+                      handleEditFormChange={handleEditFormChange}
+                      handleCancelClick={handleCancelClick}
+                      rolelist={rolelist}
+                    />
+                  ) : (
+                    <ReadOnlyRow
+                      contact={contact}
+                      handleEditClick={handleEditClick}
+                      handleDeleteClick={() => handleDeleteClick(contact.id)}
+                    />
+                  )}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
+        </form>
 
-      {(props.addstudent)
-        ? (<div className="addstudent">
-          {/*<h2>Add a student</h2>*/}
-          <form onSubmit={handleAddFormSubmit}>
-            <input
-              id="firstname"
-              type="text"
-              name="firstName"
-              required="required"
-              onChange={handleAddFormChange}
-            />
-            <input
-              id="lastname"
-              type="text"
-              name="lastName"
-              required="required"
-              onChange={handleAddFormChange}
-            />
-            <input
-              id="email"
-              type="text"
-              name="email"
-              required="required"
-              onChange={handleAddFormChange}
-            />
-            <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
-              {rolelist}
-            </select>
-            <button type="submit" id="addstudent">Add</button>
-          </form>
-        </div>)
-        : <div>{(() => { if (props.email) { return (<button id="emailstudent" onClick={handleEmail}>Email</button>) } })()}</div>
+        {(props.addstudent)
+       ? (<div className="addstudent">
+       {/*<h2>Add a student</h2>*/}
+       <form onSubmit={handleAddFormSubmit} className="addstudent-form">
+         <input
+           placeholder="First name"
+           id="firstname"
+           type="text"
+           name="firstName"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+         <input
+           placeholder="Last name"
+           id="lastname"
+           type="text"
+           name="lastName"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+         <input
+           placeholder="Email address"
+           id="email"
+           type="text"
+           name="email"
+           required="required"
+           onChange={handleAddFormChange}
+         />
+       <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
+           {rolelist}
+         </select>
+       <button type="submit" id="addstudent">Add</button>
+       </form>
+       </div>)
+       : <>{(() => {if(props.email){return(<button className="modal-bottomright-button" onClick={handleEmail}>Email</button>)}})()}</>
       }
     </div>
   );

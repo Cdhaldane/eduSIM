@@ -7,9 +7,9 @@
 }
 
 #pencil2{
-  position: absolute;
-  left:140px;
-  top:-790px;
+  position: fixed;
+  left: 90px;
+  top: 80px;
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
@@ -20,9 +20,9 @@
 }
 
 #pencil3{
-  position: absolute;
-  left:1590px;
-  top:-790px;;
+  position: fixed;
+  top: 80px;
+  right: 20px;
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
@@ -53,118 +53,57 @@
 
 .drop1{
   position: absolute;
-  left: -450px;
-  top: 250px;
+  left: -10px;
+  top: 50px;
 }
 
 .drop2 {
-  position: absolute;
-  top: -180px;
-  left: -320px;
+  position: fixed;
+  top: 150px;
+  left: 90px;
 }
 
 .drop3 {
-  position: absolute;
-  top: -180px;
-  left: 900px;
+  position: fixed;
+  top: 150px;
+  right: 320px;
 }
 
 .drop4{
-  position: absolute;
-  top: -270px;
-  left: -420px;
+  position: fixed;
+  top: 20px;
+  left: 270px;
 }
 
-@media screen and (max-width: 1860px){
-  #pencil2{
-    left:470px;
-    top:-720px;
-  }
-  #pencil3{
-    left:1250px;
-    top:-720px;;
-  }
-  .drop3 {
-    top: -220px;
-    left: 500px;
+#pencili0 .drop1 {
+  position: absolute;
+  top: -270px;
+  left: unset;
+}
+.drop4.hidden {
+  position: fixed;
+  top: 20px;
+  left: 90px;
+}
+
+@media screen and (orientation: portrait) {
+  #pencil2 {
+    left: 20px;
+    top: 140px;
   }
   .drop2 {
-    top: -220px;
-    left: 80px;
+    top: 210px;
+    left: 20px;
   }
-}
-@media screen and (max-width: 1560px){
-  #pencil2{
-    left:350px;
-    top:-700px;
-  }
-  #pencil3{
-    left:1130px;
-    top:-700px;;
+  #pencil3 {
+    top: 140px;
   }
   .drop3 {
-    top: -190px;
-    left: 380px;
+    top: 210px;
   }
-  .drop2 {
-    top: -190px;
-    left: -40px;
-  }
-}
-@media screen and (max-width: 1460px){
-  #pencil2{
-    left:250px;
-    top:-700px;
-  }
-  #pencil3{
-    left:1030px;
-    top:-700px;;
-  }
-  .drop3 {
-    top: -190px;
-    left: 280px;
-  }
-  .drop2 {
-    top: -190px;
-    left: -140px;
-  }
-}
-@media screen and (max-width: 1360px){
-  #pencil2{
-    left:150px;
-    top:-700px;
-  }
-  #pencil3{
-    left:930px;
-    top:-700px;;
-  }
-  .drop3 {
-    top: -190px;
-    left: 180px;
-  }
-  .drop2 {
-    top: -190px;
-    left: -240px;
-  }
-}
-@media screen and (max-width: 1160px){
-  #pencil2{
-    left:50px;
-    top:-700px;
-  }
-  #pencil3{
-    left:830px;
-    top:-700px;;
-  }
-  #pencil4{
+
+  #pencil4.hidden {
     opacity: 0;
-  }
-  .drop3 {
-    top: -190px;
-    left: 80px;
-  }
-  .drop2 {
-    top: -190px;
-    left: -340px;
+    pointer-events: none;
   }
 }

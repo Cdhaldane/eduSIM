@@ -1,22 +1,19 @@
 import React from "react";
-import Table from "../Table/Table"
-import { Container } from "react-bootstrap";
+import Table from "../Table/Table";
 
-  function CreateEmail(props) {
-
-
-
+function CreateEmail(props) {
   return (
-      <div class="areacsv" >
-        <Container>
-      <form id="areacsvform">
-        <p id="boxj1"> Email Room Codes to Students/Participants </p>
-          <div id="emailtable">
-          <Table email={true} addstudent={false} gameid={props.gameid} title={props.title}/>
-          </div>
-        </form>
-        </Container>
-
+    <div class="areacsv">
+      <form className="areacsvform">
+        <p className="modal-title"> Email Room Codes to Students / Participants </p>
+        <Table
+          email={true}
+          addstudent={false}
+          className="emailmodal-table"
+          gameid={props.gameid}
+          title={props.title}
+        />
+      </form>
     </div>
   );
 }

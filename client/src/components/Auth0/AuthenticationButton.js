@@ -1,6 +1,6 @@
-import React from "react"
-import Button from "../Buttons/Button"
-import { useAuth0 } from '@auth0/auth0-react';
+import React from "react";
+import Button from "../Buttons/Button";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import "../Buttons/Buttons.css";
 
@@ -31,16 +31,24 @@ function AuthenticationButton(props) {
     localStorage.clear();
   }
 
-  return (
-    isAuthenticated ?
-      <Button onClick={handleLogout}
-        type="button"
-        buttonStyle="btn--primary--solid"
-        buttonSize="button--medium">Logout</Button> :
-      <Button onClick={handleClick}
-        type="button"
-        buttonStyle="btn--primary--solid"
-        buttonSize="button--medium">Create Simulation </Button>
+  return isAuthenticated ? (
+    <Button
+      onClick={handleLogout}
+      type="button"
+      buttonStyle="btn--primary--solid"
+      buttonSize="button--medium"
+    >
+      Logout
+    </Button>
+  ) : (
+    <Button
+      onClick={handleClick}
+      type="button"
+      buttonStyle="btn--primary--solid"
+      buttonSize="button--medium"
+    >
+      Login
+    </Button>
   );
 }
 

@@ -125,12 +125,11 @@ import {
     }, [])
     return (
       <>
-       {display && <div >
-         <p id="saved">
-          <h1>Auto saved!</h1>
-         </p>
-         </div>
-       }
+        <div >
+          <p className={`saved ${display ? "saved-active" : ""}`}>
+            <h1>Auto saved!</h1>
+          </p>
+        </div>
       </>
     );
   }
@@ -392,21 +391,6 @@ class Graphics extends Component {
       pageNumber: e
     })
   }
-  handleMvisible = (e) => {
-    this.props.mvisible(e)
-  }
-   handleAvisible = (e) => {
-    this.props.avisible(e)
-  }
-   handlePavisible = (e) => {
-    this.props.pavisible(e)
-  }
-   handleSvisible = (e) => {
-    this.props.svisible(e)
-  }
-   handlePevisible = (e) => {
-    this.props.pevisible(e)
-  }
 
   handleSave = () => {
     const rects = this.state.rectangles,
@@ -427,7 +411,7 @@ class Graphics extends Component {
     //   JSON.stringify(this.state.saved) !==
     //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
     // ) {
-      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status: "up"] });
+      this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, status || "up"] });
       console.log(this.state.saved)
               console.log(this.state.gameinstanceid)
               var body = {
@@ -5873,17 +5857,6 @@ class Graphics extends Component {
               ptype={this.handleType}
               num={this.handleNum}
             />
-            <Pencil
-              id="4"
-              psize="2"
-              type="nav"
-              title=""
-              mvisible={this.handleMvisible}
-              avisible={this.handleAvisible}
-              pavisible={this.handlePavisible}
-              svisible={this.handleSvisible}
-              pevisible={this.handlePevisible}
-              />
 
             </div>
       </React.Fragment>

@@ -112,12 +112,12 @@ function Pencil(props) {
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
-        class={"fa fa-pencil fa-" + props.psize + "x"}
+        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "")}
         onClick={handleDrop}
         >
       </i>
 
-      {drop && <div className={"drop" + props.id}>
+      {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
 
       {props.type === "info"  ? (
         <Dropdowninfo ptype={handleType} num={handleNum}/>

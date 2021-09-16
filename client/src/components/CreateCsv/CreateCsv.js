@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
 import { parse } from "papaparse"
 import "./CreateCsv.css";
 import axios from 'axios';
@@ -55,37 +54,27 @@ import axios from 'axios';
     }
   }
   return (
-      <div className="areacsv" >
-        <Container>
-      <form id="areacsvform">
-        <p id="box1"> Add Student/Participant List </p>
+    <div className="areacsv">
+      <form className="areacsvform">
+        <p className="modal-title"> Add Student / Participant List </p>
+        <div className="areacsv-links">
+          <input type="file" name="img" id="csv-file" onChange={onChange} />
+          <label for="csv-file" class="csv-link">{fileName || 'Upload a CSV file +'}</label>
+          <input type="file" name="img" id="csv-filedownload" onChange={onChange} />
+          <label for="csv-filedownload" class="csv-link">Download CSV template</label>
+        </div>
+        <div className="areacsv-filename">
+          <p>File name</p>
           <input
-                type="file"
-                name="img"
-                id="file"
-                onChange={onChange}
-                />
-              <label for="file" id="csvfile">{fileName}</label>
-                <input
-                  type="file"
-                  name="img"
-                  id="filedownload"
-                  onChange={onChange}
-                />
-              <label for="filedownload" id="csvfile2">Download CSV template</label>
-          <p className="gradient-border" id="box3">
-            File name
-            <input
-               type="text"
-               id="namei"
-               name="title"
-               placeholder="                         "
-               onChange= {handleTitleChange}
-            />
-          </p>
-          <button id="add" onClick={fileUploadHandler}>Add</button>
-        </form>
-        </Container>
+            type="text"
+            name="title"
+            onChange={handleTitleChange}
+          />
+        </div>
+        <button className="modal-bottomright-button" onClick={fileUploadHandler}>
+          Add
+        </button>
+      </form>
     </div>
   );
 }

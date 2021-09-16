@@ -16,6 +16,7 @@ const EditableRow = ({
           name="firstName"
           value={editFormData.firstName}
           onChange={handleEditFormChange}
+          size="1"
         ></input>
       </td>
       <td>
@@ -25,6 +26,7 @@ const EditableRow = ({
           name="lastName"
           value={editFormData.lastName}
           onChange={handleEditFormChange}
+          size="1"
         ></input>
       </td>
       <td>
@@ -34,6 +36,7 @@ const EditableRow = ({
           name="email"
           value={editFormData.email}
           onChange={handleEditFormChange}
+          size="1"
         ></input>
       </td>
       <td>
@@ -42,10 +45,12 @@ const EditableRow = ({
           </select>
       </td>
       <td>
-        <button type="submit" >Save</button>
-        <button type="button" onClick={handleCancelClick}>
-          Cancel
-        </button>
+        <div>
+          <button type="submit" >Save</button>
+          <button type="button" onClick={handleCancelClick}>
+            Cancel
+          </button>
+        </div>
       </td>
     </tr>
   );
