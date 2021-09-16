@@ -5,7 +5,7 @@ import "./ContextMenu.css"
 
 function ContextMenu(props) {
   const [drop, setDrop] = useState(false);
-  const [menuWidth, setMenuWidth] = useState(0);
+  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
   const menu = useRef();
 
   const handleClickOutside = e => {
@@ -15,8 +15,7 @@ function ContextMenu(props) {
   };
 
   useEffect(() => {
-    setMenuWidth(menu.current.clientWidth);
-
+    console.log(sidebarWidth);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
@@ -46,11 +45,8 @@ function ContextMenu(props) {
       ref={menu}
       className="cmenu"
       style={{
-        position: "absolute",
-        left: props.position.x + menuWidth / 2,
-        top: props.position.y + 2,
-        borderRadius: "5px",
-        boxShadow: "rgba(0,0,0,0.25) 4px 4px 4px 0px",
+        left: props.position.x + sidebarWidth,
+        top: props.position.y
       }}
     >
       <ul>
