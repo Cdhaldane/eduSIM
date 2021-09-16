@@ -5,9 +5,9 @@ import "./Dropdown.css";
 const DropdownItem = (props) => {
   return (
     <div className="menu-item" onClick={props.onClick}>
-      <span className="icon-button">{props.leftIcon}</span>
+      {props.leftIcon && <span className="icon-button">{props.leftIcon}</span>}
       {props.children}
-      <span className="icon-right">{props.rightIcon}</span>
+      {props.rightIcon && <span className="icon-right">{props.rightIcon}</span>}
     </div>
   );
 };

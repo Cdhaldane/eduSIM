@@ -159,36 +159,6 @@ a {
   font-size: 2.0rem;
 }
 
-#switch1 {
-  position: absolute;
-  left: -120px;
-  bottom: 210px;
-}
-
-#switch2 {
-  position: absolute;
-  left: -120px;
-  bottom: 155px;
-}
-
-#switch3 {
-  position: absolute;
-  left: -120px;
-  bottom: 100px;
-}
-
-#switch4 {
-  position: absolute;
-  left: -120px;
-  bottom: 45px;
-}
-
-#switch5 {
-  position: absolute;
-  left: -120px;
-  bottom: -10px;
-}
-
 #switchtime {
   position: absolute;
   left: -100px;

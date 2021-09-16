@@ -72,62 +72,52 @@ const DropdownNavigationBar = (props) => {
             leftIcon={<i id="icons" className="fas fa-comment-dots"></i>}
             onClick={handleMessage}>
             Messaging
-          </DropdownItem>
-          <label id="switch1">
             <Switch
               onChange={handleMessage}
               checked={messagesChecked}
               className="react-switch"
             />
-          </label>
+          </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-bell"></i>}
             onClick={handleAlerts}>
             Alerts
-          </DropdownItem>
-          <label id="switch2">
             <Switch
               onChange={handleAlerts}
               checked={alertsChecked}
               className="react-switch"
             />
-          </label>
+          </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-sliders-h"></i>}
             onClick={handleParameters}>
             Parameters
-          </DropdownItem>
-          <label id="switch3">
             <Switch
               onChange={handleParameters}
               checked={parametersChecked}
               className="react-switch"
             />
-          </label>
+          </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-cog"></i>}
             onClick={handleSettings}>
             Settings
-          </DropdownItem>
-          <label id="switch4">
             <Switch
               onChange={handleSettings}
               checked={settingsChecked}
               className="react-switch"
             />
-          </label>
+          </DropdownItem>
           <DropdownItem
             leftIcon={<i id="icons" className="fas fa-chart-bar"></i>}
             onClick={handlePerformance}>
             Performance
-          </DropdownItem>
-          <label id="switch5">
             <Switch
               onChange={handlePerformance}
               checked={performanceChecked}
               className="react-switch"
             />
-          </label>
+          </DropdownItem>
         </div>
       </CSSTransition>
     </div>
