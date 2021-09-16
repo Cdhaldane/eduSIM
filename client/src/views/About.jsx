@@ -1,9 +1,9 @@
 import React from "react";
 
-function About(props) {
+function About(props){
   return (
-    <div className="welcome">
-      <h1>About!</h1>
+    <div className="welcome-container">
+      <h1 className="welcome">About!</h1>
     </div>
   );
 }

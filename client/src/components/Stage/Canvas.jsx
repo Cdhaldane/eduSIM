@@ -125,12 +125,11 @@ function Save() {
   }, [])
   return (
     <>
-      {display && <div >
-        <p id="saved">
+      <div >
+        <p className={`saved ${display ? "saved-active" : ""}`}>
           <h1>Auto saved!</h1>
         </p>
       </div>
-      }
     </>
   );
 }
@@ -389,26 +388,6 @@ class Graphics extends Component {
     this.setState({
       pageNumber: e
     })
-  }
-
-  handleMvisible = (e) => {
-    this.props.mvisible(e);
-  }
-
-  handleAvisible = (e) => {
-    this.props.avisible(e);
-  }
-
-  handlePavisible = (e) => {
-    this.props.pavisible(e);
-  }
-
-  handleSvisible = (e) => {
-    this.props.svisible(e);
-  }
-
-  handlePevisible = (e) => {
-    this.props.pevisible(e);
   }
 
   handleSave = () => {
@@ -5857,18 +5836,6 @@ class Graphics extends Component {
             ptype={this.handleType}
             num={this.handleNum}
           />
-          <Pencil
-            id="4"
-            psize="2"
-            type="nav"
-            title=""
-            mvisible={this.handleMvisible}
-            avisible={this.handleAvisible}
-            pavisible={this.handlePavisible}
-            svisible={this.handleSvisible}
-            pevisible={this.handlePevisible}
-          />
-
         </div>
       </React.Fragment>
     );
