@@ -1,9 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import DropdownEditObject from "../Dropdown/DropdownEditObject";
 import "./ContextMenu.css"
 
 function ContextMenuText(props) {
   const [drop, setDrop] = useState(false);
+  const [menuWidth, setMenuWidth] = useState(0);
+  const menu = useRef();
+
+  const handleClickOutside = e => {
+    if (!menu.current.contains(e.target)) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    setMenuWidth(menu.current.clientWidth);
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   function handleColorF(e) {
     props.choosecolorf(e);
@@ -23,11 +38,14 @@ function ContextMenuText(props) {
 
   return (
     <div
+      ref={menu}
       className="cmenu"
       style={{
         position: "absolute",
-        left: props.position.x + 100,
-        top: props.position.y - 20,
+        left: props.position.x + menuWidth / 2,
+        top: props.position.y + 2,
+        borderRadius: "5px",
+        boxShadow: "rgba(0,0,0,0.25) 4px 4px 4px 0px",
       }}
     >
       <ul>
@@ -36,8 +54,6 @@ function ContextMenuText(props) {
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>Edit text</li>
-        <hr />
-        <li onClick={props.close}>Close</li>
       </ul>
       {drop && <div className="drop">
         <DropdownEditObject
