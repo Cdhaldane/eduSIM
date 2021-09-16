@@ -63,8 +63,6 @@ function Sidebar(props) {
     <>
       <Backdrop visible={props.visible} onClick={props.close} />
       <StyledNav compact={!compact} {...props}>
-        <br />
-        <br />
         <NavLinksGroup compact={!compact}
           mvisible={mvisible}
           avisible={avisible}
