@@ -18,7 +18,7 @@ const gameroles = db.define('gameroles', {
 });
 
 gameroles.sync().then(() => {
-  console.log('game roles table created');
+  console.log('GameRoles table created');
 });
 
 module.exports = gameroles;

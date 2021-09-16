@@ -6,7 +6,7 @@
   left: 100px;
   bottom: 100px;
   transform: translate(0%, 100%);
-  padding:20px;
+  padding: 20px;
   background-color: white;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
   border-radius: 15px;
@@ -22,7 +22,7 @@
   left: 100px;
   bottom: 20px;
   transform: translate(0%, 0%);
-  padding:20px;
+  padding: 20px;
   background-color: white;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.4);
   border-radius: 15px;
@@ -30,7 +30,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.info0 button{
+.info0 button {
   color: #8f001a;
   z-index: 1;
   position: absolute;
@@ -40,12 +40,12 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.info0 button:hover{
+.info0 button:hover {
   cursor: pointer;
   z-index: 1;
-
 }
-.info1 button{
+
+.info1 button {
   color: #8f001a;
   z-index: 1;
   position: absolute;
@@ -55,13 +55,13 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.info1 button:hover{
+.info1 button:hover {
   cursor: pointer;
   z-index: 1;
   border: none;
 }
 
-#pencili1{
+#pencili1 {
   position: fixed;
   bottom: calc(60% - 10px);
   width: 20px;
@@ -71,7 +71,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencili0{
+#pencili0 {
   position: fixed;
   bottom: 70px;
   width: 20px;
@@ -96,11 +96,10 @@
     width: calc(100% - 60px);
     left: 30px;
   }
-  #pencili1{
+  #pencili1 {
     left: 380px;
   }
-  #pencili0{
+  #pencili0 {
     left: 380px;
   }
-
 }

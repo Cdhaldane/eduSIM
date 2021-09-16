@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import Dropdownroles from "../DropDown/Dropdownroles";
-
-
+import React from "react";
+import DropdownRoles from "../Dropdown/DropdownRoles";
 
 function CreateRole(props) {
   console.log(props)
@@ -10,12 +8,11 @@ function CreateRole(props) {
       <form className="areacsvform modal-role-select">
         <p id="boxj1"> Select the role you wish to play! </p>
         <p id="rolesdrops">
-          <Dropdownroles
+          <DropdownRoles
             gameid={props.gameid}
           />
         </p>
       </form>
-
     </div>
   );
 }

@@ -1,29 +1,46 @@
-import React, {useState} from "react";
-import Dropdownedit from "../DropDown/Dropdownedit";
+import React, { useState, useRef, useEffect } from "react";
+import DropdownEditObject from "../Dropdown/DropdownEditObject";
 import "./ContextMenu.css"
 
-function ContextMenuText(props){
+function ContextMenuText(props) {
   const [drop, setDrop] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
+  const menu = useRef();
 
-  function handleColorF(e){
+  const handleClickOutside = e => {
+    if (!menu.current.contains(e.target)) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  function handleColorF(e) {
     props.choosecolorf(e);
   }
+
   function handleEdit(e) {
     setDrop(!drop);
   }
-  function handleWidth(e){
+
+  function handleWidth(e) {
     props.handleWidth(e);
   }
-  function handleOpacity(e){
+
+  function handleOpacity(e) {
     props.handleOpacity(e);
   }
+
   return (
     <div
+      ref={menu}
       className="cmenu"
       style={{
-        position: "absolute",
-        left: props.position.x+100,
-        top: props.position.y-20,
+        left: props.position.x + sidebarWidth,
+        top: props.position.y
       }}
     >
       <ul>
@@ -32,18 +49,16 @@ function ContextMenuText(props){
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>Edit text</li>
-      <hr />
-    <li onClick={props.close}>Close</li>
       </ul>
       {drop && <div className="drop">
-        <Dropdownedit
-            title="Edit Text"
-            choosecolorf={handleColorF}
-            handleSize={(e) => props.handleSize(e)}
-            handleWidth={handleWidth}
-            handleOpacity={handleOpacity}
-            handleFont={(e) => props.handleFont(e)}
-          />
+        <DropdownEditObject
+          title="Edit Text"
+          choosecolorf={handleColorF}
+          handleSize={(e) => props.handleSize(e)}
+          handleWidth={handleWidth}
+          handleOpacity={handleOpacity}
+          handleFont={(e) => props.handleFont(e)}
+        />
       </div>}
     </div>
   );

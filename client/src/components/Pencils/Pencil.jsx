@@ -1,111 +1,132 @@
 import React, { useState } from "react";
-import Dropdown from "../DropDown/Dropdown";
-import Dropdowninfo from "../DropDown/Dropdowninfo";
-import Dropdownnav from "../DropDown/Dropdownnav";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
+import DropdownTimelineBar from "../Dropdown/DropdownTimelineBar";
+import DropdownNavigationBar from "../Dropdown/DropdownNavigationBar";
 import "./Pencil.css";
 
 function Pencil(props) {
   const [drop, setDrop] = useState(false);
 
   function handleMvisible(e) {
-    props.mvisible(e)
-  }
-  function handleAvisible(e) {
-    props.avisible(e)
-  }
-  function handlePavisible(e) {
-    props.pavisible(e)
-  }
-  function handleSvisible(e) {
-    props.svisible(e)
-  }
-  function handlePevisible(e) {
-    props.pevisible(e)
-  }
-  function handleType(e) {
-    props.ptype(e)
-  }
-  function handleNum(e) {
-    props.num(e)
+    props.mvisible(e);
   }
 
-  function addCircle(){
+  function handleAvisible(e) {
+    props.avisible(e);
+  }
+
+  function handlePavisible(e) {
+    props.pavisible(e);
+  }
+
+  function handleSvisible(e) {
+    props.svisible(e);
+  }
+
+  function handlePevisible(e) {
+    props.pevisible(e);
+  }
+
+  function handleType(e) {
+    props.ptype(e);
+  }
+
+  function handleNum(e) {
+    props.num(e);
+  }
+
+  function addCircle() {
     props.addCircle();
   }
-  function addRectangle(){
+
+  function addRectangle() {
     props.addRectangle();
   }
-  function addTriangle(){
+
+  function addTriangle() {
     props.addTriangle();
   }
-  function addStar(){
+
+  function addStar() {
     props.addStar();
   }
 
-  function addStick(){
+  function addStick() {
     props.addStick();
   }
-  function drawLine(){
+
+  function drawLine() {
     props.drawLine();
   }
-  function drawText(){
+
+  function drawText() {
     props.addText();
   }
-  function addImage(){
+
+  function addImage() {
     props.addImage();
   }
-  function addVideo(){
+
+  function addVideo() {
     props.addVideo();
   }
-  function addAudio(){
+
+  function addAudio() {
     props.addAudio();
   }
-  function addDocument(){
+
+  function addDocument() {
     props.addDocument();
   }
-  function addTic(){
+
+  function addTic() {
     props.addTic();
   }
-  function addConnect(){
+
+  function addConnect() {
     props.addConnect();
   }
-  function eraseLine(){
+
+  function eraseLine() {
     props.eraseLine();
   }
-  function stopDrawing(){
+
+  function stopDrawing() {
     props.stopDrawing();
   }
-  function handleColor(e){
+
+  function handleColor(e) {
     props.choosecolor(e);
   }
-  function handleClose(e){
+
+  function handleClose(e) {
     setDrop(!drop);
   }
-  function handleImage(e){
+
+  function handleImage(e) {
     props.handleImage(e);
   }
-  function handleVideo(e){
+
+  function handleVideo(e) {
     props.handleVideo(e);
   }
-  function handleAudio(e){
+
+  function handleAudio(e) {
     props.handleAudio(e);
   }
-  function handleDocument(e){
+  function handleDocument(e) {
     props.handleDocument(e);
   }
-  function handleDrop(){
-    setDrop(!drop)
-    if(props.editModeToggle === true){
+
+  function handleDrop() {
+    setDrop(!drop);
+    if (props.editModeToggle === true) {
       props.editMode();
     }
-    if(props.editModeToggle === false) {
+    if (props.editModeToggle === false) {
       props.editMode();
     }
   }
-
-
-
-
 
   return (
     <div className="pencil">
@@ -114,56 +135,49 @@ function Pencil(props) {
         aria-hidden="true"
         className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "")}
         onClick={handleDrop}
-        >
-      </i>
+      />
 
       {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
+        {props.type === "info" && (
+          <DropdownTimelineBar ptype={handleType} num={handleNum} close={handleClose} />
+        )}
 
-      {props.type === "info"  ? (
-        <Dropdowninfo ptype={handleType} num={handleNum}/>
-    ) : (
-      ""
-    )}
-    {props.type === "main"  ? (
-      <Dropdown
-        title={props.title}
-        addCircle={addCircle}
-        addRectangle={addRectangle}
-        addTriangle={addTriangle}
-        addStar={addStar}
-        addStick={addStick}
-        drawLine={drawLine}
-        drawText={drawText}
-        stopDrawing={stopDrawing}
-        addImage={addImage}
-        addVideo={addVideo}
-        addAudio={addAudio}
-        addDocument={addDocument}
-        addConnect={addConnect}
-        addTic={addTic}
-        eraseLine={eraseLine}
-        choosecolor={handleColor}
-        close={handleClose}
-        handleImage={handleImage}
-        handleVideo={handleVideo}
-        handleAudio={handleAudio}
-        handleDocument={handleDocument}
-      />
-    ) : (
+        {props.type === "main" && (
+          <DropdownAddObjects
+            title={props.title}
+            addCircle={addCircle}
+            addRectangle={addRectangle}
+            addTriangle={addTriangle}
+            addStar={addStar}
+            addStick={addStick}
+            drawLine={drawLine}
+            drawText={drawText}
+            stopDrawing={stopDrawing}
+            addImage={addImage}
+            addVideo={addVideo}
+            addAudio={addAudio}
+            addDocument={addDocument}
+            addConnect={addConnect}
+            addTic={addTic}
+            eraseLine={eraseLine}
+            choosecolor={handleColor}
+            close={handleClose}
+            handleImage={handleImage}
+            handleVideo={handleVideo}
+            handleAudio={handleAudio}
+            handleDocument={handleDocument}
+          />
+        )}
 
-    ""
-    )}
-    {props.type === "nav"  ? (
-    <Dropdownnav
-      mvisible={handleMvisible}
-      avisible={handleAvisible}
-      pavisible={handlePavisible}
-      svisible={handleSvisible}
-      pevisible={handlePevisible}/>
-    ) : (
-      ""
-    )}
-
+        {props.type === "nav" && (
+          <DropdownNavigationBar
+            mvisible={handleMvisible}
+            avisible={handleAvisible}
+            pavisible={handlePavisible}
+            svisible={handleSvisible}
+            pevisible={handlePevisible}
+            close={handleClose} />
+        )}
       </div>}
     </div>
   );

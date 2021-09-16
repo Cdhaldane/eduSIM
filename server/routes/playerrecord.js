@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const playerrecord = require('../controllers/joinpage.jsx');
+const playerrecord = require('../controllers/joinpage');
 const router = Router();
 
 router.post('/createGamePlayers', playerrecord.createGamePlayers);

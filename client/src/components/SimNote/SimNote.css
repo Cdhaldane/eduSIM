@@ -10,9 +10,10 @@
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
+
 .notesim h1 {
   text-align: center;
-  color: rgba(0,0,0,0.8);
+  color: rgba(0, 0, 0, 0.8);
   font-size: 1.5rem;
   text-overflow: ellipsis;
   overflow: hidden;

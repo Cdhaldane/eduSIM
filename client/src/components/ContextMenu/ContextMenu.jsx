@@ -1,17 +1,30 @@
-import React, {useState} from "react";
-import Dropdownedit from "../DropDown/Dropdownedit";
+import React, { useState, useEffect, useRef } from "react";
+import DropdownEditObject from "../Dropdown/DropdownEditObject";
+
 import "./ContextMenu.css"
 
-
-function ContextMenu(props){
-  console.log(props)
+function ContextMenu(props) {
   const [drop, setDrop] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
+  const menu = useRef();
 
-  function handleColorF(e){
+  const handleClickOutside = e => {
+    if (!menu.current.contains(e.target)) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    console.log(sidebarWidth);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  function handleColorF(e) {
     props.choosecolorf(e);
   }
 
-  function handleColorS(e){
+  function handleColorS(e) {
     props.choosecolors(e);
   }
 
@@ -19,25 +32,21 @@ function ContextMenu(props){
     setDrop(!drop);
   }
 
-  function handleWidth(e){
+  function handleWidth(e) {
     props.handleWidth(e);
   }
 
-  function handleOpacity(e){
+  function handleOpacity(e) {
     props.handleOpacity(e);
   }
 
-
-
-
   return (
-
     <div
+      ref={menu}
       className="cmenu"
       style={{
-        position: "absolute",
-        left: props.position.x+100,
-        top: props.position.y-20,
+        left: props.position.x + sidebarWidth,
+        top: props.position.y
       }}
     >
       <ul>
@@ -46,22 +55,18 @@ function ContextMenu(props){
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>Edit shape</li>
-      <hr />
-    <li onClick={props.close}>Close</li>
       </ul>
 
-
       {drop && <div className="drop">
-        <Dropdownedit
-            title="Edit Shape"
-            choosecolorf={handleColorF}
-            choosecolors={handleColorS}
-            handleWidth={handleWidth}
-            handleOpacity={handleOpacity}
-          />
+        <DropdownEditObject
+          title="Edit Shape"
+          choosecolorf={handleColorF}
+          choosecolors={handleColorS}
+          handleWidth={handleWidth}
+          handleOpacity={handleOpacity}
+        />
       </div>}
     </div>
-
   );
 };
 

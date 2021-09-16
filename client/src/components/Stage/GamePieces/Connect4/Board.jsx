@@ -201,6 +201,7 @@ export default function ConnectFour() {
         }
       }
     }
+    
     function isHorizontalWin() {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
@@ -220,6 +221,7 @@ export default function ConnectFour() {
         }
       }
     }
+
     function isVerticalWin() {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
@@ -239,6 +241,7 @@ export default function ConnectFour() {
         }
       }
     }
+
     function isBackwardsDiagonalWin() {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
@@ -258,6 +261,7 @@ export default function ConnectFour() {
         }
       }
     }
+
     function isForwardsDiagonalWin() {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
@@ -277,6 +281,7 @@ export default function ConnectFour() {
         }
       }
     }
+
     setWin(isWin());
   }, [board, dropping, win]);
 
@@ -314,48 +319,42 @@ export default function ConnectFour() {
     }
     return gridTemplateColumns;
   }
-  // <div className="xo-container">
-  //   <div>
-  //     <h1>o</h1>
-  //     <h1>o</h1>
-  //   </div>
-  // </div>
+
   return (
     <Draggable>
       <div className="connectcontainer">
 
-      <div
-        className={`board ${
-          currentPlayer === boardSettings.colors.p1 ? "p1-turn" : "p2-turn"
-        } `}
-        ref={domBoard}
-        style={{
-          gridTemplateColumns: getGridTemplateColumns()
-        }}
-      >
-        {createDropButtons()}
-        {cells}
+        <div
+          className={`board ${currentPlayer === boardSettings.colors.p1 ? "p1-turn" : "p2-turn"
+            } `}
+          ref={domBoard}
+          style={{
+            gridTemplateColumns: getGridTemplateColumns()
+          }}
+        >
+          {createDropButtons()}
+          {cells}
+        </div>
+        {!win && (
+          <h2 style={{ color: currentPlayer }}>
+            {currentPlayer === boardSettings.colors.p1 ? "Player 1" : "Player 2"}
+          </h2>
+        )}
+        {win && (
+          <>
+            <h1 style={{ color: win.winner }}>
+              {" "}
+              {win.winner === boardSettings.colors.p1
+                ? "Player 1"
+                : "Player 2"}{" "}
+              WON!
+            </h1>
+            <button onClick={restartGame}>Play Again</button>
+            <br />
+            <br />
+          </>
+        )}
       </div>
-      {!win && (
-        <h2 style={{ color: currentPlayer }}>
-          {currentPlayer === boardSettings.colors.p1 ? "Player 1" : "Player 2"}
-        </h2>
-      )}
-      {win && (
-        <>
-          <h1 style={{ color: win.winner }}>
-            {" "}
-            {win.winner === boardSettings.colors.p1
-              ? "Player 1"
-              : "Player 2"}{" "}
-            WON!
-          </h1>
-          <button onClick={restartGame}>Play Again</button>
-          <br />
-          <br />
-        </>
-      )}
-    </div>
     </Draggable>
   );
 }

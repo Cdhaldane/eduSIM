@@ -25,7 +25,7 @@ const adminaccounts = db.define('adminaccounts', {
 });
 
 adminaccounts.sync().then(() => {
-  console.log('table created');
+  console.log('AdminAccounts table created');
 });
 
 module.exports = adminaccounts;

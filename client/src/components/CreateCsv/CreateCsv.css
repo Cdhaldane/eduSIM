@@ -1,4 +1,4 @@
-.areacsv{
+.areacsv {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +11,7 @@
   border-radius: 10%;
 }
 
-.areacsv form:after{
+.areacsv form:after {
   --borderWidth: 3px;
   content: '';
   position: absolute;
@@ -25,7 +25,6 @@
   animation: animatedgradient 3s ease alternate infinite;
   background-size: 300% 300%;
 }
-
 
 @keyframes animatedgradient {
   0% {
@@ -91,9 +90,11 @@
   cursor: pointer;
 }
 
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
-  opacity: 1; /* Firefox */
+  opacity: 1;
+  /* Firefox */
 }
 
 #boxj1 {
@@ -148,7 +149,7 @@
   background-color: #8f001a;
 }
 
-#boxtabs{
+#boxtabs {
   position: absolute;
   left: 0px;
   top: 230px;
@@ -178,15 +179,15 @@
   border: solid 2px black;
 }
 
-#boxtabs input::placeholder{
+#boxtabs input::placeholder {
   opacity: 0.8;
 }
 
-#roles-selection{
+#roles-selection {
   position: relative;
 }
 
-#rolesdrops{
+#rolesdrops {
   position: relative;
   width: 300px;
 }
@@ -228,7 +229,7 @@
   #addj {
     left: 362px;
   }
-  #boxtabs{
+  #boxtabs {
     position: absolute;
     left: 0px;
     top: 230px;
@@ -241,7 +242,6 @@
     font-family: 'Raleway';
     font-size: 1.3rem;
   }
-
   #boxtabs input, #boxtabs textarea {
     position: relative;
     left: 40px;

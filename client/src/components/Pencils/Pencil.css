@@ -2,7 +2,7 @@
   position: absolute;
 }
 
-#pencil1:hover{
+#pencil1:hover {
   cursor: pointer;
 }
 
@@ -15,7 +15,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil2:hover{
+#pencil2:hover {
   cursor: pointer;
 }
 
@@ -28,30 +28,30 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil3:hover{
+#pencil3:hover {
   cursor: pointer;
 }
 
-#pencil4{
+#pencil4 {
   z-index: 2000;
   position: fixed;
-  left:20px;
-  top:20px;
+  left: 20px;
+  top: 20px;
   color: #dcafb7;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-#pencil4:hover{
+#pencil4:hover {
   cursor: pointer;
 }
 
-.header{
+.header {
   position: relative;
   top: -150px;
 }
 
-.drop1{
+.drop1 {
   position: absolute;
   left: -10px;
   top: 50px;

@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-var mailOptions = {
+let mailOptions = {
   from: 'edusimuottawa@outlook.com',
   to: 'xcdhaldane@gmail.com',
   subject: 'EDUsim invite!',

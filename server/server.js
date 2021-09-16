@@ -7,7 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 
-var cors = require('cors')
+let cors = require('cors')
 
 const ENV = process.env.NODE_ENV  //Tells us if we're working in development or production
 const PORT = process.env.PORT || 5050;
