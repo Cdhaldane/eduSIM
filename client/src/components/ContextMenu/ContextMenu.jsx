@@ -15,7 +15,6 @@ function ContextMenu(props) {
   };
 
   useEffect(() => {
-    console.log(sidebarWidth);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);

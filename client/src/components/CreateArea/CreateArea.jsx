@@ -1,19 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
+import AlertPopup from "../Alerts/AlertPopup";
 import "./CreateArea.css";
 
 function CreateArea(props) {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
-  const [title, setTitle] = useState("Untitled");
+  const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
   const [imageSelected, setImageSelected] = useState("");
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
+  const detailsArea = new useRef();
+  const imageArea = new useRef();
+  const [emptyNameAlert, setEmptyNameAlert] = useState(false);
+  const [sameNameAlert, setSameNameAlert] = useState(false);
+
+  const handleClickOutside = e => {
+    if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const uploadImage = async event => {
+    // Check if name is empty or a duplicate
+    if (title === "") {
+      setEmptyNameAlert(true);
+      return;
+    }
+    if (props.gamedata.some(game => game.gameinstance_name === title)) {
+      setSameNameAlert(true);
+      return;
+    }
+
     event.preventDefault();
     const formData = new FormData()
     formData.append("file", imageSelected)
@@ -118,7 +144,21 @@ function CreateArea(props) {
   }
   return (
     <div class="area">
-      <form className="form-input">
+      {emptyNameAlert && (
+        <AlertPopup
+          hide={() => setEmptyNameAlert(false)}
+          type={"warning"}>
+          A name is required for the simulation.
+        </AlertPopup>
+      )}
+      {sameNameAlert && (
+        <AlertPopup
+          hide={() => setSameNameAlert(false)}
+          type={"warning"}>
+          A simulation with this name already exists. Please pick a new name.
+        </AlertPopup>
+      )}
+      <form ref={detailsArea} className="form-input">
         <p className="gradient-border modal-title">Add New Simulation</p>
         <div>
           Choose a game
@@ -129,16 +169,18 @@ function CreateArea(props) {
             <option value="blank">Create a blank simulation</option>
           </select>
         </div>
-        <div class="gradient-border">
-          Duplicate a previous simulation
-          <label id="switch">
-            <Switch
-              onChange={() => setChecked(!checked)}
-              checked={checked}
-              className="react-switch"
-            />
-          </label>
-        </div>
+        {props.gamedata.length !== 0 && (
+          <div class="gradient-border">
+            Duplicate a previous simulation
+            <label id="switch">
+              <Switch
+                onChange={() => setChecked(!checked)}
+                checked={checked}
+                className="react-switch"
+              />
+            </label>
+          </div>
+        )}
         {checked && (
           <div>
             Select a previous simulation
@@ -169,12 +211,12 @@ function CreateArea(props) {
             )}
           </div>
         </div>
-        <button className="modal-bottomright-button" onClick={uploadImage}>
+        <button type="button" className="modal-bottomright-button" onClick={uploadImage}>
           Add
         </button>
       </form>
       {img && (
-        <form className="form-imgs">
+        <form ref={imageArea} className="form-imgs">
           <img
             src="temp.png"
             alt="temp"

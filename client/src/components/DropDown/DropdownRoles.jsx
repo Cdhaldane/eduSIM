@@ -13,6 +13,8 @@ const DropdownRoles = (props) => {
   const [roleName, setRoleName] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [emptyRoleName, setEmptyRoleName] = useState(false);
+  const [sameRoleName, setSameRoleName] = useState(false);
 
   const menuElem = useRef(null);
 
