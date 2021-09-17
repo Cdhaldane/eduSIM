@@ -17,10 +17,9 @@ function CreateArea(props) {
     event.preventDefault();
     const formData = new FormData()
     formData.append("file", imageSelected)
-    formData.append("upload_preset", "scyblt6a")
     formData.append("folder", "images")
     try {
-      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
         .then((res) => {
           let data = {
             gameinstance_name: title,

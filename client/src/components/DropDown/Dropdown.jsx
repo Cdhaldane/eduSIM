@@ -67,10 +67,9 @@ import "./Dropdown.css";
       event.preventDefault();
       const formData = new FormData()
       formData.append("file", img)
-      formData.append("upload_preset", "scyblt6a")
       formData.append("folder", "images")
       try {
-      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
       .then((res) => {
         console.log(res)
         const allData = res.data.public_id
@@ -86,10 +85,9 @@ import "./Dropdown.css";
       event.preventDefault();
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("upload_preset", "scyblt6a")
       formData.append("folder", "pdfs")
       try {
-      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData)
+      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
       .then((res) => {
         console.log(res)
         const allData = res.data.public_id
