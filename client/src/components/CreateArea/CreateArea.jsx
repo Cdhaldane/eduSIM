@@ -15,25 +15,25 @@ function CreateArea(props) {
 
   const uploadImage = async event => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", imageSelected);
-    formData.append("upload_preset", "scyblt6a");
-    formData.append("folder", "images");
+    const formData = new FormData()
+    formData.append("file", imageSelected)
+    formData.append("folder", "images")
     try {
-      await axios.post("https://api.cloudinary.com/v1_1/uottawaedusim/image/upload", formData).then((res) => {
-        let data = {
-          gameinstance_name: title,
-          gameinstance_photo_path: res.data.public_id,
-          game_parameters: 'value',
-          createdby_adminid: localStorage.adminid,
-          status: 'created'
-        }
-        axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
-          console.log(res);
-        }).catch(error => {
-          console.log(error);
-        });
-        props.onAdd(note);
+      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
+        .then((res) => {
+          let data = {
+            gameinstance_name: title,
+            gameinstance_photo_path: res.data.public_id,
+            game_parameters: 'value',
+            createdby_adminid: localStorage.adminid,
+            status: 'created'
+          }
+          axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
+            .then((res) => {
+              console.log(res)
+            })
+            .catch(error => console.log(error.response));
+          props.onAdd(note);
       });
     } catch (error) {
       let data = {
