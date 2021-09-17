@@ -28,7 +28,7 @@ const gameactions = db.define('gameactions', {
 });
 
 gameactions.sync().then(() => {
-  console.log('gameactions table created');
+  console.log('GameActions table created');
 });
 
 module.exports = gameactions;

@@ -3,6 +3,9 @@
   font-size: 1.5rem;
   border: 1px solid black;
   font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  box-shadow: rgba(0,0,0,0.25) 4px 4px 4px 0px;
+  position: absolute;
 }
 
 .cmenu ul, li {
@@ -12,7 +15,7 @@
   list-style-type: none;
 }
 
-.cmenu li:hover{
+.cmenu li:hover {
   background-color: grey;
   cursor: pointer;
 }

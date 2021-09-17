@@ -29,7 +29,7 @@ const gameplayers = db.define('gameplayers', {
 });
 
 gameplayers.sync().then(() => {
-  console.log('gameplayers table created');
+  console.log('GamePlayers table created');
 });
 
 module.exports = gameplayers;

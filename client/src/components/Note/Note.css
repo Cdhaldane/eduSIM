@@ -7,7 +7,6 @@
   text-align: center;
 }
 
-
 .note h1 {
   color: #181818;
   font-family: "Montserrat", sans-serif;
@@ -17,6 +16,7 @@
   text-align: center;
   padding: 10px;
 }
+
 .note p {
   font-size: 1.0em;
   margin-bottom: 10px;
@@ -24,7 +24,7 @@
   word-wrap: break-word;
 }
 
-.note img{
+.note img {
   height: 50%;
   margin-top: 5px;
   padding: 30px;

@@ -3,7 +3,7 @@
   top: 0px;
   left: 70px;
   height: 160px;
-  background: linear-gradient(0deg, rgba(229,229,229,0), rgba(229,229,229));
+  background: linear-gradient(0deg, rgba(229, 229, 229, 0), rgba(229, 229, 229));
   width: calc(100% - 70px);
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
@@ -30,6 +30,7 @@
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
+
 /* .level p {
   position: absolute;
   color: #636363;
@@ -42,10 +43,10 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 } */
 
-.level button{
+.level button {
   width: 100px;
   height: 50px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
   background-color: #8f001a;
@@ -58,7 +59,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
-.level button:hover{
+.level button:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
@@ -77,30 +78,36 @@
   display: flex;
   justify-content: space-between;
 }
+
 .level-bar-section:not(:last-child) {
   display: flex;
   align-items: center;
   flex: 1;
 }
+
 .level-bar-section {
   transition: all .3s;
 }
+
 .level-bar-node {
   width: 40px;
   height: 40px;
   border-radius: 20px;
   border: 5px solid #8f001a;
-  background-color: rgb(150,150,150);
+  background-color: rgb(150, 150, 150);
   transition: background-color .3s;
 }
+
 .level-bar-node-active {
   background-color: white;
 }
+
 .level-bar-line {
   height: 8px;
   flex: 1;
-  background-color:#8f001a;
+  background-color: #8f001a;
 }
+
 .level-select {
   top: unset;
   left: unset;
@@ -123,7 +130,6 @@
   .level-bar {
     padding: 5px 20px;
   }
-
   .level-gamepage .level-nav {
     margin-top: 20px;
     margin-right: 60px;
@@ -131,7 +137,6 @@
   .level-gamepage .level-close {
     margin-top: 15px;
   }
-
   #all {
     left: 0px;
     width: 100%;

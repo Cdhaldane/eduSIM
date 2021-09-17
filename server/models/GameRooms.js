@@ -9,18 +9,17 @@ const gamerooms = db.define('gamerooms', {
   },
   gameinstanceid: {
     type: Sequelize.UUID,
-
   },
   gameroom_name: {
     type: Sequelize.STRING(250)
   },
   gameroom_url: {
     type: Sequelize.STRING(250)
-  },  
+  },
 });
 
 gamerooms.sync().then(() => {
-  console.log('game rooms table created');
+  console.log('GameRooms table created');
 });
 
 module.exports = gamerooms;

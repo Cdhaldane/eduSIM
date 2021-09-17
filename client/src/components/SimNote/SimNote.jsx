@@ -5,21 +5,19 @@ import axios from "axios";
 import { Image } from "cloudinary-react";
 
 function SimNote(props) {
-  console.log(props);
+
   function handleClick() {
-    console.log(props.gameid);
     if (window.confirm("Are you sure you wish to delete this simulation?")) {
       props.onDelete(props.id);
-      console.log(props.gameid);
       var body = {
         id: props.gameid
       }
-      axios.put(process.env.REACT_APP_API_ORIGIN+'/api/gameinstances/delete/:id', body)
-      .then((res) => {
+
+      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).then((res) => {
         const allData = res.data;
-        console.log(allData);
-      })
-      .catch(error => console.log(error.response));
+      }).catch(error => {
+        console.log(error);
+      });
     }
   }
 

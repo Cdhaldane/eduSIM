@@ -51,11 +51,13 @@
   position: relative;
   cursor: pointer;
 }
+
 .nav-pic:hover {
   background-color: grey;
   border-radius: 4px;
   transition: all 0.2s ease-out;
 }
+
 .nav-picbutton {
   align-content: center;
   width: 60px;
@@ -171,7 +173,6 @@
     width: 100%;
     pointer-events: unset;
   }
-
   .nav-links {
     text-align: center;
     position: relative;
@@ -180,7 +181,6 @@
     width: 100%;
     display: table;
   }
-
   .nav-links:hover {
     background-color: grey;
     border-radius: 2;
@@ -191,7 +191,6 @@
     width: 100%;
     display: table;
   }
-
   .menu-icon {
     display: inline-flex;
     margin-right: 20px;
@@ -216,7 +215,6 @@
     color: white;
     font-size: 2rem;
   }
-
   .nav-links-mobile:hover {
     background: white;
     color: black;

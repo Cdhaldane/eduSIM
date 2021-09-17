@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css?family=Raleway:200");
-
 .area {
   display: flex;
   align-items: center;
@@ -116,7 +115,8 @@
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
-  opacity: 1; /* Firefox */
+  opacity: 1;
+  /* Firefox */
 }
 
 .gradientborder {
@@ -125,6 +125,7 @@
   position: relative;
   border-radius: var(--borderWidth);
 }
+
 .gradientborder:after {
   content: "";
   position: absolute;
@@ -148,6 +149,7 @@
   overflow: hidden;
   border: none;
 }
+
 .createmodalarea {
   display: flex;
   align-items: center;
@@ -158,6 +160,7 @@
   border: none;
   outline: none;
 }
+
 .myoverlay {
   position: fixed;
   top: 0;
@@ -180,7 +183,6 @@
 .ReactModal__Overlay--before-close {
   opacity: 0;
 }
-
 
 @keyframes animatedgradient {
   0% {
@@ -220,6 +222,7 @@
 select#imgoptions option[value="img2"] {
   background-image: "temp.png";
 }
+
 select#imgoptions option[value="img3"] {
   background-image: "temp.png";
 }
@@ -309,7 +312,7 @@ select#imgoptions option[value="img3"] {
   margin-left: 10px;
 }
 
-#games{
+#games {
   position: relative;
   left: 0px;
   top: 0px;
@@ -333,12 +336,12 @@ select#imgoptions option[value="img3"] {
   .form-input > div > * {
     margin-top: 10px;
   }
-
-  ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  ::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: black;
-    opacity: 1; /* Firefox */
+    opacity: 1;
+    /* Firefox */
   }
-
   .gradientborder {
     --borderWidth: 1px;
     background: #1D1F20;
@@ -352,13 +355,12 @@ select#imgoptions option[value="img3"] {
     left: calc(-1 * var(--borderWidth));
     height: calc(100% + var(--borderWidth) * 2);
     width: calc(100% + var(--borderWidth) * 2);
-    background:  white;
+    background: white;
     border-radius: calc(2 * var(--borderWidth));
     z-index: -1;
     animation: animatedgradient 10s ease alternate infinite;
     background-size: 300% 300%;
   }
-
   .myoverlay {
     position: fixed;
     top: 0;
@@ -367,31 +369,26 @@ select#imgoptions option[value="img3"] {
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.75);
   }
-
   .ReactModal__Overlay {
     opacity: 0;
     transition: opacity 500ms ease-in-out;
   }
-
   .ReactModal__Overlay--after-open {
     opacity: 1;
   }
-
   .ReactModal__Overlay--before-close {
     opacity: 0;
   }
-
-
   @keyframes animatedgradient {
-  	0% {
-  		background-position: 0% 50%;
-  	}
-  	50% {
-  		background-position: 100% 50%;
-  	}
-  	100% {
-  		background-position: 0% 50%;
-  	}
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   #imgs label {

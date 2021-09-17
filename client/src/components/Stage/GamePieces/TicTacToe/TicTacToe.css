@@ -6,8 +6,7 @@
   z-index: 200000;
 }
 
-.gametic ol,
-.gametic ul {
+.gametic ol, .gametic ul {
   padding-left: 30px;
 }
 
@@ -21,7 +20,7 @@
   margin-bottom: 10px;
   position: relative;
   top: 340px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.4vw;
   font-weight: 700;
 }
@@ -55,7 +54,7 @@
   margin-left: 20px;
 }
 
-.edit-container{
+.edit-container {
   background-color: white;
   border: 1px solid black;
   width: 20%;

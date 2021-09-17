@@ -1,11 +1,10 @@
-var supertest = require("supertest");
-
+const supertest = require("supertest");
 const express = require('express');
 const gameinstances = require("../models/GameInstances");
 
 const app = express();
 
-var server = supertest.agent("http://localhost:5050");
+let server = supertest.agent("http://localhost:5050");
 
 //==================== user API test ====================
 
@@ -14,71 +13,77 @@ var server = supertest.agent("http://localhost:5050");
  */
 describe('GET /getAdminSimulations', function () {
     it('respond with json containing a list of all game instances created by an admin', function (done) {
-        const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7"
+        const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7";
         server
-            .get('/gameinstances/'+ adminid)
+            .get('/gameinstances/' + adminid)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .expect(200,done);
+            .expect(200, done);
     });
 });
+
 describe('GET /getGameSimulationById', function () {
     it('respond with json containing a specific game instance', function (done) {
-        const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7"
-        const gameid = "c8a39fd1-a5de-42c8-8558-20687813ea62"
+        const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7";
+        const gameid = "c8a39fd1-a5de-42c8-8558-20687813ea62";
         server
-            .get('/gameinstances/getGameInstance/'+adminid+'/'+gameid)
+            .get('/gameinstances/getGameInstance/' + adminid + '/' + gameid)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
-            .expect(200,done);
+            .expect(200, done);
     });
 });
+
 describe('POST /NewGameSimulation', function () {
     it('respond with newly created game instance', function (done) {
         server
-        .post('/gameinstances/createGameInstance')
-        .send({ gameinstance_name: "Chess",
-        gameinstance_photo_path: "/chess",
-        game_parameters: {"key": "value"},
-        createdby_adminid: "d07f452e-d05b-11eb-b8bc-0242ac130003",
-        invite_url: "def.com" })
-        .set('X-API-Key', 'foobar')
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .then(res => {
-           console.log('Game Instance created successfully: ' + JSON.stringify(res.body));
-           done();
-        }).catch(done);
+            .post('/gameinstances/createGameInstance')
+            .send({
+                gameinstance_name: "Chess",
+                gameinstance_photo_path: "/chess",
+                game_parameters: { "key": "value" },
+                createdby_adminid: "d07f452e-d05b-11eb-b8bc-0242ac130003",
+                invite_url: "def.com"
+            })
+            .set('X-API-Key', 'foobar')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(res => {
+                console.log('Game Instance created successfully: ' + JSON.stringify(res.body));
+                done();
+            }).catch(done);
     });
 });
+
 describe('PUT /UpdateGameSimulation', function () {
     it('respond with updated game instance', function (done) {
-        const id = "c8a39fd1-a5de-42c8-8558-20687813ea62"
+        const id = "c8a39fd1-a5de-42c8-8558-20687813ea62";
         server
-        .put('/gameinstances/update/'+id)
-        .send({ gameinstance_photo_path: "/chessgame" })
-        .set('X-API-Key', 'foobar')
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .then(res => {
-           console.log('Game Instance updated successfully: ' + JSON.stringify(res.body));
-           done();
-        }).catch(done);
+            .put('/gameinstances/update/' + id)
+            .send({ gameinstance_photo_path: "/chessgame" })
+            .set('X-API-Key', 'foobar')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(res => {
+                console.log('Game Instance updated successfully: ' + JSON.stringify(res.body));
+                done();
+            }).catch(done);
     });
 });
+
 describe('DELETE /DeleteGameSimulation', function () {
     it('respond with success message', function (done) {
-        const id = "cc717876-3e8b-4292-970a-82007136b11b"
+        const id = "cc717876-3e8b-4292-970a-82007136b11b";
         server
-        .delete('/gameinstances/delete/'+id)
-        .set('X-API-Key', 'foobar')
-        .set('Accept', 'application/json')
-        .expect(200)
-        .then(res => {
-           console.log('Game Instance deleted successfully');
-           done();
-        }).catch(done);
+            .delete('/gameinstances/delete/' + id)
+            .set('X-API-Key', 'foobar')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .then(res => {
+                console.log('Game Instance deleted successfully');
+                done();
+            }).catch(done);
     });
 });

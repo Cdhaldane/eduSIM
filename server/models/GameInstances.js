@@ -31,7 +31,7 @@ const gameinstances = db.define('gameinstances', {
 });
 
 gameinstances.sync().then(() => {
-  console.log('gameinstance table created');
+  console.log('GameInstances table created');
 });
 
 module.exports = gameinstances;
