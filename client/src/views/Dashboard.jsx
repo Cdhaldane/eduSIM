@@ -64,10 +64,6 @@ function Dashboard(props) {
 
   return (
     <div className="dashboard">
-      <i
-        class="fa fa-home fa-2x dashboard-home"
-        aria-hidden="true"
-      ></i>
 
       <div className="page-margin">
         <button className="addbutton" onClick={toggleModal}>

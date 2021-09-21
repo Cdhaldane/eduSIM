@@ -3,6 +3,7 @@ import { MenuItems } from "./MenuItems";
 import AuthenticationButton from "../Auth0/AuthenticationButton";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import ButtonLink from "../Buttons/ButtonLink";
+import { Link } from "react-router-dom";
 
 import "./Navbar.css";
 
@@ -47,6 +48,12 @@ function NavBar(props) {
             className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
+            <Link to="/dashboard" className="nav-home-mobile">
+              <i
+                class="fa fa-home"
+                aria-hidden="true"
+              ></i>
+            </Link>
             <ButtonLink
               href="/profile"
               buttonStyle="btn--primary--solid"
@@ -57,6 +64,13 @@ function NavBar(props) {
             <AuthenticationButton />
           </div>
         )}
+
+        <Link to="/dashboard" className="nav-home">
+          <i
+            class="fa fa-home"
+            aria-hidden="true"
+          ></i>
+        </Link>
 
         {MenuItems.map((item, index) => {
           return (
