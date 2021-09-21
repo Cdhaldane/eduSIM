@@ -51,15 +51,14 @@ function Tabs(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setToggleState(toggleState + 1);
-    setTabs([...tabs, newGroup]);
     let data = {
       gameinstanceid: props.gameid,
       gameroom_name: newGroup
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
-        console.log(res)
+        setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid]]);
+        setToggleState(toggleState + 1);
       })
       .catch(error => console.log(error.response));
   }
@@ -76,7 +75,6 @@ function Tabs(props) {
 
   const handleDeleteGroup = (e) => {
     var index = tabs.indexOf(e);
-    console.log(tabs)
     setToggleState(0);
     axios.delete(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/deleteRoom/:gameroomid', {
       params: {
@@ -88,7 +86,7 @@ function Tabs(props) {
 
       })
       .catch(error => console.log(error.response));
-    delete tabs[index]
+    setTabs(tabs.filter((_,i) => i != index));
   }
 
   const handleTime = (e) => {
