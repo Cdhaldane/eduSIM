@@ -9,6 +9,7 @@ function Dashboard(props) {
   const { user } = useAuth0();
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState(null);
 
   useEffect(() => {
     const getAllGamedata = async () => {
@@ -53,6 +54,11 @@ function Dashboard(props) {
   }
 
   function toggleModal() {
+    if (!uploadedImages) {
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/image/getImagesFrom/' + localStorage.adminid).then((res) => {
+        setUploadedImages(res.data.resources);
+      });
+    }
     setShowNote(!showNote);
   }
 
@@ -64,7 +70,7 @@ function Dashboard(props) {
       ></i>
 
       <div className="page-margin">
-        <button className="addbutton" onClick={() => setShowNote(!showNote)}>
+        <button className="addbutton" onClick={toggleModal}>
           Add a new simulation +
         </button>
       </div>
@@ -99,7 +105,14 @@ function Dashboard(props) {
         overlayClassName="myoverlay"
         closeTimeoutMS={500}
       >
-        <CreateArea onAdd={addNote} onDelete={() => setShowNote(!showNote)} gamedata={gamedata} isOpen={showNote} close={toggleModal} />
+        <CreateArea 
+          onAdd={addNote} 
+          onDelete={() => setShowNote(!showNote)} 
+          gamedata={gamedata} 
+          isOpen={showNote} 
+          close={toggleModal} 
+          previewImages={uploadedImages}
+        />
       </Modal>
     </div>
   );

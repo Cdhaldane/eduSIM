@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import AlertPopup from "../Alerts/AlertPopup";
+import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
 function CreateArea(props) {
@@ -44,6 +45,7 @@ function CreateArea(props) {
     const formData = new FormData()
     formData.append("file", imageSelected)
     formData.append("folder", "images")
+    formData.append("uploader", localStorage.adminid)
     try {
       await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
         .then((res) => {
@@ -217,54 +219,16 @@ function CreateArea(props) {
       </form>
       {img && (
         <form ref={imageArea} className="form-imgs">
-          <img
-            src="temp.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/lhd0g0spuityr8xps7vn");
-              setImg("temp.png");
-            }}
-          />
-          <img
-            src="temp1.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/i50xq1m2llbrg625zf9j");
-              setImg("temp1.png");
-            }}
-          />
-          <img
-            src="temp.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/lhd0g0spuityr8xps7vn");
-              setImg("temp.png");
-            }}
-          />
-          <img
-            src="temp1.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/i50xq1m2llbrg625zf9j");
-              setImg("temp1.png");
-            }}
-          />
-          <img
-            src="temp.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/lhd0g0spuityr8xps7vn");
-              setImg("temp.png");
-            }}
-          />
-          <img
-            src="temp1.png"
-            alt="temp"
-            onClick={() => {
-              setFilename("images/i50xq1m2llbrg625zf9j");
-              setImg("temp1.png");
-            }}
-          />
+          {props.previewImages?.map((image) => (
+            <Image 
+              cloudName="uottawaedusim" 
+              publicId={image.url} 
+              onClick={() => {
+                setFilename("images/lhd0g0spuityr8xps7vn");
+                setImg(image.url);
+              }}
+            />
+          ))}
           <input type="file" name="img" id="file" onChange={onChange} />
           <label for="file" className="form-imgsubmit">
             From file
