@@ -18,6 +18,7 @@ function CreateArea(props) {
   const imageArea = new useRef();
   const [emptyNameAlert, setEmptyNameAlert] = useState(false);
   const [sameNameAlert, setSameNameAlert] = useState(false);
+  const [willUpload, setWillUpload] = useState(false);
 
   const handleClickOutside = e => {
     if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
@@ -47,26 +48,14 @@ function CreateArea(props) {
     formData.append("folder", "images")
     formData.append("uploader", localStorage.adminid)
     try {
-      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-        .then((res) => {
-          let data = {
-            gameinstance_name: title,
-            gameinstance_photo_path: res.data.public_id,
-            game_parameters: 'value',
-            createdby_adminid: localStorage.adminid,
-            status: 'created'
-          }
-          axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data)
-            .then((res) => {
-              console.log(res)
-            })
-            .catch(error => console.log(error.response));
-          props.onAdd(note);
-      });
-    } catch (error) {
+      let url = filename;
+      if (willUpload) {
+        let res = await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData);
+        url = res.data.public_id;
+      }
       let data = {
         gameinstance_name: title,
-        gameinstance_photo_path: filename,
+        gameinstance_photo_path: url,
         game_parameters: 'value',
         createdby_adminid: localStorage.adminid,
         status: 'created'
@@ -96,9 +85,11 @@ function CreateArea(props) {
         });
         props.onAdd(note);
       }
-    }
 
-    window.location.reload();
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Handles selection of img from file
@@ -109,6 +100,7 @@ function CreateArea(props) {
       title: title,
       img: URL.createObjectURL(event.target.files[0]),
     });
+    setWillUpload(true);
   }
 
   // Handle input and adds title and img to notes array
@@ -224,8 +216,9 @@ function CreateArea(props) {
               cloudName="uottawaedusim" 
               publicId={image.url} 
               onClick={() => {
-                setFilename("images/lhd0g0spuityr8xps7vn");
+                setFilename(image.public_id);
                 setImg(image.url);
+                setWillUpload(false);
               }}
             />
           ))}
