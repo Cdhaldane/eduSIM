@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import { useAlertContext } from "../Alerts/AlertContext";
+
 import "./CreateArea.css";
 
 function CreateArea(props) {
@@ -31,11 +32,11 @@ function CreateArea(props) {
 
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
-    if (title === "") {
+    if (title.trim() === "") {
       alertContext.showAlert("A name is required for the simulation.", "warning");
       return;
     }
-    if (props.gamedata.some(game => game.gameinstance_name === title)) {
+    if (props.gamedata.some(game => game.gameinstance_name === title.trim())) {
       alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
       return;
     }
@@ -48,7 +49,7 @@ function CreateArea(props) {
       await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
         .then((res) => {
           let data = {
-            gameinstance_name: title,
+            gameinstance_name: title.trim(),
             gameinstance_photo_path: res.data.public_id,
             game_parameters: 'value',
             createdby_adminid: localStorage.adminid,
@@ -63,7 +64,7 @@ function CreateArea(props) {
         });
     } catch (error) {
       let data = {
-        gameinstance_name: title,
+        gameinstance_name: title.trim(),
         gameinstance_photo_path: filename,
         game_parameters: 'value',
         createdby_adminid: localStorage.adminid,

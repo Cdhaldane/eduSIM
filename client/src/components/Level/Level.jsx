@@ -48,7 +48,7 @@ function Level(props) {
 
           <div className="level-bar">
             {times(props.number, (num) => ( // dynamically scaling level bar
-              <div className="level-bar-section">
+              <div key={num} className="level-bar-section">
                 <div className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`} />
                 {num != props.number - 1 && (<div className="level-bar-line" />)}
               </div>
@@ -58,7 +58,7 @@ function Level(props) {
           <button onClick={handleCount}>Next</button>
         </div>
         <Link to="/dashboard" className="level-close">
-          <i class="fas fa-times fa-3x"></i>
+          <i className="fas fa-times fa-3x"></i>
         </Link>
       </div>
     </div>

@@ -10,6 +10,7 @@ import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
 import Connect4 from "./GamePieces/Connect4/Board"
@@ -88,6 +89,7 @@ class URLImage extends React.Component {
     );
   }
 }
+
 function Timer(props) {
   useEffect(() => {
     const MINUTE_MS = 300000;
@@ -105,31 +107,30 @@ function Timer(props) {
     </>
   );
 }
-function Save() {
+
+const Save = () => {
   const [display, setDisplay] = useState(false);
+  const alertContext = useAlertContext();
+
   useEffect(() => {
     const MINUTE_MS = 300000;
     const interval = setInterval(() => {
       setDisplay(true)
     }, MINUTE_MS);
+    return () => clearInterval(interval);
+  }, []);
 
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])
   useEffect(() => {
     const MINUTE_MS = 306000;
     const interval = setInterval(() => {
       setDisplay(false)
     }, MINUTE_MS);
+    return () => clearInterval(interval);
+  }, []);
 
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])
   return (
     <>
-      <div >
-        <p className={`saved ${display ? "saved-active" : ""}`}>
-          <h1>Auto saved!</h1>
-        </p>
-      </div>
+      {display && alertContext.showAlert("Simulation Autosaved", "info")}
     </>
   );
 }
@@ -2616,13 +2617,11 @@ class Graphics extends Component {
                 id="ContainerRect"
               />
 
-
-
-
-              {this.state.rectangles.map(eachRect => {
+              {this.state.rectangles.map((eachRect, index) => {
                 if (eachRect.level === this.state.level && eachRect.infolevel === false) {
                   return (
                     <Rect
+                      key={index}
                       visible={eachRect.visible}
                       rotation={eachRect.rotation}
                       ref={eachRect.ref}
@@ -3813,12 +3812,13 @@ class Graphics extends Component {
                 }
               })}
 
-              {this.state.texts.map(eachText => {
+              {this.state.texts.map((eachText, index) => {
                 if (eachText.level === this.state.level && eachText.infolevel === false) {
                   return (
                     //perhaps this.state.texts only need to contain refs?
                     //so that we only need to store the refs to get more information
                     <Text
+                      key={index}
                       visible={eachText.visible}
                       textDecoration={eachText.link ? "underline" : ""}
                       onTransformStart={() => {

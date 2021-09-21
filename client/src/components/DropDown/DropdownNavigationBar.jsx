@@ -69,7 +69,7 @@ const DropdownNavigationBar = (props) => {
         <div className="menu">
           <h1>Edit Navigation Bar</h1>
           <DropdownItem
-            leftIcon={<i id="icons" className="fas fa-comment-dots"></i>}
+            leftIcon={<i className="icons fas fa-comment-dots"></i>}
             onClick={handleMessage}>
             Messaging
             <Switch
@@ -79,7 +79,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i id="icons" className="fas fa-bell"></i>}
+            leftIcon={<i className="icons fas fa-bell"></i>}
             onClick={handleAlerts}>
             Alerts
             <Switch
@@ -89,7 +89,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i id="icons" className="fas fa-sliders-h"></i>}
+            leftIcon={<i className="icons fas fa-sliders-h"></i>}
             onClick={handleParameters}>
             Parameters
             <Switch
@@ -99,7 +99,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i id="icons" className="fas fa-cog"></i>}
+            leftIcon={<i className="icons fas fa-cog"></i>}
             onClick={handleSettings}>
             Settings
             <Switch
@@ -109,7 +109,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i id="icons" className="fas fa-chart-bar"></i>}
+            leftIcon={<i className="icons fas fa-chart-bar"></i>}
             onClick={handlePerformance}>
             Performance
             <Switch

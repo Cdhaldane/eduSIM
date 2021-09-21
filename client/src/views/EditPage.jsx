@@ -51,7 +51,7 @@ function EditPage(props) {
       <Container>
         <Grid>
           <GridNav>
-            <Sidebar class="grid-sidebar" visible={showNav} close={toggle}
+            <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
               img={props.location.img}
               title={props.location.gameinstance}
             />
