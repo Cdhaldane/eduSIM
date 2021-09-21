@@ -47,6 +47,7 @@ const DropdownAddObjects = (props) => {
     const formData = new FormData();
     formData.append("file", img);
     formData.append("folder", "images");
+    formData.append("uploader", localStorage.adminid);
 
     try {
       await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
@@ -65,6 +66,7 @@ const DropdownAddObjects = (props) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folder", "pdfs");
+    formData.append("uploader", localStorage.adminid);
 
     try {
       await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
