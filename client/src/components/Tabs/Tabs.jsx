@@ -185,6 +185,7 @@ function Tabs(props) {
               className="createmodaltab"
               overlayClassName="myoverlaytab"
               closeTimeoutMS={500}
+              ariaHideApp={false}
             >
               <CreateEmail
                 addstudent={true}

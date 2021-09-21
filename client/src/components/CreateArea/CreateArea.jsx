@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
-import AlertPopup from "../Alerts/AlertPopup";
+import { useAlertContext } from "../Alerts/AlertContext";
 import "./CreateArea.css";
 
 function CreateArea(props) {
@@ -15,8 +15,8 @@ function CreateArea(props) {
   const [copiedParams, setCopiedParams] = useState();
   const detailsArea = new useRef();
   const imageArea = new useRef();
-  const [emptyNameAlert, setEmptyNameAlert] = useState(false);
-  const [sameNameAlert, setSameNameAlert] = useState(false);
+
+  const alertContext = useAlertContext();
 
   const handleClickOutside = e => {
     if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
@@ -32,18 +32,18 @@ function CreateArea(props) {
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
     if (title === "") {
-      setEmptyNameAlert(true);
+      alertContext.showAlert("A name is required for the simulation.", "warning");
       return;
     }
     if (props.gamedata.some(game => game.gameinstance_name === title)) {
-      setSameNameAlert(true);
+      alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
       return;
     }
 
     event.preventDefault();
-    const formData = new FormData()
-    formData.append("file", imageSelected)
-    formData.append("folder", "images")
+    const formData = new FormData();
+    formData.append("file", imageSelected);
+    formData.append("folder", "images");
     try {
       await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
         .then((res) => {
@@ -60,7 +60,7 @@ function CreateArea(props) {
             })
             .catch(error => console.log(error.response));
           props.onAdd(note);
-      });
+        });
     } catch (error) {
       let data = {
         gameinstance_name: title,
@@ -90,7 +90,7 @@ function CreateArea(props) {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
           console.log(res);
         }).catch(error => {
-          console.log(error.response)
+          console.log(error.response);
         });
         props.onAdd(note);
       }
@@ -142,22 +142,9 @@ function CreateArea(props) {
     });
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
   }
+
   return (
-    <div class="area">
-      {emptyNameAlert && (
-        <AlertPopup
-          hide={() => setEmptyNameAlert(false)}
-          type={"warning"}>
-          A name is required for the simulation.
-        </AlertPopup>
-      )}
-      {sameNameAlert && (
-        <AlertPopup
-          hide={() => setSameNameAlert(false)}
-          type={"warning"}>
-          A simulation with this name already exists. Please pick a new name.
-        </AlertPopup>
-      )}
+    <div className="area">
       <form ref={detailsArea} className="form-input">
         <p className="gradient-border modal-title">Add New Simulation</p>
         <div>
@@ -170,7 +157,7 @@ function CreateArea(props) {
           </select>
         </div>
         {props.gamedata.length !== 0 && (
-          <div class="gradient-border">
+          <div className="gradient-border">
             Duplicate a previous simulation
             <label id="switch">
               <Switch
@@ -189,7 +176,7 @@ function CreateArea(props) {
             </select>
           </div>
         )}
-        <div class="gradient-border">
+        <div className="gradient-border">
           Enter a ‎name‎‏‏‎ ‎
           <input
             tpye="text"
@@ -200,7 +187,7 @@ function CreateArea(props) {
             placeholder="                         "
           />
         </div>
-        <div class="gradient-border">
+        <div className="gradient-border">
           Choose an image
           <div className="form-imgpreview">
             <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
@@ -266,7 +253,7 @@ function CreateArea(props) {
             }}
           />
           <input type="file" name="img" id="file" onChange={onChange} />
-          <label for="file" className="form-imgsubmit">
+          <label htmlFor="file" className="form-imgsubmit">
             From file
           </label>
         </form>
