@@ -13,6 +13,7 @@ function Game(props) {
   const [socket, setSocketInfo] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [message, setMessage] = useState("");
+  const [running, setRunning] = useState(false);
 
   useEffect(() => {
     (async function() {
@@ -29,7 +30,8 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connect", () => {
+      client.on("connectStatus", ({ status }) => {
+        setRunning(status);
         setAlerts(list => list.concat(
           <p>connected as {client.id}</p>
         ));
@@ -44,10 +46,13 @@ function Game(props) {
           <p><b>{id}:</b> {message}</p>
         ));
       })
-      client.on("start", () => {
-        setAlerts(list => list.concat(
-          <h1>start button has been pushed</h1>
-        ));
+      client.on("gameStart", () => {
+        console.log('awoga');
+        setRunning(true);
+      })
+      client.on("gamePause", () => {
+        console.log('awooga');
+        setRunning(false);
       })
       setSocketInfo(client);
     }());
@@ -55,7 +60,7 @@ function Game(props) {
 
   const sendMessage = (event) => {
     event.preventDefault();
-    socket.emit("message", message);
+    socket.emit("message", { message });
     setMessage("");
     return false;
   }
@@ -75,12 +80,14 @@ function Game(props) {
             }
             alt="backdrop"
           />
+          <h2>room code: {roomid}</h2>
           <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
           {alerts.map((el) => (el))}
           <form onSubmit={sendMessage} action="#">
             <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
             <input type="submit" value="send" />
           </form>
+          {!running && (<div className="editpagetest-paused">paused/not running</div>)}
         </>
       ) : (
         <h1>loading...</h1>

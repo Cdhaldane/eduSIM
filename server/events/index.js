@@ -1,20 +1,24 @@
-export default (server, client) => {
-  console.log('new client connected: ', client.id);
+import playerEvents from "./player";
+import adminEvents from "./admin";
+import { getRoomStatus } from './utils';
 
-  const roomid = client.handshake.query.room;
+export default async (server, client) => {
+  
+  if (client.handshake.auth.token) {
+    // initial connection from admin, fired upon starting the simulation
 
-  client.join(roomid);
+    client.onAny((event, args) => adminEvents(server, client, event, args));
 
-  if (client.handshake.query.admin) {
-    client.broadcast.emit("start");
   } else {
-    client.to(roomid).emit("newClient", client.id);
-  }
+    // initial connection from player; return connection status and announce arrival to other players
+    
+    const roomid = client.handshake.query.room;
+    client.join(roomid);
 
-  client.on("message", (message) => {
-    server.to(roomid).emit("message", {
-      id: client.id,
-      message
-    });
-  });
+    const roomStatus = await getRoomStatus(roomid);
+    client.emit("connectStatus", roomStatus);
+    client.to(roomid).emit("newClient", client.id);
+
+    client.onAny((event, args) => playerEvents(server, client, event, args));
+  }
 };

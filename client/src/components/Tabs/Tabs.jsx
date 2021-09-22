@@ -219,12 +219,9 @@ function Tabs(props) {
           >
             <div className="content-header">
               <h2>{i[0]}</h2>
-              <div className="content-roomlink">
-                {`Room code: `} 
-                <a href={`/gamepage/${i[2]}`} target="#">
-                  {i[2]}
-                </a>
-              </div>
+              <a className="content-roomlink" href={`/gamepage/${i[2]}`} target="#">
+                Join Room
+              </a>
               <button
                 onClick={() => handleDeleteGroup(i)}
                 className="deletegroup"
