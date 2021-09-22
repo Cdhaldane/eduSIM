@@ -7,7 +7,8 @@ import Home from "./views/Home";
 import About from "./views/About";
 import Profile from "./views/Profile";
 import Dashboard from "./views/Dashboard";
-import GamePage from "./views/GamePage";
+// import GamePage from "./views/GamePage";
+import GamePageTest from "./views/GamePageTest"; // TEMPORARY CHANGE
 import EditPage from "./views/EditPage";
 import Join from "./views/Join"
 import { withAuth0 } from "@auth0/auth0-react";
@@ -29,7 +30,7 @@ class App extends React.Component {
             <Route path="/" exact component={Home} />
             <Route path="/welcome" exact component={Welcome} />
             <Route path="/about" exact component={About} />
-            <Route path="/gamepage" exact component={GamePage} />
+            <Route path="/gamepage/:roomid" component={GamePageTest} />
             <Route path="/editpage" exact component={EditPage} />
             <ProtectedRoute path="/profile" component={Profile} />
             <ProtectedRoute path="/dashboard" component={Dashboard} />
@@ -48,7 +49,7 @@ class App extends React.Component {
                 <Route path="../components/Navbar" exact component={Navbar} />
                 <Route path="/welcome" exact component={Welcome} />
                 <Route path="/about" exact component={About} />
-                <Route path="/gamepage" exact component={GamePage} />
+                <Route path="/gamepage/:roomid" component={GamePageTest} />
                 <Route path="/editpage" exact component={EditPage} />
                 <ProtectedRoute path="/profile" component={Profile} />
                 <ProtectedRoute path="/dashboard" component={Dashboard} />

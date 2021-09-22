@@ -398,6 +398,17 @@ footer {
   border: 2px solid black;
 }
 
+/* TO BE DELETED */
+.editpagetest {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: white;
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+}
+
 @media screen and (orientation: portrait) {
   .playbtn{
     left: 132px;

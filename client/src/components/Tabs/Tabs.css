@@ -259,6 +259,14 @@
   margin: 2px 20px;
   flex: 1;
 }
+.content-roomlink {
+  align-self: center;
+  margin-left: auto;
+  margin-right: 20px;
+}
+.content-roomlink a {
+  text-decoration: underline;
+}
 
 .active-content {
   display: flex;
@@ -418,5 +426,13 @@ hr {
   }
   .groupcontainer {
     flex-direction: column;
+  }
+  .content-header {
+    flex-direction: column;
+    align-items: center;
+  }
+  .content-roomlink {
+    align-self: center;
+    margin: 10px 0;
   }
 }

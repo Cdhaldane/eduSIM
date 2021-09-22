@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { withAuth0 } from "@auth0/auth0-react";
 import Tabs from "../components/Tabs/Tabs";
 import CreateCsv from "../components/CreateCsv/CreateCsv";
-import { Link } from "react-router-dom";
 import Modal from "react-modal";
 import { Image } from "cloudinary-react";
 
@@ -44,19 +43,9 @@ function Join(props) {
           </button>
         </div>
         <div className="joinboard-buttons">
-          <Link
-            to={{
-              pathname: "/gamepage",
-              img: props.location.img,
-              title: props.location.title,
-              gameinstance: props.location.gameinstance,
-              adminid: props.location.adminid,
-            }}
-          >
-            <button class="joinboard-button">
-              <i class="fa fa-play"></i>
-            </button>
-          </Link>
+          <button class="joinboard-button">
+            <i class="fa fa-play"></i>
+          </button>
           <button class="joinboard-button">
             <i class="fa fa-pause"></i>
           </button>

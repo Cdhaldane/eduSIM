@@ -37,7 +37,7 @@ function Tabs(props) {
         console.log(res);
         let cart = [];
         for (let i = 0; i < res.data.length; i++) {
-          cart.push([res.data[i].gameroom_name, res.data[i].gameroomid]);
+          cart.push([res.data[i].gameroom_name, res.data[i].gameroomid, res.data[i].gameroom_url]);
           console.log(cart);
         }
         setTabs(cart);
@@ -57,7 +57,7 @@ function Tabs(props) {
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
-        setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid]]);
+        setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid, res.data.gameroom_url]]);
         setToggleState(toggleState + 1);
       })
       .catch(error => console.log(error.response));
@@ -206,6 +206,12 @@ function Tabs(props) {
           >
             <div className="content-header">
               <h2>{i[0]}</h2>
+              <div className="content-roomlink">
+                {`Room code: `} 
+                <a href={`/gamepage/${i[2]}`} target="#">
+                  {i[2]}
+                </a>
+              </div>
               <button
                 onClick={() => handleDeleteGroup(i)}
                 className="deletegroup"
