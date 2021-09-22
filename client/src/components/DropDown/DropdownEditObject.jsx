@@ -1,40 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
 import FontPicker from "font-picker-react";
+
+import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 
 function DropdownEditObject(props) {
   const [activeMenu, setActiveMenu] = useState('main');
-  const [menuHeight, setMenuHeight] = useState(null);
   const dropdownRef = useRef(null);
   const [colourf, setColourf] = useState("");
   const [colours, setColours] = useState("");
   const [value, setValue] = React.useState(20);
   const [valueO, setValueO] = React.useState(1);
-  const [font, setFont] = React.useState("Choose a font!")
-  const [fontSize, setFontSize] = useState("50")
+  const [font, setFont] = React.useState("Open Sans");
+  const [fontSize, setFontSize] = useState("50");
 
-  function handleChangeF(e) {
-    setColourf(e);
-    props.choosecolorf(e);
+  // Slider Styles
+  const railStyle = {
+    height: 4,
+    marginTop: 14,
   };
-
-  function handleChangeS(e) {
-    setColours(e);
-    props.choosecolors(e);
+  const handleStyle = {
+    height: 28,
+    width: 28,
+    marginTop: 0,
+    backgroundColor: "black",
+    border: 0,
   };
-
-  useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
-  }, []);
-
-  function calcHeight(el) {
-    const height = el.offsetHeight;
-    setMenuHeight(height);
-  }
+  const trackStyle = {
+    marginTop: 14,
+    background: "red"
+  };
 
   function DropdownItem(props) {
     return (
@@ -46,15 +44,15 @@ function DropdownEditObject(props) {
     );
   }
 
-  /*function DropdownItems(props) {
-    return (
-      <div className="menu-itemedit" onClick={props.onClick}>
-        <span className="icon-buttonedit">{props.leftIcon}</span>
-        {props.children}
-        <span className="icon-rightedit">{props.rightIcon}</span>
-      </div>
-    );
-  }*/
+  function handleChangeF(e) {
+    setColourf(e);
+    props.choosecolorf(e);
+  }
+
+  function handleChangeS(e) {
+    setColours(e);
+    props.choosecolors(e);
+  }
 
   function onSliderChange(e) {
     setValue(e);
@@ -74,13 +72,12 @@ function DropdownEditObject(props) {
   if (props.title === "Edit Shape") {
     /* Edit a Shape Object */
     return (
-      <div className="dropdownedit" style={{ height: menuHeight }} ref={dropdownRef}>
+      <div className="dropdownedit" ref={dropdownRef}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
           classNames="edit-menu-primary"
-          unmountOnExit
-          onEnter={calcHeight}>
+          unmountOnExit>
           <div className="menuedit">
             <h1>{props.title}</h1>
             <b>
@@ -88,7 +85,7 @@ function DropdownEditObject(props) {
               <TwitterPicker
                 colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                 color={colourf}
-                triangle="Fill"
+                triangle="hide"
                 width={350}
                 onChangeComplete={handleChangeF} />
             </b>
@@ -98,7 +95,7 @@ function DropdownEditObject(props) {
               <TwitterPicker
                 colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                 color={colours}
-                triangle="Fill"
+                triangle="hide"
                 width={350}
                 onChangeComplete={handleChangeS} />
             </b>
@@ -109,23 +106,9 @@ function DropdownEditObject(props) {
                 className="slider"
                 value={value}
                 onChange={onSliderChange}
-                railStyle={{
-                  height: 4,
-                  marginTop: 14,
-                  width: 400
-                }}
-                handleStyle={{
-                  height: 28,
-                  width: 28,
-                  marginTop: 0,
-                  backgroundColor: "black",
-                  border: 0,
-
-                }}
-                trackStyle={{
-                  marginTop: 14,
-                  background: "red"
-                }}
+                railStyle={railStyle}
+                handleStyle={handleStyle}
+                trackStyle={trackStyle}
               />
             </b>
             <br />
@@ -138,23 +121,9 @@ function DropdownEditObject(props) {
                 max={1}
                 step={0.01}
                 onChange={onSliderChangeO}
-                railStyle={{
-                  height: 4,
-                  marginTop: 14,
-                  width: 400
-                }}
-                handleStyle={{
-                  height: 28,
-                  width: 28,
-                  marginTop: 0,
-                  backgroundColor: "black",
-                  border: 0,
-
-                }}
-                trackStyle={{
-                  marginTop: 14,
-                  background: "red"
-                }}
+                railStyle={railStyle}
+                handleStyle={handleStyle}
+                trackStyle={trackStyle}
               />
             </b>
             <br />
@@ -164,8 +133,7 @@ function DropdownEditObject(props) {
           in={activeMenu === 'shapes'}
           timeout={500}
           classNames="edit-menu-secondary"
-          unmountOnExit
-          onEnter={calcHeight}>
+          unmountOnExit>
           <div className="menuedit">
             <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" className="fas fa-arrow-left"></i>}>
               <h2>COLOUR!</h2>
@@ -175,15 +143,14 @@ function DropdownEditObject(props) {
       </div>
     )
   } else {
-    /* Edit a text Object */
+    /* Edit a Text Object */
     return (
-      <div className="dropdownedit" style={{ height: menuHeight }} ref={dropdownRef}>
+      <div className="dropdownedit" style={{transform: "translateX(-25px)"}} ref={dropdownRef}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
           classNames="edit-menu-primary"
-          unmountOnExit
-          onEnter={calcHeight}>
+          unmountOnExit>
           <div className="menuedit">
             <h1>{props.title}</h1>
             <b>
@@ -191,7 +158,7 @@ function DropdownEditObject(props) {
               <TwitterPicker
                 colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                 color={colourf}
-                triangle="Fill"
+                triangle="hide"
                 width={350}
                 onChangeComplete={handleChangeF} />
             </b>
@@ -203,8 +170,8 @@ function DropdownEditObject(props) {
                 apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
                 activeFontFamily={font}
                 onChange={(nextFont) => {
-                  setFont(nextFont.family)
-                  props.handleFont(nextFont.family)
+                  setFont(nextFont.family);
+                  props.handleFont(nextFont.family);
                 }}
               />
             </b>
@@ -219,23 +186,9 @@ function DropdownEditObject(props) {
                 max={1}
                 step={0.01}
                 onChange={onSliderChangeO}
-                railStyle={{
-                  height: 4,
-                  marginTop: 14,
-                  width: 400
-                }}
-                handleStyle={{
-                  height: 28,
-                  width: 28,
-                  marginTop: 0,
-                  backgroundColor: "black",
-                  border: 0,
-
-                }}
-                trackStyle={{
-                  marginTop: 14,
-                  background: "red"
-                }}
+                railStyle={railStyle}
+                handleStyle={handleStyle}
+                trackStyle={trackStyle}
               />
             </b>
             <br />

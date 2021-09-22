@@ -64,6 +64,9 @@ const DropdownRoles = (props) => {
 
   const handleActiveMenuChange = (newMenu) => {
     if (newMenu !== "main") {
+      if (props.openInfoSection) {
+        props.openInfoSection();
+      } 
       document.addEventListener('click', handleClickOutside);
     } else {
       document.removeEventListener('click', handleClickOutside);

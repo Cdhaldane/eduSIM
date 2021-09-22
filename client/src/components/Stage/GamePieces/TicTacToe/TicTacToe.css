@@ -3,7 +3,7 @@
   margin: 20px;
   min-height: 400px;
   position: absolute;
-  z-index: 200000;
+  z-index: 1;
 }
 
 .gametic ol, .gametic ul {

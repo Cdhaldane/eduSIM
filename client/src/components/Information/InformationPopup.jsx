@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Pencil from "../Pencils/Pencil";
 import DropdownRoles from "../Dropdown/DropdownRoles";
+
 import "./Info.css";
 
-function Info(props) {
+const Info = (props) => {
   const [open, setOpen] = useState(0);
 
   function addCircle() {

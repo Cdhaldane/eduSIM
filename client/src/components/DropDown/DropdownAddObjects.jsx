@@ -219,7 +219,7 @@ const DropdownAddObjects = (props) => {
           </DropdownItem>
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
-          <DropdownItem onClick={addTriangle} leftIcon={<i style={{fontSize: "2.0rem"}} className="fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i style={{fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)"}} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
           <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
 
           <DropdownItem

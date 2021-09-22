@@ -19,16 +19,16 @@ function ContextMenu(props) {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  function handleEdit() {
+    setDrop(!drop);
+  }
+
   function handleColorF(e) {
     props.choosecolorf(e);
   }
 
   function handleColorS(e) {
     props.choosecolors(e);
-  }
-
-  function handleEdit(e) {
-    setDrop(!drop);
   }
 
   function handleWidth(e) {
@@ -53,18 +53,22 @@ function ContextMenu(props) {
         <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
-        <li onClick={handleEdit}>Edit shape</li>
+        <li onClick={handleEdit}>{props.editTitle}</li>
       </ul>
 
-      {drop && <div className="drop">
-        <DropdownEditObject
-          title="Edit Shape"
-          choosecolorf={handleColorF}
-          choosecolors={handleColorS}
-          handleWidth={handleWidth}
-          handleOpacity={handleOpacity}
-        />
-      </div>}
+      {drop && (
+        <div className="drop">
+          <DropdownEditObject
+            title={props.editTitle}
+            choosecolorf={handleColorF}
+            choosecolors={handleColorS}
+            handleWidth={handleWidth}
+            handleOpacity={handleOpacity}
+            handleSize={(e) => props.handleSize(e)}
+            handleFont={(e) => props.handleFont(e)}
+          />
+        </div>
+      )}
     </div>
   );
 };

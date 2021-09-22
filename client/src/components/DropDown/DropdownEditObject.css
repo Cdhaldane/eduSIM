@@ -17,12 +17,7 @@ ul {
 a {
   color: var(--text-color);
   text-decoration: none;
-  ;
 }
-
-/* Top Navigation Bar */
-
-/* <nav> */
 
 /* Icon Button */
 
@@ -54,29 +49,24 @@ a {
 
 .dropdownedit {
   position: absolute;
-  left: 380px;
-  top: -403px;
-  width: 420px;
-  height: 200px;
-  transform: translateX(-45%);
+  left: 160px;
+  bottom: -2px;
   background-color: var(--bg);
   border: var(--border);
-  border-radius: 100;
-  padding: 0rem;
-  overflow: hidden;
-  transition: height var(--speed) ease;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: rgba(0,0,0,0.25) 4px 4px 4px 0px;
+  padding-right: 20px;
 }
 
 .menuedit {
   width: 100%;
   font-size: 1.3rem;
-  margin-bottom: 10px;
   color: black;
-  padding: 5px;
 }
 
 .menuedit h1 {
-  padding: 10px;
+  padding-bottom: 1rem;
   font-size: 1.5rem;
 }
 
@@ -230,6 +220,6 @@ a {
 }
 
 .slider {
-  width: 390px;
-  left: 9px;
+  left: 2%;
+  width: 98%;
 }

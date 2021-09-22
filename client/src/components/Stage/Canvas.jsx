@@ -9,7 +9,6 @@ import Level from "../Level/Level";
 import Pencil from "../Pencils/Pencil";
 import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
-import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
 import TransformerComponent from "./TransformerComponent";
 
@@ -492,7 +491,7 @@ class Graphics extends Component {
       });
 
 
-      this.refs.trRef1.transformer.nodes(elements);
+      this.refs.trRef1.nodes(elements);
       this.state.selection.visible = false;
       // disable click event
       Konva.listenClickTap = false;
@@ -2338,10 +2337,11 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.tics.map(eachTic => {
+        {this.state.tics.map((eachTic, index) => {
           if (eachTic.level === this.state.level) {
             return (
               <TicTacToe
+                key={index}
                 i={eachTic.i}
                 handleTicDelete={this.handleTicDelete}
               />
@@ -3821,7 +3821,7 @@ class Graphics extends Component {
               })}
               {this.state.selectedContextMenuText && (
                 <Portal>
-                  <ContextMenuText
+                  <ContextMenu
                     {...this.state.selectedContextMenuText}
                     selectedshape={this.state.selectedShapeName}
                     onOptionSelected={this.handleOptionSelected}
@@ -3834,6 +3834,7 @@ class Graphics extends Component {
                     cut={this.handleCut}
                     paste={this.handlePaste}
                     delete={this.handleDelete}
+                    editTitle={"Edit Text"}
                   />
                 </Portal>
               )}
@@ -4047,7 +4048,6 @@ class Graphics extends Component {
           <div>
             <div className={"info" + this.state.open}>
               <div id="infostage">
-
                 <Stage width={1500} height={600}
                   ref="graphicStage1"
                   onClick={this.handleStageClickInfo}
@@ -4251,6 +4251,7 @@ class Graphics extends Component {
                           cut={this.handleCut}
                           paste={this.handlePaste}
                           delete={this.handleDelete}
+                          editTitle={"Edit Shape"}
                         />
                       </Portal>
                     )}
@@ -5463,24 +5464,6 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.selectedContextMenuText && (
-                      <Portal>
-                        <ContextMenuText
-                          {...this.state.selectedContextMenuText}
-                          selectedshape={this.state.selectedShapeName}
-                          onOptionSelected={this.handleOptionSelected}
-                          choosecolorf={this.handleColorF}
-                          handleFont={this.handleFont}
-                          handleSize={this.handleSize}
-                          handleOpacity={this.handleOpacity}
-                          close={this.handleClose}
-                          copy={this.handleCopy}
-                          cut={this.handleCut}
-                          paste={this.handlePaste}
-                          delete={this.handleDelete}
-                        />
-                      </Portal>
-                    )}
                     {this.state.arrows.map(eachArrow => {
                       if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === true && eachArrow.rolelevel === this.state.rolelevel) {
                         return (
@@ -5554,7 +5537,6 @@ class Graphics extends Component {
                     <TransformerComponent
                       selectedShapeName={this.state.selectedShapeName}
                       ref="trRef1"
-
                       boundBoxFunc={(oldBox, newBox) => {
                         // limit resize
                         if (newBox.width < 5 || newBox.height < 5) {
@@ -5575,6 +5557,7 @@ class Graphics extends Component {
               }
               <div id="rolesdrop">
                 <DropdownRoles
+                  openInfoSection={() => this.setState({open: 1})}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
                 />
