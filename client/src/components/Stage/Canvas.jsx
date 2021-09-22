@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import Info from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
 import URLImage from "./URLImage";
@@ -36,11 +37,15 @@ class Graphics extends Component {
     super(props);
 
     this.state = {
-      layerX: 0,
-      layerY: 0,
-      layerScale: 1,
-      selectedShapeName: "",
-      errMsg: "",
+      // Right click menus (for group and personal space)
+      groupAreaContextMenuVisible: false,
+      groupAreaContextMenuX: 0,
+      groupAreaContextMenuY: 0,
+      personalAreaContextMenuVisible: false,
+      personalAreaContextMenuX: 0,
+      personalAreaContextMenuY: 0,
+
+      // Objects
       rectangles: [],
       ellipses: [],
       stars: [],
@@ -56,6 +61,12 @@ class Graphics extends Component {
       gameroles: [],
       tics: [],
       connect4: [],
+
+      layerX: 0,
+      layerY: 0,
+      layerScale: 1,
+      selectedShapeName: "",
+      errMsg: "",
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -304,23 +315,35 @@ class Graphics extends Component {
   };
 
   handleStageClick = e => {
-    let pos = this.refs.layer2.getStage().getPointerPosition();
-    let shape = this.refs.layer2.getIntersection(pos);
+    const pos = this.refs.layer2.getStage().getPointerPosition();
+    const shape = this.refs.layer2.getIntersection(pos);
 
-    if (
-      shape !== null &&
-      shape.name() !== undefined &&
-      shape !== undefined &&
-      shape.name() !== undefined
-    ) {
-      this.setState(
-        {
-          selectedShapeName: shape.id()
-        },
-        () => {
+    if (e.evt.button === 0) {
+      // Left click on an object -> put the selected object in state
+      if (
+        shape !== null &&
+        shape !== undefined &&
+        shape.name() !== null &&
+        shape.name() !== undefined
+      ) {
+        this.setState({ selectedShapeName: shape.id() }, () => {
           this.refs.graphicStage.draw();
-        }
-      );
+        });
+      }
+    } else if (e.evt.button === 2) {
+      // Right click on the group area -> show the add object menu
+      if (
+        shape === null ||
+        shape === undefined ||
+        shape.name() === ""
+      ) {
+        this.setState({
+          personalAreaContextMenuVisible: false,
+          groupAreaContextMenuVisible: true,
+          groupAreaContextMenuX: e.evt.clientX,
+          groupAreaContextMenuY: e.evt.clientY,
+        });
+      }
     }
   };
 
@@ -482,7 +505,7 @@ class Graphics extends Component {
       }
       const selBox = this.refs.selectionRectRef1.getClientRect();
       const elements = [];
-      this.refs.layer3.find(".shape").forEach((elementNode) => {
+      this.refs.personalAreaLayer.find(".shape").forEach((elementNode) => {
         const elBox = elementNode.getClientRect();
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
@@ -498,6 +521,27 @@ class Graphics extends Component {
       this.updateSelectionRectInfo();
     }
   };
+
+  handleStageClickInfo = e => {
+    const pos = this.refs.personalAreaLayer.getStage().getPointerPosition();
+    const shape = this.refs.personalAreaLayer.getIntersection(pos);
+
+    if (e.evt.button === 2) {
+      if (
+        shape === null ||
+        shape === undefined ||
+        shape.name() === ""
+      ) {
+        // Right click on the personal area -> show the add object menu
+        this.setState({
+          groupAreaContextMenuVisible: false,
+          personalAreaContextMenuVisible: true,
+          personalAreaContextMenuX: e.evt.clientX,
+          personalAreaContextMenuY: e.evt.clientY,
+        });
+      }
+    }
+  }
 
   handleMouseOverInfo = event => {
     // Get the currennt arrow ref and modify its position by filtering & pushing again
@@ -521,8 +565,8 @@ class Graphics extends Component {
       if (!this.state.selection.visible) {
         return;
       }
-      let pos = this.refs.graphicStage1.getPointerPosition();
-      let shape = this.refs.graphicStage1.getIntersection(pos);
+      const pos = this.refs.personalAreaStage.getPointerPosition();
+      const shape = this.refs.personalAreaStage.getIntersection(pos);
 
       this.state.selection.x2 = pos.x;
       this.state.selection.y2 = pos.y;
@@ -2392,9 +2436,68 @@ class Graphics extends Component {
           tabIndex="0"
           style={{ outline: "none" }}
         >
+          {/* The right click menu for the group area */}
+          {this.state.groupAreaContextMenuVisible && (
+            <DropdownAddObjects
+              xPos={this.state.groupAreaContextMenuX}
+              yPos={this.state.groupAreaContextMenuY}
+              title={"Edit Group Space"}
+              addRectangle={this.addRectangle}
+              addCircle={this.addCircle}
+              addStar={this.addStar}
+              addTriangle={this.addTriangle}
+              addImage={this.addImage}
+              addVideo={this.addVideo}
+              addText={this.addText}
+              addAudio={this.addAudio}
+              addStick={this.addStick}
+              addDocument={this.addDocument}
+              addTic={this.addTic}
+              addConnect={this.addConnect4}
+              drawLine={this.drawLine}
+              eraseLine={this.eraseLine}
+              stopDrawing={this.stopDrawing}
+              handleImage={this.handleImage}
+              handleVideo={this.handleVideo}
+              handleAudio={this.handleAudio}
+              handleDocument={this.handleDocument}
+              choosecolor={this.chooseColor}
+              close={() => this.setState({ groupAreaContextMenuVisible: false })}
+            />
+          )}
+          {/* The right click menu for the personal area */}
+          {this.state.personalAreaContextMenuVisible && (
+            <DropdownAddObjects
+              xPos={this.state.personalAreaContextMenuX}
+              yPos={this.state.personalAreaContextMenuY}
+              title={"Edit Personal Space"}
+              addRectangle={this.addRectangle}
+              addCircle={this.addCircle}
+              addStar={this.addStar}
+              addTriangle={this.addTriangle}
+              addImage={this.addImage}
+              addVideo={this.addVideo}
+              addText={this.addText}
+              addAudio={this.addAudio}
+              addStick={this.addStick}
+              addDocument={this.addDocument}
+              addTic={this.addTic}
+              addConnect={this.addConnect4}
+              drawLine={this.drawLine}
+              eraseLine={this.eraseLine}
+              stopDrawing={this.stopDrawing}
+              handleImage={this.handleImage}
+              handleVideo={this.handleVideo}
+              handleAudio={this.handleAudio}
+              handleDocument={this.handleDocument}
+              choosecolor={this.chooseColor}
+              close={() => this.setState({ personalAreaContextMenuVisible: false })}
+            />
+          )}
           <Stage
+            onContextMenu={(e) => e.evt.preventDefault()}
             onClick={this.handleStageClick}
-            draggabble
+            draggable
             onMouseMove={this.handleMouseOver}
             onWheel={event => this.handleWheel(event)}
             onMouseDown={this.onMouseDown}
@@ -2427,7 +2530,6 @@ class Graphics extends Component {
                 name=""
                 id="ContainerRect"
               />
-
               {this.state.rectangles.map((eachRect, index) => {
                 if (eachRect.level === this.state.level && eachRect.infolevel === false) {
                   return (
@@ -2589,7 +2691,6 @@ class Graphics extends Component {
                         }));
                       }}
                       onContextMenu={e => {
-
                         e.evt.preventDefault(true);
                         const mousePosition = e.target.getStage().getPointerPosition();
 
@@ -2599,19 +2700,18 @@ class Graphics extends Component {
                             position: mousePosition
                           }
                         });
-                      }
-                      }
-
+                      }}
                     />
                   );
                 } else {
                   return null
                 }
               })}
-              {this.state.ellipses.map(eachEllipse => {
+              {this.state.ellipses.map((eachEllipse, index) => {
                 if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
                   return (
                     <Ellipse
+                      key={index}
                       visible={eachEllipse.visible}
                       ref={eachEllipse.ref}
                       name="shape"
@@ -4049,14 +4149,15 @@ class Graphics extends Component {
             <div className={"info" + this.state.open}>
               <div id="infostage">
                 <Stage width={1500} height={600}
-                  ref="graphicStage1"
+                  onContextMenu={(e) => e.evt.preventDefault()}
+                  ref="personalAreaStage"
                   onClick={this.handleStageClickInfo}
                   draggabble
                   onMouseMove={this.handleMouseOverInfo}
                   onMouseDown={this.onMouseDownInfo}
                   onMouseUp={this.handleMouseUpInfo}
                 >
-                  <Layer ref="layer3">
+                  <Layer ref="personalAreaLayer">
                     {this.state.rectangles.map(eachRect => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -4219,7 +4320,7 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = this.refs.graphicStage1.getPointerPosition();
+                              const mousePosition = this.refs.personalAreaStage.getPointerPosition();
 
                               this.setState({
                                 selectedContextMenu: {
@@ -5546,7 +5647,6 @@ class Graphics extends Component {
                       }}
                     />
                     <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef1" />
-
                   </Layer>
                 </Stage>
 
@@ -5557,70 +5657,14 @@ class Graphics extends Component {
               }
               <div id="rolesdrop">
                 <DropdownRoles
-                  openInfoSection={() => this.setState({open: 1})}
+                  openInfoSection={() => this.setState({ open: 1 })}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
                 />
               </div>
             </div>
-            <div id={"pencili" + this.state.open}>
-              <Pencil
-                editMode={this.editMode}
-                editModeToggle={true}
-                id="1"
-                psize="2"
-                type="main"
-                title="Edit Personal Space"
-                addRectangle={this.addRectangle}
-                addCircle={this.addCircle}
-                addStar={this.addStar}
-                addTriangle={this.addTriangle}
-                addImage={this.addImage}
-                addVideo={this.addVideo}
-                addText={this.addText}
-                addAudio={this.addAudio}
-                addStick={this.addStick}
-                addDocument={this.addDocument}
-                drawLine={this.drawLine}
-                eraseLine={this.eraseLine}
-                stopDrawing={this.stopDrawing}
-                handleImage={this.handleImage}
-                handleVideo={this.handleVideo}
-                handleAudio={this.handleAudio}
-                handleDocument={this.handleDocument}
-                choosecolor={this.chooseColor}
-              />
-            </div>
-
           </div>
-          <Pencil
-            editMode={this.editModeOff}
-            editModeToggle={false}
-            id="2"
-            psize="3"
-            type="main"
-            title="Edit Group Space"
-            addRectangle={this.addRectangle}
-            addCircle={this.addCircle}
-            addStar={this.addStar}
-            addTriangle={this.addTriangle}
-            addImage={this.addImage}
-            addVideo={this.addVideo}
-            addText={this.addText}
-            addAudio={this.addAudio}
-            addStick={this.addStick}
-            addDocument={this.addDocument}
-            addTic={this.addTic}
-            addConnect={this.addConnect4}
-            drawLine={this.drawLine}
-            eraseLine={this.eraseLine}
-            stopDrawing={this.stopDrawing}
-            handleImage={this.handleImage}
-            handleVideo={this.handleVideo}
-            handleAudio={this.handleAudio}
-            handleDocument={this.handleDocument}
-            choosecolor={this.chooseColor}
-          />
+          {/* The timeline editor pencil button */}
           <Pencil
             id="3"
             psize="3"

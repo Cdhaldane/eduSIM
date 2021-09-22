@@ -18,6 +18,7 @@ const DropdownAddObjects = (props) => {
   const [vidsrc, setVidsrc] = useState("");
   const [audiosrc, setAudiosrc] = useState("");
   const [file, setFile] = useState("");
+  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
 
   function handleChange(e) {
     setColour(e);
@@ -178,7 +179,13 @@ const DropdownAddObjects = (props) => {
   }
 
   return (
-    <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
+    <div 
+    className="dropdown" 
+    style={{ 
+      height: menuHeight,
+      transform: `translateX(${props.xPos - sidebarWidth}px) translateY(${props.yPos}px)`,
+    }} 
+    ref={dropdownRef}>
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}

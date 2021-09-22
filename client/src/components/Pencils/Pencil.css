@@ -2,23 +2,6 @@
   position: absolute;
 }
 
-#pencil1:hover {
-  cursor: pointer;
-}
-
-#pencil2{
-  position: fixed;
-  left: 90px;
-  top: 80px;
-  color: #8f001a;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
-}
-
-#pencil2:hover {
-  cursor: pointer;
-}
-
 #pencil3{
   position: fixed;
   top: 80px;
@@ -51,18 +34,6 @@
   top: -150px;
 }
 
-.drop1 {
-  position: absolute;
-  left: -10px;
-  top: 50px;
-}
-
-.drop2 {
-  position: fixed;
-  top: 150px;
-  left: 90px;
-}
-
 .drop3 {
   position: fixed;
   top: 150px;
@@ -87,14 +58,6 @@
 }
 
 @media screen and (orientation: portrait) {
-  #pencil2 {
-    left: 20px;
-    top: 140px;
-  }
-  .drop2 {
-    top: 210px;
-    left: 20px;
-  }
   #pencil3 {
     top: 140px;
   }

@@ -1,124 +1,17 @@
 import React, { useState } from "react";
-import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import DropdownTimelineBar from "../Dropdown/DropdownTimelineBar";
 import DropdownNavigationBar from "../Dropdown/DropdownNavigationBar";
+
 import "./Pencil.css";
 
-function Pencil(props) {
+const Pencil = (props) => {
   const [drop, setDrop] = useState(false);
 
-  function handleMvisible(e) {
-    props.mvisible(e);
-  }
-
-  function handleAvisible(e) {
-    props.avisible(e);
-  }
-
-  function handlePavisible(e) {
-    props.pavisible(e);
-  }
-
-  function handleSvisible(e) {
-    props.svisible(e);
-  }
-
-  function handlePevisible(e) {
-    props.pevisible(e);
-  }
-
-  function handlePageTitle(e) {
-    props.pageType(e);
-  }
-
-  function handlePageNum(e) {
-    props.pageNum(e);
-  }
-
-  function addCircle() {
-    props.addCircle();
-  }
-
-  function addRectangle() {
-    props.addRectangle();
-  }
-
-  function addTriangle() {
-    props.addTriangle();
-  }
-
-  function addStar() {
-    props.addStar();
-  }
-
-  function addStick() {
-    props.addStick();
-  }
-
-  function drawLine() {
-    props.drawLine();
-  }
-
-  function drawText() {
-    props.addText();
-  }
-
-  function addImage() {
-    props.addImage();
-  }
-
-  function addVideo() {
-    props.addVideo();
-  }
-
-  function addAudio() {
-    props.addAudio();
-  }
-
-  function addDocument() {
-    props.addDocument();
-  }
-
-  function addTic() {
-    props.addTic();
-  }
-
-  function addConnect() {
-    props.addConnect();
-  }
-
-  function eraseLine() {
-    props.eraseLine();
-  }
-
-  function stopDrawing() {
-    props.stopDrawing();
-  }
-
-  function handleColor(e) {
-    props.choosecolor(e);
-  }
-
-  function handleClose(e) {
+  const handleClose = () => {
     setDrop(!drop);
   }
 
-  function handleImage(e) {
-    props.handleImage(e);
-  }
-
-  function handleVideo(e) {
-    props.handleVideo(e);
-  }
-
-  function handleAudio(e) {
-    props.handleAudio(e);
-  }
-  function handleDocument(e) {
-    props.handleDocument(e);
-  }
-
-  function handleDrop() {
+  const handleDrop = () => {
     setDrop(!drop);
     if (props.editModeToggle === true) {
       props.editMode();
@@ -136,52 +29,25 @@ function Pencil(props) {
         className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "")}
         onClick={handleDrop}
       />
-
-      {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
-        {props.type === "info" && (
-          <DropdownTimelineBar
-            handlePageTitle={handlePageTitle}
-            handlePageNum={handlePageNum}
-            close={handleClose} />
-        )}
-
-        {props.type === "main" && (
-          <DropdownAddObjects
-            title={props.title}
-            addCircle={addCircle}
-            addRectangle={addRectangle}
-            addTriangle={addTriangle}
-            addStar={addStar}
-            addStick={addStick}
-            drawLine={drawLine}
-            drawText={drawText}
-            stopDrawing={stopDrawing}
-            addImage={addImage}
-            addVideo={addVideo}
-            addAudio={addAudio}
-            addDocument={addDocument}
-            addConnect={addConnect}
-            addTic={addTic}
-            eraseLine={eraseLine}
-            choosecolor={handleColor}
-            close={handleClose}
-            handleImage={handleImage}
-            handleVideo={handleVideo}
-            handleAudio={handleAudio}
-            handleDocument={handleDocument}
-          />
-        )}
-
-        {props.type === "nav" && (
-          <DropdownNavigationBar
-            mvisible={handleMvisible}
-            avisible={handleAvisible}
-            pavisible={handlePavisible}
-            svisible={handleSvisible}
-            pevisible={handlePevisible}
-            close={handleClose} />
-        )}
-      </div>}
+      {drop && (
+        <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
+          {props.type === "info" && (
+            <DropdownTimelineBar
+              handlePageTitle={(e) => props.pageType(e)}
+              handlePageNum={(e) => props.pageNum(e)}
+              close={handleClose} />
+          )}
+          {props.type === "nav" && (
+            <DropdownNavigationBar
+              mvisible={(e) => props.mvisible(e)}
+              avisible={(e) => props.avisible(e)}
+              pavisible={(e) => props.pavisible(e)}
+              svisible={(e) => props.svisible(e)}
+              pevisible={(e) => props.pevisible(e)}
+              close={handleClose} />
+          )}
+        </div>
+      )}
     </div>
   );
 }
