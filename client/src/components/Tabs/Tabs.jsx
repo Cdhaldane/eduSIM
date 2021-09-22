@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Tabs.css";
 import Table from "../Table/Table";
 import CreateEmail from "../CreateEmail/CreateEmail";
 import {
@@ -13,6 +12,9 @@ import {
   Tooltip,
 } from "recharts";
 import Modal from "react-modal";
+import { useAlertContext } from "../Alerts/AlertContext";
+
+import "./Tabs.css";
 
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(0);
@@ -26,23 +28,22 @@ function Tabs(props) {
     { name: "Page B", uv: 500, pv: 2400, amt: 2400 },
   ];
 
+  const alertContext = useAlertContext();
+
   useEffect(() => {
-    axios
-      .get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getRooms/:gameinstanceid", {
-        params: {
-          gameinstanceid: [props.gameid],
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        let cart = [];
-        for (let i = 0; i < res.data.length; i++) {
-          cart.push([res.data[i].gameroom_name, res.data[i].gameroomid, res.data[i].gameroom_url]);
-          console.log(cart);
-        }
-        setTabs(cart);
-      })
-      .catch((error) => console.log(error.response));
+    axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getRooms/:gameinstanceid", {
+      params: {
+        gameinstanceid: [props.gameid],
+      },
+    }).then((res) => {
+      let cart = [];
+      for (let i = 0; i < res.data.length; i++) {
+        cart.push([res.data[i].gameroom_name, res.data[i].gameroomid, res.data[i].gameroom_url]);
+      }
+      setTabs(cart);
+    }).catch((error) => {
+      console.log(error);
+    });
   }, [props.gameid]);
 
   const toggleTab = (index) => {
@@ -50,10 +51,21 @@ function Tabs(props) {
   };
 
   const handleSubmit = (e) => {
+    // Check if name is empty or a duplicate
+    if (newGroup.trim() === "") {
+      console.log(tabs);
+      alertContext.showAlert("Group name cannot be empty.", "warning");
+      return;
+    }
+    if (tabs.some((tab) => tab[0] === newGroup.trim())) {
+      alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
+      return;
+    }
+
     e.preventDefault();
     let data = {
       gameinstanceid: props.gameid,
-      gameroom_name: newGroup
+      gameroom_name: newGroup.trim()
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
@@ -183,6 +195,7 @@ function Tabs(props) {
               className="createmodaltab"
               overlayClassName="myoverlaytab"
               closeTimeoutMS={500}
+              ariaHideApp={false}
             >
               <CreateEmail
                 addstudent={true}

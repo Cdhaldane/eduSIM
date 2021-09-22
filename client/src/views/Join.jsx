@@ -71,6 +71,7 @@ function Join(props) {
         className="createmodaltab"
         overlayClassName="myoverlaytab"
         closeTimeoutMS={500}
+        ariaHideApp={false}
       >
         <CreateCsv gameid={localStorage.gameid} isOpen={showNote} close={toggleModal} />
       </Modal>

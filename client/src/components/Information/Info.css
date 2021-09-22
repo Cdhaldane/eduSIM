@@ -12,6 +12,7 @@
   border-radius: 15px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  z-index: 2;
 }
 
 .info1 {
@@ -28,6 +29,7 @@
   border-radius: 15px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  z-index: 2;
 }
 
 .info0 button {
@@ -69,6 +71,7 @@
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  z-index: 2;
 }
 
 #pencili0 {
@@ -79,6 +82,7 @@
   color: #8f001a;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  z-index: 2;
 }
 
 #infostage {

@@ -38,7 +38,7 @@ function SimNote(props) {
       <div className="notesim-icons">
         <i
           id="garbage"
-          class="fa fa-trash fa-2x notesim-icon"
+          className="fa fa-trash fa-2x notesim-icon"
           aria-hidden="true"
           onClick={handleClick}
         ></i>
@@ -51,7 +51,7 @@ function SimNote(props) {
             adminid: props.adminid,
           }}
         >
-          <i id="pencil" class="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
+          <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
         </Link>
         <Link
           to={{
@@ -64,7 +64,7 @@ function SimNote(props) {
         >
           <i
             id="play"
-            class="fas fa-play-circle fa-2x notesim-icon"
+            className="fas fa-play-circle fa-2x notesim-icon"
             onClick={() => localStorage.setItem("gameid", props.gameid)}
           ></i>
         </Link>

@@ -1,49 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { CSSTransition } from 'react-transition-group';
+import { useAlertContext } from './AlertContext'
 
 import "./AlertPopup.css";
 
-const AlertPopup = (props) => {
+const AlertPopup = () => {
 
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setVisible(true);
-  }, []);
+  const alertContext = useAlertContext();
 
   const startTimer = () => {
-    // Display for 3 seconds by default or use the prop.displayTIme if provided
-    const displayTimeMS = props.displayTime ? props.displayTime : 3000;
-
     setTimeout(() => {
-      setVisible(false);
-    }, displayTimeMS);
+      alertContext.hideAlert();
+    }, alertContext.time);
   }
 
   return (
     <CSSTransition
-      in={visible}
+      in={alertContext.visible}
       timeout={300}
       classNames="alert-popup-css-anim"
       unmountOnExit
-      onEnter={startTimer}
-      onExited={props.hide}>
+      onEnter={startTimer}>
       <div className={"alert-popup " +
-        (props.type === "warning" ? "warning " : "") +
-        (props.type === "info" ? "info " : "") +
-        (props.type === "error" ? "error " : "")}>
+        (alertContext.type === "warning" ? "warning " : "") +
+        (alertContext.type === "info" ? "info " : "") +
+        (alertContext.type === "error" ? "error " : "")}>
 
-        {props.type === "warning" && (
+        {alertContext.type === "warning" && (
           <i className="fas fa-exclamation-triangle alert-popup-icon warning" />
         )}
-        {props.type === "info" && (
+        {alertContext.type === "info" && (
           <i className="fas fa-info-circle alert-popup-icon info" />
         )}
-        {props.type === "error" && (
+        {alertContext.type === "error" && (
           <i className="fas fa-exclamation-triangle alert-popup-icon error" />
         )}
 
-        {props.children}
+        {alertContext.text}
       </div>
     </CSSTransition>
   );

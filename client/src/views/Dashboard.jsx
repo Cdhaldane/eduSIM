@@ -100,6 +100,7 @@ function Dashboard(props) {
         className="createmodalarea"
         overlayClassName="myoverlay"
         closeTimeoutMS={500}
+        ariaHideApp={false}
       >
         <CreateArea 
           onAdd={addNote} 

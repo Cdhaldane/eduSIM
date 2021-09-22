@@ -4,7 +4,7 @@
 }
 
 .connectcontainer {
-  z-index: 20000;
+  z-index: 1;
   position: absolute;
   left: 500px;
   font-family: "Montserrat", sans-serif;
