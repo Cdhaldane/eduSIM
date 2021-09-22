@@ -3,17 +3,14 @@ import { Route } from "react-router-dom";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading/Loading";
 
-class ProtectedRoute extends React.Component {
-  render() {
-    return (
-      <Route
-        component={withAuthenticationRequired(this.props.component, {
-          onRedirecting: () => <Loading />,
-        })}
-        {...this.props.args}
-      />
-    );
-  }
+const ProtectedRoute = (props) => {
+  return (
+    <Route
+      component={withAuthenticationRequired(props.render, {
+        onRedirecting: () => <Loading />,
+      })}
+    />
+  );
 }
 
 export default ProtectedRoute;

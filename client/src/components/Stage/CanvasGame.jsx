@@ -208,6 +208,7 @@ class Graphics extends Component {
             className="createmodaltab"
             overlayClassName="myoverlaytab"
             closeTimeoutMS={500}
+            ariaHideApp={false}
             >
               <CreateRole gameid={this.state.gameinstanceid}/>
           </Modal>

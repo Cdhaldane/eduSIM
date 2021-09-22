@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import axios from "axios"
+import axios from "axios";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
@@ -13,10 +14,10 @@ const DropdownRoles = (props) => {
   const [roleName, setRoleName] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
-  const [emptyRoleName, setEmptyRoleName] = useState(false);
-  const [sameRoleName, setSameRoleName] = useState(false);
 
-  const menuElem = useRef(null);
+  const alertContext = useAlertContext();
+
+  const menuElem = useRef();
 
   const updateRolesData = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -63,6 +64,9 @@ const DropdownRoles = (props) => {
 
   const handleActiveMenuChange = (newMenu) => {
     if (newMenu !== "main") {
+      if (props.openInfoSection) {
+        props.openInfoSection();
+      } 
       document.addEventListener('click', handleClickOutside);
     } else {
       document.removeEventListener('click', handleClickOutside);
@@ -86,7 +90,7 @@ const DropdownRoles = (props) => {
           return (
             <div className="menu-item" onClick={(e) => handleRoleSelected(e, role.roleName)} key={index}>
               <span className="icon-button">
-                <i id="icons" className="fa fa-trash" onClick={() => handleDeleteRole(index)} />
+                <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
               </span>
               {role.roleName}
             </div>
@@ -121,9 +125,19 @@ const DropdownRoles = (props) => {
   }
 
   const handleAddRole = () => {
+    // Check if name is empty or a duplicate
+    if (roleName.trim() === "") {
+      alertContext.showAlert("Role name cannot be empty.", "warning");
+      return;
+    }
+    if (roles.some(role => role.roleName === roleName.trim())) {
+      alertContext.showAlert("A role with this name already exists. Please pick a new name.", "warning");
+      return;
+    }
+
     let data = {
       gameinstanceid: props.gameid,
-      gamerole: roleName
+      gamerole: roleName.trim()
     };
 
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
@@ -145,7 +159,7 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="roles"
-            icon={<i id="icons" className="fab fa-critical-role"></i>}>
+            icon={<i className="icons fab fa-critical-role"></i>}>
             {selectedRole || PLACEHOLDER_TEXT}
           </DropdownItem>
         </div>
@@ -160,15 +174,15 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i id="icons" className="fas fa-arrow-left"></i>}>
+            icon={<i className="icons fas fa-arrow-left"></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           <AvailableRoles />
           <div className="menu-item">
             <span className="icon-button" onClick={handleAddRole}>
-              <i id="icons" className="fas fa-plus" />
+              <i className="icons fas fa-plus" />
             </span>
-            <input className="role-name-input2" type="text" placeholder="New Role Name" onChange={handleRoleChange} value={roleName} />
+            <input className="add-dropdown-item-input" type="text" placeholder="New Role Name" onChange={handleRoleChange} value={roleName} />
           </div>
         </div>
       </CSSTransition>
