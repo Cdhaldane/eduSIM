@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 
-const AlertContext = createContext({});
+export const AlertContext = createContext({test: "hello"});
 
-export const AlertContextProvider = (props) => {
+const AlertContextProvider = (props) => {
 
   const [visible, setVisible] = useState(false);
   const [text, setText] = useState("");
@@ -28,4 +28,5 @@ export const AlertContextProvider = (props) => {
   );
 };
 
+export default AlertContextProvider;
 export const useAlertContext = () => useContext(AlertContext);

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import Info from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
+import URLImage from "./URLImage";
 import fileDownload from 'js-file-download'
 import axios from 'axios'
 import Level from "../Level/Level";
@@ -10,7 +11,7 @@ import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ContextMenuText from "../ContextMenu/ContextMenuText";
 import Portal from "./Shapes/Portal"
-import { useAlertContext } from "../Alerts/AlertContext";
+import TransformerComponent from "./TransformerComponent";
 
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
 import Connect4 from "./GamePieces/Connect4/Board"
@@ -19,217 +20,22 @@ import {
   Rect,
   Stage,
   Layer,
-  Transformer,
   Ellipse,
   Star,
   Text,
   RegularPolygon,
   Line,
   Arrow,
-  Image
 } from "react-konva";
-
-
-class URLImage extends React.Component {
-  state = {
-    image: null
-  };
-  componentDidMount() {
-    this.loadImage();
-  }
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
-      this.loadImage();
-    }
-  }
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-  render() {
-    return (
-      <Image
-        draggable
-        visible={this.props.visible}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        image={this.state.image}
-        ref={this.props.ref}
-        id={this.props.id}
-        name="shape"
-        opacity={this.props.opacity}
-        onClick={this.props.onClick}
-        onTransformStart={this.props.onTransformStart}
-        onTransform={this.props.onTransform}
-        onTransformEnd={this.props.onTransformEnd}
-        onDragMove={this.props.onDragMove}
-        onDragEnd={this.props.onDragEnd}
-        onContextMenu={this.props.onContextMenu}
-        rotation={this.props.rotation}
-        stroke={this.props.stroke}
-        strokeWidth={this.props.strokeWidth}
-      />
-    );
-  }
-}
-
-function Timer(props) {
-  useEffect(() => {
-    const MINUTE_MS = 300000;
-    const interval = setInterval(() => {
-      console.log("SAVED (Saves every 5 minutes)");
-      props.handleSave()
-    }, MINUTE_MS);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])
-
-  return (
-    <>
-      <Save />
-    </>
-  );
-}
-
-const Save = () => {
-  const [display, setDisplay] = useState(false);
-  const alertContext = useAlertContext();
-
-  useEffect(() => {
-    const MINUTE_MS = 300000;
-    const interval = setInterval(() => {
-      setDisplay(true)
-    }, MINUTE_MS);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const MINUTE_MS = 306000;
-    const interval = setInterval(() => {
-      setDisplay(false)
-    }, MINUTE_MS);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <>
-      {display && alertContext.showAlert("Simulation Autosaved", "info")}
-    </>
-  );
-}
-
-class TransformerComponent extends React.Component {
-  componentDidMount() {
-    this.checkNode();
-  }
-  componentDidUpdate() {
-    this.checkNode();
-  }
-  checkNode() {
-    /*
-     const stage = this.transformer.getStage();
-    
-     const { selectedShapeName } = this.props;
-     if (selectedShapeName === "") {
-       this.transformer.detach();
-       console.log(1)
-       return;
-     }
-     const selectedNode = stage.findOne("." + selectedShapeName);
-     if (selectedNode === this.transformer.node()) {
-       return;
-     }
-    
-     if (selectedNode) {
-       this.transformer.attachTo(selectedNode);
-       console.log(2)
-     } else {
-       this.transformer.detach();
-       console.log(3)
-     }
-     this.transformer.getLayer().batchDraw();
-     */
-  }
-  render() {
-    let stuff = null;
-    if (this.props.selectedShapeName.includes("text")) {
-      stuff = (
-        <Transformer
-          ref={node => {
-            this.transformer = node;
-          }}
-          name="transformer"
-          boundBoxFunc={(oldBox, newBox) => {
-            newBox.width = Math.max(30, newBox.width);
-            return newBox;
-          }}
-          enabledAnchors={["middle-left", "middle-right"]}
-        />
-      );
-    } else if (this.props.selectedShapeName.includes("star")) {
-      stuff = (
-        <Transformer
-          ref={node => {
-            this.transformer = node;
-          }}
-          name="transformer"
-          enabledAnchors={[
-            "top-left",
-            "top-right",
-            "bottom-left",
-            "bottom-right"
-          ]}
-        />
-      );
-    } else if (this.props.selectedShapeName.includes("arrow")) {
-      stuff = (
-        <Transformer
-          ref={node => {
-            this.transformer = node;
-          }}
-          name="transformer"
-          resizeEnabled={false}
-          rotateEnabled={false}
-        />
-      );
-    } else {
-      stuff = (
-        <Transformer
-          ref={node => {
-            this.transformer = node;
-          }}
-          name="transformer"
-          keepRatio={true}
-        />
-      );
-    }
-    return stuff;
-  }
-}
 
 let history = [];
 let historyStep = 0;
 
 class Graphics extends Component {
+
   constructor(props) {
     super(props);
+
     this.state = {
       layerX: 0,
       layerY: 0,
@@ -305,8 +111,8 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-      ptype: "",
-      pageNumber: 6,
+      ptype: "~",
+      numberOfPages: 6,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: "https://konvajs.org/assets/lion.png",
@@ -379,48 +185,123 @@ class Graphics extends Component {
     })
   }
 
-  handleType = (e) => {
+  saveInterval = null;
+
+  componentDidMount = async () => {
+    const MINUTE_MS = 1000 * 60;
+
+    // Auto save the canvas every 30 seconds
+    this.saveInterval = setInterval(() => {
+      this.handleSave();
+      this.props.showAlert("Simulation Autosaved", "info");
+    }, MINUTE_MS / 2);
+
+    history.push(this.state);
+    this.setState({ selectedShapeName: "" });
+  }
+
+  componentWillUnmount = () => {
+    clearInterval(this.saveInterval);
+  }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    let prevMainShapes = [
+      prevState.rectangles,
+      prevState.ellipses,
+      prevState.stars,
+      prevState.arrows,
+      prevState.connectors,
+      prevState.texts,
+      prevState.triangles,
+      prevState.images,
+      prevState.videos,
+      prevState.audios,
+      prevState.lines,
+      prevState.documents
+    ];
+
+    let currentMainShapes = [
+      this.state.rectangles,
+      this.state.ellipses,
+      this.state.stars,
+      this.state.arrows,
+      this.state.connectors,
+      this.state.texts,
+      this.state.triangles,
+      this.state.images,
+      this.state.videos,
+      this.state.audios,
+      this.state.lines,
+      this.state.documents
+    ];
+
+    if (!this.state.redoing && !this.state.isTransforming)
+      if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
+        if (
+          JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)
+        ) {
+          // If text shouldn't update, don't append to  history
+          if (this.state.shouldTextUpdate) {
+            let uh = history;
+            history = uh.slice(0, historyStep + 1);
+            let toAppend = this.state;
+            history = history.concat(toAppend);
+            historyStep += 1;
+          }
+        }
+      } else {
+        //console.log("compoenntDidUpdate but attrs didn't change");
+      }
+    this.state.redoing = false;
+  }
+
+  handlePageTitle = (e) => {
     this.setState({
       ptype: e
     })
   }
 
-  handleNum = (e) => {
+  handleNumOfPagesChange = (e) => {
     this.setState({
-      pageNumber: e
+      numberOfPages: e
     })
   }
 
   handleSave = () => {
-    const rects = this.state.rectangles,
-      ellipses = this.state.ellipses,
-      stars = this.state.stars,
-      texts = this.state.texts,
-      arrows = this.state.arrows,
-      triangles = this.state.triangles,
-      tics = this.state.tics,
-      connect4 = this.state.connect4,
-      images = this.state.images,
-      videos = this.state.videos,
-      audios = this.state.audios,
-      documents = this.state.documents,
-      lines = this.state.lines,
-      status = "Up";
-    // if (
-    //   JSON.stringify(this.state.saved) !==
-    //   JSON.stringify([rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents])
-    // ) {
-    this.setState({ saved: [rects, ellipses, stars, texts, arrows, triangles, images, videos, audios, documents, lines, tics, connect4, "up"] });
-    let body = {
+    const status = "Up";
+
+    const saved = [
+      this.state.rectangles,
+      this.state.ellipses,
+      this.state.stars,
+      this.state.texts,
+      this.state.arrows,
+      this.state.triangles,
+      this.state.images,
+      this.state.videos,
+      this.state.audios,
+      this.state.documents,
+      this.state.lines,
+      this.state.tics,
+      this.state.connect4,
+      status
+    ];
+
+    this.setState({
+      saved: saved
+    });
+
+    const body = {
       id: this.state.gameinstanceid,
-      game_parameters: JSON.stringify(this.state.saved),
+      game_parameters: JSON.stringify(saved),
       createdby_adminid: localStorage.adminid,
       invite_url: 'value'
     }
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body)
-      .catch(error => {
-        console.log(error);
-      });
+
+    // Save the game_parameters
+    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
+      console.log(error);
+    });
   };
 
   handleStageClick = e => {
@@ -490,7 +371,6 @@ class Graphics extends Component {
     }
   };
 
-
   handleMouseUp = () => {
     if (this.state.drawMode === true) {
       this.setState({
@@ -506,23 +386,19 @@ class Graphics extends Component {
         const elBox = elementNode.getClientRect();
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
-
         }
       });
 
-
-      this.refs.trRef.transformer.nodes(elements);
+      this.refs.trRef.nodes(elements);
       this.state.selection.visible = false;
-      // disable click event
+      // Disable click event
       Konva.listenClickTap = false;
       this.updateSelectionRect();
     }
   };
 
   handleMouseOver = event => {
-
-    //get the currennt arrow ref and modify its position by filtering & pushing again
-    //console.log("lastFill: ", this.state.lastFill);
+    // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
         return;
@@ -531,17 +407,15 @@ class Graphics extends Component {
       const stage = event.target.getStage();
       const point = stage.getPointerPosition();
       let lastLine = this.state.lines[this.state.lines.length - 1];
-      // add point
+      // Add point
       lastLine.points = lastLine.points.concat([point.x, point.y]);
 
-      // replace last
+      // Replace last
       this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
       this.setState({
         lines: this.state.lines.concat()
-      })
+      });
     } else {
-
-
       if (!this.state.selection.visible) {
         return;
       }
@@ -559,8 +433,8 @@ class Graphics extends Component {
       }
     }
   };
-  updateSelectionRectInfo = () => {
 
+  updateSelectionRectInfo = () => {
     const node = this.refs.selectionRectRef1;
     node.setAttrs({
       visible: this.state.selection.visible,
@@ -572,6 +446,7 @@ class Graphics extends Component {
     });
     node.getLayer().batchDraw();
   };
+
   onMouseDownInfo = (e) => {
     this.setState({
       draggable: false
@@ -598,7 +473,6 @@ class Graphics extends Component {
       this.updateSelectionRectInfo();
     }
   };
-
 
   handleMouseUpInfo = () => {
     if (this.state.drawMode === true) {
@@ -627,9 +501,7 @@ class Graphics extends Component {
   };
 
   handleMouseOverInfo = event => {
-
-    //get the currennt arrow ref and modify its position by filtering & pushing again
-    //console.log("lastFill: ", this.state.lastFill);
+    // Get the currennt arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
         return;
@@ -647,8 +519,6 @@ class Graphics extends Component {
         lines: this.state.lines.concat()
       })
     } else {
-
-
       if (!this.state.selection.visible) {
         return;
       }
@@ -666,6 +536,7 @@ class Graphics extends Component {
       }
     }
   };
+
   handleWheel(event) {
     if (
       this.state.rectangles.length === 0 &&
@@ -699,13 +570,6 @@ class Graphics extends Component {
 
       layer.scale({ x: newScale, y: newScale });
 
-      /*  console.log(
-        oldScale,
-        mousePointTo,
-        stage.getPointerPosition().x,
-        stage.getPointerPosition().y
-      );
-    */
       this.setState({
         layerScale: newScale,
         layerX:
@@ -716,58 +580,6 @@ class Graphics extends Component {
       });
     }
   }
-  componentDidUpdate(prevProps, prevState) {
-    let prevMainShapes = [
-      prevState.rectangles,
-      prevState.ellipses,
-      prevState.stars,
-      prevState.arrows,
-      prevState.connectors,
-      prevState.texts,
-      prevState.triangles,
-      prevState.images,
-      prevState.videos,
-      prevState.audios,
-      prevState.lines,
-      prevState.documents
-    ];
-    let currentMainShapes = [
-      this.state.rectangles,
-      this.state.ellipses,
-      this.state.stars,
-      this.state.arrows,
-      this.state.connectors,
-      this.state.texts,
-      this.state.triangles,
-      this.state.images,
-      this.state.videos,
-      this.state.audios,
-      this.state.lines,
-      this.state.documents
-    ];
-
-    if (!this.state.redoing && !this.state.isTransforming)
-      if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
-        if (
-          JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)
-        ) {
-          //if text shouldn't update, don't append to  history
-          if (this.state.shouldTextUpdate) {
-            let uh = history;
-            history = uh.slice(0, historyStep + 1);
-            //console.log("sliced", history);
-            let toAppend = this.state;
-            history = history.concat(toAppend);
-            //console.log("new", history);
-            historyStep += 1;
-            //console.log(history, historyStep, history[historyStep]);
-          }
-        }
-      } else {
-        //console.log("compoenntDidUpdate but attrs didn't change");
-      }
-    this.state.redoing = false;
-  }
 
   handleUndo = () => {
     this.handleSave()
@@ -777,7 +589,6 @@ class Graphics extends Component {
           return;
         }
         historyStep -= 1;
-
         this.setState(
           {
             rectangles: history[historyStep].rectangles,
@@ -805,7 +616,7 @@ class Graphics extends Component {
       this.setState({
         selectedContextMenu: false,
         selectedContextMenuText: false
-      })
+      });
     }
   };
 
@@ -1403,7 +1214,7 @@ class Graphics extends Component {
       this.setState({
         selectedContextMenu: false,
         selectedContextMenuText: false
-      })
+      });
     }
   }
 
@@ -1625,6 +1436,7 @@ class Graphics extends Component {
 
     return toReturn;
   };
+
   IsJsonString = str => {
     try {
       JSON.parse(str);
@@ -1634,11 +1446,6 @@ class Graphics extends Component {
     return true;
   };
 
-  async componentDidMount() {
-    history.push(this.state);
-    this.setState({ selectedShapeName: "" });
-    //if draft
-  }
   addRectangle = () => {
     let rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
 
@@ -1687,7 +1494,6 @@ class Graphics extends Component {
   };
 
   addTriangle = () => {
-
     let triName = this.state.triangles.length + 1 + this.state.triangleDeleteCount
 
     let name = 'triangle' + triName
@@ -1916,9 +1722,7 @@ class Graphics extends Component {
       documents: [...prevState.documents, toPush],
       selectedShapeName: toPush.name
     }));
-
   };
-
 
   addCircle = () => {
     let circName = this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
@@ -1964,7 +1768,7 @@ class Graphics extends Component {
   };
 
   addStick = () => {
-
+    // TODO
   }
 
   addStar = () => {
@@ -2164,6 +1968,7 @@ class Graphics extends Component {
       )
     }));
   }
+
   handleFont = (e) => {
     this.setState(prevState => ({
       texts: prevState.texts.map(eachRect =>
@@ -2176,6 +1981,7 @@ class Graphics extends Component {
       )
     }));
   }
+
   handleSize = (e) => {
     this.setState(prevState => ({
       texts: prevState.texts.map(eachRect =>
@@ -2260,7 +2066,6 @@ class Graphics extends Component {
           : eachStar
       )
     }));
-
   }
 
   handleWidth = (e) => {
@@ -2438,41 +2243,49 @@ class Graphics extends Component {
       )
     }));
   }
+
   handleLevel = (e) => {
     this.setState({
       level: e
     }, this.handleLevelUpdate)
   }
+
   handleLayerClear = () => {
     this.refs.layer2.clear();
   }
+
   handleLayerDraw = () => {
     console.log(this.state.rectangles)
   }
+
   handleImage = (e) => {
     this.setState({
       imgsrc: e
     })
     console.log(e)
   }
+
   handleVideo = (e) => {
     this.setState({
       vidsrc: e
     })
     console.log(e)
   }
+
   handleAudio = (e) => {
     this.setState({
       audsrc: e
     })
     console.log(e)
   }
+
   handleDocument = (e) => {
     this.setState({
       docsrc: e
     })
     console.log(e)
   }
+
   handleDownload = (url, filename) => {
     axios.get(url, {
       responseType: 'blob',
@@ -2547,8 +2360,6 @@ class Graphics extends Component {
           }
         })}
 
-
-        <Timer handleSave={this.handleSave} />
         <div
           onKeyDown={event => {
             const x = 88,
@@ -4099,7 +3910,6 @@ class Graphics extends Component {
               <TransformerComponent
                 selectedShapeName={this.state.selectedShapeName}
                 ref="trRef"
-
                 boundBoxFunc={(oldBox, newBox) => {
                   // limit resize
                   if (newBox.width < 5 || newBox.height < 5) {
@@ -4233,7 +4043,7 @@ class Graphics extends Component {
 
         </div>
         <div className="eheader">
-          <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel} />
+          <Level number={this.state.numberOfPages} ptype={this.state.ptype} level={this.handleLevel} />
           <div>
             <div className={"info" + this.state.open}>
               <div id="infostage">
@@ -5833,12 +5643,13 @@ class Graphics extends Component {
             psize="3"
             type="info"
             title=""
-            ptype={this.handleType}
-            num={this.handleNum}
+            pageTitle={this.handlePageTitle}
+            pageNum={this.handleNumOfPagesChange}
           />
         </div>
       </React.Fragment>
     );
   }
 }
+
 export default Graphics;

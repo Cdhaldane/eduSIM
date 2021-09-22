@@ -15,18 +15,18 @@ const DropdownNavigationBar = (props) => {
   const [performanceChecked, setPerformanceChecked] = useState(true);
   const dropdownRef = useRef();
 
+  const handleClickOutside = e => {
+    if (!dropdownRef.current.contains(e.target)) {
+      props.close();
+    }
+  }
+
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
-
-  const handleClickOutside = e => {
-    if (!dropdownRef.current.contains(e.target)) {
-      props.close();
-    }
-  };
 
   const calcHeight = (el) => {
     const height = el.offsetHeight;

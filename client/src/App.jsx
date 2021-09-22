@@ -13,7 +13,7 @@ import Join from "./views/Join"
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
-import { AlertContextProvider } from "./components/Alerts/AlertContext";
+import AlertContextProvider from "./components/Alerts/AlertContext";
 
 const App = (props) => {
 

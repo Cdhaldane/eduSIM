@@ -317,7 +317,7 @@ a {
   color: #636363;
 }
 
-.role-name-input2 {
+.add-dropdown-item-input {
   border-radius: 0.3em;
   border: solid 2px grey;
   font-size: 0.9em;
@@ -326,7 +326,7 @@ a {
   height: 100%;
 }
 
-.role-name-input2::placeholder {
+.add-dropdown-item-input::placeholder {
   font-size: 0.8em;
   font-family: "Montserrat", sans-serif;
   color: #636363;

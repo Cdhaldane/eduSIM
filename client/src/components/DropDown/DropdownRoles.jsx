@@ -17,7 +17,7 @@ const DropdownRoles = (props) => {
 
   const alertContext = useAlertContext();
 
-  const menuElem = useRef(null);
+  const menuElem = useRef();
 
   const updateRolesData = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -179,7 +179,7 @@ const DropdownRoles = (props) => {
             <span className="icon-button" onClick={handleAddRole}>
               <i className="icons fas fa-plus" />
             </span>
-            <input className="role-name-input2" type="text" placeholder="New Role Name" onChange={handleRoleChange} value={roleName} />
+            <input className="add-dropdown-item-input" type="text" placeholder="New Role Name" onChange={handleRoleChange} value={roleName} />
           </div>
         </div>
       </CSSTransition>

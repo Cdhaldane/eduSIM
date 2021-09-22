@@ -27,12 +27,12 @@ function Pencil(props) {
     props.pevisible(e);
   }
 
-  function handleType(e) {
-    props.ptype(e);
+  function handlePageTitle(e) {
+    props.pageType(e);
   }
 
-  function handleNum(e) {
-    props.num(e);
+  function handlePageNum(e) {
+    props.pageNum(e);
   }
 
   function addCircle() {
@@ -139,7 +139,10 @@ function Pencil(props) {
 
       {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
         {props.type === "info" && (
-          <DropdownTimelineBar ptype={handleType} num={handleNum} close={handleClose} />
+          <DropdownTimelineBar
+            handlePageTitle={handlePageTitle}
+            handlePageNum={handlePageNum}
+            close={handleClose} />
         )}
 
         {props.type === "main" && (

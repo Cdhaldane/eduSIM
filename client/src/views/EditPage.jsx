@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Sidebar from "../components/SideBar/Sidebar";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
-
+import { useAlertContext } from "../components/Alerts/AlertContext";
 import { Container } from "react-bootstrap";
+
 const Grid = styled.div`
   display: grid;
   grid:
@@ -18,11 +19,6 @@ const GridNav = styled.div`
   z-index: 2000;
 `;
 
-// const GridHeader = styled.header`
-//   grid-area: header;
-//   background-color: #e5e5e5;
-// `;
-
 const GridMain = styled.main`
   grid-area: main;
   margin-left: 70px;
@@ -36,16 +32,21 @@ const GridMain = styled.main`
   }
 `;
 
-function EditPage(props) {
+const EditPage = (props) => {
+
   const [showNav, setShowNav] = useState(false);
 
+  const alertContext = useAlertContext();
+
   if (props.location.img) {
-    localStorage.setItem('gameinstance', props.location.gameinstance)
-    localStorage.setItem('adminid', props.location.adminid)
-    localStorage.setItem('simimg', props.location.img)
-    localStorage.setItem('simtitle', props.location.title)
+    localStorage.setItem('gameinstance', props.location.gameinstance);
+    localStorage.setItem('adminid', props.location.adminid);
+    localStorage.setItem('simimg', props.location.img);
+    localStorage.setItem('simtitle', props.location.title);
   }
-  const toggle = () => setShowNav(!showNav)
+
+  const toggle = () => setShowNav(!showNav);
+
   return (
     <div className="editpage">
       <Container>
@@ -58,6 +59,7 @@ function EditPage(props) {
           </GridNav>
           <GridMain>
             <Canvas
+              showAlert={alertContext.showAlert}
               adminid={localStorage.adminid}
               gameinstance={localStorage.gameinstance}
             />
