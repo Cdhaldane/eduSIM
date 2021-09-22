@@ -110,7 +110,7 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-      ptype: "~",
+      ptype: "",
       numberOfPages: 6,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
