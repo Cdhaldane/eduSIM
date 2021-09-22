@@ -4,6 +4,7 @@ import Tabs from "../components/Tabs/Tabs";
 import CreateCsv from "../components/CreateCsv/CreateCsv";
 import Modal from "react-modal";
 import { Image } from "cloudinary-react";
+import io from "socket.io-client";
 
 function Join(props) {
   const [showNote, setShowNote] = useState(false);
@@ -23,6 +24,14 @@ function Join(props) {
   function toggleModal() {
     setShowNote(!showNote);
   }
+  
+  const startSim = () => {
+    const socket = io(process.env.REACT_APP_API_ORIGIN, {
+      query: {
+        admin: true
+      }
+    });
+  };
 
   return (
     <div className="dashboard">
@@ -43,7 +52,7 @@ function Join(props) {
           </button>
         </div>
         <div className="joinboard-buttons">
-          <button class="joinboard-button">
+          <button class="joinboard-button" onClick={startSim}>
             <i class="fa fa-play"></i>
           </button>
           <button class="joinboard-button">
