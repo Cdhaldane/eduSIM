@@ -220,8 +220,20 @@ footer {
   margin-bottom: 10px;
   word-break:break-word;
 }
-.joinboard-buttons {
+.joinboard-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+.joinboard-controls {
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.joinboard-controls > p {
+  margin-bottom: 10px;
+}
+.joinboard-buttons {
   display: flex;
 }
 .joinboard-button {
@@ -232,7 +244,7 @@ footer {
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  margin-left: 10px;
+  margin: 0 5px;
   cursor: pointer;
   background-color: #8f001a;
 }
@@ -472,7 +484,7 @@ footer {
     max-width: 100%;
     margin-left: 0;
   }
-  .joinboard-buttons {
+  .joinboard-controls {
     margin-left: unset;
     margin-top: 20px;
     justify-content: center;

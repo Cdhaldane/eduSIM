@@ -48,6 +48,8 @@ function Tabs(props) {
 
   const toggleTab = (index) => {
     setToggleState(index);
+    // for updating controls in admin header
+    props.setRoom(tabs[index-1]);
   };
 
   const handleSubmit = (e) => {
@@ -114,12 +116,12 @@ function Tabs(props) {
         >
           <span className="tab-text">Overview</span>
         </li>
-        {tabs.map((i) => (
+        {tabs.map((tab, i) => (
           <li
             onClick={() => toggleTab(i + 1)}
             class={toggleState === i + 1 && "selected"}
           >
-            <span className="tab-text">{i[0]}</span>
+            <span className="tab-text">{tab[0]}</span>
           </li>
         ))}
         <li
@@ -211,19 +213,19 @@ function Tabs(props) {
               </Modal> */}
           <Table addstudent={false} gameid={props.gameid} title={props.title} />
         </div>
-        {tabs.map((i) => (
+        {tabs.map((tab,i) => (
           <div
             className={
               toggleState === i + 1 ? "content  active-content" : "content"
             }
           >
             <div className="content-header">
-              <h2>{i[0]}</h2>
-              <a className="content-roomlink" href={`/gamepage/${i[2]}`} target="#">
+              <h2>{tab[0]}</h2>
+              <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                 Join Room
               </a>
               <button
-                onClick={() => handleDeleteGroup(i)}
+                onClick={() => handleDeleteGroup(tab)}
                 className="deletegroup"
               >
                 Delete Group
@@ -233,6 +235,11 @@ function Tabs(props) {
             <div className="groupcontainer">
               <div className="group-column">
                 <h3>Chat: </h3>
+                <div>
+                  {props.chatMessages.map(({ id, message }) => (
+                    <p><b>{id}: </b>{message}</p>
+                  ))}
+                </div>
               </div>
               <div className="group-column">
                 <h3>Performance:</h3>
@@ -256,7 +263,7 @@ function Tabs(props) {
             <div class="group-table">
               <Table
                 addstudent={true}
-                gameroom={i}
+                gameroom={tab}
                 gameid={props.gameid}
                 title={props.title}
               />

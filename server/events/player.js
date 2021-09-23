@@ -7,6 +7,7 @@ export default async (server, client, event, args) => {
 
       server.to(room).emit("message", {
         id: client.id,
+        room,
         message
       });
 

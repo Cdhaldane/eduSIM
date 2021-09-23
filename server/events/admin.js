@@ -1,19 +1,33 @@
-import { setRoomStatus, getSimulationRooms } from './utils';
+import { updateRoomStatus, getSimulationRooms } from './utils';
 
 export default async (server, client, event, args) => {
+  const { game } = client.handshake.query;
+
   switch (event) {
     case "gameStart": {
-      const { room, game } = args;
+      const { room } = args || {};
 
       if (room) {
         // if a room code is defined, start that room
-        await setRoomStatus(room, true);
+        const newStatus = await updateRoomStatus(room, {
+          running: true
+        });
+        client.emit("roomStatusUpdate", {
+          room,
+          status: newStatus
+        });
         server.to(room).emit("gameStart");
-      } else if (game) {
+      } else {
         // otherwise, a gameinstance is defined; get rooms associated with it and start those
         const rooms = await getSimulationRooms(game);
         rooms.forEach(async ({ dataValues: room }) => {
-          await setRoomStatus(room.gameroom_url, true);
+          const newStatus = await updateRoomStatus(room.gameroom_url, {
+            running: true
+          });
+          client.emit("roomStatusUpdate", {
+            room: room.gameroom_url,
+            status: newStatus
+          });
           server.to(room.gameroom_url).emit("gameStart");
         });
       }
@@ -21,17 +35,29 @@ export default async (server, client, event, args) => {
       break;
     };
     case "gamePause": {
-      const { room, game } = args;
+      const { room } = args || {};
 
       if (room) {
         // if a room code is defined, pause that room
-        await setRoomStatus(room, false);
+        const newStatus = await updateRoomStatus(room, {
+          running: false
+        });
+        client.emit("roomStatusUpdate", {
+          room,
+          status: newStatus
+        });
         server.to(room).emit("gamePause");
-      } else if (game) {
+      } else {
         // otherwise, a gameinstance is defined; get rooms associated with it and pause those
         const rooms = await getSimulationRooms(game);
         rooms.forEach(async ({ dataValues: room }) => {
-          await setRoomStatus(room.gameroom_url, false);
+          const newStatus = await updateRoomStatus(room.gameroom_url, {
+            running: false
+          });
+          client.emit("roomStatusUpdate", {
+            room: room.gameroom_url,
+            status: newStatus
+          });
           server.to(room.gameroom_url).emit("gamePause");
         });
       }

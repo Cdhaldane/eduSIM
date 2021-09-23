@@ -30,8 +30,8 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ status }) => {
-        setRunning(status);
+      client.on("connectStatus", ({ running }) => {
+        setRunning(running || false);
         setAlerts(list => list.concat(
           <p>connected as {client.id}</p>
         ));
@@ -68,31 +68,29 @@ function Game(props) {
   const isLoading = room === null;
 
   return (
-    <div className="editpagetest">
-      {!isLoading ? (
-        <>
-          <Image
-            className="joinboard-image"
-            cloudName="uottawaedusim"
-            publicId={
-              "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-              room.gameinstance.gameinstance_photo_path
-            }
-            alt="backdrop"
-          />
-          <h2>room code: {roomid}</h2>
-          <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
-          {alerts.map((el) => (el))}
-          <form onSubmit={sendMessage} action="#">
-            <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
-            <input type="submit" value="send" />
-          </form>
-          {!running && (<div className="editpagetest-paused">paused/not running</div>)}
-        </>
-      ) : (
-        <h1>loading...</h1>
-      )}
-    </div>
+    !isLoading ? (
+      <div className="editpagetest">
+        <Image
+          className="joinboard-image"
+          cloudName="uottawaedusim"
+          publicId={
+            "https://res.cloudinary.com/uottawaedusim/image/upload/" +
+            room.gameinstance.gameinstance_photo_path
+          }
+          alt="backdrop"
+        />
+        <h2>room code: {roomid}</h2>
+        <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
+        {alerts.map((el) => (el))}
+        <form onSubmit={sendMessage} action="#">
+          <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
+          <input type="submit" value="send" />
+        </form>
+        {!running && (<div className="editpagetest-paused">paused/not running</div>)}
+      </div>
+    ) : (
+      <h1>loading...</h1>
+    )
   );
 }
 

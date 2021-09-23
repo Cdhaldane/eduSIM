@@ -4,8 +4,18 @@ const GameRoom = require("../models/GameRooms");
 let rooms = new Map();
 
 // helper functions
-export const getRoomStatus = async (id) => ({status: rooms.get(id) || false});
-export const setRoomStatus = async (id, val) => rooms.set(id, val);
+export const getRoomStatus = async (id) => rooms.get(id) || {};
+export const updateRoomStatus = async (id, val) => {
+  const room = getRoomStatus(id);
+  rooms.set(id, {
+    ...room,
+    ...val
+  });
+  return {
+    ...room,
+    ...val
+  };
+}
 
 export const getSimulationRooms = async (id) => {
   const res = await GameRoom.findAll({

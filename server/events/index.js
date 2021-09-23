@@ -1,11 +1,23 @@
 import playerEvents from "./player";
 import adminEvents from "./admin";
-import { getRoomStatus } from './utils';
+import { getRoomStatus, getSimulationRooms } from './utils';
 
 export default async (server, client) => {
   
   if (client.handshake.auth.token) {
-    // initial connection from admin, fired upon starting the simulation
+    // initial connection from admin; return game status for all rooms in game
+
+    const { game } = client.handshake.query;
+    
+    const rooms = await getSimulationRooms(game);
+    rooms.forEach(async ({ dataValues: room }) => {
+      const status = await getRoomStatus(room.gameroom_url);
+      client.join(room.gameroom_url);
+      client.emit("roomStatusUpdate", {
+        room: room.gameroom_url,
+        status
+      });
+    });
 
     client.onAny((event, args) => adminEvents(server, client, event, args));
 
