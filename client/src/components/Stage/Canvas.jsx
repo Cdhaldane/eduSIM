@@ -7,7 +7,6 @@ import URLImage from "./URLImage";
 import fileDownload from 'js-file-download'
 import axios from 'axios'
 import Level from "../Level/Level";
-import Pencil from "../Pencils/Pencil";
 import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal"
@@ -4144,10 +4143,15 @@ class Graphics extends Component {
 
         </div>
         <div className="eheader">
-          <Level number={this.state.numberOfPages} ptype={this.state.ptype} level={this.handleLevel} />
+          <Level
+            number={this.state.numberOfPages}
+            ptype={this.state.ptype}
+            level={this.handleLevel}
+            handlePageTitle={this.handlePageTitle}
+            handleNumOfPages={this.handleNumOfPagesChange} />
           <div>
             <div className={"info" + this.state.open}>
-              <div id="infostage">
+              <div className="personalAreaStageContainer">
                 <Stage width={1500} height={600}
                   onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
@@ -5664,15 +5668,6 @@ class Graphics extends Component {
               </div>
             </div>
           </div>
-          {/* The timeline editor pencil button */}
-          <Pencil
-            id="3"
-            psize="3"
-            type="info"
-            title=""
-            pageTitle={this.handlePageTitle}
-            pageNum={this.handleNumOfPagesChange}
-          />
         </div>
       </React.Fragment>
     );

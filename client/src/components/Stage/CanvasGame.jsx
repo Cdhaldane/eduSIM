@@ -530,7 +530,7 @@ class Graphics extends Component {
         <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel} gamepage/>
             <div>
               <div className={"info" + this.state.open}>
-                <div id="infostage">
+                <div className="personalAreaStageContainer">
 
                 <Stage width={1500} height={600}
                   ref="graphicStage1"

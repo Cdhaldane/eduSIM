@@ -83,7 +83,7 @@ function DropdownTimelineBar(props) {
   }
 
   return (
-    <div className="dropdown menu-primary" style={{ height: "auto" }} ref={dropdown}>
+    <div className="dropdown menu-primary timelineDropdown" style={{ height: "auto" }} ref={dropdown}>
       <div className="menu">
         <h1>Edit Timeline Bar</h1>
         <h1>Pages:</h1>

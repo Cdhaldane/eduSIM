@@ -1,3 +1,20 @@
+:root {
+  --primary: #8f001a;
+  --warning: #ffd028;
+  --danger: #eb3f27;
+  --success: #75fa83;
+  --white: #fdfdfd;
+  --dark: #181717;
+  --bg: white;
+  --bg-accent: white;
+  --text-color: #636363;
+  --nav-size: 60px;
+  --border: 1px solid #181818;
+  --border-radius: 20px;
+  --speed: 500ms;
+  --box-shadow: rgba(0,0,0,0.25) 3px 3px 4px 0px;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -184,7 +201,7 @@ footer {
   font-family:  "Montserrat", sans-serif;
   font-size: 1.3rem;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
@@ -234,7 +251,7 @@ footer {
   height: 50px;
   margin-left: 10px;
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
 }
 
 .bimg {
@@ -321,7 +338,7 @@ footer {
   font-family:  "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
@@ -342,7 +359,7 @@ footer {
   z-index: 1;
   padding: 1.5em;
   background-color: white;
-  border: solid #8f001a 2px ;
+  border: solid var(--primary) 2px ;
   border-radius: 8px;
   transform: translateY(-100%);
   transition: transform .3s;

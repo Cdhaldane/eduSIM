@@ -295,7 +295,7 @@
   font-family:  "Montserrat", sans-serif;
   font-size: 1em;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
@@ -317,7 +317,7 @@ hr {
   padding: 10px 20px;
   font-size: 1em;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
@@ -335,7 +335,7 @@ hr {
   padding: 10px 20px;
   font-size: 1em;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 10px;

@@ -1,12 +1,20 @@
-.pencil {
-  position: absolute;
+#pencilTimeline {
+  color: var(--primary);
+  font-size: 2.25em;
+  padding: 0px 10px;
+}
+
+#pencilTimeline:hover {
+  cursor: pointer;
+  text-shadow: 2px 2px 3px rgba(0,0,0,0.25);
+  transition: all 0.1s;
 }
 
 #pencil3{
   position: fixed;
   top: 80px;
   right: 20px;
-  color: #8f001a;
+  color: var(--primary);
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }

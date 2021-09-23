@@ -1,5 +1,5 @@
 .NavbarItems {
-  background-color: #8f001a;
+  background-color: var(--primary);
   height: 80px;
   display: flex;
   justify-content: space-between;
@@ -108,7 +108,7 @@
 
 @media screen and (orientation: landscape) {
   .profilevist {
-    box-shadow: rgba(0,0,0,0.25) 4px 4px 4px 0px;
+    box-shadow: var(--box-shadow);
     font-family: "Montserrat", sans-serif;
     display: flex;
     flex-direction: column;
@@ -211,7 +211,7 @@
     margin: 1rem auto;
     border-radius: 4px;
     width: 80%;
-    background: #8f001a;
+    background: var(--primary);
     text-decoration: none;
     color: white;
     font-size: 2rem;

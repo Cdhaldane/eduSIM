@@ -22,7 +22,7 @@ const Pencil = (props) => {
   }
 
   return (
-    <div className="pencil">
+    <div>
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
@@ -33,7 +33,7 @@ const Pencil = (props) => {
         <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
           {props.type === "info" && (
             <DropdownTimelineBar
-              handlePageTitle={(e) => props.pageType(e)}
+              handlePageTitle={(e) => props.pageTitle(e)}
               handlePageNum={(e) => props.pageNum(e)}
               close={handleClose} />
           )}
