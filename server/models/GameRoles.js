@@ -14,6 +14,10 @@ const gameroles = db.define('gameroles', {
   },
   gamerole: {
     type: Sequelize.STRING(250)
+  },
+  numspots: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 });
 

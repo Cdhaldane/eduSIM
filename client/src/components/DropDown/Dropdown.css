@@ -313,6 +313,15 @@ a {
   color: #636363;
 }
 
+#roleNameAdd {
+  width: 60%;
+}
+
+#roleNumAdd {
+  width: 15%;
+  margin-left: 10px;
+}
+
 .add-dropdown-item-input {
   border-radius: 0.3em;
   border: solid 2px grey;

@@ -12,6 +12,7 @@ const DropdownRoles = (props) => {
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
   const [roleName, setRoleName] = useState("");
+  const [roleNum, setRoleNum] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
 
@@ -30,6 +31,7 @@ const DropdownRoles = (props) => {
         rolesData.push({
           id: res.data[i].gameroleid,
           roleName: res.data[i].gamerole,
+          numOfSpots: res.data[i].numspots
         });
       }
       setRoles(rolesData);
@@ -46,7 +48,7 @@ const DropdownRoles = (props) => {
 
   useEffect(() => {
     updateRolesData();
-    
+
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
@@ -66,7 +68,7 @@ const DropdownRoles = (props) => {
     if (newMenu !== "main") {
       if (props.openInfoSection) {
         props.openInfoSection();
-      } 
+      }
       document.addEventListener('click', handleClickOutside);
     } else {
       document.removeEventListener('click', handleClickOutside);
@@ -92,7 +94,7 @@ const DropdownRoles = (props) => {
               <span className="icon-button">
                 <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
               </span>
-              {role.roleName}
+              {`${role.roleName} (${role.numOfSpots})`}
             </div>
           );
         })}
@@ -107,8 +109,12 @@ const DropdownRoles = (props) => {
     }
   }
 
-  const handleRoleChange = (e) => {
+  const handleRoleNameChange = (e) => {
     setRoleName(e.target.value);
+  }
+
+  const handleRoleNumChange = (e) => {
+    setRoleNum(e.target.value);
   }
 
   const handleDeleteRole = async (e) => {
@@ -134,15 +140,22 @@ const DropdownRoles = (props) => {
       alertContext.showAlert("A role with this name already exists. Please pick a new name.", "warning");
       return;
     }
+    // Check if number value is valid (is an integer)
+    if (roleNum === null || !/^\d+$/.test(roleNum)) {
+      alertContext.showAlert("Role quantity must be an integer.", "warning");
+      return;
+    }
 
     let data = {
       gameinstanceid: props.gameid,
-      gamerole: roleName.trim()
+      gamerole: roleName.trim(),
+      numspots: parseInt(roleNum)
     };
 
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
       updateRolesData();
       setRoleName("");
+      setRoleNum("");
     }).catch(error => {
       console.log(error);
     });
@@ -182,7 +195,21 @@ const DropdownRoles = (props) => {
             <span className="icon-button" onClick={handleAddRole}>
               <i className="icons fas fa-plus" />
             </span>
-            <input className="add-dropdown-item-input" type="text" placeholder="New Role Name" onChange={handleRoleChange} value={roleName} />
+            <input
+              id="roleNameAdd"
+              className="add-dropdown-item-input"
+              type="text"
+              placeholder="New Role Name"
+              onChange={handleRoleNameChange}
+              value={roleName} />
+            <input
+              id="roleNumAdd"
+              className="add-dropdown-item-input"
+              type="text"
+              placeholder="#"
+              maxlength="3"
+              onChange={handleRoleNumChange}
+              value={roleNum} />
           </div>
         </div>
       </CSSTransition>

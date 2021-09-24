@@ -20,11 +20,13 @@ exports.getGameRoles = async (req, res) => {
 exports.createRole = async (req, res) => {
   const gameinstanceid = req.body.gameinstanceid;
   const gamerole = req.body.gamerole;
+  const numspots = req.body.numspots;
   
   try {
     let newGameInstance = await GameRole.create({
       gameinstanceid,
-      gamerole
+      gamerole,
+      numspots
     });
     return res.send(newGameInstance);
   } catch (err) {
