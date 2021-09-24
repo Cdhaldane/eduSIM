@@ -259,6 +259,21 @@
   margin: 2px 20px;
   flex: 1;
 }
+.content-roomlink {
+  align-self: center;
+  margin-left: auto;
+  margin-right: 20px;
+  font-family:  "Montserrat", sans-serif;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #8f001a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: none;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 10px;
+}
 
 .active-content {
   display: flex;
@@ -357,6 +372,18 @@ hr {
 .group-table {
   padding-bottom: 20px;
 }
+.group-chatlog {
+  font-size: .7em;
+  height: 300px;
+  padding: 10px;
+}
+.group-chatlog > div {
+  height: 100%;
+  overflow-y: auto;
+}
+.group-chatlog p {
+  height: unset;
+}
 
 .createmodaltab {
   display: flex;
@@ -418,5 +445,13 @@ hr {
   }
   .groupcontainer {
     flex-direction: column;
+  }
+  .content-header {
+    flex-direction: column;
+    align-items: center;
+  }
+  .content-roomlink {
+    align-self: center;
+    margin: 10px 0;
   }
 }
