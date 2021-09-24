@@ -8,7 +8,7 @@ import "./Dropdown.css";
 
 const DropdownAddObjects = (props) => {
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(null);
+  const [menuHeight, setMenuHeight] = useState(214);
   const [img, setImg] = useState();
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
@@ -19,11 +19,6 @@ const DropdownAddObjects = (props) => {
   const [audiosrc, setAudiosrc] = useState("");
   const [file, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
-
-  function handleChange(e) {
-    setColour(e);
-    props.choosecolor(e);
-  }
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
@@ -36,6 +31,11 @@ const DropdownAddObjects = (props) => {
     if (!dropdownRef.current.contains(e.target)) {
       props.close();
     }
+  }
+
+  function handleChange(e) {
+    setColour(e);
+    props.choosecolor(e);
   }
 
   function calcHeight(el) {
@@ -89,54 +89,220 @@ const DropdownAddObjects = (props) => {
     setFile(event.target.files[0]);
   }
 
-  function addCircle() {
-    props.addCircle();
+  // Adding Objects
+  const addObjectToLayer = (
+    objectName,
+    objectsState,
+    objectsDeletedState,
+    objectParameters) => {
+
+    const numOfObj = objectsState.length + objectsDeletedState + 1;
+    const name = objectName + numOfObj;
+
+    const object = {
+      rolelevel: props.state.rolelevel,
+      infolevel: props.state.infolevel,
+      level: props.state.level,
+      visible: true,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      ref: name,
+      ...objectParameters
+    };
+
+    const layer = props.layer;
+    const transform = props.layer.getAbsoluteTransform().copy();
+    transform.invert();
+
+    const pos = transform.point({
+      x: object.x,
+      y: object.y
+    });
+
+    if (layer.attrs.x) {
+      object.x = pos.x;
+      object.y = pos.y;
+    }
+
+    props.setState({
+      [objectName]: [...objectsState, object],
+      selectedShapeName: name
+    });
+
     props.close();
   }
 
-  function addRectangle() {
-    props.addRectangle();
-    props.close();
+  const addRectangle = () => {
+    addObjectToLayer(
+      "rectangles",
+      props.state.rectangles,
+      props.state.rectDeleteCount,
+      {
+        width: 100,
+        height: 100,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        rotation: 0,
+        fill: props.state.colorf,
+        useImage: false
+      }
+    );
   }
 
-  function addTriangle() {
-    props.addTriangle();
-    props.close();
+  const addCircle = () => {
+    addObjectToLayer(
+      "ellipses",
+      props.state.ellipses,
+      props.state.ellipseDeleteCount,
+      {
+        radiusX: 50,
+        radiusY: 50,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        fill: props.state.colorf,
+        rotation: 0
+      }
+    );
   }
 
-  function addStar() {
-    props.addStar();
-    props.close();
+  const addStar = () => {
+    addObjectToLayer(
+      "stars",
+      props.state.stars,
+      props.state.starDeleteCount,
+      {
+        numPoints: 5,
+        innerRadius: 30,
+        outerRadius: 70,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        fill: props.state.colorf,
+        rotation: 0,
+        width: 100,
+        height: 100
+      }
+    );
   }
 
+  const addTriangle = () => {
+    addObjectToLayer(
+      "triangles",
+      props.state.triangles,
+      props.state.triangleDeleteCount,
+      {
+        sides: 3,
+        radius: 70,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        useImage: false,
+        fill: props.state.colorf,
+        rotation: 0,
+        width: 100,
+        height: 100
+      }
+    );
+  }
+
+  const addImage = () => {
+    addObjectToLayer(
+      "images",
+      props.state.images,
+      props.state.imageDeleteCount,
+      {
+        imgsrc: props.state.imgsrc,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        opacity: 1,
+        width: 200,
+        height: 200
+      }
+    );
+  }
+
+  const addVideo = () => {
+    addObjectToLayer(
+      "videos",
+      props.state.videos,
+      props.state.videoDeleteCount,
+      {
+        width: 400,
+        height: 400,
+        vidsrc: props.state.vidsrc,
+        stroke: 'black',
+        strokeWidth: 1.5,
+        opacity: 1
+      }
+    );
+  }
+
+  const addText = () => {
+    addObjectToLayer(
+      "texts",
+      props.state.texts,
+      props.state.textDeleteCount,
+      {
+        fontSize: 50,
+        text: "Edit this",
+        fontFamily: "Belgrano",
+        opacity: 1,
+        fill: props.state.colorf,
+        rotation: 0,
+        width: 300,
+        height: 25
+      }
+    );
+  }
+
+  const addAudio = () => {
+    addObjectToLayer(
+      "audios",
+      props.state.audios,
+      props.state.audioDeleteCount,
+      {
+        imgsrc: "sound.png",
+        audsrc: props.state.audsrc,
+        stroke: 'black',
+        strokeWidth: 0,
+        opacity: 1,
+        width: 100,
+        height: 100
+      }
+    );
+  }
+
+  const addDocument = () => {
+    const bimage = new window.Image();
+    bimage.onload = () => {
+      props.setState({
+        docimage: bimage
+      })
+    };
+    bimage.src = 'downloadicon.png';
+    bimage.width = 10;
+    bimage.height = 10;
+
+    addObjectToLayer(
+      "documents",
+      props.state.documents,
+      props.state.documentDeleteCount,
+      {
+        stroke: 'black',
+        strokeWidth: 0,
+        fillPatternImage: props.state.docimage,
+        fillPatternOffset: "",
+        rotation: 0,
+        width: 100,
+        height: 100
+      }
+    );
+  }
+
+  // Other
   function drawLine() {
     setCheckedd(!checkedd)
     props.drawLine();
-  }
-
-  function drawText() {
-    props.drawText();
-    props.close();
-  }
-
-  function addImage(e) {
-    props.addImage();
-    props.close();
-  }
-
-  function addVideo(e) {
-    props.addVideo();
-    props.close();
-  }
-
-  function addAudio(e) {
-    props.addAudio();
-    props.close();
-  }
-
-  function addDocument(e) {
-    props.addDocument();
-    props.close();
   }
 
   function addTic(e) {
@@ -256,7 +422,7 @@ const DropdownAddObjects = (props) => {
             Image
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-video" onClick=""></i>}
+            leftIcon={<i className="icons fas fa-video"></i>}
             onClick={() => setActiveMenu("video")}>
             Video
           </DropdownItem>
@@ -271,8 +437,8 @@ const DropdownAddObjects = (props) => {
             Document
           </DropdownItem>
           <DropdownItem
-            onClick={drawText}
-            leftIcon={<i className="icons fas fa-comment-alt" onClick={drawText}></i>}>
+            onClick={addText}
+            leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
             Textbox
           </DropdownItem>
         </div>

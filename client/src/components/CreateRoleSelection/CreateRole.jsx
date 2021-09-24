@@ -2,7 +2,6 @@ import React from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 
 function CreateRole(props) {
-  console.log(props)
   return (
     <div class="areacsv" >
       <form className="areacsvform modal-role-select">
