@@ -75,6 +75,10 @@ class Graphics extends Component {
       linesDeleteCount: 0,
       arrowDeleteCount: 0,
 
+      // Page Controls
+      pages: ["1", "2", "3", "4", "5", "6"],
+      numberOfPages: 6,
+
       layerX: 0,
       layerY: 0,
       layerScale: 1,
@@ -124,8 +128,6 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-      ptype: "",
-      numberOfPages: 6,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: "https://konvajs.org/assets/lion.png",
@@ -268,10 +270,10 @@ class Graphics extends Component {
     this.state.redoing = false;
   }
 
-  handlePageTitle = (e) => {
+  handlePageTitle = (newPageTitles) => {
     this.setState({
-      ptype: e
-    })
+      pages: newPageTitles
+    });
   }
 
   handleNumOfPagesChange = (e) => {
@@ -3708,10 +3710,11 @@ class Graphics extends Component {
         <div className="eheader">
           <Level
             number={this.state.numberOfPages}
-            ptype={this.state.ptype}
+            pages={this.state.pages}
             level={this.handleLevel}
             handlePageTitle={this.handlePageTitle}
-            handleNumOfPages={this.handleNumOfPagesChange} />
+            handlePageNum={this.handleNumOfPagesChange}
+            numOfPages={this.state.numberOfPages} />
           <div>
             <div className={"info" + this.state.open}>
               <div className="personalAreaStageContainer">

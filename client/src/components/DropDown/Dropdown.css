@@ -211,6 +211,66 @@ a {
   margin-bottom: 30px;
 }
 
+#numOfPagesLabel {
+  padding: 10px;
+  font-size: 1.2rem;
+  font-weight: 100;
+  color: #636363;
+}
+
+#numOfPagesInput {
+  padding: 0;
+  width: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  border: none;
+  text-align: center;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#numOfPagesInput::-webkit-inner-spin-button, #numOfPagesInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+#numOfPagesInput:hover {
+  cursor: default;
+}
+
+#numOfPagesInput:focus {
+  border: none;
+  outline: none;
+  border: none;
+  color: transparent;
+  text-shadow: 0 0 0 black;
+}
+
+.numOfPagesInputBtn {
+  height: 20px !important;
+  width: 20px !important;
+  padding: 0 !important;
+  margin: 2px !important;
+  font-size: 1em !important;
+  transform: translateY(-3px);
+}
+
+.pageNameInput {
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  font-size: 0.9em;
+  padding-left: 0.25em;
+  height: 100%;
+  margin: 3px 10px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.pageNameInput::placeholder {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  color: #636363;
+}
+
 #pagetype input::placeholder {
   opacity: 0.8;
   color: grey;

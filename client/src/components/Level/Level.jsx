@@ -24,10 +24,12 @@ const Level = (props) => {
   }
 
   const createSelectItems = () => {
-    for (let i = 1; i <= props.number; i++) {
-      items.push(<option key={i} value={i}>{props.ptype} {i}</option>);
-      // Here I will be creating my options dynamically based on
-      // what props are currently passed to the parent component
+    for (let i = 0; i < props.number; i++) {
+      items.push(
+        <option key={i} value={i+1}>
+          {props.pages[i]}
+        </option>
+      );
     }
     return items;
   }
@@ -57,13 +59,14 @@ const Level = (props) => {
             ))}
           </div>
 
-          {props.handlePageTitle && props.handleNumOfPages && (
+          {props.handlePageNum && (
             <Pencil
               id="Timeline"
               psize="3"
               type="info"
-              pageTitle={props.handlePageTitle}
-              pageNum={props.handleNumOfPages}
+              handlePageTitle={props.handlePageTitle}
+              handlePageNum={props.handlePageNum}
+              numOfPages={props.numOfPages}
             />
           )}
 

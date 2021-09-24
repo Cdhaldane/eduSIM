@@ -33,17 +33,18 @@ const Pencil = (props) => {
         <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
           {props.type === "info" && (
             <DropdownTimelineBar
-              handlePageTitle={(e) => props.pageTitle(e)}
-              handlePageNum={(e) => props.pageNum(e)}
+              handlePageTitle={props.handlePageTitle}
+              handlePageNum={props.handlePageNum}
+              numOfPages={props.numOfPages}
               close={handleClose} />
           )}
           {props.type === "nav" && (
             <DropdownNavigationBar
-              mvisible={(e) => props.mvisible(e)}
-              avisible={(e) => props.avisible(e)}
-              pavisible={(e) => props.pavisible(e)}
-              svisible={(e) => props.svisible(e)}
-              pevisible={(e) => props.pevisible(e)}
+              mvisible={props.mvisible}
+              avisible={props.avisible}
+              pavisible={props.pavisible}
+              svisible={props.svisible}
+              pevisible={props.pevisible}
               close={handleClose} />
           )}
         </div>
