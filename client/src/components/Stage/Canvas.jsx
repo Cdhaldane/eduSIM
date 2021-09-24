@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import Info from "../Information/InformationPopup";
 import URLvideo from "./URLVideos";
 import URLImage from "./URLImage";
 import fileDownload from 'js-file-download'
 import axios from 'axios'
 import Level from "../Level/Level";
-import Pencil from "../Pencils/Pencil";
 import Konva from "konva"
 import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal"
@@ -36,11 +36,15 @@ class Graphics extends Component {
     super(props);
 
     this.state = {
-      layerX: 0,
-      layerY: 0,
-      layerScale: 1,
-      selectedShapeName: "",
-      errMsg: "",
+      // Right click menus (for group and personal space)
+      groupAreaContextMenuVisible: false,
+      groupAreaContextMenuX: 0,
+      groupAreaContextMenuY: 0,
+      personalAreaContextMenuVisible: false,
+      personalAreaContextMenuX: 0,
+      personalAreaContextMenuY: 0,
+
+      // Objects
       rectangles: [],
       ellipses: [],
       stars: [],
@@ -52,10 +56,34 @@ class Graphics extends Component {
       texts: [],
       lines: [],
       arrows: [],
+
       connectors: [],
       gameroles: [],
       tics: [],
       connect4: [],
+
+      // Object Deletion Count
+      rectDeleteCount: 0,
+      ellipseDeleteCount: 0,
+      starDeleteCount: 0,
+      triangleDeleteCount: 0,
+      imageDeleteCount: 0,
+      videoDeleteCount: 0,
+      audioDeleteCount: 0,
+      documentDeleteCount: 0,
+      textDeleteCount: 0,
+      linesDeleteCount: 0,
+      arrowDeleteCount: 0,
+
+      // Page Controls
+      pages: ["1", "2", "3", "4", "5", "6"],
+      numberOfPages: 6,
+
+      layerX: 0,
+      layerY: 0,
+      layerScale: 1,
+      selectedShapeName: "",
+      errMsg: "",
       currentTextRef: "",
       shouldTextUpdate: true,
       textX: 0,
@@ -92,16 +120,6 @@ class Graphics extends Component {
       description: "",
       thumbnail: "",
       isPasteDisabled: false,
-      ellipseDeleteCount: 0,
-      starDeleteCount: 0,
-      arrowDeleteCount: 0,
-      textDeleteCount: 0,
-      rectDeleteCount: 0,
-      triangleDeleteCount: 0,
-      imageDeleteCount: 0,
-      videoDeleteCount: 0,
-      linesDeleteCount: 0,
-      audioDeletedCount: 0,
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
       savedstates: [],
@@ -110,8 +128,6 @@ class Graphics extends Component {
       tool: 'pen',
       isDrawing: false,
       drawMode: false,
-      ptype: "",
-      numberOfPages: 6,
       imagesrc: null,
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: "https://konvajs.org/assets/lion.png",
@@ -254,10 +270,10 @@ class Graphics extends Component {
     this.state.redoing = false;
   }
 
-  handlePageTitle = (e) => {
+  handlePageTitle = (newPageTitles) => {
     this.setState({
-      ptype: e
-    })
+      pages: newPageTitles
+    });
   }
 
   handleNumOfPagesChange = (e) => {
@@ -304,23 +320,35 @@ class Graphics extends Component {
   };
 
   handleStageClick = e => {
-    let pos = this.refs.layer2.getStage().getPointerPosition();
-    let shape = this.refs.layer2.getIntersection(pos);
+    const pos = this.refs.layer2.getStage().getPointerPosition();
+    const shape = this.refs.layer2.getIntersection(pos);
 
-    if (
-      shape !== null &&
-      shape.name() !== undefined &&
-      shape !== undefined &&
-      shape.name() !== undefined
-    ) {
-      this.setState(
-        {
-          selectedShapeName: shape.id()
-        },
-        () => {
+    if (e.evt.button === 0) {
+      // Left click on an object -> put the selected object in state
+      if (
+        shape !== null &&
+        shape !== undefined &&
+        shape.name() !== null &&
+        shape.name() !== undefined
+      ) {
+        this.setState({ selectedShapeName: shape.id() }, () => {
           this.refs.graphicStage.draw();
-        }
-      );
+        });
+      }
+    } else if (e.evt.button === 2) {
+      // Right click on the group area -> show the add object menu
+      if (
+        shape === null ||
+        shape === undefined ||
+        shape.name() === ""
+      ) {
+        this.setState({
+          personalAreaContextMenuVisible: false,
+          groupAreaContextMenuVisible: true,
+          groupAreaContextMenuX: e.evt.clientX,
+          groupAreaContextMenuY: e.evt.clientY,
+        });
+      }
     }
   };
 
@@ -482,7 +510,7 @@ class Graphics extends Component {
       }
       const selBox = this.refs.selectionRectRef1.getClientRect();
       const elements = [];
-      this.refs.layer3.find(".shape").forEach((elementNode) => {
+      this.refs.personalAreaLayer.find(".shape").forEach((elementNode) => {
         const elBox = elementNode.getClientRect();
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
@@ -498,6 +526,27 @@ class Graphics extends Component {
       this.updateSelectionRectInfo();
     }
   };
+
+  handleStageClickInfo = e => {
+    const pos = this.refs.personalAreaLayer.getStage().getPointerPosition();
+    const shape = this.refs.personalAreaLayer.getIntersection(pos);
+
+    if (e.evt.button === 2) {
+      if (
+        shape === null ||
+        shape === undefined ||
+        shape.name() === ""
+      ) {
+        // Right click on the personal area -> show the add object menu
+        this.setState({
+          groupAreaContextMenuVisible: false,
+          personalAreaContextMenuVisible: true,
+          personalAreaContextMenuX: e.evt.clientX,
+          personalAreaContextMenuY: e.evt.clientY,
+        });
+      }
+    }
+  }
 
   handleMouseOverInfo = event => {
     // Get the currennt arrow ref and modify its position by filtering & pushing again
@@ -521,8 +570,8 @@ class Graphics extends Component {
       if (!this.state.selection.visible) {
         return;
       }
-      let pos = this.refs.graphicStage1.getPointerPosition();
-      let shape = this.refs.graphicStage1.getIntersection(pos);
+      const pos = this.refs.personalAreaStage.getPointerPosition();
+      const shape = this.refs.personalAreaStage.getIntersection(pos);
 
       this.state.selection.x2 = pos.x;
       this.state.selection.y2 = pos.y;
@@ -962,7 +1011,7 @@ class Graphics extends Component {
           length =
             this.state.audios.length +
             1 +
-            this.state.audioDeletedCount;
+            this.state.audioDeleteCount;
           let toPush = {
             x: copiedElement.x + 10,
             y: copiedElement.y + 10,
@@ -975,12 +1024,12 @@ class Graphics extends Component {
               "audio" +
               (this.state.audios.length +
                 1 +
-                this.state.audioDeletedCount),
+                this.state.audioDeleteCount),
             ref:
               "audio" +
               (this.state.audios.length +
                 1 +
-                this.state.audioDeletedCount),
+                this.state.audioDeleteCount),
             fill: copiedElement.fill,
             link: copiedElement.link,
             useImage: copiedElement.useImage,
@@ -1279,7 +1328,7 @@ class Graphics extends Component {
       let audios = this.state.audios.filter(function (eachRect) {
         if (eachRect.id === name) {
           that.setState({
-            audioDeletedCount: that.state.audioDeletedCount + 1
+            audioDeleteCount: that.state.audioDeleteCount + 1
           });
         }
         return eachRect.id !== name;
@@ -1444,424 +1493,6 @@ class Graphics extends Component {
     }
     return true;
   };
-
-  addRectangle = () => {
-    let rectName = this.state.rectangles.length + 1 + this.state.rectDeleteCount
-
-
-    let name = 'rectangle' + rectName
-    const rect = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 100,
-      height: 100,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      rotation: 0,
-      ref: name,
-      name: name,
-      id: name,
-      fill: this.state.colorf,
-      useImage: false,
-    };
-    let layer = this.refs.layer2;
-    let toPush = rect;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-
-    this.setState(prevState => ({
-      rectangles: [...prevState.rectangles, toPush],
-      selectedShapeName: toPush.name
-    }));
-
-  };
-
-  addTriangle = () => {
-    let triName = this.state.triangles.length + 1 + this.state.triangleDeleteCount
-
-    let name = 'triangle' + triName
-    const tri = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 100,
-      height: 100,
-      sides: 3,
-      radius: 70,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      rotation: 0,
-      id: name,
-      name: name,
-      ref: name,
-      fill: this.state.colorf,
-      useImage: false
-    };
-    let layer = this.refs.layer2;
-    let toPush = tri;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-    this.setState(prevState => ({
-      triangles: [...prevState.triangles, toPush],
-      selectedShapeName: toPush.name
-    }));
-  };
-
-  addImage = () => {
-    let imgName = this.state.images.length + 1 + this.state.imageDeleteCount
-    let imgsrc = this.state.imgsrc
-
-    let name = 'image' + imgName
-    const img = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 200,
-      height: 200,
-      imgsrc: imgsrc,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      opacity: 1,
-      id: name,
-      name: name,
-      ref: name,
-    };
-    let layer = this.refs.layer2;
-    let toPush = img;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-    this.setState(prevState => ({
-      images: [...prevState.images, toPush],
-      selectedShapeName: toPush.name
-    }));
-  };
-
-  addVideo = () => {
-    let vidName = this.state.videos.length + 1 + this.state.videoDeleteCount
-    let vidsrc = this.state.vidsrc
-
-    let name = 'video' + vidName
-    const vid = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 600,
-      y: 100,
-      width: 400,
-      height: 400,
-      vidsrc: vidsrc,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      opacity: 1,
-      id: name,
-      name: name,
-      ref: name,
-    };
-    let layer = this.refs.layer2;
-    let toPush = vid;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-
-    this.setState(prevState => ({
-      videos: [...prevState.videos, toPush],
-      selectedShapeName: toPush.name
-    }));
-  };
-
-  addAudio = () => {
-    let audName = this.state.audios.length + 1 + this.state.audioDeletedCount
-    let audsrc = this.state.audsrc
-
-
-    let name = 'audio' + audName
-    const aud = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 600,
-      y: 100,
-      width: 100,
-      height: 100,
-      imgsrc: "sound.png",
-      audsrc: audsrc,
-      stroke: 'black',
-      strokeWidth: 0,
-      opacity: 1,
-      id: name,
-      name: name,
-      ref: name,
-    };
-    let layer = this.refs.layer2;
-    let toPush = aud;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-    this.setState(prevState => ({
-      audios: [...prevState.audios, toPush],
-      selectedShapeName: toPush.name
-    }));
-  };
-
-  addDocument = () => {
-    let docName = this.state.documents.length + 1 + this.state.documentDeleteCount
-    const bimage = new window.Image();
-    bimage.onload = () => {
-      this.setState({
-        docimage: bimage
-      })
-    }
-    bimage.src = 'downloadicon.png';
-    bimage.width = 10;
-    bimage.height = 10;
-    let name = 'document' + docName
-    const doc = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 100,
-      height: 100,
-      stroke: 'black',
-      strokeWidth: 0,
-      fillPatternImage: this.state.docimage,
-      fillPatternOffset: "",
-      rotation: 0,
-      id: name,
-      name: name,
-      ref: name,
-    };
-    let layer = this.refs.layer2;
-    let toPush = doc;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-    this.setState(prevState => ({
-      documents: [...prevState.documents, toPush],
-      selectedShapeName: toPush.name
-    }));
-  };
-
-  addCircle = () => {
-    let circName = this.state.ellipses.length + 1 + this.state.ellipseDeleteCount
-
-    let name = 'ellipse' + circName
-    const circ = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      radiusX: 50,
-      radiusY: 50,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      id: name,
-      fill: this.state.colorf,
-      ref: name,
-      name: name,
-      rotation: 0
-    };
-    let layer = this.refs.layer2;
-    let toPush = circ;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-
-    this.setState(prevState => ({
-      ellipses: [...prevState.ellipses, toPush],
-      selectedShapeName: toPush.name
-    }))
-  };
-
-  addStick = () => {
-    // TODO
-  }
-
-  addStar = () => {
-    let starName = this.state.stars.length + 1 + this.state.starDeleteCount
-
-    let name = 'star' + starName
-    const star = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 100,
-      height: 100,
-      numPoints: 5,
-      innerRadius: 30,
-      outerRadius: 70,
-      stroke: 'black',
-      strokeWidth: 1.5,
-      id: name,
-      name: name,
-      fill: this.state.colorf,
-      ref: name,
-      rotation: 0
-    };
-    let layer = this.refs.layer2;
-    let toPush = star;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-
-    this.setState(prevState => ({
-      stars: [...prevState.stars, toPush],
-      selectedShapeName: toPush.name
-    }))
-  };
-
-  addText = () => {
-    let textName = this.state.texts.length + 1 + this.state.textDeleteCount
-
-    let name = 'text' + textName
-    let ref = 'text' + textName
-    const tex = {
-      rolelevel: this.state.rolelevel,
-      infolevel: this.state.infolevel,
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      width: 300,
-      height: 25,
-      fontSize: 50,
-      text: "Edit this",
-      fontFamily: "Belgrano",
-      id: name,
-      name: name,
-      fill: this.state.colorf,
-      opacity: 1,
-      ref: ref,
-      rotation: 0
-    };
-
-    let layer = this.refs.layer2;
-    let toPush = tex;
-    let transform = this.refs.layer2
-      .getAbsoluteTransform()
-      .copy();
-    transform.invert();
-
-    let pos = transform.point({
-      x: toPush.x,
-      y: toPush.y
-    });
-
-    if (layer.attrs.x !== null || layer.attrs.x !== undefined) {
-      toPush.x = pos.x;
-      toPush.y = pos.y;
-    }
-
-    this.setState(prevState => ({
-      texts: [...prevState.texts, toPush]
-    }));
-  }
 
   addTic = (e) => {
     let ticName = this.state.tics.length
@@ -2392,9 +2023,57 @@ class Graphics extends Component {
           tabIndex="0"
           style={{ outline: "none" }}
         >
+          {/* The right click menu for the group area */}
+          {this.state.groupAreaContextMenuVisible && (
+            <DropdownAddObjects
+              title={"Edit Group Space"}
+              xPos={this.state.groupAreaContextMenuX}
+              yPos={this.state.groupAreaContextMenuY}
+              state={this.state}
+              layer={this.refs.layer2}
+              setState={(obj) => {
+                this.setState(obj);
+              }}
+              addTic={this.addTic}
+              addConnect={this.addConnect4}
+              drawLine={this.drawLine}
+              eraseLine={this.eraseLine}
+              stopDrawing={this.stopDrawing}
+              handleImage={this.handleImage}
+              handleVideo={this.handleVideo}
+              handleAudio={this.handleAudio}
+              handleDocument={this.handleDocument}
+              choosecolor={this.chooseColor}
+              close={() => this.setState({ groupAreaContextMenuVisible: false })}
+            />
+          )}
+          {/* The right click menu for the personal area */}
+          {this.state.personalAreaContextMenuVisible && (
+            <DropdownAddObjects
+              title={"Edit Personal Space"}
+              xPos={this.state.personalAreaContextMenuX}
+              yPos={this.state.personalAreaContextMenuY}
+              state={this.state}
+              layer={this.refs.personalAreaLayer}
+              setState={(obj) => {
+                this.setState(obj);
+              }}
+              addTic={this.addTic}
+              addConnect={this.addConnect4}
+              drawLine={this.drawLine}
+              eraseLine={this.eraseLine}
+              stopDrawing={this.stopDrawing}
+              handleImage={this.handleImage}
+              handleVideo={this.handleVideo}
+              handleAudio={this.handleAudio}
+              handleDocument={this.handleDocument}
+              choosecolor={this.chooseColor}
+              close={() => this.setState({ personalAreaContextMenuVisible: false })}
+            />
+          )}
           <Stage
+            onContextMenu={(e) => e.evt.preventDefault()}
             onClick={this.handleStageClick}
-            draggabble
             onMouseMove={this.handleMouseOver}
             onWheel={event => this.handleWheel(event)}
             onMouseDown={this.onMouseDown}
@@ -2404,6 +2083,7 @@ class Graphics extends Component {
             ref="graphicStage"
           >
             <Layer
+              name="group"
               scaleX={this.state.layerScale}
               scaleY={this.state.layerScale}
               x={this.state.layerX}
@@ -2427,7 +2107,6 @@ class Graphics extends Component {
                 name=""
                 id="ContainerRect"
               />
-
               {this.state.rectangles.map((eachRect, index) => {
                 if (eachRect.level === this.state.level && eachRect.infolevel === false) {
                   return (
@@ -2589,7 +2268,6 @@ class Graphics extends Component {
                         }));
                       }}
                       onContextMenu={e => {
-
                         e.evt.preventDefault(true);
                         const mousePosition = e.target.getStage().getPointerPosition();
 
@@ -2599,19 +2277,18 @@ class Graphics extends Component {
                             position: mousePosition
                           }
                         });
-                      }
-                      }
-
+                      }}
                     />
                   );
                 } else {
                   return null
                 }
               })}
-              {this.state.ellipses.map(eachEllipse => {
+              {this.state.ellipses.map((eachEllipse, index) => {
                 if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
                   return (
                     <Ellipse
+                      key={index}
                       visible={eachEllipse.visible}
                       ref={eachEllipse.ref}
                       name="shape"
@@ -3769,18 +3446,12 @@ class Graphics extends Component {
                               }, 1000);
                             }
                           );
-
-                          //let win = window.open(eachText.link, "_blank");
-                          //win.focus();
                         }
                       }}
                       onDblClick={() => {
-                        // turn into textarea
+                        // Turn into textarea for editing
                         let stage = this.refs.graphicStage;
                         let text = this.refs[eachText.ref];
-                        console.log(text)
-
-
                         this.setState({
                           textX: text.absolutePosition().x,
                           textY: text.absolutePosition().y,
@@ -3802,17 +3473,15 @@ class Graphics extends Component {
                         this.refs.layer2.draw();
                       }}
                       onContextMenu={e => {
-                        e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
+                        e.evt.preventDefault(true);
                         const mousePosition = e.target.getStage().getPointerPosition();
-
                         this.setState({
                           selectedContextMenuText: {
                             type: "START",
                             position: mousePosition
                           }
                         });
-                      }
-                      }
+                      }}
                     />
                   )
                 } else {
@@ -3977,21 +3646,16 @@ class Graphics extends Component {
               }
             }}
             onBlur={() => {
-              console.log(this.state.textareaFontSize)
               this.setState({
                 textEditVisible: false,
                 shouldTextUpdate: true
               });
 
-              // get the current textNode we are editing, get the name from there
-              //match name with elements in this.state.texts,
-
-              console.log(this.state.currentTextRef)
+              // Get the current textNode we are editing, get the name from there
+              // Match name with elements in this.state.texts,
               let node = this.refs[this.state.currentTextRef];
-
               let name = node.attrs.id;
-              console.log(name)
-              console.log(this.state.selectedShapeName)
+
               this.setState(
                 prevState => ({
                   selectedShapeName: name,
@@ -4044,19 +3708,25 @@ class Graphics extends Component {
 
         </div>
         <div className="eheader">
-          <Level number={this.state.numberOfPages} ptype={this.state.ptype} level={this.handleLevel} />
+          <Level
+            number={this.state.numberOfPages}
+            pages={this.state.pages}
+            level={this.handleLevel}
+            handlePageTitle={this.handlePageTitle}
+            handlePageNum={this.handleNumOfPagesChange}
+            numOfPages={this.state.numberOfPages} />
           <div>
             <div className={"info" + this.state.open}>
-              <div id="infostage">
+              <div className="personalAreaStageContainer">
                 <Stage width={1500} height={600}
-                  ref="graphicStage1"
+                  onContextMenu={(e) => e.evt.preventDefault()}
+                  ref="personalAreaStage"
                   onClick={this.handleStageClickInfo}
-                  draggabble
                   onMouseMove={this.handleMouseOverInfo}
                   onMouseDown={this.onMouseDownInfo}
                   onMouseUp={this.handleMouseUpInfo}
                 >
-                  <Layer ref="layer3">
+                  <Layer ref="personalAreaLayer" name="personal">
                     {this.state.rectangles.map(eachRect => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -4219,7 +3889,7 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = this.refs.graphicStage1.getPointerPosition();
+                              const mousePosition = this.refs.personalAreaStage.getPointerPosition();
 
                               this.setState({
                                 selectedContextMenu: {
@@ -5546,7 +5216,6 @@ class Graphics extends Component {
                       }}
                     />
                     <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef1" />
-
                   </Layer>
                 </Stage>
 
@@ -5557,78 +5226,14 @@ class Graphics extends Component {
               }
               <div id="rolesdrop">
                 <DropdownRoles
-                  openInfoSection={() => this.setState({open: 1})}
+                  openInfoSection={() => this.setState({ open: 1 })}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
+                  editMode={true}
                 />
               </div>
             </div>
-            <div id={"pencili" + this.state.open}>
-              <Pencil
-                editMode={this.editMode}
-                editModeToggle={true}
-                id="1"
-                psize="2"
-                type="main"
-                title="Edit Personal Space"
-                addRectangle={this.addRectangle}
-                addCircle={this.addCircle}
-                addStar={this.addStar}
-                addTriangle={this.addTriangle}
-                addImage={this.addImage}
-                addVideo={this.addVideo}
-                addText={this.addText}
-                addAudio={this.addAudio}
-                addStick={this.addStick}
-                addDocument={this.addDocument}
-                drawLine={this.drawLine}
-                eraseLine={this.eraseLine}
-                stopDrawing={this.stopDrawing}
-                handleImage={this.handleImage}
-                handleVideo={this.handleVideo}
-                handleAudio={this.handleAudio}
-                handleDocument={this.handleDocument}
-                choosecolor={this.chooseColor}
-              />
-            </div>
-
           </div>
-          <Pencil
-            editMode={this.editModeOff}
-            editModeToggle={false}
-            id="2"
-            psize="3"
-            type="main"
-            title="Edit Group Space"
-            addRectangle={this.addRectangle}
-            addCircle={this.addCircle}
-            addStar={this.addStar}
-            addTriangle={this.addTriangle}
-            addImage={this.addImage}
-            addVideo={this.addVideo}
-            addText={this.addText}
-            addAudio={this.addAudio}
-            addStick={this.addStick}
-            addDocument={this.addDocument}
-            addTic={this.addTic}
-            addConnect={this.addConnect4}
-            drawLine={this.drawLine}
-            eraseLine={this.eraseLine}
-            stopDrawing={this.stopDrawing}
-            handleImage={this.handleImage}
-            handleVideo={this.handleVideo}
-            handleAudio={this.handleAudio}
-            handleDocument={this.handleDocument}
-            choosecolor={this.chooseColor}
-          />
-          <Pencil
-            id="3"
-            psize="3"
-            type="info"
-            title=""
-            pageTitle={this.handlePageTitle}
-            pageNum={this.handleNumOfPagesChange}
-          />
         </div>
       </React.Fragment>
     );

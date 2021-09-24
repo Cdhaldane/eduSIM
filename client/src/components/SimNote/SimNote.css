@@ -51,7 +51,7 @@
 }
 
 .notesim-icon {
-  color: #8f001a;
+  color: var(--primary);
 }
 
 .notesim-icon:hover {

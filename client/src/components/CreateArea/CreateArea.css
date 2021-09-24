@@ -55,7 +55,7 @@
   max-width: 900px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
-  border: solid 4px #8f001a;
+  border: solid 4px var(--primary);
 }
 
 .form-input {
@@ -85,7 +85,7 @@
   height: 50px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
 }
 
 .area input[type="file"] {

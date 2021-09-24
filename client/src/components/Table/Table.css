@@ -83,7 +83,7 @@
   font-family:  "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
-  background-color: #8f001a;
+  background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
@@ -103,7 +103,7 @@
   height: 50px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
 }
 
 #emailstudent {
@@ -118,7 +118,7 @@
   height: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
 }
 
 #roledropdown {
@@ -150,6 +150,6 @@
     height: 30px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    background-color: #8f001a;
+    background-color: var(--primary);
   }
 }
