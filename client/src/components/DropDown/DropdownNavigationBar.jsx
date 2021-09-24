@@ -16,7 +16,7 @@ const DropdownNavigationBar = (props) => {
   const dropdownRef = useRef();
 
   const handleClickOutside = e => {
-    if (!dropdownRef.current.contains(e.target)) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       props.close();
     }
   }

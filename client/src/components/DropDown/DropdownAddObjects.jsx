@@ -28,7 +28,7 @@ const DropdownAddObjects = (props) => {
   }, []);
 
   const handleClickOutside = e => {
-    if (!dropdownRef.current.contains(e.target)) {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       props.close();
     }
   }

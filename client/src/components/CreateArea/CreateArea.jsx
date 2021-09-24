@@ -21,7 +21,8 @@ function CreateArea(props) {
   const alertContext = useAlertContext();
 
   const handleClickOutside = e => {
-    if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+    if (detailsArea.current &&
+      !(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
       props.close();
     }
   };

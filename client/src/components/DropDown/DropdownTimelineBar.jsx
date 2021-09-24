@@ -12,7 +12,7 @@ function DropdownTimelineBar(props) {
   const alertContext = useAlertContext();
 
   const handleClickOutside = e => {
-    if (!dropdown.current.contains(e.target)) {
+    if (dropdown.current && !dropdown.current.contains(e.target)) {
       props.close();
     }
   }

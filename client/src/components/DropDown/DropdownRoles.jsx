@@ -41,7 +41,7 @@ const DropdownRoles = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (!menuElem.current.contains(e.target)) {
+    if (menuElem.current && !menuElem.current.contains(e.target)) {
       handleActiveMenuChange('main');
     }
   }

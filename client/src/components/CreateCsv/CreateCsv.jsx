@@ -11,7 +11,7 @@ function CreateCsv(props) {
   const form = useRef();
 
   const handleClickOutside = e => {
-    if (!form.current.contains(e.target)) {
+    if (form.current && !form.current.contains(e.target)) {
       props.close();
     }
   };
