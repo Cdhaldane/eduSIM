@@ -2081,6 +2081,7 @@ class Graphics extends Component {
             ref="graphicStage"
           >
             <Layer
+              name="group"
               scaleX={this.state.layerScale}
               scaleY={this.state.layerScale}
               x={this.state.layerX}
@@ -3722,7 +3723,7 @@ class Graphics extends Component {
                   onMouseDown={this.onMouseDownInfo}
                   onMouseUp={this.handleMouseUpInfo}
                 >
-                  <Layer ref="personalAreaLayer">
+                  <Layer ref="personalAreaLayer" name="personal">
                     {this.state.rectangles.map(eachRect => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -5225,6 +5226,7 @@ class Graphics extends Component {
                   openInfoSection={() => this.setState({ open: 1 })}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
+                  editMode={true}
                 />
               </div>
             </div>

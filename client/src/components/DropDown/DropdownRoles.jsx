@@ -191,26 +191,28 @@ const DropdownRoles = (props) => {
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           <AvailableRoles />
-          <div className="menu-item">
-            <span className="icon-button" onClick={handleAddRole}>
-              <i className="icons fas fa-plus" />
-            </span>
-            <input
-              id="roleNameAdd"
-              className="add-dropdown-item-input"
-              type="text"
-              placeholder="New Role Name"
-              onChange={handleRoleNameChange}
-              value={roleName} />
-            <input
-              id="roleNumAdd"
-              className="add-dropdown-item-input"
-              type="text"
-              placeholder="#"
-              maxlength="3"
-              onChange={handleRoleNumChange}
-              value={roleNum} />
-          </div>
+          {props.editMode && (
+            <div className="menu-item">
+              <span className="icon-button" onClick={handleAddRole}>
+                <i className="icons fas fa-plus" />
+              </span>
+              <input
+                id="roleNameAdd"
+                className="add-dropdown-item-input"
+                type="text"
+                placeholder="New Role Name"
+                onChange={handleRoleNameChange}
+                value={roleName} />
+              <input
+                id="roleNumAdd"
+                className="add-dropdown-item-input"
+                type="text"
+                placeholder="#"
+                maxLength="3"
+                onChange={handleRoleNumChange}
+                value={roleNum} />
+            </div>
+          )}
         </div>
       </CSSTransition>
     </div>

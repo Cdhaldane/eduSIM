@@ -101,7 +101,7 @@ const DropdownAddObjects = (props) => {
 
     const object = {
       rolelevel: props.state.rolelevel,
-      infolevel: props.state.infolevel,
+      infolevel: props.layer.attrs.name === "personal",
       level: props.state.level,
       visible: true,
       x: 800,

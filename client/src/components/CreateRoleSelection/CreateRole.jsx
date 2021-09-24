@@ -1,16 +1,19 @@
 import React from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 
-function CreateRole(props) {
+const CreateRole = (props) => {
   return (
-    <div class="areacsv" >
+    <div className="areacsv" >
       <form className="areacsvform modal-role-select">
-        <p id="boxj1"> Select the role you wish to play! </p>
-        <p id="rolesdrops">
+        <p id="boxj1">Select the role you wish to play!</p>
+        <div id="rolesdrops">
           <DropdownRoles
             gameid={props.gameid}
+            roleLevel={props.handleRoleLevel}
+            gameroles={props.gameroles}
+            editMode={false}
           />
-        </p>
+        </div>
       </form>
     </div>
   );
