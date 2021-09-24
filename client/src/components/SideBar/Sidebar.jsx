@@ -16,7 +16,9 @@ const StyledNav = styled.nav`
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s cubic-bezier(0.4, 0, 1, 1), transform 0.3s cubic-bezier(0.4, 0, 1, 1), left 0.3s !important;
+  transition-property: width, transform, left !important;
+  transition-duration: .3s !important;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;
   overflow: hidden;
   &::before {
     content: "";
@@ -42,10 +44,14 @@ const Submenu = styled.div`
   height: 100vh;
   z-index: 999;
   transform: translateX(${(p) => (p.open ? "0" : "-100%")});
-  transition-property: transform;
-  transition-duration: .3s;
+  transition-property: transform !important;
+  transition-duration: .3s !important;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;
   & > .hidden {
     display: none;
+  }
+  & > div {
+    height: inherit;
   }
   @media screen and (orientation: portrait) {
     transition-property: 
@@ -121,10 +127,7 @@ function Sidebar(props) {
       sublabel: props.subtitle,
       id: "title",
       visible: true,
-      icon: null,
-      submenu: (
-        <p>hello</p>
-      )
+      icon: null
     },
     {
       icon: "fas fa-comment-dots",

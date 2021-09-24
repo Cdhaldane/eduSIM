@@ -52,6 +52,7 @@ function Join(props) {
         }));
       })
       setSocketInfo(client);
+      return () => client.disconnect();
     }());
   }, []);
 

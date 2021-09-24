@@ -13,7 +13,6 @@ function Game(props) {
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
   const [alerts, setAlerts] = useState([]);
-  const [message, setMessage] = useState("");
   const [running, setRunning] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const toggle = () => setShowNav(!showNav);
@@ -44,11 +43,6 @@ function Game(props) {
           <p><b>a new person joined:</b> {id}</p>
         ));
       })
-      client.on("message", ({ id, message }) => {
-        setAlerts(list => list.concat(
-          <p><b>{id}:</b> {message}</p>
-        ));
-      })
       client.on("gameStart", () => {
         console.log('awoga');
         setRunning(true);
@@ -58,15 +52,9 @@ function Game(props) {
         setRunning(false);
       })
       setSocketInfo(client);
+      return () => client.disconnect();
     }());
   }, [roomid]);
-
-  const sendMessage = (event) => {
-    event.preventDefault();
-    socket.emit("message", { message });
-    setMessage("");
-    return false;
-  }
 
   const isLoading = room === null;
 
@@ -96,10 +84,6 @@ function Game(props) {
           <h2>room code: {roomid}</h2>
           <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
           {alerts.map((el) => (el))}
-          <form onSubmit={sendMessage} action="#">
-            <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
-            <input type="submit" value="send" />
-          </form>
           {!running && (<div className="editpagetest-paused">paused/not running</div>)}
         </div>
       </>
