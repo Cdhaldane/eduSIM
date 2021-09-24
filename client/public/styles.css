@@ -414,7 +414,7 @@ footer {
 .editpagetest {
   position: fixed;
   top: 0;
-  left: 0;
+  left: 70px;
   background: white;
   width: 100vw;
   height: 100vh;
@@ -492,4 +492,10 @@ footer {
   .joinboard-title {
     text-align: center;
   }
+  
+  /* TO BE DELETED */
+  .editpagetest {
+    left: 0px;
+  }
+  /* TO BE DELETED */
 }

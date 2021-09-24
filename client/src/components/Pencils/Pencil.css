@@ -38,8 +38,11 @@
   left: 20px;
   top: 20px;
   color: #dcafb7;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  transition: all 0.1s cubic-bezier(0.4, 0, 1, 1), left 0.3s !important;
+}
+
+#pencil4.submenu {
+  left: 370px;
 }
 
 #pencil4:hover {
@@ -85,6 +88,9 @@
   top: 20px;
   left: 90px;
 }
+.drop4.submenu {
+  left: 440px;
+}
 
 @media screen and (orientation: portrait) {
   #pencil2 {
@@ -102,8 +108,9 @@
     top: 210px;
   }
 
-  #pencil4.hidden {
+  #pencil4.hidden, #pencil4.submenu {
     opacity: 0;
     pointer-events: none;
+    left: 20px;
   }
 }

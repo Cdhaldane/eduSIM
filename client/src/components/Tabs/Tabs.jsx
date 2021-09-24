@@ -235,10 +235,12 @@ function Tabs(props) {
             <div className="groupcontainer">
               <div className="group-column">
                 <h3>Chat: </h3>
-                <div>
-                  {props.chatMessages.map(({ id, message }) => (
-                    <p><b>{id}: </b>{message}</p>
-                  ))}
+                <div className="group-chatlog">
+                  <div>
+                    {props.chatMessages.map(({ id, message }) => (
+                      <p><b>{id}: </b>{message}</p>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="group-column">

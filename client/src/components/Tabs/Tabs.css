@@ -372,6 +372,18 @@ hr {
 .group-table {
   padding-bottom: 20px;
 }
+.group-chatlog {
+  font-size: .7em;
+  height: 300px;
+  padding: 10px;
+}
+.group-chatlog > div {
+  height: 100%;
+  overflow-y: auto;
+}
+.group-chatlog p {
+  height: unset;
+}
 
 .createmodaltab {
   display: flex;

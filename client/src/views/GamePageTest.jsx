@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Image } from "cloudinary-react";
 import io from "socket.io-client";
+import Sidebar from "../components/SideBar/Sidebar";
 
 function Game(props) {
   const { roomid } = useParams();
@@ -14,9 +15,11 @@ function Game(props) {
   const [alerts, setAlerts] = useState([]);
   const [message, setMessage] = useState("");
   const [running, setRunning] = useState(false);
+  const [showNav, setShowNav] = useState(false);
+  const toggle = () => setShowNav(!showNav);
 
   useEffect(() => {
-    (async function() {
+    (async function () {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
         params: {
           id: roomid,
@@ -69,25 +72,37 @@ function Game(props) {
 
   return (
     !isLoading ? (
-      <div className="editpagetest">
-        <Image
-          className="joinboard-image"
-          cloudName="uottawaedusim"
-          publicId={
-            "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-            room.gameinstance.gameinstance_photo_path
-          }
-          alt="backdrop"
+      <>
+        <Sidebar 
+          className="grid-sidebar" 
+          visible={showNav} 
+          close={toggle}
+          img={room.gameinstance.gameinstance_photo_path}
+          title={room.gameinstance.gameinstance_name}
+          subtitle={room.gameroom_name}
+          socket={socket}
+          game
         />
-        <h2>room code: {roomid}</h2>
-        <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
-        {alerts.map((el) => (el))}
-        <form onSubmit={sendMessage} action="#">
-          <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
-          <input type="submit" value="send" />
-        </form>
-        {!running && (<div className="editpagetest-paused">paused/not running</div>)}
-      </div>
+        <div className="editpagetest">
+          <Image
+            className="joinboard-image"
+            cloudName="uottawaedusim"
+            publicId={
+              "https://res.cloudinary.com/uottawaedusim/image/upload/" +
+              room.gameinstance.gameinstance_photo_path
+            }
+            alt="backdrop"
+          />
+          <h2>room code: {roomid}</h2>
+          <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
+          {alerts.map((el) => (el))}
+          <form onSubmit={sendMessage} action="#">
+            <input type="text" onChange={(e) => setMessage(e.target.value)} value={message} placeholder="send message" />
+            <input type="submit" value="send" />
+          </form>
+          {!running && (<div className="editpagetest-paused">paused/not running</div>)}
+        </div>
+      </>
     ) : (
       <h1>loading...</h1>
     )

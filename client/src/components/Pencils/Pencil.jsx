@@ -133,11 +133,11 @@ function Pencil(props) {
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
-        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "")}
+        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
         onClick={handleDrop}
       />
 
-      {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "")}>
+      {drop && <div className={"drop" + props.id + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}>
         {props.type === "info" && (
           <DropdownTimelineBar
             handlePageTitle={handlePageTitle}
