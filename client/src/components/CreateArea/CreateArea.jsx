@@ -21,7 +21,8 @@ function CreateArea(props) {
   const alertContext = useAlertContext();
 
   const handleClickOutside = e => {
-    if (!(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+    if (detailsArea.current &&
+      !(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
       props.close();
     }
   };
@@ -78,10 +79,8 @@ function CreateArea(props) {
         });
         props.onAdd(note);
       } else {
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
-          console.log(res);
-        }).catch(error => {
-          console.log(error.response);
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).catch(error => {
+          console.log(error);
         });
         props.onAdd(note);
       }
@@ -199,9 +198,9 @@ function CreateArea(props) {
       {img && (
         <form ref={imageArea} className="form-imgs">
           {props.previewImages?.map((image) => (
-            <Image 
-              cloudName="uottawaedusim" 
-              publicId={image.url} 
+            <Image
+              cloudName="uottawaedusim"
+              publicId={image.url}
               onClick={() => {
                 setFilename(image.public_id);
                 setImg(image.url);

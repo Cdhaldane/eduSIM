@@ -106,25 +106,25 @@ function Tabs(props) {
   };
 
   return (
-    <div class="page-margin tabs">
-      <ul class="selected-tab">
+    <div className="page-margin tabs">
+      <ul className="selected-tab">
         <li
           onClick={() => toggleTab(0)}
-          class={toggleState === 0 && "selected"}
+          className={toggleState === 0 && "selected"}
         >
           <span className="tab-text">Overview</span>
         </li>
         {tabs.map((i) => (
           <li
             onClick={() => toggleTab(i + 1)}
-            class={toggleState === i + 1 && "selected"}
+            className={toggleState === i + 1 ? "selected" : ""}
           >
             <span className="tab-text">{i[0]}</span>
           </li>
         ))}
         <li
           onClick={() => toggleTab(tabs.length + 1)}
-          class={toggleState === tabs.length + 1 && "selected"}
+          className={toggleState === tabs.length + 1 ? "selected" : ""}
         >
           <span className="tab-text">Add group</span>
         </li>
@@ -136,9 +136,9 @@ function Tabs(props) {
           <div className="content-row">
             <div className="content-settings">
               <h3>Settings:</h3>
-              <div class="simadv">
+              <div className="simadv">
                 <h3>Simulation advancement</h3>
-                <div class="content-radiobuttons">
+                <div className="content-radiobuttons">
                   <div>
                     <input
                       type="radio"
@@ -205,10 +205,6 @@ function Tabs(props) {
             </Modal>
           </div>
           <h3>Student/participant list:</h3>
-
-          {/* <Button onClick={()=>setIsOpen(true)} class="button">Add</Button>
-              <Modal open={isOpen} onClose={()=>setIsOpen(false)}>
-              </Modal> */}
           <Table addstudent={false} gameid={props.gameid} title={props.title} />
         </div>
         {tabs.map((i) => (
@@ -250,7 +246,7 @@ function Tabs(props) {
               </div>
             </div>
             <h3>Students / participants in room:</h3>
-            <div class="group-table">
+            <div className="group-table">
               <Table
                 addstudent={true}
                 gameroom={i}
@@ -274,7 +270,7 @@ function Tabs(props) {
             <input
               onChange={handleChange}
               type="text"
-              class="textbox"
+              className="textbox"
               placeholder="Group Name"
               id="namei"
             />

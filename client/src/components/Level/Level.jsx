@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import "./Level.css"
 import { times } from "lodash";
 import { Link } from "react-router-dom";
+import Pencil from "../Pencils/Pencil"
 
-function Level(props) {
+import "./Level.css"
+
+const Level = (props) => {
   const [count, setCount] = useState(1);
   let items = [];
 
-  function handleLevel(e) {
+  const handleLevel = (e) => {
     props.level(e);
   }
 
-  function handleCount() {
+  const handleCount = () => {
     if (count > props.number - 1) {
       setCount(1)
       handleLevel(1)
@@ -21,24 +23,26 @@ function Level(props) {
     }
   }
 
-  function createSelectItems() {
-    for (let i = 1; i <= props.number; i++) {
-      items.push(<option key={i} value={i}>{props.ptype} {i}</option>);
-      // Here I will be creating my options dynamically based on
-      // what props are currently passed to the parent component
+  const createSelectItems = () => {
+    for (let i = 0; i < props.number; i++) {
+      items.push(
+        <option key={i} value={i+1}>
+          {props.pages[i]}
+        </option>
+      );
     }
     return items;
   }
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     setCount(parseInt(event.target.value));
     handleLevel(parseInt(event.target.value));
   }
 
   return (
-    <div id="all">
+    <div id="levelContainer">
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
-        {!props.gamepage && <h1>Edit Mode</h1>}
+        {!props.gamepage && <h1 id="editModeTitle">Edit Mode</h1>}
         <div className="level-nav">
           {!props.gamepage && (
             <select className="level-select" onChange={handleChange} value={count}>
@@ -54,9 +58,24 @@ function Level(props) {
               </div>
             ))}
           </div>
-          {/* <p>It's {props.ptype} {count}! </p> */}
-          <button onClick={handleCount}>Next</button>
+
+          {props.handlePageNum && (
+            <Pencil
+              id="Timeline"
+              psize="3"
+              type="info"
+              handlePageTitle={props.handlePageTitle}
+              handlePageNum={props.handlePageNum}
+              numOfPages={props.numOfPages}
+            />
+          )}
+
+          <button
+            onClick={handleCount}>
+            Next
+          </button>
         </div>
+
         <Link to="/dashboard" className="level-close">
           <i className="fas fa-times fa-3x"></i>
         </Link>

@@ -287,8 +287,8 @@ const Table = (props) => {
               </tr>
             </thead>
             <tbody>
-              {contacts.map((contact) => (
-                <Fragment>
+              {contacts.map((contact, index) => (
+                <Fragment key={index}>
                   {editContactId === contact.id ? (
                     <EditableRow
                       editFormData={editFormData}

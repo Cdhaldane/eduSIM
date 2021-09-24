@@ -47,7 +47,7 @@
   padding: 30px;
   box-shadow: 0 2px 5px #ccc;
   text-align: center;
-  border: solid 2px #8f001a;
+  border: solid 2px var(--primary);
   display: flex;
   flex-direction: column;
 }
@@ -117,7 +117,7 @@
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
   border: none;
   font-size: 1.5rem;
   align-self: flex-end;
@@ -146,7 +146,7 @@
   height: 50px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  background-color: #8f001a;
+  background-color: var(--primary);
 }
 
 #boxtabs {

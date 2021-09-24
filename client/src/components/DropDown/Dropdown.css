@@ -1,13 +1,3 @@
-:root {
-  --bg: white;
-  --bg-accent: white;
-  --text-color: #636363;
-  --nav-size: 60px;
-  --border: 1px solid #181818;
-  --border-radius: 20px;
-  --speed: 500ms;
-}
-
 ul {
   list-style: none;
   margin: 0;
@@ -25,7 +15,7 @@ a {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
-  background-color: #8f001a;
+  background-color: var(--primary);
   border-radius: 50%;
   padding: 5px;
   margin: 5px;
@@ -58,7 +48,13 @@ a {
   padding: 0rem;
   overflow: hidden;
   transition: height var(--speed) ease;
-  box-shadow: rgba(0,0,0,0.25) 4px 4px 4px 0px;
+  box-shadow: var(--box-shadow);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.timelineDropdown {
+  right: 2.5%;
+  top: 60px;
 }
 
 .menu {
@@ -178,7 +174,7 @@ a {
   height: 50px;
   font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
-  color: #8f001a;
+  color: var(--primary);
   background-color: white;
   border: none;
   text-align: center;
@@ -192,7 +188,7 @@ a {
 }
 
 .dropdown button::selection {
-  background-color: #8f001a;
+  background-color: var(--primary);
   color: white;
 }
 
@@ -213,6 +209,66 @@ a {
   font-size: 1.5rem;
   border-radius: 10px;
   margin-bottom: 30px;
+}
+
+#numOfPagesLabel {
+  padding: 10px;
+  font-size: 1.2rem;
+  font-weight: 100;
+  color: #636363;
+}
+
+#numOfPagesInput {
+  padding: 0;
+  width: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  border: none;
+  text-align: center;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#numOfPagesInput::-webkit-inner-spin-button, #numOfPagesInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+#numOfPagesInput:hover {
+  cursor: default;
+}
+
+#numOfPagesInput:focus {
+  border: none;
+  outline: none;
+  border: none;
+  color: transparent;
+  text-shadow: 0 0 0 black;
+}
+
+.numOfPagesInputBtn {
+  height: 20px !important;
+  width: 20px !important;
+  padding: 0 !important;
+  margin: 2px !important;
+  font-size: 1em !important;
+  transform: translateY(-3px);
+}
+
+.pageNameInput {
+  border-radius: 0.3em;
+  border: solid 2px grey;
+  font-size: 0.9em;
+  padding-left: 0.25em;
+  height: 100%;
+  margin: 3px 10px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.pageNameInput::placeholder {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.0rem;
+  color: #636363;
 }
 
 #pagetype input::placeholder {
@@ -315,6 +371,15 @@ a {
   font-family: "Montserrat", sans-serif;
   font-size: 1.0rem;
   color: #636363;
+}
+
+#roleNameAdd {
+  width: 60%;
+}
+
+#roleNumAdd {
+  width: 15%;
+  margin-left: 10px;
 }
 
 .add-dropdown-item-input {

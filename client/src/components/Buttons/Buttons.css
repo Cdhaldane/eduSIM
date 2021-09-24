@@ -1,21 +1,10 @@
-/* BUTTON */
-
-:root {
-    --primary: #8f001a;
-    --warning: #ffd028;
-    --danger: #eb3f27;
-    --success: #75fa83;
-    --white: #fdfdfd;
-    --dark: #181717;
-}
-
 .btn {
     padding: 8px 20px;
     border-radius: 4px;
     outline: none;
     border: none;
     cursor: pointer;
-    background-color: #8f001a;
+    background-color: var(--primary);
     font-size: 1.3rem;
     transition: transform 0.3s ease;
     font-family: inherit;
@@ -91,5 +80,5 @@
     padding: 12px 26px;
     border-radius: 4px;
     font-size: 22px;
-    color: #8f001a;
+    color: var(--primary);
 }

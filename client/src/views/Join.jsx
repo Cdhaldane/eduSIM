@@ -53,15 +53,15 @@ function Join(props) {
               adminid: props.location.adminid,
             }}
           >
-            <button class="joinboard-button">
-              <i class="fa fa-play"></i>
+            <button className="joinboard-button">
+              <i className="fa fa-play"></i>
             </button>
           </Link>
-          <button class="joinboard-button">
-            <i class="fa fa-pause"></i>
+          <button className="joinboard-button">
+            <i className="fa fa-pause"></i>
           </button>
-          <button class="joinboard-button">
-            <i class="fa fa-retweet"></i>
+          <button className="joinboard-button">
+            <i className="fa fa-retweet"></i>
           </button>
         </div>
       </div>

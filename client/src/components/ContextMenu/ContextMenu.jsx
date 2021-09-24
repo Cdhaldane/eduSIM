@@ -9,7 +9,7 @@ function ContextMenu(props) {
   const menu = useRef();
 
   const handleClickOutside = e => {
-    if (!menu.current.contains(e.target)) {
+    if (menu.current && !menu.current.contains(e.target)) {
       props.close();
     }
   };
