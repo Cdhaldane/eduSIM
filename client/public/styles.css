@@ -427,32 +427,6 @@ footer {
   border: 2px solid black;
 }
 
-/* TO BE DELETED */
-.editpagetest {
-  position: fixed;
-  top: 0;
-  left: 70px;
-  background: white;
-  width: 100vw;
-  height: 100vh;
-  padding: 20px;
-  line-height: 1.5;
-}
-.editpagetest-paused {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(0,0,0,0.7);
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 3em;
-}
-/* TO BE DELETED */
-
 @media screen and (orientation: portrait) {
   .playbtn{
     left: 132px;
@@ -509,10 +483,4 @@ footer {
   .joinboard-title {
     text-align: center;
   }
-  
-  /* TO BE DELETED */
-  .editpagetest {
-    left: 0px;
-  }
-  /* TO BE DELETED */
 }

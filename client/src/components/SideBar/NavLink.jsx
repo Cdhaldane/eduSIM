@@ -13,7 +13,8 @@ const StyledLink = styled.a`
   color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
   text-decoration: none;
-  cursor: pointer;
+  ${(p) => !p.disabled && "cursor: pointer;"}
+  ${(p) => p.disabled && "opacity: 0.5;"}
   i {
     min-height: 22px;
     min-width: 22px;
@@ -36,10 +37,12 @@ const StyledLink = styled.a`
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
-  &:hover {
-    text-decoration: none ;
-    background-color: rgba(255 255 255 / 5%);
-  }
+  ${(p) => !p.disabled && `
+    &:hover {
+      text-decoration: none;
+      background-color: rgba(255 255 255 / 5%);
+    }
+  `}
   &.active {
 
   }
@@ -65,7 +68,12 @@ const StyledLink = styled.a`
 function NavLink(props) {
 
   return (
-    <StyledLink href={props.to} onClick={props.action} textopacity={props.compact ? 0 : 1}>
+    <StyledLink 
+      href={!props.disabled && props.to} 
+      onClick={props.action} 
+      disabled={props.disabled} 
+      textopacity={props.compact ? 0 : 1}
+    >
       {props.children || (
         <>
           {props.iconClassName !== null ? (

@@ -83,89 +83,40 @@ class URLImage extends React.Component {
 class Graphics extends Component {
   constructor(props) {
     super(props);
+
+    const params = JSON.parse(this.props.gameinstance.game_parameters);
+
     this.state = {
-      rectangles: [],
-      ellipses: [],
-      stars: [],
-      triangles: [],
-      images: [],
-      videos: [],
-      audios: [],
-      documents: [],
-      texts: [],
-      lines: [],
-      tics: [],
-      connect4: [],
+      rectangles: params[0] || [],
+      ellipses: params[1] || [],
+      stars: params[2] || [],
+      texts: params[3] || [],
+      arrows: params[4] || [],
+      triangles: params[5] || [],
+      images: params[6] || [],
+      videos: params[7] || [],
+      audios: params[8] || [],
+      documents: params[9] || [],
+      lines: params[10] || [],
+      tics: params[11] || [],
+      connect4: params[12] || [],
       gameroles: [],
       open: 0,
       isOpen: true,
       state: false,
       selectrole: false,
-      gameinstanceid: this.props.gameinstance,
+      gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
       level: 1,
       pageNumber: 6,
     };
-
-
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
-      params: {
-        adminid: this.state.adminid,
-        gameid: this.state.gameinstanceid
-      }
-    }).then((res) => {
-      const allData = res.data;
-      this.setState({
-        rectangles: JSON.parse(allData.game_parameters)[0] || []
-      })
-      this.setState({
-        ellipses: JSON.parse(allData.game_parameters)[1] || []
-      })
-      this.setState({
-        stars: JSON.parse(allData.game_parameters)[2] || []
-      })
-      this.setState({
-        texts: JSON.parse(allData.game_parameters)[3] || []
-      })
-      this.setState({
-        arrows: JSON.parse(allData.game_parameters)[4] || []
-      })
-      this.setState({
-        triangles: JSON.parse(allData.game_parameters)[5] || []
-      })
-      this.setState({
-        images: JSON.parse(allData.game_parameters)[6] || []
-      })
-      this.setState({
-        videos: JSON.parse(allData.game_parameters)[7] || []
-      })
-      this.setState({
-        audios: JSON.parse(allData.game_parameters)[8] || []
-      })
-      this.setState({
-        documents: JSON.parse(allData.game_parameters)[9] || []
-      })
-      this.setState({
-        lines: JSON.parse(allData.game_parameters)[10] || []
-      })
-      this.setState({
-        tics: JSON.parse(allData.game_parameters)[11] || []
-      })
-      this.setState({
-        connect4: JSON.parse(allData.game_parameters)[12] || []
-      })
-
-    })
-      .catch(error => console.log(error.response));
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-        gameinstanceid: this.state.gameinstanceid,
-      }
-    })
   }
 
   handleRoleLevel = (role) => {
     this.toggleModal();
+    this.setState({
+      rolelevel: role
+    });
   }
 
   componentDidMount() {

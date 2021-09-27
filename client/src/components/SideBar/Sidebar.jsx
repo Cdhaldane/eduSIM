@@ -61,6 +61,13 @@ const Submenu = styled.div`
   }
 `;
 
+const Disabled = styled.div`
+  ${(p) => p.disabled && `
+    opacity: 0.5;
+    pointer-events: none;
+  `}
+`;
+
 function Sidebar(props) {
   const sidebarRef = useRef();
   const [compact, setCompact] = useState(0);
@@ -101,7 +108,7 @@ function Sidebar(props) {
   }, []);
 
   const onNavClick = (nav) => {
-    if (links.find(({ id }) => id === nav).submenu) {
+    if (links.find(({ id }) => id === nav).submenu && !props.disabled) {
       if (submenu != nav || !submenuVisible) {
         setSubmenu(nav);
         setSubmenuVisible(true);
@@ -114,11 +121,18 @@ function Sidebar(props) {
   };
 
   const toggleCompact = (val) => {
-    setCompact(val);
-    if (!val) {
-      setSubmenuVisible(false);
+    if (!props.disabled) {
+      setCompact(val);
+      if (!val) {
+        setSubmenuVisible(false);
+      }
     }
   }
+
+  useEffect(() => {
+    setCompact(false);
+    setSubmenuVisible(false);
+  }, [props.disabled]);
   
   const links = [
     {
@@ -184,23 +198,31 @@ function Sidebar(props) {
           compact={!compact || submenuVisible}
           links={links}
           action={onNavClick}
+          disabled={props.disabled}
         />
 
-        <NavToggle compact={!compact} submenu={submenuVisible} setCompact={toggleCompact} />
-        
-        <Pencil
-          id="4"
-          psize="2"
-          type="nav"
-          title=""
-          hidden={!compact}
-          submenu={submenuVisible}
-          mvisible={handleMvisible}
-          avisible={handleAvisible}
-          pavisible={handlePavisible}
-          svisible={handleSvisible}
-          pevisible={handlePevisible}
+        <NavToggle 
+          compact={!compact} 
+          submenu={submenuVisible} 
+          setCompact={toggleCompact} 
+          disabled={props.disabled}
         />
+        
+        <Disabled disabled={props.disabled}>
+          <Pencil
+            id="4"
+            psize="2"
+            type="nav"
+            title=""
+            hidden={!compact}
+            submenu={submenuVisible}
+            mvisible={handleMvisible}
+            avisible={handleAvisible}
+            pavisible={handlePavisible}
+            svisible={handleSvisible}
+            pevisible={handlePevisible}
+          />
+        </Disabled>
       </StyledNav>
     </div>
   );

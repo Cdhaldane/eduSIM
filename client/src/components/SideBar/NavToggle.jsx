@@ -6,7 +6,8 @@ const Button = styled.button`
     border: none;
     min-height: 42px;
     color: rgba(255,255,255, .7);
-    cursor: pointer;
+    ${(p) => !p.disabled && "cursor: pointer;"}
+    ${(p) => p.disabled && "opacity: 0.5;"}
     padding: 0 32px;
     box-shadow: 0 -1px 0 0 rgba(255 255 255 / 10%);
     text-align: right;
@@ -28,6 +29,7 @@ const Button = styled.button`
       height: 100px;
       width: 60px;
       justify-content: flex-end;
+      ${(p) => p.disabled && "opacity: 0;"}
     }
 `;
 

@@ -2,11 +2,37 @@
 // TEMPORARY FILE, TO BE DELETED
 
 import React, { useState, useEffect } from "react";
+import CanvasGame from "../components/Stage/CanvasGame";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Image } from "cloudinary-react";
 import io from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
+import styled from "styled-components";
+
+const Main = styled.main`
+  grid-area: main;
+  background-color: #e5e5e5;
+`;
+
+const PauseCover = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.7);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2em;
+  z-index: 900;
+  & > i {
+    font-size: 3em;
+  }
+`;
 
 function Game(props) {
   const { roomid } = useParams();
@@ -70,9 +96,14 @@ function Game(props) {
           subtitle={room.gameroom_name}
           socket={socket}
           game
+          disabled={!running}
         />
-        <div className="editpagetest">
-          <Image
+        <Main>
+          <CanvasGame
+            adminid={localStorage.adminid}
+            gameinstance={room.gameinstance}
+          />
+          {/* <Image
             className="joinboard-image"
             cloudName="uottawaedusim"
             publicId={
@@ -83,9 +114,12 @@ function Game(props) {
           />
           <h2>room code: {roomid}</h2>
           <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
-          {alerts.map((el) => (el))}
-          {!running && (<div className="editpagetest-paused">paused/not running</div>)}
-        </div>
+          {alerts.map((el) => (el))} */}
+          {!running && (<PauseCover>
+            <i class="fa fa-pause-circle fa-2x"></i>
+            <p>Paused</p>
+          </PauseCover>)}
+        </Main>
       </>
     ) : (
       <h1>loading...</h1>
