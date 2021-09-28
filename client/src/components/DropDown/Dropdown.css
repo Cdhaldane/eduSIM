@@ -47,7 +47,7 @@ a {
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
-  transition: height var(--speed) ease;
+  transition: var(--speed) ease;
   box-shadow: var(--box-shadow);
   font-family: 'Montserrat', sans-serif;
 }

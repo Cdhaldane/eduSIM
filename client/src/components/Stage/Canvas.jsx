@@ -98,8 +98,10 @@ class Graphics extends Component {
       arrowEndY: 0,
       isTransforming: false,
       lastFill: null,
+
+      // Context Menu
       selectedContextMenu: null,
-      selectedContextMenuText: null,
+
       colorf: "black",
       colors: "black",
       color: "white",
@@ -320,8 +322,8 @@ class Graphics extends Component {
   };
 
   handleStageClick = e => {
-    const pos = this.refs.layer2.getStage().getPointerPosition();
-    const shape = this.refs.layer2.getIntersection(pos);
+    const pos = this.refs.groupAreaLayer.getStage().getPointerPosition();
+    const shape = this.refs.groupAreaLayer.getIntersection(pos);
 
     if (e.evt.button === 0) {
       // Left click on an object -> put the selected object in state
@@ -343,6 +345,13 @@ class Graphics extends Component {
         shape.name() === ""
       ) {
         this.setState({
+          selectedContextMenu: {
+            type: "GroupAddMenu",
+            position: {
+              x: e.evt.clientX,
+              y: e.evt.clientY
+            }
+          },
           personalAreaContextMenuVisible: false,
           groupAreaContextMenuVisible: true,
           groupAreaContextMenuX: e.evt.clientX,
@@ -359,8 +368,8 @@ class Graphics extends Component {
       visible: this.state.selection.visible,
       x: Math.min(this.state.selection.x1, this.state.selection.x2),
       y: Math.min(this.state.selection.y1, this.state.selection.y2),
-      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
-      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
+      width: Math.abs(this.state.selection.x1 - this.state.selection.x2)+100,
+      height: Math.abs(this.state.selection.y1 - this.state.selection.y2)+100,
       fill: "rgba(0, 161, 255, 0.3)"
     });
     node.getLayer().batchDraw();
@@ -370,7 +379,11 @@ class Graphics extends Component {
     this.setState({
       draggable: false
     })
-    const pos = e.target.getStage().getPointerPosition();
+    const pos = {
+      x: e.evt.clientX,
+      y: e.evt.clientY
+    };
+    console.log(e);
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: true
@@ -408,14 +421,17 @@ class Graphics extends Component {
         return;
       }
       const selBox = this.refs.selectionRectRef.getClientRect();
+      console.log(selBox);
       const elements = [];
-      this.refs.layer2.find(".shape").forEach((elementNode) => {
+      this.refs.groupAreaLayer.find(".shape").forEach((elementNode) => {
         const elBox = elementNode.getClientRect();
+        console.log(elBox); 
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
         }
       });
 
+      console.log(elements);
       this.refs.trRef.nodes(elements);
       this.state.selection.visible = false;
       // Disable click event
@@ -451,6 +467,7 @@ class Graphics extends Component {
 
       this.state.selection.x2 = pos.x;
       this.state.selection.y2 = pos.y;
+      console.log("HIOVER'");
       this.updateSelectionRect();
 
       if (shape && shape.attrs.link) {
@@ -478,7 +495,10 @@ class Graphics extends Component {
     this.setState({
       draggable: false
     })
-    const pos = e.target.getStage().getPointerPosition();
+    const pos = {
+      x: e.evt.clientX,
+      y: e.evt.clientY
+    };
     if (this.state.drawMode === true) {
       this.state.isDrawing = true;
       const tool = this.state.tool;
@@ -531,7 +551,19 @@ class Graphics extends Component {
     const pos = this.refs.personalAreaLayer.getStage().getPointerPosition();
     const shape = this.refs.personalAreaLayer.getIntersection(pos);
 
-    if (e.evt.button === 2) {
+    if (e.evt.button === 0) {
+      // Left click on an object -> put the selected object in state
+      if (
+        shape !== null &&
+        shape !== undefined &&
+        shape.name() !== null &&
+        shape.name() !== undefined
+      ) {
+        this.setState({ selectedShapeName: shape.id() }, () => {
+          this.refs.graphicStage.draw();
+        });
+      }
+    } else if (e.evt.button === 2) {
       if (
         shape === null ||
         shape === undefined ||
@@ -539,6 +571,13 @@ class Graphics extends Component {
       ) {
         // Right click on the personal area -> show the add object menu
         this.setState({
+          selectedContextMenu: {
+            type: "PersonalAddMenu",
+            position: {
+              x: e.evt.clientX,
+              y: e.evt.clientY
+            }
+          },
           groupAreaContextMenuVisible: false,
           personalAreaContextMenuVisible: true,
           personalAreaContextMenuX: e.evt.clientX,
@@ -603,7 +642,7 @@ class Graphics extends Component {
       event.evt.preventDefault();
       const scaleBy = 1.2;
       const stage = this.refs.graphicStage;
-      const layer = this.refs.layer2;
+      const layer = this.refs.groupAreaLayer;
       const oldScale = layer.scaleX();
       const mousePointTo = {
         x:
@@ -662,8 +701,7 @@ class Graphics extends Component {
         );
       }
       this.setState({
-        selectedContextMenu: false,
-        selectedContextMenuText: false
+        selectedContextMenu: null
       });
     }
   };
@@ -697,8 +735,7 @@ class Graphics extends Component {
       }
     );
     this.setState({
-      selectedContextMenu: false,
-      selectedContextMenuText: false
+      selectedContextMenu: null
     })
   };
 
@@ -773,8 +810,7 @@ class Graphics extends Component {
         console.log("copied ele", this.state.copiedElement);
       });
       this.setState({
-        selectedContextMenu: false,
-        selectedContextMenuText: false
+        selectedContextMenu: null
       })
     }
   }
@@ -1260,8 +1296,7 @@ class Graphics extends Component {
         }
       }
       this.setState({
-        selectedContextMenu: false,
-        selectedContextMenuText: false
+        selectedContextMenu: null
       });
     }
   }
@@ -1385,8 +1420,7 @@ class Graphics extends Component {
         selectedShapeName: ""
       });
       this.setState({
-        selectedContextMenu: false,
-        selectedContextMenuText: false
+        selectedContextMenu: null
       })
     }
   }
@@ -1395,15 +1429,13 @@ class Graphics extends Component {
     this.handleDelete();
     this.handleCopy();
     this.setState({
-      selectedContextMenu: false,
-      selectedContextMenuText: false
+      selectedContextMenu: null
     });
   }
 
   handleClose = (e) => {
     this.setState({
-      selectedContextMenu: false,
-      selectedContextMenuText: false
+      selectedContextMenu: null
     })
   }
 
@@ -1881,7 +1913,7 @@ class Graphics extends Component {
   }
 
   handleLayerClear = () => {
-    this.refs.layer2.clear();
+    this.refs.groupAreaLayer.clear();
   }
 
   handleLayerDraw = () => {
@@ -2024,53 +2056,57 @@ class Graphics extends Component {
           style={{ outline: "none" }}
         >
           {/* The right click menu for the group area */}
-          {this.state.groupAreaContextMenuVisible && (
-            <DropdownAddObjects
-              title={"Edit Group Space"}
-              xPos={this.state.groupAreaContextMenuX}
-              yPos={this.state.groupAreaContextMenuY}
-              state={this.state}
-              layer={this.refs.layer2}
-              setState={(obj) => {
-                this.setState(obj);
-              }}
-              addTic={this.addTic}
-              addConnect={this.addConnect4}
-              drawLine={this.drawLine}
-              eraseLine={this.eraseLine}
-              stopDrawing={this.stopDrawing}
-              handleImage={this.handleImage}
-              handleVideo={this.handleVideo}
-              handleAudio={this.handleAudio}
-              handleDocument={this.handleDocument}
-              choosecolor={this.chooseColor}
-              close={() => this.setState({ groupAreaContextMenuVisible: false })}
-            />
-          )}
+          {this.state.groupAreaContextMenuVisible
+            && this.state.selectedContextMenu
+            && this.state.selectedContextMenu.type === "GroupAddMenu" && (
+              <DropdownAddObjects
+                title={"Edit Group Space"}
+                xPos={this.state.groupAreaContextMenuX}
+                yPos={this.state.groupAreaContextMenuY}
+                state={this.state}
+                layer={this.refs.groupAreaLayer}
+                setState={(obj) => {
+                  this.setState(obj);
+                }}
+                addTic={this.addTic}
+                addConnect={this.addConnect4}
+                drawLine={this.drawLine}
+                eraseLine={this.eraseLine}
+                stopDrawing={this.stopDrawing}
+                handleImage={this.handleImage}
+                handleVideo={this.handleVideo}
+                handleAudio={this.handleAudio}
+                handleDocument={this.handleDocument}
+                choosecolor={this.chooseColor}
+                close={() => this.setState({ groupAreaContextMenuVisible: false })}
+              />
+            )}
           {/* The right click menu for the personal area */}
-          {this.state.personalAreaContextMenuVisible && (
-            <DropdownAddObjects
-              title={"Edit Personal Space"}
-              xPos={this.state.personalAreaContextMenuX}
-              yPos={this.state.personalAreaContextMenuY}
-              state={this.state}
-              layer={this.refs.personalAreaLayer}
-              setState={(obj) => {
-                this.setState(obj);
-              }}
-              addTic={this.addTic}
-              addConnect={this.addConnect4}
-              drawLine={this.drawLine}
-              eraseLine={this.eraseLine}
-              stopDrawing={this.stopDrawing}
-              handleImage={this.handleImage}
-              handleVideo={this.handleVideo}
-              handleAudio={this.handleAudio}
-              handleDocument={this.handleDocument}
-              choosecolor={this.chooseColor}
-              close={() => this.setState({ personalAreaContextMenuVisible: false })}
-            />
-          )}
+          {this.state.personalAreaContextMenuVisible
+            && this.state.selectedContextMenu
+            && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
+              <DropdownAddObjects
+                title={"Edit Personal Space"}
+                xPos={this.state.personalAreaContextMenuX}
+                yPos={this.state.personalAreaContextMenuY}
+                state={this.state}
+                layer={this.refs.personalAreaLayer}
+                setState={(obj) => {
+                  this.setState(obj);
+                }}
+                addTic={this.addTic}
+                addConnect={this.addConnect4}
+                drawLine={this.drawLine}
+                eraseLine={this.eraseLine}
+                stopDrawing={this.stopDrawing}
+                handleImage={this.handleImage}
+                handleVideo={this.handleVideo}
+                handleAudio={this.handleAudio}
+                handleDocument={this.handleDocument}
+                choosecolor={this.chooseColor}
+                close={() => this.setState({ personalAreaContextMenuVisible: false })}
+              />
+            )}
           <Stage
             onContextMenu={(e) => e.evt.preventDefault()}
             onClick={this.handleStageClick}
@@ -2093,11 +2129,11 @@ class Graphics extends Component {
               draggable={this.state.draggable}
               onDragEnd={() => {
                 this.setState({
-                  layerX: this.refs.layer2.x(),
-                  layerY: this.refs.layer2.y()
+                  layerX: this.refs.groupAreaLayer.x(),
+                  layerY: this.refs.groupAreaLayer.y()
                 });
               }}
-              ref="layer2"
+              ref="groupAreaLayer"
             >
               <Rect
                 x={-5 * window.innerWidth}
@@ -2269,13 +2305,13 @@ class Graphics extends Component {
                       }}
                       onContextMenu={e => {
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
-                          selectedContextMenu: {
-                            type: "START",
-                            position: mousePosition
-                          }
+                          selectedContextMenu: "ObjectMenu"
                         });
                       }}
                     />
@@ -2438,11 +2474,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -2473,11 +2512,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -2490,17 +2532,18 @@ class Graphics extends Component {
                 }
               })}
 
-              {this.state.images.map(eachImage => {
+              {this.state.images.map((eachImage, index) => {
                 if (eachImage.level === this.state.level && eachImage.infolevel === false) {
                   return (
                     <URLImage
+                      key={index}
                       visible={eachImage.visible}
                       src={eachImage.imgsrc}
                       image={eachImage.imgsrc}
                       ref={eachImage.ref}
                       name="shape"
                       id={eachImage.id}
-                      layer={this.refs.layer2}
+                      layer={this.refs.groupAreaLayer}
                       x={eachImage.x}
                       y={eachImage.y}
                       width={eachImage.width}
@@ -2601,11 +2644,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -2618,17 +2664,18 @@ class Graphics extends Component {
                   return null
                 }
               })}
-              {this.state.videos.map(eachVideo => {
+              {this.state.videos.map((eachVideo, index) => {
                 if (eachVideo.level === this.state.level && eachVideo.infolevel === false) {
                   return (
                     <URLvideo
+                      key={index}
                       visible={eachVideo.visible}
                       src={eachVideo.vidsrc}
                       image={eachVideo.vidsrc}
                       ref={eachVideo.ref}
                       id={eachVideo.id}
                       name="shape"
-                      layer={this.refs.layer2}
+                      layer={this.refs.groupAreaLayer}
                       x={eachVideo.x}
                       y={eachVideo.y}
                       width={eachVideo.width}
@@ -2718,11 +2765,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -2735,10 +2785,11 @@ class Graphics extends Component {
                   return null
                 }
               })}
-              {this.state.audios.map(eachAudio => {
+              {this.state.audios.map((eachAudio, index) => {
                 if (eachAudio.level === this.state.level && eachAudio.infolevel === false) {
                   return (
                     <URLvideo
+                      key={index}
                       visible={eachAudio.visible}
                       fillPatternImage={true}
                       src={eachAudio.audsrc}
@@ -2746,7 +2797,7 @@ class Graphics extends Component {
                       ref={eachAudio.ref}
                       id={eachAudio.id}
                       name="shape"
-                      layer={this.refs.layer2}
+                      layer={this.refs.groupAreaLayer}
                       x={eachAudio.x}
                       y={eachAudio.y}
                       width={eachAudio.width}
@@ -2841,11 +2892,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -2858,10 +2912,11 @@ class Graphics extends Component {
                   return null
                 }
               })}
-              {this.state.documents.map(eachDoc => {
+              {this.state.documents.map((eachDoc, index) => {
                 if (eachDoc.level === this.state.level && eachDoc.infolevel === false) {
                   return (
                     <Rect
+                      key={index}
                       rotation={eachDoc.rotation}
                       ref={eachDoc.ref}
                       fill={eachDoc.fill}
@@ -2986,11 +3041,14 @@ class Graphics extends Component {
                       onContextMenu={e => {
 
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -3156,11 +3214,14 @@ class Graphics extends Component {
                       }}
                       onContextMenu={e => {
                         e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -3283,11 +3344,14 @@ class Graphics extends Component {
                       }}
                       onContextMenu={e => {
                         e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
 
                         this.setState({
                           selectedContextMenu: {
-                            type: "START",
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -3470,14 +3534,17 @@ class Graphics extends Component {
                         text.hide();
                         let transformer = stage.findOne(".transformer");
                         transformer.hide();
-                        this.refs.layer2.draw();
+                        this.refs.groupAreaLayer.draw();
                       }}
                       onContextMenu={e => {
                         e.evt.preventDefault(true);
-                        const mousePosition = e.target.getStage().getPointerPosition();
+                        const mousePosition = {
+                          x: e.evt.clientX,
+                          y: e.evt.clientY
+                        };
                         this.setState({
-                          selectedContextMenuText: {
-                            type: "START",
+                          selectedContextMenu: {
+                            type: "ObjectMenu",
                             position: mousePosition
                           }
                         });
@@ -3488,10 +3555,10 @@ class Graphics extends Component {
                   return null;
                 }
               })}
-              {this.state.selectedContextMenuText && (
+              {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && false && (
                 <Portal>
                   <ContextMenu
-                    {...this.state.selectedContextMenuText}
+                    {...this.state.selectedContextMenu}
                     selectedshape={this.state.selectedShapeName}
                     onOptionSelected={this.handleOptionSelected}
                     choosecolorf={this.handleColorF}
@@ -3507,10 +3574,11 @@ class Graphics extends Component {
                   />
                 </Portal>
               )}
-              {this.state.arrows.map(eachArrow => {
+              {this.state.arrows.map((eachArrow, index) => {
                 if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
                   return (
                     <Arrow
+                      key={index}
                       visible={eachArrow.visible}
                       ref={eachArrow.ref}
                       id={eachArrow.id}
@@ -3548,7 +3616,7 @@ class Graphics extends Component {
                         ];
 
                         this.refs[eachArrow.ref].position({ x: 0, y: 0 });
-                        this.refs.layer2.draw();
+                        this.refs.groupAreaLayer.draw();
 
                         this.setState(prevState => ({
                           arrows: prevState.arrows.map(eachArr =>
@@ -3727,10 +3795,11 @@ class Graphics extends Component {
                   onMouseUp={this.handleMouseUpInfo}
                 >
                   <Layer ref="personalAreaLayer" name="personal">
-                    {this.state.rectangles.map(eachRect => {
+                    {this.state.rectangles.map((eachRect, index) => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
                           <Rect
+                            key={index}
                             visible={eachRect.visible}
                             rotation={eachRect.rotation}
                             ref={eachRect.ref}
@@ -3893,7 +3962,7 @@ class Graphics extends Component {
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -3906,7 +3975,7 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.selectedContextMenu && (
+                    {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
                       <Portal>
                         <ContextMenu
                           {...this.state.selectedContextMenu}
@@ -3926,10 +3995,11 @@ class Graphics extends Component {
                       </Portal>
                     )}
 
-                    {this.state.ellipses.map(eachEllipse => {
+                    {this.state.ellipses.map((eachEllipse, index) => {
                       if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
                         return (
                           <Ellipse
+                            key={index}
                             visible={eachEllipse.visible}
                             ref={eachEllipse.ref}
                             name="shape"
@@ -4077,13 +4147,14 @@ class Graphics extends Component {
                               this.refs.graphicStage.draw();
                             }}
                             onContextMenu={e => {
-
                               e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = e.target.getStage().getPointerPosition();
-
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              }
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4114,11 +4185,14 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4131,17 +4205,18 @@ class Graphics extends Component {
                       }
                     })}
 
-                    {this.state.images.map(eachImage => {
+                    {this.state.images.map((eachImage, index) => {
                       if (eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel) {
                         return (
                           <URLImage
+                            key={index}
                             visible={eachImage.visible}
                             src={eachImage.imgsrc}
                             image={eachImage.imgsrc}
                             ref={eachImage.ref}
                             name="shape"
                             id={eachImage.id}
-                            layer={this.refs.layer2}
+                            layer={this.refs.groupAreaLayer}
                             x={eachImage.x}
                             y={eachImage.y}
                             width={eachImage.width}
@@ -4242,11 +4317,14 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4259,17 +4337,18 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.videos.map(eachVideo => {
+                    {this.state.videos.map((eachVideo, index) => {
                       if (eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel) {
                         return (
                           <URLvideo
+                            key={index}
                             visible={eachVideo.visible}
                             src={eachVideo.vidsrc}
                             image={eachVideo.vidsrc}
                             ref={eachVideo.ref}
                             id={eachVideo.id}
                             name="shape"
-                            layer={this.refs.layer2}
+                            layer={this.refs.groupAreaLayer}
                             x={eachVideo.x}
                             y={eachVideo.y}
                             width={eachVideo.width}
@@ -4359,11 +4438,14 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4376,10 +4458,11 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.audios.map(eachAudio => {
+                    {this.state.audios.map((eachAudio, index) => {
                       if (eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel) {
                         return (
                           <URLvideo
+                            key={index}
                             visible={eachAudio.visible}
                             fillPatternImage={true}
                             src={eachAudio.audsrc}
@@ -4387,7 +4470,7 @@ class Graphics extends Component {
                             ref={eachAudio.ref}
                             id={eachAudio.id}
                             name="shape"
-                            layer={this.refs.layer2}
+                            layer={this.refs.groupAreaLayer}
                             x={eachAudio.x}
                             y={eachAudio.y}
                             width={eachAudio.width}
@@ -4482,11 +4565,14 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4499,10 +4585,11 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.documents.map(eachDoc => {
+                    {this.state.documents.map((eachDoc, index) => {
                       if (eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel) {
                         return (
                           <Rect
+                            key={index}
                             rotation={eachDoc.rotation}
                             ref={eachDoc.ref}
                             fill={eachDoc.fill}
@@ -4627,11 +4714,14 @@ class Graphics extends Component {
                             onContextMenu={e => {
 
                               e.evt.preventDefault(true);
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4644,10 +4734,11 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.triangles.map(eachEllipse => {
+                    {this.state.triangles.map((eachEllipse, index) => {
                       if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
                         return (
                           <RegularPolygon
+                            key={index}
                             visible={eachEllipse.visible}
                             ref={eachEllipse.ref}
                             id={eachEllipse.id}
@@ -4796,11 +4887,14 @@ class Graphics extends Component {
                             }}
                             onContextMenu={e => {
                               e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4812,10 +4906,11 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.stars.map(eachStar => {
+                    {this.state.stars.map((eachStar, index) => {
                       if (eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel) {
                         return (
                           <Star
+                            key={index}
                             visible={eachStar.visible}
                             ref={eachStar.ref}
                             id={eachStar.id}
@@ -4922,11 +5017,14 @@ class Graphics extends Component {
                             }}
                             onContextMenu={e => {
                               e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
                                 selectedContextMenu: {
-                                  type: "START",
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -4939,12 +5037,13 @@ class Graphics extends Component {
                       }
                     })}
 
-                    {this.state.texts.map(eachText => {
+                    {this.state.texts.map((eachText, index) => {
                       if (eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel) {
                         return (
                           //perhaps this.state.texts only need to contain refs?
                           //so that we only need to store the refs to get more information
                           <Text
+                            key={index}
                             visible={eachText.visible}
                             textDecoration={eachText.link ? "underline" : ""}
                             onTransformStart={() => {
@@ -5114,15 +5213,18 @@ class Graphics extends Component {
                               text.hide();
                               let transformer = stage.findOne(".transformer");
                               transformer.hide();
-                              this.refs.layer2.draw();
+                              this.refs.groupAreaLayer.draw();
                             }}
                             onContextMenu={e => {
                               e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = e.target.getStage().getPointerPosition();
+                              const mousePosition = {
+                                x: e.evt.clientX,
+                                y: e.evt.clientY
+                              };
 
                               this.setState({
-                                selectedContextMenuText: {
-                                  type: "START",
+                                selectedContextMenu: {
+                                  type: "ObjectMenu",
                                   position: mousePosition
                                 }
                               });
@@ -5134,10 +5236,11 @@ class Graphics extends Component {
                         return null
                       }
                     })}
-                    {this.state.arrows.map(eachArrow => {
+                    {this.state.arrows.map((eachArrow, index) => {
                       if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === true && eachArrow.rolelevel === this.state.rolelevel) {
                         return (
                           <Arrow
+                            key={index}
                             visible={eachArrow.visible}
                             ref={eachArrow.ref}
                             id={eachArrow.id}
@@ -5175,7 +5278,7 @@ class Graphics extends Component {
                               ];
 
                               this.refs[eachArrow.ref].position({ x: 0, y: 0 });
-                              this.refs.layer2.draw();
+                              this.refs.groupAreaLayer.draw();
 
                               this.setState(prevState => ({
                                 arrows: prevState.arrows.map(eachArr =>

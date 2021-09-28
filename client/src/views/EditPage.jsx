@@ -3,6 +3,7 @@ import Sidebar from "../components/SideBar/Sidebar";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
+import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
 
 const Grid = styled.div`
@@ -37,6 +38,7 @@ const EditPage = (props) => {
   const [showNav, setShowNav] = useState(false);
 
   const alertContext = useAlertContext();
+  const dropdownContext = useDropdownContext();
 
   if (props.location.img) {
     localStorage.setItem('gameinstance', props.location.gameinstance);
@@ -59,6 +61,7 @@ const EditPage = (props) => {
           </GridNav>
           <GridMain>
             <Canvas
+              setDropdownType={dropdownContext.setType}
               showAlert={alertContext.showAlert}
               adminid={localStorage.adminid}
               gameinstance={localStorage.gameinstance}

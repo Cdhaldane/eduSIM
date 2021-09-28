@@ -7,6 +7,7 @@ import DropdownItem from "./DropdownItem";
 import "./Dropdown.css";
 
 const DropdownAddObjects = (props) => {
+
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(214);
   const [img, setImg] = useState();
@@ -20,12 +21,46 @@ const DropdownAddObjects = (props) => {
   const [file, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
 
+  const calcOutOfBounds = (x, y) => {
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 212;
+    const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
+    const paddingPx = 7;
+    const screenH = window.innerHeight - paddingPx;
+    const screenW = window.innerWidth - paddingPx;
+
+    let transformX = (x + dropWidth) - screenW;
+    if (transformX < 0) {
+      transformX = 0;
+    }
+    let transformY = (y + dropHeight) - screenH;
+    if (transformY < 0) {
+      transformY = 0;
+    }
+
+    return {
+      x: transformX,
+      y: transformY
+    }
+  }
+  const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
+  const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
+
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener('contextmenu', handleReposition);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('contextmenu', handleReposition);
+    }
   }, []);
+
+  const handleReposition = (e) => {
+    const offset = calcOutOfBounds(e.clientX, e.clientY);
+    setOffsetX(-offset.x);
+    setOffsetY(-offset.y);
+  }
 
   const handleClickOutside = e => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -40,6 +75,13 @@ const DropdownAddObjects = (props) => {
 
   function calcHeight(el) {
     const height = el.offsetHeight;
+    const matrix = new DOMMatrix(window.getComputedStyle(dropdownRef.current).transform);
+    const y = matrix.m42;
+    if (height + y > window.innerHeight) {
+      const newOffset = menuHeight - height;
+      setOffsetY(offsetY + newOffset);
+    }
+
     setMenuHeight(height);
   }
 
@@ -345,13 +387,17 @@ const DropdownAddObjects = (props) => {
   }
 
   return (
-    <div 
-    className="dropdown" 
-    style={{ 
-      height: menuHeight,
-      transform: `translateX(${props.xPos - sidebarWidth}px) translateY(${props.yPos}px)`,
-    }} 
-    ref={dropdownRef}>
+    <div
+      className="dropdown"
+      style={{
+        height: menuHeight,
+        transform: `translateX(${props.xPos - sidebarWidth + offsetX}px)
+                    translateY(${props.yPos + offsetY}px)`,
+      }}
+      ref={dropdownRef}
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}>
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
@@ -392,7 +438,7 @@ const DropdownAddObjects = (props) => {
           </DropdownItem>
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
-          <DropdownItem onClick={addTriangle} leftIcon={<i style={{fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)"}} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
           <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
 
           <DropdownItem

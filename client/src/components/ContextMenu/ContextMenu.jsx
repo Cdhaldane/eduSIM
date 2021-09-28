@@ -5,7 +5,6 @@ import "./ContextMenu.css"
 
 function ContextMenu(props) {
   const [drop, setDrop] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
   const menu = useRef();
 
   const handleClickOutside = e => {
@@ -44,7 +43,7 @@ function ContextMenu(props) {
       ref={menu}
       className="cmenu"
       style={{
-        left: props.position.x + sidebarWidth,
+        left: props.position.x,
         top: props.position.y
       }}
     >

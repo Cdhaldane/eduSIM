@@ -14,7 +14,10 @@ const TransformerComponent = forwardRef((props, ref) => {
               newBox.width = Math.max(30, newBox.width);
               return newBox;
             }}
-            enabledAnchors={["middle-left", "middle-right"]}
+            enabledAnchors={[
+              "middle-left",
+              "middle-right"
+            ]}
           />
         );
       case "star":
@@ -40,6 +43,7 @@ const TransformerComponent = forwardRef((props, ref) => {
           />
         );
       default:
+        //console.log("Normal");
         return (
           <Transformer
             ref={ref}
