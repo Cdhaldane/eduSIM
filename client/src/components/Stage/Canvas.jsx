@@ -54,7 +54,7 @@ class Graphics extends Component {
       audios: [],
       documents: [],
       texts: [],
-      lines: [],
+      lines: [], // Lines are the drawings
       arrows: [],
 
       connectors: [],
@@ -87,7 +87,7 @@ class Graphics extends Component {
       layerX: 0,
       layerY: 0,
       layerScale: 1,
-      
+
       errMsg: "",
       currentTextRef: "",
       shouldTextUpdate: true,
@@ -323,6 +323,20 @@ class Graphics extends Component {
     });
   };
 
+  onObjectContextMenu = e => {
+    e.evt.preventDefault(true);
+    const mousePosition = {
+      x: e.evt.clientX,
+      y: e.evt.clientY
+    };
+    this.setState({
+      selectedContextMenu: {
+        type: "ObjectMenu",
+        position: mousePosition
+      }
+    });
+  }
+
   handleStageClick = e => {
     const pos = this.refs.groupAreaLayer.getStage().getPointerPosition();
     const shape = this.refs.groupAreaLayer.getIntersection(pos);
@@ -397,7 +411,14 @@ class Graphics extends Component {
       });
       const tool = this.state.tool;
       this.setState({
-        lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel }]
+        lines: [...this.state.lines, {
+          tool,
+          points: [pos.x, pos.y],
+          level: this.state.level,
+          color: this.state.color,
+          id: "shape",
+          infolevel: false
+        }]
       });
     } else {
       const isElement = e.target.findAncestor(".elements-container");
@@ -509,7 +530,14 @@ class Graphics extends Component {
       this.state.isDrawing = true;
       const tool = this.state.tool;
       this.setState({
-        lines: [...this.state.lines, { tool, points: [pos.x, pos.y], level: this.state.level, color: this.state.color, id: "shape", infolevel: this.state.infolevel, rolelevel: this.state.rolelevel }]
+        lines: [...this.state.lines, {
+          tool, points: [pos.x, pos.y],
+          level: this.state.level,
+          color: this.state.color,
+          id: "shape",
+          infolevel: true,
+          rolelevel: this.state.rolelevel
+        }]
       })
     } else {
 
@@ -552,6 +580,23 @@ class Graphics extends Component {
       this.updateSelectionRectInfo();
     }
   };
+
+  handleDragEnd = (e, objectsName, ref) => {
+    const shape = this.refs[ref];
+    this.setState(prevState => ({
+      [objectsName]: prevState[objectsName].map(eachObj =>
+        eachObj.id === shape.attrs.id
+          ? {
+            ...eachObj,
+            x: e.target.x(),
+            y: e.target.y()
+          }
+          : eachObj
+      )
+    }));
+
+    this.refs.graphicStage.draw();
+  }
 
   handleStageClickInfo = e => {
     const pos = this.refs.personalAreaLayer.getStage().getPointerPosition();
@@ -751,11 +796,10 @@ class Graphics extends Component {
 
   handleCopy = () => {
     if (this.state.selectedShapeName !== "") {
-      //find it
+      // Find it
       let name = this.state.selectedShapeName;
       let copiedElement = null;
       if (name.includes("rect")) {
-        console.log(this.state.rectangles)
         copiedElement = this.state.rectangles.filter(function (
           eachRect
         ) {
@@ -774,7 +818,6 @@ class Graphics extends Component {
           return eachRect.name === name;
         });
       } else if (name.includes("image")) {
-        console.log(this.state.images)
         copiedElement = this.state.images.filter(function (
           eachRect
         ) {
@@ -816,495 +859,68 @@ class Graphics extends Component {
         });
       }
 
-      this.setState({ copiedElement: copiedElement }, () => {
-        console.log("copied ele", this.state.copiedElement);
-      });
+      this.setState({ copiedElement: copiedElement });
       this.setState({
         selectedContextMenu: null
       })
     }
   }
 
+  // type = "rectangles"
+  // deleteCount = this.state.rectDeleteCount
+  pasteObject = (type, copiedElement, deleteCount) => {
+    const num = this.state[type].length + deleteCount + 1;
+    const newObject = {
+      ...copiedElement,
+      id: type + num,
+      ref: type + num,
+      name: type + num,
+      x: copiedElement.x + 100,
+      y: copiedElement.y + 100
+    };
+    this.setState({
+      [type]: [...this.state[type], newObject],
+      selectedShapeName: newObject.name
+    });
+  }
+
   handlePaste = () => {
-    let copiedElement = this.state.copiedElement[0];
-    console.log(copiedElement);
-    let length;
+    if (this.state.copiedElement === null) {
+      // Ignore paste if nothing is copied
+      return;
+    }
+    const copiedElement = this.state.copiedElement[0];
     if (copiedElement) {
       if (copiedElement.attrs) {
+        // Don't paste when element has attributes
       } else {
-        if (copiedElement.name.includes("rectangle")) {
-          length =
-            this.state.rectangles.length +
-            1 +
-            this.state.rectDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "rectangle" +
-              (this.state.rectangles.length +
-                this.state.rectDeleteCount +
-                1),
-            ref:
-              "rectangle" +
-              (this.state.rectangles.length +
-                this.state.rectDeleteCount +
-                1),
-            fill: copiedElement.fill,
-            useImage: copiedElement.useImage,
-            link: copiedElement.link,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              rectangles: [...prevState.rectangles, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "rectangle" + this.state.rectangles.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("arrow")) {
-          length =
-            this.state.arrows.length +
-            1 +
-            this.state.arrowDeleteCount;
-
-          if (copiedElement.to || copiedElement.from) {
-            this.setState(
-              {
-                errMsg: "Connectors cannot be pasted"
-              },
-              () => {
-                let that = this;
-                setTimeout(function () {
-                  that.setState({
-                    errMsg: ""
-                  });
-                }, 1000);
-              }
-            );
-          } else {
-            let toPush = {
-              points: [
-                copiedElement.points[0] + 30,
-                copiedElement.points[1] + 30,
-                copiedElement.points[2] + 30,
-                copiedElement.points[3] + 30
-              ],
-              fill: copiedElement.fill,
-              link: copiedElement.link,
-              stroke: copiedElement.stroke,
-              strokeWidth: copiedElement.strokeWidth,
-              id:
-                "arrow" +
-                (this.state.arrows.length +
-                  1 +
-                  this.state.arrowDeleteCount),
-              ref:
-                "arrow" +
-                (this.state.arrows.length +
-                  1 +
-                  this.state.arrowDeleteCount),
-              rotation: copiedElement.rotation
-            };
-
-            let newName = this.state.selectedShapeName;
-
-            this.setState(
-              prevState => ({
-                arrows: [...prevState.arrows, toPush]
-              }),
-              () => {
-                this.setState({
-                  selectedShapeName:
-                    "arrow" + this.state.arrows.length
-                });
-              }
-            );
-          }
-        } else if (copiedElement.name.includes("ellipse")) {
-          length =
-            this.state.ellipses.length +
-            1 +
-            this.state.ellipseDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            radiusX: copiedElement.radiusX,
-            radiusY: copiedElement.radiusY,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "ellipse" +
-              (this.state.ellipses.length +
-                1 +
-                this.state.ellipseDeleteCount),
-            ref:
-              "ellipse" +
-              (this.state.ellipses.length +
-                1 +
-                this.state.ellipseDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              ellipses: [...prevState.ellipses, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "ellipse" + this.state.ellipses.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("image")) {
-          length =
-            this.state.images.length +
-            1 +
-            this.state.imageDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            imgsrc: copiedElement.imgsrc,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "image" +
-              (this.state.images.length +
-                1 +
-                this.state.imageDeleteCount),
-            ref:
-              "image" +
-              (this.state.images.length +
-                1 +
-                this.state.imageDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              images: [...prevState.images, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "image" + this.state.images.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("video")) {
-          length =
-            this.state.videos.length +
-            1 +
-            this.state.videoDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            vidsrc: copiedElement.vidsrc,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "video" +
-              (this.state.videos.length +
-                1 +
-                this.state.videoDeleteCount),
-            ref:
-              "video" +
-              (this.state.videos.length +
-                1 +
-                this.state.videoDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              videos: [...prevState.videos, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "video" + this.state.videos.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("audio")) {
-          length =
-            this.state.audios.length +
-            1 +
-            this.state.audioDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            audsrc: copiedElement.audsrc,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "audio" +
-              (this.state.audios.length +
-                1 +
-                this.state.audioDeleteCount),
-            ref:
-              "audio" +
-              (this.state.audios.length +
-                1 +
-                this.state.audioDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              audios: [...prevState.audios, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "audio" + this.state.audios.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("triangle")) {
-          length =
-            this.state.triangles.length +
-            1 +
-            this.state.triangleDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            sides: copiedElement.sides,
-            radius: copiedElement.radius,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "triangle" +
-              (this.state.triangles.length +
-                1 +
-                this.state.triangleDeleteCount),
-            ref:
-              "triangle" +
-              (this.state.triangles.length +
-                1 +
-                this.state.triangleDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              triangles: [...prevState.triangles, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "triangle" + this.state.triangles.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("document")) {
-          length =
-            this.state.documents.length +
-            1 +
-            this.state.documentDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            sides: copiedElement.sides,
-            radius: copiedElement.radius,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "document" +
-              (this.state.documents.length +
-                1 +
-                this.state.documentDeleteCount),
-            ref:
-              "document" +
-              (this.state.documents.length +
-                1 +
-                this.state.documentDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              documents: [...prevState.documents, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "document" + this.state.documents.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("line")) {
-          length =
-            this.state.lines.length +
-            1 +
-            this.state.linesDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            width: copiedElement.width,
-            height: copiedElement.height,
-            sides: copiedElement.sides,
-            radius: copiedElement.radius,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "document" +
-              (this.state.lines.length +
-                1 +
-                this.state.linesDeleteCount),
-            ref:
-              "line" +
-              (this.state.lines.length +
-                1 +
-                this.state.linesDeleteCount),
-            fill: copiedElement.fill,
-            link: copiedElement.link,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              lines: [...prevState.lines, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName:
-                  "line" + this.state.lines.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("star")) {
-          length =
-            this.state.stars.length + 1 + this.state.starDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            link: copiedElement.link,
-            innerRadius: copiedElement.innerRadius,
-            outerRadius: copiedElement.outerRadius,
-            stroke: copiedElement.stroke,
-            strokeWidth: copiedElement.strokeWidth,
-            id:
-              "star" +
-              (this.state.stars.length +
-                1 +
-                this.state.starDeleteCount),
-            ref:
-              "star" +
-              (this.state.stars.length +
-                1 +
-                this.state.starDeleteCount),
-            fill: copiedElement.fill,
-            useImage: copiedElement.useImage,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              stars: [...prevState.stars, toPush]
-            }),
-            () => {
-              this.setState({
-                selectedShapeName: "star" + this.state.stars.length
-              });
-            }
-          );
-        } else if (copiedElement.name.includes("text")) {
-          length =
-            this.state.texts.length + 1 + this.state.textDeleteCount;
-          let toPush = {
-            x: copiedElement.x + 10,
-            y: copiedElement.y + 10,
-            link: copiedElement.link,
-
-            id:
-              "text" +
-              (this.state.texts.length +
-                1 +
-                this.state.textDeleteCount),
-            ref:
-              "text" +
-              (this.state.texts.length +
-                1 +
-                this.state.textDeleteCount),
-            fill: copiedElement.fill,
-            fontSize: copiedElement.fontSize,
-            fontFamily: copiedElement.fontFamily,
-            useImage: copiedElement.useImage,
-            text: copiedElement.text,
-            width: copiedElement.width,
-            rotation: copiedElement.rotation
-          };
-          let newName = this.state.selectedShapeName;
-
-          this.setState(
-            prevState => ({
-              texts: [...prevState.texts, toPush]
-            }),
-            () => {
-              this.setState(
-                {
-                  selectedShapeName:
-                    "text" +
-                    (this.state.texts.length +
-                      this.state.textDeleteCount)
-                },
-                () => {
-                  console.log(this.state.selectedShapeName);
-                }
-              );
-            }
-          );
+        const type = copiedElement.name.replace(/\d+$/, "");
+        switch (type) {
+          case ("rectangles"):
+            this.pasteObject(type, copiedElement, this.state.rectDeleteCount);
+          case ("arrows"):
+            this.pasteObject(type, copiedElement, this.state.arrowDeleteCount);
+          case ("ellipses"):
+            this.pasteObject(type, copiedElement, this.state.ellipseDeleteCount);
+          case ("images"):
+            this.pasteObject(type, copiedElement, this.state.imageDeleteCount);
+          case ("videos"):
+            this.pasteObject(type, copiedElement, this.state.videoDeleteCount);
+          case ("audios"):
+            this.pasteObject(type, copiedElement, this.state.audioDeleteCount);
+          case ("triangles"):
+            this.pasteObject(type, copiedElement, this.state.triangleDeleteCount);
+          case ("documents"):
+            this.pasteObject(type, copiedElement, this.state.documentDeleteCount);
+          case ("lines"):
+            this.pasteObject(type, copiedElement, this.state.lineDeleteCount);
+          case ("stars"):
+            this.pasteObject(type, copiedElement, this.state.starDeleteCount);
+          case ("texts"):
+            this.pasteObject(type, copiedElement, this.state.textDeleteCount);
         }
       }
+
       this.setState({
         selectedContextMenu: null
       });
@@ -1431,13 +1047,17 @@ class Graphics extends Component {
       });
       this.setState({
         selectedContextMenu: null
-      })
+      });
+
+      // Get rid of transform UI after deletion
+      this.refs.trRef.nodes([]);
+      this.refs.trRef1.nodes([]);
     }
   }
 
   handleCut = () => {
-    this.handleDelete();
     this.handleCopy();
+    this.handleDelete();
     this.setState({
       selectedContextMenu: null
     });
@@ -2007,6 +1627,35 @@ class Graphics extends Component {
     });
   }
 
+  contextMenuEventShortcuts = (event) => {
+    const x = 88,
+      deleteKey = 46,
+      copy = 67,
+      paste = 86,
+      z = 90,
+      y = 89;
+    if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
+      this.handleDelete();
+      this.handleCopy();
+    } else if (event.keyCode === deleteKey && !this.state.isPasteDisabled) {
+      this.handleDelete();
+    } else if (event.shiftKey && event.ctrlKey && event.keyCode === z) {
+      this.handleRedo();
+    } else if (event.ctrlKey && event.keyCode === z) {
+      this.handleUndo();
+    } else if (event.ctrlKey && event.keyCode === y) {
+      this.handleRedo();
+    } else if (event.ctrlKey && event.keyCode === copy) {
+      this.handleCopy();
+    } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
+      this.handlePaste();
+    } else if (event.ctrlKey) {
+      this.setState({
+        draggable: true
+      })
+    }
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -2034,34 +1683,7 @@ class Graphics extends Component {
         })}
 
         <div
-          onKeyDown={event => {
-            const x = 88,
-              deleteKey = 46,
-              copy = 67,
-              paste = 86,
-              z = 90,
-              y = 89;
-            if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
-              this.handleDelete();
-              this.handleCopy();
-            } else if (event.keyCode === deleteKey && !this.state.isPasteDisabled) {
-              this.handleDelete();
-            } else if (event.shiftKey && event.ctrlKey && event.keyCode === z) {
-              this.handleRedo();
-            } else if (event.ctrlKey && event.keyCode === z) {
-              this.handleUndo();
-            } else if (event.ctrlKey && event.keyCode === y) {
-              this.handleRedo();
-            } else if (event.ctrlKey && event.keyCode === copy) {
-              this.handleCopy();
-            } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
-              this.handlePaste();
-            } else if (event.ctrlKey) {
-              this.setState({
-                draggable: true
-              })
-            }
-          }}
+          onKeyDown={this.contextMenuEventShortcuts}
           tabIndex="0"
           style={{ outline: "none" }}
         >
@@ -2260,7 +1882,6 @@ class Graphics extends Component {
                         rect.setAttr("scaleX", 1);
                         rect.setAttr("scaleY", 1);
                       }}
-
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2288,42 +1909,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachRect.ref];
-                        /*    this.state.rectangles.map(eachRect => {
-                            if (eachRect.name === shape.attrs.name) {
-                              shape.position({
-                                x: event.target.x(),
-                                y: event.target.y()
-                              });
-                            }
-                          });*/
-
-                        this.setState(prevState => ({
-                          rectangles: prevState.rectangles.map(eachRect =>
-                            eachRect.id === shape.attrs.id
-                              ? {
-                                ...eachRect,
-                                x: event.target.x(),
-                                y: event.target.y(),
-                              }
-                              : eachRect
-                          )
-                        }));
-                      }}
-                      onContextMenu={e => {
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: "ObjectMenu"
-                        });
-                      }}
+                      onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   );
                 } else {
@@ -2462,41 +2049,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachEllipse.ref];
-
-                        this.setState(prevState => ({
-                          ellipses: prevState.ellipses.map(eachEllipse =>
-                            eachEllipse.id === shape.attrs.id
-                              ? {
-                                ...eachEllipse,
-                                x: event.target.x(),
-                                y: event.target.y()
-                              }
-                              : eachEllipse
-                          )
-                        }));
-
-                        this.refs.graphicStage.draw();
-                      }}
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
+                      onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -2519,22 +2073,7 @@ class Graphics extends Component {
                         eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                       }
                       draggable
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   );
                 } else {
@@ -2623,51 +2162,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachImage.ref];
-                        /*    this.state.rectangles.map(eachRect => {
-                            if (eachRect.name === shape.attrs.name) {
-                              shape.position({
-                                x: event.target.x(),
-                                y: event.target.y()
-                              });
-                            }
-                          });*/
-                        console.log(this.refs)
-
-                        this.setState(prevState => ({
-                          images: prevState.images.map(eachRect =>
-                            eachRect.id === shape.props.id
-                              ? {
-                                ...eachRect,
-                                x: event.target.x(),
-                                y: event.target.y(),
-                              }
-                              : eachRect
-                          )
-                        }));
-
-                      }}
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
-
+                      onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -2755,40 +2251,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        console.log(this.state.videos)
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachVideo.ref];
-                        this.setState(prevState => ({
-                          videos: prevState.videos.map(eachRect =>
-                            eachRect.id === this.state.currentSelected
-                              ? {
-                                ...eachRect,
-                                x: event.target.x(),
-                                y: event.target.y(),
-                              }
-                              : eachRect
-                          )
-                        }));
-                      }}
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
-
+                      onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -2879,43 +2343,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachAudio.ref];
-
-
-
-                        this.setState(prevState => ({
-                          videos: prevState.videos.map(eachRect =>
-                            eachRect.id === this.state.currentSelected
-                              ? {
-                                ...eachRect,
-                                x: event.target.x(),
-                                y: event.target.y(),
-                              }
-                              : eachRect
-                          )
-                        }));
-                      }}
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
-
+                      onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -3021,50 +2450,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachDoc.ref];
-                        /*    this.state.rectangles.map(eachRect => {
-                            if (eachRect.name === shape.attrs.name) {
-                              shape.position({
-                                x: event.target.x(),
-                                y: event.target.y()
-                              });
-                            }
-                          });*/
-
-
-                        this.setState(prevState => ({
-                          documents: prevState.documents.map(eachRect =>
-                            eachRect.id === this.state.currentSelected
-                              ? {
-                                ...eachRect,
-                                x: event.target.x(),
-                                y: event.target.y(),
-                              }
-                              : eachRect
-                          )
-                        }));
-                      }}
-                      onContextMenu={e => {
-
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
-
+                      onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -3203,40 +2590,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachEllipse.ref];
-
-                        this.setState(prevState => ({
-                          triangles: prevState.triangles.map(eachEllipse =>
-                            eachEllipse.id === shape.attrs.id
-                              ? {
-                                ...eachEllipse,
-                                x: event.target.x(),
-                                y: event.target.y()
-                              }
-                              : eachEllipse
-                          )
-                        }));
-
-                        this.refs.graphicStage.draw();
-                      }}
-                      onContextMenu={e => {
-                        e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
+                      onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -3335,38 +2690,8 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachStar.ref];
-
-                        this.setState(prevState => ({
-                          stars: prevState.stars.map(eachStar =>
-                            eachStar.id === shape.attrs.id
-                              ? {
-                                ...eachStar,
-                                x: event.target.x(),
-                                y: event.target.y()
-                              }
-                              : eachStar
-                          )
-                        }));
-                      }}
-                      onContextMenu={e => {
-                        e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }
-                      }
+                      onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -3488,23 +2813,7 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={event => {
-                        //cannot compare by name because currentSelected might not be the same
-                        //have to use ref, which appears to be overcomplicated
-                        let shape = this.refs[eachText.ref];
-
-                        this.setState(prevState => ({
-                          texts: prevState.texts.map(eachtext =>
-                            eachtext.id === shape.attrs.id
-                              ? {
-                                ...eachtext,
-                                x: event.target.x(),
-                                y: event.target.y()
-                              }
-                              : eachtext
-                          )
-                        }));
-                      }}
+                      onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
                       onClick={() => {
                         let that = this;
                         if (eachText.link !== undefined && eachText.link !== "") {
@@ -3546,19 +2855,7 @@ class Graphics extends Component {
                         transformer.hide();
                         this.refs.groupAreaLayer.draw();
                       }}
-                      onContextMenu={e => {
-                        e.evt.preventDefault(true);
-                        const mousePosition = {
-                          x: e.evt.clientX,
-                          y: e.evt.clientY
-                        };
-                        this.setState({
-                          selectedContextMenu: {
-                            type: "ObjectMenu",
-                            position: mousePosition
-                          }
-                        });
-                      }}
+                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -3776,7 +3073,10 @@ class Graphics extends Component {
             numOfPages={this.state.numberOfPages} />
           <div>
             <div className={"info" + this.state.open}>
-              <div className="personalAreaStageContainer">
+              <div
+                tabIndex="0"
+                className="personalAreaStageContainer"
+                onKeyDown={this.contextMenuEventShortcuts}>
                 <Stage width={1500} height={600}
                   onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
@@ -3921,45 +3221,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachRect.ref];
-                              /*    this.state.rectangles.map(eachRect => {
-                                  if (eachRect.name === shape.attrs.name) {
-                                    shape.position({
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    });
-                                  }
-                                });*/
-
-                              this.setState(prevState => ({
-                                rectangles: prevState.rectangles.map(eachRect =>
-                                  eachRect.id === shape.attrs.id
-                                    ? {
-                                      ...eachRect,
-                                      x: event.target.x(),
-                                      y: event.target.y(),
-                                    }
-                                    : eachRect
-                                )
-                              }));
-                            }}
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = this.refs.personalAreaStage.getPointerPosition();
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
-
+                            onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4120,39 +3383,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachEllipse.ref];
-
-                              this.setState(prevState => ({
-                                ellipses: prevState.ellipses.map(eachEllipse =>
-                                  eachEllipse.id === shape.attrs.id
-                                    ? {
-                                      ...eachEllipse,
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    }
-                                    : eachEllipse
-                                )
-                              }));
-
-                              this.refs.graphicStage.draw();
-                            }}
-                            onContextMenu={e => {
-                              e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              }
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
+                            onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4175,22 +3407,7 @@ class Graphics extends Component {
                               eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                             }
                             draggable
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4279,51 +3496,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachImage.ref];
-                              /*    this.state.rectangles.map(eachRect => {
-                                  if (eachRect.name === shape.attrs.name) {
-                                    shape.position({
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    });
-                                  }
-                                });*/
-                              console.log(this.refs)
-
-                              this.setState(prevState => ({
-                                images: prevState.images.map(eachRect =>
-                                  eachRect.id === shape.props.id
-                                    ? {
-                                      ...eachRect,
-                                      x: event.target.x(),
-                                      y: event.target.y(),
-                                    }
-                                    : eachRect
-                                )
-                              }));
-
-                            }}
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
-
+                            onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4411,40 +3585,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              console.log(this.state.videos)
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachVideo.ref];
-                              this.setState(prevState => ({
-                                videos: prevState.videos.map(eachRect =>
-                                  eachRect.id === this.state.currentSelected
-                                    ? {
-                                      ...eachRect,
-                                      x: event.target.x(),
-                                      y: event.target.y(),
-                                    }
-                                    : eachRect
-                                )
-                              }));
-                            }}
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
-
+                            onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4535,43 +3677,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachAudio.ref];
-
-
-
-                              this.setState(prevState => ({
-                                videos: prevState.videos.map(eachRect =>
-                                  eachRect.id === this.state.currentSelected
-                                    ? {
-                                      ...eachRect,
-                                      x: event.target.x(),
-                                      y: event.target.y(),
-                                    }
-                                    : eachRect
-                                )
-                              }));
-                            }}
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
-
+                            onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4677,50 +3784,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachDoc.ref];
-                              /*    this.state.rectangles.map(eachRect => {
-                                  if (eachRect.name === shape.attrs.name) {
-                                    shape.position({
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    });
-                                  }
-                                });*/
-
-
-                              this.setState(prevState => ({
-                                documents: prevState.documents.map(eachRect =>
-                                  eachRect.id === this.state.currentSelected
-                                    ? {
-                                      ...eachRect,
-                                      x: event.target.x(),
-                                      y: event.target.y(),
-                                    }
-                                    : eachRect
-                                )
-                              }));
-                            }}
-                            onContextMenu={e => {
-
-                              e.evt.preventDefault(true);
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
-
+                            onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4859,40 +3924,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachEllipse.ref];
-
-                              this.setState(prevState => ({
-                                triangles: prevState.triangles.map(eachEllipse =>
-                                  eachEllipse.id === shape.attrs.id
-                                    ? {
-                                      ...eachEllipse,
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    }
-                                    : eachEllipse
-                                )
-                              }));
-
-                              this.refs.graphicStage.draw();
-                            }}
-                            onContextMenu={e => {
-                              e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
+                            onDragEnd={e => this.handleDragEnd(e, "triangles", eachEllipse.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4991,38 +4024,8 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachStar.ref];
-
-                              this.setState(prevState => ({
-                                stars: prevState.stars.map(eachStar =>
-                                  eachStar.id === shape.attrs.id
-                                    ? {
-                                      ...eachStar,
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    }
-                                    : eachStar
-                                )
-                              }));
-                            }}
-                            onContextMenu={e => {
-                              e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
+                            onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -5144,23 +4147,7 @@ class Graphics extends Component {
                                 }
                               });
                             }}
-                            onDragEnd={event => {
-                              //cannot compare by name because currentSelected might not be the same
-                              //have to use ref, which appears to be overcomplicated
-                              let shape = this.refs[eachText.ref];
-
-                              this.setState(prevState => ({
-                                texts: prevState.texts.map(eachtext =>
-                                  eachtext.id === shape.attrs.id
-                                    ? {
-                                      ...eachtext,
-                                      x: event.target.x(),
-                                      y: event.target.y()
-                                    }
-                                    : eachtext
-                                )
-                              }));
-                            }}
+                            onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
                             onClick={() => {
                               let that = this;
                               if (eachText.link !== undefined && eachText.link !== "") {
@@ -5208,21 +4195,7 @@ class Graphics extends Component {
                               transformer.hide();
                               this.refs.groupAreaLayer.draw();
                             }}
-                            onContextMenu={e => {
-                              e.evt.preventDefault(true); // NB!!!! Remember the ***TRUE***
-                              const mousePosition = {
-                                x: e.evt.clientX,
-                                y: e.evt.clientY
-                              };
-
-                              this.setState({
-                                selectedContextMenu: {
-                                  type: "ObjectMenu",
-                                  position: mousePosition
-                                }
-                              });
-                            }
-                            }
+                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {

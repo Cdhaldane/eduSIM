@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
@@ -17,6 +17,14 @@ function DropdownEditObject(props) {
   const [font, setFont] = React.useState("Open Sans");
   const [fontSize, setFontSize] = useState("50");
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
+  
+  const calcTopOffset = () => {
+    const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
+    if (props.top < thresholdPx) {
+      return thresholdPx - props.top;
+    }
+  }
+  const [topOffset, setTopOffset] = useState(calcTopOffset());
 
   // Slider Styles
   const railStyle = {
@@ -76,7 +84,10 @@ function DropdownEditObject(props) {
       <div
         className="dropdownedit"
         ref={dropdownRef}
-        style={leftOrRight}>
+        style={{
+          ...leftOrRight,
+          transform: `translateY(${topOffset}px)`
+        }}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
@@ -152,7 +163,10 @@ function DropdownEditObject(props) {
       <div
         className="dropdownedit"
         ref={dropdownRef}
-        style={leftOrRight}>
+        style={{
+          ...leftOrRight,
+          transform: `translateY(${topOffset}px)`
+        }}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}

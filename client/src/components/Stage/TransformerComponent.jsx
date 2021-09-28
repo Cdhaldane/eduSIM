@@ -5,7 +5,7 @@ const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
-      case "text":
+      case "texts":
         return (
           <Transformer
             ref={ref}
@@ -20,7 +20,7 @@ const TransformerComponent = forwardRef((props, ref) => {
             ]}
           />
         );
-      case "star":
+      case "stars":
         return (
           <Transformer
             ref={ref}
@@ -33,7 +33,7 @@ const TransformerComponent = forwardRef((props, ref) => {
             ]}
           />
         );
-      case "arrow":
+      case "arrows":
         return (
           <Transformer
             ref={ref}
@@ -43,7 +43,6 @@ const TransformerComponent = forwardRef((props, ref) => {
           />
         );
       default:
-        //console.log("Normal");
         return (
           <Transformer
             ref={ref}

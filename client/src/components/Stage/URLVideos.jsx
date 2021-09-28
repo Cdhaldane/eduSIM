@@ -1,8 +1,8 @@
 import Konva from "konva"
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { Image } from "react-konva";
 
-function URLvideo(props) {
+const URLvideo = forwardRef((props, ref) => {
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [fillPatternImage, setFillPatternImage] = useState(null);
@@ -67,7 +67,7 @@ function URLvideo(props) {
         width={props.width}
         height={props.height}
         image={videoElement}
-        ref={props.ref}
+        ref={ref}
         id={props.id}
         name="shape"
         opacity={props.opacity}
@@ -84,6 +84,6 @@ function URLvideo(props) {
       />
     </>
   );
-}
+});
 
 export default URLvideo;

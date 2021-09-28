@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { Image } from "react-konva";
 
-const URLImage = (props) => {
+const URLImage = forwardRef((props, ref) => {
 
   const [image, setImage] = useState(null);
 
@@ -24,7 +24,7 @@ const URLImage = (props) => {
       width={props.width}
       height={props.height}
       image={image}
-      ref={props.ref}
+      ref={ref}
       id={props.id}
       name="shape"
       opacity={props.opacity}
@@ -40,6 +40,6 @@ const URLImage = (props) => {
       strokeWidth={props.strokeWidth}
     />
   );
-};
+});
 
 export default URLImage;

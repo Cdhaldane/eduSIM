@@ -511,7 +511,7 @@ const DropdownAddObjects = (props) => {
             id="file"
             onChange={handleImg}
           />
-          <label id="fileI" for="file">From file</label>
+          <label id="fileI" htmlFor="file">From file</label>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
           </DropdownItem>
@@ -600,7 +600,7 @@ const DropdownAddObjects = (props) => {
             id="file"
             onChange={handleFile}
           />
-          <label id="fileI" for="file">From file</label>
+          <label id="fileI" htmlFor="file">From file</label>
 
           <DropdownItem
             onClick={addDocument}

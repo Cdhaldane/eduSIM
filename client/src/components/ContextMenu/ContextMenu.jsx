@@ -47,7 +47,7 @@ function ContextMenu(props) {
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
-    
+
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
 
     return () => {
@@ -106,6 +106,7 @@ function ContextMenu(props) {
       {drop && (
         <div className="drop">
           <DropdownEditObject
+            top={menu.current.offsetTop}
             title={props.editTitle}
             choosecolorf={handleColorF}
             choosecolors={handleColorS}
