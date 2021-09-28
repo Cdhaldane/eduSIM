@@ -189,7 +189,7 @@ function Sidebar(props) {
       <Submenu open={submenuVisible && compact}>
         {links.map(({ id, submenu: el }) => (
           el && (
-            <div className={id !== submenu && "hidden"}>{el}</div>
+            <div className={(id !== submenu ? "hidden" : "")}>{el}</div>
           )
         ))}
       </Submenu>

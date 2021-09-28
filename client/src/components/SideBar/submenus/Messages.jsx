@@ -1,18 +1,25 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components"
-import { useAlertContext } from '../../Alerts/AlertContext'
 
 const Message = styled.div`
-  background:  ${(p) => (p.sender ? "rgb(34 125 204)" : "rgb(72 169 224)")};
+  background:  ${(p) => (
+    p.private
+    ? (p.sender ? "rgb(204 81 34)" : "rgb(224 142 72)")
+    : (p.sender ? "rgb(34 125 204)" : "rgb(72 169 224)")
+  )};
   margin: ${(p) => (p.sender ? "10px 10px 10px 50px" : "10px 50px 10px 10px")};
   color: white;
   padding: 10px;
   border-radius: 10px;
   word-break: break-word;
+  cursor: pointer;
   font-size: .9em;
   & > p {
     margin-top: 5px;
+  }
+  & > aside {
+    font-size: 0.8em;
   }
 `;
 
@@ -32,7 +39,7 @@ const MessageSend = styled.button`
   margin-left: 20px;
   height: 50px;
   cursor: pointer;
-  color: #8f001a;
+  color: var(--primary);
 `;
 
 const MessageContainer = styled.div`
@@ -58,16 +65,32 @@ const MessageWarning = styled.div`
   height: inherit;
 `;
 
+const MessageGroup = styled.div`
+  display: flex;
+  font-size: 0.9em;
+  padding: 0 10px;
+  align-items: center;
+  & > button {
+    background: none;
+    border: none;
+    font-size: 1.4em;
+    cursor: pointer;
+  }
+  & > p {
+    margin-left: 10px;
+  }
+`;
+
 function Messages(props) {
   const [messageLog, setMessageLog] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const alertContext = useAlertContext();
+  const [sendGroup, setSendGroup] = useState(() => new Set());
 
   useEffect(() => {
     if (props.socket) {
-      props.socket.on("message", ({ id, message }) => {
+      props.socket.on("message", ({ id, message, group }) => {
         setMessageLog(list => list.concat({
-          id, message
+          id, message, group
         }));
       })
     }
@@ -78,24 +101,56 @@ function Messages(props) {
     if (!messageInput) {
       return false;
     };
-    props.socket.emit("message", { message: messageInput });
+    props.socket.emit("message", { 
+      message: messageInput,
+      group: Array.from(sendGroup)
+    });
     setMessageInput("");
     return false;
   }
 
-  console.log(props.socket);
+  const addWhisper = (id, group) => {
+    if (group) {
+      setSendGroup(old => {
+        const set = new Set(old).add(id);
+        group.forEach(gid => {
+          if (gid !== props.socket.id) set.add(gid);
+        });
+        return set;
+      });
+    } else {
+      if (id === props.socket.id) return;
+      setSendGroup(old => new Set(old).add(id));
+    }
+  }
+
+  const removeWhisper = () => setSendGroup(() => new Set());
 
   return (props.socket ? (
     <MessageContainer>
       <div>
-        {messageLog.map(({id, message}) => (
-          <Message sender={props.socket.id === id}>
-            <b>{(props.socket.id !== id ? `${id} says:` : "You said:")}</b>
+        {messageLog.map(({id, message, group}, ind) => (
+          <Message 
+            key={ind}
+            sender={props.socket.id === id} 
+            onClick={() => addWhisper(id, group)}
+            private={!!group}
+          >
+            {!!group && (<aside>To: {group.map(id => id === props.socket.id ? "You" : id).join(', ')}</aside>)}
+            <b>{(props.socket.id !== id ? (`${id} says:`) : "You said:")}</b>
             <p>{message}</p>
           </Message>
         ))}
       </div>
       <hr />
+      {Array.from(sendGroup).length>0 && (
+        <MessageGroup>
+          <button onClick={removeWhisper}>
+            <i class="fa fa-times-circle" aria-hidden="true"></i>
+          </button>
+          <p>Sending to: {Array.from(sendGroup).join(', ')}</p>
+        </MessageGroup>
+      )}
       <form onSubmit={sendMessage} action="#">
         <MessageInput onChange={(e) => setMessageInput(e.target.value)} value={messageInput} placeholder="Type your message here" />
         <MessageSend type="submit" value="send">

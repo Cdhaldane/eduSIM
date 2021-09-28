@@ -3,13 +3,30 @@ export default async (server, client, event, args) => {
   
   switch (event) {
     case "message": {
-      const { message } = args;
+      const { message, group } = args;
 
-      server.to(room).emit("message", {
-        id: client.id,
-        room,
-        message
-      });
+      if (group.length > 0) {
+        server.to(client.id).emit("message", {
+          id: client.id,
+          room,
+          message,
+          group
+        });
+        group.forEach((id) => {
+          server.to(id).emit("message", {
+            id: client.id,
+            room,
+            message,
+            group
+          });
+        })
+      } else {
+        server.to(room).emit("message", {
+          id: client.id,
+          room,
+          message
+        });
+      }
 
       break;
     };
