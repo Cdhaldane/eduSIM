@@ -254,6 +254,32 @@ class Graphics extends Component {
       this.state.documents
     ];
 
+
+    
+    const prevSelected = prevState.selectedShapeName;
+    const nowSelected = this.state.selectedShapeName;
+    if (prevSelected !== nowSelected) {
+      const type = nowSelected.replace(/\d+$/, "");
+      if (this.state[type]) {
+        const node = this.state[type].filter((obj) => {
+          return obj.name === nowSelected;
+        });
+        if (node.length) {
+          if (node[0].infolevel) {
+            const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
+              return obj.attrs.id === nowSelected;
+            });
+            this.refs.trRef1.nodes(obj);
+          } else {   
+            const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
+              return obj.attrs.id === nowSelected;
+            });
+            this.refs.trRef.nodes(obj);
+          }
+        }
+      }
+    }
+
     if (!this.state.redoing && !this.state.isTransforming)
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
         if (
@@ -572,7 +598,6 @@ class Graphics extends Component {
         }
       });
 
-
       this.refs.trRef1.nodes(elements);
       this.state.selection.visible = false;
       // disable click event
@@ -866,8 +891,6 @@ class Graphics extends Component {
     }
   }
 
-  // type = "rectangles"
-  // deleteCount = this.state.rectDeleteCount
   pasteObject = (type, copiedElement, deleteCount) => {
     const num = this.state[type].length + deleteCount + 1;
     const newObject = {
@@ -875,8 +898,8 @@ class Graphics extends Component {
       id: type + num,
       ref: type + num,
       name: type + num,
-      x: copiedElement.x + 100,
-      y: copiedElement.y + 100
+      x: this.state.selection.x1,
+      y: this.state.selection.y1
     };
     this.setState({
       [type]: [...this.state[type], newObject],
@@ -885,7 +908,7 @@ class Graphics extends Component {
   }
 
   handlePaste = () => {
-    if (this.state.copiedElement === null) {
+    if (this.state.copiedElement === null || this.state.copiedElement === undefined) {
       // Ignore paste if nothing is copied
       return;
     }
