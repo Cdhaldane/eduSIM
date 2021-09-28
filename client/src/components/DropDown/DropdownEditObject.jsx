@@ -16,6 +16,7 @@ function DropdownEditObject(props) {
   const [valueO, setValueO] = React.useState(1);
   const [font, setFont] = React.useState("Open Sans");
   const [fontSize, setFontSize] = useState("50");
+  const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
 
   // Slider Styles
   const railStyle = {
@@ -72,7 +73,10 @@ function DropdownEditObject(props) {
   if (props.title === "Edit Shape") {
     /* Edit a Shape Object */
     return (
-      <div className="dropdownedit" ref={dropdownRef}>
+      <div
+        className="dropdownedit"
+        ref={dropdownRef}
+        style={leftOrRight}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}
@@ -145,7 +149,10 @@ function DropdownEditObject(props) {
   } else {
     /* Edit a Text Object */
     return (
-      <div className="dropdownedit" style={{transform: "translateX(-25px)"}} ref={dropdownRef}>
+      <div
+        className="dropdownedit"
+        ref={dropdownRef}
+        style={leftOrRight}>
         <CSSTransition
           in={activeMenu === 'main'}
           timeout={500}

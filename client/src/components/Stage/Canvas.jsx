@@ -79,10 +79,15 @@ class Graphics extends Component {
       pages: ["1", "2", "3", "4", "5", "6"],
       numberOfPages: 6,
 
+      // Context Menu
+      selectedContextMenu: null,
+
+      selectedShapeName: "",
+
       layerX: 0,
       layerY: 0,
       layerScale: 1,
-      selectedShapeName: "",
+      
       errMsg: "",
       currentTextRef: "",
       shouldTextUpdate: true,
@@ -98,9 +103,6 @@ class Graphics extends Component {
       arrowEndY: 0,
       isTransforming: false,
       lastFill: null,
-
-      // Context Menu
-      selectedContextMenu: null,
 
       colorf: "black",
       colors: "black",
@@ -357,6 +359,10 @@ class Graphics extends Component {
           groupAreaContextMenuX: e.evt.clientX,
           groupAreaContextMenuY: e.evt.clientY,
         });
+      } else {
+        this.setState({ selectedShapeName: shape.id() }, () => {
+          this.refs.graphicStage.draw();
+        });
       }
     }
   };
@@ -368,8 +374,8 @@ class Graphics extends Component {
       visible: this.state.selection.visible,
       x: Math.min(this.state.selection.x1, this.state.selection.x2),
       y: Math.min(this.state.selection.y1, this.state.selection.y2),
-      width: Math.abs(this.state.selection.x1 - this.state.selection.x2)+100,
-      height: Math.abs(this.state.selection.y1 - this.state.selection.y2)+100,
+      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
+      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
       fill: "rgba(0, 161, 255, 0.3)"
     });
     node.getLayer().batchDraw();
@@ -378,12 +384,13 @@ class Graphics extends Component {
   onMouseDown = (e) => {
     this.setState({
       draggable: false
-    })
+    });
+    // Substract sidebar
+    const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
     const pos = {
-      x: e.evt.clientX,
+      x: e.evt.clientX - sidebarPx,
       y: e.evt.clientY
     };
-    console.log(e);
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: true
@@ -421,17 +428,14 @@ class Graphics extends Component {
         return;
       }
       const selBox = this.refs.selectionRectRef.getClientRect();
-      console.log(selBox);
       const elements = [];
       this.refs.groupAreaLayer.find(".shape").forEach((elementNode) => {
         const elBox = elementNode.getClientRect();
-        console.log(elBox); 
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
         }
       });
 
-      console.log(elements);
       this.refs.trRef.nodes(elements);
       this.state.selection.visible = false;
       // Disable click event
@@ -467,7 +471,6 @@ class Graphics extends Component {
 
       this.state.selection.x2 = pos.x;
       this.state.selection.y2 = pos.y;
-      console.log("HIOVER'");
       this.updateSelectionRect();
 
       if (shape && shape.attrs.link) {
@@ -494,10 +497,13 @@ class Graphics extends Component {
   onMouseDownInfo = (e) => {
     this.setState({
       draggable: false
-    })
+    });
+    // Substract sidebar and the difference between personal screen and top of screen
+    const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 100;
+    const topDiffPx = window.innerHeight * 0.3;
     const pos = {
-      x: e.evt.clientX,
-      y: e.evt.clientY
+      x: e.evt.clientX - sidebarPx,
+      y: e.evt.clientY - topDiffPx
     };
     if (this.state.drawMode === true) {
       this.state.isDrawing = true;
@@ -583,12 +589,16 @@ class Graphics extends Component {
           personalAreaContextMenuX: e.evt.clientX,
           personalAreaContextMenuY: e.evt.clientY,
         });
+      } else {
+        this.setState({ selectedShapeName: shape.id() }, () => {
+          this.refs.graphicStage.draw();
+        });
       }
     }
   }
 
   handleMouseOverInfo = event => {
-    // Get the currennt arrow ref and modify its position by filtering & pushing again
+    // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
         return;
@@ -597,7 +607,7 @@ class Graphics extends Component {
       const stage = event.target.getStage();
       const point = stage.getPointerPosition();
       let lastLine = this.state.lines[this.state.lines.length - 1];
-      // add point
+      // Add point
       lastLine.points = lastLine.points.concat([point.x, point.y]);
 
       // replace last
@@ -3555,25 +3565,6 @@ class Graphics extends Component {
                   return null;
                 }
               })}
-              {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && false && (
-                <Portal>
-                  <ContextMenu
-                    {...this.state.selectedContextMenu}
-                    selectedshape={this.state.selectedShapeName}
-                    onOptionSelected={this.handleOptionSelected}
-                    choosecolorf={this.handleColorF}
-                    handleFont={this.handleFont}
-                    handleSize={this.handleSize}
-                    handleOpacity={this.handleOpacity}
-                    close={this.handleClose}
-                    copy={this.handleCopy}
-                    cut={this.handleCut}
-                    paste={this.handlePaste}
-                    delete={this.handleDelete}
-                    editTitle={"Edit Text"}
-                  />
-                </Portal>
-              )}
               {this.state.arrows.map((eachArrow, index) => {
                 if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
                   return (
@@ -3990,7 +3981,9 @@ class Graphics extends Component {
                           cut={this.handleCut}
                           paste={this.handlePaste}
                           delete={this.handleDelete}
-                          editTitle={"Edit Shape"}
+                          handleFont={this.handleFont}
+                          handleSize={this.handleSize}
+                          editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
                         />
                       </Portal>
                     )}
