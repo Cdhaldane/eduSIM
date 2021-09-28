@@ -88,9 +88,9 @@ function Messages(props) {
 
   useEffect(() => {
     if (props.socket) {
-      props.socket.on("message", ({ id, message, group }) => {
+      props.socket.on("message", ({ sender, message, group }) => {
         setMessageLog(list => list.concat({
-          id, message, group
+          sender, message, group
         }));
       })
     }
@@ -113,8 +113,8 @@ function Messages(props) {
     if (group) {
       setSendGroup(old => {
         const set = new Set(old).add(id);
-        group.forEach(gid => {
-          if (gid !== props.socket.id) set.add(gid);
+        group.forEach(mem => {
+          if (mem.id !== props.socket.id) set.add(mem);
         });
         return set;
       });
@@ -124,20 +124,22 @@ function Messages(props) {
     }
   }
 
+  console.log(Array.from(sendGroup));
+
   const removeWhisper = () => setSendGroup(() => new Set());
 
   return (props.socket ? (
     <MessageContainer>
       <div>
-        {messageLog.map(({id, message, group}, ind) => (
+        {messageLog.map(({sender: {id, name}, message, group}, ind) => (
           <Message 
             key={ind}
             sender={props.socket.id === id} 
-            onClick={() => addWhisper(id, group)}
+            onClick={() => addWhisper({id, name}, group)}
             private={!!group}
           >
-            {!!group && (<aside>To: {group.map(id => id === props.socket.id ? "You" : id).join(', ')}</aside>)}
-            <b>{(props.socket.id !== id ? (`${id} says:`) : "You said:")}</b>
+            {!!group && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
+            <b>{(props.socket.id !== id ? (`${name} says:`) : "You said:")}</b>
             <p>{message}</p>
           </Message>
         ))}
@@ -148,7 +150,7 @@ function Messages(props) {
           <button onClick={removeWhisper}>
             <i class="fa fa-times-circle" aria-hidden="true"></i>
           </button>
-          <p>Sending to: {Array.from(sendGroup).join(', ')}</p>
+          <p>Sending to: {Array.from(sendGroup).map(mem => mem.name).join(', ')}</p>
         </MessageGroup>
       )}
       <form onSubmit={sendMessage} action="#">

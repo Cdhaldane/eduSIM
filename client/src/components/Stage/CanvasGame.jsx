@@ -112,11 +112,15 @@ class Graphics extends Component {
     };
   }
 
-  handleRoleLevel = (role) => {
+  handlePlayerInfo = ({role, name}) => {
+    console.log(role, name);
     this.toggleModal();
     this.setState({
       rolelevel: role
     });
+    this.props.socket.emit("playerUpdate", {
+      role, name
+    })
   }
 
   componentDidMount() {
@@ -165,7 +169,7 @@ class Graphics extends Component {
           >
             <CreateRole
               gameid={this.state.gameinstanceid}
-              handleRoleLevel={this.handleRoleLevel}
+              handleSubmit={this.handlePlayerInfo}
               gameroles={this.state.gameroles}
             />
           </Modal>

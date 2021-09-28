@@ -102,19 +102,8 @@ function Game(props) {
           <CanvasGame
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
+            socket={socket}
           />
-          {/* <Image
-            className="joinboard-image"
-            cloudName="uottawaedusim"
-            publicId={
-              "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-              room.gameinstance.gameinstance_photo_path
-            }
-            alt="backdrop"
-          />
-          <h2>room code: {roomid}</h2>
-          <h2>this page belongs to "{room.gameroom_name}" room of the "{room.gameinstance.gameinstance_name}" simulation</h2>
-          {alerts.map((el) => (el))} */}
           {!running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>
             <p>Paused</p>

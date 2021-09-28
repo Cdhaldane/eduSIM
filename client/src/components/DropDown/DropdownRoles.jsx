@@ -91,9 +91,11 @@ const DropdownRoles = (props) => {
         {roles.map((role, index) => {
           return (
             <div className="menu-item" onClick={(e) => handleRoleSelected(e, role.roleName)} key={index}>
-              <span className="icon-button">
-                <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
-              </span>
+              {props.editMode && (
+                <span className="icon-button">
+                  <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
+                </span>
+              )}
               {`${role.roleName} (${role.numOfSpots})`}
             </div>
           );
