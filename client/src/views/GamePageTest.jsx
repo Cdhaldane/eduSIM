@@ -70,11 +70,9 @@ function Game(props) {
         ));
       })
       client.on("gameStart", () => {
-        console.log('awoga');
         setRunning(true);
       })
       client.on("gamePause", () => {
-        console.log('awooga');
         setRunning(false);
       })
       setSocketInfo(client);

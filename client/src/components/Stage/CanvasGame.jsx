@@ -113,7 +113,6 @@ class Graphics extends Component {
   }
 
   handlePlayerInfo = ({role, name}) => {
-    console.log(role, name);
     this.toggleModal();
     this.setState({
       rolelevel: role

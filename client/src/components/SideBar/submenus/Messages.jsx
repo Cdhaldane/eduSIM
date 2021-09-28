@@ -124,8 +124,6 @@ function Messages(props) {
     }
   }
 
-  console.log(Array.from(sendGroup));
-
   const removeWhisper = () => setSendGroup(() => new Set());
 
   return (props.socket ? (
