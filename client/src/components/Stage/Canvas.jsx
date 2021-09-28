@@ -12,8 +12,10 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal"
 import TransformerComponent from "./TransformerComponent";
 
-import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
-import Connect4 from "./GamePieces/Connect4/Board"
+import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
+import Connect4 from "./GamePieces/Connect4/Board";
+
+import "./Stage.css";
 
 import {
   Rect,
@@ -255,7 +257,7 @@ class Graphics extends Component {
     ];
 
 
-    
+
     const prevSelected = prevState.selectedShapeName;
     const nowSelected = this.state.selectedShapeName;
     if (prevSelected !== nowSelected) {
@@ -270,7 +272,7 @@ class Graphics extends Component {
               return obj.attrs.id === nowSelected;
             });
             this.refs.trRef1.nodes(obj);
-          } else {   
+          } else {
             const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
               return obj.attrs.id === nowSelected;
             });
@@ -2858,15 +2860,21 @@ class Graphics extends Component {
                         // Turn into textarea for editing
                         let stage = this.refs.graphicStage;
                         let text = this.refs[eachText.ref];
+
+                        // Substract sidebar
+                        const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+
+                        console.log(text);
+
                         this.setState({
-                          textX: text.absolutePosition().x,
+                          textX: text.absolutePosition().x + sidebarPx,
                           textY: text.absolutePosition().y,
                           textEditVisible: !this.state.textEditVisible,
                           text: eachText.text,
                           textNode: eachText,
                           currentTextRef: eachText.ref,
-                          textareaWidth: text.textWidth,
-                          textareaHeight: text.textHeight,
+                          textareaWidth: text.attrs.width,
+                          textareaHeight: text.textHeight*text.textArr.length,
                           textareaFill: text.attrs.fill,
                           textareaFontFamily: text.attrs.fontFamily,
                           textareaFontSize: text.attrs.fontSize
@@ -2971,33 +2979,81 @@ class Graphics extends Component {
             </Layer>
           </Stage>
 
-          <textarea
-            ref="textarea"
-            id="textarea"
-            value={this.state.text}
-            onChange={e => {
-              this.setState({
-                text: e.target.value,
-                shouldTextUpdate: false
-              });
-            }}
-            onKeyDown={e => {
-              if (e.keyCode === 13) {
+          <div
+          style={{
+            top: this.state.textY + "px",
+            left: this.state.textX + "px",
+            position: "absolute"
+          }}>
+            <textarea
+              ref="textarea"
+              id="textEditArea"
+              value={this.state.text}
+              onChange={e => {
+                this.setState({
+                  text: e.target.value,
+                  shouldTextUpdate: false
+                });
+              }}
+              onKeyDown={e => {
+                if (e.keyCode === 13) {
+                  this.setState({
+                    textEditVisible: false,
+                    shouldTextUpdate: true
+                  });
+
+                  // get the current textNode we are editing, get the name from there
+                  //match name with elements in this.state.texts,
+                  let node = this.refs[this.state.currentTextRef];
+                  console.log("node width before set", node.textWidth);
+                  let name = node.attrs.name;
+                  this.setState(
+                    prevState => ({
+                      selectedShapeName: name,
+                      texts: prevState.texts.map(eachText =>
+                        eachText.name === name
+                          ? {
+                            ...eachText,
+                            text: this.state.text
+                          }
+                          : eachText
+                      )
+                    }),
+                    () => {
+                      this.setState(prevState => ({
+                        texts: prevState.texts.map(eachText =>
+                          eachText.name === name
+                            ? {
+                              ...eachText,
+                              textWidth: node.textWidth,
+                              textHeight: node.textHeight
+                            }
+                            : eachText
+                        )
+                      }));
+                    }
+                  );
+
+                  node.show();
+                  this.refs.graphicStage.findOne(".transformer").show();
+                }
+              }}
+              onBlur={() => {
                 this.setState({
                   textEditVisible: false,
                   shouldTextUpdate: true
                 });
 
-                // get the current textNode we are editing, get the name from there
-                //match name with elements in this.state.texts,
+                // Get the current textNode we are editing, get the name from there
+                // Match name with elements in this.state.texts,
                 let node = this.refs[this.state.currentTextRef];
-                console.log("node width before set", node.textWidth);
-                let name = node.attrs.name;
+                let name = node.attrs.id;
+
                 this.setState(
                   prevState => ({
                     selectedShapeName: name,
                     texts: prevState.texts.map(eachText =>
-                      eachText.name === name
+                      eachText.id === name
                         ? {
                           ...eachText,
                           text: this.state.text
@@ -3019,71 +3075,20 @@ class Graphics extends Component {
                     }));
                   }
                 );
-
                 node.show();
                 this.refs.graphicStage.findOne(".transformer").show();
-              }
-            }}
-            onBlur={() => {
-              this.setState({
-                textEditVisible: false,
-                shouldTextUpdate: true
-              });
-
-              // Get the current textNode we are editing, get the name from there
-              // Match name with elements in this.state.texts,
-              let node = this.refs[this.state.currentTextRef];
-              let name = node.attrs.id;
-
-              this.setState(
-                prevState => ({
-                  selectedShapeName: name,
-                  texts: prevState.texts.map(eachText =>
-                    eachText.id === name
-                      ? {
-                        ...eachText,
-                        text: this.state.text
-                      }
-                      : eachText
-                  )
-                }),
-                () => {
-                  this.setState(prevState => ({
-                    texts: prevState.texts.map(eachText =>
-                      eachText.name === name
-                        ? {
-                          ...eachText,
-                          textWidth: node.textWidth,
-                          textHeight: node.textHeight
-                        }
-                        : eachText
-                    )
-                  }));
-                }
-              );
-              node.show();
-              this.refs.graphicStage.findOne(".transformer").show();
-              this.refs.graphicStage.draw();
-            }}
-            style={{
-              //set position, width, height, fontSize, overflow, lineHeight, color
-              display: this.state.textEditVisible ? "block" : "none",
-              position: "absolute",
-              top: this.state.textY + 80 + "px",
-              left: this.state.textX + "px",
-              width: this.state.textareaWidth,
-              height: this.state.textareaHeight,
-              fontSize: this.state.textareaFontSize,
-              fontFamily: this.state.textareaFontFamily,
-              color: this.state.textareaFill,
-              border: "none",
-              padding: "0px",
-              margin: "0px",
-              outline: "none",
-              resize: "none",
-              background: "none"
-            }}
-          />
+                this.refs.graphicStage.draw();
+              }}
+              style={{
+                display: this.state.textEditVisible ? "block" : "none",
+                width: this.state.textareaWidth,
+                height: this.state.textareaHeight,
+                fontSize: this.state.textareaFontSize + "px",
+                fontFamily: this.state.textareaFontFamily,
+                color: this.state.textareaFill,
+              }}
+            />
+          </div>
 
         </div>
         <div className="eheader">
@@ -4196,7 +4201,6 @@ class Graphics extends Component {
                               let stage = this.refs.graphicStage;
                               let text = this.refs[eachText.ref];
                               console.log(text)
-
 
                               this.setState({
                                 textX: text.absolutePosition().x,

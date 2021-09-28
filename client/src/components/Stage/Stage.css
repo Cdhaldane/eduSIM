@@ -1,0 +1,11 @@
+#textEditArea {
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  outline: none;
+  resize: none;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+  overflow-y: hidden;
+  line-height: 100%;
+}
