@@ -159,7 +159,7 @@ class Graphics extends Component {
         {this.state.selectrole && <div>
           <Modal
             isOpen={this.state.isOpen}
-            onRequestClose={this.toggleModal}
+            // onRequestClose={this.toggleModal}
             contentLabel="My dialog"
             className="createmodaltab"
             overlayClassName="myoverlaytab"
@@ -170,6 +170,7 @@ class Graphics extends Component {
               gameid={this.state.gameinstanceid}
               handleSubmit={this.handlePlayerInfo}
               gameroles={this.state.gameroles}
+              players={this.props.players}
             />
           </Modal>
         </div>

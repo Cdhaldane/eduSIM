@@ -1,5 +1,5 @@
 .alert-popup {
-  z-index: 1000;
+  z-index: 1000000;
   position: absolute;
   right: 2%;
   top: 2%;

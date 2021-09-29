@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import styled from "styled-components";
+import { useAlertContext } from '../Alerts/AlertContext';
 
 const NameInput = styled.input`
   grid-area: main;
@@ -32,11 +33,28 @@ const Submit = styled.button`
 const CreateRole = (props) => {
   const [role, setRole] = useState(null);
   const [name, setName] = useState("");
+  const alertContext = useAlertContext();
+
+  const rolesTaken = Object.values(props.players).reduce((roles, {role}) => {
+    const roleCount = roles[role] || 0;
+    return {
+      ...roles,
+      [role]: roleCount+1
+    };
+  }, {});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.handleSubmit({role, name});
+    if (role && rolesTaken[role.name] >= role.num) {
+      alertContext.showAlert("Too many people have already chosen this role. Please choose a different one.", "warning");
+      return false;
+    }
+    props.handleSubmit({role: role?.name, name});
     return false;
+  }
+
+  const handleSetRole = (name, num) => {
+    setRole({name, num});
   }
 
   return (
@@ -46,13 +64,20 @@ const CreateRole = (props) => {
         <div id="rolesdrops">
           <DropdownRoles
             gameid={props.gameid}
-            roleLevel={setRole}
-            gameroles={props.gameroles}
+            roleLevel={handleSetRole}
             editMode={false}
+            rolesTaken={rolesTaken}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">
-          <NameInput type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+          <NameInput 
+            type="text" 
+            placeholder="Your name" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required
+            maxLength="25"
+          />
           <Submit type="submit">Go</Submit>
         </form>
       </form>

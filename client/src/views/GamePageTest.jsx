@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Image } from "cloudinary-react";
 import io from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
@@ -38,9 +37,9 @@ function Game(props) {
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
-  const [alerts, setAlerts] = useState([]);
   const [running, setRunning] = useState(false);
   const [showNav, setShowNav] = useState(false);
+  const [players, setPlayers] = useState({});
   const toggle = () => setShowNav(!showNav);
 
   useEffect(() => {
@@ -58,17 +57,22 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ running }) => {
+      client.on("connectStatus", ({ running, players }) => {
+        setPlayers(players);
         setRunning(running || false);
-        setAlerts(list => list.concat(
-          <p>connected as {client.id}</p>
-        ));
       });
-      client.on("newClient", (id) => {
-        setAlerts(list => list.concat(
-          <p><b>a new person joined:</b> {id}</p>
-        ));
-      })
+      client.on("clientJoined", ({id, ...player}) => {
+        setPlayers(l => ({
+          ...l,
+          [id]: player
+        }));
+      });
+      client.on("clientLeft", (id) => {
+        setPlayers(l => {
+          delete l[id];
+          return l;
+        });
+      });
       client.on("gameStart", () => {
         setRunning(true);
       })
@@ -101,6 +105,7 @@ function Game(props) {
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
+            players={players}
           />
           {!running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

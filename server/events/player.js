@@ -36,7 +36,14 @@ export default async (server, client, event, args) => {
     };
     case "playerUpdate": {
       const { name, role } = args;
-
+      
+      if (Object.keys(getPlayer(client.id)).length === 0) {
+        client.to(room).emit("clientJoined", {
+          id: client.id,
+          name,
+          role
+        });
+      }
       setPlayer(client.id, {
         name,
         role

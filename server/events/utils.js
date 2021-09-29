@@ -48,3 +48,13 @@ export const setPlayer = async (id, val) => {
     ...val
   };
 }
+
+export const getPlayersInRoom = async (roomid, server) => {
+  const sockets = await server.in(roomid).fetchSockets();
+  let players = {};
+  for (const { id } of sockets) {
+    const player = await getPlayer(id);
+    if (player.id) players[id] = player;
+  }
+  return players;
+};
