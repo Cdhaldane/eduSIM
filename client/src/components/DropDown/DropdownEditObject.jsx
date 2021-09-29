@@ -10,14 +10,16 @@ import "./DropdownEditObject.css";
 function DropdownEditObject(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
-  const [colourf, setColourf] = useState("");
+  const [colourf, setColourf] = useState(props.font ? props.font.fill() : "");
   const [colours, setColours] = useState("");
   const [value, setValue] = React.useState(20);
-  const [valueO, setValueO] = React.useState(1);
-  const [font, setFont] = React.useState("Open Sans");
-  const [fontSize, setFontSize] = useState("50");
+  const [opacity, setOpacity] = React.useState(props.font ? props.font.opacity() : 1);
+  const [font, setFont] = React.useState(props.font ? props.font.fontFamily() : "Open Sans");
+  const [fontSize, setFontSize] = useState(props.font ? props.font.fontSize() : "50");
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   
+  console.log(props.font);
+
   const calcTopOffset = () => {
     const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
     if (props.top < thresholdPx) {
@@ -69,7 +71,7 @@ function DropdownEditObject(props) {
   }
 
   function onSliderChangeO(e) {
-    setValueO(e);
+    setOpacity(e);
     props.handleOpacity(e);
   }
 
@@ -131,7 +133,7 @@ function DropdownEditObject(props) {
               Opacity:
               <Slider
                 className="slider"
-                value={valueO}
+                value={opacity}
                 min={0}
                 max={1}
                 step={0.01}
@@ -202,7 +204,7 @@ function DropdownEditObject(props) {
               Opacity:
               <Slider
                 className="slider"
-                value={valueO}
+                value={opacity}
                 min={0}
                 max={1}
                 step={0.01}

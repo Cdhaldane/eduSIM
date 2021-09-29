@@ -138,6 +138,8 @@ const DropdownAddObjects = (props) => {
     objectsDeletedState,
     objectParameters) => {
 
+    console.log(objectsState.length, objectsDeletedState);
+
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
 

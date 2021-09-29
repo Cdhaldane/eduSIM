@@ -114,6 +114,7 @@ function ContextMenu(props) {
             handleOpacity={handleOpacity}
             handleSize={(e) => props.handleSize(e)}
             handleFont={(e) => props.handleFont(e)}
+            font={props.selectedFont}
             left={editModalLeft}
           />
         </div>

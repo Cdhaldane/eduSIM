@@ -4,7 +4,16 @@ import { Transformer } from "react-konva";
 const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
+    //console.log(props.selectedShapeName.replace(/\d+$/, ""));
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
+      case "group":
+        return (
+          <Transformer
+            ref={ref}
+            name="transformer"
+            resizeEnabled={false}
+          />
+        );
       case "texts":
         return (
           <Transformer

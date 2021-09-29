@@ -84,6 +84,21 @@ class Graphics extends Component {
       // Context Menu
       selectedContextMenu: null,
 
+      // The Text Editor (<textarea/>) & other text properties
+      textX: 0,
+      textY: 0,
+      textEditVisible: false,
+      text: "",
+      currentTextRef: "",
+      textareaWidth: 0,
+      textareaHeight: 0,
+      textareaFill: null,
+      textareaFontFamily: null,
+      textareaFontSize: 10,
+      textRotation: 0,
+      shouldTextUpdate: true,
+      selectedFont: null,
+
       selectedShapeName: "",
 
       layerX: 0,
@@ -91,11 +106,7 @@ class Graphics extends Component {
       layerScale: 1,
 
       errMsg: "",
-      currentTextRef: "",
-      shouldTextUpdate: true,
-      textX: 0,
-      textY: 0,
-      textEditVisible: false,
+
       arrowDraggable: false,
       newArrowRef: "",
       count: 0,
@@ -271,12 +282,12 @@ class Graphics extends Component {
             const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
               return obj.attrs.id === nowSelected;
             });
-            this.refs.trRef1.nodes(obj);
+            this.refs.personalTransformer.nodes(obj);
           } else {
             const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
               return obj.attrs.id === nowSelected;
             });
-            this.refs.trRef.nodes(obj);
+            this.refs.groupTransformer.nodes(obj);
           }
         }
       }
@@ -331,12 +342,28 @@ class Graphics extends Component {
       this.state.lines,
       this.state.tics,
       this.state.connect4,
-      status
+
+      // Delete counts are stored to keep object labels in sync
+      this.state.rectDeleteCount,
+      this.state.ellipseDeleteCount,
+      this.state.starDeleteCount,
+      this.state.triangleDeleteCount,
+      this.state.imageDeleteCount,
+      this.state.videoDeleteCount,
+      this.state.audioDeleteCount,
+      this.state.documentDeleteCount,
+      this.state.textDeleteCount,
+      this.state.linesDeleteCount,
+      this.state.arrowDeleteCount,
+
+      status,
     ];
 
     this.setState({
       saved: saved
     });
+
+    console.log(JSON.stringify(saved));
 
     const body = {
       id: this.state.gameinstanceid,
@@ -375,7 +402,8 @@ class Graphics extends Component {
         shape !== null &&
         shape !== undefined &&
         shape.name() !== null &&
-        shape.name() !== undefined
+        shape.name() !== undefined &&
+        shape.id() !== "ContainerRect"
       ) {
         this.setState({ selectedShapeName: shape.id() }, () => {
           this.refs.graphicStage.draw();
@@ -410,7 +438,6 @@ class Graphics extends Component {
   };
 
   updateSelectionRect = () => {
-
     const node = this.refs.selectionRectRef;
     node.setAttrs({
       visible: this.state.selection.visible,
@@ -485,7 +512,18 @@ class Graphics extends Component {
         }
       });
 
-      this.refs.trRef.nodes(elements);
+      // Handle single selection and group selection
+      if (elements.length === 1) {
+        this.setState({
+          selectedShapeName: elements[0].id()
+        });
+      } else if (elements.length > 1) {
+        this.setState({
+          selectedShapeName: "group"
+        });
+      }
+
+      this.refs.groupTransformer.nodes(elements);
       this.state.selection.visible = false;
       // Disable click event
       Konva.listenClickTap = false;
@@ -600,7 +638,18 @@ class Graphics extends Component {
         }
       });
 
-      this.refs.trRef1.nodes(elements);
+      // Handle single selection and group selection
+      if (elements.length === 1) {
+        this.setState({
+          selectedShapeName: elements[0].id()
+        });
+      } else if (elements.length > 1) {
+        this.setState({
+          selectedShapeName: "group"
+        });
+      }
+
+      this.refs.personalTransformer.nodes(elements);
       this.state.selection.visible = false;
       // disable click event
       Konva.listenClickTap = false;
@@ -635,7 +684,8 @@ class Graphics extends Component {
         shape !== null &&
         shape !== undefined &&
         shape.name() !== null &&
-        shape.name() !== undefined
+        shape.name() !== undefined &&
+        shape.id() !== "ContainerRect"
       ) {
         this.setState({ selectedShapeName: shape.id() }, () => {
           this.refs.graphicStage.draw();
@@ -1075,8 +1125,8 @@ class Graphics extends Component {
       });
 
       // Get rid of transform UI after deletion
-      this.refs.trRef.nodes([]);
-      this.refs.trRef1.nodes([]);
+      this.refs.groupTransformer.nodes([]);
+      this.refs.personalTransformer.nodes([]);
     }
   }
 
@@ -1611,6 +1661,51 @@ class Graphics extends Component {
         fileDownload(res.data, filename)
         console.log(res)
       })
+  }
+
+  //const stage = this.refs.graphicStage;
+  //const text = this.refs[eachText.ref];
+  // layer = this.refs.groupAreaLayer
+  // Turn <Text> into <textarea> for editing on double click
+  handleTextDblClick = (stage, text, layer) => {
+    if (text) {
+      // Adjust location based on info or main
+      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
+        sidebarPx = 100;
+      }
+      let topPx = 0;
+      if (layer === this.refs.personalAreaLayer) {
+        topPx = window.innerHeight*0.3;
+      }
+
+      this.setState({
+        textX: text.absolutePosition().x + sidebarPx,
+        textY: text.absolutePosition().y + topPx,
+        textEditVisible: !this.state.textEditVisible,
+        text: text.attrs.text,
+        currentTextRef: text.attrs.id,
+        textareaWidth: text.attrs.width,
+        textareaHeight: text.textHeight * text.textArr.length,
+        textareaFill: text.attrs.fill,
+        textareaFontFamily: text.attrs.fontFamily,
+        textareaFontSize: text.attrs.fontSize,
+        textRotation: text.attrs.rotation,
+      });
+      const textarea = this.refs.textarea;
+      textarea.focus();
+      text.hide();
+      layer.draw();
+    }
+  }
+
+  handleTextTransform = () => {
+    const text = this.refs[this.state.selectedShapeName];
+    if (text) {
+      text.setAttr("width", text.width() * text.scaleX());
+      text.setAttr("scaleX", 1);
+      text.draw();
+    }
   }
 
   drawLine = () => {
@@ -2733,70 +2828,6 @@ class Graphics extends Component {
                       key={index}
                       visible={eachText.visible}
                       textDecoration={eachText.link ? "underline" : ""}
-                      onTransformStart={() => {
-                        let currentText = this.refs[this.state.selectedShapeName];
-                        currentText.setAttr("lastRotation", currentText.rotation());
-                      }}
-                      onTransform={() => {
-                        let currentText = this.refs[this.state.selectedShapeName];
-
-                        currentText.setAttr(
-                          "width",
-                          currentText.width() * currentText.scaleX()
-                        );
-                        currentText.setAttr("scaleX", 1);
-
-                        currentText.draw();
-
-                        if (
-                          currentText.attrs.lastRotation !== currentText.rotation()
-                        ) {
-                          this.state.arrows.map(eachArrow => {
-                            if (
-                              eachArrow.to &&
-                              eachArrow.to.name() === currentText.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating texts with connectors might skew things up!"
-                              });
-                            }
-                            if (
-                              eachArrow.from &&
-                              eachArrow.from.name() === currentText.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating texts with connectors might skew things up!"
-                              });
-                            }
-                          });
-                        }
-
-                        currentText.setAttr("lastRotation", currentText.rotation());
-                      }}
-                      onTransformEnd={() => {
-                        let currentText = this.refs[this.state.selectedShapeName];
-
-                        this.setState(prevState => ({
-                          errMsg: "",
-                          texts: prevState.texts.map(eachText =>
-                            eachText.id === this.state.selectedShapeName
-                              ? {
-                                ...eachText,
-                                width: currentText.width(),
-                                rotation: currentText.rotation(),
-                                textWidth: currentText.textWidth,
-                                textHeight: currentText.textHeight,
-                                x: currentText.x(),
-                                y: currentText.y()
-                              }
-                              : eachText
-                          )
-                        }));
-                        currentText.setAttr("scaleX", 1);
-                        currentText.draw();
-                      }}
                       link={eachText.link}
                       width={eachText.width}
                       fill={eachText.fill}
@@ -2811,6 +2842,7 @@ class Graphics extends Component {
                       y={eachText.y}
                       text={eachText.text}
                       draggable
+                      onTransform={this.handleTextTransform}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2856,37 +2888,17 @@ class Graphics extends Component {
                           );
                         }
                       }}
-                      onDblClick={() => {
-                        // Turn into textarea for editing
-                        let stage = this.refs.graphicStage;
-                        let text = this.refs[eachText.ref];
-
-                        // Substract sidebar
-                        const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-
-                        console.log(text);
-
+                      onDblClick={() => this.handleTextDblClick(
+                        this.refs.graphicStage,
+                        this.refs[eachText.ref],
+                        this.refs.groupAreaLayer)
+                      }
+                      onContextMenu={(e) => {
+                        this.onObjectContextMenu(e);
                         this.setState({
-                          textX: text.absolutePosition().x + sidebarPx,
-                          textY: text.absolutePosition().y,
-                          textEditVisible: !this.state.textEditVisible,
-                          text: eachText.text,
-                          textNode: eachText,
-                          currentTextRef: eachText.ref,
-                          textareaWidth: text.attrs.width,
-                          textareaHeight: text.textHeight*text.textArr.length,
-                          textareaFill: text.attrs.fill,
-                          textareaFontFamily: text.attrs.fontFamily,
-                          textareaFontSize: text.attrs.fontSize
+                          selectedFont: this.refs[eachText.ref]
                         });
-                        let textarea = this.refs.textarea;
-                        textarea.focus();
-                        text.hide();
-                        let transformer = stage.findOne(".transformer");
-                        transformer.hide();
-                        this.refs.groupAreaLayer.draw();
                       }}
-                      onContextMenu={this.onObjectContextMenu}
                     />
                   )
                 } else {
@@ -2966,7 +2978,7 @@ class Graphics extends Component {
               })}
               <TransformerComponent
                 selectedShapeName={this.state.selectedShapeName}
-                ref="trRef"
+                ref="groupTransformer"
                 boundBoxFunc={(oldBox, newBox) => {
                   // limit resize
                   if (newBox.width < 5 || newBox.height < 5) {
@@ -2979,12 +2991,7 @@ class Graphics extends Component {
             </Layer>
           </Stage>
 
-          <div
-          style={{
-            top: this.state.textY + "px",
-            left: this.state.textX + "px",
-            position: "absolute"
-          }}>
+          <div>
             <textarea
               ref="textarea"
               id="textEditArea"
@@ -3086,6 +3093,9 @@ class Graphics extends Component {
                 fontSize: this.state.textareaFontSize + "px",
                 fontFamily: this.state.textareaFontFamily,
                 color: this.state.textareaFill,
+                top: this.state.textY + "px",
+                left: this.state.textX + "px",
+                transform: `rotate(${this.state.textRotation}deg) translateY(2px)`
               }}
             />
           </div>
@@ -3274,6 +3284,7 @@ class Graphics extends Component {
                           delete={this.handleDelete}
                           handleFont={this.handleFont}
                           handleSize={this.handleSize}
+                          selectedFont={this.state.selectedFont}
                           editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
                         />
                       </Portal>
@@ -4070,70 +4081,6 @@ class Graphics extends Component {
                             key={index}
                             visible={eachText.visible}
                             textDecoration={eachText.link ? "underline" : ""}
-                            onTransformStart={() => {
-                              let currentText = this.refs[this.state.selectedShapeName];
-                              currentText.setAttr("lastRotation", currentText.rotation());
-                            }}
-                            onTransform={() => {
-                              let currentText = this.refs[this.state.selectedShapeName];
-
-                              currentText.setAttr(
-                                "width",
-                                currentText.width() * currentText.scaleX()
-                              );
-                              currentText.setAttr("scaleX", 1);
-
-                              currentText.draw();
-
-                              if (
-                                currentText.attrs.lastRotation !== currentText.rotation()
-                              ) {
-                                this.state.arrows.map(eachArrow => {
-                                  if (
-                                    eachArrow.to &&
-                                    eachArrow.to.name() === currentText.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating texts with connectors might skew things up!"
-                                    });
-                                  }
-                                  if (
-                                    eachArrow.from &&
-                                    eachArrow.from.name() === currentText.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating texts with connectors might skew things up!"
-                                    });
-                                  }
-                                });
-                              }
-
-                              currentText.setAttr("lastRotation", currentText.rotation());
-                            }}
-                            onTransformEnd={() => {
-                              let currentText = this.refs[this.state.selectedShapeName];
-
-                              this.setState(prevState => ({
-                                errMsg: "",
-                                texts: prevState.texts.map(eachText =>
-                                  eachText.id === this.state.selectedShapeName
-                                    ? {
-                                      ...eachText,
-                                      width: currentText.width(),
-                                      rotation: currentText.rotation(),
-                                      textWidth: currentText.textWidth,
-                                      textHeight: currentText.textHeight,
-                                      x: currentText.x(),
-                                      y: currentText.y()
-                                    }
-                                    : eachText
-                                )
-                              }));
-                              currentText.setAttr("scaleX", 1);
-                              currentText.draw();
-                            }}
                             link={eachText.link}
                             width={eachText.width}
                             fill={eachText.fill}
@@ -4148,6 +4095,7 @@ class Graphics extends Component {
                             y={eachText.y}
                             text={eachText.text}
                             draggable
+                            onTransform={this.handleTextTransform}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -4196,33 +4144,17 @@ class Graphics extends Component {
                                 //win.focus();
                               }
                             }}
-                            onDblClick={() => {
-                              // turn into textarea
-                              let stage = this.refs.graphicStage;
-                              let text = this.refs[eachText.ref];
-                              console.log(text)
-
+                            onDblClick={() => this.handleTextDblClick(
+                              this.refs.graphicStage,
+                              this.refs[eachText.ref],
+                              this.refs.personalAreaLayer)
+                            }
+                            onContextMenu={(e) => {
+                              this.onObjectContextMenu(e);
                               this.setState({
-                                textX: text.absolutePosition().x,
-                                textY: text.absolutePosition().y,
-                                textEditVisible: !this.state.textEditVisible,
-                                text: eachText.text,
-                                textNode: eachText,
-                                currentTextRef: eachText.ref,
-                                textareaWidth: text.textWidth,
-                                textareaHeight: text.textHeight,
-                                textareaFill: text.attrs.fill,
-                                textareaFontFamily: text.attrs.fontFamily,
-                                textareaFontSize: text.attrs.fontSize
+                                selectedFont: this.refs[eachText.ref]
                               });
-                              let textarea = this.refs.textarea;
-                              textarea.focus();
-                              text.hide();
-                              let transformer = stage.findOne(".transformer");
-                              transformer.hide();
-                              this.refs.groupAreaLayer.draw();
                             }}
-                            onContextMenu={this.onObjectContextMenu}
                           />
                         )
                       } else {
@@ -4302,7 +4234,7 @@ class Graphics extends Component {
                     })}
                     <TransformerComponent
                       selectedShapeName={this.state.selectedShapeName}
-                      ref="trRef1"
+                      ref="personalTransformer"
                       boundBoxFunc={(oldBox, newBox) => {
                         // limit resize
                         if (newBox.width < 5 || newBox.height < 5) {
