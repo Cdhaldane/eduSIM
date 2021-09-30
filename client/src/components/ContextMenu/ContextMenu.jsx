@@ -17,7 +17,7 @@ function ContextMenu(props) {
   const calcOutOfBounds = (x, y) => {
     const dropHeight = menu.current ? menu.current.clientHeight : 205;
     const dropWidth = menu.current ? menu.current.clientWidth : 155;
-    const editModalWidth = 300;
+    const editModalWidth = 400;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
     const screenW = window.innerWidth - paddingPx;
@@ -115,7 +115,9 @@ function ContextMenu(props) {
             handleSize={(e) => props.handleSize(e)}
             handleFont={(e) => props.handleFont(e)}
             font={props.selectedFont}
+            shape={props.shape}
             left={editModalLeft}
+            close={props.close}
           />
         </div>
       )}

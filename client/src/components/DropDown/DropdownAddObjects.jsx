@@ -6,6 +6,8 @@ import DropdownItem from "./DropdownItem";
 
 import "./Dropdown.css";
 
+const DEFAULT_STROKE = 0.1;
+
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
@@ -137,9 +139,15 @@ const DropdownAddObjects = (props) => {
     objectsState,
     objectsDeletedState,
     objectParameters) => {
-
-    console.log(objectsState.length, objectsDeletedState);
-
+    if (
+      objectsDeletedState === undefined ||
+      objectsDeletedState === null ||
+      objectsDeletedState === NaN
+      ) {
+        console.log("WIERD DELETED STATE");
+        console.log(objectsDeletedState);
+        objectsDeletedState = 0;
+    }
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
 
@@ -187,10 +195,10 @@ const DropdownAddObjects = (props) => {
         width: 100,
         height: 100,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         rotation: 0,
         fill: props.state.colorf,
-        useImage: false
+        useImage: false,
       }
     );
   }
@@ -204,7 +212,7 @@ const DropdownAddObjects = (props) => {
         radiusX: 50,
         radiusY: 50,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         fill: props.state.colorf,
         rotation: 0
       }
@@ -221,7 +229,7 @@ const DropdownAddObjects = (props) => {
         innerRadius: 30,
         outerRadius: 70,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         fill: props.state.colorf,
         rotation: 0,
         width: 100,
@@ -239,7 +247,7 @@ const DropdownAddObjects = (props) => {
         sides: 3,
         radius: 70,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         useImage: false,
         fill: props.state.colorf,
         rotation: 0,
@@ -257,7 +265,7 @@ const DropdownAddObjects = (props) => {
       {
         imgsrc: props.state.imgsrc,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         opacity: 1,
         width: 200,
         height: 200
@@ -275,7 +283,7 @@ const DropdownAddObjects = (props) => {
         height: 400,
         vidsrc: props.state.vidsrc,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         opacity: 1
       }
     );

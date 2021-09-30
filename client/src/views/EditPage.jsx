@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar/Sidebar";
 import Canvas from "../components/Stage/Canvas";
 import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
+import FontPicker from "font-picker-react";
 
 const Grid = styled.div`
   display: grid;
@@ -69,6 +70,11 @@ const EditPage = (props) => {
           </GridMain>
         </Grid>
       </Container>
+      {/*<div style={{display: "hidden"}}>
+        <FontPicker
+          apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
+        />
+  </div>*/}
     </div>
   );
 }
