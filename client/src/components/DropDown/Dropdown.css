@@ -81,6 +81,14 @@ a {
   cursor: pointer;
 }
 
+.dropdown-add-disabled > .menu-item > .icon-button {
+  background-color: #636363 !important;
+}
+
+.dropdown-add-disabled > .menu-item > .icon-button:hover {
+  cursor: not-allowed !important;
+}
+
 .menu-item h2 {
   font-size: 1.5rem;
 }

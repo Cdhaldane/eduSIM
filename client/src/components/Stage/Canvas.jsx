@@ -207,13 +207,15 @@ class Graphics extends Component {
         gameid: this.state.gameinstanceid
       }
     }).then((res) => {
-      const objects = JSON.parse(res.data.game_parameters);
-      this.savedObjects.forEach((object) => {
-        this.setState({
-          [object]: objects[object]
+      if (JSON.parse(res.data.game_parameters)) {
+        const objects = JSON.parse(res.data.game_parameters);
+        this.savedObjects.forEach((object) => {
+          this.setState({
+            [object]: objects[object]
+          });
         });
-      });
-    }).catch(error => console.log(error.response));
+      }
+    }).catch(error => console.log(error));
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
         gameinstanceid: this.state.gameinstanceid,

@@ -7,7 +7,7 @@ import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
 
-  const PLACEHOLDER_TEXT = "Select Role!";
+  const PLACEHOLDER_TEXT = "Select Role";
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);

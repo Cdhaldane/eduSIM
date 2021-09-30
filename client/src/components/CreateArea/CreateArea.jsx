@@ -45,9 +45,11 @@ function CreateArea(props) {
 
     event.preventDefault();
     const formData = new FormData();
+    console.log(imageSelected);
     formData.append("file", imageSelected);
     formData.append("folder", "images");
     formData.append("uploader", localStorage.adminid);
+
     try {
       let url = filename;
       if (willUpload) {
@@ -177,7 +179,7 @@ function CreateArea(props) {
             name="title"
             onChange={handleChange}
             value={note.title}
-            placeholder="                         "
+            placeholder=""
           />
         </div>
         <div className="gradient-border">

@@ -3,6 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { ChromePicker } from 'react-color';
 import axios from "axios";
 import DropdownItem from "./DropdownItem";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
@@ -15,6 +16,8 @@ const DropdownAddObjects = (props) => {
   const [img, setImg] = useState();
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const [validURL, setValidURL] = useState(false);
   const [checkedd, setCheckedd] = useState(false);
   const [checked, setChecked] = useState(false);
   const [imgsrc, setImgsrc] = useState("");
@@ -22,6 +25,8 @@ const DropdownAddObjects = (props) => {
   const [audiosrc, setAudiosrc] = useState("");
   const [file, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
+
+  const alertContext = useAlertContext();
 
   const calcOutOfBounds = (x, y) => {
     const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 212;
@@ -46,6 +51,21 @@ const DropdownAddObjects = (props) => {
   }
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
+
+  const imageURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".png") ||
+        url.includes(".jpg") ||
+        url.includes(".jpeg") ||
+        url.includes(".gif")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
@@ -87,25 +107,6 @@ const DropdownAddObjects = (props) => {
     setMenuHeight(height);
   }
 
-  const submitNote = async event => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", img);
-    formData.append("folder", "images");
-    formData.append("uploader", localStorage.adminid);
-
-    try {
-      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
-          props.handleImage(name);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   const filesubmitNote = async event => {
     event.preventDefault();
     const formData = new FormData();
@@ -125,15 +126,33 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  function handleImg(event) {
-    const file = document.getElementById("filePickerImageEdit").files[0];
-    console.log(file.type.toString());
-    if (file.type.toString().includes("image")) {
-      // Upload to cloudinary and then use the cloudinary URL
-      setImg(file);
-    } else {
-      console.log("NOT AN IMAGE!");
+  const uploadImage = async file => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "images");
+    formData.append("uploader", localStorage.adminid);
+
+    try {
+      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+          setImageUploaded(true);
+          props.handleImage(name);
+        });
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  const handleImgFromComputer = () => {
+    const file = document.getElementById("filePickerImageEdit").files[0];
+    if (!file.type.toString().includes("image")) {
+      alertContext.showAlert("Uploaded file is not an image.", "error");
+      return;
+    }
+
+    uploadImage(file);
   }
 
   function handleFile(event) {
@@ -380,9 +399,12 @@ const DropdownAddObjects = (props) => {
   }
 
   function handleImage(e) {
-    //submitNote(e);
-    setImgsrc(e.target.value);
-    props.handleImage(e.target.value);
+    const url = e.target.value;
+    if (imageURLGood(url)) {
+      setValidURL(true);
+      props.handleImage(url);
+    }
+    setImgsrc(url);
   }
 
   function handleVideo(e) {
@@ -393,10 +415,6 @@ const DropdownAddObjects = (props) => {
   function handleAudio(e) {
     setAudiosrc(e.target.value);
     props.handleAudio(audiosrc);
-  }
-
-  function handleImgSubmit(e) {
-    submitNote(e);
   }
 
   function handleFilesubmit(e) {
@@ -518,21 +536,32 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("media")}>
             <h2>Add Image</h2>
           </DropdownItem>
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={handleImgSubmit}></i>}>
-            <input
-              type="file"
-              name="img"
-              id="filePickerImageEdit"
-              onChange={handleImg}
-            />
-          </DropdownItem>
+          <div className={`${imageUploaded ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+                if (imageUploaded) {
+                  addImage(e);
+                }
+              }}></i>}>
+              <input
+                type="file"
+                name="img"
+                id="filePickerImageEdit"
+                onChange={handleImgFromComputer}
+              />
+            </DropdownItem>
+          </div>
 
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
-            <input className="add-dropdown-item-input" type="text" placeholder="Image URL" onChange={handleImage} value={imgsrc} />
-          </DropdownItem>
-
+          <div className={`${validURL ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+                if (validURL) {
+                  addImage(e);
+                }
+              }}></i>}>
+              <input className="add-dropdown-item-input" type="text" placeholder="Image URL" onChange={handleImage} value={imgsrc} />
+            </DropdownItem>
+          </div>
         </div>
       </CSSTransition>
       <CSSTransition
