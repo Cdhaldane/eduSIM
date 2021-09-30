@@ -6,14 +6,19 @@ const URLImage = forwardRef((props, ref) => {
   const [image, setImage] = useState(null);
 
   const loadImage = () => {
-    const image = new window.Image();
-    image.src = props.src;
-    setImage(image);
+    if (image) {
+      image.src = props.src;
+      return image;
+    } else {
+      const newImg = new window.Image();
+      newImg.src = props.src;
+      return newImg;
+    }
   }
 
   useEffect(() => {
-    loadImage();
-  }, []);
+    setImage(loadImage());
+  }, [ref]);
 
   return (
     <Image

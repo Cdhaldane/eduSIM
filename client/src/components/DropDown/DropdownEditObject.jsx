@@ -140,7 +140,7 @@ function DropdownEditObject(props) {
               <b>
                 Stroke width:
                 <Slider
-                  min={0.01}
+                  min={0}
                   max={30}
                   step={0.01}
                   className="slider"

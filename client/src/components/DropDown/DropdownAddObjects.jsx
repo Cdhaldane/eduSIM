@@ -6,7 +6,7 @@ import DropdownItem from "./DropdownItem";
 
 import "./Dropdown.css";
 
-const DEFAULT_STROKE = 0.1;
+const DEFAULT_STROKE = 2;
 
 const DropdownAddObjects = (props) => {
 
@@ -126,7 +126,14 @@ const DropdownAddObjects = (props) => {
   }
 
   function handleImg(event) {
-    setImg(event.target.files[0]);
+    const file = document.getElementById("filePickerImageEdit").files[0];
+    console.log(file.type.toString());
+    if (file.type.toString().includes("image")) {
+      // Upload to cloudinary and then use the cloudinary URL
+      setImg(file);
+    } else {
+      console.log("NOT AN IMAGE!");
+    }
   }
 
   function handleFile(event) {
@@ -143,10 +150,10 @@ const DropdownAddObjects = (props) => {
       objectsDeletedState === undefined ||
       objectsDeletedState === null ||
       objectsDeletedState === NaN
-      ) {
-        console.log("WIERD DELETED STATE");
-        console.log(objectsDeletedState);
-        objectsDeletedState = 0;
+    ) {
+      console.log("WEIRD DELETED STATE");
+      console.log(objectsDeletedState);
+      objectsDeletedState = 0;
     }
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
@@ -265,7 +272,7 @@ const DropdownAddObjects = (props) => {
       {
         imgsrc: props.state.imgsrc,
         stroke: 'black',
-        strokeWidth: DEFAULT_STROKE,
+        strokeWidth: 0,
         opacity: 1,
         width: 200,
         height: 200
@@ -373,9 +380,9 @@ const DropdownAddObjects = (props) => {
   }
 
   function handleImage(e) {
-    submitNote(e);
+    //submitNote(e);
     setImgsrc(e.target.value);
-    props.handleImage(imgsrc);
+    props.handleImage(e.target.value);
   }
 
   function handleVideo(e) {
@@ -419,7 +426,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-shapes"></i>}
             onClick={() => setActiveMenu("shapes")}>
-            Add shapes
+            Add Shapes
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-camera"></i>}
@@ -429,7 +436,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
             onClick={() => setActiveMenu("pieces")}>
-            Game Piece
+            Add Games
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -444,7 +451,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>SHAPES!</h2>
+            <h2>Add Shapes</h2>
           </DropdownItem>
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
@@ -470,7 +477,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>MEDIA!</h2>
+            <h2>Add Media</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fa fa-picture-o"></i>}
@@ -485,7 +492,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-volume-up"></i>}
             onClick={() => setActiveMenu("audio")}>
-            Sound
+            Audio
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-file"></i>}
@@ -495,7 +502,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             onClick={addText}
             leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
-            Textbox
+            Text
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -509,33 +516,23 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>IMAGE!</h2>
+            <h2>Add Image</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={handleImgSubmit}></i>}>
+            <input
+              type="file"
+              name="img"
+              id="filePickerImageEdit"
+              onChange={handleImg}
+            />
           </DropdownItem>
 
-          <input
-            type="file"
-            name="img"
-            id="file"
-            onChange={handleImg}
-          />
-          <label id="fileI" htmlFor="file">From file</label>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
+            <input className="add-dropdown-item-input" type="text" placeholder="Image URL" onChange={handleImage} value={imgsrc} />
           </DropdownItem>
 
-          <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
-          </DropdownItem>
-
-          <input id="imginputname" type="text" placeholder="Image name..." onChange={handleImage} value={imgsrc} />
-          <DropdownItem
-            onClick={addImage}
-            leftIcon={<i className="icons fas fa-plus"
-              onClick={addImage}></i>}>Add</DropdownItem>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -548,7 +545,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>VIDEO!</h2>
+            <h2>Add Video</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addVideo}></i>}>
@@ -575,7 +572,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>AUDIO!!</h2>
+            <h2>Add Audio</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addAudio}></i>}>
@@ -599,7 +596,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>DOCUMENTS!</h2>
+            <h2>Add Document</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={handleFilesubmit}></i>}>
@@ -629,7 +626,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("shapes")}>
-            <h2>DRAW!</h2>
+            <h2>Draw Mode</h2>
           </DropdownItem>
           <b id="colourp">
             <ChromePicker
@@ -661,7 +658,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>PIECES!</h2>
+            <h2>Add Games</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addTic}

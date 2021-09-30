@@ -133,6 +133,19 @@ class Graphics extends Component {
       shouldTextUpdate: true,
       selectedFont: null,
 
+      // Image, Video, Audio, Document sources
+      vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
+      //imgsrc: "https://konvajs.org/assets/lion.png",
+      imgsrc: 'https://cdn.hackernoon.com/hn-images/0*xMaFF2hSXpf_kIfG.jpg',
+      audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
+      docsrc: "",
+      docimage: null,
+
+      // Draw
+      tool: 'pen',
+      isDrawing: false,
+      drawMode: false,
+
       selectedShapeName: "",
 
       layerX: 0,
@@ -176,15 +189,7 @@ class Graphics extends Component {
       savedstates: [],
       draggable: false,
       level: 1,
-      tool: 'pen',
-      isDrawing: false,
-      drawMode: false,
-      imagesrc: null,
-      vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
-      imgsrc: "https://konvajs.org/assets/lion.png",
-      audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
-      docsrc: "",
-      docimage: null,
+
       selection: {
         visible: false,
         x1: -100,
@@ -227,11 +232,11 @@ class Graphics extends Component {
       this.props.showAlert("Simulation Autosaved", "info");
     }, MINUTE_MS / 2);
 
-    // Redraw the canvas every 5 seconds
+    // Redraw the canvas every 1 second
     this.drawInterval = setInterval(() => {
       this.refs.graphicStage.draw();
       this.refs.personalAreaStage.draw();
-    }, MINUTE_MS / 12);
+    }, 1000);
 
     history.push(this.state);
     this.setState({ selectedShapeName: "" });
@@ -295,6 +300,13 @@ class Graphics extends Component {
           }
         }
       }
+    }
+
+    // Show Selection (for debugging purposes)
+    if (this.state.selectedShapeName) {
+      //console.log(this.refs[this.state.selectedShapeName].attrs.id);
+      //console.log(this.refs[this.state.selectedShapeName].attrs);
+      //console.log(this.refs[this.state.selectedShapeName].attrs.image.src);
     }
 
     if (!this.state.redoing && !this.state.isTransforming)
@@ -938,8 +950,12 @@ class Graphics extends Component {
   }
 
   handlePaste = () => {
-    if (this.state.copiedElement === null || this.state.copiedElement === undefined) {
-      // Ignore paste if nothing is copied
+    if (
+      this.state.copiedElement === null ||
+      this.state.copiedElement === undefined ||
+      document.activeElement.getAttribute("name") !== "pasteContainer"
+    ) {
+      // Ignore paste if nothing is copied or if focus is not on canvas
       return;
     }
     const copiedElement = this.state.copiedElement[0];
@@ -951,26 +967,37 @@ class Graphics extends Component {
         switch (type) {
           case ("rectangles"):
             this.pasteObject(type, copiedElement, this.state.rectDeleteCount);
+            break;
           case ("arrows"):
             this.pasteObject(type, copiedElement, this.state.arrowDeleteCount);
+            break;
           case ("ellipses"):
             this.pasteObject(type, copiedElement, this.state.ellipseDeleteCount);
+            break;
           case ("images"):
             this.pasteObject(type, copiedElement, this.state.imageDeleteCount);
+            break;
           case ("videos"):
             this.pasteObject(type, copiedElement, this.state.videoDeleteCount);
+            break;
           case ("audios"):
             this.pasteObject(type, copiedElement, this.state.audioDeleteCount);
+            break;
           case ("triangles"):
             this.pasteObject(type, copiedElement, this.state.triangleDeleteCount);
+            break;
           case ("documents"):
             this.pasteObject(type, copiedElement, this.state.documentDeleteCount);
+            break;
           case ("lines"):
             this.pasteObject(type, copiedElement, this.state.lineDeleteCount);
+            break;
           case ("stars"):
             this.pasteObject(type, copiedElement, this.state.starDeleteCount);
+            break;
           case ("texts"):
             this.pasteObject(type, copiedElement, this.state.textDeleteCount);
+            break;
         }
       }
 
@@ -1096,9 +1123,7 @@ class Graphics extends Component {
         arrows: arrows,
         texts: texts,
         lines: lines,
-        selectedShapeName: ""
-      });
-      this.setState({
+        selectedShapeName: "",
         selectedContextMenu: null
       });
 
@@ -1426,7 +1451,7 @@ class Graphics extends Component {
       const objects = this.state[objType];
       if (Array.isArray(objects) && objects.length) {
         objects.forEach((object) => {
-          if (object.strokeWidth && object.id === this.state.selectedShapeName) {
+          if (object.strokeWidth !== null && object.id === this.state.selectedShapeName) {
             const index = objects.map(object => object.name).indexOf(this.state.selectedShapeName);
             const newObjs = [
               ...objects.slice(0, index),
@@ -1479,8 +1504,7 @@ class Graphics extends Component {
   handleImage = (e) => {
     this.setState({
       imgsrc: e
-    })
-    console.log(e)
+    });
   }
 
   handleVideo = (e) => {
@@ -1514,9 +1538,29 @@ class Graphics extends Component {
       })
   }
 
-  //const stage = this.refs.graphicStage;
-  //const text = this.refs[eachText.ref];
-  // layer = this.refs.groupAreaLayer
+  imgOnTransformEnd = () => {
+    this.setState({
+      isTransforming: false
+    });
+    const image = this.refs[this.state.selectedShapeName];
+    if (image) {
+      this.setState(prevState => ({
+        images: prevState.images.map(i =>
+          i.id === this.state.selectedShapeName
+            ? {
+              ...i,
+              scaleX: image.scaleX(),
+              scaleY: image.scaleY(),
+              rotation: image.rotation(),
+              x: image.x(),
+              y: image.y()
+            }
+            : i
+        )
+      }));
+    }
+  }
+
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (stage, text, layer) => {
     if (text) {
@@ -1677,6 +1721,7 @@ class Graphics extends Component {
 
         <div
           onKeyDown={this.contextMenuEventShortcuts}
+          name="pasteContainer"
           tabIndex="0"
           style={{ outline: "none" }}
         >
@@ -2122,27 +2167,7 @@ class Graphics extends Component {
                       onTransform={() => {
 
                       }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-                        const image = this.refs[eachImage.ref];
-                        this.setState(prevState => ({
-                          images: prevState.images.map(i =>
-                            i.id === this.state.selectedShapeName
-                              ? {
-                                ...i,
-                                scaleX: image.scaleX(),
-                                scaleY: image.scaleY(),
-                                rotation: image.rotation(),
-                                x: image.x(),
-                                y: image.y()
-                              }
-                              : i
-                          )
-                        }));
-                      }}
-
+                      onTransformEnd={this.imgOnTransformEnd}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -3001,6 +3026,7 @@ class Graphics extends Component {
           <div>
             <div className={"info" + this.state.open}>
               <div
+                name="pasteContainer"
                 tabIndex="0"
                 className="personalAreaStageContainer"
                 onKeyDown={this.contextMenuEventShortcuts}>
@@ -3356,6 +3382,8 @@ class Graphics extends Component {
                             name="shape"
                             id={eachImage.id}
                             layer={this.refs.groupAreaLayer}
+                            scaleX={eachImage.scaleX}
+                            scaleY={eachImage.scaleY}
                             x={eachImage.x}
                             y={eachImage.y}
                             width={eachImage.width}
@@ -3385,19 +3413,8 @@ class Graphics extends Component {
                               this.setState({
                                 isTransforming: true
                               });
-
                             }}
-                            onTransform={() => {
-
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({
-                                isTransforming: false
-                              });
-                              let triangle = this.refs[eachImage.ref];
-
-                            }}
-
+                            onTransformEnd={this.imgOnTransformEnd}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {

@@ -81,6 +81,10 @@ a {
   cursor: pointer;
 }
 
+.menu-item h2 {
+  font-size: 1.5rem;
+}
+
 .menu-item .icon-button {
   margin-right: 0.5rem;
 }
@@ -287,6 +291,12 @@ a {
   left: 60px;
   background-color: white;
   height: 20px;
+}
+
+#filePickerImageEdit {
+  width: 80%;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
 }
 
 #fileI {
