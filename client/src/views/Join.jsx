@@ -48,7 +48,7 @@ function Join(props) {
       client.on("message", (data) => {
         setRoomMessages((messages) => ({
           ...messages,
-          [data.room]: [ ...messages[data.room] || [], { id: data.id, message: data.message } ]
+          [data.room]: [ ...messages[data.room] || [], { sender: data.sender, message: data.message } ]
         }));
       })
       setSocketInfo(client);

@@ -7,8 +7,7 @@ import Home from "./views/Home";
 import About from "./views/About";
 import Profile from "./views/Profile";
 import Dashboard from "./views/Dashboard";
-// import GamePage from "./views/GamePage";
-import GamePageTest from "./views/GamePageTest"; // TEMPORARY CHANGE
+import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
 import Join from "./views/Join"
 import { withAuth0 } from "@auth0/auth0-react";
@@ -38,7 +37,7 @@ const App = (props) => {
           )}
           <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
           <Route exact path="/about" render={(props) => <About {...props} />} />
-          <Route exact path="/gamepage/:roomid" render={(props) => <GamePageTest {...props} />} />
+          <Route exact path="/gamepage/:roomid" render={(props) => <GamePage {...props} />} />
           <Route exact path="/editpage" render={(props) => <EditPage {...props} />} />
           <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
           <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />

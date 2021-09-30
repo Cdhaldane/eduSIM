@@ -1,6 +1,6 @@
 import playerEvents from "./player";
 import adminEvents from "./admin";
-import { getRoomStatus, getSimulationRooms } from './utils';
+import { getRoomStatus, getSimulationRooms, getPlayersInRoom } from './utils';
 
 export default async (server, client) => {
   
@@ -27,9 +27,16 @@ export default async (server, client) => {
     const roomid = client.handshake.query.room;
     client.join(roomid);
 
+    const players = await getPlayersInRoom(roomid, server);
+
     const roomStatus = await getRoomStatus(roomid);
-    client.emit("connectStatus", roomStatus);
-    client.to(roomid).emit("newClient", client.id);
+    client.emit("connectStatus", {
+      ...roomStatus, players 
+    });
+
+    client.on("disconnect", () => {
+      server.in(roomid).emit("clientLeft", client.id);
+    });
 
     client.onAny((event, args) => playerEvents(server, client, event, args));
   }

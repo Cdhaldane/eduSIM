@@ -43,6 +43,7 @@ function NavLinksGroup(props) {
             compact={props.compact}
             key={link.to}
             to={link.to}
+            disabled={props.disabled}
             iconClassName={link.icon}
             label={link.label}
             sublabel={link.sublabel}

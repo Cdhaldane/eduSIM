@@ -81,6 +81,12 @@ a {
   cursor: pointer;
 }
 
+.menu-item[disabled] {
+  pointer-events: none;
+  cursor: unset;
+  opacity: 0.5;
+}
+
 .menu-item .icon-button {
   margin-right: 0.5rem;
 }
@@ -95,6 +101,11 @@ a {
 
 .icon-right {
   margin-left: auto;
+}
+
+.role-deselect-icon {
+  margin-left: auto;
+  border-radius: 0 !important;
 }
 
 /* CSSTransition classes  */
