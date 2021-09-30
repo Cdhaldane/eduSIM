@@ -21,6 +21,8 @@ const URLImage = forwardRef((props, ref) => {
       visible={props.visible}
       x={props.x}
       y={props.y}
+      scaleY={props.scaleY}
+      scaleX={props.scaleX}
       width={props.width}
       height={props.height}
       image={image}

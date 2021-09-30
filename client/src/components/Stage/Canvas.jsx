@@ -1563,7 +1563,6 @@ class Graphics extends Component {
     let text = this.refs[this.state.selectedShapeName];
 
     this.setState(prevState => ({
-      errMsg: "",
       texts: prevState.texts.map(t =>
         t.id === this.state.selectedShapeName
           ? {
@@ -2089,6 +2088,8 @@ class Graphics extends Component {
                       layer={this.refs.groupAreaLayer}
                       x={eachImage.x}
                       y={eachImage.y}
+                      scaleX={eachImage.scaleX}
+                      scaleY={eachImage.scaleY}
                       width={eachImage.width}
                       height={eachImage.height}
                       stroke={eachImage.stroke}
@@ -2125,8 +2126,21 @@ class Graphics extends Component {
                         this.setState({
                           isTransforming: false
                         });
-                        let triangle = this.refs[eachImage.ref];
-
+                        const image = this.refs[eachImage.ref];
+                        this.setState(prevState => ({
+                          images: prevState.images.map(i =>
+                            i.id === this.state.selectedShapeName
+                              ? {
+                                ...i,
+                                scaleX: image.scaleX(),
+                                scaleY: image.scaleY(),
+                                rotation: image.rotation(),
+                                x: image.x(),
+                                y: image.y()
+                              }
+                              : i
+                          )
+                        }));
                       }}
 
                       onDragMove={() => {
