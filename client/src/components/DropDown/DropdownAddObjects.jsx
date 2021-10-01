@@ -142,8 +142,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
         .then((res) => {
           const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/audio/upload/" + allData + ".mp4";
-          console.log(name);
+          const name = "https://res.cloudinary.com/uottawaedusim/audio/upload/" + allData + ".mp3";
           setAudioUploaded(true);
           props.handleAudio(name);
         });
@@ -187,7 +186,7 @@ const DropdownAddObjects = (props) => {
       return;
     }
 
-    uploadFile(file, "video");
+    uploadFile(file, "audio");
   }
 
   function handleFile(event) {
@@ -638,6 +637,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
+                className={"addObjectFilePicker"}
                 id="filePickerImageEdit"
                 onChange={handleImgFromComputer}
               />
@@ -679,6 +679,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
+                className={"addObjectFilePicker"}
                 id="filePickerVideoEdit"
                 onChange={handleVideoFromComputer}
               />
@@ -720,6 +721,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
+                className={"addObjectFilePicker"}
                 id="filePickerAudioEdit"
                 onChange={handleAudioFromComputer}
               />

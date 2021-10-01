@@ -1512,22 +1512,19 @@ class Graphics extends Component {
   handleVideo = (e) => {
     this.setState({
       vidsrc: e
-    })
-    console.log(e)
+    });
   }
 
   handleAudio = (e) => {
     this.setState({
       audsrc: e
-    })
-    console.log(e)
+    });
   }
 
   handleDocument = (e) => {
     this.setState({
       docsrc: e
-    })
-    console.log(e)
+    });
   }
 
   handleDownload = (url, filename) => {
