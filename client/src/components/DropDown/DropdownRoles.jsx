@@ -200,8 +200,8 @@ const DropdownRoles = (props) => {
             icon={<i className="icons fab fa-critical-role"></i>}>
             {selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && (
-              <button class="role-deselect-icon" onClick={handleDeselectRole}>
-                <i class="fa fa-times-circle"></i>
+              <button className="role-deselect-icon" onClick={handleDeselectRole}>
+                <i className="fa fa-times-circle"></i>
               </button>
             )}
           </DropdownItem>

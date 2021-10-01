@@ -199,8 +199,9 @@ function CreateArea(props) {
       </form>
       {img && (
         <form ref={imageArea} className="form-imgs">
-          {props.previewImages?.map((image) => (
+        {props.previewImages?.map((image, index) => (
             <Image
+              key={index}
               cloudName="uottawaedusim"
               publicId={image.url}
               onClick={() => {

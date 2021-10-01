@@ -187,9 +187,9 @@ function Sidebar(props) {
     <div ref={sidebarRef}>
       <Backdrop visible={props.visible} onClick={props.close} />
       <Submenu open={submenuVisible && compact}>
-        {links.map(({ id, submenu: el }) => (
+        {links.map(({ id, submenu: el }, index) => (
           el && (
-            <div className={(id !== submenu ? "hidden" : "")}>{el}</div>
+            <div key={index} className={(id !== submenu ? "hidden" : "")}>{el}</div>
           )
         ))}
       </Submenu>

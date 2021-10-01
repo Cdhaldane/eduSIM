@@ -146,7 +146,7 @@ function Messages(props) {
       {Array.from(sendGroup).length>0 && (
         <MessageGroup>
           <button onClick={removeWhisper}>
-            <i class="fa fa-times-circle" aria-hidden="true"></i>
+            <i className="fa fa-times-circle" aria-hidden="true"></i>
           </button>
           <p>Sending to: {Array.from(sendGroup).map(mem => mem.name).join(', ')}</p>
         </MessageGroup>
@@ -154,7 +154,7 @@ function Messages(props) {
       <form onSubmit={sendMessage} action="#">
         <MessageInput onChange={(e) => setMessageInput(e.target.value)} value={messageInput} placeholder="Type your message here" />
         <MessageSend type="submit" value="send">
-          <i class="fa fa-send fa-2x" ></i>
+          <i className="fa fa-send fa-2x" ></i>
         </MessageSend>
       </form>
     </MessageContainer>

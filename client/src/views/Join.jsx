@@ -103,14 +103,14 @@ function Join(props) {
         <div className="joinboard-controls">
           <p>{currentRoom ? (currentRoom[0] + (currentRoomStatus.running ? ' (running)' : '')) : "All rooms"}</p>
           <div className="joinboard-buttons">
-            <button class={`joinboard-button ${currentRoom && currentRoomStatus.running && ' joinboard-disabled'}`} onClick={startSim}>
-              <i class="fa fa-play"></i>
+            <button className={`joinboard-button ${currentRoom && currentRoomStatus.running && ' joinboard-disabled'}`} onClick={startSim}>
+              <i className="fa fa-play"></i>
             </button>
-            <button class={`joinboard-button ${currentRoom && !currentRoomStatus.running && ' joinboard-disabled'}`} onClick={pauseSim}>
-              <i class="fa fa-pause"></i>
+            <button className={`joinboard-button ${currentRoom && !currentRoomStatus.running && ' joinboard-disabled'}`} onClick={pauseSim}>
+              <i className="fa fa-pause"></i>
             </button>
-            <button class="joinboard-button">
-              <i class="fa fa-retweet"></i>
+            <button className="joinboard-button">
+              <i className="fa fa-retweet"></i>
             </button>
           </div>
         </div>

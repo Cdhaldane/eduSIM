@@ -18,8 +18,10 @@ const DropdownAddObjects = (props) => {
   const [colour, setColour] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
+  const [audioUploaded, setAudioUploaded] = useState(false);
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
+  const [validAudioURL, setValidAudioURL] = useState(false);
   const [checkedd, setCheckedd] = useState(false);
   const [checked, setChecked] = useState(false);
   const [imgsrc, setImgsrc] = useState("");
@@ -136,12 +138,22 @@ const DropdownAddObjects = (props) => {
           setVideoUploaded(true);
           props.handleVideo(name);
         });
+      } else if (type === "audio") {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/audio/upload/" + allData + ".mp3";
+          setAudioUploaded(true);
+          props.handleAudio(name);
+        });
       }
     } catch (error) {
       if (type === "image") {
         setImageUploaded(false);
       } else if (type === "video") {
         setVideoUploaded(false);
+      } else if (type === "audio") {
+        setAudioUploaded(false);
       }
       console.log(error);
     }
@@ -165,6 +177,16 @@ const DropdownAddObjects = (props) => {
     }
 
     uploadFile(file, "video");
+  }
+
+  const handleAudioFromComputer = () => {
+    const file = document.getElementById("filePickerAudioEdit").files[0];
+    if (!file.type.toString().includes("audio")) {
+      alertContext.showAlert("Uploaded file is not an audio file.", "error");
+      return;
+    }
+
+    uploadFile(file, "audio");
   }
 
   function handleFile(event) {
@@ -441,7 +463,6 @@ const DropdownAddObjects = (props) => {
       url.includes("http://") ||
       url.includes("https://")) && (
         url.includes(".mp4") ||
-        url.includes(".wav") ||
         url.includes(".webm") ||
         url.includes(".ogv") ||
         url.includes(".avi")
@@ -463,9 +484,28 @@ const DropdownAddObjects = (props) => {
     setVidsrc(url);
   }
 
-  function handleAudio(e) {
-    setAudiosrc(e.target.value);
-    props.handleAudio(audiosrc);
+  const audioURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".mp3") ||
+        url.includes(".wav")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const handleAudio = (e) => {
+    const url = e.target.value;
+    if (audioURLGood(url)) {
+      setValidAudioURL(true);
+      props.handleAudio(url);
+    } else {
+      setValidAudioURL(false);
+    }
+    setAudiosrc(url);
   }
 
   function handleFilesubmit(e) {
@@ -597,6 +637,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
+                className={"addObjectFilePicker"}
                 id="filePickerImageEdit"
                 onChange={handleImgFromComputer}
               />
@@ -638,6 +679,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
+                className={"addObjectFilePicker"}
                 id="filePickerVideoEdit"
                 onChange={handleVideoFromComputer}
               />
@@ -654,20 +696,6 @@ const DropdownAddObjects = (props) => {
               <input className="add-dropdown-item-input" type="text" placeholder="Video URL" onChange={handleVideo} value={vidsrc} />
             </DropdownItem>
           </div>
-
-          {/*<DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addVideo}></i>}>
-          </DropdownItem>
-          <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus"
-              onClick={addVideo}></i>}>
-          </DropdownItem>
-          <input id="imginputvname" type="text" placeholder="Video name..." onChange={handleVideo} value={vidsrc} />
-          <DropdownItem
-            onClick={addVideo}
-            leftIcon={<i className="icons fas fa-plus"
-              onClick={addVideo}></i>}>Add</DropdownItem>*/}
         </div>
       </CSSTransition>
       <CSSTransition
@@ -682,15 +710,34 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("media")}>
             <h2>Add Audio</h2>
           </DropdownItem>
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addAudio}></i>}>
-          </DropdownItem>
-          <input id="imginputv" type="text" placeholder="Audio source..." onChange={handleAudio} value={audiosrc} />
-          <DropdownItem
-            onClick={addAudio}
-            leftIcon={<i className="icons fas fa-plus" onClick={addAudio}></i>}>
-            Add
-          </DropdownItem>
+
+          <div className={`${audioUploaded ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+                if (audioUploaded) {
+                  addAudio(e);
+                }
+              }}></i>}>
+              <input
+                type="file"
+                name="img"
+                className={"addObjectFilePicker"}
+                id="filePickerAudioEdit"
+                onChange={handleAudioFromComputer}
+              />
+            </DropdownItem>
+          </div>
+
+          <div className={`${validAudioURL ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+                if (validAudioURL) {
+                  addAudio(e);
+                }
+              }}></i>}>
+              <input className="add-dropdown-item-input" type="text" placeholder="Audio URL" onChange={handleAudio} value={audiosrc} />
+            </DropdownItem>
+          </div>
         </div>
       </CSSTransition>
 

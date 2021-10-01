@@ -105,7 +105,7 @@ function Game(props) {
             players={players}
           />
           {!running && (<PauseCover>
-            <i class="fa fa-pause-circle fa-2x"></i>
+            <i className="fa fa-pause-circle fa-2x"></i>
             <p>Paused</p>
           </PauseCover>)}
         </Main>
