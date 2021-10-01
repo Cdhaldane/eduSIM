@@ -48,7 +48,7 @@ function Game(props) {
   const [roomStatus, setRoomStatus] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
-  const [level, setLevel] = useState();
+  const [level, setLevel] = useState(1);
 
   const toggle = () => setShowNav(!showNav);
 
@@ -97,14 +97,12 @@ function Game(props) {
     : (roomStatus.timeElapsed || 0)
   );
 
-
-
   const countdown = () => {
     const count = (roomStatus.settings?.advanceMode || 1)*60000;
     return (count - timeFromNow()) - Math.floor((count - timeFromNow())/count)*count
   };
 
-  console.log(roomStatus.settings?.advanceMode)
+  const actualLevel = roomStatus.level || level;
 
   const isLoading = room === null;
 
@@ -128,7 +126,7 @@ function Game(props) {
             gameinstance={room.gameinstance}
             socket={socket}
             players={players}
-            level={level}
+            level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
           />
           {!roomStatus.running && (<PauseCover>
@@ -143,7 +141,7 @@ function Game(props) {
             intervalTime={20}
             enabled
           /></p>
-          {roomStatus.settings?.advanceMode && roomStatus.settings?.advanceMode !== "student" && (<p>level: {level}</p>)}
+          {roomStatus.settings?.advanceMode && roomStatus.settings?.advanceMode !== "student" && (<p>level: {actualLevel}</p>)}
           {!isNaN(roomStatus.settings?.advanceMode) && (
             <>
               countdown: <AutoUpdate

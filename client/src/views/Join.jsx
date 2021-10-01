@@ -44,7 +44,6 @@ function Join(props) {
         }
       });
       client.on("roomStatusUpdate", (data) => {
-        console.log("POO", data);
         setRoomStatus((rooms) => ({
           ...rooms,
           [data.room]: data.status

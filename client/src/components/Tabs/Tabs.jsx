@@ -49,7 +49,7 @@ function Tabs(props) {
   const toggleTab = (index) => {
     setToggleState(index);
     // for updating controls in admin header
-    props.setRoom(tabs[index-1]);
+    props.setRoom(tabs[index - 1]);
   };
 
   const handleSubmit = (e) => {
@@ -103,11 +103,11 @@ function Tabs(props) {
 
       })
       .catch(error => console.log(error.response));
-    setTabs(tabs.filter((_,i) => i != index));
+    setTabs(tabs.filter((_, i) => i != index));
   }
 
   const handleTime = (e) => {
-    const val = Math.max(parseFloat(e.target.value),1);
+    const val = Math.max(parseFloat(e.target.value), 1);
     setTime(val);
     if (props.socket) {
       props.socket.emit("updateGameSettings", {
@@ -128,7 +128,13 @@ function Tabs(props) {
         }
       });
     }
-  }
+  };
+
+  const handleNextPage = (room) => {
+    if (props.socket) {
+      props.socket.emit("goToNextPage", { room });
+    }
+  };
 
   const displayAdvance = () => {
     const keys = props.roomStatus && Object.keys(props.roomStatus);
@@ -138,7 +144,7 @@ function Tabs(props) {
       ) || "student"
     }
     return "student";
-  }
+  };
 
   return (
     <div className="page-margin tabs">
@@ -241,7 +247,7 @@ function Tabs(props) {
           <h3>Student/participant list:</h3>
           <Table addstudent={false} gameid={props.gameid} title={props.title} />
         </div>
-        {tabs.map((tab,i) => (
+        {tabs.map((tab, i) => (
           <div
             className={
               toggleState === i + 1 ? "content  active-content" : "content"
@@ -249,6 +255,15 @@ function Tabs(props) {
           >
             <div className="content-header">
               <h2>{tab[0]}</h2>
+              {props.roomStatus[tab[2]]?.settings?.advanceMode === "teacher" &&
+                props.roomStatus[tab[2]]?.startTime && (
+                  <>
+                    <button className="content-pagecontrol" onClick={() => handleNextPage(tab[2])}>
+                      Next Page
+                    </button>
+                    On page: {props.roomStatus[tab[2]].level || 1}
+                  </>
+                )}
               <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                 Join Room
               </a>
