@@ -15,19 +15,20 @@ const PORT = process.env.PORT || 5050;
 
 //Initialising express and registering the basic middleware
 const app = express();
-app.use(cors()) // Use this after the variable declaration
+app.use(cors()); // Use this after the variable declaration
 app.use(helmet());
 app.use(express.json()); //-> allows us to access the req.body
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(fileUpload());
 
-app.use('/api/gameinstances', routes.gameinstance)
-app.use('/api/adminaccounts', routes.adminaccount)
-app.use('/api/email', routes.emailer)
-app.use('/api/gameroles', routes.gamerole)
-app.use('/api/playerrecords', routes.playerrecord)
-app.use('/api/image', routes.image)
+app.use('/api/gameinstances', routes.gameinstance);
+app.use('/api/adminaccounts', routes.adminaccount);
+app.use('/api/email', routes.emailer);
+app.use('/api/gameroles', routes.gamerole);
+app.use('/api/playerrecords', routes.playerrecord);
+app.use('/api/image', routes.image);
+app.use('/api/video', routes.video);
 
 app.use((req, res) => {
   res.status(404).send('404: Page not found');

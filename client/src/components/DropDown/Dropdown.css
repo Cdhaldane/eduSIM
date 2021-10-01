@@ -47,7 +47,7 @@ a {
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
-  transition: height var(--speed) ease;
+  transition: var(--speed) ease;
   box-shadow: var(--box-shadow);
   font-family: 'Montserrat', sans-serif;
 }
@@ -76,9 +76,20 @@ a {
   align-items: center;
   border-radius: var(--border-radius);
   transition: background var(--speed);
-  padding: 0.5rem;
   margin-bottom: 0px;
   cursor: pointer;
+}
+
+.dropdown-add-disabled > .menu-item > .icon-button {
+  background-color: #636363 !important;
+}
+
+.dropdown-add-disabled > .menu-item > .icon-button:hover {
+  cursor: not-allowed !important;
+}
+
+.menu-item h2 {
+  font-size: 1.5rem;
 }
 
 .menu-item[disabled] {
@@ -298,6 +309,12 @@ a {
   left: 60px;
   background-color: white;
   height: 20px;
+}
+
+#filePickerImageEdit {
+  width: 80%;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
 }
 
 #fileI {

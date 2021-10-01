@@ -5,7 +5,7 @@ import "./ContextMenu.css"
 
 function ContextMenu(props) {
   const [drop, setDrop] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
+  const [editModalLeft, setEditModalLeft] = useState(false);
   const menu = useRef();
 
   const handleClickOutside = e => {
@@ -14,10 +14,56 @@ function ContextMenu(props) {
     }
   };
 
+  const calcOutOfBounds = (x, y) => {
+    const dropHeight = menu.current ? menu.current.clientHeight : 205;
+    const dropWidth = menu.current ? menu.current.clientWidth : 155;
+    const editModalWidth = 400;
+    const paddingPx = 7;
+    const screenH = window.innerHeight - paddingPx;
+    const screenW = window.innerWidth - paddingPx;
+
+    let transformX = (x + dropWidth) - screenW;
+    if (transformX < 0) {
+      transformX = 0;
+    }
+    let transformY = (y + dropHeight) - screenH;
+    if (transformY < 0) {
+      transformY = 0;
+    }
+    let left = false;
+    if (screenW - (x + dropWidth + editModalWidth) < 0 && menu.current) {
+      left = true;
+    }
+
+    return {
+      x: transformX,
+      y: transformY,
+      left: left
+    }
+  }
+  const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.position.x, props.position.y).x);
+  const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.position.x, props.position.y).y);
+
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener('contextmenu', handleRightClick);
+
+    setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('contextmenu', handleRightClick);
+    }
   }, []);
+
+  const handleRightClick = (e) => {
+    setDrop(false);
+
+    const offset = calcOutOfBounds(e.clientX, e.clientY);
+    setOffsetX(-offset.x);
+    setOffsetY(-offset.y);
+    setEditModalLeft(offset.left);
+  }
 
   function handleEdit() {
     setDrop(!drop);
@@ -44,8 +90,9 @@ function ContextMenu(props) {
       ref={menu}
       className="cmenu"
       style={{
-        left: props.position.x + sidebarWidth,
-        top: props.position.y
+        width: "155px",
+        left: props.position.x + offsetX,
+        top: props.position.y + offsetY
       }}
     >
       <ul>
@@ -59,6 +106,7 @@ function ContextMenu(props) {
       {drop && (
         <div className="drop">
           <DropdownEditObject
+            top={menu.current.offsetTop}
             title={props.editTitle}
             choosecolorf={handleColorF}
             choosecolors={handleColorS}
@@ -66,6 +114,10 @@ function ContextMenu(props) {
             handleOpacity={handleOpacity}
             handleSize={(e) => props.handleSize(e)}
             handleFont={(e) => props.handleFont(e)}
+            font={props.selectedFont}
+            shape={props.shape}
+            left={editModalLeft}
+            close={props.close}
           />
         </div>
       )}

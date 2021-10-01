@@ -4,6 +4,7 @@ import emailer from "./emailer";
 import gamerole from "./gamerole";
 import playerrecord from "./playerrecord";
 import image from "./image";
+import video from "./video";
 
 export default {
   gameinstance,
@@ -11,5 +12,6 @@ export default {
   emailer,
   gamerole,
   playerrecord,
-  image
+  image,
+  video
 };

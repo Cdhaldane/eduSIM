@@ -3,15 +3,23 @@ import { CSSTransition } from 'react-transition-group';
 import { ChromePicker } from 'react-color';
 import axios from "axios";
 import DropdownItem from "./DropdownItem";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
+const DEFAULT_STROKE = 2;
+
 const DropdownAddObjects = (props) => {
+
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(214);
   const [img, setImg] = useState();
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const [videoUploaded, setVideoUploaded] = useState(false);
+  const [validImgURL, setValidImgURL] = useState(false);
+  const [validVideoURL, setValidVideoURL] = useState(false);
   const [checkedd, setCheckedd] = useState(false);
   const [checked, setChecked] = useState(false);
   const [imgsrc, setImgsrc] = useState("");
@@ -20,12 +28,48 @@ const DropdownAddObjects = (props) => {
   const [file, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
 
+  const alertContext = useAlertContext();
+
+  const calcOutOfBounds = (x, y) => {
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 212;
+    const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
+    const paddingPx = 7;
+    const screenH = window.innerHeight - paddingPx;
+    const screenW = window.innerWidth - paddingPx;
+
+    let transformX = (x + dropWidth) - screenW;
+    if (transformX < 0) {
+      transformX = 0;
+    }
+    let transformY = (y + dropHeight) - screenH;
+    if (transformY < 0) {
+      transformY = 0;
+    }
+
+    return {
+      x: transformX,
+      y: transformY
+    }
+  }
+  const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
+  const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
+
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener('contextmenu', handleReposition);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('contextmenu', handleReposition);
+    }
   }, []);
+
+  const handleReposition = (e) => {
+    const offset = calcOutOfBounds(e.clientX, e.clientY);
+    setOffsetX(-offset.x);
+    setOffsetY(-offset.y);
+  }
 
   const handleClickOutside = e => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -40,26 +84,14 @@ const DropdownAddObjects = (props) => {
 
   function calcHeight(el) {
     const height = el.offsetHeight;
-    setMenuHeight(height);
-  }
-
-  const submitNote = async event => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", img);
-    formData.append("folder", "images");
-    formData.append("uploader", localStorage.adminid);
-
-    try {
-      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
-          props.handleImage(name);
-        });
-    } catch (error) {
-      console.log(error);
+    const matrix = new DOMMatrix(window.getComputedStyle(dropdownRef.current).transform);
+    const y = matrix.m42;
+    if (height + y > window.innerHeight) {
+      const newOffset = menuHeight - height;
+      setOffsetY(offsetY + newOffset);
     }
+
+    setMenuHeight(height);
   }
 
   const filesubmitNote = async event => {
@@ -81,8 +113,58 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  function handleImg(event) {
-    setImg(event.target.files[0]);
+  const uploadFile = async (file, type) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", type + "s");
+    formData.append("uploader", localStorage.adminid);
+
+    try {
+      if (type === "image") {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+          setImageUploaded(true);
+          props.handleImage(name);
+        });
+      } else if (type === "video") {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
+          setVideoUploaded(true);
+          props.handleVideo(name);
+        });
+      }
+    } catch (error) {
+      if (type === "image") {
+        setImageUploaded(false);
+      } else if (type === "video") {
+        setVideoUploaded(false);
+      }
+      console.log(error);
+    }
+  }
+
+  const handleImgFromComputer = () => {
+    const file = document.getElementById("filePickerImageEdit").files[0];
+    if (!file.type.toString().includes("image")) {
+      alertContext.showAlert("Uploaded file is not an image.", "error");
+      return;
+    }
+
+    uploadFile(file, "image");
+  }
+
+  const handleVideoFromComputer = () => {
+    const file = document.getElementById("filePickerVideoEdit").files[0];
+    if (!file.type.toString().includes("video")) {
+      alertContext.showAlert("Uploaded file is not a video.", "error");
+      return;
+    }
+
+    uploadFile(file, "video");
   }
 
   function handleFile(event) {
@@ -95,7 +177,15 @@ const DropdownAddObjects = (props) => {
     objectsState,
     objectsDeletedState,
     objectParameters) => {
-
+    if (
+      objectsDeletedState === undefined ||
+      objectsDeletedState === null ||
+      objectsDeletedState === NaN
+    ) {
+      console.log("WEIRD DELETED STATE");
+      console.log(objectsDeletedState);
+      objectsDeletedState = 0;
+    }
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
 
@@ -143,10 +233,10 @@ const DropdownAddObjects = (props) => {
         width: 100,
         height: 100,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         rotation: 0,
         fill: props.state.colorf,
-        useImage: false
+        useImage: false,
       }
     );
   }
@@ -160,7 +250,7 @@ const DropdownAddObjects = (props) => {
         radiusX: 50,
         radiusY: 50,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         fill: props.state.colorf,
         rotation: 0
       }
@@ -177,7 +267,7 @@ const DropdownAddObjects = (props) => {
         innerRadius: 30,
         outerRadius: 70,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         fill: props.state.colorf,
         rotation: 0,
         width: 100,
@@ -195,7 +285,7 @@ const DropdownAddObjects = (props) => {
         sides: 3,
         radius: 70,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: DEFAULT_STROKE,
         useImage: false,
         fill: props.state.colorf,
         rotation: 0,
@@ -213,7 +303,7 @@ const DropdownAddObjects = (props) => {
       {
         imgsrc: props.state.imgsrc,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: 0,
         opacity: 1,
         width: 200,
         height: 200
@@ -231,7 +321,7 @@ const DropdownAddObjects = (props) => {
         height: 400,
         vidsrc: props.state.vidsrc,
         stroke: 'black',
-        strokeWidth: 1.5,
+        strokeWidth: 0,
         opacity: 1
       }
     );
@@ -320,15 +410,57 @@ const DropdownAddObjects = (props) => {
     props.stopDrawing();
   }
 
-  function handleImage(e) {
-    submitNote(e);
-    setImgsrc(e.target.value);
-    props.handleImage(imgsrc);
+  const imageURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".png") ||
+        url.includes(".jpg") ||
+        url.includes(".jpeg") ||
+        url.includes(".gif")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  function handleVideo(e) {
-    setVidsrc(e.target.value);
-    props.handleVideo(vidsrc);
+  const handleImage = (e) => {
+    const url = e.target.value;
+    if (imageURLGood(url)) {
+      setValidImgURL(true);
+      props.handleImage(url);
+    } else {
+      setValidImgURL(false);
+    }
+    setImgsrc(url);
+  }
+
+  const videoURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".mp4") ||
+        url.includes(".wav") ||
+        url.includes(".webm") ||
+        url.includes(".ogv") ||
+        url.includes(".avi")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const handleVideo = (e) => {
+    const url = e.target.value;
+    if (videoURLGood(url)) {
+      setValidVideoURL(true);
+      props.handleVideo(url);
+    } else {
+      setValidVideoURL(false);
+    }
+    setVidsrc(url);
   }
 
   function handleAudio(e) {
@@ -336,22 +468,22 @@ const DropdownAddObjects = (props) => {
     props.handleAudio(audiosrc);
   }
 
-  function handleImgSubmit(e) {
-    submitNote(e);
-  }
-
   function handleFilesubmit(e) {
     filesubmitNote(e);
   }
 
   return (
-    <div 
-    className="dropdown" 
-    style={{ 
-      height: menuHeight,
-      transform: `translateX(${props.xPos - sidebarWidth}px) translateY(${props.yPos}px)`,
-    }} 
-    ref={dropdownRef}>
+    <div
+      className="dropdown"
+      style={{
+        height: menuHeight,
+        transform: `translateX(${props.xPos - sidebarWidth + offsetX}px)
+                    translateY(${props.yPos + offsetY}px)`,
+      }}
+      ref={dropdownRef}
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}>
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
@@ -363,7 +495,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-shapes"></i>}
             onClick={() => setActiveMenu("shapes")}>
-            Add shapes
+            Add Shapes
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-camera"></i>}
@@ -373,7 +505,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
             onClick={() => setActiveMenu("pieces")}>
-            Game Piece
+            Add Games
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -388,11 +520,11 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>SHAPES!</h2>
+            <h2>Add Shapes</h2>
           </DropdownItem>
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
-          <DropdownItem onClick={addTriangle} leftIcon={<i style={{fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)"}} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
           <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
 
           <DropdownItem
@@ -414,7 +546,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>MEDIA!</h2>
+            <h2>Add Media</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fa fa-picture-o"></i>}
@@ -429,7 +561,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-volume-up"></i>}
             onClick={() => setActiveMenu("audio")}>
-            Sound
+            Audio
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-file"></i>}
@@ -439,7 +571,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             onClick={addText}
             leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
-            Textbox
+            Text
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -453,33 +585,34 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>IMAGE!</h2>
+            <h2>Add Image</h2>
           </DropdownItem>
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={handleImgSubmit}></i>}>
-          </DropdownItem>
+          <div className={`${imageUploaded ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+                if (imageUploaded) {
+                  addImage(e);
+                }
+              }}></i>}>
+              <input
+                type="file"
+                name="img"
+                id="filePickerImageEdit"
+                onChange={handleImgFromComputer}
+              />
+            </DropdownItem>
+          </div>
 
-          <input
-            type="file"
-            name="img"
-            id="file"
-            onChange={handleImg}
-          />
-          <label id="fileI" for="file">From file</label>
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
-          </DropdownItem>
-
-          <input id="imginput" type="text" placeholder="Image source..." onChange={handleImage} value={imgsrc} />
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={addImage}></i>}>
-          </DropdownItem>
-
-          <input id="imginputname" type="text" placeholder="Image name..." onChange={handleImage} value={imgsrc} />
-          <DropdownItem
-            onClick={addImage}
-            leftIcon={<i className="icons fas fa-plus"
-              onClick={addImage}></i>}>Add</DropdownItem>
+          <div className={`${validImgURL ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+                if (validImgURL) {
+                  addImage(e);
+                }
+              }}></i>}>
+              <input className="add-dropdown-item-input" type="text" placeholder="Image URL" onChange={handleImage} value={imgsrc} />
+            </DropdownItem>
+          </div>
         </div>
       </CSSTransition>
       <CSSTransition
@@ -492,9 +625,37 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>VIDEO!</h2>
+            <h2>Add Video</h2>
           </DropdownItem>
-          <DropdownItem
+
+          <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+                if (videoUploaded) {
+                  addVideo(e);
+                }
+              }}></i>}>
+              <input
+                type="file"
+                name="img"
+                id="filePickerVideoEdit"
+                onChange={handleVideoFromComputer}
+              />
+            </DropdownItem>
+          </div>
+
+          <div className={`${validVideoURL ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+                if (validVideoURL) {
+                  addVideo(e);
+                }
+              }}></i>}>
+              <input className="add-dropdown-item-input" type="text" placeholder="Video URL" onChange={handleVideo} value={vidsrc} />
+            </DropdownItem>
+          </div>
+
+          {/*<DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addVideo}></i>}>
           </DropdownItem>
           <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
@@ -506,7 +667,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             onClick={addVideo}
             leftIcon={<i className="icons fas fa-plus"
-              onClick={addVideo}></i>}>Add</DropdownItem>
+              onClick={addVideo}></i>}>Add</DropdownItem>*/}
         </div>
       </CSSTransition>
       <CSSTransition
@@ -519,7 +680,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>AUDIO!!</h2>
+            <h2>Add Audio</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addAudio}></i>}>
@@ -543,7 +704,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>DOCUMENTS!</h2>
+            <h2>Add Document</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={handleFilesubmit}></i>}>
@@ -554,7 +715,7 @@ const DropdownAddObjects = (props) => {
             id="file"
             onChange={handleFile}
           />
-          <label id="fileI" for="file">From file</label>
+          <label id="fileI" htmlFor="file">From file</label>
 
           <DropdownItem
             onClick={addDocument}
@@ -573,7 +734,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("shapes")}>
-            <h2>DRAW!</h2>
+            <h2>Draw Mode</h2>
           </DropdownItem>
           <b id="colourp">
             <ChromePicker
@@ -605,7 +766,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>PIECES!</h2>
+            <h2>Add Games</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addTic}
