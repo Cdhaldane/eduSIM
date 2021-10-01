@@ -90,21 +90,29 @@ const DropdownRoles = (props) => {
       <div>
         {roles.map((role, index) => {
           return (
-            <div 
-              className="menu-item" 
-              onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
-              key={index}
-              disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
-            >
-              {props.editMode && (
+            props.editMode ? (
+              <div 
+                className="menu-item" 
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+                key={index}
+              >
                 <span className="icon-button">
                   <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
                 </span>
-              )}
-              {props.rolesTaken[role.roleName] 
-              ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
-              : `${role.roleName} (${role.numOfSpots})`}
-            </div>
+                {`${role.roleName} (${role.numOfSpots})`}
+              </div>
+            ) : (
+              <div 
+                className="menu-item" 
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+                key={index}
+                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
+              >
+                {props.rolesTaken[role.roleName] 
+                ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                : `${role.roleName} (${role.numOfSpots})`}
+              </div>
+            )
           );
         })}
       </div>

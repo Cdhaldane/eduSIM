@@ -81,25 +81,56 @@ class URLImage extends React.Component {
 }
 
 class Graphics extends Component {
+
+  savedObjects = [
+    // Objects
+    "rectangles",
+    "ellipses",
+    "stars",
+    "texts",
+    "arrows",
+    "triangles",
+    "images",
+    "videos",
+    "audios",
+    "documents",
+    "lines",
+    "tics",
+    "connect4",
+
+    // Delete Counts (stored to keep object label #s in sync)
+    "rectDeleteCount",
+    "ellipseDeleteCount",
+    "starDeleteCount",
+    "triangleDeleteCount",
+    "imageDeleteCount",
+    "videoDeleteCount",
+    "audioDeleteCount",
+    "documentDeleteCount",
+    "textDeleteCount",
+    "linesDeleteCount",
+    "arrowDeleteCount",
+
+    "status"
+  ];
+
   constructor(props) {
     super(props);
 
-    const params = JSON.parse(this.props.gameinstance.game_parameters);
-
     this.state = {
-      rectangles: params[0] || [],
-      ellipses: params[1] || [],
-      stars: params[2] || [],
-      texts: params[3] || [],
-      arrows: params[4] || [],
-      triangles: params[5] || [],
-      images: params[6] || [],
-      videos: params[7] || [],
-      audios: params[8] || [],
-      documents: params[9] || [],
-      lines: params[10] || [],
-      tics: params[11] || [],
-      connect4: params[12] || [],
+      rectangles: [],
+      ellipses: [],
+      stars: [],
+      texts: [],
+      arrows: [],
+      triangles: [],
+      images: [],
+      videos: [],
+      audios: [],
+      documents: [],
+      lines: [],
+      tics: [],
+      connect4: [],
       gameroles: [],
       open: 0,
       isOpen: true,
@@ -126,6 +157,15 @@ class Graphics extends Component {
     this.setState({
       selectrole: true
     })
+
+    if (JSON.parse(this.props.gameinstance.game_parameters)) {
+      const objects = JSON.parse(this.props.gameinstance.game_parameters);
+      this.savedObjects.forEach((object) => {
+        this.setState({
+          [object]: objects[object]
+        });
+      });
+    }
   }
 
   handleLevel = (e) => {
