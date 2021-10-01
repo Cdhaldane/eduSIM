@@ -59,7 +59,7 @@ function CreateArea(props) {
       let data = {
         gameinstance_name: title,
         gameinstance_photo_path: url,
-        game_parameters: 'value',
+        game_parameters: "",
         createdby_adminid: localStorage.adminid,
         status: 'created'
       }
@@ -69,7 +69,7 @@ function CreateArea(props) {
             id: res.data.gameinstanceid,
             game_parameters: copiedParams,
             createdby_adminid: localStorage.adminid,
-            invite_url: 'value'
+            invite_url: ""
           }
           axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then((res) => {
             console.log(res);

@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import Info from "../Information/InformationPopup";
-import URLvideo from "./URLVideos";
+import URLVideo from "./URLVideos";
 import URLImage from "./URLImage";
-import fileDownload from 'js-file-download'
-import axios from 'axios'
+import fileDownload from 'js-file-download';
+import axios from 'axios';
 import Level from "../Level/Level";
-import Konva from "konva"
+import Konva from "konva";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal"
 import TransformerComponent from "./TransformerComponent";
@@ -207,7 +207,7 @@ class Graphics extends Component {
         gameid: this.state.gameinstanceid
       }
     }).then((res) => {
-      if (JSON.parse(res.data.game_parameters)) {
+      if (res.data.game_parameters) {
         const objects = JSON.parse(res.data.game_parameters);
         this.savedObjects.forEach((object) => {
           this.setState({
@@ -215,7 +215,9 @@ class Graphics extends Component {
           });
         });
       }
-    }).catch(error => console.log(error));
+    }).catch(error => {
+      console.log(error);
+    });
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
         gameinstanceid: this.state.gameinstanceid,
@@ -1541,20 +1543,20 @@ class Graphics extends Component {
     this.setState({
       isTransforming: false
     });
-    const image = this.refs[this.state.selectedShapeName];
-    if (image) {
+    const object = this.refs[this.state.selectedShapeName];
+    if (object) {
       this.setState(prevState => ({
-        images: prevState[type].map(i =>
-          i.id === this.state.selectedShapeName
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
             ? {
-              ...i,
-              scaleX: image.scaleX(),
-              scaleY: image.scaleY(),
-              rotation: image.rotation(),
-              x: image.x(),
-              y: image.y()
+              ...obj,
+              scaleX: object.scaleX(),
+              scaleY: object.scaleY(),
+              rotation: object.rotation(),
+              x: object.x(),
+              y: object.y()
             }
-            : i
+            : obj
         )
       }));
     }
@@ -2205,7 +2207,8 @@ class Graphics extends Component {
               {this.state.videos.map((eachVideo, index) => {
                 if (eachVideo.level === this.state.level && eachVideo.infolevel === false) {
                   return (
-                    <URLvideo
+                    <URLVideo
+                      type={"video"}
                       key={index}
                       visible={eachVideo.visible}
                       src={eachVideo.vidsrc}
@@ -2286,7 +2289,8 @@ class Graphics extends Component {
               {this.state.audios.map((eachAudio, index) => {
                 if (eachAudio.level === this.state.level && eachAudio.infolevel === false) {
                   return (
-                    <URLvideo
+                    <URLVideo
+                      type={"audio"}
                       key={index}
                       visible={eachAudio.visible}
                       fillPatternImage={true}
@@ -2329,7 +2333,7 @@ class Graphics extends Component {
                           isTransforming: true
                         });
                       }}
-                      onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
+                      onTransformEnd={() => this.urlObjOnTransformEnd("audios")}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -3434,7 +3438,8 @@ class Graphics extends Component {
                     {this.state.videos.map((eachVideo, index) => {
                       if (eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel) {
                         return (
-                          <URLvideo
+                          <URLVideo
+                            type={"video"}
                             key={index}
                             visible={eachVideo.visible}
                             src={eachVideo.vidsrc}
@@ -3515,7 +3520,8 @@ class Graphics extends Component {
                     {this.state.audios.map((eachAudio, index) => {
                       if (eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel) {
                         return (
-                          <URLvideo
+                          <URLVideo
+                            type={"audio"}
                             key={index}
                             visible={eachAudio.visible}
                             fillPatternImage={true}
@@ -3558,7 +3564,7 @@ class Graphics extends Component {
                                 isTransforming: true
                               });
                             }}
-                            onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
+                            onTransformEnd={() => this.urlObjOnTransformEnd("audios")}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {

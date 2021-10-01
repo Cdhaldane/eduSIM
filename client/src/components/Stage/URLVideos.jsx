@@ -1,11 +1,12 @@
 import Konva from "konva"
-import React, { useState, forwardRef } from 'react';
-import { Image } from "react-konva";
+import React, { useState, forwardRef, useEffect, useRef } from 'react';
+import { Image, Text } from "react-konva";
 
-const URLvideo = forwardRef((props, ref) => {
-
-  const [isPlaying, setIsPlaying] = useState(true);
+const URLVideo = forwardRef((props, ref) => {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [fillPatternImage, setFillPatternImage] = useState(null);
+  const [playPauseScale, setPlayPauseScale] = useState(0);
+  const playPause = useRef();
 
   if (props.fillPatternImage) {
     const bimage = new window.Image();
@@ -15,6 +16,14 @@ const URLvideo = forwardRef((props, ref) => {
     bimage.src = 'sound.png';
   }
 
+  useEffect(() => {
+    if (props.type === "video") {
+      setPlayPauseScale(30);
+    } else if (props.type === "audio") {
+      setPlayPauseScale(15);
+    }
+  }, []);
+
   const videoElement = React.useMemo(() => {
     const element = document.createElement("video");
     element.src = props.src;
@@ -22,8 +31,8 @@ const URLvideo = forwardRef((props, ref) => {
   }, [props.src]);
 
 
-  React.useEffect(() => {
-    const onload = function () {
+  useEffect(() => {
+    const onload = () => {
       //
     };
 
@@ -34,7 +43,7 @@ const URLvideo = forwardRef((props, ref) => {
     };
   }, [videoElement]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     videoElement.play();
     const layer = props.layer.getStage();
 
@@ -44,7 +53,7 @@ const URLvideo = forwardRef((props, ref) => {
     return () => anim.stop();
   }, [videoElement, props.layer]);
 
-  function playAudio() {
+  const togglePlay = () => {
     if (isPlaying) {
       videoElement.pause();
       setIsPlaying(false);
@@ -53,7 +62,7 @@ const URLvideo = forwardRef((props, ref) => {
       setIsPlaying(true);
     }
   }
-  
+
   return (
     <>
       <Image
@@ -64,6 +73,8 @@ const URLvideo = forwardRef((props, ref) => {
         draggable
         x={props.x}
         y={props.y}
+        scaleY={props.scaleY}
+        scaleX={props.scaleX}
         width={props.width}
         height={props.height}
         image={videoElement}
@@ -71,7 +82,7 @@ const URLvideo = forwardRef((props, ref) => {
         id={props.id}
         name="shape"
         opacity={props.opacity}
-        onClick={playAudio}
+        onClick={togglePlay}
         onTransformStart={props.onTransformStart}
         onTransform={props.onTransform}
         onTransformEnd={props.onTransformEnd}
@@ -82,8 +93,22 @@ const URLvideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
+      <Text
+        ref={playPause}
+        fontSize={props.scaleX ?
+          Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
+          playPauseScale}
+        fontFamily={"Montserrat"}
+        text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
+        fill={"black"}
+        x={props.x}
+        y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
+        width={props.scaleX ? props.width * props.scaleX : props.width}
+        rotation={props.rotation}
+        opacity={0.5}
+      />
     </>
   );
 });
 
-export default URLvideo;
+export default URLVideo;
