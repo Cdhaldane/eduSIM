@@ -135,7 +135,6 @@ class Graphics extends Component {
 
       // Image, Video, Audio, Document sources
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
-      //imgsrc: "https://konvajs.org/assets/lion.png",
       imgsrc: 'https://cdn.hackernoon.com/hn-images/0*xMaFF2hSXpf_kIfG.jpg',
       audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
       docsrc: "",
@@ -1061,7 +1060,7 @@ class Graphics extends Component {
         return eachRect.id !== name;
       });
 
-      let videos = this.state.videos.filter(function (eachRect) {
+      let videos = this.state.videos.filter((eachRect) => {
         if (eachRect.id === name) {
           that.setState({
             videoDeleteCount: that.state.videoDeleteCount + 1

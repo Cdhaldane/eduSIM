@@ -39,6 +39,7 @@ const URLVideo = forwardRef((props, ref) => {
     videoElement.addEventListener("loadedmetadata", onload);
 
     return () => {
+      videoElement.pause();
       videoElement.removeEventListener("loadedmetadata", onload);
     };
   }, [videoElement]);
