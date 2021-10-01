@@ -158,14 +158,14 @@ class Graphics extends Component {
       selectrole: true
     })
 
-    if (JSON.parse(this.props.gameinstance.game_parameters)) {
+    try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
       this.savedObjects.forEach((object) => {
         this.setState({
           [object]: objects[object]
         });
       });
-    }
+    } catch(e) {};
   }
 
   handleLevel = (e) => {
