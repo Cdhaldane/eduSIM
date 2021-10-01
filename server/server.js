@@ -2,6 +2,7 @@ require('dotenv').config()
 import helmet from 'helmet';
 
 import routes from './routes';
+import events from './events';
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -33,7 +34,18 @@ app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
 
-app.listen(PORT, () => {
+const httpServer = require("http").createServer(app);
+
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: true,
+    credentials: true
+  },
+});
+
+io.on("connection", (socket) => events(io, socket));
+
+httpServer.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}!`);
 });
 

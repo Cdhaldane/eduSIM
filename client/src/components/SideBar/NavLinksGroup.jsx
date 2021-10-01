@@ -35,58 +35,20 @@ const DenseNavLinks = styled(NavLink)`
 `;
 
 function NavLinksGroup(props) {
-
-  const links = [
-    {
-      to: "/editpage",
-      img: props.img,
-      label: props.title,
-      visible: true,
-      icon: null
-    },
-    {
-      to: "/chat",
-      icon: "fas fa-comment-dots",
-      label: "Messaging",
-      visible: props.mvisible
-    },
-    {
-      to: "/alert",
-      icon: "fas fa-bell",
-      label: "Alert",
-      visible: props.avisible
-    },
-    {
-      to: "/parameters",
-      icon: "fas fa-sliders-h",
-      label: "Parameters",
-      visible: props.pavisible
-    },
-    {
-      to: "/settings",
-      icon: "fas fa-cog",
-      label: "Settings",
-      visible: props.svisible
-
-    },
-    {
-      to: "/performance",
-      icon: "fas fa-chart-bar",
-      label: "Performance",
-      visible: props.pevisible
-    },
-  ];
-
   return (
     <LinksGroup {...props}>
-      {links.map((link) => {
+      {props.links.map((link) => {
         return link.visible &&
           <DenseNavLinks
             compact={props.compact}
             key={link.to}
             to={link.to}
+            disabled={props.disabled}
             iconClassName={link.icon}
             label={link.label}
+            sublabel={link.sublabel}
+            img={link.img}
+            action={(e) => props.action(link.id, e)}
           />
       })}
     </LinksGroup>

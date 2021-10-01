@@ -57,7 +57,7 @@ const EditPage = (props) => {
           <GridNav>
             <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
               img={props.location.img}
-              title={props.location.gameinstance}
+              title={props.location.title}
             />
           </GridNav>
           <GridMain>

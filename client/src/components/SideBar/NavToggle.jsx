@@ -6,19 +6,19 @@ const Button = styled.button`
     border: none;
     min-height: 42px;
     color: rgba(255,255,255, .7);
-    cursor: pointer;
-    padding: 0 24px;
+    ${(p) => !p.disabled && "cursor: pointer;"}
+    ${(p) => p.disabled && "opacity: 0.5;"}
+    padding: 0 32px;
     box-shadow: 0 -1px 0 0 rgba(255 255 255 / 10%);
-    text-align: ${p => p.compact ? 'center' : 'right'};
+    text-align: right;
     i {
         transition: transform 0.2s linear;
         transform: rotate(${p => p.compact ? "180deg" : "0deg"});
     }
     @media screen and (orientation: portrait) {
-      transition: left 0.3s
-        ${(p) => p.visible ? "cubic-bezier(0.4, 0, 1, 1)" : "cubic-bezier(0, 0, 0.2, 1)"} !important;
+      transition: left 0.3s cubic-bezier(0, 0, 0.2, 1) !important;
       position: fixed;
-      left: ${p => p.compact ? '0px' : '256px'};
+      left: ${p => p.compact ? '0px' : (p.submenu ? '350px' : '256px')};
       top: calc(50% - 50px);
       color: white;
       font-size: 1.5em;
@@ -29,6 +29,7 @@ const Button = styled.button`
       height: 100px;
       width: 60px;
       justify-content: flex-end;
+      ${(p) => p.disabled && "opacity: 0;"}
     }
 `;
 

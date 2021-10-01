@@ -3,7 +3,7 @@ import styled from "styled-components"
 import React from "react"
 import { Image } from "cloudinary-react";
 
-const StyledLink = styled(Link)`
+const StyledLink = styled.a`
   min-height: 56px;
   display: flex;
   align-items: center;
@@ -13,6 +13,8 @@ const StyledLink = styled(Link)`
   color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
   text-decoration: none;
+  ${(p) => !p.disabled && "cursor: pointer;"}
+  ${(p) => p.disabled && "opacity: 0.5;"}
   i {
     min-height: 22px;
     min-width: 22px;
@@ -28,10 +30,19 @@ const StyledLink = styled(Link)`
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
-  &:hover {
-    text-decoration: none ;
-    background-color: rgba(255 255 255 / 5%);
+  p {
+    padding-left: 14px;
+    font-size: .7em;
+    line-height: .9em;
+    opacity: ${(p) => p.textopacity};
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
+  ${(p) => !p.disabled && `
+    &:hover {
+      text-decoration: none;
+      background-color: rgba(255 255 255 / 5%);
+    }
+  `}
   &.active {
 
   }
@@ -48,7 +59,7 @@ const StyledLink = styled(Link)`
     justify-content: center;
   }
   @media screen and (orientation: portrait) {
-      span {
+      span, p {
         opacity: 1;
       }
   }
@@ -56,16 +67,13 @@ const StyledLink = styled(Link)`
 
 function NavLink(props) {
 
-  const simimg = React.useState(
-    localStorage.getItem('simimg') || ''
-  );
-
-  const simtitle = React.useState(
-    localStorage.getItem('simtitle') || ''
-  );
-
   return (
-    <StyledLink to="/chat" textopacity={props.compact ? 0 : 1}>
+    <StyledLink 
+      href={!props.disabled && props.to} 
+      onClick={props.action} 
+      disabled={props.disabled} 
+      textopacity={props.compact ? 0 : 1}
+    >
       {props.children || (
         <>
           {props.iconClassName !== null ? (
@@ -75,8 +83,11 @@ function NavLink(props) {
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + simimg[0] + ".jpg"} alt="backdrop" />
-              <span className="label">{simtitle[0]}</span>
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img + ".jpg"} alt="backdrop" />
+              <div>
+                <span className="label">{props.label}</span>
+                <p className="sublabel">{props.sublabel}</p>
+              </div>
             </>
           )}
         </>

@@ -2,6 +2,8 @@ const uuid = require('uuid');
 const GameRoom = require("../models/GameRooms");
 const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
+const GameInstance = require("../models/GameInstances");
+import cryptoRandomString from 'crypto-random-string';
 
 // Create Players using csv
 exports.createGamePlayers = async (req, res) => {
@@ -141,7 +143,7 @@ exports.getAllPlayers = async (req, res) => {
 
 exports.createRoom = async (req, res) => {
   const { gameinstanceid, gameroom_name } = req.body;
-  const gameroom_url = "hello";
+  const gameroom_url = cryptoRandomString(10);
   const gameroomid = uuid.v4();
 
   try {
@@ -155,6 +157,30 @@ exports.createRoom = async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,
+    });
+  }
+};
+
+GameRoom.belongsTo(GameInstance, { foreignKey: 'gameinstanceid' });
+
+exports.getRoomByURL = async (req, res) => {
+  const roomid = req.query.id;
+
+  try {
+    let gameroom = await GameRoom.findOne({
+      where: {
+        gameroom_url: roomid
+      },
+      include: [{
+        model: GameInstance,
+        required: true
+      }]
+    });
+    return res.send(gameroom);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send({
+      message: `No game room found with the id ${roomid}`,
     });
   }
 };

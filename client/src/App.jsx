@@ -14,7 +14,6 @@ import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
-import DropdownContextProvider from "./components/Dropdown/DropdownReactContext"
 
 const App = (props) => {
 
@@ -24,29 +23,27 @@ const App = (props) => {
 
   return (
     <AlertContextProvider>
-      <DropdownContextProvider>
-        <AlertPopup />
-        {!(window.location.pathname === "/gamepage" || window.location.pathname === "/editpage") && (
-          <Navbar />
-        )}
-        <div >
-          <Switch>
-            <Route exact path="/" >
-              <Home />
-            </Route>
-            {!(window.location.pathname === "/gamepage" || window.location.pathname === "/editpage") && (
-              <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
-            )}
-            <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
-            <Route exact path="/about" render={(props) => <About {...props} />} />
-            <Route exact path="/gamepage" render={(props) => <GamePage {...props} />} />
-            <Route exact path="/editpage" render={(props) => <EditPage {...props} />} />
-            <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
-            <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-            <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
-          </Switch>
-        </div>
-      </DropdownContextProvider>
+      <AlertPopup/>
+      {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+        <Navbar />
+      )}
+      <div >
+        <Switch>
+          <Route exact path="/" >
+            <Home />
+          </Route>
+          {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+            <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
+          )}
+          <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
+          <Route exact path="/about" render={(props) => <About {...props} />} />
+          <Route exact path="/gamepage/:roomid" render={(props) => <GamePage {...props} />} />
+          <Route exact path="/editpage" render={(props) => <EditPage {...props} />} />
+          <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
+          <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
+          <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
+        </Switch>
+      </div>
     </AlertContextProvider>
   );
 }
