@@ -140,6 +140,14 @@ class Graphics extends Component {
     })
   }
 
+  componentWillReceiveProps = ({ level }) => {
+    if (level) {
+      this.setState({
+        level
+      })
+    }
+  }
+
   render() {
 
     const canvas = document.createElement("canvas");
@@ -488,7 +496,14 @@ class Graphics extends Component {
           </Stage>
         </div>
         <div className="eheader">
-          <Level number={this.state.pageNumber} ptype={this.state.ptype} level={this.handleLevel} gamepage />
+          <Level 
+            number={this.state.pageNumber} 
+            ptype={this.state.ptype} 
+            level={this.handleLevel} 
+            gamepage
+            levelVal={this.state.level}
+            freeAdvance={this.props.freeAdvance}
+          />
           <div>
             <div className={"info" + this.state.open}>
               <div className="personalAreaStageContainer">
