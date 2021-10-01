@@ -17,7 +17,9 @@ const DropdownAddObjects = (props) => {
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
-  const [validURL, setValidURL] = useState(false);
+  const [videoUploaded, setVideoUploaded] = useState(false);
+  const [validImgURL, setValidImgURL] = useState(false);
+  const [validVideoURL, setValidVideoURL] = useState(false);
   const [checkedd, setCheckedd] = useState(false);
   const [checked, setChecked] = useState(false);
   const [imgsrc, setImgsrc] = useState("");
@@ -51,21 +53,6 @@ const DropdownAddObjects = (props) => {
   }
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
-
-  const imageURLGood = (url) => {
-    if ((
-      url.includes("http://") ||
-      url.includes("https://")) && (
-        url.includes(".png") ||
-        url.includes(".jpg") ||
-        url.includes(".jpeg") ||
-        url.includes(".gif")
-      )) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   useEffect(() => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
@@ -126,21 +113,36 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  const uploadImage = async file => {
+  const uploadFile = async (file, type) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("folder", "images");
+    formData.append("folder", type + "s");
     formData.append("uploader", localStorage.adminid);
 
     try {
-      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
+      if (type === "image") {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
         .then((res) => {
           const allData = res.data.public_id;
           const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
           setImageUploaded(true);
           props.handleImage(name);
         });
+      } else if (type === "video") {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
+        .then((res) => {
+          const allData = res.data.public_id;
+          const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
+          setVideoUploaded(true);
+          props.handleVideo(name);
+        });
+      }
     } catch (error) {
+      if (type === "image") {
+        setImageUploaded(false);
+      } else if (type === "video") {
+        setVideoUploaded(false);
+      }
       console.log(error);
     }
   }
@@ -152,7 +154,17 @@ const DropdownAddObjects = (props) => {
       return;
     }
 
-    uploadImage(file);
+    uploadFile(file, "image");
+  }
+
+  const handleVideoFromComputer = () => {
+    const file = document.getElementById("filePickerVideoEdit").files[0];
+    if (!file.type.toString().includes("video")) {
+      alertContext.showAlert("Uploaded file is not a video.", "error");
+      return;
+    }
+
+    uploadFile(file, "video");
   }
 
   function handleFile(event) {
@@ -309,7 +321,7 @@ const DropdownAddObjects = (props) => {
         height: 400,
         vidsrc: props.state.vidsrc,
         stroke: 'black',
-        strokeWidth: DEFAULT_STROKE,
+        strokeWidth: 0,
         opacity: 1
       }
     );
@@ -398,18 +410,57 @@ const DropdownAddObjects = (props) => {
     props.stopDrawing();
   }
 
-  function handleImage(e) {
+  const imageURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".png") ||
+        url.includes(".jpg") ||
+        url.includes(".jpeg") ||
+        url.includes(".gif")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const handleImage = (e) => {
     const url = e.target.value;
     if (imageURLGood(url)) {
-      setValidURL(true);
+      setValidImgURL(true);
       props.handleImage(url);
+    } else {
+      setValidImgURL(false);
     }
     setImgsrc(url);
   }
 
-  function handleVideo(e) {
-    setVidsrc(e.target.value);
-    props.handleVideo(vidsrc);
+  const videoURLGood = (url) => {
+    if ((
+      url.includes("http://") ||
+      url.includes("https://")) && (
+        url.includes(".mp4") ||
+        url.includes(".wav") ||
+        url.includes(".webm") ||
+        url.includes(".ogv") ||
+        url.includes(".avi")
+      )) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const handleVideo = (e) => {
+    const url = e.target.value;
+    if (videoURLGood(url)) {
+      setValidVideoURL(true);
+      props.handleVideo(url);
+    } else {
+      setValidVideoURL(false);
+    }
+    setVidsrc(url);
   }
 
   function handleAudio(e) {
@@ -552,10 +603,10 @@ const DropdownAddObjects = (props) => {
             </DropdownItem>
           </div>
 
-          <div className={`${validURL ? "" : "dropdown-add-disabled"}`}>
+          <div className={`${validImgURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
               leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
-                if (validURL) {
+                if (validImgURL) {
                   addImage(e);
                 }
               }}></i>}>
@@ -576,7 +627,35 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("media")}>
             <h2>Add Video</h2>
           </DropdownItem>
-          <DropdownItem
+
+          <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+                if (videoUploaded) {
+                  addVideo(e);
+                }
+              }}></i>}>
+              <input
+                type="file"
+                name="img"
+                id="filePickerVideoEdit"
+                onChange={handleVideoFromComputer}
+              />
+            </DropdownItem>
+          </div>
+
+          <div className={`${validVideoURL ? "" : "dropdown-add-disabled"}`}>
+            <DropdownItem
+              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+                if (validVideoURL) {
+                  addVideo(e);
+                }
+              }}></i>}>
+              <input className="add-dropdown-item-input" type="text" placeholder="Video URL" onChange={handleVideo} value={vidsrc} />
+            </DropdownItem>
+          </div>
+
+          {/*<DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={addVideo}></i>}>
           </DropdownItem>
           <input id="imginputv" type="text" placeholder="Video source..." onChange={handleVideo} value={vidsrc} />
@@ -588,7 +667,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             onClick={addVideo}
             leftIcon={<i className="icons fas fa-plus"
-              onClick={addVideo}></i>}>Add</DropdownItem>
+              onClick={addVideo}></i>}>Add</DropdownItem>*/}
         </div>
       </CSSTransition>
       <CSSTransition

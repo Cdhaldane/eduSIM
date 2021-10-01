@@ -1540,14 +1540,14 @@ class Graphics extends Component {
       })
   }
 
-  imgOnTransformEnd = () => {
+  urlObjOnTransformEnd = (type) => {
     this.setState({
       isTransforming: false
     });
     const image = this.refs[this.state.selectedShapeName];
     if (image) {
       this.setState(prevState => ({
-        images: prevState.images.map(i =>
+        images: prevState[type].map(i =>
           i.id === this.state.selectedShapeName
             ? {
               ...i,
@@ -2169,7 +2169,7 @@ class Graphics extends Component {
                       onTransform={() => {
 
                       }}
-                      onTransformEnd={this.imgOnTransformEnd}
+                      onTransformEnd={() => this.urlObjOnTransformEnd("images")}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2217,6 +2217,8 @@ class Graphics extends Component {
                       id={eachVideo.id}
                       name="shape"
                       layer={this.refs.groupAreaLayer}
+                      scaleX={eachVideo.scaleX}
+                      scaleY={eachVideo.scaleY}
                       x={eachVideo.x}
                       y={eachVideo.y}
                       width={eachVideo.width}
@@ -2248,17 +2250,7 @@ class Graphics extends Component {
                         });
 
                       }}
-                      onTransform={() => {
-
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-                        let triangle = this.refs[eachVideo.ref];
-
-                      }}
-
+                      onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2307,6 +2299,8 @@ class Graphics extends Component {
                       id={eachAudio.id}
                       name="shape"
                       layer={this.refs.groupAreaLayer}
+                      scaleX={eachAudio.scaleX}
+                      scaleY={eachAudio.scaleY}
                       x={eachAudio.x}
                       y={eachAudio.y}
                       width={eachAudio.width}
@@ -2337,21 +2331,9 @@ class Graphics extends Component {
                         this.setState({
                           isTransforming: true
                         });
-
                       }}
-                      onTransform={() => {
-
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-                        let triangle = this.refs[eachAudio.ref];
-
-                      }}
-
+                      onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
                       onDragMove={() => {
-
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
                             if (eachAudio.name === eachArrow.from.attrs.name) {
@@ -3416,7 +3398,7 @@ class Graphics extends Component {
                                 isTransforming: true
                               });
                             }}
-                            onTransformEnd={this.imgOnTransformEnd}
+                            onTransformEnd={() => this.urlObjOnTransformEnd("images")}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3464,6 +3446,8 @@ class Graphics extends Component {
                             id={eachVideo.id}
                             name="shape"
                             layer={this.refs.groupAreaLayer}
+                            scaleX={eachVideo.scaleX}
+                            scaleY={eachVideo.scaleY}
                             x={eachVideo.x}
                             y={eachVideo.y}
                             width={eachVideo.width}
@@ -3495,17 +3479,7 @@ class Graphics extends Component {
                               });
 
                             }}
-                            onTransform={() => {
-
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({
-                                isTransforming: false
-                              });
-                              let triangle = this.refs[eachVideo.ref];
-
-                            }}
-
+                            onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3553,6 +3527,8 @@ class Graphics extends Component {
                             ref={eachAudio.ref}
                             id={eachAudio.id}
                             name="shape"
+                            scaleX={eachAudio.scaleX}
+                            scaleY={eachAudio.scaleY}
                             layer={this.refs.groupAreaLayer}
                             x={eachAudio.x}
                             y={eachAudio.y}
@@ -3584,21 +3560,9 @@ class Graphics extends Component {
                               this.setState({
                                 isTransforming: true
                               });
-
                             }}
-                            onTransform={() => {
-
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({
-                                isTransforming: false
-                              });
-                              let triangle = this.refs[eachAudio.ref];
-
-                            }}
-
+                            onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
                             onDragMove={() => {
-
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
                                   if (eachAudio.name === eachArrow.from.attrs.name) {
@@ -3611,7 +3575,6 @@ class Graphics extends Component {
                                     this.forceUpdate();
                                   }
                                 }
-
                                 if (eachArrow.to !== undefined) {
                                   if (eachAudio.name === eachArrow.to.attrs.name) {
                                     eachArrow.points = [
