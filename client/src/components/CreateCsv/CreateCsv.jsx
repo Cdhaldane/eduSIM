@@ -65,9 +65,9 @@ function CreateCsv(props) {
         <p className="modal-title"> Add Student / Participant List </p>
         <div className="areacsv-links">
           <input type="file" name="img" id="csv-file" onChange={onChange} />
-          <label for="csv-file" class="csv-link">{fileName || 'Upload a CSV file +'}</label>
+          <label for="csv-file" className="csv-link">{fileName || 'Upload a CSV file +'}</label>
           <input type="file" name="img" id="csv-filedownload" onChange={onChange} />
-          <label for="csv-filedownload" class="csv-link">Download CSV template</label>
+          <label for="csv-filedownload" className="csv-link">Download CSV template</label>
         </div>
         <div className="areacsv-filename">
           <p>File name</p>

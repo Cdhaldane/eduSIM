@@ -4,7 +4,7 @@ import Table from "../Table/Table"
 function CreateEmail(props) {
 
   return (
-    <div class="areacsv">
+    <div className="areacsv">
       <form className="areacsvform">
         <p className="modal-title"> Email Room Codes to Students / Participants </p>
         <Table

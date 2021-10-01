@@ -65,7 +65,7 @@ const StyledLink = styled.a`
   }
 `;
 
-function NavLink(props) {
+const NavLink = (props) => {
 
   return (
     <StyledLink 

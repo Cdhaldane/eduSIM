@@ -720,7 +720,7 @@ const DropdownAddObjects = (props) => {
               <input
                 type="file"
                 name="img"
-                id="filePickerVideoEdit"
+                id="filePickerAudioEdit"
                 onChange={handleAudioFromComputer}
               />
             </DropdownItem>
