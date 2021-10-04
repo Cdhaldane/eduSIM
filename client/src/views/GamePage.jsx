@@ -32,13 +32,20 @@ const PauseCover = styled.div`
   }
 `;
 
-const Time = styled.div`
+const Time = styled.div`    
   position: fixed;
-  top: 60px;
-  right: 20px;
-  background-color: black;
-  color: white;
+  text-align: center;
+  top: 40px;
+  left: 50%;
+  color: var(--primary);
   font-size: 3em;
+  font-weight: bold;
+  width: 300px;
+  margin-left: -195px;
+  @media screen and (orientation: portrait) {
+    margin-left: -180px;
+    top: 60px;
+  }
 `;
 
 function Game(props) {
@@ -135,16 +142,9 @@ function Game(props) {
           </PauseCover>)}
         </Main>
         <Time>
-          <p>advance: {roomStatus.settings?.advanceMode || 'unspecified (student)'} {isNaN(roomStatus.settings?.advanceMode) ? "" : "min"}</p>
-          <p>time: <AutoUpdate
-            value={() => moment(timeFromNow()).format("mm:ss")}
-            intervalTime={20}
-            enabled
-          /></p>
-          {roomStatus.settings?.advanceMode && roomStatus.settings?.advanceMode !== "student" && (<p>level: {actualLevel}</p>)}
           {!isNaN(roomStatus.settings?.advanceMode) && (
             <>
-              countdown: <AutoUpdate
+              <AutoUpdate
                 value={() => moment(countdown()).format("mm:ss")}
                 intervalTime={20}
                 enabled

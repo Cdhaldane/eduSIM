@@ -14,13 +14,8 @@ const Level = (props) => {
   }
 
   const handleCount = () => {
-    if (count > props.number - 1) {
-      setCount(1)
-      handleLevel(1)
-    } else {
-      setCount(count + 1);
-      handleLevel(count + 1);
-    }
+    setCount(count + 1);
+    handleLevel(count + 1);
   }
 
   useEffect(() => {

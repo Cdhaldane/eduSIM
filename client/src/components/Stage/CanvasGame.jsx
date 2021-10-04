@@ -6,9 +6,9 @@ import axios from "axios";
 import Level from "../Level/Level";
 import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
-
-import TicTacToe from "./GamePieces/TicTacToe/TicTacToe"
-import Connect4 from "./GamePieces/Connect4/Board"
+import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
+import Connect4 from "./GamePieces/Connect4/Board";
+import styled from "styled-components";
 
 import {
   Rect,
@@ -21,6 +21,43 @@ import {
   Line,
   Image
 } from "react-konva";
+
+const EndScreen = styled.div`
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: #e5e5e5;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .4s;
+  ${(p) => !p.open && `
+    opacity: 0;
+    pointer-events: none; 
+  `}
+  & > p {
+    font-size: 3em;
+  }
+  & > button {
+    align-self: center;
+    font-family: inherit;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    background-color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+`;
 
 class URLImage extends React.Component {
   state = {
@@ -143,7 +180,7 @@ class Graphics extends Component {
     };
   }
 
-  handlePlayerInfo = ({role, name}) => {
+  handlePlayerInfo = ({ role, name }) => {
     this.toggleModal();
     this.setState({
       rolelevel: role
@@ -536,10 +573,10 @@ class Graphics extends Component {
           </Stage>
         </div>
         <div className="eheader">
-          <Level 
-            number={this.state.pageNumber} 
-            ptype={this.state.ptype} 
-            level={this.handleLevel} 
+          <Level
+            number={this.state.pageNumber}
+            ptype={this.state.ptype}
+            level={this.handleLevel}
             gamepage
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
@@ -825,6 +862,12 @@ class Graphics extends Component {
             </div>
           </div>
         </div>
+        <EndScreen open={this.state.level > 6}>
+          <p>Thank you for joining!</p>
+          {this.props.freeAdvance && (
+            <button onClick={() => this.handleLevel(1)}>Reset simulation</button>
+          )}
+        </EndScreen>
       </React.Fragment>
     );
   }

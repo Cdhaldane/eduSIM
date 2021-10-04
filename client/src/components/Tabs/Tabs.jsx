@@ -259,9 +259,8 @@ function Tabs(props) {
                 props.roomStatus[tab[2]]?.startTime && (
                   <>
                     <button className="content-pagecontrol" onClick={() => handleNextPage(tab[2])}>
-                      Next Page
+                      Move to Page {props.roomStatus[tab[2]].level || 1}
                     </button>
-                    On page: {props.roomStatus[tab[2]].level || 1}
                   </>
                 )}
               <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
