@@ -15,6 +15,7 @@ const DropdownRoles = (props) => {
   const [roleNum, setRoleNum] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [initFlag, setInitFlag] = useState(false);
 
   const alertContext = useAlertContext();
 
@@ -106,7 +107,7 @@ const DropdownRoles = (props) => {
                 className="menu-item" 
                 onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
                 key={index}
-                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
+                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots}
               >
                 {props.rolesTaken[role.roleName] 
                 ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
@@ -118,6 +119,14 @@ const DropdownRoles = (props) => {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (props.initRole) {
+      setSelectedRole(props.initRole.name);
+    }
+  }, [props.initRole]);
+
+  console.log(selectedRole);
 
   const handleRoleSelected = (e, roleName, roleNum) => {
     if (e.target.tagName.toLowerCase() !== "i") {
@@ -137,7 +146,7 @@ const DropdownRoles = (props) => {
   const handleDeselectRole = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    setSelectedRole("");
+    setSelectedRole(null);
     props.roleLevel(null, null);
     return false;
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
@@ -59,6 +59,9 @@ function Game(props) {
 
   const toggle = () => setShowNav(!showNav);
 
+  const userid = (new URLSearchParams(useLocation().search)).get("user");
+  const [queryUser, setQueryUser] = useState({});
+
   useEffect(() => {
     (async function () {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
@@ -67,7 +70,17 @@ function Game(props) {
         }
       }).then((res) => {
         setRoomInfo(res.data);
-      })
+      });
+      
+      if (userid) {
+        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayer', {
+          params: {
+            id: userid,
+          }
+        }).then((res) => {
+          setQueryUser(res.data);
+        });
+      }
 
       const client = await io(process.env.REACT_APP_API_ORIGIN, {
         query: {
@@ -113,6 +126,8 @@ function Game(props) {
 
   const isLoading = room === null;
 
+  console.log("PEE", queryUser);
+
   return (
     !isLoading ? (
       <>
@@ -135,6 +150,7 @@ function Game(props) {
             players={players}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
+            initialUserInfo={queryUser}
           />
           {!roomStatus.running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useEffects, useState } from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import styled from "styled-components";
 import { useAlertContext } from '../Alerts/AlertContext';
@@ -43,9 +43,14 @@ const CreateRole = (props) => {
     };
   }, {});
 
+  useEffect(() => {
+    setRole({name: props.initialUserInfo?.gamerole});
+    setName(props.initialUserInfo?.fname);
+  }, [props.initialUserInfo]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (role && rolesTaken[role.name] >= role.num) {
+    if (role && (role.num && rolesTaken[role.name] >= role.num)) {
       alertContext.showAlert("Too many people have already chosen this role. Please choose a different one.", "warning");
       return false;
     }
@@ -67,6 +72,7 @@ const CreateRole = (props) => {
             roleLevel={handleSetRole}
             editMode={false}
             rolesTaken={rolesTaken}
+            initRole={role}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">

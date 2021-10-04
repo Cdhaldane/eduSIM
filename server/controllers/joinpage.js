@@ -108,6 +108,22 @@ exports.getRooms = async (req, res) => {
   }
 };
 
+exports.getPlayer = async (req, res) => {
+  const gameplayerid = req.query.id;
+  try {
+    let gameplayer = await GamePlayer.findOne({
+      where: {
+        gameplayerid
+      },
+    });
+    return res.send(gameplayer);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No players found with the id ${gameplayerid}`,
+    });
+  }
+};
+
 // Get players for a particular tab or room
 exports.getPlayers = async (req, res) => {
   const game_room = req.query.game_room;

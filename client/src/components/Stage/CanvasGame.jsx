@@ -256,6 +256,7 @@ class Graphics extends Component {
               handleSubmit={this.handlePlayerInfo}
               gameroles={this.state.gameroles}
               players={this.props.players}
+              initialUserInfo={this.props.initialUserInfo}
             />
           </Modal>
         </div>
