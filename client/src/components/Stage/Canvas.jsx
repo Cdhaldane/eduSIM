@@ -93,6 +93,8 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
+      selectedShapeName: "",
+
       connectors: [],
       gameroles: [],
       tics: [],
@@ -145,14 +147,31 @@ class Graphics extends Component {
       isDrawing: false,
       drawMode: false,
 
-      selectedShapeName: "",
+      // Variables for calculating responsive sizing 
+      // (for different screen sizes)
+      groupLayerX: 0,
+      groupLayerY: 0,
+      groupLayerScale: 1,
+      personalLayerX: 0,
+      personalLayerY: 0,
+      personalLayerScale: 1,
+      draggable: false,
 
-      layerX: 0,
-      layerY: 0,
-      layerScale: 1,
+      // Fill and Stroke
+      colorf: "black",
+      colors: "black",
+      color: "white",
+      strokeWidth: 3.75,
+      opacity: 1,
+      lastFill: null,
+
+      // Metadata
+      title: "",
+      category: "",
+      description: "",
+      thumbnail: "",
 
       errMsg: "",
-
       arrowDraggable: false,
       newArrowRef: "",
       count: 0,
@@ -161,13 +180,6 @@ class Graphics extends Component {
       arrowEndX: 0,
       arrowEndY: 0,
       isTransforming: false,
-      lastFill: null,
-
-      colorf: "black",
-      colors: "black",
-      color: "white",
-      strokeWidth: 3.75,
-      opacity: 1,
       infolevel: false,
       rolelevel: "",
       tic: false,
@@ -178,15 +190,10 @@ class Graphics extends Component {
       roadmapId: null,
       alreadyCreated: false,
       publishing: false,
-      title: "",
-      category: "",
-      description: "",
-      thumbnail: "",
       isPasteDisabled: false,
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
       savedstates: [],
-      draggable: false,
       level: 1,
 
       selection: {
@@ -215,7 +222,7 @@ class Graphics extends Component {
         });
       }
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
@@ -305,18 +312,9 @@ class Graphics extends Component {
       }
     }
 
-    // Show Selection (for debugging purposes)
-    if (this.state.selectedShapeName) {
-      //console.log(this.refs[this.state.selectedShapeName].attrs.id);
-      //console.log(this.refs[this.state.selectedShapeName].attrs);
-      //console.log(this.refs[this.state.selectedShapeName].attrs.image.src);
-    }
-
-    if (!this.state.redoing && !this.state.isTransforming)
+    if (!this.state.redoing && !this.state.isTransforming) {
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
-        if (
-          JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)
-        ) {
+        if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
           // If text shouldn't update, don't append to  history
           if (this.state.shouldTextUpdate) {
             let uh = history;
@@ -326,9 +324,8 @@ class Graphics extends Component {
             historyStep += 1;
           }
         }
-      } else {
-        //console.log("compoenntDidUpdate but attrs didn't change");
       }
+    }
     this.state.redoing = false;
   }
 
@@ -367,7 +364,7 @@ class Graphics extends Component {
 
     // Save the game_parameters
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   };
 
@@ -430,8 +427,11 @@ class Graphics extends Component {
     }
   };
 
-  updateSelectionRect = () => {
-    const node = this.refs.selectionRectRef;
+  updateSelectionRect = (personalArea) => {
+    let node = this.refs.selectionRectRef;
+    if (personalArea) {
+      node = this.refs.selectionRectRef1;
+    }
     node.setAttrs({
       visible: this.state.selection.visible,
       x: Math.min(this.state.selection.x1, this.state.selection.x2),
@@ -443,16 +443,18 @@ class Graphics extends Component {
     node.getLayer().batchDraw();
   };
 
-  onMouseDown = (e) => {
-    this.setState({
-      draggable: false
-    });
-    // Substract sidebar
-    const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+  onMouseDown = (e, personalArea) => {
+    if (!e.evt.ctrlKey) {
+      this.setState({
+        draggable: false
+      });
+    }
+
     const pos = {
-      x: e.evt.clientX - sidebarPx,
-      y: e.evt.clientY
+      x: e.evt.layerX,
+      y: e.evt.layerY
     };
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: true
@@ -465,7 +467,7 @@ class Graphics extends Component {
           level: this.state.level,
           color: this.state.color,
           id: "shape",
-          infolevel: false
+          infolevel: personalArea
         }]
       });
     } else {
@@ -474,16 +476,27 @@ class Graphics extends Component {
       if (isElement || isTransformer) {
         return;
       }
+
+      let scale = this.state.groupLayerScale;
+      let xOffset = -this.state.groupLayerX;
+      let yOffset = -this.state.groupLayerY;
+      if (personalArea) {
+        scale = this.state.personalLayerScale;
+        xOffset = -this.state.personalLayerX;
+        yOffset = -this.state.personalLayerY;
+      }
+
       this.setState({
         selection: {
           visible: true,
-          x1: pos.x,
-          y1: pos.y,
-          x2: pos.x,
-          y2: pos.y
+          x1: (pos.x + xOffset) / scale,
+          y1: (pos.y + yOffset) / scale,
+          x2: (pos.x + xOffset) / scale,
+          y2: (pos.y + yOffset) / scale
         }
+      }, () => {
+        this.updateSelectionRect(personalArea);
       });
-      this.updateSelectionRect();
     }
   };
 
@@ -520,18 +533,18 @@ class Graphics extends Component {
       this.state.selection.visible = false;
       // Disable click event
       Konva.listenClickTap = false;
-      this.updateSelectionRect();
+      this.updateSelectionRect(false);
     }
   };
 
-  handleMouseOver = event => {
+  handleMouseOver = (e, personalArea) => {
     // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
         return;
       }
 
-      const stage = event.target.getStage();
+      const stage = e.target.getStage();
       const point = stage.getPointerPosition();
       let lastLine = this.state.lines[this.state.lines.length - 1];
       // Add point
@@ -543,74 +556,39 @@ class Graphics extends Component {
         lines: this.state.lines.concat()
       });
     } else {
-      if (!this.state.selection.visible) {
+      if (!this.state.selection.visible && !this.state.draggable) {
         return;
       }
-      let pos = this.refs.graphicStage.getPointerPosition();
-      let shape = this.refs.graphicStage.getIntersection(pos);
 
-      this.state.selection.x2 = pos.x;
-      this.state.selection.y2 = pos.y;
-      this.updateSelectionRect();
+      const stage = personalArea ? "personalAreaStage" : "graphicStage";
+      const pos = this.refs[stage].getPointerPosition();
+      const shape = this.refs[stage].getIntersection(pos);
 
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
       } else {
         document.body.style.cursor = "default";
+
+        let scale = this.state.groupLayerScale;
+        let xOffset = -this.state.groupLayerX;
+        let yOffset = -this.state.groupLayerY;
+        if (personalArea) {
+          scale = this.state.personalLayerScale;
+          xOffset = -this.state.personalLayerX;
+          yOffset = -this.state.personalLayerY;
+        }
+
+        // Create drag selection rectangle
+        this.setState({
+          selection: {
+            ...this.state.selection,
+            x2: (pos.x + xOffset) / scale,
+            y2: (pos.y + yOffset) / scale
+          }
+        }, () => {
+          this.updateSelectionRect(personalArea);
+        });
       }
-    }
-  };
-
-  updateSelectionRectInfo = () => {
-    const node = this.refs.selectionRectRef1;
-    node.setAttrs({
-      visible: this.state.selection.visible,
-      x: Math.min(this.state.selection.x1, this.state.selection.x2),
-      y: Math.min(this.state.selection.y1, this.state.selection.y2),
-      width: Math.abs(this.state.selection.x1 - this.state.selection.x2),
-      height: Math.abs(this.state.selection.y1 - this.state.selection.y2),
-      fill: "rgba(0, 161, 255, 0.3)"
-    });
-    node.getLayer().batchDraw();
-  };
-
-  onMouseDownInfo = (e) => {
-    this.setState({
-      draggable: false
-    });
-    // Substract sidebar and the difference between personal screen and top of screen
-    const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 100;
-    const topDiffPx = window.innerHeight * 0.3;
-    const pos = {
-      x: e.evt.clientX - sidebarPx,
-      y: e.evt.clientY - topDiffPx
-    };
-    if (this.state.drawMode === true) {
-      this.state.isDrawing = true;
-      const tool = this.state.tool;
-      this.setState({
-        lines: [...this.state.lines, {
-          tool, points: [pos.x, pos.y],
-          level: this.state.level,
-          color: this.state.color,
-          id: "shape",
-          infolevel: true,
-          rolelevel: this.state.rolelevel
-        }]
-      })
-    } else {
-
-      const isElement = e.target.findAncestor(".elements-container");
-      const isTransformer = e.target.findAncestor("Transformer");
-      if (isElement || isTransformer) {
-        return;
-      }
-      this.state.selection.visible = true;
-      this.state.selection.x1 = pos.x;
-      this.state.selection.y1 = pos.y;
-      this.state.selection.x2 = pos.x;
-      this.state.selection.y2 = pos.y;
-      this.updateSelectionRectInfo();
     }
   };
 
@@ -646,7 +624,7 @@ class Graphics extends Component {
       this.state.selection.visible = false;
       // disable click event
       Konva.listenClickTap = false;
-      this.updateSelectionRectInfo();
+      this.updateSelectionRect(true);
     }
   };
 
@@ -712,44 +690,7 @@ class Graphics extends Component {
     }
   }
 
-  handleMouseOverInfo = event => {
-    // Get the current arrow ref and modify its position by filtering & pushing again
-    if (this.state.drawMode === true) {
-      if (!this.state.isDrawing) {
-        return;
-      }
-
-      const stage = event.target.getStage();
-      const point = stage.getPointerPosition();
-      let lastLine = this.state.lines[this.state.lines.length - 1];
-      // Add point
-      lastLine.points = lastLine.points.concat([point.x, point.y]);
-
-      // replace last
-      this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
-      this.setState({
-        lines: this.state.lines.concat()
-      })
-    } else {
-      if (!this.state.selection.visible) {
-        return;
-      }
-      const pos = this.refs.personalAreaStage.getPointerPosition();
-      const shape = this.refs.personalAreaStage.getIntersection(pos);
-
-      this.state.selection.x2 = pos.x;
-      this.state.selection.y2 = pos.y;
-      this.updateSelectionRectInfo();
-
-      if (shape && shape.attrs.link) {
-        document.body.style.cursor = "pointer";
-      } else {
-        document.body.style.cursor = "default";
-      }
-    }
-  };
-
-  handleWheel(event) {
+  handleWheel = (e, personalArea) => {
     if (
       this.state.rectangles.length === 0 &&
       this.state.ellipses.length === 0 &&
@@ -764,31 +705,21 @@ class Graphics extends Component {
       this.state.lines.length === 0
     ) {
     } else {
-      event.evt.preventDefault();
+      e.evt.preventDefault();
+
       const scaleBy = 1.2;
-      const stage = this.refs.graphicStage;
-      const layer = this.refs.groupAreaLayer;
+      const layer = personalArea ? this.refs.personalAreaLayer : this.refs.groupAreaLayer;
+
       const oldScale = layer.scaleX();
-      const mousePointTo = {
-        x:
-          stage.getPointerPosition().x / oldScale -
-          this.state.layerX / oldScale,
-        y:
-          stage.getPointerPosition().y / oldScale - this.state.layerY / oldScale
-      };
+      const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      const newScale =
-        event.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
-
-      layer.scale({ x: newScale, y: newScale });
-
+      layer.scale({
+        x: newScale,
+        y: newScale
+      });
+      const layerScale = personalArea ? "personalLayerScale" : "groupLayerScale";
       this.setState({
-        layerScale: newScale,
-        layerX:
-          -(mousePointTo.x - stage.getPointerPosition().x / newScale) *
-          newScale,
-        layerY:
-          -(mousePointTo.y - stage.getPointerPosition().y / newScale) * newScale
+        [layerScale]: newScale
       });
     }
   }
@@ -1501,7 +1432,7 @@ class Graphics extends Component {
   }
 
   handleLayerDraw = () => {
-    console.log(this.state.rectangles)
+    //
   }
 
   handleImage = (e) => {
@@ -1531,11 +1462,9 @@ class Graphics extends Component {
   handleDownload = (url, filename) => {
     axios.get(url, {
       responseType: 'blob',
-    })
-      .then((res) => {
-        fileDownload(res.data, filename)
-        console.log(res)
-      })
+    }).then((res) => {
+      fileDownload(res.data, filename);
+    });
   }
 
   urlObjOnTransformEnd = (type) => {
@@ -1664,6 +1593,15 @@ class Graphics extends Component {
     });
   }
 
+  keyUp = (e) => {
+    if (e.key === "Control") {
+      document.body.style.cursor = "default";
+      this.setState({
+        draggable: false
+      });
+    }
+  }
+
   contextMenuEventShortcuts = (event) => {
     const x = 88,
       deleteKey = 46,
@@ -1687,9 +1625,10 @@ class Graphics extends Component {
     } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
       this.handlePaste();
     } else if (event.ctrlKey) {
+      document.body.style.cursor = "grab";
       this.setState({
         draggable: true
-      })
+      });
     }
   }
 
@@ -1721,6 +1660,7 @@ class Graphics extends Component {
 
         <div
           onKeyDown={this.contextMenuEventShortcuts}
+          onKeyUp={this.keyUp}
           name="pasteContainer"
           tabIndex="0"
           id={"editMainContainer"}
@@ -1780,9 +1720,9 @@ class Graphics extends Component {
           <Stage
             onContextMenu={(e) => e.evt.preventDefault()}
             onClick={this.handleStageClick}
-            onMouseMove={this.handleMouseOver}
-            onWheel={event => this.handleWheel(event)}
-            onMouseDown={this.onMouseDown}
+            onMouseMove={(e) => this.handleMouseOver(e, false)}
+            onWheel={(e) => this.handleWheel(e, false)}
+            onMouseDown={(e) => this.onMouseDown(e, false)}
             onMouseUp={this.handleMouseUp}
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
@@ -1792,20 +1732,22 @@ class Graphics extends Component {
           >
             <Layer
               name="group"
-              scaleX={this.state.layerScale}
-              scaleY={this.state.layerScale}
-              x={this.state.layerX}
-              y={this.state.layerY}
+              scaleX={this.state.groupLayerScale}
+              scaleY={this.state.groupLayerScale}
+              x={this.state.groupLayerX}
+              y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
               draggable={this.state.draggable}
-              onDragEnd={() => {
-                this.setState({
-                  layerX: this.refs.groupAreaLayer.x(),
-                  layerY: this.refs.groupAreaLayer.y()
-                });
-              }}
               ref="groupAreaLayer"
+              onDragMove={(e) => {
+                if (this.state.draggable) {
+                  this.setState({
+                    groupLayerX: this.state.groupLayerX + e.evt.movementX,
+                    groupLayerY: this.state.groupLayerY + e.evt.movementY
+                  });
+                }
+              }}
             >
               <Rect
                 x={-5 * window.innerWidth}
@@ -2060,7 +2002,6 @@ class Graphics extends Component {
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
-                            console.log("prevArrow: ", eachArrow.points);
                             if (eachEllipse.name === eachArrow.from.attrs.name) {
                               eachArrow.points = [
                                 eachEllipse.x,
@@ -2069,10 +2010,8 @@ class Graphics extends Component {
                                 eachArrow.points[3]
                               ];
                               this.forceUpdate();
-
                               this.refs.graphicStage.draw();
                             }
-                            console.log("new arrows:", eachArrow.points);
                           }
 
                           if (eachArrow.to !== undefined) {
@@ -2393,7 +2332,6 @@ class Graphics extends Component {
                       stroke={eachDoc.stroke}
                       strokeWidth={eachDoc.strokeWidth}
                       onClick={() => {
-                        console.log(this.state.docsrc)
                         fetch(this.state.docsrc, {
                           method: 'GET',
                           headers: {
@@ -2402,8 +2340,6 @@ class Graphics extends Component {
                         })
                           .then((response) => response.blob())
                           .then((blob) => {
-                            console.log(blob)
-
                             // Create blob link to download
                             const url = window.URL.createObjectURL(
                               new Blob([blob]),
@@ -2429,7 +2365,6 @@ class Graphics extends Component {
                         this.setState({
                           isTransforming: true
                         });
-
                       }}
                       onTransform={() => {
 
@@ -2439,7 +2374,6 @@ class Graphics extends Component {
                           isTransforming: false
                         });
                         let triangle = this.refs[eachDoc.ref];
-
                       }}
                       draggable
                       onDragMove={() => {
@@ -2581,7 +2515,6 @@ class Graphics extends Component {
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
-                            console.log("prevArrow: ", eachArrow.points);
                             if (eachEllipse.name === eachArrow.from.attrs.name) {
                               eachArrow.points = [
                                 eachEllipse.x,
@@ -2592,7 +2525,6 @@ class Graphics extends Component {
                               this.forceUpdate();
                               this.refs.graphicStage.draw();
                             }
-                            console.log("new arrows:", eachArrow.points);
                           }
 
                           if (eachArrow.to !== undefined) {
@@ -2912,7 +2844,6 @@ class Graphics extends Component {
                   // get the current textNode we are editing, get the name from there
                   //match name with elements in this.state.texts,
                   let node = this.refs[this.state.currentTextRef];
-                  console.log("node width before set", node.textWidth);
                   let name = node.attrs.name;
                   this.setState(
                     prevState => ({
@@ -3010,21 +2941,49 @@ class Graphics extends Component {
             handlePageNum={this.handleNumOfPagesChange}
             numOfPages={this.state.numberOfPages} />
           <div>
-            <div className={"info" + this.state.open}>
+            <div
+              id={"editPersonalContainer"}
+              className={"info" + this.state.open}
+            >
               <div
                 name="pasteContainer"
                 tabIndex="0"
                 className="personalAreaStageContainer"
-                onKeyDown={this.contextMenuEventShortcuts}>
-                <Stage width={1500} height={600}
+                onKeyDown={this.contextMenuEventShortcuts}
+                onKeyUp={this.keyUp}
+              >
+                <Stage
+                  height={document.getElementById("editPersonalContainer") ?
+                    document.getElementById("editPersonalContainer").clientHeight : 0}
+                  width={document.getElementById("editPersonalContainer") ?
+                    document.getElementById("editPersonalContainer").clientWidth : 0}
                   onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
                   onClick={this.handleStageClickInfo}
-                  onMouseMove={this.handleMouseOverInfo}
-                  onMouseDown={this.onMouseDownInfo}
+                  onMouseMove={(e) => this.handleMouseOver(e, true)}
+                  onMouseDown={(e) => this.onMouseDown(e, true)}
+                  onWheel={(e) => this.handleWheel(e, true)}
                   onMouseUp={this.handleMouseUpInfo}
                 >
-                  <Layer ref="personalAreaLayer" name="personal">
+                  <Layer
+                    ref="personalAreaLayer"
+                    name="personal"
+                    scaleX={this.state.personalLayerScale}
+                    scaleY={this.state.personalLayerScale}
+                    x={this.state.personalLayerX}
+                    y={this.state.personalLayerY}
+                    height={window.innerHeight}
+                    width={window.innerWidth}
+                    draggable={this.state.draggable}
+                    onDragMove={(e) => {
+                      if (this.state.draggable) {
+                        this.setState({
+                          personalLayerX: this.state.personalLayerX + e.evt.movementX,
+                          personalLayerY: this.state.personalLayerY + e.evt.movementY
+                        });
+                      }
+                    }}
+                  >
                     {this.state.rectangles.map((eachRect, index) => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -3295,7 +3254,6 @@ class Graphics extends Component {
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
-                                  console.log("prevArrow: ", eachArrow.points);
                                   if (eachEllipse.name === eachArrow.from.attrs.name) {
                                     eachArrow.points = [
                                       eachEllipse.x,
@@ -3307,7 +3265,6 @@ class Graphics extends Component {
 
                                     this.refs.graphicStage.draw();
                                   }
-                                  console.log("new arrows:", eachArrow.points);
                                 }
 
                                 if (eachArrow.to !== undefined) {
@@ -3623,7 +3580,6 @@ class Graphics extends Component {
                             stroke={eachDoc.stroke}
                             strokeWidth={eachDoc.strokeWidth}
                             onClick={() => {
-                              console.log(this.state.docsrc)
                               fetch(this.state.docsrc, {
                                 method: 'GET',
                                 headers: {
@@ -3632,7 +3588,6 @@ class Graphics extends Component {
                               })
                                 .then((response) => response.blob())
                                 .then((blob) => {
-                                  console.log(blob)
 
                                   // Create blob link to download
                                   const url = window.URL.createObjectURL(
@@ -3811,7 +3766,6 @@ class Graphics extends Component {
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
-                                  console.log("prevArrow: ", eachArrow.points);
                                   if (eachEllipse.name === eachArrow.from.attrs.name) {
                                     eachArrow.points = [
                                       eachEllipse.x,
@@ -3822,7 +3776,6 @@ class Graphics extends Component {
                                     this.forceUpdate();
                                     this.refs.graphicStage.draw();
                                   }
-                                  console.log("new arrows:", eachArrow.points);
                                 }
 
                                 if (eachArrow.to !== undefined) {
