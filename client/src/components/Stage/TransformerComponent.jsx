@@ -4,8 +4,17 @@ import { Transformer } from "react-konva";
 const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
+    //console.log(props.selectedShapeName.replace(/\d+$/, ""));
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
-      case "text":
+      case "group":
+        return (
+          <Transformer
+            ref={ref}
+            name="transformer"
+            resizeEnabled={false}
+          />
+        );
+      case "texts":
         return (
           <Transformer
             ref={ref}
@@ -14,10 +23,13 @@ const TransformerComponent = forwardRef((props, ref) => {
               newBox.width = Math.max(30, newBox.width);
               return newBox;
             }}
-            enabledAnchors={["middle-left", "middle-right"]}
+            enabledAnchors={[
+              "middle-left",
+              "middle-right"
+            ]}
           />
         );
-      case "star":
+      case "stars":
         return (
           <Transformer
             ref={ref}
@@ -30,7 +42,7 @@ const TransformerComponent = forwardRef((props, ref) => {
             ]}
           />
         );
-      case "arrow":
+      case "arrows":
         return (
           <Transformer
             ref={ref}

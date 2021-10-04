@@ -7,7 +7,7 @@ import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
 
-  const PLACEHOLDER_TEXT = "Select Role!";
+  const PLACEHOLDER_TEXT = "Select Role";
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -90,21 +90,29 @@ const DropdownRoles = (props) => {
       <div>
         {roles.map((role, index) => {
           return (
-            <div 
-              className="menu-item" 
-              onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
-              key={index}
-              disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
-            >
-              {props.editMode && (
+            props.editMode ? (
+              <div 
+                className="menu-item" 
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+                key={index}
+              >
                 <span className="icon-button">
                   <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
                 </span>
-              )}
-              {props.rolesTaken[role.roleName] 
-              ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
-              : `${role.roleName} (${role.numOfSpots})`}
-            </div>
+                {`${role.roleName} (${role.numOfSpots})`}
+              </div>
+            ) : (
+              <div 
+                className="menu-item" 
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+                key={index}
+                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
+              >
+                {props.rolesTaken[role.roleName] 
+                ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                : `${role.roleName} (${role.numOfSpots})`}
+              </div>
+            )
           );
         })}
       </div>
@@ -192,8 +200,8 @@ const DropdownRoles = (props) => {
             icon={<i className="icons fab fa-critical-role"></i>}>
             {selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && (
-              <button class="role-deselect-icon" onClick={handleDeselectRole}>
-                <i class="fa fa-times-circle"></i>
+              <button className="role-deselect-icon" onClick={handleDeselectRole}>
+                <i className="fa fa-times-circle"></i>
               </button>
             )}
           </DropdownItem>

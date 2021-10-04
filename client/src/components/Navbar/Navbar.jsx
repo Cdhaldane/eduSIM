@@ -50,7 +50,7 @@ function NavBar(props) {
             <h2>{user.name}</h2>
             <Link to="/dashboard" className="nav-home-mobile">
               <i
-                class="fa fa-home"
+                className="fa fa-home"
                 aria-hidden="true"
               ></i>
             </Link>
@@ -67,7 +67,7 @@ function NavBar(props) {
 
         <Link to="/dashboard" className="nav-home">
           <i
-            class="fa fa-home"
+            className="fa fa-home"
             aria-hidden="true"
           ></i>
         </Link>

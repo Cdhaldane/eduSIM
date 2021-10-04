@@ -34,14 +34,14 @@ const DenseNavLinks = styled(NavLink)`
   }
 `;
 
-function NavLinksGroup(props) {
+const NavLinksGroup = (props) => {
   return (
-    <LinksGroup {...props}>
-      {props.links.map((link) => {
+    <LinksGroup>
+      {props.links.map((link, index) => {
         return link.visible &&
           <DenseNavLinks
             compact={props.compact}
-            key={link.to}
+            key={index}
             to={link.to}
             disabled={props.disabled}
             iconClassName={link.icon}

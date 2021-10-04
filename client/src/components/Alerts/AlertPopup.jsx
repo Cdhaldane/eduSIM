@@ -1,6 +1,6 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
-import { useAlertContext } from './AlertContext'
+import { useAlertContext } from './AlertContext';
 
 import "./AlertPopup.css";
 

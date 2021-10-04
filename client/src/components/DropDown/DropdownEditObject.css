@@ -39,9 +39,8 @@ a {
 
 .dropdownedit {
   position: absolute;
-  left: 160px;
   bottom: -2px;
-  background-color: var(--bg);
+  background-color: rgba(255, 255, 255, 0.8);
   border: var(--border);
   border-radius: 5px;
   padding: 10px;

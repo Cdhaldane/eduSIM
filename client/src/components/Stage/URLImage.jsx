@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { Image } from "react-konva";
 
-const URLImage = (props) => {
+const URLImage = forwardRef((props, ref) => {
 
   const [image, setImage] = useState(null);
 
   const loadImage = () => {
-    const image = new window.Image();
-    image.src = props.src;
-    setImage(image);
+    if (image) {
+      image.src = props.src;
+      return image;
+    } else {
+      const newImg = new window.Image();
+      newImg.src = props.src;
+      return newImg;
+    }
   }
 
   useEffect(() => {
-    loadImage();
-  }, []);
+    setImage(loadImage());
+  }, [ref]);
 
   return (
     <Image
@@ -21,10 +26,12 @@ const URLImage = (props) => {
       visible={props.visible}
       x={props.x}
       y={props.y}
+      scaleY={props.scaleY}
+      scaleX={props.scaleX}
       width={props.width}
       height={props.height}
       image={image}
-      ref={props.ref}
+      ref={ref}
       id={props.id}
       name="shape"
       opacity={props.opacity}
@@ -40,6 +47,6 @@ const URLImage = (props) => {
       strokeWidth={props.strokeWidth}
     />
   );
-};
+});
 
 export default URLImage;
