@@ -12,10 +12,6 @@
   position: absolute;
 }
 
-:root {
-  
-}
-
 #editMainContainer {
   background-color: rgba(255, 255, 255, 0.63);
   border: 3px solid black;
