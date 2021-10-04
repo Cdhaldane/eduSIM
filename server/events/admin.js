@@ -157,7 +157,7 @@ export default async (server, client, event, args) => {
       } else {
         const rooms = await getSimulationRooms(game);
         rooms.forEach(async ({ dataValues: room }) => {
-          const { level = 1 } = await getRoomStatus(room.gameroom_url);
+          const { running, timeElapsed, level = 1 } = await getRoomStatus(room.gameroom_url);
 
           if (running || timeElapsed) {
             const newStatus = await updateRoomStatus(room.gameroom_url, {
