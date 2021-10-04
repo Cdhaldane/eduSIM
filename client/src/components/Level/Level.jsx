@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { times } from "lodash";
 import { Link } from "react-router-dom";
 import Pencil from "../Pencils/Pencil"
@@ -14,14 +14,15 @@ const Level = (props) => {
   }
 
   const handleCount = () => {
-    if (count > props.number - 1) {
-      setCount(1)
-      handleLevel(1)
-    } else {
-      setCount(count + 1);
-      handleLevel(count + 1);
-    }
+    setCount(count + 1);
+    handleLevel(count + 1);
   }
+
+  useEffect(() => {
+    if (props.levelVal) {
+      setCount(props.levelVal);
+    }
+  }, [props.levelVal]);
 
   const createSelectItems = () => {
     for (let i = 0; i < props.number; i++) {
@@ -70,10 +71,12 @@ const Level = (props) => {
             />
           )}
 
-          <button
-            onClick={handleCount}>
-            Next
-          </button>
+          {props.freeAdvance && (
+            <button
+              onClick={handleCount}>
+              Next
+            </button>
+          )}
         </div>
 
         <Link to="/dashboard" className="level-close">

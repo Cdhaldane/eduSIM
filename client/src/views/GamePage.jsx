@@ -5,6 +5,8 @@ import axios from "axios";
 import io from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
+import moment from "moment";
+import AutoUpdate from "../components/AutoUpdate";
 
 const Main = styled.main`
   grid-area: main;
@@ -30,13 +32,31 @@ const PauseCover = styled.div`
   }
 `;
 
+const Time = styled.div`    
+  position: fixed;
+  text-align: center;
+  top: 40px;
+  left: 50%;
+  color: var(--primary);
+  font-size: 3em;
+  font-weight: bold;
+  width: 300px;
+  margin-left: -195px;
+  @media screen and (orientation: portrait) {
+    margin-left: -180px;
+    top: 60px;
+  }
+`;
+
 function Game(props) {
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
-  const [running, setRunning] = useState(false);
+  const [roomStatus, setRoomStatus] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
+  const [level, setLevel] = useState(1);
+
   const toggle = () => setShowNav(!showNav);
 
   useEffect(() => {
@@ -54,9 +74,12 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ running, players }) => {
+      client.on("connectStatus", ({ players, ...status }) => {
         setPlayers(players);
-        setRunning(running || false);
+        setRoomStatus(status || {});
+      });
+      client.on("roomStatusUpdate", ({ status }) => {
+        setRoomStatus(status);
       });
       client.on("clientJoined", ({id, ...player}) => {
         setPlayers(l => ({
@@ -70,16 +93,23 @@ function Game(props) {
           return l;
         });
       });
-      client.on("gameStart", () => {
-        setRunning(true);
-      })
-      client.on("gamePause", () => {
-        setRunning(false);
-      })
       setSocketInfo(client);
       return () => client.disconnect();
     }());
   }, [roomid]);
+
+  const timeFromNow = () => (
+    roomStatus.running 
+    ? moment(moment()).diff(roomStatus.startTime - (roomStatus.timeElapsed || 0))
+    : (roomStatus.timeElapsed || 0)
+  );
+
+  const countdown = () => {
+    const count = (roomStatus.settings?.advanceMode || 1)*60000;
+    return (count - timeFromNow()) - Math.floor((count - timeFromNow())/count)*count
+  };
+
+  const actualLevel = roomStatus.level || level;
 
   const isLoading = room === null;
 
@@ -95,7 +125,7 @@ function Game(props) {
           subtitle={room.gameroom_name}
           socket={socket}
           game
-          disabled={!running}
+          disabled={!roomStatus.running}
         />
         <Main>
           <CanvasGame
@@ -103,12 +133,32 @@ function Game(props) {
             gameinstance={room.gameinstance}
             socket={socket}
             players={players}
+            level={actualLevel}
+            freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
           />
-          {!running && (<PauseCover>
-            <i className="fa fa-pause-circle fa-2x"></i>
+          {!roomStatus.running && (<PauseCover>
+            <i class="fa fa-pause-circle fa-2x"></i>
             <p>Paused</p>
           </PauseCover>)}
         </Main>
+        <Time>
+          {!isNaN(roomStatus.settings?.advanceMode) && (
+            <>
+              <AutoUpdate
+                value={() => moment(countdown()).format("mm:ss")}
+                intervalTime={20}
+                enabled
+              />
+              <AutoUpdate
+                value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode*60000))+1}
+                intervalTime={20}
+                enabled
+                noDisplay
+                onChange={setLevel}
+              />
+            </>
+          )}
+        </Time>
       </>
     ) : (
       <h1>loading...</h1>

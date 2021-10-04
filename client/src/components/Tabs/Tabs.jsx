@@ -22,7 +22,7 @@ function Tabs(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [newGroup, setNewGroup] = useState("");
   const [tabs, setTabs] = useState([]);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(1);
   const data = [
     { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
     { name: "Page B", uv: 500, pv: 2400, amt: 2400 },
@@ -49,7 +49,7 @@ function Tabs(props) {
   const toggleTab = (index) => {
     setToggleState(index);
     // for updating controls in admin header
-    props.setRoom(tabs[index-1]);
+    props.setRoom(tabs[index - 1]);
   };
 
   const handleSubmit = (e) => {
@@ -73,6 +73,9 @@ function Tabs(props) {
       .then((res) => {
         setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid, res.data.gameroom_url]]);
         setToggleState(toggleState + 1);
+        if (props.socket) {
+          props.socket.emit("joinRoom", res.data.gameroom_url);
+        }
       })
       .catch(error => console.log(error.response));
   }
@@ -100,11 +103,41 @@ function Tabs(props) {
 
       })
       .catch(error => console.log(error.response));
-    setTabs(tabs.filter((_,i) => i != index));
+    setTabs(tabs.filter((_, i) => i != index));
   }
 
   const handleTime = (e) => {
-    setTime(e.target.value);
+    const val = Math.max(parseFloat(e.target.value), 1);
+    setTime(val);
+    if (props.socket) {
+      props.socket.emit("updateGameSettings", {
+        settings: {
+          advanceMode: val
+        }
+      });
+    }
+  };
+
+  const handleRadio = (e) => {
+    const val = e.target.value;
+    setRadio(val);
+    if (props.socket) {
+      props.socket.emit("updateGameSettings", {
+        settings: {
+          advanceMode: val === "timed" ? time : val
+        }
+      });
+    }
+  };
+
+  const displayAdvance = () => {
+    const keys = props.roomStatus && Object.keys(props.roomStatus);
+    if (keys && keys.length > 0) {
+      return props.roomStatus && (
+        isNaN(props.roomStatus[keys[0]].settings?.advanceMode) ? props.roomStatus[keys[0]].settings?.advanceMode : "timed"
+      ) || "student"
+    }
+    return "student";
   };
 
   return (
@@ -112,7 +145,7 @@ function Tabs(props) {
       <ul className="selected-tab">
         <li
           onClick={() => toggleTab(0)}
-          className={toggleState === 0 && "selected"}
+          className={toggleState === 0 ? "selected" : ""}
         >
           <span className="tab-text">Overview</span>
         </li>
@@ -144,40 +177,39 @@ function Tabs(props) {
                   <div>
                     <input
                       type="radio"
-                      checked={radio === "Teacher"}
-                      value="Teacher"
-                      onChange={(e) => {
-                        setRadio(e.target.value);
-                      }}
+                      checked={displayAdvance() === "teacher"}
+                      value="teacher"
+                      onChange={handleRadio}
+                      disabled={tabs.length === 0}
                     />{" "}
                     Teacher/Facilitator
                   </div>
                   <div>
                     <input
                       type="radio"
-                      checked={radio === "Student"}
-                      value="Student"
-                      onChange={(e) => {
-                        setRadio(e.target.value);
-                      }}
+                      checked={displayAdvance() === "student"}
+                      value="student"
+                      onChange={handleRadio}
+                      disabled={tabs.length === 0}
                     />{" "}
                     Student/Participants
                   </div>
                   <div>
                     <input
                       type="radio"
-                      checked={radio === "Timed"}
-                      value="Timed"
-                      onChange={(e) => {
-                        setRadio(e.target.value);
-                      }}
+                      checked={displayAdvance() === "timed"}
+                      value="timed"
+                      onChange={handleRadio}
+                      disabled={tabs.length === 0}
                     />{" "}
                     <span>Timed =</span>
                     <input
                       onChange={handleTime}
+                      value={time}
                       type="text"
                       placeholder="Time"
                       className="content-timeinput"
+                      disabled={tabs.length === 0 || radio !== "timed"}
                     />
                     <span>min</span>
                   </div>
@@ -209,7 +241,7 @@ function Tabs(props) {
           <h3>Student/participant list:</h3>
           <Table addstudent={false} gameid={props.gameid} title={props.title} />
         </div>
-        {tabs.map((tab,i) => (
+        {tabs.map((tab, i) => (
           <div
             className={
               toggleState === i + 1 ? "content  active-content" : "content"

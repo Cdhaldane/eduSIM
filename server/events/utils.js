@@ -9,7 +9,7 @@ let players = new Map();
 // helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
 export const updateRoomStatus = async (id, val) => {
-  const room = getRoomStatus(id);
+  const room = await getRoomStatus(id);
   rooms.set(id, {
     ...room,
     ...val
@@ -18,6 +18,18 @@ export const updateRoomStatus = async (id, val) => {
     ...room,
     ...val
   };
+}
+export const clearRoomStatus = async (id, keepSettings) => {
+  if (keepSettings) {
+    const { settings } = await getRoomStatus(id);
+    rooms.set(id, {
+      settings
+    });
+    return { settings };
+  } else {
+    rooms.delete(id);
+    return {};
+  }
 }
 
 export const getSimulationRooms = async (id) => {
@@ -30,7 +42,7 @@ export const getSimulationRooms = async (id) => {
 };
 
 export const getPlayer = async (id) => {
-  const player = players.get(id);
+  const player = await players.get(id);
   if (!player) return {};
   return {
     ...player,
@@ -38,7 +50,7 @@ export const getPlayer = async (id) => {
   }
 };
 export const setPlayer = async (id, val) => {
-  const player = getPlayer(id);
+  const player = await getPlayer(id);
   players.set(id, {
     ...player,
     ...val
