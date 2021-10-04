@@ -91,7 +91,7 @@ class Graphics extends Component {
       documents: [],
       texts: [],
       lines: [], // Lines are the drawings
-      arrows: [],
+      arrows: [], // Arrows are used for transformations
 
       connectors: [],
       gameroles: [],
@@ -1723,7 +1723,7 @@ class Graphics extends Component {
           onKeyDown={this.contextMenuEventShortcuts}
           name="pasteContainer"
           tabIndex="0"
-          style={{ outline: "none" }}
+          id={"editMainContainer"}
         >
           {/* The right click menu for the group area */}
           {this.state.groupAreaContextMenuVisible
@@ -1784,8 +1784,10 @@ class Graphics extends Component {
             onWheel={event => this.handleWheel(event)}
             onMouseDown={this.onMouseDown}
             onMouseUp={this.handleMouseUp}
-            height={window.innerHeight}
-            width={window.innerWidth}
+            height={document.getElementById("editMainContainer") ?
+              document.getElementById("editMainContainer").clientHeight : 0}
+            width={document.getElementById("editMainContainer") ?
+              document.getElementById("editMainContainer").clientWidth : 0}
             ref="graphicStage"
           >
             <Layer
