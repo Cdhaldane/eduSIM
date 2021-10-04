@@ -102,6 +102,15 @@ function Join(props) {
     ).format("mm:ss");
   };
 
+  const handleNextPage = (room) => {
+    if (!socket) return;
+    socket.emit("goToNextPage", (currentRoom && {
+      room: currentRoom[2]
+    }));
+  };
+
+  const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
+
   return (
     <div className="dashboard">
       <div className="page-margin joinboard-header">
@@ -121,45 +130,60 @@ function Join(props) {
           </button>
         </div>
         <div className="joinboard-controls">
-          {currentRoom ? (
-            <>
-              <p>{currentRoom[0]}</p>
-              <p>
-                <AutoUpdate
-                  value={(currentRoomStatus.running
-                    ? timeFromNow
-                    : () => moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
-                  )}
-                  intervalTime={20}
-                  enabled
-                />
-                {(currentRoomStatus.running == true ? '' : (
-                  currentRoomStatus.running === false ? ' (paused)' : ' (stopped)'
-                ))}
-              </p>
-            </>
-          ) : (
-            <p>All rooms</p>
-          )}
-          <div className="joinboard-buttons">
-            <button
-              class={`joinboard-button ${currentRoom && currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-              onClick={startSim}
-            >
-              <i class="fa fa-play"></i>
-            </button>
-            <button
-              class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-              onClick={pauseSim}
-            >
-              <i class="fa fa-pause"></i>
-            </button>
-            <button
-              class="joinboard-button"
-              onClick={resetSim}
-            >
-              <i class="fa fa-retweet"></i>
-            </button>
+          <div>
+            {currentRoom ? (
+              <>
+                <p>{currentRoom[0]}</p>
+                <p>
+                  {advanceMode === "teacher" && `Page ${currentRoomStatus.level || 1}, `}
+                  <AutoUpdate
+                    value={(currentRoomStatus.running
+                      ? timeFromNow
+                      : () => moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
+                    )}
+                    intervalTime={20}
+                    enabled
+                  />
+                  {(currentRoomStatus.running == true ? '' : (
+                    currentRoomStatus.running === false ? ' (paused)' : ' (stopped)'
+                  ))}
+                </p>
+              </>
+            ) : (
+              <p>All rooms</p>
+            )}
+            <div className="joinboard-buttons">
+              <button
+                class={`joinboard-button ${currentRoom && currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                onClick={startSim}
+                title={currentRoom ? "Start this simulation" : "Start all simulations"}
+              >
+                <i class="fa fa-play"></i>
+              </button>
+              <button
+                class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                onClick={pauseSim}
+                title={currentRoom ? "Pause this simulation" : "Pause all simulations"}
+              >
+                <i class="fa fa-pause"></i>
+              </button>
+              <button
+                class="joinboard-button"
+                onClick={resetSim}
+                title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
+              >
+                <i class="fa fa-retweet"></i>
+              </button>
+              {advanceMode === "teacher" && (
+                <button
+                  class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                  onClick={handleNextPage}
+                  title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
+                >
+                  <i class="fa fa-angle-double-right"></i>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

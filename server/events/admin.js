@@ -157,15 +157,17 @@ export default async (server, client, event, args) => {
       } else {
         const rooms = await getSimulationRooms(game);
         rooms.forEach(async ({ dataValues: room }) => {
-          const { page = 1 } = await getRoomStatus(room.gameroom_url);
-  
-          const newStatus = await updateRoomStatus(room.gameroom_url, {
-            page: page+1
-          });
-          server.to(room.gameroom_url).emit("roomStatusUpdate", {
-            room: room.gameroom_url,
-            status: newStatus
-          });
+          const { level = 1 } = await getRoomStatus(room.gameroom_url);
+
+          if (running || timeElapsed) {
+            const newStatus = await updateRoomStatus(room.gameroom_url, {
+              level: level+1
+            });
+            server.to(room.gameroom_url).emit("roomStatusUpdate", {
+              room: room.gameroom_url,
+              status: newStatus
+            });
+          }
         });
       }
 

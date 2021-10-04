@@ -130,12 +130,6 @@ function Tabs(props) {
     }
   };
 
-  const handleNextPage = (room) => {
-    if (props.socket) {
-      props.socket.emit("goToNextPage", { room });
-    }
-  };
-
   const displayAdvance = () => {
     const keys = props.roomStatus && Object.keys(props.roomStatus);
     if (keys && keys.length > 0) {
@@ -255,14 +249,6 @@ function Tabs(props) {
           >
             <div className="content-header">
               <h2>{tab[0]}</h2>
-              {props.roomStatus[tab[2]]?.settings?.advanceMode === "teacher" &&
-                props.roomStatus[tab[2]]?.startTime && (
-                  <>
-                    <button className="content-pagecontrol" onClick={() => handleNextPage(tab[2])}>
-                      Move to Page {props.roomStatus[tab[2]].level || 1}
-                    </button>
-                  </>
-                )}
               <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                 Join Room
               </a>

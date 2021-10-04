@@ -246,12 +246,11 @@ footer {
   display: flex;
   flex-direction: column;
   text-align: center;
-}
-.joinboard-controls > p {
-  margin-bottom: 10px;
+  line-height: 1.3em;
 }
 .joinboard-buttons {
   display: flex;
+  margin-top: 5px;
 }
 .joinboard-button {
   color: white;

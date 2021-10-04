@@ -274,21 +274,6 @@
   vertical-align: middle;
   border-radius: 10px;
 }
-.content-pagecontrol {
-  align-self: center;
-  margin-left: 20px;
-  font-family:  "Montserrat", sans-serif;
-  padding: 10px 20px;
-  font-size: 1em;
-  color: white;
-  background-color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: none;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  border-radius: 10px;
-}
 
 .active-content {
   display: flex;
@@ -468,8 +453,5 @@ hr {
   .content-roomlink {
     align-self: center;
     margin: 10px 0;
-  }
-  .content-pagecontrol {
-    margin-left: 0px;
   }
 }
