@@ -123,6 +123,10 @@
   align-self: flex-end;
   margin-top: auto;
 }
+.modal-bottomright-button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 .csv-link {
   color: blue;

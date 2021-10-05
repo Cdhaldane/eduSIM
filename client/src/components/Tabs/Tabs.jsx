@@ -235,6 +235,7 @@ function Tabs(props) {
                 addstudent={true}
                 gameid={props.gameid}
                 title={props.title}
+                close={() => setIsOpen(false)}
               />
             </Modal>
           </div>
