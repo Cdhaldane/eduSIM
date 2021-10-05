@@ -128,6 +128,7 @@ class Graphics extends Component {
       currentTextRef: "",
       textareaWidth: 0,
       textareaHeight: 0,
+      textareaInlineStyle: {},
       textareaFill: null,
       textareaFontFamily: null,
       textareaFontSize: 10,
@@ -1580,8 +1581,10 @@ class Graphics extends Component {
       }
       let topPx = 0;
       if (layer === this.refs.personalAreaLayer) {
-        topPx = window.innerHeight * 0.3;
+        topPx = 70;
       }
+      const scaleVal = layer === this.refs.personalAreaLayer ?
+        this.state.personalLayerScale : this.state.groupLayerScale;
 
       this.setState({
         textX: text.absolutePosition().x + sidebarPx,
@@ -1589,12 +1592,26 @@ class Graphics extends Component {
         textEditVisible: !this.state.textEditVisible,
         text: text.attrs.text,
         currentTextRef: text.attrs.id,
-        textareaWidth: text.attrs.width,
-        textareaHeight: text.textHeight * text.textArr.length,
+        textareaWidth: text.attrs.width * scaleVal,
+        textareaHeight: text.textHeight * text.textArr.length * scaleVal,
         textareaFill: text.attrs.fill,
         textareaFontFamily: text.attrs.fontFamily,
-        textareaFontSize: text.attrs.fontSize,
+        textareaFontSize: text.attrs.fontSize * scaleVal,
         textRotation: text.attrs.rotation,
+      }, () => {
+        this.setState({
+          textareaInlineStyle: {
+            display: this.state.textEditVisible ? "block" : "none",
+            width: this.state.textareaWidth,
+            height: this.state.textareaHeight,
+            fontSize: this.state.textareaFontSize + "px",
+            fontFamily: this.state.textareaFontFamily,
+            color: this.state.textareaFill,
+            top: this.state.textY + "px",
+            left: this.state.textX + "px",
+            transform: `rotate(${this.state.textRotation}deg) translateY(2px)`
+          }
+        });
       });
       const textarea = this.refs.textarea;
       textarea.focus();
@@ -2922,7 +2939,11 @@ class Graphics extends Component {
                 if (e.keyCode === 13) {
                   this.setState({
                     textEditVisible: false,
-                    shouldTextUpdate: true
+                    shouldTextUpdate: true,
+                    textareaInlineStyle: {
+                      ...this.state.textareaInlineStyle,
+                      display: "none"
+                    }
                   });
 
                   // get the current textNode we are editing, get the name from there
@@ -2963,7 +2984,11 @@ class Graphics extends Component {
               onBlur={() => {
                 this.setState({
                   textEditVisible: false,
-                  shouldTextUpdate: true
+                  shouldTextUpdate: true,
+                  textareaInlineStyle: {
+                    ...this.state.textareaInlineStyle,
+                    display: "none"
+                  }
                 });
 
                 // Get the current textNode we are editing, get the name from there
@@ -3001,17 +3026,7 @@ class Graphics extends Component {
                 this.refs.graphicStage.findOne(".transformer").show();
                 this.refs.graphicStage.draw();
               }}
-              style={{
-                display: this.state.textEditVisible ? "block" : "none",
-                width: this.state.textareaWidth,
-                height: this.state.textareaHeight,
-                fontSize: this.state.textareaFontSize + "px",
-                fontFamily: this.state.textareaFontFamily,
-                color: this.state.textareaFill,
-                top: this.state.textY + "px",
-                left: this.state.textX + "px",
-                transform: `rotate(${this.state.textRotation}deg) translateY(2px)`
-              }}
+              style={this.state.textareaInlineStyle}
             />
           </div>
 
