@@ -1,6 +1,6 @@
 .info0 {
   width: calc(100% - 130px);
-  height: 70%;
+  height: calc(100% - 70px);
   text-align: center;
   position: fixed;
   left: 100px;
@@ -17,7 +17,7 @@
 
 .info1 {
   width: calc(100% - 130px);
-  height: 70%;
+  height: calc(100% - 70px);
   text-align: center;
   position: fixed;
   left: 100px;
@@ -90,10 +90,12 @@
 
 @media screen and (orientation: portrait) {
   .info0 {
+    height: calc(100% - 110px);
     width: calc(100% - 60px);
     left: 30px;
   }
   .info1 {
+    height: calc(100% - 110px);
     width: calc(100% - 60px);
     left: 30px;
   }
