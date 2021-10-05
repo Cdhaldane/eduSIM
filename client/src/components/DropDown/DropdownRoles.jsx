@@ -107,7 +107,7 @@ const DropdownRoles = (props) => {
                 className="menu-item" 
                 onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
                 key={index}
-                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots}
+                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
               >
                 {props.rolesTaken[role.roleName] 
                 ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`

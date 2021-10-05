@@ -229,19 +229,15 @@ const Table = (props) => {
 
   const handleEmail = (e) => {
     e.preventDefault();
-    contacts.forEach((contact) => {
-      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendEmail', {
-        simname: props.title,
-        pname: user.name,
-        name: contact.firstName,
-        lastname: contact.lastName,
-        email: contact.email
-      }).then((res) => {
-        console.log(res);
-      }).catch((error) => {
-        console.log('Email Failed');
-        console.log(error);
-      });
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendInviteEmails', {
+      simname: props.title,
+      admin: user.name,
+      simid: props.gameid
+    }).then((res) => {
+      console.log(res);
+    }).catch((error) => {
+      console.log('Email Failed');
+      console.log(error);
     });
   }
 
