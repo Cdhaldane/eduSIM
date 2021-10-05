@@ -165,6 +165,15 @@ class Graphics extends Component {
       opacity: 1,
       lastFill: null,
 
+      // The blue selection rectangle / click location
+      selection: {
+        visible: false,
+        x1: -100,
+        y1: -100,
+        x2: 0,
+        y2: 0
+      },
+
       // Metadata
       title: "",
       category: "",
@@ -195,14 +204,6 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       savedstates: [],
       level: 1,
-
-      selection: {
-        visible: false,
-        x1: -100,
-        y1: -100,
-        x2: 0,
-        y2: 0
-      }
     };
 
     this.handleWheel = this.handleWheel.bind(this);
@@ -231,6 +232,103 @@ class Graphics extends Component {
     })
   }
 
+  recalculateCanvasSizeAndPosition = (personalArea) => {
+    const layerX = personalArea ? "personalLayerX" : "groupLayerX";
+    const layerY = personalArea ? "personalLayerY" : "groupLayerY";
+    const layerScale = personalArea ? "personalLayerScale" : "groupLayerScale";
+
+    let leftmostX = null;
+    let leftmostObj = null;
+    let rightmostX = null;
+    let rightmostObj = null;
+    let topmostY = null;
+    let topmostObj = null;
+    let bottommostY = null;
+    let bottommostObj = null;
+
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const objectType = this.savedObjects[i];
+      const objects = this.state[objectType];
+      if (objects) {
+        for (let j = 0; j < objects.length; j++) {
+          if (objects[j].infolevel === personalArea) {
+            const rect = this.refs[objects[j].id].getClientRect();
+
+            // Get furthest left x-coord
+            const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
+            if (leftmostX === null || leftX < leftmostX) {
+              leftmostX = leftX;
+              leftmostObj = this.refs[objects[j].id];
+            }
+
+            // Get furthest right x-coord
+            const rightX = (rect.x - this.state[layerX] + rect.width) / this.state[layerScale];
+            if (rightmostX === null || rightX > rightmostX) {
+              rightmostX = rightX;
+              rightmostObj = this.refs[objects[j].id];
+            }
+
+            // Get furthest top y-coord
+            const topY = (rect.y - this.state[layerY]) / this.state[layerScale];
+            if (topmostY === null || topY < topmostY) {
+              topmostY = topY;
+              topmostObj = this.refs[objects[j].id];
+            }
+
+            // Get furthest bottom y-coord
+            const bottomY = (rect.y - this.state[layerY] + rect.height) / this.state[layerScale];
+            if (bottommostY === null || bottomY > bottommostY) {
+              bottommostY = bottomY;
+              bottommostObj = this.refs[objects[j].id];
+            }
+          }
+        }
+      }
+    }
+
+    if (leftmostObj && rightmostObj && topmostObj && bottommostObj) {
+      let sidebarVal = 70;
+      if (personalArea) {
+        sidebarVal = 100;
+      }
+      const sidebarWidth = window.matchMedia("(orientation: portrait)").matches ? 0 : sidebarVal;
+      const topbarHeight = window.matchMedia("(orientation: portrait)").matches ? 110 : 55;
+
+      const contentWidth = rightmostX - leftmostX;
+      const totalWidth = window.innerWidth - sidebarWidth;
+
+      const contentHeight = bottommostY - topmostY;
+      const totalHeight = Math.max(window.innerHeight - topbarHeight, 1);
+
+      const xScale = totalWidth / contentWidth;
+      const yScale = totalHeight / contentHeight;
+
+      // Scale so that everything fits on screen vertically and horizontally
+      const newScale = Math.min(xScale, yScale);
+
+      this.setState({
+        [layerX]: -leftmostX,
+        [layerY]: -topmostY + topbarHeight,
+        [layerScale]: newScale,
+      }, () => {
+
+        // Adjust x, y position to center content again after scale is complete
+        const leftRect = leftmostObj.getClientRect();
+        const rightRect = rightmostObj.getClientRect();
+        const topRect = topmostObj.getClientRect();
+        const bottomRect = bottommostObj.getClientRect();
+
+        const newContentWidth = (rightRect.x + rightRect.width) - leftRect.x;
+        const newContentHeight = (bottomRect.y + bottomRect.height) - topRect.y;
+
+        this.setState({
+          [layerX]: this.state[layerX] - leftRect.x + ((totalWidth - newContentWidth) / 2),
+          [layerY]: this.state[layerY] + ((totalHeight - newContentHeight) / 2)
+        });
+      });
+    }
+  }
+
   saveInterval = null;
   drawInterval = null;
   componentDidMount = async () => {
@@ -247,6 +345,22 @@ class Graphics extends Component {
       this.refs.graphicStage.draw();
       this.refs.personalAreaStage.draw();
     }, 1000);
+
+    // Reposition / scale objects on screen resize
+    let resizeTimeout;
+    window.onresize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.recalculateCanvasSizeAndPosition(false);
+        this.recalculateCanvasSizeAndPosition(true);
+      }, 100);
+    };
+
+    // Calculate positions on initial load
+    setTimeout(() => {
+      this.recalculateCanvasSizeAndPosition(false);
+      this.recalculateCanvasSizeAndPosition(true);
+    }, 50);
 
     history.push(this.state);
     this.setState({ selectedShapeName: "" });
@@ -382,9 +496,11 @@ class Graphics extends Component {
     });
   }
 
-  handleStageClick = e => {
-    const pos = this.refs.groupAreaLayer.getStage().getPointerPosition();
-    const shape = this.refs.groupAreaLayer.getIntersection(pos);
+  handleStageClick = (e, personalArea) => {
+    const stage = personalArea ? "personalAreaStage" : "graphicStage";
+    const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+    const pos = this.refs[layer].getStage().getPointerPosition();
+    const shape = this.refs[layer].getIntersection(pos);
 
     if (e.evt.button === 0) {
       // Left click on an object -> put the selected object in state
@@ -395,33 +511,42 @@ class Graphics extends Component {
         shape.name() !== undefined &&
         shape.id() !== "ContainerRect"
       ) {
-        this.setState({ selectedShapeName: shape.id() }, () => {
-          this.refs.graphicStage.draw();
+        this.setState({
+          selectedShapeName: shape.id()
+        }, () => {
+          this.refs[stage].draw();
         });
       }
     } else if (e.evt.button === 2) {
-      // Right click on the group area -> show the add object menu
+      // Right click (not on an object) -> show the add object menu
       if (
         shape === null ||
         shape === undefined ||
         shape.name() === ""
       ) {
+        const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
+        const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
+        const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
+        const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
+        const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
         this.setState({
           selectedContextMenu: {
-            type: "GroupAddMenu",
+            type: type,
             position: {
               x: e.evt.clientX,
               y: e.evt.clientY
             }
           },
-          personalAreaContextMenuVisible: false,
-          groupAreaContextMenuVisible: true,
-          groupAreaContextMenuX: e.evt.clientX,
-          groupAreaContextMenuY: e.evt.clientY,
+          [notVisible]: false,
+          [visible]: true,
+          [contextMenuX]: e.evt.clientX,
+          [contextMenuY]: e.evt.clientY,
         });
       } else {
-        this.setState({ selectedShapeName: shape.id() }, () => {
-          this.refs.graphicStage.draw();
+        this.setState({
+          selectedShapeName: shape.id()
+        }, () => {
+          this.refs[stage].draw();
         });
       }
     }
@@ -643,51 +768,6 @@ class Graphics extends Component {
     }));
 
     this.refs.graphicStage.draw();
-  }
-
-  handleStageClickInfo = e => {
-    const pos = this.refs.personalAreaLayer.getStage().getPointerPosition();
-    const shape = this.refs.personalAreaLayer.getIntersection(pos);
-
-    if (e.evt.button === 0) {
-      // Left click on an object -> put the selected object in state
-      if (
-        shape !== null &&
-        shape !== undefined &&
-        shape.name() !== null &&
-        shape.name() !== undefined &&
-        shape.id() !== "ContainerRect"
-      ) {
-        this.setState({ selectedShapeName: shape.id() }, () => {
-          this.refs.graphicStage.draw();
-        });
-      }
-    } else if (e.evt.button === 2) {
-      if (
-        shape === null ||
-        shape === undefined ||
-        shape.name() === ""
-      ) {
-        // Right click on the personal area -> show the add object menu
-        this.setState({
-          selectedContextMenu: {
-            type: "PersonalAddMenu",
-            position: {
-              x: e.evt.clientX,
-              y: e.evt.clientY
-            }
-          },
-          groupAreaContextMenuVisible: false,
-          personalAreaContextMenuVisible: true,
-          personalAreaContextMenuX: e.evt.clientX,
-          personalAreaContextMenuY: e.evt.clientY,
-        });
-      } else {
-        this.setState({ selectedShapeName: shape.id() }, () => {
-          this.refs.graphicStage.draw();
-        });
-      }
-    }
   }
 
   handleWheel = (e, personalArea) => {
@@ -1608,10 +1688,14 @@ class Graphics extends Component {
       copy = 67,
       paste = 86,
       z = 90,
-      y = 89;
+      y = 89,
+      r = 82;
     if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
       this.handleDelete();
       this.handleCopy();
+    } else if (event.shiftKey && event.keyCode === r) {
+      this.recalculateCanvasSizeAndPosition(false);
+      this.recalculateCanvasSizeAndPosition(true);
     } else if (event.keyCode === deleteKey && !this.state.isPasteDisabled) {
       this.handleDelete();
     } else if (event.shiftKey && event.ctrlKey && event.keyCode === z) {
@@ -1719,7 +1803,7 @@ class Graphics extends Component {
             )}
           <Stage
             onContextMenu={(e) => e.evt.preventDefault()}
-            onClick={this.handleStageClick}
+            onClick={(e) => this.handleStageClick(e, false)}
             onMouseMove={(e) => this.handleMouseOver(e, false)}
             onWheel={(e) => this.handleWheel(e, false)}
             onMouseDown={(e) => this.onMouseDown(e, false)}
@@ -2959,7 +3043,7 @@ class Graphics extends Component {
                     document.getElementById("editPersonalContainer").clientWidth : 0}
                   onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
-                  onClick={this.handleStageClickInfo}
+                  onClick={(e) => this.handleStageClick(e, true)}
                   onMouseMove={(e) => this.handleMouseOver(e, true)}
                   onMouseDown={(e) => this.onMouseDown(e, true)}
                   onWheel={(e) => this.handleWheel(e, true)}
