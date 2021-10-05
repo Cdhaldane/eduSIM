@@ -7,6 +7,8 @@ import FontPicker from "font-picker-react";
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 
+const DEFAULT_FONT_SIZE = 50;
+
 function DropdownEditObject(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
@@ -15,7 +17,7 @@ function DropdownEditObject(props) {
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
   const [font, setFont] = React.useState("");
-  const [fontSize, setFontSize] = useState("50");
+  const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   const [loading, setLoading] = useState(true);
 

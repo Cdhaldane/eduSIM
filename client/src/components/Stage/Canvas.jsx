@@ -93,8 +93,7 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
-      selectedShapeName: "",
-
+      // Game Pieces?
       connectors: [],
       gameroles: [],
       tics: [],
@@ -167,6 +166,7 @@ class Graphics extends Component {
       lastFill: null,
 
       // The blue selection rectangle / click location
+      // And info about the selection
       selection: {
         visible: false,
         x1: -100,
@@ -174,6 +174,8 @@ class Graphics extends Component {
         x2: 0,
         y2: 0
       },
+      selectedShapeName: "",
+      groupSelection: [],
 
       // Metadata
       title: "",
@@ -364,7 +366,9 @@ class Graphics extends Component {
     }, 50);
 
     history.push(this.state);
-    this.setState({ selectedShapeName: "" });
+    this.setState({
+      selectedShapeName: ""
+    });
   }
 
   componentWillUnmount = () => {
@@ -430,7 +434,7 @@ class Graphics extends Component {
     if (!this.state.redoing && !this.state.isTransforming) {
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
         if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
-          // If text shouldn't update, don't append to  history
+          // If text shouldn't update, don't append to history
           if (this.state.shouldTextUpdate) {
             let uh = history;
             history = uh.slice(0, historyStep + 1);
@@ -519,12 +523,12 @@ class Graphics extends Component {
         });
       }
     } else if (e.evt.button === 2) {
-      // Right click (not on an object) -> show the add object menu
       if (
         shape === null ||
         shape === undefined ||
         shape.name() === ""
       ) {
+        // Right click (not on an object) -> show the add object menu
         const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
         const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
         const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
@@ -544,6 +548,8 @@ class Graphics extends Component {
           [contextMenuY]: e.evt.clientY,
         });
       } else {
+        // Right click on a shape (or group)
+        console.log(this.state.selectedShapeName);
         this.setState({
           selectedShapeName: shape.id()
         }, () => {
@@ -626,7 +632,11 @@ class Graphics extends Component {
     }
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (e, personalArea) => {
+    const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
+    const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+    const transformer = personalArea ? "personalTransformer" : "groupTransformer";
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
@@ -635,31 +645,47 @@ class Graphics extends Component {
       if (!this.state.selection.visible) {
         return;
       }
-      const selBox = this.refs.selectionRectRef.getClientRect();
+      const selBox = this.refs[selectionRect].getClientRect();
       const elements = [];
-      this.refs.groupAreaLayer.find(".shape").forEach((elementNode) => {
+      this.refs[layer].find(".shape").forEach((elementNode) => {
         const elBox = elementNode.getClientRect();
         if (Konva.Util.haveIntersection(selBox, elBox)) {
           elements.push(elementNode);
         }
       });
 
-      // Handle single selection and group selection
-      if (elements.length === 1) {
-        this.setState({
-          selectedShapeName: elements[0].id()
-        });
-      } else if (elements.length > 1) {
-        this.setState({
-          selectedShapeName: "group"
-        });
+      if (e.evt.button === 2 &&
+        this.state.selectedShapeName === "group" &&
+        this.state.groupSelection.length > 1) {
+        // Right clicked on an already selected group
+        console.log(this.state.groupSelection);
+      } else {
+        // Handle single selection and group selection
+        if (elements.length === 1) {
+          this.setState({
+            selectedShapeName: elements[0].id(),
+            groupSelection: []
+          });
+        } else if (elements.length > 1) {
+          this.setState({
+            selectedShapeName: "group",
+            groupSelection: elements
+          });
+        }
+
+        this.refs[transformer].nodes(elements);
       }
 
-      this.refs.groupTransformer.nodes(elements);
-      this.state.selection.visible = false;
+      this.setState({
+        selection: {
+          ...this.state.selection,
+          visible: false
+        }
+      });
+
       // Disable click event
       Konva.listenClickTap = false;
-      this.updateSelectionRect(false);
+      this.updateSelectionRect(personalArea);
     }
   };
 
@@ -715,42 +741,6 @@ class Graphics extends Component {
           this.updateSelectionRect(personalArea);
         });
       }
-    }
-  };
-
-  handleMouseUpInfo = () => {
-    if (this.state.drawMode === true) {
-      this.state.isDrawing = false;
-    } else {
-      if (!this.state.selection.visible) {
-        return;
-      }
-      const selBox = this.refs.selectionRectRef1.getClientRect();
-      const elements = [];
-      this.refs.personalAreaLayer.find(".shape").forEach((elementNode) => {
-        const elBox = elementNode.getClientRect();
-        if (Konva.Util.haveIntersection(selBox, elBox)) {
-          elements.push(elementNode);
-
-        }
-      });
-
-      // Handle single selection and group selection
-      if (elements.length === 1) {
-        this.setState({
-          selectedShapeName: elements[0].id()
-        });
-      } else if (elements.length > 1) {
-        this.setState({
-          selectedShapeName: "group"
-        });
-      }
-
-      this.refs.personalTransformer.nodes(elements);
-      this.state.selection.visible = false;
-      // disable click event
-      Konva.listenClickTap = false;
-      this.updateSelectionRect(true);
     }
   };
 
@@ -1375,6 +1365,11 @@ class Graphics extends Component {
   }
 
   handleSize = (e) => {
+    if (Number.isNaN(parseInt(e)) || parseInt(e) === 0) {
+      e = 50;
+    } else {
+      e = parseInt(e);
+    }
     this.setState(prevState => ({
       texts: prevState.texts.map(eachRect =>
         eachRect.id === this.state.selectedShapeName
@@ -1824,7 +1819,7 @@ class Graphics extends Component {
             onMouseMove={(e) => this.handleMouseOver(e, false)}
             onWheel={(e) => this.handleWheel(e, false)}
             onMouseDown={(e) => this.onMouseDown(e, false)}
-            onMouseUp={this.handleMouseUp}
+            onMouseUp={(e) => this.handleMouseUp(e, false)}
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
             width={document.getElementById("editMainContainer") ?
@@ -3062,7 +3057,7 @@ class Graphics extends Component {
                   onMouseMove={(e) => this.handleMouseOver(e, true)}
                   onMouseDown={(e) => this.onMouseDown(e, true)}
                   onWheel={(e) => this.handleWheel(e, true)}
-                  onMouseUp={this.handleMouseUpInfo}
+                  onMouseUp={(e) => this.handleMouseUp(e, true)}
                 >
                   <Layer
                     ref="personalAreaLayer"
