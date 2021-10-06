@@ -188,7 +188,17 @@
   justify-content: space-between;
 }
 .modal-role-select > #rolesdrops {
-  margin-top: -200px;
+  margin-top: -170px;
+  height: 55px;
+  display: flex;
+}
+.modal-role-select > #rolesdrops > span {
+  transform: translateX(calc(-100% - 10px))
+}
+.modal-role-select span {
+  font-size: 1.3em;
+  align-self: center;
+  margin-right: 10px;
 }
 .modal-role-select > form {
   display: flex;

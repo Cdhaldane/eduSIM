@@ -72,6 +72,7 @@ const CreateRole = (props) => {
           <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name and role to continue."}</p>
         </div>
         <div id="rolesdrops">
+          <span>Role</span>
           <DropdownRoles
             gameid={props.gameid}
             roleLevel={handleSetRole}
@@ -82,6 +83,7 @@ const CreateRole = (props) => {
           />
         </div>
         <form onSubmit={handleSubmit} action="#">
+          <span>Name</span>
           <NameInput 
             type="text" 
             placeholder="Your name" 
