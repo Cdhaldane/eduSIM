@@ -142,7 +142,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
         .then((res) => {
           const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/audio/upload/" + allData + ".mp3";
+          const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp3";
           setAudioUploaded(true);
           props.handleAudio(name);
         });

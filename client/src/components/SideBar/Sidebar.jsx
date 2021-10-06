@@ -185,7 +185,7 @@ function Sidebar(props) {
 
   return (
     <div ref={sidebarRef}>
-      <Backdrop visible={props.visible} onClick={props.close} />
+      <Backdrop visible={compact} onClick={props.close} />
       <Submenu open={submenuVisible && compact}>
         {links.map(({ id, submenu: el }, index) => (
           el && (
