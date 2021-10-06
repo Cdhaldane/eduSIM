@@ -13,6 +13,7 @@ function CreateEmail(props) {
           className="emailmodal-table"
           gameid={props.gameid}
           title={props.title}
+          onEmailSent={props.close}
         />
       </form>
     </div>

@@ -5,6 +5,7 @@ let rooms = new Map();
 
 // client info (name, role, etc)
 let players = new Map();
+let playerIDs = new Map();
 
 // helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
@@ -49,8 +50,20 @@ export const getPlayer = async (id) => {
     id
   }
 };
+export const getPlayerByDBID = async (dbid) => {
+  const id = await playerIDs.get(dbid);
+  const player = await players.get(id);
+  if (!player) return null;
+  return {
+    ...player,
+    id
+  }
+};
 export const setPlayer = async (id, val) => {
   const player = await getPlayer(id);
+  if (val.dbid) {
+    playerIDs.set(val.dbid, id);
+  }
   players.set(id, {
     ...player,
     ...val
@@ -59,6 +72,13 @@ export const setPlayer = async (id, val) => {
     ...player,
     ...val
   };
+}
+export const removePlayer = async (id) => {
+  const player = await getPlayer(id);
+  if (player.dbid) {
+    playerIDs.delete(player.dbid);
+  }
+  players.delete(id);
 }
 
 export const getPlayersInRoom = async (roomid, server) => {

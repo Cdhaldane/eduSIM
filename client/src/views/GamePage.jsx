@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
+import { useAlertContext } from "../components/Alerts/AlertContext";
 
 const Main = styled.main`
   grid-area: main;
@@ -56,8 +57,12 @@ function Game(props) {
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
   const [level, setLevel] = useState(1);
+  const alertContext = useAlertContext();
 
   const toggle = () => setShowNav(!showNav);
+
+  const userid = (new URLSearchParams(useLocation().search)).get("user");
+  const [queryUser, setQueryUser] = useState({});
 
   useEffect(() => {
     (async function () {
@@ -67,7 +72,17 @@ function Game(props) {
         }
       }).then((res) => {
         setRoomInfo(res.data);
-      })
+      });
+      
+      if (userid) {
+        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayer', {
+          params: {
+            id: userid,
+          }
+        }).then((res) => {
+          setQueryUser(res.data);
+        });
+      }
 
       const client = await io(process.env.REACT_APP_API_ORIGIN, {
         query: {
@@ -92,6 +107,9 @@ function Game(props) {
           delete l[id];
           return l;
         });
+      });
+      client.on("errorLog", (message) => {
+        alertContext.showAlert(message, "error");
       });
       setSocketInfo(client);
       return () => client.disconnect();
@@ -135,6 +153,8 @@ function Game(props) {
             players={players}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
+            initialUserInfo={queryUser}
+            initialUserId={userid}
           />
           {!roomStatus.running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

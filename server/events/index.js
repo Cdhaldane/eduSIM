@@ -1,6 +1,6 @@
 import playerEvents from "./player";
 import adminEvents from "./admin";
-import { getRoomStatus, getSimulationRooms, getPlayersInRoom } from './utils';
+import { getRoomStatus, getSimulationRooms, getPlayersInRoom, removePlayer } from './utils';
 
 export default async (server, client) => {
   
@@ -36,6 +36,7 @@ export default async (server, client) => {
 
     client.on("disconnect", () => {
       server.in(roomid).emit("clientLeft", client.id);
+      removePlayer(client.id);
     });
 
     client.onAny((event, args) => playerEvents(server, client, event, args));
