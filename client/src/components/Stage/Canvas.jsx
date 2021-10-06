@@ -470,6 +470,7 @@ class Graphics extends Component {
     };
     this.setState({
       selectedContextMenu: {
+        addGroup: this.state.groupSelection.length ? true : false,
         type: "ObjectMenu",
         position: mousePosition
       }
@@ -678,18 +679,23 @@ class Graphics extends Component {
       } else if (e.evt.button === 2) {
         // RIGHT CLICK
         if (this.isShape(shape)) {
-          // Right click on a shape
-          this.setState({
-            selectedShapeName: shape.id(),
-            groupSelection: []
-          }, () => {
-            this.handleObjectSelection();
-            this.refs[stage].draw();
-          });
+          // Right click on a shape -> set it to the selection
+          let shapeIsInGroupSelection = false;
+          for (let i = 0; i < this.state.groupSelection.length; i++) {
+            if (this.state.groupSelection[i].attrs.id === shape.id()) {
+              shapeIsInGroupSelection = true;
+              break;
+            }
+          }
 
-          if (shape.id() === "") {
-            // TODO
-            // Right clicked on an already selected group
+          if (!shapeIsInGroupSelection) {
+            this.setState({
+              selectedShapeName: shape.id(),
+              groupSelection: []
+            }, () => {
+              this.handleObjectSelection();
+              this.refs[stage].draw();
+            });
           }
         } else {
           // Right click on the canvas -> show the add object menu

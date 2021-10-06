@@ -3,7 +3,7 @@ import DropdownEditObject from "../Dropdown/DropdownEditObject";
 
 import "./ContextMenu.css"
 
-function ContextMenu(props) {
+const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const menu = useRef();
@@ -65,24 +65,28 @@ function ContextMenu(props) {
     setEditModalLeft(offset.left);
   }
 
-  function handleEdit() {
+  const handleEdit = () => {
     setDrop(!drop);
   }
 
-  function handleColorF(e) {
+  const handleColorF = (e) => {
     props.choosecolorf(e);
   }
 
-  function handleColorS(e) {
+  const handleColorS = (e) => {
     props.choosecolors(e);
   }
 
-  function handleWidth(e) {
+  const handleWidth = (e) => {
     props.handleWidth(e);
   }
 
-  function handleOpacity(e) {
+  const handleOpacity = (e) => {
     props.handleOpacity(e);
+  }
+
+  const handleGrouping = () => {
+    console.log("YO");
   }
 
   return (
@@ -101,7 +105,9 @@ function ContextMenu(props) {
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>{props.editTitle}</li>
-        <li onClick={() => null}>Group Objects</li>
+        {props.addGroup && (
+        <li onClick={handleGrouping}>Group Objects</li>
+        )}
       </ul>
 
       {drop && (
