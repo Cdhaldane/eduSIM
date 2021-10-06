@@ -4,9 +4,9 @@ import { Transformer } from "react-konva";
 const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
-    //console.log(props.selectedShapeName.replace(/\d+$/, ""));
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
-      case "group":
+      case "":
+        // This is a group selection
         return (
           <Transformer
             ref={ref}

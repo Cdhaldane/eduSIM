@@ -168,6 +168,7 @@ class Graphics extends Component {
       // The blue selection rectangle / click location
       // And info about the selection
       selection: {
+        isDraggingShape: false,
         visible: false,
         x1: -100,
         y1: -100,
@@ -195,7 +196,7 @@ class Graphics extends Component {
       infolevel: false,
       rolelevel: "",
       tic: false,
-      open: 0,
+      personalAreaOpen: 0, // 0 = closed, 1 = open
       state: false,
       saving: null,
       saved: [],
@@ -534,8 +535,12 @@ class Graphics extends Component {
         yOffset = -this.state.personalLayerY;
       }
 
+      const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+      const pointerPos = this.refs[layer].getStage().getPointerPosition();
+      const shape = this.refs[layer].getIntersection(pointerPos);
       this.setState({
         selection: {
+          isDraggingShape: this.isShape(shape),
           visible: true,
           x1: (pos.x + xOffset) / scale,
           y1: (pos.y + yOffset) / scale,
@@ -589,24 +594,78 @@ class Graphics extends Component {
               groupSelection: []
             }, this.handleObjectSelection);
           } else if (elements.length > 1) {
-            this.setState({
-              selectedShapeName: "group",
-              groupSelection: elements
-            }, this.handleObjectSelection);
+            if (!this.state.selection.isDraggingShape) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: elements
+              }, this.handleObjectSelection);
+            }
           }
         } else {
           // There has been a single left click
-          // Clicked on object -> put the selected object in state
-          // Clicked on nothing -> deselect all
           if (this.isShape(shape)) {
-            this.setState({
-              selectedShapeName: shape.id(),
-              groupSelection: []
-            }, () => {
-              this.handleObjectSelection();
-              this.refs[stage].draw();
-            });
+            if (e.evt.shiftKey) {
+              // Shift selected -> create group selection
+              let alreadySelectedCurrent = false;
+              let alreadySelectedPrev = false;
+              for (let i = 0; i < this.state.groupSelection.length; i++) {
+                const obj = this.state.groupSelection[i];
+                if (obj.attrs.id === shape.id()) {
+                  alreadySelectedCurrent = true;
+                }
+                if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
+                  alreadySelectedPrev = true;
+                }
+
+                if (alreadySelectedCurrent && (alreadySelectedPrev || !this.state.selectedShapeName)) {
+                  break;
+                }
+              }
+
+              if (this.state.selectedShapeName !== shape.id() || this.state.groupSelection.length) {
+                if (!alreadySelectedCurrent) {
+                  const newSelection = [...this.state.groupSelection];
+                  if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
+                    newSelection.push(this.refs[this.state.selectedShapeName]);
+                  }
+                  if (newSelection.length === 0) {
+                    this.setState({
+                      selectedShapeName: shape.id(),
+                      groupSelection: []
+                    }, this.handleObjectSelection);
+                  } else {
+                    this.setState({
+                      selectedShapeName: "",
+                      groupSelection: [...newSelection, this.refs[shape.id()]]
+                    }, this.handleObjectSelection);
+                  }
+                } else {
+                  const newGroupSelection = this.state.groupSelection.filter(o => o.attrs.id !== shape.id());
+                  if (newGroupSelection.length === 1) {
+                    this.setState({
+                      selectedShapeName: newGroupSelection[0].id(),
+                      groupSelection: []
+                    }, this.handleObjectSelection);
+                  } else {
+                    this.setState({
+                      selectedShapeName: "",
+                      groupSelection: newGroupSelection
+                    }, this.handleObjectSelection);
+                  }
+                }
+              }
+            } else {
+              // Clicked on object -> put the selected object in state
+              this.setState({
+                selectedShapeName: shape.id(),
+                groupSelection: []
+              }, () => {
+                this.handleObjectSelection();
+                this.refs[stage].draw();
+              });
+            }
           } else {
+            // Clicked on nothing -> deselect all
             this.setState({
               selectedShapeName: "",
               groupSelection: []
@@ -628,7 +687,7 @@ class Graphics extends Component {
             this.refs[stage].draw();
           });
 
-          if (shape.id() === "group") {
+          if (shape.id() === "") {
             // TODO
             // Right clicked on an already selected group
           }
@@ -684,33 +743,13 @@ class Graphics extends Component {
 
   handleObjectSelection = () => {
     const type = this.state.selectedShapeName.replace(/\d+$/, "");
-    console.log(type);
-    if (this.state[type]) {
-      const node = this.state[type].filter((obj) => {
-        return obj.name === this.state.selectedShapeName;
-      });
-
-      if (node.length) {
-        if (node[0].infolevel) {
-          const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
-            return obj.attrs.id === this.state.selectedShapeName;
-          });
-          this.refs.personalTransformer.nodes(obj);
-          this.refs.groupTransformer.nodes([]);
-        } else {
-          const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
-            return obj.attrs.id === this.state.selectedShapeName;
-          });
-          this.refs.groupTransformer.nodes(obj);
-          this.refs.personalTransformer.nodes([]);
-        }
-      }
-    } else if (type === "group") {
-      console.log(this.state.groupSelection);
-      this.refs.groupTransformer.nodes(this.state.groupSelection);
+    const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
+    if (this.refs[this.state.selectedShapeName]) {
+      this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
+    } else if (type === "" && this.state.groupSelection.length) {
+      this.refs[transformer].nodes(this.state.groupSelection);
     } else {
-      this.refs.personalTransformer.nodes([]);
-      this.refs.groupTransformer.nodes([]);
+      this.refs[transformer].nodes([]);
     }
   }
 
@@ -1187,6 +1226,18 @@ class Graphics extends Component {
     this.setState({
       selectedContextMenu: null
     })
+  }
+
+  handlePersonalAreaOpen = (open) => {
+    this.setState({
+      personalAreaOpen: open ? 1 : 0,
+      groupSelection: [],
+      selectedShapeName: "",
+    });
+
+    // Remove transformers    
+    this.refs.groupTransformer.nodes([]);
+    this.refs.personalTransformer.nodes([]);
   }
 
   shapeIsGone = returnTo => {
@@ -1679,8 +1730,6 @@ class Graphics extends Component {
           : t
       )
     }));
-    text.setAttr("scaleX", 1);
-    text.draw();
   }
 
   drawLine = () => {
@@ -3066,7 +3115,7 @@ class Graphics extends Component {
           <div>
             <div
               id={"editPersonalContainer"}
-              className={"info" + this.state.open}
+              className={"info" + this.state.personalAreaOpen}
             >
               <div
                 name="pasteContainer"
@@ -4092,9 +4141,6 @@ class Graphics extends Component {
                                     }, 1000);
                                   }
                                 );
-
-                                //let win = window.open(eachText.link, "_blank");
-                                //win.focus();
                               }
                             }}
                             onDblClick={() => this.handleTextDblClick(
@@ -4201,13 +4247,17 @@ class Graphics extends Component {
                 </Stage>
 
               </div>
-              {(this.state.open !== 1)
-                ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
-                : <button onClick={() => this.setState({ open: 0 })}><i className="fas fa-caret-square-down fa-3x"></i></button>
+              {(this.state.personalAreaOpen !== 1)
+                ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
+                  <i className="fas fa-caret-square-up fa-3x" />
+                </button>
+                : <button onClick={() => this.handlePersonalAreaOpen(false)}>
+                  <i className="fas fa-caret-square-down fa-3x" />
+                </button>
               }
               <div id="rolesdrop">
                 <DropdownRoles
-                  openInfoSection={() => this.setState({ open: 1 })}
+                  openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
                   editMode={true}
