@@ -1,4 +1,11 @@
-import { getPlayer, setPlayer, getPlayerByDBID } from './utils';
+import { 
+  getPlayer, 
+  setPlayer, 
+  getPlayerByDBID,
+  addInteraction,
+  getInteractionBreakdown
+} from './utils';
+import moment from "moment";
 
 export default async (server, client, event, args) => {
   const { room } = client.handshake.query;
@@ -53,6 +60,20 @@ export default async (server, client, event, args) => {
         role,
         dbid
       });
+
+      break;
+    };
+    case "interaction": {
+      const { level, type, parameters } = args;
+      
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        type,
+        parameters,
+        player: client.id
+      });
+      console.log(room, await getInteractionBreakdown(room));
 
       break;
     };

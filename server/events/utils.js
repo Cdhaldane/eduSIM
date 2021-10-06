@@ -1,11 +1,14 @@
 const GameRoom = require("../models/GameRooms");
 
-// room status map. this will preferably be a sql table in the future
+// room status map
 let rooms = new Map();
 
 // client info (name, role, etc)
 let players = new Map();
 let playerIDs = new Map();
+
+// simulation actions, would probably be too large/unnecessary to include in room status
+let interactions = new Map();
 
 // helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
@@ -89,4 +92,19 @@ export const getPlayersInRoom = async (roomid, server) => {
     if (player.id) players[id] = player;
   }
   return players;
+};
+
+export const addInteraction = async (roomid, interaction) => {
+  const old = interactions.get(roomid) || [];
+  old.push(interaction);
+  interactions.set(roomid, old);
+  return true;
+};
+export const getInteractionBreakdown = async (roomid) => {
+  const list = interactions.get(roomid) || [];
+  let counts = {};
+  list.forEach(({level}) => {
+    counts[level] = (counts[level] || 0) + 1;
+  });
+  return counts;
 };
