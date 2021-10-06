@@ -126,8 +126,6 @@ const DropdownRoles = (props) => {
     }
   }, [props.initRole]);
 
-  console.log(selectedRole);
-
   const handleRoleSelected = (e, roleName, roleNum) => {
     if (e.target.tagName.toLowerCase() !== "i") {
       setSelectedRole(roleName);
@@ -196,7 +194,7 @@ const DropdownRoles = (props) => {
   }
 
   return (
-    <div className="dropdown" style={{ height: menuHeight }} ref={menuElem}>
+    <div className="dropdown" style={{ height: menuHeight }} ref={menuElem} disabled={props.disabled}>
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
@@ -208,7 +206,7 @@ const DropdownRoles = (props) => {
             goToMenu="roles"
             icon={<i className="icons fab fa-critical-role"></i>}>
             {selectedRole || PLACEHOLDER_TEXT}
-            {selectedRole && (
+            {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
                 <i className="fa fa-times-circle"></i>
               </button>

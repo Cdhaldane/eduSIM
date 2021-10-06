@@ -62,10 +62,15 @@ const CreateRole = (props) => {
     setRole({name, num});
   }
 
+  const userExists = Object.keys(props.initialUserInfo).length>0;
+
   return (
     <div className="areacsv" >
       <form className="areacsvform modal-role-select">
-        <p id="boxj1">Select the role and name you wish to play as!</p>
+        <div className="modal-role-header">
+          <h2>Welcome to the simulation!</h2>
+          <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name and role to continue."}</p>
+        </div>
         <div id="rolesdrops">
           <DropdownRoles
             gameid={props.gameid}
@@ -73,6 +78,7 @@ const CreateRole = (props) => {
             editMode={false}
             rolesTaken={rolesTaken}
             initRole={role}
+            disabled={userExists}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">

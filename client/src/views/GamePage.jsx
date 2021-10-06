@@ -7,6 +7,7 @@ import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
+import { useAlertContext } from "../components/Alerts/AlertContext";
 
 const Main = styled.main`
   grid-area: main;
@@ -56,6 +57,7 @@ function Game(props) {
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
   const [level, setLevel] = useState(1);
+  const alertContext = useAlertContext();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -106,6 +108,9 @@ function Game(props) {
           return l;
         });
       });
+      client.on("errorLog", (message) => {
+        alertContext.showAlert(message, "error");
+      });
       setSocketInfo(client);
       return () => client.disconnect();
     }());
@@ -125,8 +130,6 @@ function Game(props) {
   const actualLevel = roomStatus.level || level;
 
   const isLoading = room === null;
-
-  console.log("PEE", queryUser);
 
   return (
     !isLoading ? (
@@ -151,6 +154,7 @@ function Game(props) {
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             initialUserInfo={queryUser}
+            initialUserId={userid}
           />
           {!roomStatus.running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

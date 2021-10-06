@@ -186,7 +186,9 @@ class Graphics extends Component {
       rolelevel: role
     });
     this.props.socket.emit("playerUpdate", {
-      role, name
+      role, name, ...(
+        this.props.initialUserId ? {dbid: this.props.initialUserId} : {}
+      )
     })
   }
 
@@ -243,8 +245,7 @@ class Graphics extends Component {
       <React.Fragment>
         {this.state.selectrole && <div>
           <Modal
-            isOpen={this.state.isOpen}
-            // onRequestClose={this.toggleModal}
+            isOpen={!this.props.players[this.props.socket.id]}
             contentLabel="My dialog"
             className="createmodaltab"
             overlayClassName="myoverlaytab"

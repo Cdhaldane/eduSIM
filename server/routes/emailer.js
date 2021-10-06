@@ -5,10 +5,12 @@ const db = require('../databaseConnection');
 
 router.post("/sendInviteEmails", async (req, res) => {
   let { simid, admin, simname } = req.body
-  let error = true;
 
   let smtpTransport = nodemailer.createTransport({
     service: 'hotmail',
+    maxConnections: 1,
+    maxMessages: 1,
+    pool: true,
     auth: {
       user: "edusimuottawa@outlook.com",
       pass: "Legodinosaur"
@@ -22,7 +24,7 @@ router.post("/sendInviteEmails", async (req, res) => {
     r.gameroom_name=p.game_room
   `);
 
-  contacts.forEach(async (data) => {
+  for (const data of contacts) {
   
     let mailOptions = {
       from: 'edusimuottawa@outlook.com',
@@ -50,16 +52,17 @@ router.post("/sendInviteEmails", async (req, res) => {
       `
     };
   
-    smtpTransport.sendMail(mailOptions, (error, response) => {
+    await smtpTransport.sendMail(mailOptions, (error, response) => {
       if (error) {
+        console.log(error);
         res.status(400).send(error);
       } else {
-        res.send('Email sent: ' + response.response)
+        res.send('Email sent: ' + response.response);
       }
     });
-  })
+  }
 
-  smtpTransport.close();
+  // smtpTransport.close();
 });
 
 export default router;

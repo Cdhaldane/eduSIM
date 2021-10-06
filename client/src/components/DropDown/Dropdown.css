@@ -52,6 +52,11 @@ a {
   font-family: 'Montserrat', sans-serif;
 }
 
+.dropdown[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .timelineDropdown {
   right: 2.5%;
   top: 60px;

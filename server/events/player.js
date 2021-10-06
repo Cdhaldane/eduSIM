@@ -1,4 +1,4 @@
-import { getPlayer, setPlayer } from './utils';
+import { getPlayer, setPlayer, getPlayerByDBID } from './utils';
 
 export default async (server, client, event, args) => {
   const { room } = client.handshake.query;
@@ -35,18 +35,23 @@ export default async (server, client, event, args) => {
       break;
     };
     case "playerUpdate": {
-      const { name, role } = args;
-      
+      const { name, role, dbid } = args;
+      if (await getPlayerByDBID(dbid)) {
+        client.emit("errorLog", "You are attempting to join as a player that has already joined.");
+        return;
+      }
       if (Object.keys(getPlayer(client.id)).length === 0) {
-        client.to(room).emit("clientJoined", {
+        server.to(room).emit("clientJoined", {
           id: client.id,
+          dbid,
           name,
           role
         });
       }
       setPlayer(client.id, {
         name,
-        role
+        role,
+        dbid
       });
 
       break;
