@@ -101,6 +101,7 @@ function ContextMenu(props) {
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         <li onClick={handleEdit}>{props.editTitle}</li>
+        <li onClick={() => null}>Group Objects</li>
       </ul>
 
       {drop && (

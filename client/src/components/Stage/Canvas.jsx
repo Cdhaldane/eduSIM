@@ -155,7 +155,7 @@ class Graphics extends Component {
       personalLayerX: 0,
       personalLayerY: 0,
       personalLayerScale: 1,
-      draggable: false,
+      layerDraggable: false,
 
       // Fill and Stroke
       colorf: "black",
@@ -218,12 +218,19 @@ class Graphics extends Component {
       }
     }).then((res) => {
       if (res.data.game_parameters) {
+        // Load saved object data
         const objects = JSON.parse(res.data.game_parameters);
         this.savedObjects.forEach((object) => {
           this.setState({
             [object]: objects[object]
           });
         });
+
+        // Calculate positions on initial load
+        setTimeout(() => {
+          this.recalculateCanvasSizeAndPosition(false);
+          this.recalculateCanvasSizeAndPosition(true);
+        }, 100);
       }
     }).catch(error => {
       console.error(error);
@@ -359,16 +366,7 @@ class Graphics extends Component {
       }, 100);
     };
 
-    // Calculate positions on initial load
-    setTimeout(() => {
-      this.recalculateCanvasSizeAndPosition(false);
-      this.recalculateCanvasSizeAndPosition(true);
-    }, 50);
-
     history.push(this.state);
-    this.setState({
-      selectedShapeName: ""
-    });
   }
 
   componentWillUnmount = () => {
@@ -406,30 +404,6 @@ class Graphics extends Component {
       this.state.lines,
       this.state.documents
     ];
-
-    const prevSelected = prevState.selectedShapeName;
-    const nowSelected = this.state.selectedShapeName;
-    if (prevSelected !== nowSelected) {
-      const type = nowSelected.replace(/\d+$/, "");
-      if (this.state[type]) {
-        const node = this.state[type].filter((obj) => {
-          return obj.name === nowSelected;
-        });
-        if (node.length) {
-          if (node[0].infolevel) {
-            const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
-              return obj.attrs.id === nowSelected;
-            });
-            this.refs.personalTransformer.nodes(obj);
-          } else {
-            const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
-              return obj.attrs.id === nowSelected;
-            });
-            this.refs.groupTransformer.nodes(obj);
-          }
-        }
-      }
-    }
 
     if (!this.state.redoing && !this.state.isTransforming) {
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
@@ -501,64 +475,6 @@ class Graphics extends Component {
     });
   }
 
-  handleStageClick = (e, personalArea) => {
-    const stage = personalArea ? "personalAreaStage" : "graphicStage";
-    const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
-    const pos = this.refs[layer].getStage().getPointerPosition();
-    const shape = this.refs[layer].getIntersection(pos);
-
-    if (e.evt.button === 0) {
-      // Left click on an object -> put the selected object in state
-      if (
-        shape !== null &&
-        shape !== undefined &&
-        shape.name() !== null &&
-        shape.name() !== undefined &&
-        shape.id() !== "ContainerRect"
-      ) {
-        this.setState({
-          selectedShapeName: shape.id()
-        }, () => {
-          this.refs[stage].draw();
-        });
-      }
-    } else if (e.evt.button === 2) {
-      if (
-        shape === null ||
-        shape === undefined ||
-        shape.name() === ""
-      ) {
-        // Right click (not on an object) -> show the add object menu
-        const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
-        const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
-        const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
-        const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
-        const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
-        this.setState({
-          selectedContextMenu: {
-            type: type,
-            position: {
-              x: e.evt.clientX,
-              y: e.evt.clientY
-            }
-          },
-          [notVisible]: false,
-          [visible]: true,
-          [contextMenuX]: e.evt.clientX,
-          [contextMenuY]: e.evt.clientY,
-        });
-      } else {
-        // Right click on a shape (or group)
-        console.log(this.state.selectedShapeName);
-        this.setState({
-          selectedShapeName: shape.id()
-        }, () => {
-          this.refs[stage].draw();
-        });
-      }
-    }
-  };
-
   updateSelectionRect = (personalArea) => {
     let node = this.refs.selectionRectRef;
     if (personalArea) {
@@ -578,7 +494,7 @@ class Graphics extends Component {
   onMouseDown = (e, personalArea) => {
     if (!e.evt.ctrlKey) {
       this.setState({
-        draggable: false
+        layerDraggable: false
       });
     }
 
@@ -633,10 +549,6 @@ class Graphics extends Component {
   };
 
   handleMouseUp = (e, personalArea) => {
-    const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
-    const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
-    const transformer = personalArea ? "personalTransformer" : "groupTransformer";
-
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
@@ -645,35 +557,102 @@ class Graphics extends Component {
       if (!this.state.selection.visible) {
         return;
       }
-      const selBox = this.refs[selectionRect].getClientRect();
-      const elements = [];
-      this.refs[layer].find(".shape").forEach((elementNode) => {
-        const elBox = elementNode.getClientRect();
-        if (Konva.Util.haveIntersection(selBox, elBox)) {
-          elements.push(elementNode);
-        }
-      });
 
-      if (e.evt.button === 2 &&
-        this.state.selectedShapeName === "group" &&
-        this.state.groupSelection.length > 1) {
-        // Right clicked on an already selected group
-        console.log(this.state.groupSelection);
-      } else {
-        // Handle single selection and group selection
-        if (elements.length === 1) {
+      const stage = personalArea ? "personalAreaStage" : "graphicStage";
+      const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+      const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
+      const pointerPos = this.refs[layer].getStage().getPointerPosition();
+      const shape = this.refs[layer].getIntersection(pointerPos);
+
+      if (e.evt.button === 0) {
+        // LEFT CLICK
+        const selBox = this.refs[selectionRect].getClientRect();
+        if (selBox.width > 1 && selBox.height > 1) {
+          // This only runs if there has been a rectangle selection (click and drag selection)
+          const elements = [];
+          this.refs[layer].find(".shape").forEach((elementNode) => {
+            const elBox = elementNode.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              elements.push(elementNode);
+            }
+          });
+
+          // Handle if nothing, one thing, or a group has been selected
+          if (elements.length === 0) {
+            this.setState({
+              selectedShapeName: "",
+              groupSelection: []
+            }, this.handleObjectSelection);
+          } else if (elements.length === 1) {
+            this.setState({
+              selectedShapeName: elements[0].id(),
+              groupSelection: []
+            }, this.handleObjectSelection);
+          } else if (elements.length > 1) {
+            this.setState({
+              selectedShapeName: "group",
+              groupSelection: elements
+            }, this.handleObjectSelection);
+          }
+        } else {
+          // There has been a single left click
+          // Clicked on object -> put the selected object in state
+          // Clicked on nothing -> deselect all
+          if (this.isShape(shape)) {
+            this.setState({
+              selectedShapeName: shape.id(),
+              groupSelection: []
+            }, () => {
+              this.handleObjectSelection();
+              this.refs[stage].draw();
+            });
+          } else {
+            this.setState({
+              selectedShapeName: "",
+              groupSelection: []
+            }, () => {
+              this.handleObjectSelection();
+              this.refs[stage].draw();
+            });
+          }
+        }
+      } else if (e.evt.button === 2) {
+        // RIGHT CLICK
+        if (this.isShape(shape)) {
+          // Right click on a shape
           this.setState({
-            selectedShapeName: elements[0].id(),
+            selectedShapeName: shape.id(),
             groupSelection: []
+          }, () => {
+            this.handleObjectSelection();
+            this.refs[stage].draw();
           });
-        } else if (elements.length > 1) {
+
+          if (shape.id() === "group") {
+            // TODO
+            // Right clicked on an already selected group
+          }
+        } else {
+          // Right click on the canvas -> show the add object menu
+          const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
+          const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
+          const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
+          const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
+          const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
           this.setState({
-            selectedShapeName: "group",
-            groupSelection: elements
+            selectedContextMenu: {
+              type: type,
+              position: {
+                x: e.evt.clientX,
+                y: e.evt.clientY
+              }
+            },
+            [notVisible]: false,
+            [visible]: true,
+            [contextMenuX]: e.evt.clientX,
+            [contextMenuY]: e.evt.clientY,
           });
         }
-
-        this.refs[transformer].nodes(elements);
       }
 
       this.setState({
@@ -688,6 +667,52 @@ class Graphics extends Component {
       this.updateSelectionRect(personalArea);
     }
   };
+
+  isShape = (shape) => {
+    if (
+      shape === null ||
+      shape === undefined ||
+      shape.name() === null ||
+      shape.name() === undefined ||
+      shape.id() === "ContainerRect"
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  handleObjectSelection = () => {
+    const type = this.state.selectedShapeName.replace(/\d+$/, "");
+    console.log(type);
+    if (this.state[type]) {
+      const node = this.state[type].filter((obj) => {
+        return obj.name === this.state.selectedShapeName;
+      });
+
+      if (node.length) {
+        if (node[0].infolevel) {
+          const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
+            return obj.attrs.id === this.state.selectedShapeName;
+          });
+          this.refs.personalTransformer.nodes(obj);
+          this.refs.groupTransformer.nodes([]);
+        } else {
+          const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
+            return obj.attrs.id === this.state.selectedShapeName;
+          });
+          this.refs.groupTransformer.nodes(obj);
+          this.refs.personalTransformer.nodes([]);
+        }
+      }
+    } else if (type === "group") {
+      console.log(this.state.groupSelection);
+      this.refs.groupTransformer.nodes(this.state.groupSelection);
+    } else {
+      this.refs.personalTransformer.nodes([]);
+      this.refs.groupTransformer.nodes([]);
+    }
+  }
 
   handleMouseOver = (e, personalArea) => {
     // Get the current arrow ref and modify its position by filtering & pushing again
@@ -708,7 +733,7 @@ class Graphics extends Component {
         lines: this.state.lines.concat()
       });
     } else {
-      if (!this.state.selection.visible && !this.state.draggable) {
+      if (!this.state.selection.visible && !this.state.layerDraggable) {
         return;
       }
 
@@ -719,27 +744,28 @@ class Graphics extends Component {
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
       } else {
-        document.body.style.cursor = "default";
-
-        let scale = this.state.groupLayerScale;
-        let xOffset = -this.state.groupLayerX;
-        let yOffset = -this.state.groupLayerY;
-        if (personalArea) {
-          scale = this.state.personalLayerScale;
-          xOffset = -this.state.personalLayerX;
-          yOffset = -this.state.personalLayerY;
-        }
-
-        // Create drag selection rectangle
-        this.setState({
-          selection: {
-            ...this.state.selection,
-            x2: (pos.x + xOffset) / scale,
-            y2: (pos.y + yOffset) / scale
+        // Only have drag select on left click and drag
+        if (e.evt.buttons === 1 && !this.state.layerDraggable) {
+          let scale = this.state.groupLayerScale;
+          let xOffset = -this.state.groupLayerX;
+          let yOffset = -this.state.groupLayerY;
+          if (personalArea) {
+            scale = this.state.personalLayerScale;
+            xOffset = -this.state.personalLayerX;
+            yOffset = -this.state.personalLayerY;
           }
-        }, () => {
-          this.updateSelectionRect(personalArea);
-        });
+
+          // Create drag selection rectangle
+          this.setState({
+            selection: {
+              ...this.state.selection,
+              x2: (pos.x + xOffset) / scale,
+              y2: (pos.y + yOffset) / scale
+            }
+          }, () => {
+            this.updateSelectionRect(personalArea);
+          });
+        }
       }
     }
   };
@@ -791,6 +817,16 @@ class Graphics extends Component {
       const layerScale = personalArea ? "personalLayerScale" : "groupLayerScale";
       this.setState({
         [layerScale]: newScale
+      });
+    }
+  }
+
+  dragLayer = (e, personalArea) => {
+    const type = personalArea ? "personal" : "group";
+    if (this.state.layerDraggable) {
+      this.setState({
+        [type + "LayerX"]: this.state[type + "LayerX"] + e.evt.movementX,
+        [type + "LayerY"]: this.state[type + "LayerY"] + e.evt.movementY
       });
     }
   }
@@ -1129,6 +1165,7 @@ class Graphics extends Component {
         texts: texts,
         lines: lines,
         selectedShapeName: "",
+        groupSelection: [],
         selectedContextMenu: null
       });
 
@@ -1689,7 +1726,7 @@ class Graphics extends Component {
     if (e.key === "Control") {
       document.body.style.cursor = "default";
       this.setState({
-        draggable: false
+        layerDraggable: false
       });
     }
   }
@@ -1723,7 +1760,7 @@ class Graphics extends Component {
     } else if (event.ctrlKey) {
       document.body.style.cursor = "grab";
       this.setState({
-        draggable: true
+        layerDraggable: true
       });
     }
   }
@@ -1814,19 +1851,19 @@ class Graphics extends Component {
               />
             )}
           <Stage
-            onContextMenu={(e) => e.evt.preventDefault()}
-            onClick={(e) => this.handleStageClick(e, false)}
-            onMouseMove={(e) => this.handleMouseOver(e, false)}
-            onWheel={(e) => this.handleWheel(e, false)}
-            onMouseDown={(e) => this.onMouseDown(e, false)}
-            onMouseUp={(e) => this.handleMouseUp(e, false)}
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
             width={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientWidth : 0}
             ref="graphicStage"
+            onMouseMove={(e) => this.handleMouseOver(e, false)}
+            onMouseDown={(e) => this.onMouseDown(e, false)}
+            onMouseUp={(e) => this.handleMouseUp(e, false)}
+            onWheel={(e) => this.handleWheel(e, false)}
+            onContextMenu={(e) => e.evt.preventDefault()}
           >
             <Layer
+              ref="groupAreaLayer"
               name="group"
               scaleX={this.state.groupLayerScale}
               scaleY={this.state.groupLayerScale}
@@ -1834,24 +1871,16 @@ class Graphics extends Component {
               y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              draggable={this.state.draggable}
-              ref="groupAreaLayer"
-              onDragMove={(e) => {
-                if (this.state.draggable) {
-                  this.setState({
-                    groupLayerX: this.state.groupLayerX + e.evt.movementX,
-                    groupLayerY: this.state.groupLayerY + e.evt.movementY
-                  });
-                }
-              }}
+              draggable={this.state.layerDraggable}
+              onDragMove={(e) => this.dragLayer(e, false)}
             >
+              {/* This rect is for dragging the canvas */}
               <Rect
+                id="ContainerRect"
                 x={-5 * window.innerWidth}
                 y={-5 * window.innerHeight}
                 height={window.innerHeight * 10}
                 width={window.innerWidth * 10}
-                name=""
-                id="ContainerRect"
               />
               {this.state.rectangles.map((eachRect, index) => {
                 if (eachRect.level === this.state.level && eachRect.infolevel === false) {
@@ -1875,7 +1904,7 @@ class Graphics extends Component {
                       stroke={eachRect.stroke}
                       strokeWidth={eachRect.strokeWidth}
                       strokeScaleEnabled={false}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onClick={() => {
                         let that = this;
                         if (eachRect.link !== undefined && eachRect.link !== "") {
@@ -2094,7 +2123,7 @@ class Graphics extends Component {
                         ellipse.setAttr("scaleY", 1);
                         this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2147,7 +2176,7 @@ class Graphics extends Component {
                       globalCompositeOperation={
                         eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                       }
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onContextMenu={this.onObjectContextMenu}
                     />
                   );
@@ -2471,7 +2500,7 @@ class Graphics extends Component {
                         });
                         let triangle = this.refs[eachDoc.ref];
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2607,7 +2636,7 @@ class Graphics extends Component {
                         triangle.setAttr("scaleY", 1);
                         this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2709,7 +2738,7 @@ class Graphics extends Component {
                         star.setAttr("scaleY", 1);
                         this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2768,7 +2797,7 @@ class Graphics extends Component {
                       x={eachText.x}
                       y={eachText.y}
                       text={eachText.text}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onTransform={this.handleTextTransform}
                       onTransformEnd={this.onTransformEndText}
                       onDragMove={() => {
@@ -2850,7 +2879,7 @@ class Graphics extends Component {
                       ]}
                       stroke={eachArrow.stroke}
                       fill={eachArrow.fill}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragEnd={event => {
                         //set new points to current position
 
@@ -3051,13 +3080,12 @@ class Graphics extends Component {
                     document.getElementById("editPersonalContainer").clientHeight : 0}
                   width={document.getElementById("editPersonalContainer") ?
                     document.getElementById("editPersonalContainer").clientWidth : 0}
-                  onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
-                  onClick={(e) => this.handleStageClick(e, true)}
                   onMouseMove={(e) => this.handleMouseOver(e, true)}
                   onMouseDown={(e) => this.onMouseDown(e, true)}
-                  onWheel={(e) => this.handleWheel(e, true)}
                   onMouseUp={(e) => this.handleMouseUp(e, true)}
+                  onWheel={(e) => this.handleWheel(e, true)}
+                  onContextMenu={(e) => e.evt.preventDefault()}
                 >
                   <Layer
                     ref="personalAreaLayer"
@@ -3068,16 +3096,17 @@ class Graphics extends Component {
                     y={this.state.personalLayerY}
                     height={window.innerHeight}
                     width={window.innerWidth}
-                    draggable={this.state.draggable}
-                    onDragMove={(e) => {
-                      if (this.state.draggable) {
-                        this.setState({
-                          personalLayerX: this.state.personalLayerX + e.evt.movementX,
-                          personalLayerY: this.state.personalLayerY + e.evt.movementY
-                        });
-                      }
-                    }}
+                    draggable={this.state.layerDraggable}
+                    onDragMove={(e) => this.dragLayer(e, true)}
                   >
+                    {/* This rect is for dragging the canvas */}
+                    <Rect
+                      id="ContainerRect"
+                      x={-5 * window.innerWidth}
+                      y={-5 * window.innerHeight}
+                      height={window.innerHeight * 10}
+                      width={window.innerWidth * 10}
+                    />
                     {this.state.rectangles.map((eachRect, index) => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -3100,7 +3129,7 @@ class Graphics extends Component {
                             stroke={eachRect.stroke}
                             strokeWidth={eachRect.strokeWidth}
                             strokeScaleEnabled={false}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onClick={() => {
                               let that = this;
                               if (eachRect.link !== undefined && eachRect.link !== "") {
@@ -3344,7 +3373,7 @@ class Graphics extends Component {
                               ellipse.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3398,7 +3427,7 @@ class Graphics extends Component {
                             globalCompositeOperation={
                               eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                             }
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onContextMenu={this.onObjectContextMenu}
                           />
                         )
@@ -3720,7 +3749,7 @@ class Graphics extends Component {
                               let triangle = this.refs[eachDoc.ref];
 
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3856,7 +3885,7 @@ class Graphics extends Component {
                               triangle.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3958,7 +3987,7 @@ class Graphics extends Component {
                               star.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -4017,7 +4046,7 @@ class Graphics extends Component {
                             x={eachText.x}
                             y={eachText.y}
                             text={eachText.text}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onTransform={this.handleTextTransform}
                             onTransformEnd={this.onTransformEndText}
                             onDragMove={() => {
@@ -4102,7 +4131,7 @@ class Graphics extends Component {
                             ]}
                             stroke={eachArrow.stroke}
                             fill={eachArrow.fill}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragEnd={event => {
                               //set new points to current position
 
