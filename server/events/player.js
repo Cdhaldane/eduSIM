@@ -2,8 +2,7 @@ import {
   getPlayer, 
   setPlayer, 
   getPlayerByDBID,
-  addInteraction,
-  getInteractionBreakdown
+  addInteraction
 } from './utils';
 import moment from "moment";
 
@@ -73,7 +72,6 @@ export default async (server, client, event, args) => {
         parameters,
         player: client.id
       });
-      console.log(room, await getInteractionBreakdown(room));
 
       break;
     };

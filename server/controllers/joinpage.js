@@ -4,6 +4,9 @@ const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
 const GameInstance = require("../models/GameInstances");
 import cryptoRandomString from 'crypto-random-string';
+import { 
+  getInteractionBreakdown
+} from '../events/utils';
 
 // Create Players using csv
 exports.createGamePlayers = async (req, res) => {
@@ -104,6 +107,24 @@ exports.getRooms = async (req, res) => {
   } catch (err) {
     return res.status(400).send({
       message: `No game rooms found with the id ${gameinstanceid}`,
+    });
+  }
+};
+
+exports.getRoomInteractionBreakdown = async (req, res) => {
+  const gameroomid = req.query.gameroomid;
+  try {
+    let { dataValues } = await GameRoom.findOne({
+      where: {
+        gameroomid
+      },
+      attributes: ["gameroom_url"]
+    });
+    const breakdown = await getInteractionBreakdown(dataValues.gameroom_url);
+    return res.send(breakdown);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No game rooms found with the id ${gameroomid}`,
     });
   }
 };
