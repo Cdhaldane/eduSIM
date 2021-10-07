@@ -471,10 +471,14 @@ class Graphics extends Component {
       x: e.evt.clientX,
       y: e.evt.clientY
     };
+    let singleGroupSelected = false;
+    if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
+      singleGroupSelected = true;
+    }
     this.setState({
       selectedContextMenu: {
-        unGroup: this.state.groupSelection.length && this.state.groupSelection[0] === "group" ? true : false,
-        addGroup: this.state.groupSelection.length && this.state.groupSelection[0] !== "group" ? true : false,
+        unGroup: singleGroupSelected ? true : false,
+        addGroup: this.state.groupSelection.length && !singleGroupSelected ? true : false,
         type: "ObjectMenu",
         position: mousePosition
       }
@@ -568,7 +572,6 @@ class Graphics extends Component {
         return;
       }
 
-      const stage = personalArea ? "personalAreaStage" : "graphicStage";
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
       const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
@@ -612,15 +615,32 @@ class Graphics extends Component {
           if (this.isShape(shape)) {
             if (e.evt.shiftKey) {
               // Shift selected -> create group selection
+
+              // The object that was just shift selected
               let alreadySelectedCurrent = false;
+              // The object already selected while new shift selection was made
               let alreadySelectedPrev = false;
+
+              // This determines if the object that was just selected or was previously selected
+              // is part of the groupSelection already so the logic will deal with it accordingly
+              // Current already selected -> deselect
+              // Prev already selected & different -> add to new group selection
               for (let i = 0; i < this.state.groupSelection.length; i++) {
                 const obj = this.state.groupSelection[i];
-                if (obj.attrs.id === shape.id()) {
-                  alreadySelectedCurrent = true;
-                }
-                if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
-                  alreadySelectedPrev = true;
+                if (!Array.isArray(obj)) {
+                  if (obj.attrs.id === shape.id()) {
+                    alreadySelectedCurrent = true;
+                  }
+                  if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
+                    alreadySelectedPrev = true;
+                  }
+                } else if (clickShapeGroup) {
+                  const clickedGroupIsObj = obj.every(item => clickShapeGroup.includes(item)) &&
+                    clickShapeGroup.every(item => obj.includes(item));
+                  if (clickedGroupIsObj) {
+                    alreadySelectedCurrent = true;
+                    break;
+                  }
                 }
 
                 if (alreadySelectedCurrent && (alreadySelectedPrev || !this.state.selectedShapeName)) {
@@ -630,28 +650,70 @@ class Graphics extends Component {
 
               if (this.state.selectedShapeName !== shape.id() || this.state.groupSelection.length) {
                 if (!alreadySelectedCurrent) {
+                  // ADD SELECTION
+
                   const newSelection = [...this.state.groupSelection];
                   if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
+                    // A shape is already selected in selectedShapeName but not in groupSelection 
+                    // Add it to groupSelection
                     newSelection.push(this.refs[this.state.selectedShapeName]);
                   }
                   if (newSelection.length === 0) {
-                    this.setState({
-                      selectedShapeName: shape.id(),
-                      groupSelection: []
-                    }, this.handleObjectSelection);
+                    // Shift select with nothing else selected so set it as the selection
+                    if (!clickShapeGroup) {
+                      this.setState({
+                        selectedShapeName: shape.id(),
+                        groupSelection: []
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [clickShapeGroup]
+                      }, this.handleObjectSelection);
+                    }
                   } else {
-                    this.setState({
-                      selectedShapeName: "",
-                      groupSelection: [...newSelection, this.refs[shape.id()]]
-                    }, this.handleObjectSelection);
+                    // Add the new selection to the shift select group
+                    if (!clickShapeGroup) {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [...newSelection, this.refs[shape.id()]]
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [...newSelection, clickShapeGroup]
+                      }, this.handleObjectSelection);
+                    }
                   }
                 } else {
-                  const newGroupSelection = this.state.groupSelection.filter(o => o.attrs.id !== shape.id());
+                  // REMOVE SELECTION
+
+                  const newGroupSelection = this.state.groupSelection.filter((obj) => {
+                    if (Array.isArray(obj)) {
+                      if (clickShapeGroup) {
+                        const clickedGroupIsObj = obj.every(item => clickShapeGroup.includes(item)) &&
+                          clickShapeGroup.every(item => obj.includes(item));
+                        return !clickedGroupIsObj;
+                      } else {
+                        return true;
+                      }
+                    } else {
+                      return obj.attrs.id !== shape.id();
+                    }
+                  });
                   if (newGroupSelection.length === 1) {
-                    this.setState({
-                      selectedShapeName: newGroupSelection[0].id(),
-                      groupSelection: []
-                    }, this.handleObjectSelection);
+                    // Only one selection left
+                    if (Array.isArray(newGroupSelection[0])) {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [newGroupSelection[0]]
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: newGroupSelection[0].id(),
+                        groupSelection: []
+                      }, this.handleObjectSelection);
+                    }
                   } else {
                     this.setState({
                       selectedShapeName: "",
@@ -665,7 +727,7 @@ class Graphics extends Component {
               if (clickShapeGroup) {
                 this.setState({
                   selectedShapeName: "",
-                  groupSelection: clickShapeGroup
+                  groupSelection: [clickShapeGroup]
                 }, this.handleObjectSelection);
               } else {
                 this.setState({
@@ -688,15 +750,29 @@ class Graphics extends Component {
         // RIGHT CLICK
         if (this.isShape(shape)) {
           if (clickShapeGroup) {
-            this.setState({
-              selectedShapeName: "",
-              groupSelection: clickShapeGroup
-            }, this.handleObjectSelection);
+            // Check if group already selected to avoid duplicates
+            let alreadySelected = false;
+            for (let i = 0; i < this.state.groupSelection.length; i++) {
+              const obj = this.state.groupSelection[i];
+              if (Array.isArray(obj) && obj.includes(clickShapeGroup[0])) {
+                alreadySelected = true;
+              }
+            }
+
+            if (!alreadySelected) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: [...this.state.groupSelection, clickShapeGroup]
+              }, this.handleObjectSelection);
+            }
           } else {
             // Right click on a shape -> set it to the selection
             let shapeIsInGroupSelection = false;
             for (let i = 0; i < this.state.groupSelection.length; i++) {
-              if (this.state.groupSelection[i].attrs.id === shape.id()) {
+              if (
+                !Array.isArray(this.state.groupSelection[i]) &&
+                this.state.groupSelection[i].attrs.id === shape.id()
+              ) {
                 shapeIsInGroupSelection = true;
                 break;
               }
@@ -765,12 +841,7 @@ class Graphics extends Component {
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
     } else if (type === "" && this.state.groupSelection.length) {
-      if (this.state.groupSelection[0] === "group") {
-        console.log("GROUP selected");
-        this.refs[transformer].nodes(this.state.groupSelection.slice(1));
-      } else {
-        this.refs[transformer].nodes(this.state.groupSelection);
-      }
+      this.refs[transformer].nodes(this.state.groupSelection.flat());
     } else {
       this.refs[transformer].nodes([]);
     }
@@ -814,7 +885,7 @@ class Graphics extends Component {
             if (shapeGroup) {
               this.setState({
                 selectedShapeName: "",
-                groupSelection: shapeGroup
+                groupSelection: [shapeGroup]
               }, this.handleObjectSelection);
             } else {
               this.setState({
@@ -831,7 +902,7 @@ class Graphics extends Component {
               xOffset = -this.state.personalLayerX;
               yOffset = -this.state.personalLayerY;
             }
-  
+
             // Create drag selection rectangle
             this.setState({
               selection: {
@@ -1624,10 +1695,34 @@ class Graphics extends Component {
 
   handleGrouping = () => {
     if (this.state.groupSelection.length > 1) {
+      // Remove any existing groups which are part of the new group
+      const newGroup = [...this.state.groupSelection.flat()];
+      let newSavedGroups = [...this.state.savedGroups];
+      let newGroupSameIndices = [];
+      for (let i = 0; i < newGroup.length; i++) {
+        if (newSavedGroups.flat().includes(newGroup[i])) {
+          newGroupSameIndices.push(i);
+        }
+      }
+      let savedGroupSameIndices = [];
+      for (let i = 0; i < newSavedGroups.length; i++) {
+        for (let j = 0; j < newGroupSameIndices.length; j++) {
+          if (newSavedGroups[i].includes(newGroup[j])) {
+            savedGroupSameIndices.push(i);
+          }
+        }
+      }
+      savedGroupSameIndices = [...new Set(savedGroupSameIndices)];
+      for (let i = 0; i < savedGroupSameIndices.length; i++) {
+        newSavedGroups[i] = null;
+      }
+      newSavedGroups = newSavedGroups.filter(g => g !== null);
+      newSavedGroups.push(newGroup);
+
       this.setState({
         selectedShape: "",
-        groupSelection: [],
-        savedGroups: [...this.state.savedGroups, ["group", ...this.state.groupSelection]]
+        groupSelection: [newGroup],
+        savedGroups: newSavedGroups
       });
     } else {
       console.error("No group selected - GROUPING");
@@ -1635,11 +1730,10 @@ class Graphics extends Component {
   }
 
   handleUngrouping = () => {
-    if (this.state.groupSelection.length > 1) {
-      const objId = this.state.groupSelection[1].attrs.id;
+    if (this.state.groupSelection.length && Array.isArray(this.state.groupSelection[0])) {
+      const objId = this.state.groupSelection[0][0].attrs.id;
       for (let i = 0; i < this.state.savedGroups.length; i++) {
-        // Starts at index 1 since index 0 is "group" string
-        for (let j = 1; j < this.state.savedGroups[i].length; j++) {
+        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
           if (this.state.savedGroups[i][j].attrs.id === objId) {
             const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
             this.setState({
@@ -1658,10 +1752,9 @@ class Graphics extends Component {
 
   // Returns the group a shape is part of or null if it isn't in a group
   getShapeGroup = (shape) => {
-    if (shape) {
+    if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
-        // Starts at index 1 since index 0 is "group" string
-        for (let j = 1; j < this.state.savedGroups[i].length; j++) {
+        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
           if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
             return this.state.savedGroups[i];
           }
