@@ -79,9 +79,11 @@ const Level = (props) => {
           )}
         </div>
 
-        <Link to="/dashboard" className="level-close">
-          <i className="fas fa-times fa-3x"></i>
-        </Link>
+        {!props.gamepage && (
+          <Link to="/dashboard" className="level-close">
+            <i className="fas fa-times fa-3x"></i>
+          </Link>
+        )}
       </div>
     </div>
   );
