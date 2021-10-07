@@ -23,10 +23,7 @@ function Tabs(props) {
   const [newGroup, setNewGroup] = useState("");
   const [tabs, setTabs] = useState([]);
   const [time, setTime] = useState(1);
-  const data = [
-    { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
-    { name: "Page B", uv: 500, pv: 2400, amt: 2400 },
-  ];
+  const [interactionData, setInteractionData] = useState({});
 
   const alertContext = useAlertContext();
 
@@ -50,6 +47,16 @@ function Tabs(props) {
     setToggleState(index);
     // for updating controls in admin header
     props.setRoom(tabs[index - 1]);
+    if (index > 0 && index < tabs.length+1) {
+      const id = tabs[index-1][1];
+      axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getRoomInteractionBreakdown", {
+        params: {
+          gameroomid: id,
+        },
+      }).then((res) => {
+        setInteractionData(Object.entries(res.data).map((val) => ({name: "Level "+val[0], interactions: val[1]})));
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -274,19 +281,22 @@ function Tabs(props) {
               </div>
               <div className="group-column">
                 <h3>Performance:</h3>
-                <div className="chart">
+                <div className="chart" disabled={interactionData.length === 0}>
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart
-                      data={data}
+                      data={interactionData}
                       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
                     >
-                      <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                      <Line type="monotone" dataKey="interactions" stroke="#8884d8" />
                       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip />
                     </LineChart>
                   </ResponsiveContainer>
+                    {interactionData.length === 0 && (
+                      <p>No data has been recorded yet.</p>
+                    )}
                 </div>
               </div>
             </div>
