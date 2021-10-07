@@ -39,6 +39,10 @@ const Level = (props) => {
     handleLevel(parseInt(event.target.value));
   }
 
+  const saveOnClose = () => {
+    props.saveGame();
+  }
+
   return (
     <div id="levelContainer">
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
@@ -76,7 +80,7 @@ const Level = (props) => {
           </button>
         </div>
 
-        <Link to="/dashboard" className="level-close">
+        <Link onClick={saveOnClose} to="/dashboard" className="level-close">
           <i className="fas fa-times fa-3x"></i>
         </Link>
       </div>

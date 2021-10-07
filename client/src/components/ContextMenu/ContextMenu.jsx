@@ -15,7 +15,7 @@ const ContextMenu = (props) => {
   };
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = menu.current ? menu.current.clientHeight : 205;
+    const dropHeight = menu.current ? menu.current.clientHeight : 235;
     const dropWidth = menu.current ? menu.current.clientWidth : 155;
     const editModalWidth = 400;
     const paddingPx = 7;
@@ -86,7 +86,13 @@ const ContextMenu = (props) => {
   }
 
   const handleGrouping = () => {
-    console.log("YO");
+    props.handleGrouping();
+    props.close();
+  }
+
+  const handleUngrouping = () => {
+    props.handleUngrouping();
+    props.close();
   }
 
   return (
@@ -104,9 +110,14 @@ const ContextMenu = (props) => {
         <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
+        {!props.addGroup && !props.unGroup && (
         <li onClick={handleEdit}>{props.editTitle}</li>
+        )}
         {props.addGroup && (
-        <li onClick={handleGrouping}>Group Objects</li>
+          <li onClick={handleGrouping}>Group Objects</li>
+        )}
+        {props.unGroup && (
+          <li onClick={handleUngrouping}>Ungroup Objects</li>
         )}
       </ul>
 

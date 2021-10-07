@@ -93,6 +93,9 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
+      // An array of arrays containing grouped items
+      savedGroups: [],
+
       // Game Pieces?
       connectors: [],
       gameroles: [],
@@ -345,11 +348,11 @@ class Graphics extends Component {
   componentDidMount = async () => {
     const MINUTE_MS = 1000 * 60;
 
-    // Auto save the canvas every 30 seconds
+    // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
       this.handleSave();
       this.props.showAlert("Simulation Autosaved", "info");
-    }, MINUTE_MS / 2);
+    }, MINUTE_MS);
 
     // Redraw the canvas every 1 second
     this.drawInterval = setInterval(() => {
@@ -470,7 +473,8 @@ class Graphics extends Component {
     };
     this.setState({
       selectedContextMenu: {
-        addGroup: this.state.groupSelection.length ? true : false,
+        unGroup: this.state.groupSelection.length && this.state.groupSelection[0] === "group" ? true : false,
+        addGroup: this.state.groupSelection.length && this.state.groupSelection[0] !== "group" ? true : false,
         type: "ObjectMenu",
         position: mousePosition
       }
@@ -569,6 +573,7 @@ class Graphics extends Component {
       const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
       const shape = this.refs[layer].getIntersection(pointerPos);
+      const clickShapeGroup = this.getShapeGroup(shape);
 
       if (e.evt.button === 0) {
         // LEFT CLICK
@@ -657,45 +662,52 @@ class Graphics extends Component {
               }
             } else {
               // Clicked on object -> put the selected object in state
-              this.setState({
-                selectedShapeName: shape.id(),
-                groupSelection: []
-              }, () => {
-                this.handleObjectSelection();
-                this.refs[stage].draw();
-              });
+              if (clickShapeGroup) {
+                this.setState({
+                  selectedShapeName: "",
+                  groupSelection: clickShapeGroup
+                }, this.handleObjectSelection);
+              } else {
+                this.setState({
+                  selectedShapeName: shape.id(),
+                  groupSelection: []
+                }, this.handleObjectSelection);
+              }
             }
           } else {
             // Clicked on nothing -> deselect all
-            this.setState({
-              selectedShapeName: "",
-              groupSelection: []
-            }, () => {
-              this.handleObjectSelection();
-              this.refs[stage].draw();
-            });
+            if (!this.state.selection.isDraggingShape) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: []
+              }, this.handleObjectSelection);
+            }
           }
         }
       } else if (e.evt.button === 2) {
         // RIGHT CLICK
         if (this.isShape(shape)) {
-          // Right click on a shape -> set it to the selection
-          let shapeIsInGroupSelection = false;
-          for (let i = 0; i < this.state.groupSelection.length; i++) {
-            if (this.state.groupSelection[i].attrs.id === shape.id()) {
-              shapeIsInGroupSelection = true;
-              break;
-            }
-          }
-
-          if (!shapeIsInGroupSelection) {
+          if (clickShapeGroup) {
             this.setState({
-              selectedShapeName: shape.id(),
-              groupSelection: []
-            }, () => {
-              this.handleObjectSelection();
-              this.refs[stage].draw();
-            });
+              selectedShapeName: "",
+              groupSelection: clickShapeGroup
+            }, this.handleObjectSelection);
+          } else {
+            // Right click on a shape -> set it to the selection
+            let shapeIsInGroupSelection = false;
+            for (let i = 0; i < this.state.groupSelection.length; i++) {
+              if (this.state.groupSelection[i].attrs.id === shape.id()) {
+                shapeIsInGroupSelection = true;
+                break;
+              }
+            }
+
+            if (!shapeIsInGroupSelection) {
+              this.setState({
+                selectedShapeName: shape.id(),
+                groupSelection: []
+              }, this.handleObjectSelection);
+            }
           }
         } else {
           // Right click on the canvas -> show the add object menu
@@ -753,7 +765,12 @@ class Graphics extends Component {
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
     } else if (type === "" && this.state.groupSelection.length) {
-      this.refs[transformer].nodes(this.state.groupSelection);
+      if (this.state.groupSelection[0] === "group") {
+        console.log("GROUP selected");
+        this.refs[transformer].nodes(this.state.groupSelection.slice(1));
+      } else {
+        this.refs[transformer].nodes(this.state.groupSelection);
+      }
     } else {
       this.refs[transformer].nodes([]);
     }
@@ -791,25 +808,41 @@ class Graphics extends Component {
       } else {
         // Only have drag select on left click and drag
         if (e.evt.buttons === 1 && !this.state.layerDraggable) {
-          let scale = this.state.groupLayerScale;
-          let xOffset = -this.state.groupLayerX;
-          let yOffset = -this.state.groupLayerY;
-          if (personalArea) {
-            scale = this.state.personalLayerScale;
-            xOffset = -this.state.personalLayerX;
-            yOffset = -this.state.personalLayerY;
-          }
-
-          // Create drag selection rectangle
-          this.setState({
-            selection: {
-              ...this.state.selection,
-              x2: (pos.x + xOffset) / scale,
-              y2: (pos.y + yOffset) / scale
+          if (this.state.selection.isDraggingShape) {
+            // Select the shape being dragged (and don't create a selection)
+            const shapeGroup = this.getShapeGroup(shape);
+            if (shapeGroup) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: shapeGroup
+              }, this.handleObjectSelection);
+            } else {
+              this.setState({
+                selectedShapeName: shape.id(),
+                groupSelection: []
+              }, this.handleObjectSelection);
             }
-          }, () => {
-            this.updateSelectionRect(personalArea);
-          });
+          } else {
+            let scale = this.state.groupLayerScale;
+            let xOffset = -this.state.groupLayerX;
+            let yOffset = -this.state.groupLayerY;
+            if (personalArea) {
+              scale = this.state.personalLayerScale;
+              xOffset = -this.state.personalLayerX;
+              yOffset = -this.state.personalLayerY;
+            }
+  
+            // Create drag selection rectangle
+            this.setState({
+              selection: {
+                ...this.state.selection,
+                x2: (pos.x + xOffset) / scale,
+                y2: (pos.y + yOffset) / scale
+              }
+            }, () => {
+              this.updateSelectionRect(personalArea);
+            });
+          }
         }
       }
     }
@@ -1212,11 +1245,7 @@ class Graphics extends Component {
         selectedShapeName: "",
         groupSelection: [],
         selectedContextMenu: null
-      });
-
-      // Get rid of transform UI after deletion
-      this.refs.groupTransformer.nodes([]);
-      this.refs.personalTransformer.nodes([]);
+      }, this.handleObjectSelection);
     }
   }
 
@@ -1239,11 +1268,13 @@ class Graphics extends Component {
       personalAreaOpen: open ? 1 : 0,
       groupSelection: [],
       selectedShapeName: "",
-    });
+    }, this.handleObjectSelection);
 
-    // Remove transformers    
-    this.refs.groupTransformer.nodes([]);
-    this.refs.personalTransformer.nodes([]);
+    if (open) {
+      document.getElementById("personalMainContainer").focus();
+    } else {
+      document.getElementById("editMainContainer").focus();
+    }
   }
 
   shapeIsGone = returnTo => {
@@ -1589,6 +1620,55 @@ class Graphics extends Component {
         });
       }
     }
+  }
+
+  handleGrouping = () => {
+    if (this.state.groupSelection.length > 1) {
+      this.setState({
+        selectedShape: "",
+        groupSelection: [],
+        savedGroups: [...this.state.savedGroups, ["group", ...this.state.groupSelection]]
+      });
+    } else {
+      console.error("No group selected - GROUPING");
+    }
+  }
+
+  handleUngrouping = () => {
+    if (this.state.groupSelection.length > 1) {
+      const objId = this.state.groupSelection[1].attrs.id;
+      for (let i = 0; i < this.state.savedGroups.length; i++) {
+        // Starts at index 1 since index 0 is "group" string
+        for (let j = 1; j < this.state.savedGroups[i].length; j++) {
+          if (this.state.savedGroups[i][j].attrs.id === objId) {
+            const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
+            this.setState({
+              selectedShape: "",
+              groupSelection: [],
+              savedGroups: newSavedGroups
+            }, this.handleObjectSelection);
+            return;
+          }
+        }
+      }
+    } else {
+      console.error("No group selected - UNGROUPING");
+    }
+  }
+
+  // Returns the group a shape is part of or null if it isn't in a group
+  getShapeGroup = (shape) => {
+    if (shape) {
+      for (let i = 0; i < this.state.savedGroups.length; i++) {
+        // Starts at index 1 since index 0 is "group" string
+        for (let j = 1; j < this.state.savedGroups[i].length; j++) {
+          if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
+            return this.state.savedGroups[i];
+          }
+        }
+      }
+    }
+    return null;
   }
 
   handleLevel = (e) => {
@@ -3112,6 +3192,7 @@ class Graphics extends Component {
         </div>
         <div className="eheader">
           <Level
+            saveGame={this.handleSave}
             number={this.state.numberOfPages}
             pages={this.state.pages}
             level={this.handleLevel}
@@ -3124,6 +3205,7 @@ class Graphics extends Component {
               className={"info" + this.state.personalAreaOpen}
             >
               <div
+                id="personalMainContainer"
                 name="pasteContainer"
                 tabIndex="0"
                 className="personalAreaStageContainer"
@@ -3309,6 +3391,8 @@ class Graphics extends Component {
                       <Portal>
                         <ContextMenu
                           {...this.state.selectedContextMenu}
+                          handleUngrouping={this.handleUngrouping}
+                          handleGrouping={this.handleGrouping}
                           selectedshape={this.state.selectedShapeName}
                           onOptionSelected={this.handleOptionSelected}
                           choosecolors={this.handleColorS}
