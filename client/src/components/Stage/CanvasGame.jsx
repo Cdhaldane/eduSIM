@@ -219,14 +219,6 @@ class Graphics extends Component {
     })
   }
 
-  handleInteraction = () => {
-    if (this.props.socket) {
-      this.props.socket.emit("interaction", {
-        type: "pageClick", parameters: {}, level: this.state.level
-      })
-    }
-  }
-
   componentWillReceiveProps = ({ level }) => {
     if (level) {
       this.setState({
@@ -292,7 +284,7 @@ class Graphics extends Component {
             return null
           }
         })}
-        <div onClick={this.handleInteraction}>
+        <div>
           <Stage
             height={window.innerHeight}
             width={window.innerWidth}

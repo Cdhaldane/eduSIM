@@ -421,6 +421,19 @@ hr {
 .chart {
   margin-top: 10px;
   font-size: 1rem;
+  position: relative;
+}
+.chart[disabled] > div {
+  opacity: 0.5;
+}
+.chart > p {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  opacity: 0.7;
+  font-size: 1.3em;
 }
 
 #roomh3 {
