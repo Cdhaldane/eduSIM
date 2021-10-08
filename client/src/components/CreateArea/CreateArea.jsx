@@ -178,7 +178,7 @@ function CreateArea(props) {
             id="namei"
             name="title"
             onChange={handleChange}
-            value={note.title}
+            value={title}
             placeholder=""
           />
         </div>

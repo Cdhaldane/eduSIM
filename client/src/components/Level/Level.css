@@ -64,7 +64,9 @@
   align-items: center;
   margin: auto;
   max-width: 1000px;
-  transform: translateX(-50px);
+}
+.level-gamepage {
+  padding-right: 90px;
 }
 
 .level-bar {
@@ -128,9 +130,11 @@
   .level-bar {
     padding: 5px 20px;
   }
+  .level-gamepage {
+    padding-right: 20px;
+  }
   .level-gamepage .level-nav {
     margin-top: 20px;
-    margin-right: 60px;
   }
   .level-gamepage .level-close {
     margin-top: 15px;
