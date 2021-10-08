@@ -3,6 +3,7 @@ import "./Table.css"
 import ReadOnlyRow from "../ReadOnlyRow";
 import EditableRow from "../EditableRow"
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAlertContext } from '../Alerts/AlertContext';
 import { parse } from "papaparse";
 import axios from "axios";
 import "./tailwind.css"
@@ -35,6 +36,8 @@ const Table = (props) => {
   const [editContactId, setEditContactId] = useState(null);
 
   const { user } = useAuth0()
+  const alertContext = useAlertContext();
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (props.addstudent === false) {
@@ -229,19 +232,21 @@ const Table = (props) => {
 
   const handleEmail = (e) => {
     e.preventDefault();
-    contacts.forEach((contact) => {
-      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendEmail', {
-        simname: props.title,
-        pname: user.name,
-        name: contact.firstName,
-        lastname: contact.lastName,
-        email: contact.email
-      }).then((res) => {
-        console.log(res);
-      }).catch((error) => {
-        console.log('Email Failed');
-        console.log(error);
-      });
+    setSending(true);
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendInviteEmails', {
+      simname: props.title,
+      admin: user.name,
+      simid: props.gameid
+    }).then((res) => {
+      alertContext.showAlert("Email invitations have been successfully sent to simulation participants.", "info");
+      props.onEmailSent();
+      setSending(false);
+    }).catch((error) => {
+      console.log(error);
+      if (error) {
+        alertContext.showAlert("An error has occured while attempting to send email invitations. Please try again.", "error");
+      }
+      setSending(false);
     });
   }
 
@@ -343,7 +348,11 @@ const Table = (props) => {
        <button type="submit" id="addstudent">Add</button>
        </form>
        </div>)
-       : <>{(() => {if(props.email){return(<button className="modal-bottomright-button" onClick={handleEmail}>Email</button>)}})()}</>
+       : <>
+        {props.email && (
+          <button className="modal-bottomright-button" onClick={handleEmail} disabled={sending}>Email</button>
+        )}
+       </>
       }
     </div>
   );

@@ -16,6 +16,10 @@ router.get('/getRooms/:gameinstanceid', playerrecord.getRooms);
 
 router.get('/getRoomByURL', playerrecord.getRoomByURL);
 
+router.get('/getRoomInteractionBreakdown', playerrecord.getRoomInteractionBreakdown);
+
+router.get('/getPlayer', playerrecord.getPlayer);
+
 router.get('/getPlayers/:game_room', playerrecord.getPlayers);
 
 router.get('/getAllPlayers/:gameinstanceid', playerrecord.getAllPlayers);

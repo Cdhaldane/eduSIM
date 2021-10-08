@@ -91,21 +91,6 @@
   border-radius: 10px
 }
 
-#emailbutton {
-  color: white;
-  z-index: 2000;
-  font-size: 1.5rem;
-  position: absolute;
-  bottom: 0px;
-  left: 700px;
-  border-radius: 5%;
-  width: 100px;
-  height: 50px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  background-color: var(--primary);
-}
-
 #emailstudent {
   color: white;
   z-index: 2000000;
@@ -142,14 +127,5 @@
     gap: 10px;
     padding: 0rem;
     width: 100%;
-  }
-  #emailbutton {
-    font-size: 1.0rem;
-    left: 370px;
-    width: 70px;
-    height: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    background-color: var(--primary);
   }
 }

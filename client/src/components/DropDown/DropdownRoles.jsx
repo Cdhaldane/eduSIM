@@ -15,6 +15,7 @@ const DropdownRoles = (props) => {
   const [roleNum, setRoleNum] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [initFlag, setInitFlag] = useState(false);
 
   const alertContext = useAlertContext();
 
@@ -106,7 +107,7 @@ const DropdownRoles = (props) => {
                 className="menu-item" 
                 onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
                 key={index}
-                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] === role.numOfSpots}
+                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
               >
                 {props.rolesTaken[role.roleName] 
                 ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
@@ -118,6 +119,12 @@ const DropdownRoles = (props) => {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (props.initRole) {
+      setSelectedRole(props.initRole.name);
+    }
+  }, [props.initRole]);
 
   const handleRoleSelected = (e, roleName, roleNum) => {
     if (e.target.tagName.toLowerCase() !== "i") {
@@ -137,7 +144,7 @@ const DropdownRoles = (props) => {
   const handleDeselectRole = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    setSelectedRole("");
+    setSelectedRole(null);
     props.roleLevel(null, null);
     return false;
   }
@@ -187,7 +194,7 @@ const DropdownRoles = (props) => {
   }
 
   return (
-    <div className="dropdown" style={{ height: menuHeight }} ref={menuElem}>
+    <div className="dropdown" style={{ height: menuHeight }} ref={menuElem} disabled={props.disabled}>
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
@@ -199,7 +206,7 @@ const DropdownRoles = (props) => {
             goToMenu="roles"
             icon={<i className="icons fab fa-critical-role"></i>}>
             {selectedRole || PLACEHOLDER_TEXT}
-            {selectedRole && (
+            {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
                 <i className="fa fa-times-circle"></i>
               </button>
