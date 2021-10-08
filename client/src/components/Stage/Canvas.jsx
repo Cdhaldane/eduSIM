@@ -230,9 +230,6 @@ class Graphics extends Component {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
 
-        console.log("START");
-        console.log(objects.triangles[0]);
-
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
