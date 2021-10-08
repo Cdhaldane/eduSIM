@@ -5,8 +5,8 @@ import "./Dropdown.css";
 
 function DropdownTimelineBar(props) {
   
-  const [pages, setPages] = useState(["1"]);
-  const [numOfPages, setNumOfPages] = useState(1);
+  const [pages, setPages] = useState(props.pages);
+  const [numOfPages, setNumOfPages] = useState(props.numOfPages);
   const dropdown = useRef();
 
   const alertContext = useAlertContext();
@@ -19,7 +19,6 @@ function DropdownTimelineBar(props) {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
-    setNumOfPages(props.numOfPages);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 

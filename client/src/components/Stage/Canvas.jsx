@@ -70,7 +70,11 @@ class Graphics extends Component {
     "linesDeleteCount",
     "arrowDeleteCount",
 
-    "status"
+    // Pages
+    "pages",
+    "numberOfPages",
+
+    "status",
   ];
 
   constructor(props) {
@@ -2874,31 +2878,31 @@ class Graphics extends Component {
                         this.setState({
                           isTransforming: false
                         });
-                      
+
                         let triangle = this.refs[eachTriangle.ref];
-                      
+
                         this.setState(
                           prevState => ({
-                          errMsg: "",
-                          triangles: prevState.triangles.map(eachTriangle =>
-                            eachTriangle.id === triangle.attrs.id
-                              ? {
-                                ...eachTriangle,
-                      
-                                width: triangle.width() * triangle.scaleX(),
-                                height: triangle.height() * triangle.scaleY(),
-                                rotation: triangle.rotation(),
-                                x: triangle.x(),
-                                y: triangle.y()
-                      
-                              }
-                              : eachTriangle
-                          )
-                        }), 
-                        () => {
-                          this.forceUpdate();
-                        });
-                      
+                            errMsg: "",
+                            triangles: prevState.triangles.map(eachTriangle =>
+                              eachTriangle.id === triangle.attrs.id
+                                ? {
+                                  ...eachTriangle,
+
+                                  width: triangle.width() * triangle.scaleX(),
+                                  height: triangle.height() * triangle.scaleY(),
+                                  rotation: triangle.rotation(),
+                                  x: triangle.x(),
+                                  y: triangle.y()
+
+                                }
+                                : eachTriangle
+                            )
+                          }),
+                          () => {
+                            this.forceUpdate();
+                          });
+
                         triangle.setAttr("scaleX", 1);
                         triangle.setAttr("scaleY", 1);
                       }}
