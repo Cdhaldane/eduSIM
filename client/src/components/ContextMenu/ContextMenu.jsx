@@ -3,7 +3,7 @@ import DropdownEditObject from "../Dropdown/DropdownEditObject";
 
 import "./ContextMenu.css"
 
-function ContextMenu(props) {
+const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const menu = useRef();
@@ -15,7 +15,7 @@ function ContextMenu(props) {
   };
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = menu.current ? menu.current.clientHeight : 205;
+    const dropHeight = menu.current ? menu.current.clientHeight : 235;
     const dropWidth = menu.current ? menu.current.clientWidth : 155;
     const editModalWidth = 400;
     const paddingPx = 7;
@@ -65,24 +65,34 @@ function ContextMenu(props) {
     setEditModalLeft(offset.left);
   }
 
-  function handleEdit() {
+  const handleEdit = () => {
     setDrop(!drop);
   }
 
-  function handleColorF(e) {
+  const handleColorF = (e) => {
     props.choosecolorf(e);
   }
 
-  function handleColorS(e) {
+  const handleColorS = (e) => {
     props.choosecolors(e);
   }
 
-  function handleWidth(e) {
+  const handleWidth = (e) => {
     props.handleWidth(e);
   }
 
-  function handleOpacity(e) {
+  const handleOpacity = (e) => {
     props.handleOpacity(e);
+  }
+
+  const handleGrouping = () => {
+    props.handleGrouping();
+    props.close();
+  }
+
+  const handleUngrouping = () => {
+    props.handleUngrouping();
+    props.close();
   }
 
   return (
@@ -100,7 +110,15 @@ function ContextMenu(props) {
         <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
+        {!props.addGroup && !props.unGroup && (
         <li onClick={handleEdit}>{props.editTitle}</li>
+        )}
+        {props.addGroup && (
+          <li onClick={handleGrouping}>Group Objects</li>
+        )}
+        {props.unGroup && (
+          <li onClick={handleUngrouping}>Ungroup Objects</li>
+        )}
       </ul>
 
       {drop && (

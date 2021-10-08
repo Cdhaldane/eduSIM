@@ -37,7 +37,7 @@ class Graphics extends Component {
   // Save State
   // These are the names of the objects in state that are saved to the database
   savedObjects = [
-    // Objects
+    // Rendered Objects Only (shapes, media, etc.)
     "rectangles",
     "ellipses",
     "stars",
@@ -50,7 +50,12 @@ class Graphics extends Component {
     "documents",
     "lines",
     "tics",
-    "connect4",
+    "connect4"
+  ];
+  // The complete save state
+  savedState = [
+    ...this.savedObjects,
+    "savedGroups",
 
     // Delete Counts (stored to keep object label #s in sync)
     "rectDeleteCount",
@@ -93,8 +98,10 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
-      selectedShapeName: "",
+      // An array of arrays containing grouped items
+      savedGroups: [],
 
+      // Game Pieces?
       connectors: [],
       gameroles: [],
       tics: [],
@@ -128,6 +135,7 @@ class Graphics extends Component {
       currentTextRef: "",
       textareaWidth: 0,
       textareaHeight: 0,
+      textareaInlineStyle: {},
       textareaFill: null,
       textareaFontFamily: null,
       textareaFontSize: 10,
@@ -155,7 +163,7 @@ class Graphics extends Component {
       personalLayerX: 0,
       personalLayerY: 0,
       personalLayerScale: 1,
-      draggable: false,
+      layerDraggable: false,
 
       // Fill and Stroke
       colorf: "black",
@@ -166,13 +174,17 @@ class Graphics extends Component {
       lastFill: null,
 
       // The blue selection rectangle / click location
+      // And info about the selection
       selection: {
+        isDraggingShape: false,
         visible: false,
         x1: -100,
         y1: -100,
         x2: 0,
         y2: 0
       },
+      selectedShapeName: "",
+      groupSelection: [],
 
       // Metadata
       title: "",
@@ -192,7 +204,7 @@ class Graphics extends Component {
       infolevel: false,
       rolelevel: "",
       tic: false,
-      open: 0,
+      personalAreaOpen: 0, // 0 = closed, 1 = open
       state: false,
       saving: null,
       saved: [],
@@ -215,12 +227,49 @@ class Graphics extends Component {
       }
     }).then((res) => {
       if (res.data.game_parameters) {
-        const objects = JSON.parse(res.data.game_parameters);
-        this.savedObjects.forEach((object) => {
+        // Load saved object data
+        let objects = JSON.parse(res.data.game_parameters);
+
+        console.log("START");
+        console.log(objects.triangles[0]);
+
+        // Parse the saved groups
+        let parsedSavedGroups = [];
+        for (let i = 0; i < objects.savedGroups.length; i++) {
+          let savedGroup = [];
+          for (let j = 0; j < objects.savedGroups[i].length; j++) {
+            savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
+          }
+          parsedSavedGroups.push(savedGroup);
+        }
+        objects.savedGroups = parsedSavedGroups;
+
+        // Put parsed saved data into state
+        this.savedState.forEach((object) => {
           this.setState({
             [object]: objects[object]
           });
         });
+
+        setTimeout(() => {
+          // Calculate positions on initial load
+          this.recalculateCanvasSizeAndPosition(false);
+          this.recalculateCanvasSizeAndPosition(true);
+
+          // Get full objects for saved groups
+          let fullObjSavedGroups = [];
+          for (let i = 0; i < this.state.savedGroups.length; i++) {
+            let savedGroup = [];
+            for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+              const id = this.state.savedGroups[i][j].attrs.id;
+              savedGroup.push(this.refs[id]);
+            }
+            fullObjSavedGroups.push(savedGroup);
+          }
+          this.setState({
+            savedGroups: fullObjSavedGroups
+          });
+        }, 100);
       }
     }).catch(error => {
       console.error(error);
@@ -289,16 +338,17 @@ class Graphics extends Component {
     if (leftmostObj && rightmostObj && topmostObj && bottommostObj) {
       let sidebarVal = 70;
       if (personalArea) {
-        sidebarVal = 100;
+        sidebarVal = 130;
       }
       const sidebarWidth = window.matchMedia("(orientation: portrait)").matches ? 0 : sidebarVal;
       const topbarHeight = window.matchMedia("(orientation: portrait)").matches ? 110 : 55;
+      const personalAreaHeight = personalArea ? 0 : 90;
 
       const contentWidth = rightmostX - leftmostX;
       const totalWidth = window.innerWidth - sidebarWidth;
 
       const contentHeight = bottommostY - topmostY;
-      const totalHeight = Math.max(window.innerHeight - topbarHeight, 1);
+      const totalHeight = Math.max(window.innerHeight - topbarHeight - personalAreaHeight, 1);
 
       const xScale = totalWidth / contentWidth;
       const yScale = totalHeight / contentHeight;
@@ -308,7 +358,7 @@ class Graphics extends Component {
 
       this.setState({
         [layerX]: -leftmostX,
-        [layerY]: -topmostY + topbarHeight,
+        [layerY]: -topmostY,
         [layerScale]: newScale,
       }, () => {
 
@@ -323,7 +373,7 @@ class Graphics extends Component {
 
         this.setState({
           [layerX]: this.state[layerX] - leftRect.x + ((totalWidth - newContentWidth) / 2),
-          [layerY]: this.state[layerY] + ((totalHeight - newContentHeight) / 2)
+          [layerY]: this.state[layerY] + topbarHeight
         });
       });
     }
@@ -334,11 +384,11 @@ class Graphics extends Component {
   componentDidMount = async () => {
     const MINUTE_MS = 1000 * 60;
 
-    // Auto save the canvas every 30 seconds
+    // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
       this.handleSave();
       this.props.showAlert("Simulation Autosaved", "info");
-    }, MINUTE_MS / 2);
+    }, MINUTE_MS);
 
     // Redraw the canvas every 1 second
     this.drawInterval = setInterval(() => {
@@ -356,14 +406,7 @@ class Graphics extends Component {
       }, 100);
     };
 
-    // Calculate positions on initial load
-    setTimeout(() => {
-      this.recalculateCanvasSizeAndPosition(false);
-      this.recalculateCanvasSizeAndPosition(true);
-    }, 50);
-
     history.push(this.state);
-    this.setState({ selectedShapeName: "" });
   }
 
   componentWillUnmount = () => {
@@ -402,34 +445,10 @@ class Graphics extends Component {
       this.state.documents
     ];
 
-    const prevSelected = prevState.selectedShapeName;
-    const nowSelected = this.state.selectedShapeName;
-    if (prevSelected !== nowSelected) {
-      const type = nowSelected.replace(/\d+$/, "");
-      if (this.state[type]) {
-        const node = this.state[type].filter((obj) => {
-          return obj.name === nowSelected;
-        });
-        if (node.length) {
-          if (node[0].infolevel) {
-            const obj = this.refs.personalAreaLayer.find(".shape").filter((obj) => {
-              return obj.attrs.id === nowSelected;
-            });
-            this.refs.personalTransformer.nodes(obj);
-          } else {
-            const obj = this.refs.groupAreaLayer.find(".shape").filter((obj) => {
-              return obj.attrs.id === nowSelected;
-            });
-            this.refs.groupTransformer.nodes(obj);
-          }
-        }
-      }
-    }
-
     if (!this.state.redoing && !this.state.isTransforming) {
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
         if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
-          // If text shouldn't update, don't append to  history
+          // If text shouldn't update, don't append to history
           if (this.state.shouldTextUpdate) {
             let uh = history;
             history = uh.slice(0, historyStep + 1);
@@ -457,8 +476,8 @@ class Graphics extends Component {
 
   handleSave = () => {
     let storedObj = {};
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const newObj = this.savedObjects[i];
+    for (let i = 0; i < this.savedState.length; i++) {
+      const newObj = this.savedState[i];
       storedObj = {
         ...storedObj,
         [newObj]: this.state[newObj]
@@ -488,69 +507,19 @@ class Graphics extends Component {
       x: e.evt.clientX,
       y: e.evt.clientY
     };
+    let singleGroupSelected = false;
+    if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
+      singleGroupSelected = true;
+    }
     this.setState({
       selectedContextMenu: {
+        unGroup: singleGroupSelected ? true : false,
+        addGroup: this.state.groupSelection.length && !singleGroupSelected ? true : false,
         type: "ObjectMenu",
         position: mousePosition
       }
     });
   }
-
-  handleStageClick = (e, personalArea) => {
-    const stage = personalArea ? "personalAreaStage" : "graphicStage";
-    const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
-    const pos = this.refs[layer].getStage().getPointerPosition();
-    const shape = this.refs[layer].getIntersection(pos);
-
-    if (e.evt.button === 0) {
-      // Left click on an object -> put the selected object in state
-      if (
-        shape !== null &&
-        shape !== undefined &&
-        shape.name() !== null &&
-        shape.name() !== undefined &&
-        shape.id() !== "ContainerRect"
-      ) {
-        this.setState({
-          selectedShapeName: shape.id()
-        }, () => {
-          this.refs[stage].draw();
-        });
-      }
-    } else if (e.evt.button === 2) {
-      // Right click (not on an object) -> show the add object menu
-      if (
-        shape === null ||
-        shape === undefined ||
-        shape.name() === ""
-      ) {
-        const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
-        const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
-        const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
-        const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
-        const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
-        this.setState({
-          selectedContextMenu: {
-            type: type,
-            position: {
-              x: e.evt.clientX,
-              y: e.evt.clientY
-            }
-          },
-          [notVisible]: false,
-          [visible]: true,
-          [contextMenuX]: e.evt.clientX,
-          [contextMenuY]: e.evt.clientY,
-        });
-      } else {
-        this.setState({
-          selectedShapeName: shape.id()
-        }, () => {
-          this.refs[stage].draw();
-        });
-      }
-    }
-  };
 
   updateSelectionRect = (personalArea) => {
     let node = this.refs.selectionRectRef;
@@ -571,7 +540,7 @@ class Graphics extends Component {
   onMouseDown = (e, personalArea) => {
     if (!e.evt.ctrlKey) {
       this.setState({
-        draggable: false
+        layerDraggable: false
       });
     }
 
@@ -611,8 +580,12 @@ class Graphics extends Component {
         yOffset = -this.state.personalLayerY;
       }
 
+      const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+      const pointerPos = this.refs[layer].getStage().getPointerPosition();
+      const shape = this.refs[layer].getIntersection(pointerPos);
       this.setState({
         selection: {
+          isDraggingShape: this.isShape(shape),
           visible: true,
           x1: (pos.x + xOffset) / scale,
           y1: (pos.y + yOffset) / scale,
@@ -625,7 +598,7 @@ class Graphics extends Component {
     }
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (e, personalArea) => {
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
@@ -634,33 +607,281 @@ class Graphics extends Component {
       if (!this.state.selection.visible) {
         return;
       }
-      const selBox = this.refs.selectionRectRef.getClientRect();
-      const elements = [];
-      this.refs.groupAreaLayer.find(".shape").forEach((elementNode) => {
-        const elBox = elementNode.getClientRect();
-        if (Konva.Util.haveIntersection(selBox, elBox)) {
-          elements.push(elementNode);
+
+      const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
+      const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
+      const pointerPos = this.refs[layer].getStage().getPointerPosition();
+      const shape = this.refs[layer].getIntersection(pointerPos);
+      const clickShapeGroup = this.getShapeGroup(shape);
+
+      if (e.evt.button === 0) {
+        // LEFT CLICK
+        const selBox = this.refs[selectionRect].getClientRect();
+        if (selBox.width > 1 && selBox.height > 1) {
+          // This only runs if there has been a rectangle selection (click and drag selection)
+          const elements = [];
+          this.refs[layer].find(".shape").forEach((elementNode) => {
+            const elBox = elementNode.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              elements.push(elementNode);
+            }
+          });
+
+          // Handle if nothing, one thing, or a group has been selected
+          if (elements.length === 0) {
+            this.setState({
+              selectedShapeName: "",
+              groupSelection: []
+            }, this.handleObjectSelection);
+          } else if (elements.length === 1) {
+            this.setState({
+              selectedShapeName: elements[0].id(),
+              groupSelection: []
+            }, this.handleObjectSelection);
+          } else if (elements.length > 1) {
+            if (!this.state.selection.isDraggingShape) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: elements
+              }, this.handleObjectSelection);
+            }
+          }
+        } else {
+          // There has been a single left click
+          if (this.isShape(shape)) {
+            if (e.evt.shiftKey) {
+              // Shift selected -> create group selection
+
+              // The object that was just shift selected
+              let alreadySelectedCurrent = false;
+              // The object already selected while new shift selection was made
+              let alreadySelectedPrev = false;
+
+              // This determines if the object that was just selected or was previously selected
+              // is part of the groupSelection already so the logic will deal with it accordingly
+              // Current already selected -> deselect
+              // Prev already selected & different -> add to new group selection
+              for (let i = 0; i < this.state.groupSelection.length; i++) {
+                const obj = this.state.groupSelection[i];
+                if (!Array.isArray(obj)) {
+                  if (obj.attrs.id === shape.id()) {
+                    alreadySelectedCurrent = true;
+                  }
+                  if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
+                    alreadySelectedPrev = true;
+                  }
+                } else if (clickShapeGroup) {
+                  const clickedGroupIsObj = obj.every(item => clickShapeGroup.includes(item)) &&
+                    clickShapeGroup.every(item => obj.includes(item));
+                  if (clickedGroupIsObj) {
+                    alreadySelectedCurrent = true;
+                    break;
+                  }
+                }
+
+                if (alreadySelectedCurrent && (alreadySelectedPrev || !this.state.selectedShapeName)) {
+                  break;
+                }
+              }
+
+              if (this.state.selectedShapeName !== shape.id() || this.state.groupSelection.length) {
+                if (!alreadySelectedCurrent) {
+                  // ADD SELECTION
+
+                  const newSelection = [...this.state.groupSelection];
+                  if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
+                    // A shape is already selected in selectedShapeName but not in groupSelection 
+                    // Add it to groupSelection
+                    newSelection.push(this.refs[this.state.selectedShapeName]);
+                  }
+                  if (newSelection.length === 0) {
+                    // Shift select with nothing else selected so set it as the selection
+                    if (!clickShapeGroup) {
+                      this.setState({
+                        selectedShapeName: shape.id(),
+                        groupSelection: []
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [clickShapeGroup]
+                      }, this.handleObjectSelection);
+                    }
+                  } else {
+                    // Add the new selection to the shift select group
+                    if (!clickShapeGroup) {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [...newSelection, this.refs[shape.id()]]
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [...newSelection, clickShapeGroup]
+                      }, this.handleObjectSelection);
+                    }
+                  }
+                } else {
+                  // REMOVE SELECTION
+
+                  const newGroupSelection = this.state.groupSelection.filter((obj) => {
+                    if (Array.isArray(obj)) {
+                      if (clickShapeGroup) {
+                        const clickedGroupIsObj = obj.every(item => clickShapeGroup.includes(item)) &&
+                          clickShapeGroup.every(item => obj.includes(item));
+                        return !clickedGroupIsObj;
+                      } else {
+                        return true;
+                      }
+                    } else {
+                      return obj.attrs.id !== shape.id();
+                    }
+                  });
+                  if (newGroupSelection.length === 1) {
+                    // Only one selection left
+                    if (Array.isArray(newGroupSelection[0])) {
+                      this.setState({
+                        selectedShapeName: "",
+                        groupSelection: [newGroupSelection[0]]
+                      }, this.handleObjectSelection);
+                    } else {
+                      this.setState({
+                        selectedShapeName: newGroupSelection[0].id(),
+                        groupSelection: []
+                      }, this.handleObjectSelection);
+                    }
+                  } else {
+                    this.setState({
+                      selectedShapeName: "",
+                      groupSelection: newGroupSelection
+                    }, this.handleObjectSelection);
+                  }
+                }
+              }
+            } else {
+              // Clicked on object -> put the selected object in state
+              if (clickShapeGroup) {
+                this.setState({
+                  selectedShapeName: "",
+                  groupSelection: [clickShapeGroup]
+                }, this.handleObjectSelection);
+              } else {
+                this.setState({
+                  selectedShapeName: shape.id(),
+                  groupSelection: []
+                }, this.handleObjectSelection);
+              }
+            }
+          } else {
+            // Clicked on nothing -> deselect all
+            if (!this.state.selection.isDraggingShape) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: []
+              }, this.handleObjectSelection);
+            }
+          }
+        }
+      } else if (e.evt.button === 2) {
+        // RIGHT CLICK
+        if (this.isShape(shape)) {
+          if (clickShapeGroup) {
+            // Check if group already selected to avoid duplicates
+            let alreadySelected = false;
+            for (let i = 0; i < this.state.groupSelection.length; i++) {
+              const obj = this.state.groupSelection[i];
+              if (Array.isArray(obj) && obj.includes(clickShapeGroup[0])) {
+                alreadySelected = true;
+              }
+            }
+
+            if (!alreadySelected) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: [...this.state.groupSelection, clickShapeGroup]
+              }, this.handleObjectSelection);
+            }
+          } else {
+            // Right click on a shape -> set it to the selection
+            let shapeIsInGroupSelection = false;
+            for (let i = 0; i < this.state.groupSelection.length; i++) {
+              if (
+                !Array.isArray(this.state.groupSelection[i]) &&
+                this.state.groupSelection[i].attrs.id === shape.id()
+              ) {
+                shapeIsInGroupSelection = true;
+                break;
+              }
+            }
+
+            if (!shapeIsInGroupSelection) {
+              this.setState({
+                selectedShapeName: shape.id(),
+                groupSelection: []
+              }, this.handleObjectSelection);
+            }
+          }
+        } else {
+          // Right click on the canvas -> show the add object menu
+          const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
+          const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
+          const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
+          const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
+          const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
+          this.setState({
+            selectedContextMenu: {
+              type: type,
+              position: {
+                x: e.evt.clientX,
+                y: e.evt.clientY
+              }
+            },
+            [notVisible]: false,
+            [visible]: true,
+            [contextMenuX]: e.evt.clientX,
+            [contextMenuY]: e.evt.clientY,
+          });
+        }
+      }
+
+      this.setState({
+        selection: {
+          ...this.state.selection,
+          visible: false
         }
       });
 
-      // Handle single selection and group selection
-      if (elements.length === 1) {
-        this.setState({
-          selectedShapeName: elements[0].id()
-        });
-      } else if (elements.length > 1) {
-        this.setState({
-          selectedShapeName: "group"
-        });
-      }
-
-      this.refs.groupTransformer.nodes(elements);
-      this.state.selection.visible = false;
       // Disable click event
       Konva.listenClickTap = false;
-      this.updateSelectionRect(false);
+      this.updateSelectionRect(personalArea);
     }
   };
+
+  isShape = (shape) => {
+    if (
+      shape === null ||
+      shape === undefined ||
+      shape.name() === null ||
+      shape.name() === undefined ||
+      shape.id() === "ContainerRect"
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  handleObjectSelection = () => {
+    const type = this.state.selectedShapeName.replace(/\d+$/, "");
+    const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
+    if (this.refs[this.state.selectedShapeName]) {
+      this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
+    } else if (type === "" && this.state.groupSelection.length) {
+      this.refs[transformer].nodes(this.state.groupSelection.flat());
+    } else {
+      this.refs[transformer].nodes([]);
+    }
+  }
 
   handleMouseOver = (e, personalArea) => {
     // Get the current arrow ref and modify its position by filtering & pushing again
@@ -681,7 +902,7 @@ class Graphics extends Component {
         lines: this.state.lines.concat()
       });
     } else {
-      if (!this.state.selection.visible && !this.state.draggable) {
+      if (!this.state.selection.visible && !this.state.layerDraggable) {
         return;
       }
 
@@ -692,64 +913,45 @@ class Graphics extends Component {
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
       } else {
-        document.body.style.cursor = "default";
+        // Only have drag select on left click and drag
+        if (e.evt.buttons === 1 && !this.state.layerDraggable) {
+          if (this.state.selection.isDraggingShape) {
+            // Select the shape being dragged (and don't create a selection)
+            const shapeGroup = this.getShapeGroup(shape);
+            if (shapeGroup) {
+              this.setState({
+                selectedShapeName: "",
+                groupSelection: [shapeGroup]
+              }, this.handleObjectSelection);
+            } else {
+              this.setState({
+                selectedShapeName: shape.id(),
+                groupSelection: []
+              }, this.handleObjectSelection);
+            }
+          } else {
+            let scale = this.state.groupLayerScale;
+            let xOffset = -this.state.groupLayerX;
+            let yOffset = -this.state.groupLayerY;
+            if (personalArea) {
+              scale = this.state.personalLayerScale;
+              xOffset = -this.state.personalLayerX;
+              yOffset = -this.state.personalLayerY;
+            }
 
-        let scale = this.state.groupLayerScale;
-        let xOffset = -this.state.groupLayerX;
-        let yOffset = -this.state.groupLayerY;
-        if (personalArea) {
-          scale = this.state.personalLayerScale;
-          xOffset = -this.state.personalLayerX;
-          yOffset = -this.state.personalLayerY;
-        }
-
-        // Create drag selection rectangle
-        this.setState({
-          selection: {
-            ...this.state.selection,
-            x2: (pos.x + xOffset) / scale,
-            y2: (pos.y + yOffset) / scale
+            // Create drag selection rectangle
+            this.setState({
+              selection: {
+                ...this.state.selection,
+                x2: (pos.x + xOffset) / scale,
+                y2: (pos.y + yOffset) / scale
+              }
+            }, () => {
+              this.updateSelectionRect(personalArea);
+            });
           }
-        }, () => {
-          this.updateSelectionRect(personalArea);
-        });
-      }
-    }
-  };
-
-  handleMouseUpInfo = () => {
-    if (this.state.drawMode === true) {
-      this.state.isDrawing = false;
-    } else {
-      if (!this.state.selection.visible) {
-        return;
-      }
-      const selBox = this.refs.selectionRectRef1.getClientRect();
-      const elements = [];
-      this.refs.personalAreaLayer.find(".shape").forEach((elementNode) => {
-        const elBox = elementNode.getClientRect();
-        if (Konva.Util.haveIntersection(selBox, elBox)) {
-          elements.push(elementNode);
-
         }
-      });
-
-      // Handle single selection and group selection
-      if (elements.length === 1) {
-        this.setState({
-          selectedShapeName: elements[0].id()
-        });
-      } else if (elements.length > 1) {
-        this.setState({
-          selectedShapeName: "group"
-        });
       }
-
-      this.refs.personalTransformer.nodes(elements);
-      this.state.selection.visible = false;
-      // disable click event
-      Konva.listenClickTap = false;
-      this.updateSelectionRect(true);
     }
   };
 
@@ -800,6 +1002,16 @@ class Graphics extends Component {
       const layerScale = personalArea ? "personalLayerScale" : "groupLayerScale";
       this.setState({
         [layerScale]: newScale
+      });
+    }
+  }
+
+  dragLayer = (e, personalArea) => {
+    const type = personalArea ? "personal" : "group";
+    if (this.state.layerDraggable) {
+      this.setState({
+        [type + "LayerX"]: this.state[type + "LayerX"] + e.evt.movementX,
+        [type + "LayerY"]: this.state[type + "LayerY"] + e.evt.movementY
       });
     }
   }
@@ -1138,12 +1350,9 @@ class Graphics extends Component {
         texts: texts,
         lines: lines,
         selectedShapeName: "",
+        groupSelection: [],
         selectedContextMenu: null
-      });
-
-      // Get rid of transform UI after deletion
-      this.refs.groupTransformer.nodes([]);
-      this.refs.personalTransformer.nodes([]);
+      }, this.handleObjectSelection);
     }
   }
 
@@ -1159,6 +1368,20 @@ class Graphics extends Component {
     this.setState({
       selectedContextMenu: null
     })
+  }
+
+  handlePersonalAreaOpen = (open) => {
+    this.setState({
+      personalAreaOpen: open ? 1 : 0,
+      groupSelection: [],
+      selectedShapeName: "",
+    }, this.handleObjectSelection);
+
+    if (open) {
+      document.getElementById("personalMainContainer").focus();
+    } else {
+      document.getElementById("editMainContainer").focus();
+    }
   }
 
   shapeIsGone = returnTo => {
@@ -1374,6 +1597,11 @@ class Graphics extends Component {
   }
 
   handleSize = (e) => {
+    if (Number.isNaN(parseInt(e)) || parseInt(e) === 0) {
+      e = 50;
+    } else {
+      e = parseInt(e);
+    }
     this.setState(prevState => ({
       texts: prevState.texts.map(eachRect =>
         eachRect.id === this.state.selectedShapeName
@@ -1501,6 +1729,77 @@ class Graphics extends Component {
     }
   }
 
+  handleGrouping = () => {
+    if (this.state.groupSelection.length > 1) {
+      // Remove any existing groups which are part of the new group
+      const newGroup = [...this.state.groupSelection.flat()];
+      let newSavedGroups = [...this.state.savedGroups];
+      let newGroupSameIndices = [];
+      for (let i = 0; i < newGroup.length; i++) {
+        if (newSavedGroups.flat().includes(newGroup[i])) {
+          newGroupSameIndices.push(i);
+        }
+      }
+      let savedGroupSameIndices = [];
+      for (let i = 0; i < newSavedGroups.length; i++) {
+        for (let j = 0; j < newGroupSameIndices.length; j++) {
+          if (newSavedGroups[i].includes(newGroup[j])) {
+            savedGroupSameIndices.push(i);
+          }
+        }
+      }
+      savedGroupSameIndices = [...new Set(savedGroupSameIndices)];
+      for (let i = 0; i < savedGroupSameIndices.length; i++) {
+        newSavedGroups[i] = null;
+      }
+      newSavedGroups = newSavedGroups.filter(g => g !== null);
+      newSavedGroups.push(newGroup);
+
+      this.setState({
+        selectedShape: "",
+        groupSelection: [newGroup],
+        savedGroups: newSavedGroups
+      });
+    } else {
+      console.error("No group selected - GROUPING");
+    }
+  }
+
+  handleUngrouping = () => {
+    if (this.state.groupSelection.length && Array.isArray(this.state.groupSelection[0])) {
+      const objId = this.state.groupSelection[0][0].attrs.id;
+      for (let i = 0; i < this.state.savedGroups.length; i++) {
+        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+          if (this.state.savedGroups[i][j].attrs.id === objId) {
+            const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
+            this.setState({
+              selectedShape: "",
+              groupSelection: [],
+              savedGroups: newSavedGroups
+            }, this.handleObjectSelection);
+            return;
+          }
+        }
+      }
+    } else {
+      console.error("No group selected - UNGROUPING");
+    }
+  }
+
+  // Returns the group a shape is part of or null if it isn't in a group
+  getShapeGroup = (shape) => {
+    if (shape && !Array.isArray(shape)) {
+      for (let i = 0; i < this.state.savedGroups.length; i++) {
+        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+          if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
+            return this.state.savedGroups[i];
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   handleLevel = (e) => {
     this.setState({
       level: e
@@ -1580,8 +1879,10 @@ class Graphics extends Component {
       }
       let topPx = 0;
       if (layer === this.refs.personalAreaLayer) {
-        topPx = window.innerHeight * 0.3;
+        topPx = 70;
       }
+      const scaleVal = layer === this.refs.personalAreaLayer ?
+        this.state.personalLayerScale : this.state.groupLayerScale;
 
       this.setState({
         textX: text.absolutePosition().x + sidebarPx,
@@ -1589,12 +1890,26 @@ class Graphics extends Component {
         textEditVisible: !this.state.textEditVisible,
         text: text.attrs.text,
         currentTextRef: text.attrs.id,
-        textareaWidth: text.attrs.width,
-        textareaHeight: text.textHeight * text.textArr.length,
+        textareaWidth: text.attrs.width * scaleVal,
+        textareaHeight: text.textHeight * text.textArr.length * scaleVal,
         textareaFill: text.attrs.fill,
         textareaFontFamily: text.attrs.fontFamily,
-        textareaFontSize: text.attrs.fontSize,
+        textareaFontSize: text.attrs.fontSize * scaleVal,
         textRotation: text.attrs.rotation,
+      }, () => {
+        this.setState({
+          textareaInlineStyle: {
+            display: this.state.textEditVisible ? "block" : "none",
+            width: this.state.textareaWidth,
+            height: this.state.textareaHeight,
+            fontSize: this.state.textareaFontSize + "px",
+            fontFamily: this.state.textareaFontFamily,
+            color: this.state.textareaFill,
+            top: this.state.textY + "px",
+            left: this.state.textX + "px",
+            transform: `rotate(${this.state.textRotation}deg) translateY(2px)`
+          }
+        });
       });
       const textarea = this.refs.textarea;
       textarea.focus();
@@ -1630,8 +1945,6 @@ class Graphics extends Component {
           : t
       )
     }));
-    text.setAttr("scaleX", 1);
-    text.draw();
   }
 
   drawLine = () => {
@@ -1677,7 +1990,7 @@ class Graphics extends Component {
     if (e.key === "Control") {
       document.body.style.cursor = "default";
       this.setState({
-        draggable: false
+        layerDraggable: false
       });
     }
   }
@@ -1711,7 +2024,7 @@ class Graphics extends Component {
     } else if (event.ctrlKey) {
       document.body.style.cursor = "grab";
       this.setState({
-        draggable: true
+        layerDraggable: true
       });
     }
   }
@@ -1802,19 +2115,19 @@ class Graphics extends Component {
               />
             )}
           <Stage
-            onContextMenu={(e) => e.evt.preventDefault()}
-            onClick={(e) => this.handleStageClick(e, false)}
-            onMouseMove={(e) => this.handleMouseOver(e, false)}
-            onWheel={(e) => this.handleWheel(e, false)}
-            onMouseDown={(e) => this.onMouseDown(e, false)}
-            onMouseUp={this.handleMouseUp}
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
             width={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientWidth : 0}
             ref="graphicStage"
+            onMouseMove={(e) => this.handleMouseOver(e, false)}
+            onMouseDown={(e) => this.onMouseDown(e, false)}
+            onMouseUp={(e) => this.handleMouseUp(e, false)}
+            onWheel={(e) => this.handleWheel(e, false)}
+            onContextMenu={(e) => e.evt.preventDefault()}
           >
             <Layer
+              ref="groupAreaLayer"
               name="group"
               scaleX={this.state.groupLayerScale}
               scaleY={this.state.groupLayerScale}
@@ -1822,24 +2135,16 @@ class Graphics extends Component {
               y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              draggable={this.state.draggable}
-              ref="groupAreaLayer"
-              onDragMove={(e) => {
-                if (this.state.draggable) {
-                  this.setState({
-                    groupLayerX: this.state.groupLayerX + e.evt.movementX,
-                    groupLayerY: this.state.groupLayerY + e.evt.movementY
-                  });
-                }
-              }}
+              draggable={this.state.layerDraggable}
+              onDragMove={(e) => this.dragLayer(e, false)}
             >
+              {/* This rect is for dragging the canvas */}
               <Rect
+                id="ContainerRect"
                 x={-5 * window.innerWidth}
                 y={-5 * window.innerHeight}
                 height={window.innerHeight * 10}
                 width={window.innerWidth * 10}
-                name=""
-                id="ContainerRect"
               />
               {this.state.rectangles.map((eachRect, index) => {
                 if (eachRect.level === this.state.level && eachRect.infolevel === false) {
@@ -1863,7 +2168,7 @@ class Graphics extends Component {
                       stroke={eachRect.stroke}
                       strokeWidth={eachRect.strokeWidth}
                       strokeScaleEnabled={false}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onClick={() => {
                         let that = this;
                         if (eachRect.link !== undefined && eachRect.link !== "") {
@@ -2082,7 +2387,7 @@ class Graphics extends Component {
                         ellipse.setAttr("scaleY", 1);
                         this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2135,7 +2440,7 @@ class Graphics extends Component {
                       globalCompositeOperation={
                         eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                       }
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onContextMenu={this.onObjectContextMenu}
                     />
                   );
@@ -2459,7 +2764,7 @@ class Graphics extends Component {
                         });
                         let triangle = this.refs[eachDoc.ref];
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2495,31 +2800,31 @@ class Graphics extends Component {
                   return null
                 }
               })}
-              {this.state.triangles.map((eachEllipse, index) => {
-                if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
+              {this.state.triangles.map((eachTriangle, index) => {
+                if (eachTriangle.level === this.state.level && eachTriangle.infolevel === false) {
                   return (
                     <RegularPolygon
                       key={index}
-                      visible={eachEllipse.visible}
-                      ref={eachEllipse.ref}
-                      id={eachEllipse.id}
+                      visible={eachTriangle.visible}
+                      ref={eachTriangle.ref}
+                      id={eachTriangle.id}
                       name="shape"
-                      x={eachEllipse.x}
-                      y={eachEllipse.y}
-                      opacity={eachEllipse.opacity}
-                      rotation={eachEllipse.rotation}
-                      height={eachEllipse.height}
-                      sides={eachEllipse.sides}
-                      radius={eachEllipse.radius}
-                      fill={eachEllipse.fill}
-                      stroke={eachEllipse.stroke}
-                      strokeWidth={eachEllipse.strokeWidth}
+                      x={eachTriangle.x}
+                      y={eachTriangle.y}
+                      opacity={eachTriangle.opacity}
+                      rotation={eachTriangle.rotation}
+                      width={eachTriangle.width}
+                      height={eachTriangle.height}
+                      sides={eachTriangle.sides}
+                      fill={eachTriangle.fill}
+                      stroke={eachTriangle.stroke}
+                      strokeWidth={eachTriangle.strokeWidth}
                       strokeScaleEnabled={false}
                       onClick={() => {
                         let that = this;
                         if (
-                          eachEllipse.link !== undefined &&
-                          eachEllipse.link !== ""
+                          eachTriangle.link !== undefined &&
+                          eachTriangle.link !== ""
                         ) {
                           this.setState(
                             {
@@ -2537,11 +2842,11 @@ class Graphics extends Component {
                       }}
                       onTransformStart={() => {
                         this.setState({ isTransforming: true });
-                        let triangle = this.refs[eachEllipse.ref];
+                        let triangle = this.refs[eachTriangle.ref];
                         triangle.setAttr("lastRotation", triangle.rotation());
                       }}
                       onTransform={() => {
-                        let triangle = this.refs[eachEllipse.ref];
+                        let triangle = this.refs[eachTriangle.ref];
 
                         if (triangle.attrs.lastRotation !== triangle.rotation()) {
                           this.state.arrows.map(eachArrow => {
@@ -2569,40 +2874,45 @@ class Graphics extends Component {
                         triangle.setAttr("lastRotation", triangle.rotation());
                       }}
                       onTransformEnd={() => {
-                        this.setState({ isTransforming: false });
-                        let triangle = this.refs[eachEllipse.ref];
-                        let scaleX = triangle.scaleX(),
-                          scaleY = triangle.scaleY();
-
-                        this.setState(prevState => ({
+                        this.setState({
+                          isTransforming: false
+                        });
+                      
+                        let triangle = this.refs[eachTriangle.ref];
+                      
+                        this.setState(
+                          prevState => ({
                           errMsg: "",
-                          triangles: prevState.triangles.map(eachEllipse =>
-                            eachEllipse.id === triangle.attrs.id
+                          triangles: prevState.triangles.map(eachTriangle =>
+                            eachTriangle.id === triangle.attrs.id
                               ? {
-                                ...eachEllipse,
-
+                                ...eachTriangle,
+                      
                                 width: triangle.width() * triangle.scaleX(),
                                 height: triangle.height() * triangle.scaleY(),
                                 rotation: triangle.rotation(),
                                 x: triangle.x(),
                                 y: triangle.y()
+                      
                               }
-                              : eachEllipse
+                              : eachTriangle
                           )
-                        }));
-
+                        }), 
+                        () => {
+                          this.forceUpdate();
+                        });
+                      
                         triangle.setAttr("scaleX", 1);
                         triangle.setAttr("scaleY", 1);
-                        this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
-                            if (eachEllipse.name === eachArrow.from.attrs.name) {
+                            if (eachTriangle.name === eachArrow.from.attrs.name) {
                               eachArrow.points = [
-                                eachEllipse.x,
-                                eachEllipse.y,
+                                eachTriangle.x,
+                                eachTriangle.y,
                                 eachArrow.points[2],
                                 eachArrow.points[3]
                               ];
@@ -2612,12 +2922,12 @@ class Graphics extends Component {
                           }
 
                           if (eachArrow.to !== undefined) {
-                            if (eachEllipse.name === eachArrow.to.attrs.name) {
+                            if (eachTriangle.name === eachArrow.to.attrs.name) {
                               eachArrow.points = [
                                 eachArrow.points[0],
                                 eachArrow.points[1],
-                                eachEllipse.x,
-                                eachEllipse.y
+                                eachTriangle.x,
+                                eachTriangle.y
                               ];
                               this.forceUpdate();
                               this.refs.graphicStage.draw();
@@ -2625,7 +2935,7 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
+                      onDragEnd={e => this.handleDragEnd(e, "triangles", eachTriangle.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
                   )
@@ -2697,7 +3007,7 @@ class Graphics extends Component {
                         star.setAttr("scaleY", 1);
                         this.forceUpdate();
                       }}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
@@ -2756,7 +3066,7 @@ class Graphics extends Component {
                       x={eachText.x}
                       y={eachText.y}
                       text={eachText.text}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onTransform={this.handleTextTransform}
                       onTransformEnd={this.onTransformEndText}
                       onDragMove={() => {
@@ -2838,7 +3148,7 @@ class Graphics extends Component {
                       ]}
                       stroke={eachArrow.stroke}
                       fill={eachArrow.fill}
-                      draggable
+                      draggable={!this.state.layerDraggable}
                       onDragEnd={event => {
                         //set new points to current position
 
@@ -2922,7 +3232,11 @@ class Graphics extends Component {
                 if (e.keyCode === 13) {
                   this.setState({
                     textEditVisible: false,
-                    shouldTextUpdate: true
+                    shouldTextUpdate: true,
+                    textareaInlineStyle: {
+                      ...this.state.textareaInlineStyle,
+                      display: "none"
+                    }
                   });
 
                   // get the current textNode we are editing, get the name from there
@@ -2963,7 +3277,11 @@ class Graphics extends Component {
               onBlur={() => {
                 this.setState({
                   textEditVisible: false,
-                  shouldTextUpdate: true
+                  shouldTextUpdate: true,
+                  textareaInlineStyle: {
+                    ...this.state.textareaInlineStyle,
+                    display: "none"
+                  }
                 });
 
                 // Get the current textNode we are editing, get the name from there
@@ -3001,23 +3319,14 @@ class Graphics extends Component {
                 this.refs.graphicStage.findOne(".transformer").show();
                 this.refs.graphicStage.draw();
               }}
-              style={{
-                display: this.state.textEditVisible ? "block" : "none",
-                width: this.state.textareaWidth,
-                height: this.state.textareaHeight,
-                fontSize: this.state.textareaFontSize + "px",
-                fontFamily: this.state.textareaFontFamily,
-                color: this.state.textareaFill,
-                top: this.state.textY + "px",
-                left: this.state.textX + "px",
-                transform: `rotate(${this.state.textRotation}deg) translateY(2px)`
-              }}
+              style={this.state.textareaInlineStyle}
             />
           </div>
 
         </div>
         <div className="eheader">
           <Level
+            saveGame={this.handleSave}
             number={this.state.numberOfPages}
             pages={this.state.pages}
             level={this.handleLevel}
@@ -3027,9 +3336,10 @@ class Graphics extends Component {
           <div>
             <div
               id={"editPersonalContainer"}
-              className={"info" + this.state.open}
+              className={"info" + this.state.personalAreaOpen}
             >
               <div
+                id="personalMainContainer"
                 name="pasteContainer"
                 tabIndex="0"
                 className="personalAreaStageContainer"
@@ -3041,13 +3351,12 @@ class Graphics extends Component {
                     document.getElementById("editPersonalContainer").clientHeight : 0}
                   width={document.getElementById("editPersonalContainer") ?
                     document.getElementById("editPersonalContainer").clientWidth : 0}
-                  onContextMenu={(e) => e.evt.preventDefault()}
                   ref="personalAreaStage"
-                  onClick={(e) => this.handleStageClick(e, true)}
                   onMouseMove={(e) => this.handleMouseOver(e, true)}
                   onMouseDown={(e) => this.onMouseDown(e, true)}
+                  onMouseUp={(e) => this.handleMouseUp(e, true)}
                   onWheel={(e) => this.handleWheel(e, true)}
-                  onMouseUp={this.handleMouseUpInfo}
+                  onContextMenu={(e) => e.evt.preventDefault()}
                 >
                   <Layer
                     ref="personalAreaLayer"
@@ -3058,16 +3367,17 @@ class Graphics extends Component {
                     y={this.state.personalLayerY}
                     height={window.innerHeight}
                     width={window.innerWidth}
-                    draggable={this.state.draggable}
-                    onDragMove={(e) => {
-                      if (this.state.draggable) {
-                        this.setState({
-                          personalLayerX: this.state.personalLayerX + e.evt.movementX,
-                          personalLayerY: this.state.personalLayerY + e.evt.movementY
-                        });
-                      }
-                    }}
+                    draggable={this.state.layerDraggable}
+                    onDragMove={(e) => this.dragLayer(e, true)}
                   >
+                    {/* This rect is for dragging the canvas */}
+                    <Rect
+                      id="ContainerRect"
+                      x={-5 * window.innerWidth}
+                      y={-5 * window.innerHeight}
+                      height={window.innerHeight * 10}
+                      width={window.innerWidth * 10}
+                    />
                     {this.state.rectangles.map((eachRect, index) => {
                       if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
                         return (
@@ -3090,7 +3400,7 @@ class Graphics extends Component {
                             stroke={eachRect.stroke}
                             strokeWidth={eachRect.strokeWidth}
                             strokeScaleEnabled={false}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onClick={() => {
                               let that = this;
                               if (eachRect.link !== undefined && eachRect.link !== "") {
@@ -3215,6 +3525,8 @@ class Graphics extends Component {
                       <Portal>
                         <ContextMenu
                           {...this.state.selectedContextMenu}
+                          handleUngrouping={this.handleUngrouping}
+                          handleGrouping={this.handleGrouping}
                           selectedshape={this.state.selectedShapeName}
                           onOptionSelected={this.handleOptionSelected}
                           choosecolors={this.handleColorS}
@@ -3334,7 +3646,7 @@ class Graphics extends Component {
                               ellipse.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3388,7 +3700,7 @@ class Graphics extends Component {
                             globalCompositeOperation={
                               eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
                             }
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onContextMenu={this.onObjectContextMenu}
                           />
                         )
@@ -3710,7 +4022,7 @@ class Graphics extends Component {
                               let triangle = this.refs[eachDoc.ref];
 
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3761,7 +4073,6 @@ class Graphics extends Component {
                             rotation={eachEllipse.rotation}
                             height={eachEllipse.height}
                             sides={eachEllipse.sides}
-                            radius={eachEllipse.radius}
                             fill={eachEllipse.fill}
                             stroke={eachEllipse.stroke}
                             strokeWidth={eachEllipse.strokeWidth}
@@ -3846,7 +4157,7 @@ class Graphics extends Component {
                               triangle.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -3948,7 +4259,7 @@ class Graphics extends Component {
                               star.setAttr("scaleY", 1);
                               this.forceUpdate();
                             }}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragMove={() => {
                               this.state.arrows.map(eachArrow => {
                                 if (eachArrow.from !== undefined) {
@@ -4007,7 +4318,7 @@ class Graphics extends Component {
                             x={eachText.x}
                             y={eachText.y}
                             text={eachText.text}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onTransform={this.handleTextTransform}
                             onTransformEnd={this.onTransformEndText}
                             onDragMove={() => {
@@ -4053,9 +4364,6 @@ class Graphics extends Component {
                                     }, 1000);
                                   }
                                 );
-
-                                //let win = window.open(eachText.link, "_blank");
-                                //win.focus();
                               }
                             }}
                             onDblClick={() => this.handleTextDblClick(
@@ -4092,7 +4400,7 @@ class Graphics extends Component {
                             ]}
                             stroke={eachArrow.stroke}
                             fill={eachArrow.fill}
-                            draggable
+                            draggable={!this.state.layerDraggable}
                             onDragEnd={event => {
                               //set new points to current position
 
@@ -4162,13 +4470,17 @@ class Graphics extends Component {
                 </Stage>
 
               </div>
-              {(this.state.open !== 1)
-                ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
-                : <button onClick={() => this.setState({ open: 0 })}><i className="fas fa-caret-square-down fa-3x"></i></button>
+              {(this.state.personalAreaOpen !== 1)
+                ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
+                  <i className="fas fa-caret-square-up fa-3x" />
+                </button>
+                : <button onClick={() => this.handlePersonalAreaOpen(false)}>
+                  <i className="fas fa-caret-square-down fa-3x" />
+                </button>
               }
               <div id="rolesdrop">
                 <DropdownRoles
-                  openInfoSection={() => this.setState({ open: 1 })}
+                  openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
                   roleLevel={this.handleRoleLevel}
                   gameid={this.state.gameinstanceid}
                   editMode={true}
