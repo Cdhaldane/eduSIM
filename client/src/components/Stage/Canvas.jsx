@@ -37,7 +37,7 @@ class Graphics extends Component {
   // Save State
   // These are the names of the objects in state that are saved to the database
   savedObjects = [
-    // Objects
+    // Rendered Objects Only (shapes, media, etc.)
     "rectangles",
     "ellipses",
     "stars",
@@ -50,7 +50,12 @@ class Graphics extends Component {
     "documents",
     "lines",
     "tics",
-    "connect4",
+    "connect4"
+  ];
+  // The complete save state
+  savedState = [
+    ...this.savedObjects,
+    "savedGroups",
 
     // Delete Counts (stored to keep object label #s in sync)
     "rectDeleteCount",
@@ -223,17 +228,44 @@ class Graphics extends Component {
     }).then((res) => {
       if (res.data.game_parameters) {
         // Load saved object data
-        const objects = JSON.parse(res.data.game_parameters);
-        this.savedObjects.forEach((object) => {
+        let objects = JSON.parse(res.data.game_parameters);
+
+        // Parse the saved groups
+        let parsedSavedGroups = [];
+        for (let i = 0; i < objects.savedGroups.length; i++) {
+          let savedGroup = [];
+          for (let j = 0; j < objects.savedGroups[i].length; j++) {
+            savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
+          }
+          parsedSavedGroups.push(savedGroup);
+        }
+        objects.savedGroups = parsedSavedGroups;
+
+        // Put parsed saved data into state
+        this.savedState.forEach((object) => {
           this.setState({
             [object]: objects[object]
           });
         });
 
-        // Calculate positions on initial load
         setTimeout(() => {
+          // Calculate positions on initial load
           this.recalculateCanvasSizeAndPosition(false);
           this.recalculateCanvasSizeAndPosition(true);
+
+          // Get full objects for saved groups
+          let fullObjSavedGroups = [];
+          for (let i = 0; i < this.state.savedGroups.length; i++) {
+            let savedGroup = [];
+            for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+              const id = this.state.savedGroups[i][j].attrs.id;
+              savedGroup.push(this.refs[id]);
+            }
+            fullObjSavedGroups.push(savedGroup);
+          }
+          this.setState({
+            savedGroups: fullObjSavedGroups
+          });
         }, 100);
       }
     }).catch(error => {
@@ -303,16 +335,17 @@ class Graphics extends Component {
     if (leftmostObj && rightmostObj && topmostObj && bottommostObj) {
       let sidebarVal = 70;
       if (personalArea) {
-        sidebarVal = 100;
+        sidebarVal = 130;
       }
       const sidebarWidth = window.matchMedia("(orientation: portrait)").matches ? 0 : sidebarVal;
       const topbarHeight = window.matchMedia("(orientation: portrait)").matches ? 110 : 55;
+      const personalAreaHeight = personalArea ? 0 : 90;
 
       const contentWidth = rightmostX - leftmostX;
       const totalWidth = window.innerWidth - sidebarWidth;
 
       const contentHeight = bottommostY - topmostY;
-      const totalHeight = Math.max(window.innerHeight - topbarHeight, 1);
+      const totalHeight = Math.max(window.innerHeight - topbarHeight - personalAreaHeight, 1);
 
       const xScale = totalWidth / contentWidth;
       const yScale = totalHeight / contentHeight;
@@ -322,7 +355,7 @@ class Graphics extends Component {
 
       this.setState({
         [layerX]: -leftmostX,
-        [layerY]: -topmostY + topbarHeight,
+        [layerY]: -topmostY,
         [layerScale]: newScale,
       }, () => {
 
@@ -337,7 +370,7 @@ class Graphics extends Component {
 
         this.setState({
           [layerX]: this.state[layerX] - leftRect.x + ((totalWidth - newContentWidth) / 2),
-          [layerY]: this.state[layerY] + ((totalHeight - newContentHeight) / 2)
+          [layerY]: this.state[layerY] + topbarHeight
         });
       });
     }
@@ -440,8 +473,8 @@ class Graphics extends Component {
 
   handleSave = () => {
     let storedObj = {};
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const newObj = this.savedObjects[i];
+    for (let i = 0; i < this.savedState.length; i++) {
+      const newObj = this.savedState[i];
       storedObj = {
         ...storedObj,
         [newObj]: this.state[newObj]
@@ -2838,10 +2871,12 @@ class Graphics extends Component {
                         triangle.setAttr("lastRotation", triangle.rotation());
                       }}
                       onTransformEnd={() => {
-                        this.setState({ isTransforming: false });
+                        this.setState({
+                          isTransforming: false
+                        });
                         let triangle = this.refs[eachEllipse.ref];
-                        let scaleX = triangle.scaleX(),
-                          scaleY = triangle.scaleY();
+                        console.log(triangle.scaleX());
+
 
                         this.setState(prevState => ({
                           errMsg: "",
@@ -2858,11 +2893,12 @@ class Graphics extends Component {
                               }
                               : eachEllipse
                           )
-                        }));
+                        }), () => {
+                          this.forceUpdate();
+                        });
 
                         triangle.setAttr("scaleX", 1);
                         triangle.setAttr("scaleY", 1);
-                        this.forceUpdate();
                       }}
                       draggable={!this.state.layerDraggable}
                       onDragMove={() => {
