@@ -230,6 +230,9 @@ class Graphics extends Component {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
 
+        console.log("START");
+        console.log(objects.triangles[0]);
+
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -2797,31 +2800,31 @@ class Graphics extends Component {
                   return null
                 }
               })}
-              {this.state.triangles.map((eachEllipse, index) => {
-                if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
+              {this.state.triangles.map((eachTriangle, index) => {
+                if (eachTriangle.level === this.state.level && eachTriangle.infolevel === false) {
                   return (
                     <RegularPolygon
                       key={index}
-                      visible={eachEllipse.visible}
-                      ref={eachEllipse.ref}
-                      id={eachEllipse.id}
+                      visible={eachTriangle.visible}
+                      ref={eachTriangle.ref}
+                      id={eachTriangle.id}
                       name="shape"
-                      x={eachEllipse.x}
-                      y={eachEllipse.y}
-                      opacity={eachEllipse.opacity}
-                      rotation={eachEllipse.rotation}
-                      height={eachEllipse.height}
-                      sides={eachEllipse.sides}
-                      radius={eachEllipse.radius}
-                      fill={eachEllipse.fill}
-                      stroke={eachEllipse.stroke}
-                      strokeWidth={eachEllipse.strokeWidth}
+                      x={eachTriangle.x}
+                      y={eachTriangle.y}
+                      opacity={eachTriangle.opacity}
+                      rotation={eachTriangle.rotation}
+                      width={eachTriangle.width}
+                      height={eachTriangle.height}
+                      sides={eachTriangle.sides}
+                      fill={eachTriangle.fill}
+                      stroke={eachTriangle.stroke}
+                      strokeWidth={eachTriangle.strokeWidth}
                       strokeScaleEnabled={false}
                       onClick={() => {
                         let that = this;
                         if (
-                          eachEllipse.link !== undefined &&
-                          eachEllipse.link !== ""
+                          eachTriangle.link !== undefined &&
+                          eachTriangle.link !== ""
                         ) {
                           this.setState(
                             {
@@ -2839,11 +2842,11 @@ class Graphics extends Component {
                       }}
                       onTransformStart={() => {
                         this.setState({ isTransforming: true });
-                        let triangle = this.refs[eachEllipse.ref];
+                        let triangle = this.refs[eachTriangle.ref];
                         triangle.setAttr("lastRotation", triangle.rotation());
                       }}
                       onTransform={() => {
-                        let triangle = this.refs[eachEllipse.ref];
+                        let triangle = this.refs[eachTriangle.ref];
 
                         if (triangle.attrs.lastRotation !== triangle.rotation()) {
                           this.state.arrows.map(eachArrow => {
@@ -2874,29 +2877,31 @@ class Graphics extends Component {
                         this.setState({
                           isTransforming: false
                         });
-                        let triangle = this.refs[eachEllipse.ref];
-                        console.log(triangle.scaleX());
-
-
-                        this.setState(prevState => ({
+                      
+                        let triangle = this.refs[eachTriangle.ref];
+                      
+                        this.setState(
+                          prevState => ({
                           errMsg: "",
-                          triangles: prevState.triangles.map(eachEllipse =>
-                            eachEllipse.id === triangle.attrs.id
+                          triangles: prevState.triangles.map(eachTriangle =>
+                            eachTriangle.id === triangle.attrs.id
                               ? {
-                                ...eachEllipse,
-
+                                ...eachTriangle,
+                      
                                 width: triangle.width() * triangle.scaleX(),
                                 height: triangle.height() * triangle.scaleY(),
                                 rotation: triangle.rotation(),
                                 x: triangle.x(),
                                 y: triangle.y()
+                      
                               }
-                              : eachEllipse
+                              : eachTriangle
                           )
-                        }), () => {
+                        }), 
+                        () => {
                           this.forceUpdate();
                         });
-
+                      
                         triangle.setAttr("scaleX", 1);
                         triangle.setAttr("scaleY", 1);
                       }}
@@ -2904,10 +2909,10 @@ class Graphics extends Component {
                       onDragMove={() => {
                         this.state.arrows.map(eachArrow => {
                           if (eachArrow.from !== undefined) {
-                            if (eachEllipse.name === eachArrow.from.attrs.name) {
+                            if (eachTriangle.name === eachArrow.from.attrs.name) {
                               eachArrow.points = [
-                                eachEllipse.x,
-                                eachEllipse.y,
+                                eachTriangle.x,
+                                eachTriangle.y,
                                 eachArrow.points[2],
                                 eachArrow.points[3]
                               ];
@@ -2917,12 +2922,12 @@ class Graphics extends Component {
                           }
 
                           if (eachArrow.to !== undefined) {
-                            if (eachEllipse.name === eachArrow.to.attrs.name) {
+                            if (eachTriangle.name === eachArrow.to.attrs.name) {
                               eachArrow.points = [
                                 eachArrow.points[0],
                                 eachArrow.points[1],
-                                eachEllipse.x,
-                                eachEllipse.y
+                                eachTriangle.x,
+                                eachTriangle.y
                               ];
                               this.forceUpdate();
                               this.refs.graphicStage.draw();
@@ -2930,7 +2935,7 @@ class Graphics extends Component {
                           }
                         });
                       }}
-                      onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
+                      onDragEnd={e => this.handleDragEnd(e, "triangles", eachTriangle.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
                   )
@@ -4068,7 +4073,6 @@ class Graphics extends Component {
                             rotation={eachEllipse.rotation}
                             height={eachEllipse.height}
                             sides={eachEllipse.sides}
-                            radius={eachEllipse.radius}
                             fill={eachEllipse.fill}
                             stroke={eachEllipse.stroke}
                             strokeWidth={eachEllipse.strokeWidth}

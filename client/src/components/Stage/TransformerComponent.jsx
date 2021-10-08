@@ -29,6 +29,7 @@ const TransformerComponent = forwardRef((props, ref) => {
             ]}
           />
         );
+      case "triangles":
       case "stars":
         return (
           <Transformer
