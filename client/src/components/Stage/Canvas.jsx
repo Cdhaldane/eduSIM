@@ -2054,7 +2054,7 @@ class Graphics extends Component {
                 key={index}
                 i={eachTic.i}
                 handleTicDelete={this.handleTicDelete}
-                {...this.getInteractiveProps()}
+                {...this.getInteractiveProps(eachTic.id)}
               />
             )
           } else {
