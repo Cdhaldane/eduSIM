@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import axios from "axios";
+import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
@@ -15,9 +16,17 @@ const DropdownRoles = (props) => {
   const [roleNum, setRoleNum] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [deleteIndex, setDeleteIndex] = useState(0);
   const [initFlag, setInitFlag] = useState(false);
 
   const alertContext = useAlertContext();
+
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const confirmationVisibleRef = useRef(confirmationVisible);
+  const setConfirmationModal = (data) => {
+    setConfirmationVisible(data);
+    setTimeout(() => { confirmationVisibleRef.current = data }, 250);
+  }
 
   const menuElem = useRef();
 
@@ -42,7 +51,10 @@ const DropdownRoles = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (menuElem.current && !menuElem.current.contains(e.target)) {
+    if (menuElem.current &&
+      !menuElem.current.contains(e.target) &&
+      e.target.className !== "icons fa fa-trash" &&
+      !confirmationVisibleRef.current) {
       handleActiveMenuChange('main');
     }
   }
@@ -92,26 +104,29 @@ const DropdownRoles = (props) => {
         {roles.map((role, index) => {
           return (
             props.editMode ? (
-              <div 
-                className="menu-item" 
-                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+              <div
+                className="menu-item"
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
                 key={index}
               >
                 <span className="icon-button">
-                  <i className="icons fa fa-trash" onClick={() => handleDeleteRole(index)} />
+                  <i className="icons fa fa-trash" onClick={() => {
+                    setConfirmationModal(true);
+                    setDeleteIndex(index);
+                  }} />
                 </span>
                 {`${role.roleName} (${role.numOfSpots})`}
               </div>
             ) : (
-              <div 
-                className="menu-item" 
-                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)} 
+              <div
+                className="menu-item"
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
                 key={index}
                 disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
               >
-                {props.rolesTaken[role.roleName] 
-                ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
-                : `${role.roleName} (${role.numOfSpots})`}
+                {props.rolesTaken[role.roleName]
+                  ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                  : `${role.roleName} (${role.numOfSpots})`}
               </div>
             )
           );
@@ -252,6 +267,14 @@ const DropdownRoles = (props) => {
           )}
         </div>
       </CSSTransition>
+
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => handleDeleteRole(deleteIndex)}
+        confirmMessage={"Yes - Delete Role"}
+        message={`Are you sure you want to delete the ${roles[deleteIndex] ? roles[deleteIndex].roleName : ""} role? This action cannot be undone.`}
+      />
     </div>
   );
 }

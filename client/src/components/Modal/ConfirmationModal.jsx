@@ -1,29 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from "react-modal";
 import "../Modal/Modal.css";
 
+const TIMEOUT_MS = 250;
+
 const ConfirmationModal = (props) => {
+
+  const [msg, setMsg] = useState(null);
+
+  const hide = () => {
+    setMsg(props.message);
+    props.hide();
+  }
+
+  useEffect(() => {
+    setTimeout(() => setMsg(null), TIMEOUT_MS);
+  }, [props.visible]);
 
   return (
     <Modal
       isOpen={props.visible}
-      onRequestClose={props.hide}
+      onRequestClose={hide}
       className="confirmationModal"
       overlayClassName="myoverlay"
       ariaHideApp={false}
-      closeTimeoutMS={250}
+      closeTimeoutMS={TIMEOUT_MS}
     >
       <div>
-        {props.message}
+        {msg ? msg : props.message}
       </div>
       <div className={"confirmationModalButtons"}>
         <button id={"confirmModalConfirmButton"} onClick={() => {
+          document.getElementById("confirmModalConfirmButton").disabled = true;
           props.confirmFunction();
-          props.hide();
+          hide();
         }}>
           {props.confirmMessage}
         </button>
-        <button id={"confirmModalCancelButton"} onClick={props.hide}>
+        <button id={"confirmModalCancelButton"} onClick={hide}>
           Cancel
         </button>
       </div>

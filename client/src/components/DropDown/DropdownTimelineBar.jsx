@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ConfirmationModal from "../Modal/ConfirmationModal"
+import ConfirmationModal from "../Modal/ConfirmationModal";
 
 import "./Dropdown.css";
 
@@ -13,12 +13,12 @@ function DropdownTimelineBar(props) {
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
     setConfirmationVisible(data);
-    setTimeout(() => {confirmationVisibleRef.current = data}, 250);
+    setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
 
   const handleClickOutside = e => {
-    if (dropdown.current && 
-      !dropdown.current.contains(e.target) && 
+    if (dropdown.current &&
+      !dropdown.current.contains(e.target) &&
       !confirmationVisibleRef.current) {
       props.close();
     }
@@ -75,6 +75,7 @@ function DropdownTimelineBar(props) {
             display: "inline"
           }}>
             <button
+              disabled={parseInt(numOfPages) === 1}
               className={"numOfPagesInputBtn"}
               onClick={() => setConfirmationModal(true)} >
               -
@@ -117,7 +118,9 @@ function DropdownTimelineBar(props) {
           setNumOfPages(num.value);
         }}
         confirmMessage={"Yes - Delete Page"}
-        message={"Are you sure you want to delete this page? This action cannot be undone."}
+        message={`Are you sure you want to delete page 
+        ${pages[numOfPages - 1] ? (pages[numOfPages - 1].trim() !== "" ? pages[numOfPages - 1] : "Untitled") : ""}? 
+        This action cannot be undone.`}
       />
     </div>
   );
