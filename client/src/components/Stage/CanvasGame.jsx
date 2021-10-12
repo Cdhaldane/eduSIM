@@ -249,7 +249,7 @@ class Graphics extends Component {
             contentLabel="My dialog"
             className="createmodaltab"
             overlayClassName="myoverlaytab"
-            closeTimeoutMS={500}
+            closeTimeoutMS={250}
             ariaHideApp={false}
           >
             <CreateRole

@@ -171,19 +171,6 @@
   border: none;
 }
 
-.ReactModal__Overlay {
-  opacity: 0;
-  transition: opacity 500ms ease-in-out;
-}
-
-.ReactModal__Overlay--after-open {
-  opacity: 1;
-}
-
-.ReactModal__Overlay--before-close {
-  opacity: 0;
-}
-
 @keyframes animatedgradient {
   0% {
     background-position: 0% 50%;
@@ -368,16 +355,6 @@ select#imgoptions option[value="img3"] {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.75);
-  }
-  .ReactModal__Overlay {
-    opacity: 0;
-    transition: opacity 500ms ease-in-out;
-  }
-  .ReactModal__Overlay--after-open {
-    opacity: 1;
-  }
-  .ReactModal__Overlay--before-close {
-    opacity: 0;
   }
   @keyframes animatedgradient {
     0% {

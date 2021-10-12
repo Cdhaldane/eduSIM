@@ -99,7 +99,7 @@ function Dashboard(props) {
         contentLabel="My dialog"
         className="createmodalarea"
         overlayClassName="myoverlay"
-        closeTimeoutMS={500}
+        closeTimeoutMS={250}
         ariaHideApp={false}
       >
         <CreateArea 
