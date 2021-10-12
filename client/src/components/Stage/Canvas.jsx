@@ -192,6 +192,8 @@ class Graphics extends Component {
       description: "",
       thumbnail: "",
 
+      gamepieceStatus: {},
+
       errMsg: "",
       arrowDraggable: false,
       newArrowRef: "",
@@ -473,6 +475,19 @@ class Graphics extends Component {
       numberOfPages: e
     })
   }
+  
+  // essentially just for testing
+  getInteractiveProps = (id) => ({
+    updateStatus: (parameters) => {
+      this.setState({
+        gamepieceStatus: {
+          ...this.state.gamepieceStatus,
+          [id]: parameters
+        }
+      })
+    },
+    status: this.state.gamepieceStatus[id] || {}
+  })
 
   handleSave = () => {
     let storedObj = {};
@@ -2039,6 +2054,7 @@ class Graphics extends Component {
                 key={index}
                 i={eachTic.i}
                 handleTicDelete={this.handleTicDelete}
+                {...this.getInteractiveProps()}
               />
             )
           } else {

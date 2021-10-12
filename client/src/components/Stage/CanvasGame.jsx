@@ -207,14 +207,15 @@ class Graphics extends Component {
     } catch(e) {};
   }
 
-  updateGamepieceFunc = (id) => (parameters) => {
-    this.props.socket.emit("interaction", {
-      gamepieceId: id,
-      parameters
-    })
-  }
-
-  getGamepieceStatus = (id) => this.props.gamepieceStatus[id] || {};
+  getInteractiveProps = (id) => ({
+    updateStatus: (parameters) => {
+      this.props.socket.emit("interaction", {
+        gamepieceId: id,
+        parameters
+      })
+    },
+    status: this.props.gamepieceStatus[id] || {}
+  })
 
   handleLevel = (e) => {
     this.setState({
@@ -278,8 +279,7 @@ class Graphics extends Component {
               <TicTacToe
                 i={i}
                 handleTicDelete={this.handleTicDelete}
-                updateStatus={this.updateGamepieceFunc(id)}
-                status={this.getGamepieceStatus(id)}
+                {...this.getInteractiveProps()}
               />
             )
           } else {

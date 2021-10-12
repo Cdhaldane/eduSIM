@@ -79,11 +79,7 @@ function Board(props) {
   )
 }
 
-function Game({
-  status = {},
-  updateStatus = () => {},
-  ...props
-}) {
+function Game(props) {
 
   const [show, setShow] = useState(false);
 
@@ -102,8 +98,8 @@ function Game({
           show={show}
           handleShow={handleShow}
           handleTicDelete={handleDelete}
-          status={status}
-          updateStatus={updateStatus}
+          status={props.status}
+          updateStatus={props.updateStatus}
         />
       </div>
     </Draggable>
