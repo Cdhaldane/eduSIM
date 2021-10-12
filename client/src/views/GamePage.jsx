@@ -153,6 +153,7 @@ function Game(props) {
             players={players}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
+            gamepieceStatus={roomStatus.gamepieces || {}}
             initialUserInfo={queryUser}
             initialUserId={userid}
           />

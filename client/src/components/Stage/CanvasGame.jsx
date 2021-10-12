@@ -207,6 +207,15 @@ class Graphics extends Component {
     } catch(e) {};
   }
 
+  updateGamepieceFunc = (id) => (parameters) => {
+    this.props.socket.emit("interaction", {
+      gamepieceId: id,
+      parameters
+    })
+  }
+
+  getGamepieceStatus = (id) => this.props.gamepieceStatus[id] || {};
+
   handleLevel = (e) => {
     this.setState({
       level: e
@@ -219,8 +228,8 @@ class Graphics extends Component {
     })
   }
 
-  componentWillReceiveProps = ({ level }) => {
-    if (level) {
+  componentWillReceiveProps = ({ level, freeAdvance }) => {
+    if (level && !freeAdvance) {
       this.setState({
         level
       })
@@ -263,12 +272,14 @@ class Graphics extends Component {
         </div>
         }
 
-        {this.state.tics.map(eachTic => {
-          if (eachTic.level === this.state.level) {
+        {this.state.tics.map(({i, level, id}) => {
+          if (level === this.state.level) {
             return (
               <TicTacToe
-                i={eachTic.i}
+                i={i}
                 handleTicDelete={this.handleTicDelete}
+                updateStatus={this.updateGamepieceFunc(id)}
+                status={this.getGamepieceStatus(id)}
               />
             )
           } else {
