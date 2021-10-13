@@ -2061,10 +2061,12 @@ class Graphics extends Component {
             return null
           }
         })}
-        {this.state.connect4.map(eachConnect => {
-          if (eachConnect.level === this.state.level) {
+        {this.state.connect4.map(({level, id}) => {
+          if (level === this.state.level) {
             return (
-              <Connect4 />
+              <Connect4 
+                {...this.getInteractiveProps(id)}
+              />
             )
           } else {
             return null
