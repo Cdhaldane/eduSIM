@@ -192,6 +192,8 @@ class Graphics extends Component {
       description: "",
       thumbnail: "",
 
+      gamepieceStatus: {},
+
       errMsg: "",
       arrowDraggable: false,
       newArrowRef: "",
@@ -473,6 +475,19 @@ class Graphics extends Component {
       numberOfPages: e
     })
   }
+  
+  // essentially just for testing
+  getInteractiveProps = (id) => ({
+    updateStatus: (parameters) => {
+      this.setState({
+        gamepieceStatus: {
+          ...this.state.gamepieceStatus,
+          [id]: parameters
+        }
+      })
+    },
+    status: this.state.gamepieceStatus[id] || {}
+  })
 
   handleSave = () => {
     let storedObj = {};
@@ -2039,16 +2054,19 @@ class Graphics extends Component {
                 key={index}
                 i={eachTic.i}
                 handleTicDelete={this.handleTicDelete}
+                {...this.getInteractiveProps(eachTic.id)}
               />
             )
           } else {
             return null
           }
         })}
-        {this.state.connect4.map(eachConnect => {
-          if (eachConnect.level === this.state.level) {
+        {this.state.connect4.map(({level, id}) => {
+          if (level === this.state.level) {
             return (
-              <Connect4 />
+              <Connect4 
+                {...this.getInteractiveProps(id)}
+              />
             )
           } else {
             return null

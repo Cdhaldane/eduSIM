@@ -15,41 +15,12 @@ function getStatus(squares, xIsNext) {
   }
 }
 
-function gameReducer(state, action) {
-  const { squares, xIsNext } = state;
-  switch (action.type) {
-    case 'SELECT_SQUARE': {
-      const { square } = action
-      const winner = calculateWinner(squares);
-      if (winner || squares[square]) {
-        return state;
-      }
-      const squaresCopy = [...squares];
-      squaresCopy[square] = xIsNext ? 'X' : '0';
-      return {
-        squares: squaresCopy,
-        xIsNext: !xIsNext,
-      }
-    }
-    case 'RESET': {
-      return { squares: Array(9).fill(null) }
-    }
-    default: {
-      throw new Error(
-        `Unhandled action type: ${action.type}. Please fix it. Thank you.`,
-      )
-    }
-  }
-}
-
 function Board(props) {
 
-  const [state, dispatch] = React.useReducer(gameReducer, {
-    squares: Array(9).fill(null),
-    xIsNext: true,
-  });
-
-  const { squares, xIsNext } = state;
+  const { 
+    squares = new Array(9), 
+    xIsNext = true
+  } = props.status;
 
   function renderSquare(index) {
     return (
@@ -60,13 +31,23 @@ function Board(props) {
   }
 
   function handleReset() {
-    for (let i = 0; i < 9; i++) {
-      dispatch({ type: 'RESET', i })
-    }
+    props.updateStatus({
+      squares: new Array(9),
+      xIsNext: true
+    });
   }
 
   function selectSquare(square) {
-    dispatch({ type: 'SELECT_SQUARE', square })
+    const winner = calculateWinner(squares);
+    if (winner || squares[square]) {
+      return;
+    }
+    const squaresCopy = [...squares];
+    squaresCopy[square] = xIsNext ? 'X' : '0';
+    props.updateStatus({
+      squares: squaresCopy,
+      xIsNext: !xIsNext
+    });
   }
 
   const status = getStatus(squares, xIsNext)
@@ -117,6 +98,8 @@ function Game(props) {
           show={show}
           handleShow={handleShow}
           handleTicDelete={handleDelete}
+          status={props.status}
+          updateStatus={props.updateStatus}
         />
       </div>
     </Draggable>

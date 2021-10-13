@@ -207,6 +207,16 @@ class Graphics extends Component {
     } catch(e) {};
   }
 
+  getInteractiveProps = (id) => ({
+    updateStatus: (parameters) => {
+      this.props.socket.emit("interaction", {
+        gamepieceId: id,
+        parameters
+      })
+    },
+    status: this.props.gamepieceStatus[id] || {}
+  })
+
   handleLevel = (e) => {
     this.setState({
       level: e
@@ -219,8 +229,8 @@ class Graphics extends Component {
     })
   }
 
-  componentWillReceiveProps = ({ level }) => {
-    if (level) {
+  componentWillReceiveProps = ({ level, freeAdvance }) => {
+    if (level && !freeAdvance) {
       this.setState({
         level
       })
@@ -263,22 +273,25 @@ class Graphics extends Component {
         </div>
         }
 
-        {this.state.tics.map(eachTic => {
-          if (eachTic.level === this.state.level) {
+        {this.state.tics.map(({i, level, id}) => {
+          if (level === this.state.level) {
             return (
               <TicTacToe
-                i={eachTic.i}
+                i={i}
                 handleTicDelete={this.handleTicDelete}
+                {...this.getInteractiveProps(id)}
               />
             )
           } else {
             return null
           }
         })}
-        {this.state.connect4.map(eachConnect => {
-          if (eachConnect.level === this.state.level) {
+        {this.state.connect4.map(({level, id}) => {
+          if (level === this.state.level) {
             return (
-              <Connect4 />
+              <Connect4 
+                {...this.getInteractiveProps(id)}
+              />
             )
           } else {
             return null
