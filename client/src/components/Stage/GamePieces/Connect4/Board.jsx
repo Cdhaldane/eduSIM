@@ -21,12 +21,15 @@ const winTypes = {
   backwardsDiagonal: 3
 };
 
-export default function ConnectFour() {
+export default function ConnectFour(props) {
+  const {
+    currentPlayer = getFirstPlayerTurn()
+  } = props.status;
   const [board, setBoard] = useState(createBoard());
-  const [currentPlayer, setCurrentPlayer] = useState(getFirstPlayerTurn());
   const [win, setWin] = useState(null);
   const [flashTimer, setFlashTimer] = useState(null);
   const [dropping, setDropping] = useState(false);
+  const [firstRefresh, setFirstRefresh] = useState(true);
   const domBoard = useRef(null);
 
   /**
@@ -60,9 +63,10 @@ export default function ConnectFour() {
   }
 
   function restartGame() {
-    setCurrentPlayer(getFirstPlayerTurn());
-    setWin(null);
-    setBoard(createBoard());
+    props.updateStatus({
+      board: createBoard(),
+      currentPlayer: getFirstPlayerTurn()
+    })
   }
 
   function getDomBoardCell(index) {
@@ -87,19 +91,44 @@ export default function ConnectFour() {
     if (dropping || win) return;
     const row = findFirstEmptyRow(column);
     if (row < 0) return;
-    setDropping(true);
-    await animateDrop(row, column, currentPlayer);
-    setDropping(false);
     const newBoard = board.slice();
     newBoard[getIndex(row, column)] = currentPlayer;
-    setBoard(newBoard);
-
-    setCurrentPlayer(
-      currentPlayer === boardSettings.colors.p1
-        ? boardSettings.colors.p2
-        : boardSettings.colors.p1
-    );
+    props.updateStatus({
+      board: newBoard,
+      currentPlayer: (
+        currentPlayer === boardSettings.colors.p1
+          ? boardSettings.colors.p2
+          : boardSettings.colors.p1
+      )
+    });
   }
+
+  useEffect(() => {
+    if (props.status.board && board != props.status.board) {
+      (async () => {
+        if (!firstRefresh) {
+          let r=null, c=null, ii=null, clear=false;
+          for (let i=0;i<boardSettings.rows*boardSettings.columns;i++) {
+            if (props.status.board[i] != board[i]) {
+              if (r || c) clear = true;
+              ii = i;
+              r = Math.floor(i/boardSettings.columns);
+              c = i%boardSettings.columns;
+            }
+          }
+          if (!clear) {
+            setDropping(true);
+            await animateDrop(r, c, props.status.board[ii]);
+            setDropping(false);
+          } else {
+            setWin(null);
+          }
+        }
+        setFirstRefresh(false);
+        setBoard(props.status.board);
+      })();
+    }
+  }, [props.status.board]);
 
   async function animateDrop(row, column, color, currentRow) {
     if (currentRow === undefined) {
@@ -135,6 +164,7 @@ export default function ConnectFour() {
       const { winner } = win;
       for (let o of win.winningCells) {
         let c = getDomBoardCell(getIndex(o.row, o.column));
+        if (!c) return;
         c.style.backgroundColor = on ? winner : empty;
       }
       setFlashTimer(
