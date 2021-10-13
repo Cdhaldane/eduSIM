@@ -156,6 +156,7 @@ function Game(props) {
             gamepieceStatus={roomStatus.gamepieces || {}}
             initialUserInfo={queryUser}
             initialUserId={userid}
+            alert={alertContext.showAlert}
           />
           {!roomStatus.running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

@@ -48,6 +48,8 @@ const CreateRole = (props) => {
     setName(props.initialUserInfo?.fname);
   }, [props.initialUserInfo]);
 
+  console.log(props.initialUserInfo)
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (role && (role.num && rolesTaken[role.name] >= role.num)) {
