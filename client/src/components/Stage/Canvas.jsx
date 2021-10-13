@@ -1456,29 +1456,6 @@ class Graphics extends Component {
     });
   }
 
-  urlObjOnTransformEnd = (type) => {
-    this.setState({
-      isTransforming: false
-    });
-    const object = this.refs[this.state.selectedShapeName];
-    if (object) {
-      this.setState(prevState => ({
-        [type]: prevState[type].map(obj =>
-          obj.id === this.state.selectedShapeName
-            ? {
-              ...obj,
-              scaleX: object.scaleX(),
-              scaleY: object.scaleY(),
-              rotation: object.rotation(),
-              x: object.x(),
-              y: object.y()
-            }
-            : obj
-        )
-      }));
-    }
-  }
-
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (stage, text, layer) => {
     if (text) {
@@ -1535,26 +1512,6 @@ class Graphics extends Component {
       text.setAttr("scaleX", 1);
       text.draw();
     }
-  }
-
-  onTransformEndText = () => {
-    let text = this.refs[this.state.selectedShapeName];
-
-    this.setState(prevState => ({
-      texts: prevState.texts.map(t =>
-        t.id === this.state.selectedShapeName
-          ? {
-            ...t,
-            width: text.width(),
-            rotation: text.rotation(),
-            textWidth: text.textWidth,
-            textHeight: text.textHeight,
-            x: text.x(),
-            y: text.y()
-          }
-          : t
-      )
-    }));
   }
 
   drawLine = () => {
@@ -1636,6 +1593,172 @@ class Graphics extends Component {
       this.setState({
         layerDraggable: true
       });
+    }
+  }
+
+  onObjectDragMove = (obj) => {
+    this.state.arrows.map(arrow => {
+      if (arrow.from !== undefined) {
+        if (obj.name === arrow.from.attrs.name) {
+          arrow.points = [
+            obj.x,
+            obj.y,
+            arrow.points[2],
+            arrow.points[3]
+          ];
+        }
+      }
+
+      if (arrow.to !== undefined) {
+        if (obj.name === arrow.to.attrs.name) {
+          arrow.points = [
+            arrow.points[0],
+            arrow.points[1],
+            obj.x,
+            obj.y
+          ];
+        }
+      }
+    }, this.forceUpdate);
+  }
+
+  onObjectClick = (obj) => {
+    if (obj.link !== undefined && obj.link !== "") {
+      this.setState({
+        errMsg: "Links will not be opened in Edit Mode."
+      }, () => {
+        setTimeout(() => {
+          this.setState({
+            errMsg: ""
+          });
+        }, 1000);
+      });
+    }
+  }
+
+  onDocClick = () => {
+    fetch(this.state.docsrc, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf',
+      },
+    }).then(response => response.blob()).then(blob => {
+      // Create a blob link to download
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', this.state.docsrc);
+
+      // Append to html link element page
+      document.body.appendChild(link);
+
+      // Start download
+      link.click();
+
+      // Clean up and remove the link
+      link.parentNode.removeChild(link);
+    });
+  }
+
+  onDragEndArrow = (arrow) => {
+    // Set new points to current position
+    let oldPoints = [
+      arrow.points[0],
+      arrow.points[1],
+      arrow.points[2],
+      arrow.points[3]
+    ];
+
+    let shiftX = this.refs[arrow.ref].attrs.x;
+    let shiftY = this.refs[arrow.ref].attrs.y;
+
+    let newPoints = [
+      oldPoints[0] + shiftX,
+      oldPoints[1] + shiftY,
+      oldPoints[2] + shiftX,
+      oldPoints[3] + shiftY
+    ];
+
+    this.refs[arrow.ref].position({ x: 0, y: 0 });
+    this.refs.groupAreaLayer.draw();
+
+    this.setState(prevState => ({
+      arrows: prevState.arrows.map(a =>
+        a.name === arrow.name
+          ? {
+            ...a,
+            points: newPoints
+          }
+          : a
+      )
+    }));
+  }
+
+  onObjectTransformStart = () => {
+    this.setState({ isTransforming: true });
+  }
+
+  onObjectTransformEnd = (obj) => {
+    this.setState({ isTransforming: false });
+
+    const object = this.refs[obj.ref];
+    const type = this.getObjType(object.attrs.id);
+    let transformOptions = {};
+    switch (type) {
+      case "texts":
+        transformOptions = {
+          width: object.width(),
+          textWidth: object.textWidth,
+          textHeight: object.textHeight
+        };
+        break;
+      case "ellipses":
+        transformOptions = {
+          radiusX: object.radiusX() * object.scaleX(),
+          radiusY: object.radiusY() * object.scaleY()
+        };
+        break;
+      case "stars":
+        transformOptions = {
+          innerRadius: object.innerRadius() * object.scaleX(),
+          outerRadius: object.outerRadius() * object.scaleY()
+        };
+        break;
+      case "images":
+      case "videos":
+      case "audios":
+        transformOptions = {
+          scaleX: object.scaleX(),
+          scaleY: object.scaleY()
+        };
+        break;
+      default:
+        transformOptions = {
+          width: object.width() * object.scaleX(),
+          height: object.height() * object.scaleY()
+        };
+        break;
+    }
+
+    this.setState(
+      prevState => ({
+        [type]: prevState[type].map(o =>
+          o.id === object.attrs.id
+            ? {
+              ...o,
+              ...transformOptions,
+              rotation: object.rotation(),
+              x: object.x(),
+              y: object.y(),
+            }
+            : o
+        )
+      })
+    );
+
+    if (!(type === "images" || type === "videos" || type === "audios")) {
+      object.setAttr("scaleX", 1);
+      object.setAttr("scaleY", 1);
     }
   }
 
@@ -1779,117 +1902,10 @@ class Graphics extends Component {
                       strokeWidth={eachRect.strokeWidth}
                       strokeScaleEnabled={false}
                       draggable={!this.state.layerDraggable}
-                      onClick={() => {
-                        let that = this;
-                        if (eachRect.link !== undefined && eachRect.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({
-                          isTransforming: true
-                        });
-                        let rect = this.refs[eachRect.ref];
-                        rect.setAttr("lastRotation", rect.rotation());
-                      }}
-                      onTransform={() => {
-                        let rect = this.refs[eachRect.ref];
-
-                        if (rect.attrs.lastRotation !== rect.rotation()) {
-                          this.state.arrows.map(eachArrow => {
-                            if (
-                              eachArrow.to &&
-                              eachArrow.to.name() === rect.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating rects with connectors might skew things up!"
-                              });
-                            }
-                            if (
-                              eachArrow.from &&
-                              eachArrow.from.name() === rect.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating rects with connectors might skew things up!"
-                              });
-                            }
-                          });
-                        }
-
-                        rect.setAttr("lastRotation", rect.rotation());
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-
-                        let rect = this.refs[eachRect.ref];
-
-                        this.setState(
-                          prevState => ({
-                            errMsg: "",
-                            rectangles: prevState.rectangles.map(eachRect =>
-                              eachRect.id === rect.attrs.id
-                                ? {
-                                  ...eachRect,
-                                  width: rect.width() * rect.scaleX(),
-                                  height: rect.height() * rect.scaleY(),
-                                  rotation: rect.rotation(),
-                                  x: rect.x(),
-                                  y: rect.y(),
-
-                                }
-                                : eachRect
-                            )
-                          }),
-                          () => {
-                            this.forceUpdate();
-                          }
-                        );
-
-                        rect.setAttr("scaleX", 1);
-                        rect.setAttr("scaleY", 1);
-                      }}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachRect.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachRect.x,
-                                eachRect.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachRect.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachRect.x,
-                                eachRect.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onClick={() => this.onObjectClick(eachRect)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachRect)}
+                      onDragMove={() => this.onObjectDragMove(eachRect)}
                       onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -1917,116 +1933,11 @@ class Graphics extends Component {
                       stroke={eachEllipse.stroke}
                       strokeWidth={eachEllipse.strokeWidth}
                       strokeScaleEnabled={false}
-                      onClick={() => {
-                        let that = this;
-                        if (
-                          eachEllipse.link !== undefined &&
-                          eachEllipse.link !== ""
-                        ) {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({ isTransforming: true });
-                        let ellipse = this.refs[eachEllipse.ref];
-                        ellipse.setAttr("lastRotation", ellipse.rotation());
-                      }}
-                      onTransform={() => {
-                        let ellipse = this.refs[eachEllipse.ref];
-
-                        if (ellipse.attrs.lastRotation !== ellipse.rotation()) {
-                          this.state.arrows.map(eachArrow => {
-                            if (
-                              eachArrow.to &&
-                              eachArrow.to.name() === ellipse.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating ellipses with connectors might skew things up!"
-                              });
-                            }
-                            if (
-                              eachArrow.from &&
-                              eachArrow.from.name() === ellipse.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating ellipses with connectors might skew things up!"
-                              });
-                            }
-                          });
-                        }
-
-                        ellipse.setAttr("lastRotation", ellipse.rotation());
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({ isTransforming: false });
-                        let ellipse = this.refs[eachEllipse.ref];
-                        let scaleX = ellipse.scaleX(),
-                          scaleY = ellipse.scaleY();
-
-                        this.setState(prevState => ({
-                          errMsg: "",
-                          ellipses: prevState.ellipses.map(eachEllipse =>
-                            eachEllipse.id === ellipse.attrs.id
-                              ? {
-                                ...eachEllipse,
-
-                                radiusX: ellipse.radiusX() * ellipse.scaleX(),
-                                radiusY: ellipse.radiusY() * ellipse.scaleY(),
-                                rotation: ellipse.rotation(),
-                                x: ellipse.x(),
-                                y: ellipse.y()
-                              }
-                              : eachEllipse
-                          )
-                        }));
-
-                        ellipse.setAttr("scaleX", 1);
-                        ellipse.setAttr("scaleY", 1);
-                        this.forceUpdate();
-                      }}
+                      onClick={() => this.onObjectClick(eachEllipse)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
                       draggable={!this.state.layerDraggable}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachEllipse.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachEllipse.x,
-                                eachEllipse.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                              this.refs.graphicStage.draw();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachEllipse.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachEllipse.x,
-                                eachEllipse.y
-                              ];
-                              this.forceUpdate();
-                              this.refs.graphicStage.draw();
-                            }
-                          }
-                        });
-                      }}
+                      onDragMove={() => this.onObjectDragMove(eachEllipse)}
                       onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2081,60 +1992,10 @@ class Graphics extends Component {
                       strokeWidth={eachImage.strokeWidth}
                       rotation={eachImage.rotation}
                       opacity={eachImage.opacity}
-                      onClick={() => {
-                        let that = this;
-                        if (eachImage.link !== undefined && eachImage.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({
-                          isTransforming: true
-                        });
-
-                      }}
-                      onTransform={() => {
-
-                      }}
-                      onTransformEnd={() => this.urlObjOnTransformEnd("images")}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachImage.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachImage.x,
-                                eachImage.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachImage.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachImage.x,
-                                eachImage.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onClick={() => this.onObjectClick(eachImage)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachImage)}
+                      onDragMove={() => this.onObjectDragMove(eachImage)}
                       onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2166,57 +2027,10 @@ class Graphics extends Component {
                       strokeWidth={eachVideo.strokeWidth}
                       rotation={eachVideo.rotation}
                       opacity={eachVideo.opacity}
-                      onClick={() => {
-                        let that = this;
-                        if (eachVideo.link !== undefined && eachVideo.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({
-                          isTransforming: true
-                        });
-
-                      }}
-                      onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachVideo.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachVideo.x,
-                                eachVideo.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachVideo.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachVideo.x,
-                                eachVideo.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onClick={() => this.onObjectClick(eachVideo)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachVideo)}
+                      onDragMove={() => this.onObjectDragMove(eachVideo)}
                       onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2249,57 +2063,10 @@ class Graphics extends Component {
                       strokeWidth={eachAudio.strokeWidth}
                       rotation={eachAudio.rotation}
                       opacity={eachAudio.opacity}
-                      onClick={() => {
-
-                        let that = this;
-                        if (eachAudio.link !== undefined && eachAudio.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({
-                          isTransforming: true
-                        });
-                      }}
-                      onTransformEnd={() => this.urlObjOnTransformEnd("audios")}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachAudio.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachAudio.x,
-                                eachAudio.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachAudio.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachAudio.x,
-                                eachAudio.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onClick={() => this.onObjectClick(eachAudio)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachAudio)}
+                      onDragMove={() => this.onObjectDragMove(eachAudio)}
                       onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2330,78 +2097,11 @@ class Graphics extends Component {
                       height={eachDoc.height}
                       stroke={eachDoc.stroke}
                       strokeWidth={eachDoc.strokeWidth}
-                      onClick={() => {
-                        fetch(this.state.docsrc, {
-                          method: 'GET',
-                          headers: {
-                            'Content-Type': 'application/pdf',
-                          },
-                        })
-                          .then((response) => response.blob())
-                          .then((blob) => {
-                            // Create blob link to download
-                            const url = window.URL.createObjectURL(
-                              new Blob([blob]),
-                            );
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.setAttribute(
-                              'download',
-                              this.state.docsrc,
-                            );
-
-                            // Append to html link element page
-                            document.body.appendChild(link);
-
-                            // Start download
-                            link.click();
-
-                            // Clean up and remove the link
-                            link.parentNode.removeChild(link);
-                          });
-                      }}
-                      onTransformStart={() => {
-                        this.setState({
-                          isTransforming: true
-                        });
-                      }}
-                      onTransform={() => {
-
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-                        let triangle = this.refs[eachDoc.ref];
-                      }}
+                      onClick={this.onDocClick}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachDoc)}
                       draggable={!this.state.layerDraggable}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachDoc.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachDoc.x,
-                                eachDoc.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachDoc.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachDoc.x,
-                                eachDoc.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onDragMove={() => this.onObjectDragMove(eachDoc)}
                       onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2430,121 +2130,11 @@ class Graphics extends Component {
                       stroke={eachTriangle.stroke}
                       strokeWidth={eachTriangle.strokeWidth}
                       strokeScaleEnabled={false}
-                      onClick={() => {
-                        let that = this;
-                        if (
-                          eachTriangle.link !== undefined &&
-                          eachTriangle.link !== ""
-                        ) {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({ isTransforming: true });
-                        let triangle = this.refs[eachTriangle.ref];
-                        triangle.setAttr("lastRotation", triangle.rotation());
-                      }}
-                      onTransform={() => {
-                        let triangle = this.refs[eachTriangle.ref];
-
-                        if (triangle.attrs.lastRotation !== triangle.rotation()) {
-                          this.state.arrows.map(eachArrow => {
-                            if (
-                              eachArrow.to &&
-                              eachArrow.to.name() === triangle.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating ellipses with connectors might skew things up!"
-                              });
-                            }
-                            if (
-                              eachArrow.from &&
-                              eachArrow.from.name() === triangle.name()
-                            ) {
-                              this.setState({
-                                errMsg:
-                                  "Rotating ellipses with connectors might skew things up!"
-                              });
-                            }
-                          });
-                        }
-
-                        triangle.setAttr("lastRotation", triangle.rotation());
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({
-                          isTransforming: false
-                        });
-
-                        let triangle = this.refs[eachTriangle.ref];
-
-                        this.setState(
-                          prevState => ({
-                            errMsg: "",
-                            triangles: prevState.triangles.map(eachTriangle =>
-                              eachTriangle.id === triangle.attrs.id
-                                ? {
-                                  ...eachTriangle,
-
-                                  width: triangle.width() * triangle.scaleX(),
-                                  height: triangle.height() * triangle.scaleY(),
-                                  rotation: triangle.rotation(),
-                                  x: triangle.x(),
-                                  y: triangle.y()
-
-                                }
-                                : eachTriangle
-                            )
-                          }),
-                          () => {
-                            this.forceUpdate();
-                          });
-
-                        triangle.setAttr("scaleX", 1);
-                        triangle.setAttr("scaleY", 1);
-                      }}
+                      onClick={() => this.onObjectClick(eachTriangle)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachTriangle)}
                       draggable={!this.state.layerDraggable}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachTriangle.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachTriangle.x,
-                                eachTriangle.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                              this.refs.graphicStage.draw();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachTriangle.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachTriangle.x,
-                                eachTriangle.y
-                              ];
-                              this.forceUpdate();
-                              this.refs.graphicStage.draw();
-                            }
-                          }
-                        });
-                      }}
+                      onDragMove={() => this.onObjectDragMove(eachTriangle)}
                       onDragEnd={e => this.handleDragEnd(e, "triangles", eachTriangle.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2573,78 +2163,11 @@ class Graphics extends Component {
                       opacity={eachStar.opacity}
                       strokeScaleEnabled={false}
                       rotation={eachStar.rotation}
-                      onClick={() => {
-                        let that = this;
-                        if (eachStar.link !== undefined && eachStar.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
-                      onTransformStart={() => {
-                        this.setState({ isTransforming: true });
-                      }}
-                      onTransformEnd={() => {
-                        this.setState({ isTransforming: false });
-                        let star = this.refs[eachStar.ref];
-                        let scaleX = star.scaleX(),
-                          scaleY = star.scaleY();
-
-                        this.setState(prevState => ({
-                          stars: prevState.stars.map(eachStar =>
-                            eachStar.id === star.attrs.id
-                              ? {
-                                ...eachStar,
-                                innerRadius: star.innerRadius() * star.scaleX(),
-                                outerRadius: star.outerRadius() * star.scaleX(),
-                                rotation: star.rotation(),
-                                x: star.x(),
-                                y: star.y()
-                              }
-                              : eachStar
-                          )
-                        }));
-                        star.setAttr("scaleX", 1);
-                        star.setAttr("scaleY", 1);
-                        this.forceUpdate();
-                      }}
+                      onClick={() => this.onObjectClick(eachStar)}
+                      onTransformStart={this.onObjectTransformStart}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachStar)}
                       draggable={!this.state.layerDraggable}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachStar.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachStar.x,
-                                eachStar.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachStar.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachStar.x,
-                                eachStar.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onDragMove={() => this.onObjectDragMove(eachStar)}
                       onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
                       onContextMenu={this.onObjectContextMenu}
                     />
@@ -2678,52 +2201,10 @@ class Graphics extends Component {
                       text={eachText.text}
                       draggable={!this.state.layerDraggable}
                       onTransform={this.handleTextTransform}
-                      onTransformEnd={this.onTransformEndText}
-                      onDragMove={() => {
-                        this.state.arrows.map(eachArrow => {
-                          if (eachArrow.from !== undefined) {
-                            if (eachText.name === eachArrow.from.attrs.name) {
-                              eachArrow.points = [
-                                eachText.x,
-                                eachText.y,
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-
-                          if (eachArrow.to !== undefined) {
-                            if (eachText.name === eachArrow.to.attrs.name) {
-                              eachArrow.points = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachText.x,
-                                eachText.y
-                              ];
-                              this.forceUpdate();
-                            }
-                          }
-                        });
-                      }}
+                      onTransformEnd={() => this.onObjectTransformEnd(eachText)}
+                      onDragMove={() => this.onObjectDragMove(eachText)}
                       onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
-                      onClick={() => {
-                        let that = this;
-                        if (eachText.link !== undefined && eachText.link !== "") {
-                          this.setState(
-                            {
-                              errMsg: "Links will not be opened in create mode"
-                            },
-                            () => {
-                              setTimeout(function () {
-                                that.setState({
-                                  errMsg: ""
-                                });
-                              }, 1000);
-                            }
-                          );
-                        }
-                      }}
+                      onClick={() => this.onObjectClick(eachText)}
                       onDblClick={() => this.handleTextDblClick(
                         this.refs.graphicStage,
                         this.refs[eachText.ref],
@@ -2759,43 +2240,7 @@ class Graphics extends Component {
                       stroke={eachArrow.stroke}
                       fill={eachArrow.fill}
                       draggable={!this.state.layerDraggable}
-                      onDragEnd={event => {
-                        //set new points to current position
-
-                        //usually: state => star => x & y
-                        //now: state => arrow => attr => x & y
-
-                        let oldPoints = [
-                          eachArrow.points[0],
-                          eachArrow.points[1],
-                          eachArrow.points[2],
-                          eachArrow.points[3]
-                        ];
-
-                        let shiftX = this.refs[eachArrow.ref].attrs.x;
-                        let shiftY = this.refs[eachArrow.ref].attrs.y;
-
-                        let newPoints = [
-                          oldPoints[0] + shiftX,
-                          oldPoints[1] + shiftY,
-                          oldPoints[2] + shiftX,
-                          oldPoints[3] + shiftY
-                        ];
-
-                        this.refs[eachArrow.ref].position({ x: 0, y: 0 });
-                        this.refs.groupAreaLayer.draw();
-
-                        this.setState(prevState => ({
-                          arrows: prevState.arrows.map(eachArr =>
-                            eachArr.name === eachArrow.name
-                              ? {
-                                ...eachArr,
-                                points: newPoints
-                              }
-                              : eachArr
-                          )
-                        }));
-                      }}
+                      onDragEnd={() => this.onDragEndArrow(eachArrow)}
                     />
                   );
                 } else if (
@@ -3011,118 +2456,10 @@ class Graphics extends Component {
                             strokeWidth={eachRect.strokeWidth}
                             strokeScaleEnabled={false}
                             draggable={!this.state.layerDraggable}
-                            onClick={() => {
-                              let that = this;
-                              if (eachRect.link !== undefined && eachRect.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({
-                                isTransforming: true
-                              });
-                              let rect = this.refs[eachRect.ref];
-                              rect.setAttr("lastRotation", rect.rotation());
-                            }}
-                            onTransform={() => {
-                              let rect = this.refs[eachRect.ref];
-
-                              if (rect.attrs.lastRotation !== rect.rotation()) {
-                                this.state.arrows.map(eachArrow => {
-                                  if (
-                                    eachArrow.to &&
-                                    eachArrow.to.name() === rect.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating rects with connectors might skew things up!"
-                                    });
-                                  }
-                                  if (
-                                    eachArrow.from &&
-                                    eachArrow.from.name() === rect.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating rects with connectors might skew things up!"
-                                    });
-                                  }
-                                });
-                              }
-
-                              rect.setAttr("lastRotation", rect.rotation());
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({
-                                isTransforming: false
-                              });
-
-                              let rect = this.refs[eachRect.ref];
-
-                              this.setState(
-                                prevState => ({
-                                  errMsg: "",
-                                  rectangles: prevState.rectangles.map(eachRect =>
-                                    eachRect.id === rect.attrs.id
-                                      ? {
-                                        ...eachRect,
-                                        width: rect.width() * rect.scaleX(),
-                                        height: rect.height() * rect.scaleY(),
-                                        rotation: rect.rotation(),
-                                        x: rect.x(),
-                                        y: rect.y(),
-
-                                      }
-                                      : eachRect
-                                  )
-                                }),
-                                () => {
-                                  this.forceUpdate();
-                                }
-                              );
-
-                              rect.setAttr("scaleX", 1);
-                              rect.setAttr("scaleY", 1);
-                            }}
-
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachRect.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachRect.x,
-                                      eachRect.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachRect.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachRect.x,
-                                      eachRect.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onClick={() => this.onObjectClick(eachRect)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachRect)}
+                            onDragMove={() => this.onObjectDragMove(eachRect)}
                             onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3176,117 +2513,11 @@ class Graphics extends Component {
                             stroke={eachEllipse.stroke}
                             strokeWidth={eachEllipse.strokeWidth}
                             strokeScaleEnabled={false}
-                            onClick={() => {
-                              let that = this;
-                              if (
-                                eachEllipse.link !== undefined &&
-                                eachEllipse.link !== ""
-                              ) {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({ isTransforming: true });
-                              let ellipse = this.refs[eachEllipse.ref];
-                              ellipse.setAttr("lastRotation", ellipse.rotation());
-                            }}
-                            onTransform={() => {
-                              let ellipse = this.refs[eachEllipse.ref];
-
-                              if (ellipse.attrs.lastRotation !== ellipse.rotation()) {
-                                this.state.arrows.map(eachArrow => {
-                                  if (
-                                    eachArrow.to &&
-                                    eachArrow.to.name() === ellipse.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating ellipses with connectors might skew things up!"
-                                    });
-                                  }
-                                  if (
-                                    eachArrow.from &&
-                                    eachArrow.from.name() === ellipse.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating ellipses with connectors might skew things up!"
-                                    });
-                                  }
-                                });
-                              }
-
-                              ellipse.setAttr("lastRotation", ellipse.rotation());
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({ isTransforming: false });
-                              let ellipse = this.refs[eachEllipse.ref];
-                              let scaleX = ellipse.scaleX(),
-                                scaleY = ellipse.scaleY();
-
-                              this.setState(prevState => ({
-                                errMsg: "",
-                                ellipses: prevState.ellipses.map(eachEllipse =>
-                                  eachEllipse.id === ellipse.attrs.id
-                                    ? {
-                                      ...eachEllipse,
-
-                                      radiusX: ellipse.radiusX() * ellipse.scaleX(),
-                                      radiusY: ellipse.radiusY() * ellipse.scaleY(),
-                                      rotation: ellipse.rotation(),
-                                      x: ellipse.x(),
-                                      y: ellipse.y()
-                                    }
-                                    : eachEllipse
-                                )
-                              }));
-
-                              ellipse.setAttr("scaleX", 1);
-                              ellipse.setAttr("scaleY", 1);
-                              this.forceUpdate();
-                            }}
+                            onClick={() => this.onObjectClick(eachEllipse)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
                             draggable={!this.state.layerDraggable}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachEllipse.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachEllipse.x,
-                                      eachEllipse.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-
-                                    this.refs.graphicStage.draw();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachEllipse.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachEllipse.x,
-                                      eachEllipse.y
-                                    ];
-                                    this.forceUpdate();
-                                    this.refs.graphicStage.draw();
-                                  }
-                                }
-                              });
-                            }}
+                            onDragMove={() => this.onObjectDragMove(eachEllipse)}
                             onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3341,56 +2572,10 @@ class Graphics extends Component {
                             strokeWidth={eachImage.strokeWidth}
                             rotation={eachImage.rotation}
                             opacity={eachImage.opacity}
-                            onClick={() => {
-                              let that = this;
-                              if (eachImage.link !== undefined && eachImage.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({
-                                isTransforming: true
-                              });
-                            }}
-                            onTransformEnd={() => this.urlObjOnTransformEnd("images")}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachImage.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachImage.x,
-                                      eachImage.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachImage.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachImage.x,
-                                      eachImage.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onClick={() => this.onObjectClick(eachImage)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachImage)}
+                            onDragMove={() => this.onObjectDragMove(eachImage)}
                             onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3422,57 +2607,10 @@ class Graphics extends Component {
                             strokeWidth={eachVideo.strokeWidth}
                             rotation={eachVideo.rotation}
                             opacity={eachVideo.opacity}
-                            onClick={() => {
-                              let that = this;
-                              if (eachVideo.link !== undefined && eachVideo.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({
-                                isTransforming: true
-                              });
-
-                            }}
-                            onTransformEnd={() => this.urlObjOnTransformEnd("videos")}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachVideo.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachVideo.x,
-                                      eachVideo.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachVideo.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachVideo.x,
-                                      eachVideo.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onClick={() => this.onObjectClick(eachVideo)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachVideo)}
+                            onDragMove={() => this.onObjectDragMove(eachVideo)}
                             onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3505,56 +2643,10 @@ class Graphics extends Component {
                             strokeWidth={eachAudio.strokeWidth}
                             rotation={eachAudio.rotation}
                             opacity={eachAudio.opacity}
-                            onClick={() => {
-
-                              let that = this;
-                              if (eachAudio.link !== undefined && eachAudio.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({
-                                isTransforming: true
-                              });
-                            }}
-                            onTransformEnd={() => this.urlObjOnTransformEnd("audios")}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachAudio.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachAudio.x,
-                                      eachAudio.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                                if (eachArrow.to !== undefined) {
-                                  if (eachAudio.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachAudio.x,
-                                      eachAudio.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onClick={() => this.onObjectClick(eachAudio)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachAudio)}
+                            onDragMove={() => this.onObjectDragMove(eachAudio)}
                             onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3585,81 +2677,11 @@ class Graphics extends Component {
                             height={eachDoc.height}
                             stroke={eachDoc.stroke}
                             strokeWidth={eachDoc.strokeWidth}
-                            onClick={() => {
-                              fetch(this.state.docsrc, {
-                                method: 'GET',
-                                headers: {
-                                  'Content-Type': 'application/pdf',
-                                },
-                              })
-                                .then((response) => response.blob())
-                                .then((blob) => {
-
-                                  // Create blob link to download
-                                  const url = window.URL.createObjectURL(
-                                    new Blob([blob]),
-                                  );
-                                  const link = document.createElement('a');
-                                  link.href = url;
-                                  link.setAttribute(
-                                    'download',
-                                    this.state.docsrc,
-                                  );
-
-                                  // Append to html link element page
-                                  document.body.appendChild(link);
-
-                                  // Start download
-                                  link.click();
-
-                                  // Clean up and remove the link
-                                  link.parentNode.removeChild(link);
-                                });
-                            }}
-                            onTransformStart={() => {
-                              this.setState({
-                                isTransforming: true
-                              });
-
-                            }}
-                            onTransform={() => {
-
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({
-                                isTransforming: false
-                              });
-                              let triangle = this.refs[eachDoc.ref];
-
-                            }}
+                            onClick={this.onDocClick}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachDoc)}
                             draggable={!this.state.layerDraggable}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachDoc.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachDoc.x,
-                                      eachDoc.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachDoc.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachDoc.x,
-                                      eachDoc.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onDragMove={() => this.onObjectDragMove(eachDoc)}
                             onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3687,116 +2709,11 @@ class Graphics extends Component {
                             stroke={eachEllipse.stroke}
                             strokeWidth={eachEllipse.strokeWidth}
                             strokeScaleEnabled={false}
-                            onClick={() => {
-                              let that = this;
-                              if (
-                                eachEllipse.link !== undefined &&
-                                eachEllipse.link !== ""
-                              ) {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({ isTransforming: true });
-                              let triangle = this.refs[eachEllipse.ref];
-                              triangle.setAttr("lastRotation", triangle.rotation());
-                            }}
-                            onTransform={() => {
-                              let triangle = this.refs[eachEllipse.ref];
-
-                              if (triangle.attrs.lastRotation !== triangle.rotation()) {
-                                this.state.arrows.map(eachArrow => {
-                                  if (
-                                    eachArrow.to &&
-                                    eachArrow.to.name() === triangle.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating ellipses with connectors might skew things up!"
-                                    });
-                                  }
-                                  if (
-                                    eachArrow.from &&
-                                    eachArrow.from.name() === triangle.name()
-                                  ) {
-                                    this.setState({
-                                      errMsg:
-                                        "Rotating ellipses with connectors might skew things up!"
-                                    });
-                                  }
-                                });
-                              }
-
-                              triangle.setAttr("lastRotation", triangle.rotation());
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({ isTransforming: false });
-                              let triangle = this.refs[eachEllipse.ref];
-                              let scaleX = triangle.scaleX(),
-                                scaleY = triangle.scaleY();
-
-                              this.setState(prevState => ({
-                                errMsg: "",
-                                triangles: prevState.triangles.map(eachEllipse =>
-                                  eachEllipse.id === triangle.attrs.id
-                                    ? {
-                                      ...eachEllipse,
-
-                                      width: triangle.width() * triangle.scaleX(),
-                                      height: triangle.height() * triangle.scaleY(),
-                                      rotation: triangle.rotation(),
-                                      x: triangle.x(),
-                                      y: triangle.y()
-                                    }
-                                    : eachEllipse
-                                )
-                              }));
-
-                              triangle.setAttr("scaleX", 1);
-                              triangle.setAttr("scaleY", 1);
-                              this.forceUpdate();
-                            }}
+                            onClick={() => this.onObjectClick(eachEllipse)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
                             draggable={!this.state.layerDraggable}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachEllipse.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachEllipse.x,
-                                      eachEllipse.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                    this.refs.graphicStage.draw();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachEllipse.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachEllipse.x,
-                                      eachEllipse.y
-                                    ];
-                                    this.forceUpdate();
-                                    this.refs.graphicStage.draw();
-                                  }
-                                }
-                              });
-                            }}
+                            onDragMove={() => this.onObjectDragMove(eachEllipse)}
                             onDragEnd={e => this.handleDragEnd(e, "triangles", eachEllipse.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3825,78 +2742,11 @@ class Graphics extends Component {
                             opacity={eachStar.opacity}
                             strokeScaleEnabled={false}
                             rotation={eachStar.rotation}
-                            onClick={() => {
-                              let that = this;
-                              if (eachStar.link !== undefined && eachStar.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
-                            onTransformStart={() => {
-                              this.setState({ isTransforming: true });
-                            }}
-                            onTransformEnd={() => {
-                              this.setState({ isTransforming: false });
-                              let star = this.refs[eachStar.ref];
-                              let scaleX = star.scaleX(),
-                                scaleY = star.scaleY();
-
-                              this.setState(prevState => ({
-                                stars: prevState.stars.map(eachStar =>
-                                  eachStar.id === star.attrs.id
-                                    ? {
-                                      ...eachStar,
-                                      innerRadius: star.innerRadius() * star.scaleX(),
-                                      outerRadius: star.outerRadius() * star.scaleX(),
-                                      rotation: star.rotation(),
-                                      x: star.x(),
-                                      y: star.y()
-                                    }
-                                    : eachStar
-                                )
-                              }));
-                              star.setAttr("scaleX", 1);
-                              star.setAttr("scaleY", 1);
-                              this.forceUpdate();
-                            }}
+                            onClick={() => this.onObjectClick(eachStar)}
+                            onTransformStart={this.onObjectTransformStart}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachStar)}
                             draggable={!this.state.layerDraggable}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachStar.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachStar.x,
-                                      eachStar.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachStar.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachStar.x,
-                                      eachStar.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onDragMove={() => this.onObjectDragMove(eachStar)}
                             onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
                             onContextMenu={this.onObjectContextMenu}
                           />
@@ -3930,52 +2780,10 @@ class Graphics extends Component {
                             text={eachText.text}
                             draggable={!this.state.layerDraggable}
                             onTransform={this.handleTextTransform}
-                            onTransformEnd={this.onTransformEndText}
-                            onDragMove={() => {
-                              this.state.arrows.map(eachArrow => {
-                                if (eachArrow.from !== undefined) {
-                                  if (eachText.name === eachArrow.from.attrs.name) {
-                                    eachArrow.points = [
-                                      eachText.x,
-                                      eachText.y,
-                                      eachArrow.points[2],
-                                      eachArrow.points[3]
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-
-                                if (eachArrow.to !== undefined) {
-                                  if (eachText.name === eachArrow.to.attrs.name) {
-                                    eachArrow.points = [
-                                      eachArrow.points[0],
-                                      eachArrow.points[1],
-                                      eachText.x,
-                                      eachText.y
-                                    ];
-                                    this.forceUpdate();
-                                  }
-                                }
-                              });
-                            }}
+                            onTransformEnd={() => this.onObjectTransformEnd(eachText)}
+                            onDragMove={() => this.onObjectDragMove(eachText)}
                             onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
-                            onClick={() => {
-                              let that = this;
-                              if (eachText.link !== undefined && eachText.link !== "") {
-                                this.setState(
-                                  {
-                                    errMsg: "Links will not be opened in create mode"
-                                  },
-                                  () => {
-                                    setTimeout(function () {
-                                      that.setState({
-                                        errMsg: ""
-                                      });
-                                    }, 1000);
-                                  }
-                                );
-                              }
-                            }}
+                            onClick={() => this.onObjectClick(eachText)}
                             onDblClick={() => this.handleTextDblClick(
                               this.refs.graphicStage,
                               this.refs[eachText.ref],
@@ -4011,43 +2819,7 @@ class Graphics extends Component {
                             stroke={eachArrow.stroke}
                             fill={eachArrow.fill}
                             draggable={!this.state.layerDraggable}
-                            onDragEnd={event => {
-                              //set new points to current position
-
-                              //usually: state => star => x & y
-                              //now: state => arrow => attr => x & y
-
-                              let oldPoints = [
-                                eachArrow.points[0],
-                                eachArrow.points[1],
-                                eachArrow.points[2],
-                                eachArrow.points[3]
-                              ];
-
-                              let shiftX = this.refs[eachArrow.ref].attrs.x;
-                              let shiftY = this.refs[eachArrow.ref].attrs.y;
-
-                              let newPoints = [
-                                oldPoints[0] + shiftX,
-                                oldPoints[1] + shiftY,
-                                oldPoints[2] + shiftX,
-                                oldPoints[3] + shiftY
-                              ];
-
-                              this.refs[eachArrow.ref].position({ x: 0, y: 0 });
-                              this.refs.groupAreaLayer.draw();
-
-                              this.setState(prevState => ({
-                                arrows: prevState.arrows.map(eachArr =>
-                                  eachArr.name === eachArrow.name
-                                    ? {
-                                      ...eachArr,
-                                      points: newPoints
-                                    }
-                                    : eachArr
-                                )
-                              }));
-                            }}
+                            onDragEnd={() => this.onDragEndArrow(eachArrow)}
                           />
                         );
                       } else if (
