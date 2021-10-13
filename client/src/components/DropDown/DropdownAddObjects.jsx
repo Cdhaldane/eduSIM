@@ -545,7 +545,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
             onClick={() => setActiveMenu("pieces")}>
-            Add Games
+            Add Interactive
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -562,6 +562,13 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("main")}>
             <h2>Add Shapes</h2>
           </DropdownItem>
+          
+          <DropdownItem
+            onClick={addText}
+            leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
+            Text
+          </DropdownItem>
+
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
           <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
@@ -607,11 +614,6 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fas fa-file"></i>}
             onClick={() => setActiveMenu("docs")}>
             Document
-          </DropdownItem>
-          <DropdownItem
-            onClick={addText}
-            leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
-            Text
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -813,7 +815,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>Add Games</h2>
+            <h2>Add Interactive</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addTic}

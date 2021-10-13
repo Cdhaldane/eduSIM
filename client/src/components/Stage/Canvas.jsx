@@ -48,27 +48,32 @@ class Graphics extends Component {
     "videos",
     "audios",
     "documents",
-    "lines",
-    "tics",
-    "connect4"
+    "lines"
   ];
-  // The complete save state
-  savedState = [
-    ...this.savedObjects,
-    "savedGroups",
-
+  deletionCounts = [
     // Delete Counts (stored to keep object label #s in sync)
+    // Must be in the same order as savedObjects
     "rectDeleteCount",
     "ellipseDeleteCount",
     "starDeleteCount",
+    "textDeleteCount",
+    "arrowDeleteCount",
     "triangleDeleteCount",
     "imageDeleteCount",
     "videoDeleteCount",
     "audioDeleteCount",
     "documentDeleteCount",
-    "textDeleteCount",
     "linesDeleteCount",
-    "arrowDeleteCount",
+  ];
+  savedState = [
+    // The complete save state
+    ...this.savedObjects,
+    ...this.deletionCounts,
+
+    "tics",
+    "connect4",
+
+    "savedGroups",
 
     // Pages
     "pages",
@@ -416,35 +421,13 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    let prevMainShapes = [
-      prevState.rectangles,
-      prevState.ellipses,
-      prevState.stars,
-      prevState.arrows,
-      prevState.connectors,
-      prevState.texts,
-      prevState.triangles,
-      prevState.images,
-      prevState.videos,
-      prevState.audios,
-      prevState.lines,
-      prevState.documents
-    ];
-
-    let currentMainShapes = [
-      this.state.rectangles,
-      this.state.ellipses,
-      this.state.stars,
-      this.state.arrows,
-      this.state.connectors,
-      this.state.texts,
-      this.state.triangles,
-      this.state.images,
-      this.state.videos,
-      this.state.audios,
-      this.state.lines,
-      this.state.documents
-    ];
+    const prevMainShapes = [];
+    const currentMainShapes = [];
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const type = this.savedObjects[i];
+      prevMainShapes.push(prevState[type]);
+      currentMainShapes.push(this.state[type]);
+    }
 
     if (!this.state.redoing && !this.state.isTransforming) {
       if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
@@ -455,12 +438,11 @@ class Graphics extends Component {
             history = uh.slice(0, historyStep + 1);
             let toAppend = this.state;
             history = history.concat(toAppend);
-            historyStep += 1;
+            historyStep++;
           }
         }
       }
     }
-    this.state.redoing = false;
   }
 
   handlePageTitle = (newPageTitles) => {
@@ -873,7 +855,7 @@ class Graphics extends Component {
   }
 
   handleObjectSelection = () => {
-    const type = this.state.selectedShapeName.replace(/\d+$/, "");
+    const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
@@ -974,20 +956,14 @@ class Graphics extends Component {
   }
 
   handleWheel = (e, personalArea) => {
-    if (
-      this.state.rectangles.length === 0 &&
-      this.state.ellipses.length === 0 &&
-      this.state.stars.length === 0 &&
-      this.state.texts.length === 0 &&
-      this.state.triangles.length === 0 &&
-      this.state.arrows.length === 0 &&
-      this.state.images.length === 0 &&
-      this.state.videos.length === 0 &&
-      this.state.audios.length === 0 &&
-      this.state.documents.length === 0 &&
-      this.state.lines.length === 0
-    ) {
-    } else {
+    let objectsExist = false;
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      if (this.state[this.savedObjects[i]].length > 0) {
+        objectsExist = true;
+        break;
+      }
+    }
+    if (objectsExist) {
       e.evt.preventDefault();
 
       const scaleBy = 1.2;
@@ -1018,39 +994,25 @@ class Graphics extends Component {
   }
 
   handleUndo = () => {
-    this.handleSave()
+    this.handleSave();
     if (!this.state.isTransforming) {
       if (!this.state.textEditVisible) {
         if (historyStep === 0) {
           return;
         }
-        historyStep -= 1;
-        this.setState(
-          {
-            rectangles: history[historyStep].rectangles,
-            arrows: history[historyStep].arrows,
-            ellipses: history[historyStep].ellipses,
-            triangles: history[historyStep].triangles,
-            images: history[historyStep].images,
-            lines: history[historyStep].lines,
-            videos: history[historyStep].videos,
-            audios: history[historyStep].audios,
-            stars: history[historyStep].stars,
-            texts: history[historyStep].texts,
-            documents: history[historyStep].documents,
-            connectors: history[historyStep].connectors,
-            redoing: true,
-            selectedShapeName: this.shapeIsGone(history[historyStep])
-              ? ""
-              : this.state.selectedShapeName
-          },
-          () => {
-            this.refs.graphicStage.draw();
-          }
-        );
+        historyStep--;
+        for (let i = 0; i < this.savedObjects.length; i++) {
+          this.setState({
+            [this.savedObjects[i]]: history[historyStep][this.savedObjects[i]]
+          }, () => this.refs.graphicStage.draw());
+        }
       }
       this.setState({
-        selectedContextMenu: null
+        selectedContextMenu: null,
+        redoing: true,
+        selectedShapeName: this.shapeIsGone(history[historyStep])
+          ? ""
+          : this.state.selectedShapeName
       });
     }
   };
@@ -1059,104 +1021,39 @@ class Graphics extends Component {
     if (historyStep === history.length - 1) {
       return;
     }
-    historyStep += 1;
+
+    historyStep++;
     const next = history[historyStep];
-    this.setState(
-      {
-        rectangles: next.rectangles,
-        arrows: next.arrows,
-        ellipses: next.ellipses,
-        triangles: next.triangles,
-        images: next.images,
-        videos: next.videos,
-        audios: next.audios,
-        documents: next.documents,
-        lines: next.lines,
-        stars: next.stars,
-        texts: next.texts,
-        redoing: true,
-        selectedShapeName: this.shapeIsGone(history[historyStep])
-          ? ""
-          : this.state.selectedShapeName
-      },
-      () => {
-        this.forceUpdate();
-      }
-    );
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      this.setState({
+        [this.savedObjects[i]]: next[this.savedObjects[i]]
+      }, this.forceUpdate);
+    }
+
     this.setState({
+      redoing: true,
+      selectedShapeName: this.shapeIsGone(history[historyStep])
+        ? ""
+        : this.state.selectedShapeName,
       selectedContextMenu: null
-    })
-  };
+    });
+  }
+
+  getObjType = (name) => {
+    return name.replace(/\d+$/, "");
+  }
 
   handleCopy = () => {
     if (this.state.selectedShapeName !== "") {
-      // Find it
-      let name = this.state.selectedShapeName;
-      let copiedElement = null;
-      if (name.includes("rect")) {
-        copiedElement = this.state.rectangles.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("ellipse")) {
-        copiedElement = this.state.ellipses.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("triangle")) {
-        copiedElement = this.state.triangles.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("image")) {
-        copiedElement = this.state.images.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("video")) {
-        copiedElement = this.state.videos.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("audio")) {
-        copiedElement = this.state.audios.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("document")) {
-        copiedElement = this.state.documents.filter(function (
-          eachRect
-        ) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("star")) {
-        copiedElement = this.state.stars.filter(function (eachRect) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("text")) {
-        copiedElement = this.state.texts.filter(function (eachRect) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("arrow")) {
-        copiedElement = this.state.arrows.filter(function (eachRect) {
-          return eachRect.name === name;
-        });
-      } else if (name.includes("line")) {
-        copiedElement = this.state.lines.filter(function (eachRect) {
-          return eachRect.name === name;
-        });
-      }
-
-      this.setState({ copiedElement: copiedElement });
+      const name = this.state.selectedShapeName;
+      const type = this.getObjType(name);
+      const copiedElement = this.state[type].filter((obj) => {
+        return obj.name === name;
+      });
       this.setState({
+        copiedElement: copiedElement,
         selectedContextMenu: null
-      })
+      });
     }
   }
 
@@ -1190,44 +1087,10 @@ class Graphics extends Component {
       if (copiedElement.attrs) {
         // Don't paste when element has attributes
       } else {
-        const type = copiedElement.name.replace(/\d+$/, "");
-        switch (type) {
-          case ("rectangles"):
-            this.pasteObject(type, copiedElement, this.state.rectDeleteCount);
-            break;
-          case ("arrows"):
-            this.pasteObject(type, copiedElement, this.state.arrowDeleteCount);
-            break;
-          case ("ellipses"):
-            this.pasteObject(type, copiedElement, this.state.ellipseDeleteCount);
-            break;
-          case ("images"):
-            this.pasteObject(type, copiedElement, this.state.imageDeleteCount);
-            break;
-          case ("videos"):
-            this.pasteObject(type, copiedElement, this.state.videoDeleteCount);
-            break;
-          case ("audios"):
-            this.pasteObject(type, copiedElement, this.state.audioDeleteCount);
-            break;
-          case ("triangles"):
-            this.pasteObject(type, copiedElement, this.state.triangleDeleteCount);
-            break;
-          case ("documents"):
-            this.pasteObject(type, copiedElement, this.state.documentDeleteCount);
-            break;
-          case ("lines"):
-            this.pasteObject(type, copiedElement, this.state.lineDeleteCount);
-            break;
-          case ("stars"):
-            this.pasteObject(type, copiedElement, this.state.starDeleteCount);
-            break;
-          case ("texts"):
-            this.pasteObject(type, copiedElement, this.state.textDeleteCount);
-            break;
-        }
+        const type = this.getObjType(copiedElement.name);
+        const typeIndex = this.savedObjects.indexOf(type);
+        this.pasteObject(type, copiedElement, this.state[this.deletionCounts[typeIndex]]);
       }
-
       this.setState({
         selectedContextMenu: null
       });
@@ -1235,126 +1098,27 @@ class Graphics extends Component {
   }
 
   handleDelete = () => {
-    if (this.state.selectedShapeName !== "") {
-      let that = this;
-      //delete it from the state too
-      let name = this.state.selectedShapeName;
-      let rects = this.state.rectangles.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            rectDeleteCount: that.state.rectDeleteCount + 1
+    const name = this.state.selectedShapeName;
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const objects = this.state[this.savedObjects[i]].filter((obj) => {
+        if (obj.id === name) {
+          this.setState({
+            [this.deletionCounts[i]]: this.state[this.deletionCounts[i]] + 1
           });
         }
-        return eachRect.id !== name;
-      });
-
-      let ellipses = this.state.ellipses.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            ellipseDeleteCount: that.state.ellipseDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let triangles = this.state.triangles.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            triangleDeleteCount: that.state.triangleDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let images = this.state.images.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            imageDeleteCount: that.state.imageDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let lines = this.state.lines.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            linesDeleteCount: that.state.imageDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let videos = this.state.videos.filter((eachRect) => {
-        if (eachRect.id === name) {
-          that.setState({
-            videoDeleteCount: that.state.videoDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let audios = this.state.audios.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            audioDeleteCount: that.state.audioDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let documents = this.state.documents.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            documentDeletedCount: that.state.documentDeletedCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let stars = this.state.stars.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            starDeleteCount: that.state.starDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let arrows = this.state.arrows.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            arrowDeleteCount: that.state.arrowDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
-      });
-
-      let texts = this.state.texts.filter(function (eachRect) {
-        if (eachRect.id === name) {
-          that.setState({
-            textDeleteCount: that.state.textDeleteCount + 1
-          });
-        }
-        return eachRect.id !== name;
+        return obj.id !== name;
       });
 
       this.setState({
-        rectangles: rects,
-        ellipses: ellipses,
-        triangles: triangles,
-        images: images,
-        videos: videos,
-        audios: audios,
-        documents: documents,
-        stars: stars,
-        arrows: arrows,
-        texts: texts,
-        lines: lines,
-        selectedShapeName: "",
-        groupSelection: [],
-        selectedContextMenu: null
-      }, this.handleObjectSelection);
+        [this.savedObjects[i]]: objects
+      });
     }
+
+    this.setState({
+      selectedShapeName: "",
+      groupSelection: [],
+      selectedContextMenu: null
+    }, this.handleObjectSelection);
   }
 
   handleCut = () => {
@@ -1386,81 +1150,18 @@ class Graphics extends Component {
   }
 
   shapeIsGone = returnTo => {
-    let toReturn = true;
-    let currentShapeName = this.state.selectedShapeName;
-    let [rectangles, ellipses, stars, arrows, texts, triangles, images, videos, audios, documents, lines] = [
-      returnTo.rectangles,
-      returnTo.ellipses,
-      returnTo.stars,
-      returnTo.arrows,
-      returnTo.triangles,
-      returnTo.images,
-      returnTo.lines,
-      returnTo.videos,
-      returnTo.audios,
-      returnTo.documents,
-
-      returnTo.texts
-    ];
-    rectangles.map(eachRect => {
-      if (eachRect.id === currentShapeName) {
-        toReturn = false;
-      }
+    if (this.state.selectedShapeName) {
+      let exists = false;
+      const type = this.getObjType(this.state.selectedShapeName);
+      returnTo[type].map((obj) => {
+        if (obj.id === this.state.selectedShapeName) {
+          exists = true;
+        }
+      });
+      return !exists;
+    } else {
+      return true;
     }
-    );
-    ellipses.map(eachEllipse => {
-      if (eachEllipse.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    triangles.map(eachTriangle => {
-      if (eachTriangle.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    images.map(eachImage => {
-      if (eachImage.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    lines.map(eachLine => {
-      if (eachLine.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    videos.map(eachVideo => {
-      if (eachVideo.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    audios.map(eachAudio => {
-      if (eachAudio.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    documents.map(eachDocument => {
-      if (eachDocument.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    stars.map(eachStar => {
-      if (eachStar.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-    arrows.map(eachArrow => {
-      if (eachArrow.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-
-    texts.map(eachText => {
-      if (eachText.id === currentShapeName) {
-        toReturn = false;
-      }
-    });
-
-    return toReturn;
   };
 
   IsJsonString = str => {
@@ -1524,59 +1225,37 @@ class Graphics extends Component {
     }));
   }
 
-  handleColorF = (e) => {
+  // Fill Color
+  handleFillColor = (e) => {
+    const type = this.getObjType(this.state.selectedShapeName);
     this.setState(prevState => ({
-      rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
+      [type]: prevState[type].map(obj =>
+        obj.id === this.state.selectedShapeName
           ? {
-            ...eachRect,
+            ...obj,
             fill: e.hex
           }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      triangles: prevState.triangles.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            fill: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.id === this.state.selectedShapeName
-          ? {
-            ...eachCirc,
-            fill: e.hex
-          }
-          : eachCirc
-      )
-    }));
-    this.setState(prevState => ({
-      stars: prevState.stars.map(eachStar =>
-        eachStar.id === this.state.selectedShapeName
-          ? {
-            ...eachStar,
-            fill: e.hex
-          }
-          : eachStar
-      )
-    }));
-    this.setState(prevState => ({
-      texts: prevState.texts.map(eachStar =>
-        eachStar.id === this.state.selectedShapeName
-          ? {
-            ...eachStar,
-            fill: e.hex
-          }
-          : eachStar
+          : obj
       )
     }));
   }
 
+  // Stroke Color
+  handleStrokeColor = (e) => {
+    const type = this.getObjType(this.state.selectedShapeName);
+    this.setState(prevState => ({
+      [type]: prevState[type].map(obj =>
+        obj.id === this.state.selectedShapeName
+          ? {
+            ...obj,
+            stroke: e.hex
+          }
+          : obj
+      )
+    }));
+  }
+
+  // Font Family
   handleFont = (font) => {
     this.setState({
       texts: this.state.texts.map((t) => {
@@ -1597,6 +1276,7 @@ class Graphics extends Component {
     });
   }
 
+  // Font Size
   handleSize = (e) => {
     if (Number.isNaN(parseInt(e)) || parseInt(e) === 0) {
       e = 50;
@@ -1615,79 +1295,7 @@ class Graphics extends Component {
     }));
   }
 
-  handleColorS = (e) => {
-    this.setState(prevState => ({
-      rectangles: prevState.rectangles.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            stroke: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      images: prevState.images.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            stroke: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      videos: prevState.videos.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            stroke: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      audios: prevState.audios.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            stroke: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      triangles: prevState.triangles.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            stroke: e.hex
-          }
-          : eachRect
-      )
-    }));
-    this.setState(prevState => ({
-      ellipses: prevState.ellipses.map(eachCirc =>
-        eachCirc.id === this.state.selectedShapeName
-          ? {
-            ...eachCirc,
-            stroke: e.hex
-          }
-          : eachCirc
-      )
-    }));
-    this.setState(prevState => ({
-      stars: prevState.stars.map(eachStar =>
-        eachStar.id === this.state.selectedShapeName
-          ? {
-            ...eachStar,
-            stroke: e.hex
-          }
-          : eachStar
-      )
-    }));
-  }
-
+  // Stroke Width
   handleWidth = (e) => {
     for (let i = 0; i < this.savedObjects.length; i++) {
       const objType = this.savedObjects[i];
@@ -1709,6 +1317,7 @@ class Graphics extends Component {
     }
   }
 
+  // Object Opacity
   handleOpacity = (e) => {
     for (let i = 0; i < this.savedObjects.length; i++) {
       const objType = this.savedObjects[i];
@@ -3530,8 +3139,8 @@ class Graphics extends Component {
                           handleGrouping={this.handleGrouping}
                           selectedshape={this.state.selectedShapeName}
                           onOptionSelected={this.handleOptionSelected}
-                          choosecolors={this.handleColorS}
-                          choosecolorf={this.handleColorF}
+                          choosecolors={this.handleStrokeColor}
+                          choosecolorf={this.handleFillColor}
                           handleWidth={this.handleWidth}
                           handleOpacity={this.handleOpacity}
                           shape={this.refs[this.state.selectedShapeName]}
