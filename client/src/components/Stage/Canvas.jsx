@@ -421,6 +421,11 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
+    if (prevState.savedGroups !== this.state.savedGroups) {
+      //console.log("NEW GROUPS:");
+      //console.log(this.state.savedGroups);
+    }
+
     const prevMainShapes = [];
     const currentMainShapes = [];
     for (let i = 0; i < this.savedObjects.length; i++) {
@@ -1072,7 +1077,6 @@ class Graphics extends Component {
   handleCopy = () => {
     const toCopy = this.state.selectedShapeName ? [this.refs[this.state.selectedShapeName]] : this.state.groupSelection;
     if (toCopy) {
-      console.log(toCopy);
       this.setState({
         copied: toCopy,
         selectedContextMenu: null
@@ -1080,20 +1084,16 @@ class Graphics extends Component {
     }
   }
 
-  pasteObject = (type, copied, deleteCount) => {
-    const num = this.state[type].length + deleteCount + 1;
-    const newObject = {
-      ...copied,
-      id: type + num,
-      ref: type + num,
-      name: type + num,
-      x: this.state.selection.x1,
-      y: this.state.selection.y1
-    };
-    this.setState({
-      [type]: [...this.state[type], newObject],
-      selectedShapeName: newObject.name
+  getStateObjectById = (id) => {
+    const type = this.getObjType(id);
+    const item = this.state[type].filter((obj) => {
+      return obj.id === id;
     });
+    if (item.length) {
+      return item[0];
+    } else {
+      return null;
+    }
   }
 
   handlePaste = () => {
@@ -1106,35 +1106,102 @@ class Graphics extends Component {
       return;
     }
 
-    const name = this.state.selectedShapeName;
-    const type = this.getObjType(name);
-    const copiedElement = this.state[type].filter((obj) => {
-      return obj.name === name;
-    });
-
+    // Convert the copied items from konva objects to state objects
+    const stateItems = [];
     for (let i = 0; i < this.state.copied.length; i++) {
       const copiedItem = this.state.copied[i];
-      // Create new group if copied item is a group
+
       if (Array.isArray(copiedItem)) {
+        // Enter into group if item is a group
+        const stateGroup = []
         for (let j = 0; j < copiedItem.length; j++) {
-          const groupItem = copiedItem[j];
-          if (!groupItem.attrs) {
-            const type = this.getObjType(groupItem.name);
-            const typeIndex = this.savedObjects.indexOf(type);
-            this.pasteObject(type, groupItem, this.state[this.deletionCounts[typeIndex]]);
-          }
+          const stateObj = this.getStateObjectById(copiedItem[j].attrs.id);
+          stateGroup.push(stateObj);
         }
+        stateItems.push(stateGroup);
       } else {
-        console.log(copiedItem);
-        if (!copiedItem.attrs) {
-          const type = this.getObjType(copiedItem.name);
-          const typeIndex = this.savedObjects.indexOf(type);
-          this.pasteObject(type, copiedItem, this.state[this.deletionCounts[typeIndex]]);
-        }
+        // Single item
+        const stateObj = this.getStateObjectById(copiedItem.attrs.id);
+        stateItems.push(stateObj);
       }
     }
+
+    // Get group item ids
+    const groupCopiedIds = [];
+    for (let i = 0; i < stateItems.length; i++) {
+      if (Array.isArray(stateItems[i])) {
+        const group = stateItems[i].map((item) => {
+          return item.id
+        });
+        groupCopiedIds.push(group);
+      }
+    }
+
+    // Get the top left copied shape's x & y coords
+    let originX = null;
+    let originY = null;
+    const itemsFlat = stateItems.flat();
+    for (let i = 0; i < itemsFlat.length; i++) {
+      if (originX === null || itemsFlat[i].x < originX) {
+        originX = itemsFlat[i].x;
+      }
+      if (originY === null || itemsFlat[i].y < originY) {
+        originY = itemsFlat[i].y;
+      }
+    }
+
+    // Paste by type
+    let types = [];
+    for (let i = 0; i < itemsFlat.length; i++) {
+      types.push(this.getObjType(itemsFlat[i].id));
+    }
+    types = [...new Set(types)];
+
+    for (let i = 0; i < types.length; i++) {
+      let objects = [...this.state[types[i]]];
+      const typeIndex = this.savedObjects.indexOf(types[i]);
+      const delCount = this.state[this.deletionCounts[typeIndex]];
+      for (let j = 0; j < itemsFlat.length; j++) {
+        if (this.getObjType(itemsFlat[j].id) === types[i]) {
+          const num = objects.length + delCount + 1;
+          const newX = this.state.selection.x1 + (itemsFlat[j].x - originX);
+          const newY = this.state.selection.y1 + (itemsFlat[j].y - originY);
+          const newId = types[i] + num;
+          const newObject = {
+            ...itemsFlat[j],
+            id: newId,
+            ref: newId,
+            name: newId,
+            x: newX,
+            y: newY
+          }
+          objects.push(newObject);
+
+          // Check if in group and replace with new id if so
+          for (let x = 0; x < groupCopiedIds.length; x++) {
+            for (let y = 0; y < groupCopiedIds[x].length; y++) {
+              if (groupCopiedIds[x][y] === itemsFlat[j].id) {
+                groupCopiedIds[x][y] = newId;
+              }
+            }
+          }
+        }
+      }
+      this.setState({
+        [types[i]]: objects
+      });
+    }
+
     this.setState({
       selectedContextMenu: null
+    }, () => {
+      // All pasting has been completed, time to create groups
+      for (let i = 0; i < groupCopiedIds.length; i++) {
+        const group = groupCopiedIds[i].map((id) => {
+          return this.refs[id];
+        });
+        this.handleGrouping(group);
+      }
     });
   }
 
@@ -1403,10 +1470,11 @@ class Graphics extends Component {
     }
   }
 
-  handleGrouping = () => {
-    if (this.state.groupSelection.length > 1) {
+  handleGrouping = (inGroup) => {
+    const groupSelection = inGroup ? inGroup : this.state.groupSelection;
+    if (groupSelection.length > 1) {
       // Remove any existing groups which are part of the new group
-      const newGroup = [...this.state.groupSelection.flat()];
+      const newGroup = [...groupSelection.flat()];
       let newSavedGroups = [...this.state.savedGroups];
       let newGroupSameIndices = [];
       for (let i = 0; i < newGroup.length; i++) {
@@ -1417,14 +1485,14 @@ class Graphics extends Component {
       let savedGroupSameIndices = [];
       for (let i = 0; i < newSavedGroups.length; i++) {
         for (let j = 0; j < newGroupSameIndices.length; j++) {
-          if (newSavedGroups[i].includes(newGroup[j])) {
+          if (newSavedGroups[i].includes(newGroup[newGroupSameIndices[j]])) {
             savedGroupSameIndices.push(i);
           }
         }
       }
       savedGroupSameIndices = [...new Set(savedGroupSameIndices)];
       for (let i = 0; i < savedGroupSameIndices.length; i++) {
-        newSavedGroups[i] = null;
+        newSavedGroups[savedGroupSameIndices[i]] = null;
       }
       newSavedGroups = newSavedGroups.filter(g => g !== null);
       newSavedGroups.push(newGroup);
