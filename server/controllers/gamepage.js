@@ -1,4 +1,5 @@
 const GameInstance = require("../models/GameInstances");
+const db = require('../databaseConnection');
 
 // Get all the game instances that a specific admin has created
 // Request has an admin id
@@ -11,6 +12,11 @@ exports.getGameInstances = async (req, res) => {
         createdby_adminid: id,
       },
     });
+    // const collabed = await db.query(`
+    //   select g from gameinstances g, collaborators c where 
+    //   c.adminid='${id}' and 
+    //   g.gameinstanceid=c.gameinstanceid
+    // `);
     let Array = [];
     for (i = 0; i < gameinstance.length; i++) {
       if (gameinstance[i].status === 'created' || gameinstance[i].status === 'started' || gameinstance[i].status === 'ended') {
