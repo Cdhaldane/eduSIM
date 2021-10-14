@@ -421,11 +421,6 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevState.savedGroups !== this.state.savedGroups) {
-      //console.log("NEW GROUPS:");
-      //console.log(this.state.savedGroups);
-    }
-
     const prevMainShapes = [];
     const currentMainShapes = [];
     for (let i = 0; i < this.savedObjects.length; i++) {
