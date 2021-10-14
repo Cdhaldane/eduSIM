@@ -2,6 +2,8 @@ import {
   getPlayer, 
   setPlayer, 
   getPlayerByDBID,
+  getRoomStatus,
+  updateRoomStatus,
   addInteraction
 } from './utils';
 import moment from "moment";
@@ -63,15 +65,34 @@ export default async (server, client, event, args) => {
       break;
     };
     case "interaction": {
-      const { level, type, parameters } = args;
+      const { gamepieceId, parameters } = args;
       
-      await addInteraction(room, {
-        timestamp: moment().valueOf(),
-        level,
-        type,
-        parameters,
-        player: client.id
+      const { running, timeElapsed, gamepieces } = await getRoomStatus(room);
+
+      if (!running) {
+        client.emit("errorLog", "Game is paused/stopped!");
+        return;
+      }
+
+      const newStatus = await updateRoomStatus(room, {
+        gamepieces: {
+          ...gamepieces,
+          [gamepieceId]: parameters
+        }
       });
+
+      server.to(room).emit("roomStatusUpdate", {
+        room,
+        status: newStatus
+      });
+
+      // await addInteraction(room, {
+      //   timestamp: moment().valueOf(),
+      //   level,
+      //   gamepieceId,
+      //   parameters,
+      //   player: client.id
+      // });
 
       break;
     };
