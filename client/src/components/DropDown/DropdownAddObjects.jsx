@@ -124,28 +124,28 @@ const DropdownAddObjects = (props) => {
     try {
       if (type === "image") {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
-          setImageUploaded(true);
-          props.handleImage(name);
-        });
+          .then((res) => {
+            const allData = res.data.public_id;
+            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+            setImageUploaded(true);
+            props.handleImage(name);
+          });
       } else if (type === "video") {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
-          setVideoUploaded(true);
-          props.handleVideo(name);
-        });
+          .then((res) => {
+            const allData = res.data.public_id;
+            const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
+            setVideoUploaded(true);
+            props.handleVideo(name);
+          });
       } else if (type === "audio") {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp3";
-          setAudioUploaded(true);
-          props.handleAudio(name);
-        });
+          .then((res) => {
+            const allData = res.data.public_id;
+            const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp3";
+            setAudioUploaded(true);
+            props.handleAudio(name);
+          });
       }
     } catch (error) {
       if (type === "image") {
@@ -427,6 +427,11 @@ const DropdownAddObjects = (props) => {
     props.close();
   }
 
+  const addPoll = () => {
+    props.addPoll();
+    props.close();
+  }
+
   function stopDrawing() {
     setChecked(!checked);
     props.stopDrawing();
@@ -562,7 +567,7 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("main")}>
             <h2>Add Shapes</h2>
           </DropdownItem>
-          
+
           <DropdownItem
             onClick={addText}
             leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
@@ -827,6 +832,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-circle"
               onClick={addConnect}></i>}>
             Connect-Four</DropdownItem>
+          <DropdownItem
+            onClick={addPoll}
+            leftIcon={<i className="icons fa fa-poll"
+              onClick={addPoll}></i>}>
+            Poll</DropdownItem>
         </div>
       </CSSTransition>
     </div>

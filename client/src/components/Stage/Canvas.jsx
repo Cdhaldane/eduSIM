@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import Info from "../Information/InformationPopup";
-import URLVideo from "./URLVideos";
-import URLImage from "./URLImage";
 import fileDownload from 'js-file-download';
 import axios from 'axios';
 import Level from "../Level/Level";
@@ -12,8 +10,12 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal"
 import TransformerComponent from "./TransformerComponent";
 
+import URLVideo from "./URLVideos";
+import URLImage from "./URLImage";
+
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
+import Poll from "./GamePieces/Poll/Poll";
 
 import "./Stage.css";
 
@@ -107,14 +109,16 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
+      // Interactive
+      tics: [],
+      connect4: [],
+      polls: [],
+
       // An array of arrays containing grouped items
       savedGroups: [],
 
-      // Game Pieces?
       connectors: [],
       gameroles: [],
-      tics: [],
-      connect4: [],
 
       // Object Deletion Count
       rectDeleteCount: 0,
@@ -458,7 +462,7 @@ class Graphics extends Component {
       numberOfPages: e
     })
   }
-  
+
   // essentially just for testing
   getInteractiveProps = (id) => ({
     updateStatus: (parameters) => {
@@ -1366,6 +1370,25 @@ class Graphics extends Component {
     }));
   }
 
+  addPoll = () => {
+    const pollNum = this.state.polls.length + 1;
+    const name = "polls" + pollNum;
+    const newPoll = {
+      level: this.state.level,
+      visible: true,
+      opacity: 1,
+      x: 800,
+      y: 400,
+      id: name,
+      name: name,
+      ref: name,
+    };
+
+    this.setState({
+      polls: [...this.state.polls, newPoll]
+    });
+  }
+
   // Fill Color
   handleFillColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
@@ -1923,11 +1946,24 @@ class Graphics extends Component {
             return null
           }
         })}
-        {this.state.connect4.map(({level, id}) => {
+        {this.state.connect4.map(({ level, id }) => {
           if (level === this.state.level) {
             return (
-              <Connect4 
+              <Connect4
                 {...this.getInteractiveProps(id)}
+              />
+            )
+          } else {
+            return null
+          }
+        })}
+        {this.state.polls.map((poll, index) => {
+          if (poll.level === this.state.level) {
+            return (
+              <Poll
+                ref={poll.ref}
+                key={index}
+                {...this.getInteractiveProps(poll.id)}
               />
             )
           } else {
@@ -1957,6 +1993,7 @@ class Graphics extends Component {
                 }}
                 addTic={this.addTic}
                 addConnect={this.addConnect4}
+                addPoll={this.addPoll}
                 drawLine={this.drawLine}
                 eraseLine={this.eraseLine}
                 stopDrawing={this.stopDrawing}
@@ -1983,6 +2020,7 @@ class Graphics extends Component {
                 }}
                 addTic={this.addTic}
                 addConnect={this.addConnect4}
+                addPoll={this.addPoll}
                 drawLine={this.drawLine}
                 eraseLine={this.eraseLine}
                 stopDrawing={this.stopDrawing}
