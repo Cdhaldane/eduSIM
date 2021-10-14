@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./SimNote.css";
 import axios from "axios";
 import { Image } from "cloudinary-react";
+import Modal from "react-modal";
+import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
 
 function SimNote(props) {
+  const [modalOpen, setModalOpen] = useState(false);
 
   function handleClick() {
     if (window.confirm("Are you sure you wish to delete this simulation?")) {
@@ -68,7 +71,22 @@ function SimNote(props) {
             onClick={() => localStorage.setItem("gameid", props.gameid)}
           ></i>
         </Link>
+        {props.superadmin && (
+          <i class="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
+        )}
       </div>
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        className="createmodalarea"
+        overlayClassName="myoverlay"
+        closeTimeoutMS={500}
+        ariaHideApp={false}
+      >
+        <InviteCollaboratorsModal 
+          close={() => setModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }
