@@ -616,17 +616,43 @@ class Graphics extends Component {
               selectedShapeName: "",
               groupSelection: []
             }, this.handleObjectSelection);
-          } else if (elements.length === 1) {
-            this.setState({
-              selectedShapeName: elements[0].id(),
-              groupSelection: []
-            }, this.handleObjectSelection);
-          } else if (elements.length > 1) {
-            if (!this.state.selection.isDraggingShape) {
+          } else {
+            // Get any selected groups
+            let elemIds = [];
+            for (let i = 0; i < elements.length; i++) {
+              elemIds.push(elements[i].attrs.id);
+            }
+            const selectedGroups = [];
+            for (let i = 0; i < this.state.savedGroups.length; i++) {
+              const group = this.state.savedGroups[i];
+              for (let j = 0; j < group.length; j++) {
+                if (elemIds.includes(group[j].attrs.id)) {
+                  selectedGroups.push(group);
+                  break;
+                }
+              }
+            }
+            for (let i = 0; i < selectedGroups.length; i++) {
+              const group = selectedGroups[i];
+              for (let j = 0; j < group.length; j++) {
+                elemIds = elemIds.filter(e => group[j].attrs.id !== e);
+              }
+            }
+            elemIds = elemIds.map(e => this.refs[e]);
+
+            if (selectedGroups.length === 0 && elemIds.length === 1) {
               this.setState({
-                selectedShapeName: "",
-                groupSelection: elements
+                selectedShapeName: elements[0].id(),
+                groupSelection: []
               }, this.handleObjectSelection);
+            } else {
+              const selection = [...selectedGroups, ...elemIds];
+              if (!this.state.selection.isDraggingShape) {
+                this.setState({
+                  selectedShapeName: "",
+                  groupSelection: selection
+                }, this.handleObjectSelection);
+              }
             }
           }
         } else {
@@ -1044,23 +1070,20 @@ class Graphics extends Component {
   }
 
   handleCopy = () => {
-    if (this.state.selectedShapeName !== "") {
-      const name = this.state.selectedShapeName;
-      const type = this.getObjType(name);
-      const copiedElement = this.state[type].filter((obj) => {
-        return obj.name === name;
-      });
+    const toCopy = this.state.selectedShapeName ? [this.refs[this.state.selectedShapeName]] : this.state.groupSelection;
+    if (toCopy) {
+      console.log(toCopy);
       this.setState({
-        copiedElement: copiedElement,
+        copied: toCopy,
         selectedContextMenu: null
       });
     }
   }
 
-  pasteObject = (type, copiedElement, deleteCount) => {
+  pasteObject = (type, copied, deleteCount) => {
     const num = this.state[type].length + deleteCount + 1;
     const newObject = {
-      ...copiedElement,
+      ...copied,
       id: type + num,
       ref: type + num,
       name: type + num,
@@ -1075,45 +1098,86 @@ class Graphics extends Component {
 
   handlePaste = () => {
     if (
-      this.state.copiedElement === null ||
-      this.state.copiedElement === undefined ||
+      this.state.copied === null ||
+      this.state.copied === undefined ||
       document.activeElement.getAttribute("name") !== "pasteContainer"
     ) {
       // Ignore paste if nothing is copied or if focus is not on canvas
       return;
     }
-    const copiedElement = this.state.copiedElement[0];
-    if (copiedElement) {
-      if (copiedElement.attrs) {
-        // Don't paste when element has attributes
+
+    const name = this.state.selectedShapeName;
+    const type = this.getObjType(name);
+    const copiedElement = this.state[type].filter((obj) => {
+      return obj.name === name;
+    });
+
+    for (let i = 0; i < this.state.copied.length; i++) {
+      const copiedItem = this.state.copied[i];
+      // Create new group if copied item is a group
+      if (Array.isArray(copiedItem)) {
+        for (let j = 0; j < copiedItem.length; j++) {
+          const groupItem = copiedItem[j];
+          if (!groupItem.attrs) {
+            const type = this.getObjType(groupItem.name);
+            const typeIndex = this.savedObjects.indexOf(type);
+            this.pasteObject(type, groupItem, this.state[this.deletionCounts[typeIndex]]);
+          }
+        }
       } else {
-        const type = this.getObjType(copiedElement.name);
-        const typeIndex = this.savedObjects.indexOf(type);
-        this.pasteObject(type, copiedElement, this.state[this.deletionCounts[typeIndex]]);
+        console.log(copiedItem);
+        if (!copiedItem.attrs) {
+          const type = this.getObjType(copiedItem.name);
+          const typeIndex = this.savedObjects.indexOf(type);
+          this.pasteObject(type, copiedItem, this.state[this.deletionCounts[typeIndex]]);
+        }
       }
-      this.setState({
-        selectedContextMenu: null
-      });
     }
+    this.setState({
+      selectedContextMenu: null
+    });
   }
 
   handleDelete = () => {
-    const name = this.state.selectedShapeName;
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const objects = this.state[this.savedObjects[i]].filter((obj) => {
-        if (obj.id === name) {
-          this.setState({
-            [this.deletionCounts[i]]: this.state[this.deletionCounts[i]] + 1
-          });
-        }
-        return obj.id !== name;
-      });
+    // Get list of each individual object being deleted
+    let toDelete = [];
+    if (this.state.selectedShapeName) {
+      toDelete = [this.refs[this.state.selectedShapeName]];
+    } else {
+      toDelete = this.state.groupSelection.flat();
+    }
 
+    // Get a list of the affected types
+    let affectedTypes = [];
+    for (let i = 0; i < toDelete.length; i++) {
+      affectedTypes.push(this.getObjType(toDelete[i].attrs.id));
+    }
+    affectedTypes = [...new Set(affectedTypes)];
+
+    // Delete objects one type at a time
+    this.handleUngrouping();
+    for (let i = 0; i < affectedTypes.length; i++) {
+      const type = affectedTypes[i];
+      const toDeleteOfType = [];
+      for (let j = 0; j < toDelete.length; j++) {
+        if (this.getObjType(toDelete[j].attrs.id) === type) {
+          toDeleteOfType.push(toDelete[j].attrs.id);
+        }
+      }
+      let objs = [...this.state[type]];
+      const deletedCountName = this.deletionCounts[this.savedObjects.indexOf(type)];
+      let deletedCount = this.state[deletedCountName];
+      deletedCount += toDeleteOfType.length;
+      objs = objs.filter((obj) => {
+        return !toDeleteOfType.includes(obj.id);
+      });
       this.setState({
-        [this.savedObjects[i]]: objects
+        [type]: objs,
+        [deletedCountName]: deletedCount
       });
     }
 
+    // Deselect
     this.setState({
       selectedShapeName: "",
       groupSelection: [],
@@ -1370,29 +1434,31 @@ class Graphics extends Component {
         groupSelection: [newGroup],
         savedGroups: newSavedGroups
       });
-    } else {
-      console.error("No group selected - GROUPING");
     }
   }
 
   handleUngrouping = () => {
-    if (this.state.groupSelection.length && Array.isArray(this.state.groupSelection[0])) {
-      const objId = this.state.groupSelection[0][0].attrs.id;
-      for (let i = 0; i < this.state.savedGroups.length; i++) {
-        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-          if (this.state.savedGroups[i][j].attrs.id === objId) {
-            const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
-            this.setState({
-              selectedShape: "",
-              groupSelection: [],
-              savedGroups: newSavedGroups
-            }, this.handleObjectSelection);
-            return;
+    if (this.state.groupSelection.length && this.state.groupSelection.some(obj => Array.isArray(obj))) {
+      for (let x = 0; x < this.state.groupSelection.length; x++) {
+        const selection = this.state.groupSelection[x];
+        // Item is a group (so ungroup it)
+        if (Array.isArray(selection)) {
+          const objId = selection[0].attrs.id;
+          for (let i = 0; i < this.state.savedGroups.length; i++) {
+            for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+              if (this.state.savedGroups[i][j].attrs.id === objId) {
+                const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
+                this.setState({
+                  selectedShape: "",
+                  groupSelection: [],
+                  savedGroups: newSavedGroups
+                }, this.handleObjectSelection);
+                return;
+              }
+            }
           }
         }
       }
-    } else {
-      console.error("No group selected - UNGROUPING");
     }
   }
 
