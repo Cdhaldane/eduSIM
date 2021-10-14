@@ -207,8 +207,6 @@ class Graphics extends Component {
       });
     } catch(e) {};
 
-    console.log(document.cookie);
-
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
       if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
