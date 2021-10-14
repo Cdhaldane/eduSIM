@@ -8,3 +8,62 @@ p {
 .block {
   display: block;
 }
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 250ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+/* The Confirmation Modal */
+
+.confirmationModal {
+  min-width: 300px;
+  max-width: 500px;
+  background-color: white;
+  margin: 0 auto;
+  margin-top: 15vh;
+  border: 2px solid rgb(145, 145, 145);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--box-shadow);
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+}
+
+.confirmationModalButtons {
+  border-top: 1px dashed rgb(145, 145, 145);
+  text-align: right;
+  vertical-align: center;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.confirmationModalButtons button {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid rgb(136, 136, 136);
+  border-radius: 5px;
+}
+
+.confirmationModalButtons button:hover {
+  cursor: pointer;
+  filter:brightness(0.9) saturate(1.5);
+}
+
+#confirmModalConfirmButton {
+  background-color: rgb(170, 247, 126);
+}
+
+#confirmModalCancelButton {
+  background-color: rgb(255, 178, 159);
+}

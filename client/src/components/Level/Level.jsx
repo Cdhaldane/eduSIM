@@ -25,10 +25,19 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   const createSelectItems = () => {
+    // Replace empty names with Untitled#
+    let pageNames = [...props.pages];
+    let untitledNum = 1;
+    for (let i = 0; i < pageNames.length; i++) {
+      if (pageNames[i] === "") {
+        pageNames[i] = "Untitled " + untitledNum;
+        untitledNum++;
+      }
+    }
     for (let i = 0; i < props.number; i++) {
       items.push(
-        <option key={i} value={i+1}>
-          {props.pages[i]}
+        <option key={i} value={i + 1}>
+          {pageNames[i]}
         </option>
       );
     }
@@ -69,6 +78,7 @@ const Level = (props) => {
               id="Timeline"
               psize="3"
               type="info"
+              pages={props.pages}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}

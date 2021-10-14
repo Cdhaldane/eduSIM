@@ -23,7 +23,7 @@ function NavBar(props) {
   }
 
   const handleClickOutside = e => {
-    if (profileDropdown.current &&!profileDropdown.current.contains(e.target)) {
+    if (profileDropdown.current && !profileDropdown.current.contains(e.target)) {
       setMenuOpen(false);
       document.removeEventListener('click', handleClickOutside);
     }
