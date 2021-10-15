@@ -1,0 +1,9 @@
+.poll {
+  width: 500px;
+}
+
+.sv_body {
+  border: 1px solid rgb(122, 122, 122);
+  border-radius: 5px 5px 5px 5px;
+  box-shadow: var(--box-shadow);
+}
