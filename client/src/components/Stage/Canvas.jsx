@@ -853,7 +853,6 @@ class Graphics extends Component {
             }
           }
         } else {
-          console.log(e.evt);
           // Right click on the canvas -> show the add object menu
           const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
           const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
