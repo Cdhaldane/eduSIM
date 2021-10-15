@@ -527,9 +527,9 @@ class Graphics extends Component {
   }
 
   updateSelectionRect = (personalArea) => {
-    let node = this.refs.selectionRectRef;
+    let node = this.refs.groupSelectionRect;
     if (personalArea) {
-      node = this.refs.selectionRectRef1;
+      node = this.refs.personalSelectionRect;
     }
     node.setAttrs({
       visible: this.state.selection.visible,
@@ -614,7 +614,7 @@ class Graphics extends Component {
       }
 
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
-      const selectionRect = personalArea ? "selectionRectRef1" : "selectionRectRef";
+      const selectionRect = personalArea ? "personalSelectionRect" : "groupSelectionRect";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
       const shape = this.refs[layer].getIntersection(pointerPos);
       const clickShapeGroup = this.getShapeGroup(shape);
@@ -853,24 +853,29 @@ class Graphics extends Component {
             }
           }
         } else {
+          console.log(e.evt);
           // Right click on the canvas -> show the add object menu
           const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
           const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
           const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
           const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
           const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
+          let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+          if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
+            sidebarPx = 100;
+          }
           this.setState({
             selectedContextMenu: {
               type: type,
               position: {
-                x: e.evt.clientX,
-                y: e.evt.clientY
+                x: e.evt.layerX + sidebarPx,
+                y: e.evt.layerY
               }
             },
             [notVisible]: false,
             [visible]: true,
-            [contextMenuX]: e.evt.clientX,
-            [contextMenuY]: e.evt.clientY,
+            [contextMenuX]: e.evt.layerX + sidebarPx,
+            [contextMenuY]: e.evt.layerY,
           });
         }
       }
@@ -1932,6 +1937,54 @@ class Graphics extends Component {
     }
   }
 
+  updateText = (e) => {
+    if (!e || e.keyCode === 13) {
+      this.setState({
+        textEditVisible: false,
+        shouldTextUpdate: true,
+        textareaInlineStyle: {
+          ...this.state.textareaInlineStyle,
+          display: "none"
+        }
+      });
+
+      // Get the current textNode we are editing, get the name from there
+      // Match name with elements in this.state.texts,
+      let node = this.refs[this.state.currentTextRef];
+      let name = node.attrs.id;
+
+      this.setState(
+        prevState => ({
+          selectedShapeName: name,
+          texts: prevState.texts.map(eachText =>
+            eachText.id === name
+              ? {
+                ...eachText,
+                text: this.state.text
+              }
+              : eachText
+          )
+        }),
+        () => {
+          this.setState(prevState => ({
+            texts: prevState.texts.map(eachText =>
+              eachText.name === name
+                ? {
+                  ...eachText,
+                  textWidth: node.textWidth,
+                  textHeight: node.textHeight
+                }
+                : eachText
+            )
+          }));
+        }
+      );
+      node.show();
+      this.refs.graphicStage.findOne(".transformer").show();
+      this.refs.graphicStage.draw();
+    }
+  }
+
   // Component Props
   defaultProps = (obj, index) => {
     return {
@@ -2097,6 +2150,20 @@ class Graphics extends Component {
     }
   }
 
+  transformerProps = (type) => {
+    return {
+      selectedShapeName: this.state.selectedShapeName,
+      ref: type + "Transformer",
+      boundBoxFunc: (oldBox, newBox) => {
+        // Limit resize
+        if (newBox.width < 5 || newBox.height < 5) {
+          return oldBox;
+        }
+        return newBox;
+      }
+    }
+  }
+
   objectIsOnStage = (obj) => {
     if (obj.level === this.state.level && obj.infolevel === false) {
       return "group";
@@ -2114,6 +2181,16 @@ class Graphics extends Component {
   loadObjects = (stage) => {
     return (
       <>
+        {/* This Rect is for dragging the canvas */}
+        <Rect
+          id="ContainerRect"
+          x={-5 * window.innerWidth}
+          y={-5 * window.innerHeight}
+          height={window.innerHeight * 10}
+          width={window.innerWidth * 10}
+        />
+
+        {/* Load objects in state */}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Rect {...this.defaultProps(obj, index)} {...this.rectProps(obj)} /> : null
@@ -2163,6 +2240,9 @@ class Graphics extends Component {
           ) ?
             <Arrow {...this.arrowProps(obj, index)} /> : null
         })}
+
+        <TransformerComponent {...this.transformerProps(stage)} />
+        <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
       </>
     );
   }
@@ -2170,6 +2250,7 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
+        {/* Custom Items (Interactive) ***THIS SHOULD BE REFACTORED*** */}
         {this.state.tics.map((eachTic, index) => {
           if (eachTic.level === this.state.level) {
             return (
@@ -2208,6 +2289,8 @@ class Graphics extends Component {
             return null
           }
         })}
+
+        {/* The Group Canvas */}
         <div
           onKeyDown={this.contextMenuEventShortcuts}
           onKeyUp={this.keyUp}
@@ -2242,33 +2325,6 @@ class Graphics extends Component {
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
               />
             )}
-          {/* The right click menu for the personal area */}
-          {this.state.personalAreaContextMenuVisible
-            && this.state.selectedContextMenu
-            && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
-              <DropdownAddObjects
-                title={"Edit Personal Space"}
-                xPos={this.state.personalAreaContextMenuX}
-                yPos={this.state.personalAreaContextMenuY}
-                state={this.state}
-                layer={this.refs.personalAreaLayer}
-                setState={(obj) => {
-                  this.setState(obj);
-                }}
-                addTic={this.addTic}
-                addConnect={this.addConnect4}
-                addPoll={this.addPoll}
-                drawLine={this.drawLine}
-                eraseLine={this.eraseLine}
-                stopDrawing={this.stopDrawing}
-                handleImage={this.handleImage}
-                handleVideo={this.handleVideo}
-                handleAudio={this.handleAudio}
-                handleDocument={this.handleDocument}
-                choosecolor={this.chooseColor}
-                close={() => this.setState({ personalAreaContextMenuVisible: false })}
-              />
-            )}
           <Stage
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
@@ -2293,138 +2349,13 @@ class Graphics extends Component {
               draggable={this.state.layerDraggable}
               onDragMove={(e) => this.dragLayer(e, false)}
             >
-              {/* This rect is for dragging the canvas */}
-              <Rect
-                id="ContainerRect"
-                x={-5 * window.innerWidth}
-                y={-5 * window.innerHeight}
-                height={window.innerHeight * 10}
-                width={window.innerWidth * 10}
-              />
               {this.loadObjects("group")}
-              <TransformerComponent
-                selectedShapeName={this.state.selectedShapeName}
-                ref="groupTransformer"
-                boundBoxFunc={(oldBox, newBox) => {
-                  // Limit resize
-                  if (newBox.width < 5 || newBox.height < 5) {
-                    return oldBox;
-                  }
-                  return newBox;
-                }}
-              />
-              <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef" />
             </Layer>
           </Stage>
-
-          <div>
-            <textarea
-              ref="textarea"
-              id="textEditArea"
-              value={this.state.text}
-              onChange={e => {
-                this.setState({
-                  text: e.target.value,
-                  shouldTextUpdate: false
-                });
-              }}
-              onKeyDown={e => {
-                if (e.keyCode === 13) {
-                  this.setState({
-                    textEditVisible: false,
-                    shouldTextUpdate: true,
-                    textareaInlineStyle: {
-                      ...this.state.textareaInlineStyle,
-                      display: "none"
-                    }
-                  });
-
-                  // get the current textNode we are editing, get the name from there
-                  //match name with elements in this.state.texts,
-                  let node = this.refs[this.state.currentTextRef];
-                  let name = node.attrs.name;
-                  this.setState(
-                    prevState => ({
-                      selectedShapeName: name,
-                      texts: prevState.texts.map(eachText =>
-                        eachText.name === name
-                          ? {
-                            ...eachText,
-                            text: this.state.text
-                          }
-                          : eachText
-                      )
-                    }),
-                    () => {
-                      this.setState(prevState => ({
-                        texts: prevState.texts.map(eachText =>
-                          eachText.name === name
-                            ? {
-                              ...eachText,
-                              textWidth: node.textWidth,
-                              textHeight: node.textHeight
-                            }
-                            : eachText
-                        )
-                      }));
-                    }
-                  );
-
-                  node.show();
-                  this.refs.graphicStage.findOne(".transformer").show();
-                }
-              }}
-              onBlur={() => {
-                this.setState({
-                  textEditVisible: false,
-                  shouldTextUpdate: true,
-                  textareaInlineStyle: {
-                    ...this.state.textareaInlineStyle,
-                    display: "none"
-                  }
-                });
-
-                // Get the current textNode we are editing, get the name from there
-                // Match name with elements in this.state.texts,
-                let node = this.refs[this.state.currentTextRef];
-                let name = node.attrs.id;
-
-                this.setState(
-                  prevState => ({
-                    selectedShapeName: name,
-                    texts: prevState.texts.map(eachText =>
-                      eachText.id === name
-                        ? {
-                          ...eachText,
-                          text: this.state.text
-                        }
-                        : eachText
-                    )
-                  }),
-                  () => {
-                    this.setState(prevState => ({
-                      texts: prevState.texts.map(eachText =>
-                        eachText.name === name
-                          ? {
-                            ...eachText,
-                            textWidth: node.textWidth,
-                            textHeight: node.textHeight
-                          }
-                          : eachText
-                      )
-                    }));
-                  }
-                );
-                node.show();
-                this.refs.graphicStage.findOne(".transformer").show();
-                this.refs.graphicStage.draw();
-              }}
-              style={this.state.textareaInlineStyle}
-            />
-          </div>
-
         </div>
+
         <div className="eheader">
+          {/* The Top Bar */}
           <Level
             saveGame={this.handleSave}
             number={this.state.numberOfPages}
@@ -2432,113 +2363,140 @@ class Graphics extends Component {
             level={this.handleLevel}
             handlePageTitle={this.handlePageTitle}
             handlePageNum={this.handleNumOfPagesChange}
-            numOfPages={this.state.numberOfPages} />
-          <div>
-            <div
-              id={"editPersonalContainer"}
-              className={"info" + this.state.personalAreaOpen}
-            >
-              <div
-                id="personalMainContainer"
-                name="pasteContainer"
-                tabIndex="0"
-                className="personalAreaStageContainer"
-                onKeyDown={this.contextMenuEventShortcuts}
-                onKeyUp={this.keyUp}
-              >
-                <Stage
-                  height={document.getElementById("editPersonalContainer") ?
-                    document.getElementById("editPersonalContainer").clientHeight : 0}
-                  width={document.getElementById("editPersonalContainer") ?
-                    document.getElementById("editPersonalContainer").clientWidth : 0}
-                  ref="personalAreaStage"
-                  onMouseMove={(e) => this.handleMouseOver(e, true)}
-                  onMouseDown={(e) => this.onMouseDown(e, true)}
-                  onMouseUp={(e) => this.handleMouseUp(e, true)}
-                  onWheel={(e) => this.handleWheel(e, true)}
-                  onContextMenu={(e) => e.evt.preventDefault()}
-                >
-                  <Layer
-                    ref="personalAreaLayer"
-                    name="personal"
-                    scaleX={this.state.personalLayerScale}
-                    scaleY={this.state.personalLayerScale}
-                    x={this.state.personalLayerX}
-                    y={this.state.personalLayerY}
-                    height={window.innerHeight}
-                    width={window.innerWidth}
-                    draggable={this.state.layerDraggable}
-                    onDragMove={(e) => this.dragLayer(e, true)}
-                  >
-                    {/* This rect is for dragging the canvas */}
-                    <Rect
-                      id="ContainerRect"
-                      x={-5 * window.innerWidth}
-                      y={-5 * window.innerHeight}
-                      height={window.innerHeight * 10}
-                      width={window.innerWidth * 10}
-                    />
-                    {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
-                      <Portal>
-                        <ContextMenu
-                          {...this.state.selectedContextMenu}
-                          handleUngrouping={this.handleUngrouping}
-                          handleGrouping={this.handleGrouping}
-                          selectedshape={this.state.selectedShapeName}
-                          onOptionSelected={this.handleOptionSelected}
-                          choosecolors={this.handleStrokeColor}
-                          choosecolorf={this.handleFillColor}
-                          handleWidth={this.handleWidth}
-                          handleOpacity={this.handleOpacity}
-                          shape={this.refs[this.state.selectedShapeName]}
-                          close={this.handleClose}
-                          copy={this.handleCopy}
-                          cut={this.handleCut}
-                          paste={this.handlePaste}
-                          delete={this.handleDelete}
-                          handleFont={this.handleFont}
-                          handleSize={this.handleSize}
-                          selectedFont={this.state.selectedFont}
-                          editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
-                        />
-                      </Portal>
-                    )}
-                    {this.loadObjects("personal")}
-                    <TransformerComponent
-                      selectedShapeName={this.state.selectedShapeName}
-                      ref="personalTransformer"
-                      boundBoxFunc={(oldBox, newBox) => {
-                        // limit resize
-                        if (newBox.width < 5 || newBox.height < 5) {
-                          return oldBox;
-                        }
-                        return newBox;
-                      }}
-                    />
-                    <Rect fill="rgba(0,0,0,0.5)" ref="selectionRectRef1" />
-                  </Layer>
-                </Stage>
+            numOfPages={this.state.numberOfPages}
+          />
 
-              </div>
-              {(this.state.personalAreaOpen !== 1)
-                ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
-                  <i className="fas fa-caret-square-up fa-3x" />
-                </button>
-                : <button onClick={() => this.handlePersonalAreaOpen(false)}>
-                  <i className="fas fa-caret-square-down fa-3x" />
-                </button>
-              }
-              <div id="rolesdrop">
-                <DropdownRoles
-                  openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
-                  roleLevel={this.handleRoleLevel}
-                  gameid={this.state.gameinstanceid}
-                  editMode={true}
-                />
-              </div>
+          {/* The Personal Canvas */}
+          <div
+            id={"editPersonalContainer"}
+            className={"info" + this.state.personalAreaOpen}
+          >
+            <div
+              id="personalMainContainer"
+              name="pasteContainer"
+              tabIndex="0"
+              className="personalAreaStageContainer"
+              onKeyDown={this.contextMenuEventShortcuts}
+              onKeyUp={this.keyUp}
+            >
+              {/* The right click menu for the personal area */}
+              {this.state.personalAreaContextMenuVisible
+                && this.state.selectedContextMenu
+                && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
+                  <DropdownAddObjects
+                    title={"Edit Personal Space"}
+                    xPos={this.state.personalAreaContextMenuX}
+                    yPos={this.state.personalAreaContextMenuY}
+                    state={this.state}
+                    layer={this.refs.personalAreaLayer}
+                    setState={(obj) => {
+                      this.setState(obj);
+                    }}
+                    addTic={this.addTic}
+                    addConnect={this.addConnect4}
+                    addPoll={this.addPoll}
+                    drawLine={this.drawLine}
+                    eraseLine={this.eraseLine}
+                    stopDrawing={this.stopDrawing}
+                    handleImage={this.handleImage}
+                    handleVideo={this.handleVideo}
+                    handleAudio={this.handleAudio}
+                    handleDocument={this.handleDocument}
+                    choosecolor={this.chooseColor}
+                    close={() => this.setState({ personalAreaContextMenuVisible: false })}
+                  />
+                )}
+              <Stage
+                height={document.getElementById("editPersonalContainer") ?
+                  document.getElementById("editPersonalContainer").clientHeight : 0}
+                width={document.getElementById("editPersonalContainer") ?
+                  document.getElementById("editPersonalContainer").clientWidth : 0}
+                ref="personalAreaStage"
+                onMouseMove={(e) => this.handleMouseOver(e, true)}
+                onMouseDown={(e) => this.onMouseDown(e, true)}
+                onMouseUp={(e) => this.handleMouseUp(e, true)}
+                onWheel={(e) => this.handleWheel(e, true)}
+                onContextMenu={(e) => e.evt.preventDefault()}
+              >
+                <Layer
+                  ref="personalAreaLayer"
+                  name="personal"
+                  scaleX={this.state.personalLayerScale}
+                  scaleY={this.state.personalLayerScale}
+                  x={this.state.personalLayerX}
+                  y={this.state.personalLayerY}
+                  height={window.innerHeight}
+                  width={window.innerWidth}
+                  draggable={this.state.layerDraggable}
+                  onDragMove={(e) => this.dragLayer(e, true)}
+                >
+                  {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
+                    <Portal>
+                      <ContextMenu
+                        {...this.state.selectedContextMenu}
+                        handleUngrouping={this.handleUngrouping}
+                        handleGrouping={this.handleGrouping}
+                        selectedshape={this.state.selectedShapeName}
+                        onOptionSelected={this.handleOptionSelected}
+                        choosecolors={this.handleStrokeColor}
+                        choosecolorf={this.handleFillColor}
+                        handleWidth={this.handleWidth}
+                        handleOpacity={this.handleOpacity}
+                        shape={this.refs[this.state.selectedShapeName]}
+                        close={this.handleClose}
+                        copy={this.handleCopy}
+                        cut={this.handleCut}
+                        paste={this.handlePaste}
+                        delete={this.handleDelete}
+                        handleFont={this.handleFont}
+                        handleSize={this.handleSize}
+                        selectedFont={this.state.selectedFont}
+                        editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
+                      />
+                    </Portal>
+                  )}
+                  {this.loadObjects("personal")}
+                </Layer>
+              </Stage>
+            </div>
+
+            {/* The Personal Area Open / Close Caret */}
+            {(this.state.personalAreaOpen !== 1)
+              ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
+                <i className="fas fa-caret-square-up fa-3x" />
+              </button>
+              : <button onClick={() => this.handlePersonalAreaOpen(false)}>
+                <i className="fas fa-caret-square-down fa-3x" />
+              </button>
+            }
+
+            {/* The Role Picker */}
+            <div id="rolesdrop">
+              <DropdownRoles
+                openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
+                roleLevel={this.handleRoleLevel}
+                gameid={this.state.gameinstanceid}
+                editMode={true}
+              />
             </div>
           </div>
         </div>
+
+        {/* The edit text area that appears when double clicking a Text object */}
+        <textarea
+          ref="textarea"
+          id="textEditArea"
+          value={this.state.text}
+          onChange={e => {
+            this.setState({
+              text: e.target.value,
+              shouldTextUpdate: false
+            });
+          }}
+          onKeyDown={(e) => this.updateText(e)}
+          onBlur={() => this.updateText()}
+          style={this.state.textareaInlineStyle}
+        />
       </React.Fragment>
     );
   }
