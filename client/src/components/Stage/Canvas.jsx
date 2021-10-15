@@ -50,7 +50,8 @@ class Graphics extends Component {
     "videos",
     "audios",
     "documents",
-    "lines"
+    "lines",
+    "polls"
   ];
   deletionCounts = [
     // Delete Counts (stored to keep object label #s in sync)
@@ -66,6 +67,7 @@ class Graphics extends Component {
     "audioDeleteCount",
     "documentDeleteCount",
     "linesDeleteCount",
+    "pollsDeleteCount"
   ];
   savedState = [
     // The complete save state
@@ -132,6 +134,7 @@ class Graphics extends Component {
       textDeleteCount: 0,
       linesDeleteCount: 0,
       arrowDeleteCount: 0,
+      pollsDeleteCount: 0,
 
       // Page Controls
       pages: ["1", "2", "3", "4", "5", "6"],
@@ -1929,6 +1932,241 @@ class Graphics extends Component {
     }
   }
 
+  // Component Props
+  defaultProps = (obj, index) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      rotation: obj.rotation,
+      ref: obj.ref,
+      fill: obj.fill,
+      opacity: obj.opacity,
+      name: "shape",
+      id: obj.id,
+      x: obj.x,
+      y: obj.y,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth,
+      strokeScaleEnabled: false,
+      draggable: !this.state.layerDraggable,
+      onClick: () => this.onObjectClick(obj),
+      onTransformStart: this.onObjectTransformStart,
+      onTransformEnd: () => this.onObjectTransformEnd(obj),
+      onDragMove: () => this.onObjectDragMove(obj),
+      onDragEnd: e => this.handleDragEnd(e, this.getObjType(obj.id), obj.ref),
+      onContextMenu: this.onObjectContextMenu
+    }
+  }
+
+  rectProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: obj.fillPatternImage,
+      fillPatternOffset: obj.fillPatternOffset,
+      image: obj.image
+    }
+  }
+
+  ellipseProps = (obj) => {
+    return {
+      radiusX: obj.radiusX,
+      radiusY: obj.radiusY
+    }
+  }
+
+  imageProps = (obj, layer) => {
+    return {
+      src: obj.imgsrc,
+      image: obj.imgsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  videoProps = (obj, layer) => {
+    return {
+      type: "video",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  audioProps = (obj, layer) => {
+    return {
+      type: "audio",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: true
+    }
+  }
+
+  documentProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: this.state.docimage,
+      fillPatternOffset: obj.fillPatternOffset,
+      fillPatternScaleY: 0.2,
+      fillPatternScaleX: 0.2,
+      image: obj.image
+    }
+  }
+
+  triangleProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      sides: obj.sides
+    }
+  }
+
+  starProps = (obj) => {
+    return {
+      innerRadius: obj.innerRadius,
+      outerRadius: obj.outerRadius,
+      numPoints: obj.numPoints
+    }
+  }
+
+  textProps = (obj) => {
+    return {
+      textDecoration: obj.link ? "underline" : "",
+      width: obj.width,
+      fontFamily: obj.fontFamily,
+      fontSize: obj.fontSize,
+      text: obj.text,
+      link: obj.link,
+      onTransform: this.handleTextTransform,
+      onDblClick: () => this.handleTextDblClick(this.refs.graphicStage, this.refs[obj.ref], this.refs.groupAreaLayer),
+      onContextMenu: (e) => {
+        this.onObjectContextMenu(e);
+        this.setState({
+          selectedFont: this.refs[obj.ref]
+        });
+      }
+    }
+  }
+
+  lineProps = (obj, index) => {
+    return {
+      id: obj.id,
+      level: obj.level,
+      key: index,
+      points: obj.points,
+      stroke: obj.color,
+      strokeWidth: 5,
+      tension: 0.5,
+      lineCap: "round",
+      globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
+      draggable: !this.state.layerDraggable,
+      onContextMenu: this.onObjectContextMenu,
+    }
+  }
+
+  arrowProps = (obj, index) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      ref: obj.ref,
+      id: obj.id,
+      name: "shape",
+      points: [
+        obj.points[0],
+        obj.points[1],
+        obj.points[2],
+        obj.points[3]
+      ],
+      stroke: obj.stroke,
+      fill: obj.fill,
+      draggable: !this.state.layerDraggable,
+      onDragEnd: () => this.onDragEndArrow(obj)
+    }
+  }
+
+  objectIsOnStage = (obj) => {
+    if (obj.level === this.state.level && obj.infolevel === false) {
+      return "group";
+    } else if (obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel) {
+      return "personal";
+    } else {
+      return "";
+    }
+  }
+
+  objectIsOnPersonalStage = (obj) => {
+    return obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel;
+  }
+
+  loadObjects = (stage) => {
+    return (
+      <>
+        {this.state.rectangles.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Rect {...this.defaultProps(obj, index)} {...this.rectProps(obj)} /> : null
+        })}
+        {this.state.ellipses.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Ellipse {...this.defaultProps(obj, index)} {...this.ellipseProps(obj)} /> : null
+        })}
+        {this.state.lines.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Line {...this.lineProps(obj, index)} /> : null
+        })}
+        {this.state.images.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLImage {...this.defaultProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.videos.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLVideo {...this.defaultProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.audios.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLVideo {...this.defaultProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.documents.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Rect {...this.defaultProps(obj, index)} {...this.documentProps(obj)} /> : null
+        })}
+        {this.state.triangles.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <RegularPolygon {...this.defaultProps(obj, index)} {...this.triangleProps(obj)} /> : null
+        })}
+        {this.state.stars.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Star {...this.defaultProps(obj, index)} {...this.starProps(obj)} /> : null
+        })}
+        {this.state.texts.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Text {...this.defaultProps(obj, index)} {...this.textProps(obj)} /> : null
+        })}
+        {this.state.arrows.map((obj, index) => {
+          return (
+            !obj.from &&
+            !obj.to &&
+            obj.level === this.state.level &&
+            obj.infolevel === (stage === "personal")
+          ) ?
+            <Arrow {...this.arrowProps(obj, index)} /> : null
+        })}
+      </>
+    );
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -1970,7 +2208,6 @@ class Graphics extends Component {
             return null
           }
         })}
-
         <div
           onKeyDown={this.contextMenuEventShortcuts}
           onKeyUp={this.keyUp}
@@ -2064,389 +2301,12 @@ class Graphics extends Component {
                 height={window.innerHeight * 10}
                 width={window.innerWidth * 10}
               />
-              {this.state.rectangles.map((eachRect, index) => {
-                if (eachRect.level === this.state.level && eachRect.infolevel === false) {
-                  return (
-                    <Rect
-                      key={index}
-                      visible={eachRect.visible}
-                      rotation={eachRect.rotation}
-                      ref={eachRect.ref}
-                      fill={eachRect.fill}
-                      fillPatternImage={eachRect.fillPatternImage}
-                      fillPatternOffset={eachRect.fillPatternOffset}
-                      image={eachRect.image}
-                      opacity={eachRect.opacity}
-                      id={eachRect.id}
-                      name="shape"
-                      x={eachRect.x}
-                      y={eachRect.y}
-                      width={eachRect.width}
-                      height={eachRect.height}
-                      stroke={eachRect.stroke}
-                      strokeWidth={eachRect.strokeWidth}
-                      strokeScaleEnabled={false}
-                      draggable={!this.state.layerDraggable}
-                      onClick={() => this.onObjectClick(eachRect)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachRect)}
-                      onDragMove={() => this.onObjectDragMove(eachRect)}
-                      onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  );
-                } else {
-                  return null
-                }
-              })}
-              {this.state.ellipses.map((eachEllipse, index) => {
-                if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
-                  return (
-                    <Ellipse
-                      key={index}
-                      visible={eachEllipse.visible}
-                      ref={eachEllipse.ref}
-                      name="shape"
-                      id={eachEllipse.id}
-                      x={eachEllipse.x}
-                      y={eachEllipse.y}
-                      opacity={eachEllipse.opacity}
-                      rotation={eachEllipse.rotation}
-                      radiusX={eachEllipse.radiusX}
-                      radiusY={eachEllipse.radiusY}
-                      fill={eachEllipse.fill}
-                      stroke={eachEllipse.stroke}
-                      strokeWidth={eachEllipse.strokeWidth}
-                      strokeScaleEnabled={false}
-                      onClick={() => this.onObjectClick(eachEllipse)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
-                      draggable={!this.state.layerDraggable}
-                      onDragMove={() => this.onObjectDragMove(eachEllipse)}
-                      onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.lines.map((eachLine, i) => {
-                if (eachLine.level === this.state.level && eachLine.infolevel === false) {
-                  return (
-                    <Line
-                      id={eachLine.id}
-                      level={eachLine.level}
-                      key={i}
-                      points={eachLine.points}
-                      stroke={eachLine.color}
-                      strokeWidth={5}
-                      tension={0.5}
-                      lineCap="round"
-                      globalCompositeOperation={
-                        eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
-                      }
-                      draggable={!this.state.layerDraggable}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  );
-                } else {
-                  return null
-                }
-              })}
-
-              {this.state.images.map((eachImage, index) => {
-                if (eachImage.level === this.state.level && eachImage.infolevel === false) {
-                  return (
-                    <URLImage
-                      key={index}
-                      visible={eachImage.visible}
-                      src={eachImage.imgsrc}
-                      image={eachImage.imgsrc}
-                      ref={eachImage.ref}
-                      name="shape"
-                      id={eachImage.id}
-                      layer={this.refs.groupAreaLayer}
-                      x={eachImage.x}
-                      y={eachImage.y}
-                      scaleX={eachImage.scaleX}
-                      scaleY={eachImage.scaleY}
-                      width={eachImage.width}
-                      height={eachImage.height}
-                      stroke={eachImage.stroke}
-                      strokeWidth={eachImage.strokeWidth}
-                      rotation={eachImage.rotation}
-                      opacity={eachImage.opacity}
-                      onClick={() => this.onObjectClick(eachImage)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachImage)}
-                      onDragMove={() => this.onObjectDragMove(eachImage)}
-                      onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.videos.map((eachVideo, index) => {
-                if (eachVideo.level === this.state.level && eachVideo.infolevel === false) {
-                  return (
-                    <URLVideo
-                      type={"video"}
-                      key={index}
-                      visible={eachVideo.visible}
-                      src={eachVideo.vidsrc}
-                      image={eachVideo.vidsrc}
-                      ref={eachVideo.ref}
-                      id={eachVideo.id}
-                      name="shape"
-                      layer={this.refs.groupAreaLayer}
-                      scaleX={eachVideo.scaleX}
-                      scaleY={eachVideo.scaleY}
-                      x={eachVideo.x}
-                      y={eachVideo.y}
-                      width={eachVideo.width}
-                      height={eachVideo.height}
-                      stroke={eachVideo.stroke}
-                      strokeWidth={eachVideo.strokeWidth}
-                      rotation={eachVideo.rotation}
-                      opacity={eachVideo.opacity}
-                      onClick={() => this.onObjectClick(eachVideo)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachVideo)}
-                      onDragMove={() => this.onObjectDragMove(eachVideo)}
-                      onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.audios.map((eachAudio, index) => {
-                if (eachAudio.level === this.state.level && eachAudio.infolevel === false) {
-                  return (
-                    <URLVideo
-                      type={"audio"}
-                      key={index}
-                      visible={eachAudio.visible}
-                      fillPatternImage={true}
-                      src={eachAudio.audsrc}
-                      image={eachAudio.imgsrc}
-                      ref={eachAudio.ref}
-                      id={eachAudio.id}
-                      name="shape"
-                      layer={this.refs.groupAreaLayer}
-                      scaleX={eachAudio.scaleX}
-                      scaleY={eachAudio.scaleY}
-                      x={eachAudio.x}
-                      y={eachAudio.y}
-                      width={eachAudio.width}
-                      height={eachAudio.height}
-                      stroke={eachAudio.stroke}
-                      strokeWidth={eachAudio.strokeWidth}
-                      rotation={eachAudio.rotation}
-                      opacity={eachAudio.opacity}
-                      onClick={() => this.onObjectClick(eachAudio)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachAudio)}
-                      onDragMove={() => this.onObjectDragMove(eachAudio)}
-                      onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.documents.map((eachDoc, index) => {
-                if (eachDoc.level === this.state.level && eachDoc.infolevel === false) {
-                  return (
-                    <Rect
-                      key={index}
-                      rotation={eachDoc.rotation}
-                      ref={eachDoc.ref}
-                      fill={eachDoc.fill}
-                      fillPatternImage={this.state.docimage}
-                      fillPatternOffset={eachDoc.fillPatternOffset}
-                      fillPatternScaleY={0.2}
-                      fillPatternScaleX={0.2}
-                      image={eachDoc.image}
-                      opacity={eachDoc.opacity}
-                      id={eachDoc.id}
-                      name="shape"
-                      x={eachDoc.x}
-                      y={eachDoc.y}
-                      width={eachDoc.width}
-                      height={eachDoc.height}
-                      stroke={eachDoc.stroke}
-                      strokeWidth={eachDoc.strokeWidth}
-                      onClick={this.onDocClick}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachDoc)}
-                      draggable={!this.state.layerDraggable}
-                      onDragMove={() => this.onObjectDragMove(eachDoc)}
-                      onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.triangles.map((eachTriangle, index) => {
-                if (eachTriangle.level === this.state.level && eachTriangle.infolevel === false) {
-                  return (
-                    <RegularPolygon
-                      key={index}
-                      visible={eachTriangle.visible}
-                      ref={eachTriangle.ref}
-                      id={eachTriangle.id}
-                      name="shape"
-                      x={eachTriangle.x}
-                      y={eachTriangle.y}
-                      opacity={eachTriangle.opacity}
-                      rotation={eachTriangle.rotation}
-                      width={eachTriangle.width}
-                      height={eachTriangle.height}
-                      sides={eachTriangle.sides}
-                      fill={eachTriangle.fill}
-                      stroke={eachTriangle.stroke}
-                      strokeWidth={eachTriangle.strokeWidth}
-                      strokeScaleEnabled={false}
-                      onClick={() => this.onObjectClick(eachTriangle)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachTriangle)}
-                      draggable={!this.state.layerDraggable}
-                      onDragMove={() => this.onObjectDragMove(eachTriangle)}
-                      onDragEnd={e => this.handleDragEnd(e, "triangles", eachTriangle.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.stars.map((eachStar, index) => {
-                if (eachStar.level === this.state.level && eachStar.infolevel === false) {
-                  return (
-                    <Star
-                      key={index}
-                      visible={eachStar.visible}
-                      ref={eachStar.ref}
-                      id={eachStar.id}
-                      name="shape"
-                      x={eachStar.x}
-                      y={eachStar.y}
-                      innerRadius={eachStar.innerRadius}
-                      outerRadius={eachStar.outerRadius}
-                      numPoints={eachStar.numPoints}
-                      stroke={eachStar.stroke}
-                      strokeWidth={eachStar.strokeWidth}
-                      fill={eachStar.fill}
-                      opacity={eachStar.opacity}
-                      strokeScaleEnabled={false}
-                      rotation={eachStar.rotation}
-                      onClick={() => this.onObjectClick(eachStar)}
-                      onTransformStart={this.onObjectTransformStart}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachStar)}
-                      draggable={!this.state.layerDraggable}
-                      onDragMove={() => this.onObjectDragMove(eachStar)}
-                      onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
-                      onContextMenu={this.onObjectContextMenu}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-
-              {this.state.texts.map((eachText, index) => {
-                if (eachText.level === this.state.level && eachText.infolevel === false) {
-                  return (
-                    //perhaps this.state.texts only need to contain refs?
-                    //so that we only need to store the refs to get more information
-                    <Text
-                      key={index}
-                      visible={eachText.visible}
-                      textDecoration={eachText.link ? "underline" : ""}
-                      link={eachText.link}
-                      width={eachText.width}
-                      fill={eachText.fill}
-                      opacity={eachText.opacity}
-                      id={eachText.id}
-                      name="shape"
-                      ref={eachText.ref}
-                      rotation={eachText.rotation}
-                      fontFamily={eachText.fontFamily}
-                      fontSize={eachText.fontSize}
-                      x={eachText.x}
-                      y={eachText.y}
-                      text={eachText.text}
-                      draggable={!this.state.layerDraggable}
-                      onTransform={this.handleTextTransform}
-                      onTransformEnd={() => this.onObjectTransformEnd(eachText)}
-                      onDragMove={() => this.onObjectDragMove(eachText)}
-                      onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
-                      onClick={() => this.onObjectClick(eachText)}
-                      onDblClick={() => this.handleTextDblClick(
-                        this.refs.graphicStage,
-                        this.refs[eachText.ref],
-                        this.refs.groupAreaLayer)
-                      }
-                      onContextMenu={(e) => {
-                        this.onObjectContextMenu(e);
-                        this.setState({
-                          selectedFont: this.refs[eachText.ref]
-                        });
-                      }}
-                    />
-                  )
-                } else {
-                  return null;
-                }
-              })}
-              {this.state.arrows.map((eachArrow, index) => {
-                if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === false) {
-                  return (
-                    <Arrow
-                      key={index}
-                      visible={eachArrow.visible}
-                      ref={eachArrow.ref}
-                      id={eachArrow.id}
-                      name="shape"
-                      points={[
-                        eachArrow.points[0],
-                        eachArrow.points[1],
-                        eachArrow.points[2],
-                        eachArrow.points[3]
-                      ]}
-                      stroke={eachArrow.stroke}
-                      fill={eachArrow.fill}
-                      draggable={!this.state.layerDraggable}
-                      onDragEnd={() => this.onDragEndArrow(eachArrow)}
-                    />
-                  );
-                } else if (
-                  eachArrow.name === this.state.newArrowRef &&
-                  (eachArrow.from || eachArrow.to)
-                ) {
-                  return (
-                    ""
-                  );
-                } else if (eachArrow.from || eachArrow.to) {
-                  //if arrow construction is completed
-                  return (
-                    ""
-                  );
-                }
-              })}
+              {this.loadObjects("group")}
               <TransformerComponent
                 selectedShapeName={this.state.selectedShapeName}
                 ref="groupTransformer"
                 boundBoxFunc={(oldBox, newBox) => {
-                  // limit resize
+                  // Limit resize
                   if (newBox.width < 5 || newBox.height < 5) {
                     return oldBox;
                   }
@@ -2618,41 +2478,6 @@ class Graphics extends Component {
                       height={window.innerHeight * 10}
                       width={window.innerWidth * 10}
                     />
-                    {this.state.rectangles.map((eachRect, index) => {
-                      if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Rect
-                            key={index}
-                            visible={eachRect.visible}
-                            rotation={eachRect.rotation}
-                            ref={eachRect.ref}
-                            fill={eachRect.fill}
-                            fillPatternImage={eachRect.fillPatternImage}
-                            fillPatternOffset={eachRect.fillPatternOffset}
-                            image={eachRect.image}
-                            opacity={eachRect.opacity}
-                            id={eachRect.id}
-                            name="shape"
-                            x={eachRect.x}
-                            y={eachRect.y}
-                            width={eachRect.width}
-                            height={eachRect.height}
-                            stroke={eachRect.stroke}
-                            strokeWidth={eachRect.strokeWidth}
-                            strokeScaleEnabled={false}
-                            draggable={!this.state.layerDraggable}
-                            onClick={() => this.onObjectClick(eachRect)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachRect)}
-                            onDragMove={() => this.onObjectDragMove(eachRect)}
-                            onDragEnd={e => this.handleDragEnd(e, "rectangles", eachRect.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
                     {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
                       <Portal>
                         <ContextMenu
@@ -2678,349 +2503,7 @@ class Graphics extends Component {
                         />
                       </Portal>
                     )}
-
-                    {this.state.ellipses.map((eachEllipse, index) => {
-                      if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Ellipse
-                            key={index}
-                            visible={eachEllipse.visible}
-                            ref={eachEllipse.ref}
-                            name="shape"
-                            id={eachEllipse.id}
-                            x={eachEllipse.x}
-                            y={eachEllipse.y}
-                            opacity={eachEllipse.opacity}
-                            rotation={eachEllipse.rotation}
-                            radiusX={eachEllipse.radiusX}
-                            radiusY={eachEllipse.radiusY}
-                            fill={eachEllipse.fill}
-                            stroke={eachEllipse.stroke}
-                            strokeWidth={eachEllipse.strokeWidth}
-                            strokeScaleEnabled={false}
-                            onClick={() => this.onObjectClick(eachEllipse)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
-                            draggable={!this.state.layerDraggable}
-                            onDragMove={() => this.onObjectDragMove(eachEllipse)}
-                            onDragEnd={e => this.handleDragEnd(e, "ellipses", eachEllipse.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.lines.map((eachLine, i) => {
-                      if (eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Line
-                            id={eachLine.id}
-                            level={eachLine.level}
-                            key={i}
-                            points={eachLine.points}
-                            stroke={eachLine.color}
-                            strokeWidth={5}
-                            tension={0.5}
-                            lineCap="round"
-                            globalCompositeOperation={
-                              eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
-                            }
-                            draggable={!this.state.layerDraggable}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-
-                    {this.state.images.map((eachImage, index) => {
-                      if (eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLImage
-                            key={index}
-                            visible={eachImage.visible}
-                            src={eachImage.imgsrc}
-                            image={eachImage.imgsrc}
-                            ref={eachImage.ref}
-                            name="shape"
-                            id={eachImage.id}
-                            layer={this.refs.groupAreaLayer}
-                            scaleX={eachImage.scaleX}
-                            scaleY={eachImage.scaleY}
-                            x={eachImage.x}
-                            y={eachImage.y}
-                            width={eachImage.width}
-                            height={eachImage.height}
-                            stroke={eachImage.stroke}
-                            strokeWidth={eachImage.strokeWidth}
-                            rotation={eachImage.rotation}
-                            opacity={eachImage.opacity}
-                            onClick={() => this.onObjectClick(eachImage)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachImage)}
-                            onDragMove={() => this.onObjectDragMove(eachImage)}
-                            onDragEnd={e => this.handleDragEnd(e, "images", eachImage.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.videos.map((eachVideo, index) => {
-                      if (eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLVideo
-                            type={"video"}
-                            key={index}
-                            visible={eachVideo.visible}
-                            src={eachVideo.vidsrc}
-                            image={eachVideo.vidsrc}
-                            ref={eachVideo.ref}
-                            id={eachVideo.id}
-                            name="shape"
-                            layer={this.refs.groupAreaLayer}
-                            scaleX={eachVideo.scaleX}
-                            scaleY={eachVideo.scaleY}
-                            x={eachVideo.x}
-                            y={eachVideo.y}
-                            width={eachVideo.width}
-                            height={eachVideo.height}
-                            stroke={eachVideo.stroke}
-                            strokeWidth={eachVideo.strokeWidth}
-                            rotation={eachVideo.rotation}
-                            opacity={eachVideo.opacity}
-                            onClick={() => this.onObjectClick(eachVideo)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachVideo)}
-                            onDragMove={() => this.onObjectDragMove(eachVideo)}
-                            onDragEnd={e => this.handleDragEnd(e, "videos", eachVideo.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.audios.map((eachAudio, index) => {
-                      if (eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLVideo
-                            type={"audio"}
-                            key={index}
-                            visible={eachAudio.visible}
-                            fillPatternImage={true}
-                            src={eachAudio.audsrc}
-                            image={eachAudio.imgsrc}
-                            ref={eachAudio.ref}
-                            id={eachAudio.id}
-                            name="shape"
-                            scaleX={eachAudio.scaleX}
-                            scaleY={eachAudio.scaleY}
-                            layer={this.refs.groupAreaLayer}
-                            x={eachAudio.x}
-                            y={eachAudio.y}
-                            width={eachAudio.width}
-                            height={eachAudio.height}
-                            stroke={eachAudio.stroke}
-                            strokeWidth={eachAudio.strokeWidth}
-                            rotation={eachAudio.rotation}
-                            opacity={eachAudio.opacity}
-                            onClick={() => this.onObjectClick(eachAudio)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachAudio)}
-                            onDragMove={() => this.onObjectDragMove(eachAudio)}
-                            onDragEnd={e => this.handleDragEnd(e, "audios", eachAudio.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.documents.map((eachDoc, index) => {
-                      if (eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Rect
-                            key={index}
-                            rotation={eachDoc.rotation}
-                            ref={eachDoc.ref}
-                            fill={eachDoc.fill}
-                            fillPatternImage={this.state.docimage}
-                            fillPatternOffset={eachDoc.fillPatternOffset}
-                            fillPatternScaleY={0.2}
-                            fillPatternScaleX={0.2}
-                            image={eachDoc.image}
-                            opacity={eachDoc.opacity}
-                            id={eachDoc.id}
-                            name="shape"
-                            x={eachDoc.x}
-                            y={eachDoc.y}
-                            width={eachDoc.width}
-                            height={eachDoc.height}
-                            stroke={eachDoc.stroke}
-                            strokeWidth={eachDoc.strokeWidth}
-                            onClick={this.onDocClick}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachDoc)}
-                            draggable={!this.state.layerDraggable}
-                            onDragMove={() => this.onObjectDragMove(eachDoc)}
-                            onDragEnd={e => this.handleDragEnd(e, "documents", eachDoc.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.triangles.map((eachEllipse, index) => {
-                      if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
-                        return (
-                          <RegularPolygon
-                            key={index}
-                            visible={eachEllipse.visible}
-                            ref={eachEllipse.ref}
-                            id={eachEllipse.id}
-                            name="shape"
-                            x={eachEllipse.x}
-                            y={eachEllipse.y}
-                            opacity={eachEllipse.opacity}
-                            rotation={eachEllipse.rotation}
-                            height={eachEllipse.height}
-                            sides={eachEllipse.sides}
-                            fill={eachEllipse.fill}
-                            stroke={eachEllipse.stroke}
-                            strokeWidth={eachEllipse.strokeWidth}
-                            strokeScaleEnabled={false}
-                            onClick={() => this.onObjectClick(eachEllipse)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachEllipse)}
-                            draggable={!this.state.layerDraggable}
-                            onDragMove={() => this.onObjectDragMove(eachEllipse)}
-                            onDragEnd={e => this.handleDragEnd(e, "triangles", eachEllipse.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.stars.map((eachStar, index) => {
-                      if (eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Star
-                            key={index}
-                            visible={eachStar.visible}
-                            ref={eachStar.ref}
-                            id={eachStar.id}
-                            name="shape"
-                            x={eachStar.x}
-                            y={eachStar.y}
-                            innerRadius={eachStar.innerRadius}
-                            outerRadius={eachStar.outerRadius}
-                            numPoints={eachStar.numPoints}
-                            stroke={eachStar.stroke}
-                            strokeWidth={eachStar.strokeWidth}
-                            fill={eachStar.fill}
-                            opacity={eachStar.opacity}
-                            strokeScaleEnabled={false}
-                            rotation={eachStar.rotation}
-                            onClick={() => this.onObjectClick(eachStar)}
-                            onTransformStart={this.onObjectTransformStart}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachStar)}
-                            draggable={!this.state.layerDraggable}
-                            onDragMove={() => this.onObjectDragMove(eachStar)}
-                            onDragEnd={e => this.handleDragEnd(e, "stars", eachStar.ref)}
-                            onContextMenu={this.onObjectContextMenu}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-
-                    {this.state.texts.map((eachText, index) => {
-                      if (eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel) {
-                        return (
-                          //perhaps this.state.texts only need to contain refs?
-                          //so that we only need to store the refs to get more information
-                          <Text
-                            key={index}
-                            visible={eachText.visible}
-                            textDecoration={eachText.link ? "underline" : ""}
-                            link={eachText.link}
-                            width={eachText.width}
-                            fill={eachText.fill}
-                            opacity={eachText.opacity}
-                            id={eachText.id}
-                            name="shape"
-                            ref={eachText.ref}
-                            rotation={eachText.rotation}
-                            fontFamily={eachText.fontFamily}
-                            fontSize={eachText.fontSize}
-                            x={eachText.x}
-                            y={eachText.y}
-                            text={eachText.text}
-                            draggable={!this.state.layerDraggable}
-                            onTransform={this.handleTextTransform}
-                            onTransformEnd={() => this.onObjectTransformEnd(eachText)}
-                            onDragMove={() => this.onObjectDragMove(eachText)}
-                            onDragEnd={e => this.handleDragEnd(e, "texts", eachText.ref)}
-                            onClick={() => this.onObjectClick(eachText)}
-                            onDblClick={() => this.handleTextDblClick(
-                              this.refs.graphicStage,
-                              this.refs[eachText.ref],
-                              this.refs.personalAreaLayer)
-                            }
-                            onContextMenu={(e) => {
-                              this.onObjectContextMenu(e);
-                              this.setState({
-                                selectedFont: this.refs[eachText.ref]
-                              });
-                            }}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.arrows.map((eachArrow, index) => {
-                      if (!eachArrow.from && !eachArrow.to && eachArrow.level === this.state.level && eachArrow.infolevel === true && eachArrow.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Arrow
-                            key={index}
-                            visible={eachArrow.visible}
-                            ref={eachArrow.ref}
-                            id={eachArrow.id}
-                            name="shape"
-                            points={[
-                              eachArrow.points[0],
-                              eachArrow.points[1],
-                              eachArrow.points[2],
-                              eachArrow.points[3]
-                            ]}
-                            stroke={eachArrow.stroke}
-                            fill={eachArrow.fill}
-                            draggable={!this.state.layerDraggable}
-                            onDragEnd={() => this.onDragEndArrow(eachArrow)}
-                          />
-                        );
-                      } else if (
-                        eachArrow.name === this.state.newArrowRef &&
-                        (eachArrow.from || eachArrow.to)
-                      ) {
-                        return (
-                          ""
-                        );
-                      } else if (eachArrow.from || eachArrow.to) {
-                        //if arrow construction is completed
-                        return (
-                          ""
-                        );
-                      }
-                    })}
+                    {this.loadObjects("personal")}
                     <TransformerComponent
                       selectedShapeName={this.state.selectedShapeName}
                       ref="personalTransformer"
