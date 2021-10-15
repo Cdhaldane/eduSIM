@@ -194,7 +194,7 @@ function Join(props) {
         contentLabel="My dialog"
         className="createmodaltab"
         overlayClassName="myoverlaytab"
-        closeTimeoutMS={500}
+        closeTimeoutMS={250}
         ariaHideApp={false}
       >
         <CreateCsv gameid={localStorage.gameid} isOpen={showNote} close={toggleModal} />

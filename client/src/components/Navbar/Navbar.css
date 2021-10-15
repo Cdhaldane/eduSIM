@@ -1,4 +1,5 @@
 .NavbarItems {
+  box-shadow: rgb(0, 0, 0, 0.15) 0px 3px 3px 0px;
   background-color: var(--primary);
   height: 80px;
   display: flex;
@@ -129,21 +130,18 @@
     background: white;
     transition: all 0.3s;
   }
-
   .profilevist h2 {
     color: #181818;
     text-align: center;
     font-size: 1.5rem;
     padding: 10px;
   }
-
   .profilevist-closed {
     right: 0;
     opacity: 0;
     pointer-events: none;
     transition: none;
   }
-
   .nav-home-mobile {
     display: none;
   }
@@ -170,11 +168,9 @@
   .nav-menu > button {
     margin: 5px 0;
   }
-
   .nav-pic {
     display: none;
   }
-
   .nav-menu.active {
     transform: none;
     opacity: 1;
@@ -230,7 +226,6 @@
     color: black;
     transition: 250ms;
   }
-
   .profilevist {
     display: flex;
     flex-direction: column;
@@ -241,7 +236,6 @@
   .profilevist a {
     color: white;
   }
-
   .nav-home {
     display: none;
   }

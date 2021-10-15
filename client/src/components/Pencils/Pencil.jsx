@@ -33,6 +33,7 @@ const Pencil = (props) => {
         <div className={"drop" + props.id + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}>
           {props.type === "info" && (
             <DropdownTimelineBar
+              pages={props.pages}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}

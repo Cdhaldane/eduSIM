@@ -1,25 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAlertContext } from "../Alerts/AlertContext";
+import ConfirmationModal from "../Modal/ConfirmationModal";
 
 import "./Dropdown.css";
 
 function DropdownTimelineBar(props) {
-  
-  const [pages, setPages] = useState(["1"]);
-  const [numOfPages, setNumOfPages] = useState(1);
+
+  const [pages, setPages] = useState(props.pages);
+  const [numOfPages, setNumOfPages] = useState(props.numOfPages);
   const dropdown = useRef();
 
-  const alertContext = useAlertContext();
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const confirmationVisibleRef = useRef(confirmationVisible);
+  const setConfirmationModal = (data) => {
+    setConfirmationVisible(data);
+    setTimeout(() => { confirmationVisibleRef.current = data }, 250);
+  }
 
   const handleClickOutside = e => {
-    if (dropdown.current && !dropdown.current.contains(e.target)) {
+    if (dropdown.current &&
+      !dropdown.current.contains(e.target) &&
+      !confirmationVisibleRef.current) {
       props.close();
     }
   }
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
-    setNumOfPages(props.numOfPages);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
@@ -69,12 +75,9 @@ function DropdownTimelineBar(props) {
             display: "inline"
           }}>
             <button
+              disabled={parseInt(numOfPages) === 1}
               className={"numOfPagesInputBtn"}
-              onClick={() => {
-                const num = document.getElementById("numOfPagesInput");
-                num.stepDown()
-                setNumOfPages(num.value);
-              }} >
+              onClick={() => setConfirmationModal(true)} >
               -
             </button>
             <button
@@ -105,6 +108,20 @@ function DropdownTimelineBar(props) {
           })}
         </div>
       </div>
+
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => {
+          const num = document.getElementById("numOfPagesInput");
+          num.stepDown()
+          setNumOfPages(num.value);
+        }}
+        confirmMessage={"Yes - Delete Page"}
+        message={`Are you sure you want to delete page 
+        ${pages[numOfPages - 1] ? (pages[numOfPages - 1].trim() !== "" ? pages[numOfPages - 1] : "Untitled") : ""}? 
+        This action cannot be undone.`}
+      />
     </div>
   );
 }

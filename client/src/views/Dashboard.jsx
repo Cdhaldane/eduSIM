@@ -4,12 +4,24 @@ import SimNote from "../components/SimNote/SimNote";
 import CreateArea from "../components/CreateArea/CreateArea";
 import Modal from "react-modal";
 import axios from "axios";
+import ConfirmationModal from "../components/Modal/ConfirmationModal";
 
 function Dashboard(props) {
   const { user } = useAuth0();
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState([]);
   const [uploadedImages, setUploadedImages] = useState(null);
+  const [deletionId, setDeletionId] = useState(null);
+
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const setConfirmationModal = (data, index) => {
+    setConfirmationVisible(data);
+    if (data) {
+      setDeletionId(index);
+    } else {
+      setDeletionId(null);
+    }
+  }
 
   useEffect(() => {
     const getAllGamedata = async () => {
@@ -84,7 +96,7 @@ function Dashboard(props) {
                   gameid={noteItem.gameinstanceid}
                   img={noteItem.gameinstance_photo_path}
                   adminid={noteItem.createdby_adminid}
-                  onDelete={deleteNote}
+                  setConfirmationModal={setConfirmationModal}
                   title={noteItem.gameinstance_name}
                   superadmin={noteItem.createdby_adminid === localStorage.adminid}
                 />
@@ -100,7 +112,7 @@ function Dashboard(props) {
         contentLabel="My dialog"
         className="createmodalarea"
         overlayClassName="myoverlay"
-        closeTimeoutMS={500}
+        closeTimeoutMS={250}
         ariaHideApp={false}
       >
         <CreateArea 
@@ -112,6 +124,24 @@ function Dashboard(props) {
           previewImages={uploadedImages}
         />
       </Modal>
+
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => {
+          deleteNote(deletionId);
+
+          var body = {
+            id: gamedata[deletionId].gameinstanceid
+          }
+
+          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).catch(error => {
+            console.error(error);
+          });
+        }}
+        confirmMessage={"Yes - Delete Simulation"}
+        message={`Are you sure you want to delete the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation? This action cannot be undone.`}
+      />
     </div>
   );
 }

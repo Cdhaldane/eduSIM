@@ -1,28 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./SimNote.css";
-import axios from "axios";
 import { Image } from "cloudinary-react";
 import Modal from "react-modal";
 import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
 
-function SimNote(props) {
+const SimNote = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
-
-  function handleClick() {
-    if (window.confirm("Are you sure you wish to delete this simulation?")) {
-      props.onDelete(props.id);
-      var body = {
-        id: props.gameid
-      }
-
-      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).then((res) => {
-        const allData = res.data;
-      }).catch(error => {
-        console.log(error);
-      });
-    }
-  }
 
   return (
     <div className="notesim">
@@ -43,7 +27,7 @@ function SimNote(props) {
           id="garbage"
           className="fa fa-trash fa-2x notesim-icon"
           aria-hidden="true"
-          onClick={handleClick}
+          onClick={() => props.setConfirmationModal(true, props.id)}
         ></i>
         <Link
           to={{
