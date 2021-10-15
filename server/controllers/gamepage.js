@@ -181,9 +181,9 @@ exports.verifyCollaboratorStatus = async (req, res) => {
     },
   });
 
-  if (!collab) {
+  if (!collab || collab.verified === true) {
     return res.status(400).send({
-      message: `No pending collab invites`,
+      message: `No pending collab invites/invite already accepted`,
     });
   } else {
     collab.verified = true;

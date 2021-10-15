@@ -23,23 +23,28 @@ const SimNote = (props) => {
         </div>
       </div>
       <div className="notesim-icons">
-        <i
-          id="garbage"
-          className="fa fa-trash fa-2x notesim-icon"
-          aria-hidden="true"
-          onClick={() => props.setConfirmationModal(true, props.id)}
-        ></i>
-        <Link
-          to={{
-            pathname: "/editpage",
-            img: props.img,
-            title: props.title,
-            gameinstance: props.gameid,
-            adminid: props.adminid,
-          }}
-        >
-          <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
-        </Link>
+        {props.superadmin && (
+          <>
+            <i
+              id="garbage"
+              className="fa fa-trash fa-2x notesim-icon"
+              aria-hidden="true"
+              onClick={() => props.setConfirmationModal(true, props.id)}
+            ></i>
+            <Link
+              to={{
+                pathname: "/editpage",
+                img: props.img,
+                title: props.title,
+                gameinstance: props.gameid,
+                adminid: props.adminid,
+              }}
+            >
+              <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
+            </Link>
+            <i class="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
+          </>
+        )}
         <Link
           to={{
             pathname: "/join",
@@ -55,9 +60,6 @@ const SimNote = (props) => {
             onClick={() => localStorage.setItem("gameid", props.gameid)}
           ></i>
         </Link>
-        {props.superadmin && (
-          <i class="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
-        )}
       </div>
       <Modal
         isOpen={modalOpen}
