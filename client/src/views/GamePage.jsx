@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
 import moment from "moment";
