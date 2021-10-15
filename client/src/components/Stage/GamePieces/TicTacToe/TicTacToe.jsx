@@ -106,26 +106,4 @@ function Game(props) {
   )
 }
 
-export default Game
-
-
-
-
-
-
-// import React from "react";
-// import {Link } from "react-router-dom";
-// import Draggable from 'react-draggable'; // The default
-// import "./TicTacToe.css";
-//
-// function TicTacToe(props) {
-// return (
-//   <Draggable>
-//   <div className="tic-container">
-//     <h1>hello</h1>
-//   </div>
-// </Draggable>
-// );
-// }
-//
-// export default TicTacToe;
+export default Game;

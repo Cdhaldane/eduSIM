@@ -64,6 +64,10 @@ p {
   background-color: rgb(170, 247, 126);
 }
 
+#confirmModalConfirmButton:disabled {
+  color: black;
+}
+
 #confirmModalCancelButton {
   background-color: rgb(255, 178, 159);
 }
