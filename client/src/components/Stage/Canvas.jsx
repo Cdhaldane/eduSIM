@@ -7,7 +7,7 @@ import axios from 'axios';
 import Level from "../Level/Level";
 import Konva from "konva";
 import ContextMenu from "../ContextMenu/ContextMenu";
-import Portal from "./Shapes/Portal"
+import Portal from "./Shapes/Portal";
 import TransformerComponent from "./TransformerComponent";
 
 import URLVideo from "./URLVideos";
@@ -316,7 +316,8 @@ class Graphics extends Component {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
-            const rect = this.refs[objects[j].id].getClientRect();
+            const rect = this.getRect(this.refs[objects[j].id]);
+            console.log(rect);
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
@@ -378,10 +379,10 @@ class Graphics extends Component {
       }, () => {
 
         // Adjust x, y position to center content again after scale is complete
-        const leftRect = leftmostObj.getClientRect();
-        const rightRect = rightmostObj.getClientRect();
-        const topRect = topmostObj.getClientRect();
-        const bottomRect = bottommostObj.getClientRect();
+        const leftRect = this.getRect(leftmostObj);
+        const rightRect = this.getRect(rightmostObj);
+        const topRect = this.getRect(topmostObj);
+        const bottomRect = this.getRect(bottommostObj);
 
         const newContentWidth = (rightRect.x + rightRect.width) - leftRect.x;
         const newContentHeight = (bottomRect.y + bottomRect.height) - topRect.y;
@@ -392,6 +393,19 @@ class Graphics extends Component {
         });
       });
     }
+  }
+
+  getRect = (obj) => {
+    let rect = null;
+    if (obj.nodeName === "DIV") {
+      // Custom Object
+      rect = obj.getBoundingClientRect();
+    } else {
+      // Konva Object
+      rect = obj.getClientRect();
+    }
+
+    return rect;
   }
 
   saveInterval = null;
@@ -1377,25 +1391,6 @@ class Graphics extends Component {
     }));
   }
 
-  addPoll = () => {
-    const pollNum = this.state.polls.length + 1;
-    const name = "polls" + pollNum;
-    const newPoll = {
-      level: this.state.level,
-      visible: true,
-      opacity: 1,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      ref: name,
-    };
-
-    this.setState({
-      polls: [...this.state.polls, newPoll]
-    });
-  }
-
   // Fill Color
   handleFillColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
@@ -1767,6 +1762,10 @@ class Graphics extends Component {
       this.setState({
         layerDraggable: true
       });
+    } else if (event.altKey && event.keyCode === r) {
+      // Print refs
+      console.log("REFS:");
+      console.log(this.refs);
     }
   }
 
@@ -1985,7 +1984,7 @@ class Graphics extends Component {
   }
 
   // Component Props
-  defaultProps = (obj, index) => {
+  defaultObjProps = (obj, index) => {
     return {
       key: index,
       visible: obj.visible,
@@ -2192,11 +2191,11 @@ class Graphics extends Component {
         {/* Load objects in state */}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultProps(obj, index)} {...this.rectProps(obj)} /> : null
+            <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
         })}
         {this.state.ellipses.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Ellipse {...this.defaultProps(obj, index)} {...this.ellipseProps(obj)} /> : null
+            <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
         })}
         {this.state.lines.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
@@ -2204,31 +2203,35 @@ class Graphics extends Component {
         })}
         {this.state.images.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLImage {...this.defaultProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLImage {...this.defaultObjProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.videos.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.audios.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.documents.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultProps(obj, index)} {...this.documentProps(obj)} /> : null
+            <Rect {...this.defaultObjProps(obj, index)} {...this.documentProps(obj)} /> : null
         })}
         {this.state.triangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <RegularPolygon {...this.defaultProps(obj, index)} {...this.triangleProps(obj)} /> : null
+            <RegularPolygon {...this.defaultObjProps(obj, index)} {...this.triangleProps(obj)} /> : null
         })}
         {this.state.stars.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Star {...this.defaultProps(obj, index)} {...this.starProps(obj)} /> : null
+            <Star {...this.defaultObjProps(obj, index)} {...this.starProps(obj)} /> : null
         })}
         {this.state.texts.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Text {...this.defaultProps(obj, index)} {...this.textProps(obj)} /> : null
+            <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
+        })}
+        {this.state.polls.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Poll {...this.defaultObjProps(obj, index)} /> : null
         })}
         {this.state.arrows.map((obj, index) => {
           return (
@@ -2275,20 +2278,6 @@ class Graphics extends Component {
             return null
           }
         })}
-        {this.state.polls.map((poll, index) => {
-          if (poll.level === this.state.level) {
-            return (
-              <Poll
-                ref={poll.ref}
-                key={index}
-                {...this.getInteractiveProps(poll.id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-
         {/* The Group Canvas */}
         <div
           onKeyDown={this.contextMenuEventShortcuts}
@@ -2310,11 +2299,11 @@ class Graphics extends Component {
                 setState={(obj) => {
                   this.setState(obj);
                 }}
+                objectLabels={this.savedObjects}
+                deleteLabels={this.deletionCounts}
                 addTic={this.addTic}
                 addConnect={this.addConnect4}
-                addPoll={this.addPoll}
                 drawLine={this.drawLine}
-                eraseLine={this.eraseLine}
                 stopDrawing={this.stopDrawing}
                 handleImage={this.handleImage}
                 handleVideo={this.handleVideo}
@@ -2391,11 +2380,11 @@ class Graphics extends Component {
                     setState={(obj) => {
                       this.setState(obj);
                     }}
+                    objectLabels={this.savedObjects}
+                    deleteLabels={this.deletionCounts}
                     addTic={this.addTic}
                     addConnect={this.addConnect4}
-                    addPoll={this.addPoll}
                     drawLine={this.drawLine}
-                    eraseLine={this.eraseLine}
                     stopDrawing={this.stopDrawing}
                     handleImage={this.handleImage}
                     handleVideo={this.handleVideo}

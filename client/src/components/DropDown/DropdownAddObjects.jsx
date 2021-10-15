@@ -194,20 +194,10 @@ const DropdownAddObjects = (props) => {
   }
 
   // Adding Objects
-  const addObjectToLayer = (
-    objectName,
-    objectsState,
-    objectsDeletedState,
-    objectParameters) => {
-    if (
-      objectsDeletedState === undefined ||
-      objectsDeletedState === null ||
-      objectsDeletedState === NaN
-    ) {
-      console.log("WEIRD DELETED STATE");
-      console.log(objectsDeletedState);
-      objectsDeletedState = 0;
-    }
+  const addObjectToLayer = (objectName, objectParameters) => {
+    const objectsState = props.state[objectName];
+    const deleteName = props.deleteLabels[props.objectLabels.indexOf(objectName)];
+    const objectsDeletedState = props.state[deleteName];
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
 
@@ -249,8 +239,6 @@ const DropdownAddObjects = (props) => {
   const addRectangle = () => {
     addObjectToLayer(
       "rectangles",
-      props.state.rectangles,
-      props.state.rectDeleteCount,
       {
         width: 100,
         height: 100,
@@ -266,8 +254,6 @@ const DropdownAddObjects = (props) => {
   const addCircle = () => {
     addObjectToLayer(
       "ellipses",
-      props.state.ellipses,
-      props.state.ellipseDeleteCount,
       {
         radiusX: 50,
         radiusY: 50,
@@ -282,8 +268,6 @@ const DropdownAddObjects = (props) => {
   const addStar = () => {
     addObjectToLayer(
       "stars",
-      props.state.stars,
-      props.state.starDeleteCount,
       {
         numPoints: 5,
         innerRadius: 30,
@@ -301,8 +285,6 @@ const DropdownAddObjects = (props) => {
   const addTriangle = () => {
     addObjectToLayer(
       "triangles",
-      props.state.triangles,
-      props.state.triangleDeleteCount,
       {
         sides: 3,
         radius: 70,
@@ -320,8 +302,6 @@ const DropdownAddObjects = (props) => {
   const addImage = () => {
     addObjectToLayer(
       "images",
-      props.state.images,
-      props.state.imageDeleteCount,
       {
         imgsrc: props.state.imgsrc,
         stroke: 'black',
@@ -336,8 +316,6 @@ const DropdownAddObjects = (props) => {
   const addVideo = () => {
     addObjectToLayer(
       "videos",
-      props.state.videos,
-      props.state.videoDeleteCount,
       {
         width: 400,
         height: 400,
@@ -352,8 +330,6 @@ const DropdownAddObjects = (props) => {
   const addText = () => {
     addObjectToLayer(
       "texts",
-      props.state.texts,
-      props.state.textDeleteCount,
       {
         fontSize: 50,
         text: "Edit this",
@@ -370,8 +346,6 @@ const DropdownAddObjects = (props) => {
   const addAudio = () => {
     addObjectToLayer(
       "audios",
-      props.state.audios,
-      props.state.audioDeleteCount,
       {
         imgsrc: "sound.png",
         audsrc: props.state.audsrc,
@@ -397,8 +371,6 @@ const DropdownAddObjects = (props) => {
 
     addObjectToLayer(
       "documents",
-      props.state.documents,
-      props.state.documentDeleteCount,
       {
         stroke: 'black',
         strokeWidth: 0,
@@ -407,6 +379,15 @@ const DropdownAddObjects = (props) => {
         rotation: 0,
         width: 100,
         height: 100
+      }
+    );
+  }
+
+  const addPoll = () => {
+    addObjectToLayer(
+      "polls",
+      {
+
       }
     );
   }
@@ -424,11 +405,6 @@ const DropdownAddObjects = (props) => {
 
   function addConnect() {
     props.addConnect();
-    props.close();
-  }
-
-  const addPoll = () => {
-    props.addPoll();
     props.close();
   }
 
