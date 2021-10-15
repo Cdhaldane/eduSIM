@@ -98,6 +98,7 @@ function Dashboard(props) {
                   adminid={noteItem.createdby_adminid}
                   setConfirmationModal={setConfirmationModal}
                   title={noteItem.gameinstance_name}
+                  superadmin={noteItem.createdby_adminid === localStorage.adminid}
                 />
               </div>
             );

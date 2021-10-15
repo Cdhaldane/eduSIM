@@ -52,6 +52,13 @@
   flex-direction: column;
 }
 
+.areainvitecollabs > p {
+  text-align: left;
+  font-size: 1em;
+  padding: 0;
+  font-weight: unset;
+}
+
 .areacsvform input[type="file"] {
   display: none; 
 }
@@ -237,6 +244,13 @@
   }
   .modal-title {
     text-align: center;
+  }
+
+  .areainvitecollabs > p {
+    text-align: center;
+    font-size: 1em;
+    padding: 0;
+    font-weight: unset;
   }
 
   #addj {
