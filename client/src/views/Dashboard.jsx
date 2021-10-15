@@ -86,7 +86,7 @@ function Dashboard(props) {
                   adminid={noteItem.createdby_adminid}
                   onDelete={deleteNote}
                   title={noteItem.gameinstance_name}
-                  superadmin={index%2==1}
+                  superadmin={noteItem.createdby_adminid === localStorage.adminid}
                 />
               </div>
             );

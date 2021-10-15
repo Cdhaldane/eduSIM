@@ -85,6 +85,8 @@ function SimNote(props) {
       >
         <InviteCollaboratorsModal 
           close={() => setModalOpen(false)}
+          gameid={props.gameid}
+          title={props.title}
         />
       </Modal>
     </div>

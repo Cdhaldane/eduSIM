@@ -1,5 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useAlertContext } from '../Alerts/AlertContext';
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
 
 const EmailInput = styled.div`
   display: flex;
@@ -41,6 +44,9 @@ const EmailInput = styled.div`
 function InviteCollaboratorsModal(props) {
   const detailsArea = new useRef();
   const [emails, setEmails] = useState([""]);
+  const [sending, setSending] = useState(false);
+  const alertContext = useAlertContext();
+  const { user } = useAuth0();
   
   const handleClickOutside = e => {
     if (detailsArea.current &&
@@ -66,6 +72,26 @@ function InviteCollaboratorsModal(props) {
     // which means it no longer is contained in the form and triggers
     // the modal to close. >:(
     setTimeout(() => setEmails(emails.filter((_,i) => i!=ind)), 20);
+  }
+
+  const handleSendEmails = () => {
+    setSending(true);
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendCollaboratorEmails', {
+      emails,
+      admin: user.name,
+      simid: props.gameid,
+      simname: props.title
+    }).then((res) => {
+      alertContext.showAlert("Invitations have been successfully sent to given email addresses.", "info");
+      props.close();
+      setSending(false);
+    }).catch((error) => {
+      console.log(error);
+      if (error) {
+        alertContext.showAlert("An error has occured while attempting to send email invitations. Please try again.", "error");
+      }
+      setSending(false);
+    });
   }
 
   useEffect(() => {
@@ -101,7 +127,8 @@ function InviteCollaboratorsModal(props) {
         <button 
           type="button" 
           className="modal-bottomright-button"
-          onClick={props.close}
+          onClick={handleSendEmails}
+          disabled={sending}
         >
           Send
         </button>

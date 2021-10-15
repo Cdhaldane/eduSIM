@@ -17,6 +17,10 @@ const collaborators = db.define('collaborators', {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
+  },
+  verified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 });
 
