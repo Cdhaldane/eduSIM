@@ -198,6 +198,54 @@ exports.verifyCollaboratorStatus = async (req, res) => {
   }
 };
 
+exports.revokeGameInstanceAccess = async (req, res) => {
+  const { gameinstanceid, adminid } = req.body;
+
+  const collab = await Collaborators.findOne({
+    where: {
+      gameinstanceid,
+      adminid
+    },
+  });
+
+  if (!collab) {
+    return res.status(400).send({
+      message: `Params do not fit any existing collaborator status`,
+    });
+  }
+
+  try {
+    // Updating a specific json field
+    await collab.destroy();
+    return res.send({
+      message: `Access to ${gameinstanceid} has been revoked for ${adminid}`,
+      collab
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+
+exports.getCollaborators = async (req, res) => {
+  const { gameinstanceid } = req.params;
+
+  try {
+    const admins = await db.query(`
+      select a.* from adminaccounts a, collaborators c where 
+      a.adminid=c.adminid and 
+      c.gameinstanceid='${gameinstanceid}'
+    `);
+    return res.json(admins[0]);
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
 /*
 exports.deleteGameInstance = async (req, res) => {
   const id = req.query.id;
