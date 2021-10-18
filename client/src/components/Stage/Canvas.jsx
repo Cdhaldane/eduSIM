@@ -317,7 +317,6 @@ class Graphics extends Component {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
             const rect = this.getRect(this.refs[objects[j].id]);
-            console.log(rect);
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
@@ -2395,6 +2394,7 @@ class Graphics extends Component {
                   />
                 )}
               <Stage
+                style={{ position: "relative", overflow: "hidden" }}
                 height={document.getElementById("editPersonalContainer") ?
                   document.getElementById("editPersonalContainer").clientHeight : 0}
                 width={document.getElementById("editPersonalContainer") ?

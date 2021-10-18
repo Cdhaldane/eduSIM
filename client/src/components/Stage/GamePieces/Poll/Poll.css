@@ -7,3 +7,11 @@
   border-radius: 5px 5px 5px 5px;
   box-shadow: var(--box-shadow);
 }
+
+.customPointerEventsOn {
+  pointer-events: auto;
+}
+
+.customObj {
+  position: relative;
+}

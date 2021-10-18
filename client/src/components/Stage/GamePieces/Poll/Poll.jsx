@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import './Poll.css';
 import Draggable from 'react-draggable';
 import "survey-react/survey.css";
@@ -45,31 +45,69 @@ const surveyJson = {
 
 const Poll = forwardRef((props, ref) => {
 
+  const obj = useRef(null);
+
+  const getObj = () => {
+    return obj.current.parentElement;
+  }
+
   const handleLoad = () => {
-    const customObjs = document.getElementsByClassName("customObj");
-    let thisObj = null;
-    for (let i =0; i < customObjs.length; i++) {
-      if (customObjs[i].dataset.name === ref._stringRef) {
-        thisObj = customObjs[i];
-        break;
-      }
+    const thisObj = getObj();
+    thisObj.parentElement.style.pointerEvents = "none";
+  }
+
+  let scrollTimeout = null;
+  const noDragTimeout = () => {
+    noDrag({ctrlKey: true});
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      activateDrag({key: "Control"})
+    }, 100);
+  }
+
+  const noDrag = (e) => {
+    if (e.ctrlKey) {
+      obj.current.classList.remove("customPointerEventsOn");
     }
-    console.log(thisObj.parentElement);
-    thisObj.parentElement.oncontextmenu = (e) => {
-      e.preventDefault();
+  }
+
+  const activateDrag = (e) => {
+    if (e.key === "Control") {
+      obj.current.classList.add("customPointerEventsOn");
     }
   }
 
   useEffect(() => {
-    window.addEventListener('load', handleLoad);
-    return () => window.removeEventListener('load', handleLoad);
+    window.addEventListener("wheel", noDragTimeout);
+    window.addEventListener("keydown", noDrag);
+    window.addEventListener("keyup", activateDrag);
+
+    return () => {
+      window.removeEventListener("wheel", noDragTimeout);
+      window.removeEventListener("keydown", noDrag);
+      window.removeEventListener("keyup", activateDrag);
+    }
   }, []);
+
+  useEffect(() => {
+    if (obj.current) {
+      handleLoad();
+    }
+  }, [obj.current]);
+
+  useEffect(() => {
+    if (obj.current) {
+      const thisObj = getObj();
+      thisObj.parentElement.style.zIndex = "0";
+    }
+  });
 
   return (
     <KonvaHtml>
       <Draggable>
         <div className={"customObj"} data-name={ref._stringRef} ref={ref}>
-          <div className="poll">
+          <div className="customPointerEventsOn poll" ref={obj}>
             <Survey.Survey
               json={surveyJson}
             />
