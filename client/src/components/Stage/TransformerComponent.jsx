@@ -31,6 +31,7 @@ const TransformerComponent = forwardRef((props, ref) => {
         );
       case "triangles":
       case "stars":
+      case "polls":
         return (
           <Transformer
             ref={ref}
@@ -48,6 +49,16 @@ const TransformerComponent = forwardRef((props, ref) => {
           <Transformer
             ref={ref}
             name="transformer"
+            resizeEnabled={false}
+            rotateEnabled={false}
+            borderEnabled={false}
+          />
+        );
+      case "customRect":
+      case "ContainerRect":
+        return (
+          <Transformer
+            ref={ref}
             resizeEnabled={false}
             rotateEnabled={false}
           />

@@ -78,12 +78,12 @@ function DropdownEditObject(props) {
 
   function handleChangeF(e) {
     setFillColor(e);
-    props.choosecolorf(e);
+    props.handleFillColor(e);
   }
 
   function handleChangeS(e) {
     setStrokeColor(e);
-    props.choosecolors(e);
+    props.handleStrokeColor(e);
   }
 
   function onSliderChange(e) {

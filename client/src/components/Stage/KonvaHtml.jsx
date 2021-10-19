@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, createElement } from 'react';
+import React, { useRef, useLayoutEffect, createElement, forwardRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Group } from 'react-konva';
 
@@ -20,7 +20,7 @@ const __rest = (this && this.__rest) || function (s, e) {
   return t;
 };
 
-const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc }) => {
+const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, refName }) => {
 
   const groupRef = useRef(null);
   const container = useRef();
@@ -38,7 +38,7 @@ const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc })
         attrs = transformFunc(attrs);
       }
       div.style.position = 'absolute';
-      div.style.zIndex = '10';
+      div.style.zIndex = '0';
       div.style.top = '0px';
       div.style.left = '0px';
       div.style.transform = `translate(${attrs.x}px, ${attrs.y}px) rotate(${attrs.rotation}deg) scaleX(${attrs.scaleX}) scaleY(${attrs.scaleY})`;
@@ -87,10 +87,15 @@ const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc })
   }, [divProps]);
 
   useLayoutEffect(() => {
-    ReactDOM.render(children, container.current);
+    if (container.current) {
+      ReactDOM.render(children, container.current);
+    }
   });
 
-  return createElement(Group, Object.assign({ ref: groupRef }, groupProps));
+  return createElement(Group, Object.assign({ 
+    ref: groupRef, 
+    id: refName 
+  }, groupProps));
 };
 
 export default KonvaHtml;

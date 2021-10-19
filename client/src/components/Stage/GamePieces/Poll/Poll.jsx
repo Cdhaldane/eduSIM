@@ -3,7 +3,10 @@ import './Poll.css';
 import Draggable from 'react-draggable';
 import "survey-react/survey.css";
 import * as Survey from "survey-react";
-import KonvaHtml from "../../KonvaHtml"
+import KonvaHtml from "../../KonvaHtml";
+import {
+  Rect
+} from "react-konva";
 
 const surveyJson = {
   questions: [
@@ -58,11 +61,11 @@ const Poll = forwardRef((props, ref) => {
 
   let scrollTimeout = null;
   const noDragTimeout = () => {
-    noDrag({ctrlKey: true});
+    noDrag({ ctrlKey: true });
 
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      activateDrag({key: "Control"})
+      activateDrag({ key: "Control" })
     }, 100);
   }
 
@@ -96,21 +99,73 @@ const Poll = forwardRef((props, ref) => {
     }
   }, [obj.current]);
 
-  useEffect(() => {
-    if (obj.current) {
-      const thisObj = getObj();
-      thisObj.parentElement.style.zIndex = "0";
-    }
-  });
+  const deltaTransformPoint = (matrix, point) => {
+    const dx = point.x * matrix.a + point.y * matrix.c + 0;
+    const dy = point.x * matrix.b + point.y * matrix.d + 0;
+    return {
+      x: dx,
+      y: dy
+    };
+  }
+
+  const decomposeMatrix = (matrix) => {
+    // @See https://gist.github.com/2052247
+
+    // Calculate delta transform point
+    const px = deltaTransformPoint(matrix, { x: 0, y: 1 });
+    const py = deltaTransformPoint(matrix, { x: 1, y: 0 });
+
+    // Calculate skew
+    const skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+    const skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+
+    return {
+      translateX: matrix.e,
+      translateY: matrix.f,
+      scaleX: Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
+      scaleY: Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d),
+      skewX: skewX,
+      skewY: skewY,
+      rotation: skewX // Rotation is the same as skew x
+    };
+  }
+
+  const toRadians = (angle) => {
+    return angle * (Math.PI / 180);
+  }
+
+  const calcRotation = (e) => {
+    const style = window.getComputedStyle(getObj().parentElement);
+    const matrix = new DOMMatrix(style.transform);
+    const rot = -toRadians(decomposeMatrix(matrix).rotation);
+    const x = e.x;
+    const y = e.y;
+    const realX = x * Math.cos(rot);
+    const realY = y * Math.sin(rot);
+    getObj().style.transform = `translate(${realX}px, ${realY}px)`;
+    console.log(`translate(${realX}px, ${realY}px)`);
+  }
 
   return (
-    <KonvaHtml>
-      <Draggable>
+    <KonvaHtml refName={ref._stringRef}>
+      <Draggable
+        onDrag={calcRotation}
+      >
         <div className={"customObj"} data-name={ref._stringRef} ref={ref}>
-          <div className="customPointerEventsOn poll" ref={obj}>
-            <Survey.Survey
-              json={surveyJson}
-            />
+          <div
+            className="customPointerEventsOn"
+            ref={obj}
+            onClick={props.onClick}
+            onContextMenu={props.onContextMenu}
+            onMouseUp={props.onMouseUp}
+            onMouseDown={props.onMouseDown}
+            onMouseMove={props.onMouseMove}
+          >
+            <div className="poll">
+              <Survey.Survey
+                json={surveyJson}
+              />
+            </div>
           </div>
         </div>
       </Draggable>

@@ -16,6 +16,7 @@ import URLImage from "./URLImage";
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import Poll from "./GamePieces/Poll/Poll";
+import KonvaHtml from "./KonvaHtml";
 
 import "./Stage.css";
 
@@ -121,6 +122,19 @@ class Graphics extends Component {
 
       connectors: [],
       gameroles: [],
+
+      // TESTING Custom Transformer
+      customRect: [{
+        infolevel: false,
+        level: "group",
+        visible: true,
+        x: 0,
+        y: 0,
+        id: "customRect",
+        name: "customRect",
+        ref: "customRect",
+        fill: "red"
+      }],
 
       // Object Deletion Count
       rectDeleteCount: 0,
@@ -442,6 +456,18 @@ class Graphics extends Component {
     clearInterval(this.drawInterval);
   }
 
+  // Return current selectedShapeName if input is customRect or ContainerRect
+  // Return input otherwise
+  checkName = (name) => {
+    switch (name) {
+      case "customRect":
+      case "ContainerRect":
+        return this.state.selectedShapeName;
+      default:
+        return name;
+    }
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     const prevMainShapes = [];
     const currentMainShapes = [];
@@ -520,10 +546,11 @@ class Graphics extends Component {
   };
 
   onObjectContextMenu = e => {
-    e.evt.preventDefault(true);
+    const event = e.evt ? e.evt : e;
+    event.preventDefault(true);
     const mousePosition = {
-      x: e.evt.clientX,
-      y: e.evt.clientY
+      x: event.clientX,
+      y: event.clientY
     };
     let singleGroupSelected = false;
     if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
@@ -556,16 +583,31 @@ class Graphics extends Component {
   };
 
   onMouseDown = (e, personalArea) => {
-    if (!e.evt.ctrlKey) {
+    const event = e.evt ? e.evt : e;
+
+    if (!event.ctrlKey) {
       this.setState({
         layerDraggable: false
       });
     }
 
-    const pos = {
-      x: e.evt.layerX,
-      y: e.evt.layerY
-    };
+    let pos = null;
+    if (event.layerX) {
+      pos = {
+        x: event.layerX,
+        y: event.layerY
+      };
+    } else {
+      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      if (sidebarPx > 0 && personalArea) {
+        sidebarPx = 100;
+      }
+
+      pos = {
+        x: event.clientX - sidebarPx,
+        y: event.clientY
+      }
+    }
 
     if (this.state.drawMode === true) {
       this.setState({
@@ -583,10 +625,12 @@ class Graphics extends Component {
         }]
       });
     } else {
-      const isElement = e.target.findAncestor(".elements-container");
-      const isTransformer = e.target.findAncestor("Transformer");
-      if (isElement || isTransformer) {
-        return;
+      if (e.evt) {
+        const isElement = e.target.findAncestor(".elements-container");
+        const isTransformer = e.target.findAncestor("Transformer");
+        if (isElement || isTransformer) {
+          return;
+        }
       }
 
       let scale = this.state.groupLayerScale;
@@ -600,7 +644,10 @@ class Graphics extends Component {
 
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
-      const shape = this.refs[layer].getIntersection(pointerPos);
+      let shape = true;
+      if (e.evt) {
+        shape = this.refs[layer].getIntersection(pointerPos);
+      }
       this.setState({
         selection: {
           isDraggingShape: this.isShape(shape),
@@ -617,6 +664,8 @@ class Graphics extends Component {
   };
 
   handleMouseUp = (e, personalArea) => {
+    const event = e.evt ? e.evt : e;
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
@@ -629,10 +678,14 @@ class Graphics extends Component {
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
       const selectionRect = personalArea ? "personalSelectionRect" : "groupSelectionRect";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
-      const shape = this.refs[layer].getIntersection(pointerPos);
-      const clickShapeGroup = this.getShapeGroup(shape);
+      let shape = null;
+      let clickShapeGroup = null;
+      if (pointerPos) {
+        shape = this.refs[layer].getIntersection(pointerPos);
+        clickShapeGroup = this.getShapeGroup(shape);
+      }
 
-      if (e.evt.button === 0) {
+      if (event.button === 0) {
         // LEFT CLICK
         const selBox = this.refs[selectionRect].getClientRect();
         if (selBox.width > 1 && selBox.height > 1) {
@@ -677,7 +730,7 @@ class Graphics extends Component {
 
             if (selectedGroups.length === 0 && elemIds.length === 1) {
               this.setState({
-                selectedShapeName: elements[0].id(),
+                selectedShapeName: this.checkName(elements[0].id()),
                 groupSelection: []
               }, this.handleObjectSelection);
             } else {
@@ -693,7 +746,7 @@ class Graphics extends Component {
         } else {
           // There has been a single left click
           if (this.isShape(shape)) {
-            if (e.evt.shiftKey) {
+            if (event.shiftKey) {
               // Shift selected -> create group selection
 
               // The object that was just shift selected
@@ -742,7 +795,7 @@ class Graphics extends Component {
                     // Shift select with nothing else selected so set it as the selection
                     if (!clickShapeGroup) {
                       this.setState({
-                        selectedShapeName: shape.id(),
+                        selectedShapeName: this.checkName(shape.id()),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     } else {
@@ -790,7 +843,7 @@ class Graphics extends Component {
                       }, this.handleObjectSelection);
                     } else {
                       this.setState({
-                        selectedShapeName: newGroupSelection[0].id(),
+                        selectedShapeName: this.checkName(newGroupSelection[0].id()),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     }
@@ -811,7 +864,7 @@ class Graphics extends Component {
                 }, this.handleObjectSelection);
               } else {
                 this.setState({
-                  selectedShapeName: shape.id(),
+                  selectedShapeName: this.checkName(shape.id()),
                   groupSelection: []
                 }, this.handleObjectSelection);
               }
@@ -826,7 +879,7 @@ class Graphics extends Component {
             }
           }
         }
-      } else if (e.evt.button === 2) {
+      } else if (event.button === 2) {
         // RIGHT CLICK
         if (this.isShape(shape)) {
           if (clickShapeGroup) {
@@ -860,7 +913,7 @@ class Graphics extends Component {
 
             if (!shapeIsInGroupSelection) {
               this.setState({
-                selectedShapeName: shape.id(),
+                selectedShapeName: this.checkName(shape.id()),
                 groupSelection: []
               }, this.handleObjectSelection);
             }
@@ -880,14 +933,14 @@ class Graphics extends Component {
             selectedContextMenu: {
               type: type,
               position: {
-                x: e.evt.layerX + sidebarPx,
-                y: e.evt.layerY
+                x: event.layerX + sidebarPx,
+                y: event.layerY
               }
             },
             [notVisible]: false,
             [visible]: true,
-            [contextMenuX]: e.evt.layerX + sidebarPx,
-            [contextMenuY]: e.evt.layerY,
+            [contextMenuX]: event.layerX + sidebarPx,
+            [contextMenuY]: event.layerY,
           });
         }
       }
@@ -906,6 +959,9 @@ class Graphics extends Component {
   };
 
   isShape = (shape) => {
+    if (shape === true) {
+      return true;
+    }
     if (
       shape === null ||
       shape === undefined ||
@@ -919,11 +975,12 @@ class Graphics extends Component {
     }
   }
 
+  // Put the Transform around the selected object / group
   handleObjectSelection = () => {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
     if (this.refs[this.state.selectedShapeName]) {
-      this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
+      this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName)]);
     } else if (type === "" && this.state.groupSelection.length) {
       this.refs[transformer].nodes(this.state.groupSelection.flat());
     } else {
@@ -932,6 +989,8 @@ class Graphics extends Component {
   }
 
   handleMouseOver = (e, personalArea) => {
+    const event = e.evt ? e.evt : e;
+
     // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
@@ -962,7 +1021,7 @@ class Graphics extends Component {
         document.body.style.cursor = "pointer";
       } else {
         // Only have drag select on left click and drag
-        if (e.evt.buttons === 1 && !this.state.layerDraggable) {
+        if (event.buttons === 1 && !this.state.layerDraggable) {
           if (this.state.selection.isDraggingShape) {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
@@ -972,8 +1031,9 @@ class Graphics extends Component {
                 groupSelection: [shapeGroup]
               }, this.handleObjectSelection);
             } else {
+              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
               this.setState({
-                selectedShapeName: shape.id(),
+                selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
               }, this.handleObjectSelection);
             }
@@ -1294,7 +1354,7 @@ class Graphics extends Component {
     });
   }
 
-  handleClose = (e) => {
+  handleCloseContextMenu = (e) => {
     this.setState({
       selectedContextMenu: null
     })
@@ -1764,7 +1824,46 @@ class Graphics extends Component {
     } else if (event.altKey && event.keyCode === r) {
       // Print refs
       console.log("REFS:");
+      console.log(this.refs.groupAreaLayer.find('Group'));
       console.log(this.refs);
+    }
+  }
+
+  // For Konva Objects: 
+  // returns Konva object
+  // For Custom Objects:
+  // returns the Konva Group associated with the KonvaHtml of the object
+  getKonvaObj = (id) => {
+    if (this.refs[id].attrs) {
+      return this.refs[id];
+    } else {
+      const groups = this.refs.groupAreaLayer.find('Group');
+      for (let i = 0; i < groups.length; i++) {
+        if (groups[i].attrs.id === id) {
+          const elem = this.refs[id];
+          const group = groups[i];
+          const style = window.getComputedStyle(elem);
+          const matrix = new DOMMatrix(style.transform);
+          const x = matrix.m41;
+          const y = matrix.m42;
+          const width = elem.clientWidth;
+          const height = elem.clientHeight;
+          const sizeRect = this.refs.customRect;
+          const paddingPercent = 0.05;
+          this.setState({
+            customRect: [{
+              ...this.state.customRect[0],
+              x: x - ((width * paddingPercent) / 2),
+              y: y - ((height * paddingPercent) / 2)
+            }]
+          });
+          sizeRect.attrs.width = width * (1 + paddingPercent);
+          sizeRect.attrs.height = height * (1 + paddingPercent);
+          group.add(sizeRect);
+          return group;
+        }
+      }
+      return null;
     }
   }
 
@@ -2187,6 +2286,12 @@ class Graphics extends Component {
           width={window.innerWidth * 10}
         />
 
+        {/* This Rect acts as the transform object for custom objects */}
+        <Rect
+          {...this.defaultObjProps(this.state.customRect[0], 0)}
+          draggable={false}
+        />
+
         {/* Load objects in state */}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
@@ -2230,7 +2335,12 @@ class Graphics extends Component {
         })}
         {this.state.polls.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Poll {...this.defaultObjProps(obj, index)} /> : null
+            <Poll
+              {...this.defaultObjProps(obj, index)}
+              onMouseUp={(e) => this.handleMouseUp(e, false)}
+              onMouseDown={(e) => this.onMouseDown(e, false)}
+              onMouseMove={(e) => this.handleMouseOver(e, false)}
+            /> : null
         })}
         {this.state.arrows.map((obj, index) => {
           return (
@@ -2422,24 +2532,22 @@ class Graphics extends Component {
                     <Portal>
                       <ContextMenu
                         {...this.state.selectedContextMenu}
+                        selectedShapeName={this.state.selectedShapeName}
+                        shape={this.refs[this.state.selectedShapeName]}
+                        selectedFont={this.state.selectedFont}
                         handleUngrouping={this.handleUngrouping}
                         handleGrouping={this.handleGrouping}
-                        selectedshape={this.state.selectedShapeName}
-                        onOptionSelected={this.handleOptionSelected}
-                        choosecolors={this.handleStrokeColor}
-                        choosecolorf={this.handleFillColor}
+                        handleStrokeColor={this.handleStrokeColor}
+                        handleFillColor={this.handleFillColor}
                         handleWidth={this.handleWidth}
                         handleOpacity={this.handleOpacity}
-                        shape={this.refs[this.state.selectedShapeName]}
-                        close={this.handleClose}
+                        handleFont={this.handleFont}
+                        handleSize={this.handleSize}
+                        close={this.handleCloseContextMenu}
                         copy={this.handleCopy}
                         cut={this.handleCut}
                         paste={this.handlePaste}
                         delete={this.handleDelete}
-                        handleFont={this.handleFont}
-                        handleSize={this.handleSize}
-                        selectedFont={this.state.selectedFont}
-                        editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
                       />
                     </Portal>
                   )}
