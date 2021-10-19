@@ -236,7 +236,8 @@ exports.getCollaborators = async (req, res) => {
     const admins = await db.query(`
       select a.* from adminaccounts a, collaborators c where 
       a.adminid=c.adminid and 
-      c.gameinstanceid='${gameinstanceid}'
+      c.gameinstanceid='${gameinstanceid}' and
+      c.verified=true
     `);
     return res.json(admins[0]);
   } catch (err) {

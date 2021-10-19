@@ -191,11 +191,11 @@ function InviteCollaboratorsModal(props) {
             </EmailInput>
             <Collaborators>
               <h3>People with access to {props.title}:</h3>
-              {collaborators.length>0 ? collaborators.map(({adminid: id, name, updatedAt}) => (
+              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email}) => (
                 <div>
                   <div>
                     <h4>{name}</h4>
-                    <p>Since {moment(updatedAt).fromNow()}</p>
+                    <p>{email}</p>
                   </div>
                   <i class="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>
                 </div>
