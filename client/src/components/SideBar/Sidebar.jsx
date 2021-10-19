@@ -149,7 +149,7 @@ function Sidebar(props) {
       visible: mvisible,
       id: "messaging",
       submenu: (
-        <Messages socket={props.socket} />
+        <Messages socket={props.socket} messageBacklog={props.submenuProps?.messageBacklog} />
       )
     },
     {

@@ -1,6 +1,12 @@
 import playerEvents from "./player";
 import adminEvents from "./admin";
-import { getRoomStatus, getSimulationRooms, getPlayersInRoom, removePlayer } from './utils';
+import { 
+  getRoomStatus, 
+  getSimulationRooms, 
+  getPlayersInRoom, 
+  getChatlog,
+  removePlayer
+} from './utils';
 
 export default async (server, client) => {
   
@@ -28,10 +34,10 @@ export default async (server, client) => {
     client.join(roomid);
 
     const players = await getPlayersInRoom(roomid, server);
-
     const roomStatus = await getRoomStatus(roomid);
+    const chatlog = await getChatlog(roomid);
     client.emit("connectStatus", {
-      ...roomStatus, players 
+      ...roomStatus, players, chatlog
     });
 
     client.on("disconnect", () => {

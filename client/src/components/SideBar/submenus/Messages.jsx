@@ -86,6 +86,8 @@ function Messages(props) {
   const [messageInput, setMessageInput] = useState("");
   const [sendGroup, setSendGroup] = useState(() => new Set());
 
+  console.log(props.messageBacklog);
+
   useEffect(() => {
     if (props.socket) {
       props.socket.on("message", ({ sender, message, group }) => {
@@ -95,6 +97,12 @@ function Messages(props) {
       })
     }
   }, []);
+
+  useEffect(() => {
+    if (props.messageBacklog && props.messageBacklog.length>0) {
+      setMessageLog(props.messageBacklog);
+    }
+  }, [props.messageBacklog]);
 
   const sendMessage = (event) => {
     event.preventDefault();
@@ -134,9 +142,9 @@ function Messages(props) {
             key={ind}
             sender={props.socket.id === id} 
             onClick={() => addWhisper({id, name}, group)}
-            private={!!group}
+            private={group && group.length>0}
           >
-            {!!group && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
+            {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
             <b>{(props.socket.id !== id ? (`${name} says:`) : "You said:")}</b>
             <p>{message}</p>
           </Message>

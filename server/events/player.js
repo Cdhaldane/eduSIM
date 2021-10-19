@@ -4,7 +4,7 @@ import {
   getPlayerByDBID,
   getRoomStatus,
   updateRoomStatus,
-  addInteraction
+  updateChatlog
 } from './utils';
 import moment from "moment";
 
@@ -16,6 +16,14 @@ export default async (server, client, event, args) => {
       const { message, group } = args;
 
       const sender = await getPlayer(client.id);
+
+      updateChatlog(room, {
+        sender,
+        room,
+        message,
+        group,
+        timeSent: moment().valueOf()
+      });
 
       if (group.length > 0) {
         server.to(client.id).emit("message", {

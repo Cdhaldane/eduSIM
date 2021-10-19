@@ -56,6 +56,7 @@ function Game(props) {
   const [roomStatus, setRoomStatus] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
+  const [messageBacklog, setMessageBacklog] = useState([]);
   const [level, setLevel] = useState(1);
   const alertContext = useAlertContext();
 
@@ -89,9 +90,10 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ players, ...status }) => {
+      client.on("connectStatus", ({ players, chatlog, ...status }) => {
         setPlayers(players);
         setRoomStatus(status || {});
+        setMessageBacklog(chatlog);
       });
       client.on("roomStatusUpdate", ({ status }) => {
         setRoomStatus(status);
@@ -142,6 +144,7 @@ function Game(props) {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          submenuProps={{messageBacklog}}
           game
           disabled={!roomStatus.running}
         />
