@@ -14,7 +14,7 @@ const Level = (props) => {
   }
 
   const handleCount = () => {
-    setCount(count + 1);
+    // setCount(count + 1);
     handleLevel(count + 1);
   }
 

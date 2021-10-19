@@ -96,5 +96,18 @@ export default async (server, client, event, args) => {
 
       break;
     };
+    
+    case "goToPage": {
+      const { level } = args;
+
+      const newStatus = await updateRoomStatus(room, {
+        level
+      });
+
+      server.to(room).emit("roomStatusUpdate", {
+        room,
+        status: newStatus
+      });
+    }
   }
 }

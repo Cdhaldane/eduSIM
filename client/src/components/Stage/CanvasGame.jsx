@@ -225,9 +225,12 @@ class Graphics extends Component {
   })
 
   handleLevel = (e) => {
-    this.setState({
+    this.props.socket.emit("goToPage", {
       level: e
-    }, this.handleLevelUpdate)
+    })
+    // this.setState({
+    //   level: e
+    // }, this.handleLevelUpdate)
   }
 
   toggleModal = () => {
@@ -236,8 +239,8 @@ class Graphics extends Component {
     })
   }
 
-  componentWillReceiveProps = ({ level, freeAdvance }) => {
-    if (level && !freeAdvance) {
+  componentWillReceiveProps = ({ level }) => {
+    if (level) {
       this.setState({
         level
       })
