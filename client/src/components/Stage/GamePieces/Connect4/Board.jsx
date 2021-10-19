@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import "./Board.css";
-import Draggable from 'react-draggable'; // The default
+import CustomWrapper from "../CustomWrapper";
 
 const boardSettings = {
   rows: 8,
@@ -21,10 +21,22 @@ const winTypes = {
   backwardsDiagonal: 3
 };
 
-export default function ConnectFour(props) {
+const ConnectFour = forwardRef((props, ref) => {
+
+  const getFirstPlayerTurn = () => {
+    return boardSettings.colors.p1;
+  }
+
+  const createBoard = () => {
+    return new Array(boardSettings.rows * boardSettings.columns).fill(
+      boardSettings.colors.empty
+    );
+  }
+
   const {
     currentPlayer = getFirstPlayerTurn()
   } = props.status;
+
   const [board, setBoard] = useState(createBoard());
   const [win, setWin] = useState(null);
   const [flashTimer, setFlashTimer] = useState(null);
@@ -37,12 +49,13 @@ export default function ConnectFour(props) {
    * @param {number} row - row in board
    * @param {number} column - column in board
    */
-  function getIndex(row, column) {
+  const getIndex = (row, column) => {
     const index = row * boardSettings.columns + column;
     if (index > boardSettings.rows * boardSettings.colums) return null;
     return index;
   }
-  function getRowAndColumn(index) {
+
+  const getRowAndColumn = (index) => {
     if (index > boardSettings.rows * boardSettings.colums) return null;
     const row = Math.floor(index / boardSettings.columns);
     const column = Math.floor(index % boardSettings.columns);
@@ -52,31 +65,21 @@ export default function ConnectFour(props) {
     };
   }
 
-  function createBoard() {
-    return new Array(boardSettings.rows * boardSettings.columns).fill(
-      boardSettings.colors.empty
-    );
-  }
-
-  function getFirstPlayerTurn() {
-    return boardSettings.colors.p1;
-  }
-
-  function restartGame() {
+  const restartGame = () => {
     props.updateStatus({
       board: createBoard(),
       currentPlayer: getFirstPlayerTurn()
     })
   }
 
-  function getDomBoardCell(index) {
+  const getDomBoardCell = (index) => {
     if (!domBoard.current) return;
     const board = domBoard.current;
     const blocks = board.querySelectorAll(".board-block");
     return blocks[index];
   }
 
-  function findFirstEmptyRow(column) {
+  const findFirstEmptyRow = (column) => {
     let { empty } = boardSettings.colors;
     let { rows } = boardSettings;
     for (let i = 0; i < rows; i++) {
@@ -87,7 +90,7 @@ export default function ConnectFour(props) {
     return rows - 1;
   }
 
-  async function handleDrop(column) {
+  const handleDrop = async (column) => {
     if (dropping || win) return;
     const row = findFirstEmptyRow(column);
     if (row < 0) return;
@@ -107,13 +110,13 @@ export default function ConnectFour(props) {
     if (props.status.board && board != props.status.board) {
       (async () => {
         if (!firstRefresh) {
-          let r=null, c=null, ii=null, clear=false;
-          for (let i=0;i<boardSettings.rows*boardSettings.columns;i++) {
+          let r = null, c = null, ii = null, clear = false;
+          for (let i = 0; i < boardSettings.rows * boardSettings.columns; i++) {
             if (props.status.board[i] != board[i]) {
               if (r || c) clear = true;
               ii = i;
-              r = Math.floor(i/boardSettings.columns);
-              c = i%boardSettings.columns;
+              r = Math.floor(i / boardSettings.columns);
+              c = i % boardSettings.columns;
             }
           }
           if (!clear) {
@@ -130,7 +133,7 @@ export default function ConnectFour(props) {
     }
   }, [props.status.board]);
 
-  async function animateDrop(row, column, color, currentRow) {
+  const animateDrop = async (row, column, color, currentRow) => {
     if (currentRow === undefined) {
       currentRow = 0;
     }
@@ -203,7 +206,7 @@ export default function ConnectFour(props) {
       );
     }
 
-    function createWinState(start, winType) {
+    const createWinState = (start, winType) => {
       const win = {
         winner: board[start],
         winningCells: []
@@ -231,8 +234,8 @@ export default function ConnectFour(props) {
         }
       }
     }
-    
-    function isHorizontalWin() {
+
+    const isHorizontalWin = () => {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
       const { empty } = boardSettings.colors;
@@ -252,7 +255,7 @@ export default function ConnectFour(props) {
       }
     }
 
-    function isVerticalWin() {
+    const isVerticalWin = () => {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
       const { empty } = boardSettings.colors;
@@ -272,7 +275,7 @@ export default function ConnectFour(props) {
       }
     }
 
-    function isBackwardsDiagonalWin() {
+    const isBackwardsDiagonalWin = () => {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
       const { empty } = boardSettings.colors;
@@ -292,7 +295,7 @@ export default function ConnectFour(props) {
       }
     }
 
-    function isForwardsDiagonalWin() {
+    const isForwardsDiagonalWin = () => {
       const { rows } = boardSettings;
       const { columns } = boardSettings;
       const { empty } = boardSettings.colors;
@@ -315,7 +318,7 @@ export default function ConnectFour(props) {
     setWin(isWin());
   }, [board, dropping, win]);
 
-  function createDropButtons() {
+  const createDropButtons = () => {
     const btns = [];
     for (let i = 0; i < boardSettings.columns; i++) {
       btns.push(
@@ -342,7 +345,7 @@ export default function ConnectFour(props) {
     />
   ));
 
-  function getGridTemplateColumns() {
+  const getGridTemplateColumns = () => {
     let gridTemplateColumns = "";
     for (let i = 0; i < boardSettings.columns; i++) {
       gridTemplateColumns += "auto ";
@@ -351,9 +354,8 @@ export default function ConnectFour(props) {
   }
 
   return (
-    <Draggable>
+    <CustomWrapper {...props} ref={ref}>
       <div className="connectcontainer">
-
         <div
           className={`board ${currentPlayer === boardSettings.colors.p1 ? "p1-turn" : "p2-turn"
             } `}
@@ -385,6 +387,9 @@ export default function ConnectFour(props) {
           </>
         )}
       </div>
-    </Draggable>
+    </CustomWrapper>
   );
-}
+});
+
+
+export default ConnectFour;

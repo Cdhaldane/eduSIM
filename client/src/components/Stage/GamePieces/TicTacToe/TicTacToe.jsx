@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import './TicTacToe.css'
-import calculateWinner from './calculate-winner'
-import Draggable from 'react-draggable'; // The default
+import React, { useState, forwardRef } from 'react';
+import './TicTacToe.css';
+import calculateWinner from './calculate-winner';
+import CustomWrapper from "../CustomWrapper";
 
-function getStatus(squares, xIsNext) {
+const getStatus = (squares, xIsNext) => {
   const winner = calculateWinner(squares);
 
   if (winner) {
@@ -15,14 +15,14 @@ function getStatus(squares, xIsNext) {
   }
 }
 
-function Board(props) {
+const Board = (props) => {
 
-  const { 
-    squares = new Array(9), 
+  const {
+    squares = new Array(9),
     xIsNext = true
   } = props.status;
 
-  function renderSquare(index) {
+  const renderSquare = (index) => {
     return (
       <button className="squaretic" onClick={() => selectSquare(index)}>
         {squares[index]}
@@ -30,14 +30,14 @@ function Board(props) {
     )
   }
 
-  function handleReset() {
+  const handleReset = () => {
     props.updateStatus({
       squares: new Array(9),
       xIsNext: true
     });
   }
 
-  function selectSquare(square) {
+  const selectSquare = (square) => {
     const winner = calculateWinner(squares);
     if (winner || squares[square]) {
       return;
@@ -50,10 +50,15 @@ function Board(props) {
     });
   }
 
-  const status = getStatus(squares, xIsNext)
+  const status = getStatus(squares, xIsNext);
+
   return (
     <div>
       <div className="statustic">{status}</div>
+      <div className="ticTacToeButtons">
+        <button id="resetbutton" onClick={handleReset}>Reset</button>
+        <button id="ticeditbutton" onClick={props.handleShow}>Edit</button>
+      </div>
       <div className="board-rowtic">
         {renderSquare(0)}
         {renderSquare(1)}
@@ -69,41 +74,35 @@ function Board(props) {
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
-      <button id="resetbutton" onClick={handleReset}>Reset</button>
-      <button id="ticeditbutton" onClick={props.handleShow}>Edit</button>
+
       {props.show && <div className="edit-container">
         <button onClick={props.handleTicDelete}>Delete</button>
       </div>
       }
     </div>
-  )
+  );
 }
 
-function Game(props) {
+const Game = forwardRef((props, ref) => {
 
   const [show, setShow] = useState(false);
 
-  function handleShow() {
+  const handleShow = () => {
     setShow(!show);
   }
 
-  function handleDelete() {
-    props.handleTicDelete(props.i);
-  }
-
   return (
-    <Draggable>
+    <CustomWrapper {...props} ref={ref}>
       <div className="gametic">
         <Board
           show={show}
           handleShow={handleShow}
-          handleTicDelete={handleDelete}
           status={props.status}
           updateStatus={props.updateStatus}
         />
       </div>
-    </Draggable>
+    </CustomWrapper>
   )
-}
+});
 
 export default Game;

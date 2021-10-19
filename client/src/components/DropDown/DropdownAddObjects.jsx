@@ -383,32 +383,32 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
-      "polls",
-      {
+      "polls", {}
+    );
+  }
 
-      }
+  const addConnect4 = () => {
+    addObjectToLayer(
+      "connect4s", {}
+    );
+  }
+
+  const addTicTacToe = () => {
+    addObjectToLayer(
+      "tics", {}
     );
   }
 
   // Other
-  function drawLine() {
+  const drawLine = () => {
     setCheckedd(!checkedd)
     props.drawLine();
   }
 
-  function addTic(e) {
-    props.addTic("clicked");
-    props.close();
-  }
-
-  function addConnect() {
-    props.addConnect();
-    props.close();
-  }
-
-  function stopDrawing() {
+  const stopDrawing = () => {
     setChecked(!checked);
     props.stopDrawing();
   }
@@ -799,14 +799,14 @@ const DropdownAddObjects = (props) => {
             <h2>Add Interactive</h2>
           </DropdownItem>
           <DropdownItem
-            onClick={addTic}
+            onClick={addTicTacToe}
             leftIcon={<i className="icons fas fa-times"
-              onClick={addTic}></i>}>
+              onClick={addTicTacToe}></i>}>
             Tic-Tac-Toe</DropdownItem>
           <DropdownItem
-            onClick={addConnect}
+            onClick={addConnect4}
             leftIcon={<i className="icons fa fa-circle"
-              onClick={addConnect}></i>}>
+              onClick={addConnect4}></i>}>
             Connect-Four</DropdownItem>
           <DropdownItem
             onClick={addPoll}

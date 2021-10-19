@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
-import DropdownRoles from "../Dropdown/DropdownRoles";
-import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
-import Info from "../Information/InformationPopup";
 import fileDownload from 'js-file-download';
 import axios from 'axios';
 import Level from "../Level/Level";
-import Konva from "konva";
-import ContextMenu from "../ContextMenu/ContextMenu";
 import Portal from "./Shapes/Portal";
-import TransformerComponent from "./TransformerComponent";
+import Info from "../Information/InformationPopup";
 
+// Dropdowns
+import DropdownRoles from "../Dropdown/DropdownRoles";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
+import ContextMenu from "../ContextMenu/ContextMenu";
+
+// Custom Konva Components
+import TransformerComponent from "./TransformerComponent";
 import URLVideo from "./URLVideos";
 import URLImage from "./URLImage";
 
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import Poll from "./GamePieces/Poll/Poll";
-import KonvaHtml from "./KonvaHtml";
 
-import "./Stage.css";
-
+// Standard Konva Components
+import Konva from "konva";
 import {
   Rect,
   Stage,
@@ -31,6 +32,8 @@ import {
   Line,
   Arrow,
 } from "react-konva";
+
+import "./Stage.css";
 
 let history = [];
 let historyStep = 0;
@@ -52,7 +55,9 @@ class Graphics extends Component {
     "audios",
     "documents",
     "lines",
-    "polls"
+    "polls",
+    "connect4s",
+    "tics"
   ];
   deletionCounts = [
     // Delete Counts (stored to keep object label #s in sync)
@@ -68,15 +73,14 @@ class Graphics extends Component {
     "audioDeleteCount",
     "documentDeleteCount",
     "linesDeleteCount",
-    "pollsDeleteCount"
+    "pollsDeleteCount",
+    "connect4sDeleteCount",
+    "ticsDeleteCount"
   ];
   savedState = [
     // The complete save state
     ...this.savedObjects,
     ...this.deletionCounts,
-
-    "tics",
-    "connect4",
 
     "savedGroups",
 
@@ -114,7 +118,7 @@ class Graphics extends Component {
 
       // Interactive
       tics: [],
-      connect4: [],
+      connect4s: [],
       polls: [],
 
       // An array of arrays containing grouped items
@@ -124,17 +128,17 @@ class Graphics extends Component {
       gameroles: [],
 
       // TESTING Custom Transformer
-      customRect: [{
-        infolevel: false,
-        level: "group",
-        visible: true,
-        x: 0,
-        y: 0,
-        id: "customRect",
-        name: "customRect",
-        ref: "customRect",
-        fill: "red"
-      }],
+      customRect: [
+        {
+          visible: true,
+          x: 0,
+          y: 0,
+          id: "customRect",
+          name: "customRect",
+          ref: "customRect",
+          opacity: 0
+        }
+      ],
 
       // Object Deletion Count
       rectDeleteCount: 0,
@@ -149,6 +153,8 @@ class Graphics extends Component {
       linesDeleteCount: 0,
       arrowDeleteCount: 0,
       pollsDeleteCount: 0,
+      connect4sDeleteCount: 0,
+      ticsDeleteCount: 0,
 
       // Page Controls
       pages: ["1", "2", "3", "4", "5", "6"],
@@ -1398,58 +1404,6 @@ class Graphics extends Component {
     return true;
   };
 
-  addTic = (e) => {
-    let ticName = this.state.tics.length
-
-    let name = 'tic' + ticName
-    let ref = ticName
-    const tac = {
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      opacity: 1,
-      i: ref,
-    };
-
-    let toPush = tac;
-
-    this.setState(prevState => ({
-      tics: [...prevState.tics, toPush]
-    }));
-  }
-
-  handleTicDelete = (index) => {
-    this.setState({
-      tics: this.state.tics.filter((_, i) => i !== index)
-    })
-  }
-
-  addConnect4 = (e) => {
-    let conName = this.state.connect4.length + 1
-
-    let name = 'con' + conName
-    let ref = 'con' + conName
-    const conn = {
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      opacity: 1,
-      ref: ref,
-    };
-
-    let toPush = conn;
-
-    this.setState(prevState => ({
-      connect4: [...prevState.connect4, toPush]
-    }));
-  }
-
   // Fill Color
   handleFillColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
@@ -1837,7 +1791,8 @@ class Graphics extends Component {
     if (this.refs[id].attrs) {
       return this.refs[id];
     } else {
-      const groups = this.refs.groupAreaLayer.find('Group');
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
+      const groups = this.refs[layer].find('Group');
       for (let i = 0; i < groups.length; i++) {
         if (groups[i].attrs.id === id) {
           const elem = this.refs[id];
@@ -2274,6 +2229,14 @@ class Graphics extends Component {
     return obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel;
   }
 
+  customObjProps = () => {
+    return {
+      onMouseUp: (e) => this.handleMouseUp(e, false),
+      onMouseDown: (e) => this.onMouseDown(e, false),
+      onMouseMove: (e) => this.handleMouseOver(e, false)
+    };
+  }
+
   loadObjects = (stage) => {
     return (
       <>
@@ -2337,9 +2300,23 @@ class Graphics extends Component {
           return this.objectIsOnStage(obj) === stage ?
             <Poll
               {...this.defaultObjProps(obj, index)}
-              onMouseUp={(e) => this.handleMouseUp(e, false)}
-              onMouseDown={(e) => this.onMouseDown(e, false)}
-              onMouseMove={(e) => this.handleMouseOver(e, false)}
+              {...this.customObjProps()}
+            /> : null
+        })}
+        {this.state.connect4s.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Connect4
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
+            /> : null
+        })}
+        {this.state.tics.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <TicTacToe
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
             /> : null
         })}
         {this.state.arrows.map((obj, index) => {
@@ -2361,33 +2338,34 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* Custom Items (Interactive) ***THIS SHOULD BE REFACTORED*** */}
-        {this.state.tics.map((eachTic, index) => {
-          if (eachTic.level === this.state.level) {
-            return (
-              <TicTacToe
-                key={index}
-                i={eachTic.i}
-                handleTicDelete={this.handleTicDelete}
-                {...this.getInteractiveProps(eachTic.id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-        {this.state.connect4.map(({ level, id }) => {
-          if (level === this.state.level) {
-            return (
-              <Connect4
-                {...this.getInteractiveProps(id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-        {/* The Group Canvas */}
+        {/* The Top Bar */}
+        <Level
+          saveGame={this.handleSave}
+          number={this.state.numberOfPages}
+          pages={this.state.pages}
+          level={this.handleLevel}
+          handlePageTitle={this.handlePageTitle}
+          handlePageNum={this.handleNumOfPagesChange}
+          numOfPages={this.state.numberOfPages}
+        />
+
+        {/* The edit text area that appears when double clicking a Text object */}
+        <textarea
+          ref="textarea"
+          id="textEditArea"
+          value={this.state.text}
+          onChange={e => {
+            this.setState({
+              text: e.target.value,
+              shouldTextUpdate: false
+            });
+          }}
+          onKeyDown={(e) => this.updateText(e)}
+          onBlur={() => this.updateText()}
+          style={this.state.textareaInlineStyle}
+        />
+
+        {/* ---- GROUP CANVAS ---- */}
         <div
           onKeyDown={this.contextMenuEventShortcuts}
           onKeyUp={this.keyUp}
@@ -2410,8 +2388,6 @@ class Graphics extends Component {
                 }}
                 objectLabels={this.savedObjects}
                 deleteLabels={this.deletionCounts}
-                addTic={this.addTic}
-                addConnect={this.addConnect4}
                 drawLine={this.drawLine}
                 stopDrawing={this.stopDrawing}
                 handleImage={this.handleImage}
@@ -2451,148 +2427,117 @@ class Graphics extends Component {
           </Stage>
         </div>
 
-        <div className="eheader">
-          {/* The Top Bar */}
-          <Level
-            saveGame={this.handleSave}
-            number={this.state.numberOfPages}
-            pages={this.state.pages}
-            level={this.handleLevel}
-            handlePageTitle={this.handlePageTitle}
-            handlePageNum={this.handleNumOfPagesChange}
-            numOfPages={this.state.numberOfPages}
-          />
-
-          {/* The Personal Canvas */}
+        {/* ---- PERSONAL CANVAS ---- */}
+        <div
+          id={"editPersonalContainer"}
+          className={"info" + this.state.personalAreaOpen}
+        >
           <div
-            id={"editPersonalContainer"}
-            className={"info" + this.state.personalAreaOpen}
+            id="personalMainContainer"
+            name="pasteContainer"
+            tabIndex="0"
+            className="personalAreaStageContainer"
+            onKeyDown={this.contextMenuEventShortcuts}
+            onKeyUp={this.keyUp}
           >
-            <div
-              id="personalMainContainer"
-              name="pasteContainer"
-              tabIndex="0"
-              className="personalAreaStageContainer"
-              onKeyDown={this.contextMenuEventShortcuts}
-              onKeyUp={this.keyUp}
+            {/* The right click menu for the personal area */}
+            {this.state.personalAreaContextMenuVisible
+              && this.state.selectedContextMenu
+              && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
+                <DropdownAddObjects
+                  title={"Edit Personal Space"}
+                  xPos={this.state.personalAreaContextMenuX}
+                  yPos={this.state.personalAreaContextMenuY}
+                  state={this.state}
+                  layer={this.refs.personalAreaLayer}
+                  setState={(obj) => {
+                    this.setState(obj);
+                  }}
+                  objectLabels={this.savedObjects}
+                  deleteLabels={this.deletionCounts}
+                  drawLine={this.drawLine}
+                  stopDrawing={this.stopDrawing}
+                  handleImage={this.handleImage}
+                  handleVideo={this.handleVideo}
+                  handleAudio={this.handleAudio}
+                  handleDocument={this.handleDocument}
+                  choosecolor={this.chooseColor}
+                  close={() => this.setState({ personalAreaContextMenuVisible: false })}
+                />
+              )}
+            <Stage
+              style={{ position: "relative", overflow: "hidden" }}
+              height={document.getElementById("editPersonalContainer") ?
+                document.getElementById("editPersonalContainer").clientHeight : 0}
+              width={document.getElementById("editPersonalContainer") ?
+                document.getElementById("editPersonalContainer").clientWidth : 0}
+              ref="personalAreaStage"
+              onMouseMove={(e) => this.handleMouseOver(e, true)}
+              onMouseDown={(e) => this.onMouseDown(e, true)}
+              onMouseUp={(e) => this.handleMouseUp(e, true)}
+              onWheel={(e) => this.handleWheel(e, true)}
+              onContextMenu={(e) => e.evt.preventDefault()}
             >
-              {/* The right click menu for the personal area */}
-              {this.state.personalAreaContextMenuVisible
-                && this.state.selectedContextMenu
-                && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
-                  <DropdownAddObjects
-                    title={"Edit Personal Space"}
-                    xPos={this.state.personalAreaContextMenuX}
-                    yPos={this.state.personalAreaContextMenuY}
-                    state={this.state}
-                    layer={this.refs.personalAreaLayer}
-                    setState={(obj) => {
-                      this.setState(obj);
-                    }}
-                    objectLabels={this.savedObjects}
-                    deleteLabels={this.deletionCounts}
-                    addTic={this.addTic}
-                    addConnect={this.addConnect4}
-                    drawLine={this.drawLine}
-                    stopDrawing={this.stopDrawing}
-                    handleImage={this.handleImage}
-                    handleVideo={this.handleVideo}
-                    handleAudio={this.handleAudio}
-                    handleDocument={this.handleDocument}
-                    choosecolor={this.chooseColor}
-                    close={() => this.setState({ personalAreaContextMenuVisible: false })}
-                  />
-                )}
-              <Stage
-                style={{ position: "relative", overflow: "hidden" }}
-                height={document.getElementById("editPersonalContainer") ?
-                  document.getElementById("editPersonalContainer").clientHeight : 0}
-                width={document.getElementById("editPersonalContainer") ?
-                  document.getElementById("editPersonalContainer").clientWidth : 0}
-                ref="personalAreaStage"
-                onMouseMove={(e) => this.handleMouseOver(e, true)}
-                onMouseDown={(e) => this.onMouseDown(e, true)}
-                onMouseUp={(e) => this.handleMouseUp(e, true)}
-                onWheel={(e) => this.handleWheel(e, true)}
-                onContextMenu={(e) => e.evt.preventDefault()}
+              <Layer
+                ref="personalAreaLayer"
+                name="personal"
+                scaleX={this.state.personalLayerScale}
+                scaleY={this.state.personalLayerScale}
+                x={this.state.personalLayerX}
+                y={this.state.personalLayerY}
+                height={window.innerHeight}
+                width={window.innerWidth}
+                draggable={this.state.layerDraggable}
+                onDragMove={(e) => this.dragLayer(e, true)}
               >
-                <Layer
-                  ref="personalAreaLayer"
-                  name="personal"
-                  scaleX={this.state.personalLayerScale}
-                  scaleY={this.state.personalLayerScale}
-                  x={this.state.personalLayerX}
-                  y={this.state.personalLayerY}
-                  height={window.innerHeight}
-                  width={window.innerWidth}
-                  draggable={this.state.layerDraggable}
-                  onDragMove={(e) => this.dragLayer(e, true)}
-                >
-                  {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
-                    <Portal>
-                      <ContextMenu
-                        {...this.state.selectedContextMenu}
-                        selectedShapeName={this.state.selectedShapeName}
-                        shape={this.refs[this.state.selectedShapeName]}
-                        selectedFont={this.state.selectedFont}
-                        handleUngrouping={this.handleUngrouping}
-                        handleGrouping={this.handleGrouping}
-                        handleStrokeColor={this.handleStrokeColor}
-                        handleFillColor={this.handleFillColor}
-                        handleWidth={this.handleWidth}
-                        handleOpacity={this.handleOpacity}
-                        handleFont={this.handleFont}
-                        handleSize={this.handleSize}
-                        close={this.handleCloseContextMenu}
-                        copy={this.handleCopy}
-                        cut={this.handleCut}
-                        paste={this.handlePaste}
-                        delete={this.handleDelete}
-                      />
-                    </Portal>
-                  )}
-                  {this.loadObjects("personal")}
-                </Layer>
-              </Stage>
-            </div>
+                {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
+                  <Portal>
+                    <ContextMenu
+                      {...this.state.selectedContextMenu}
+                      selectedShapeName={this.state.selectedShapeName}
+                      shape={this.refs[this.state.selectedShapeName]}
+                      selectedFont={this.state.selectedFont}
+                      handleUngrouping={this.handleUngrouping}
+                      handleGrouping={this.handleGrouping}
+                      handleStrokeColor={this.handleStrokeColor}
+                      handleFillColor={this.handleFillColor}
+                      handleWidth={this.handleWidth}
+                      handleOpacity={this.handleOpacity}
+                      handleFont={this.handleFont}
+                      handleSize={this.handleSize}
+                      close={this.handleCloseContextMenu}
+                      copy={this.handleCopy}
+                      cut={this.handleCut}
+                      paste={this.handlePaste}
+                      delete={this.handleDelete}
+                    />
+                  </Portal>
+                )}
+                {this.loadObjects("personal")}
+              </Layer>
+            </Stage>
+          </div>
 
-            {/* The Personal Area Open / Close Caret */}
-            {(this.state.personalAreaOpen !== 1)
-              ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
-                <i className="fas fa-caret-square-up fa-3x" />
-              </button>
-              : <button onClick={() => this.handlePersonalAreaOpen(false)}>
-                <i className="fas fa-caret-square-down fa-3x" />
-              </button>
-            }
+          {/* The Personal Area Open / Close Caret */}
+          {(this.state.personalAreaOpen !== 1)
+            ? <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
+              <i className="fas fa-caret-square-up fa-3x" />
+            </button>
+            : <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
+              <i className="fas fa-caret-square-down fa-3x" />
+            </button>
+          }
 
-            {/* The Role Picker */}
-            <div id="rolesdrop">
-              <DropdownRoles
-                openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
-                roleLevel={this.handleRoleLevel}
-                gameid={this.state.gameinstanceid}
-                editMode={true}
-              />
-            </div>
+          {/* The Role Picker */}
+          <div id="rolesdrop">
+            <DropdownRoles
+              openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
+              roleLevel={this.handleRoleLevel}
+              gameid={this.state.gameinstanceid}
+              editMode={true}
+            />
           </div>
         </div>
-
-        {/* The edit text area that appears when double clicking a Text object */}
-        <textarea
-          ref="textarea"
-          id="textEditArea"
-          value={this.state.text}
-          onChange={e => {
-            this.setState({
-              text: e.target.value,
-              shouldTextUpdate: false
-            });
-          }}
-          onKeyDown={(e) => this.updateText(e)}
-          onBlur={() => this.updateText()}
-          style={this.state.textareaInlineStyle}
-        />
       </React.Fragment>
     );
   }
