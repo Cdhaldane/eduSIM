@@ -52,6 +52,12 @@
   flex-direction: column;
 }
 
+.areainvitecollabs > div {
+  display: flex;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  overflow-y: auto;
+}
 .areainvitecollabs > p {
   text-align: left;
   font-size: 1em;
