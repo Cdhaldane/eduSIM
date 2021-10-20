@@ -48,6 +48,12 @@ function Join(props) {
           ...rooms,
           [data.room]: data.status
         }));
+        if (data.chatlog) {
+          setRoomMessages((messages) => ({
+            ...messages,
+            [data.room]: data.chatlog
+          }));
+        }
       });
       client.on("message", (data) => {
         setRoomMessages((messages) => ({
