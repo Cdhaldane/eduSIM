@@ -9,6 +9,7 @@ import CreateRole from "../CreateRoleSelection/CreateRole";
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
+import { uniqueId } from "lodash";
 
 import {
   Rect,
@@ -180,17 +181,19 @@ class Graphics extends Component {
     };
   }
 
-  handlePlayerInfo = ({ role, name }) => {
+  handlePlayerInfo = ({ role, name, dbid }) => {
     this.toggleModal();
     this.setState({
       rolelevel: role
     });
+    let id = dbid
+    if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
     this.props.socket.emit("playerUpdate", {
-      role, name, ...(
+      role, name, dbid: id, ...(
         this.props.initialUserId ? {dbid: this.props.initialUserId} : {}
       )
     })
-    if (!sessionStorage.userInfo) sessionStorage.setItem('userInfo', JSON.stringify({role,name}));
+    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: id}));
   }
 
   componentDidMount() {

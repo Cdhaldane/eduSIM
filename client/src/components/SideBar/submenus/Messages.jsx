@@ -134,18 +134,20 @@ function Messages(props) {
 
   const removeWhisper = () => setSendGroup(() => new Set());
 
+  const sessionId = sessionStorage.userInfo && JSON.parse(sessionStorage.userInfo).dbid;
+
   return (props.socket ? (
     <MessageContainer>
       <div>
-        {messageLog.map(({sender: {id, name}, message, group}, ind) => (
+        {messageLog.map(({sender: {id, name, dbid}, message, group}, ind) => (
           <Message 
             key={ind}
-            sender={props.socket.id === id} 
+            sender={props.socket.id === id || dbid === sessionId} 
             onClick={() => addWhisper({id, name}, group)}
             private={group && group.length>0}
           >
             {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
-            <b>{(props.socket.id !== id ? (`${name} says:`) : "You said:")}</b>
+            <b>{(props.socket.id !== id && dbid !== sessionId ? (`${name} says:`) : "You said:")}</b>
             <p>{message}</p>
           </Message>
         ))}

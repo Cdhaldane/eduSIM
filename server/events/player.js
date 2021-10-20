@@ -52,6 +52,7 @@ export default async (server, client, event, args) => {
     };
     case "playerUpdate": {
       const { name, role, dbid } = args;
+      console.log(dbid);
       if (await getPlayerByDBID(dbid)) {
         client.emit("errorLog", "You are attempting to join as a player that has already joined.");
         return;
@@ -75,7 +76,7 @@ export default async (server, client, event, args) => {
     case "interaction": {
       const { gamepieceId, parameters } = args;
       
-      const { running, timeElapsed, gamepieces } = await getRoomStatus(room);
+      const { running, gamepieces } = await getRoomStatus(room);
 
       if (!running) {
         client.emit("errorLog", "Game is paused/stopped!");
