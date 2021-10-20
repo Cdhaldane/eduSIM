@@ -42,8 +42,19 @@ class Graphics extends Component {
 
   // Save State
   // These are the names of the objects in state that are saved to the database
+  customObjects = [
+    "polls",
+    "connect4s",
+    "tics"
+  ];
+  customDeletes = [
+    "pollsDeleteCount",
+    "connect4sDeleteCount",
+    "ticsDeleteCount"
+  ];
   savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
+    ...this.customObjects,
     "rectangles",
     "ellipses",
     "stars",
@@ -55,13 +66,11 @@ class Graphics extends Component {
     "audios",
     "documents",
     "lines",
-    "polls",
-    "connect4s",
-    "tics"
   ];
   deletionCounts = [
     // Delete Counts (stored to keep object label #s in sync)
     // Must be in the same order as savedObjects
+    ...this.customDeletes,
     "rectDeleteCount",
     "ellipseDeleteCount",
     "starDeleteCount",
@@ -73,9 +82,6 @@ class Graphics extends Component {
     "audioDeleteCount",
     "documentDeleteCount",
     "linesDeleteCount",
-    "pollsDeleteCount",
-    "connect4sDeleteCount",
-    "ticsDeleteCount"
   ];
   savedState = [
     // The complete save state
@@ -136,7 +142,7 @@ class Graphics extends Component {
           id: "customRect",
           name: "customRect",
           ref: "customRect",
-          opacity: 0
+          opacity: 0,
         }
       ],
 
@@ -291,10 +297,6 @@ class Graphics extends Component {
         });
 
         setTimeout(() => {
-          // Calculate positions on initial load
-          this.recalculateCanvasSizeAndPosition(false);
-          this.recalculateCanvasSizeAndPosition(true);
-
           // Get full objects for saved groups
           let fullObjSavedGroups = [];
           for (let i = 0; i < this.state.savedGroups.length; i++) {
@@ -308,6 +310,19 @@ class Graphics extends Component {
           this.setState({
             savedGroups: fullObjSavedGroups
           });
+
+          for (let j = 0; j < this.customObjects.length; j++) {
+            const type = this.customObjects[j];
+            for (let i = 0; i < this.state[type].length; i++) {
+              const state = this.state[type][i];
+              this.setCustomGroupPos(state, "groupAreaLayer");
+              this.setCustomGroupPos(state, "personalAreaLayer");
+            }
+          }
+
+          // Calculate positions on initial load
+          this.recalculateCanvasSizeAndPosition(false);
+          this.recalculateCanvasSizeAndPosition(true);
         }, 100);
       }
     }).catch(error => {
@@ -319,6 +334,29 @@ class Graphics extends Component {
         gameinstanceid: this.state.gameinstanceid,
       }
     });
+  }
+
+  setCustomGroupPos = (state, layer) => {
+    const groups = this.refs[layer].find('Group');
+    let group = null;
+    for (let i = 0; i < groups.length; i++) {
+      if (groups[i].attrs.id === state.id) {
+        group = groups[i];
+        break;
+      }
+    }
+    if (group) {
+      group.rotation(state.rotation);
+      group.scale({
+        x: state.scaleX,
+        y: state.scaleY
+      });
+
+      group.position({ x: state.newX, y: state.newY });
+
+      const ref = this.refs[state.id];
+      ref.style.transform = `translate(${state.x}px, ${state.y}px)`;
+    }
   }
 
   recalculateCanvasSizeAndPosition = (personalArea) => {
@@ -972,6 +1010,11 @@ class Graphics extends Component {
       // Disable click event
       Konva.listenClickTap = false;
       this.updateSelectionRect(personalArea);
+
+      // Update custom object transform
+      if (e.evt) {
+        this.getKonvaObj(this.state.selectedShapeName, true);
+      }
     }
   };
 
@@ -1036,7 +1079,7 @@ class Graphics extends Component {
 
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
-      } else {
+      } else if (shape) {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
           if (this.state.selection.isDraggingShape) {
@@ -1049,7 +1092,6 @@ class Graphics extends Component {
               }, this.handleObjectSelection);
             } else {
               const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
-              //console.log(shapeId);
               this.setState({
                 selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
@@ -1802,43 +1844,106 @@ class Graphics extends Component {
     }
   }
 
+  deltaTransformPoint = (matrix, point) => {
+    const dx = point.x * matrix.a + point.y * matrix.c + 0;
+    const dy = point.x * matrix.b + point.y * matrix.d + 0;
+    return {
+      x: dx,
+      y: dy
+    };
+  }
+
+  decomposeMatrix = (matrix) => {
+    // @See https://gist.github.com/2052247
+
+    // Calculate delta transform point
+    const px = this.deltaTransformPoint(matrix, { x: 0, y: 1 });
+    const py = this.deltaTransformPoint(matrix, { x: 1, y: 0 });
+
+    // Calculate skew
+    const skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+    const skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+
+    return {
+      translateX: matrix.e,
+      translateY: matrix.f,
+      scaleX: Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
+      scaleY: Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d),
+      skewX: skewX,
+      skewY: skewY,
+      rotation: skewX // Rotation is the same as skew x
+    };
+  }
+
   // For Konva Objects: 
   // returns Konva object
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
-  getKonvaObj = (id) => {
-    //console.log(id);
-    if (this.refs[id].attrs) {
-      return this.refs[id];
-    } else {
-      const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
-      const groups = this.refs[layer].find('Group');
-      for (let i = 0; i < groups.length; i++) {
-        if (groups[i].attrs.id === id) {
-          const elem = this.refs[id];
-          const group = groups[i];
-          const style = window.getComputedStyle(elem);
-          const matrix = new DOMMatrix(style.transform);
-          const x = matrix.m41;
-          const y = matrix.m42;
-          const width = elem.clientWidth;
-          const height = elem.clientHeight;
-          const sizeRect = this.refs.customRect;
-          const paddingPercent = 0.05;
-          this.setState({
-            customRect: [{
-              ...this.state.customRect[0],
-              x: x - ((width * paddingPercent) / 2),
-              y: y - ((height * paddingPercent) / 2)
-            }]
-          });
-          sizeRect.attrs.width = width * (1 + paddingPercent);
-          sizeRect.attrs.height = height * (1 + paddingPercent);
-          group.add(sizeRect);
-          return group;
+  getKonvaObj = (id, showTransformer) => {
+    if (id) {
+      if (this.refs[id].attrs) {
+        return this.refs[id];
+      } else {
+        const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
+        const groups = this.refs[layer].find('Group');
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i].attrs.id === id) {
+            const customState = [...this.state[this.getObjType(id)]];
+
+            // Elem transforms (x, y, width, height)
+            const elem = this.refs[id];
+            const style = window.getComputedStyle(elem);
+            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
+            const x = matrix.translateX;
+            const y = matrix.translateY;
+            const width = elem.clientWidth;
+            const height = elem.clientHeight;
+
+            // Parent transforms (rotation, scale)
+            const parent = elem.parentElement;
+            const pstyle = window.getComputedStyle(parent);
+            const pmatrix = this.decomposeMatrix(new DOMMatrix(pstyle.transform));
+            const scale = pmatrix.scaleX;
+            const rot = pmatrix.rotation;
+            const pX = pmatrix.translateX;
+            const pY = pmatrix.translateY;
+
+            const group = groups[i];
+            const sizeRect = this.refs.customRect;
+            const paddingPercent = 0.05;
+            for (let j = 0; j < customState.length; j++) {
+              if (customState[j].id === id) {
+                customState[j].pX = pX;
+                customState[j].pY = pY;
+                customState[j].x = x;
+                customState[j].y = y;
+                customState[j].scaleX = scale;
+                customState[j].scaleY = scale;
+                customState[j].rotation = rot;
+              }
+            }
+            this.setState({
+              customRect: [{
+                ...this.state.customRect[0],
+                x: x - ((width * paddingPercent) / 2),
+                y: y - ((height * paddingPercent) / 2)
+              }],
+              [this.getObjType(id)]: customState
+            });
+            sizeRect.attrs.width = width * (1 + paddingPercent);
+            sizeRect.attrs.height = height * (1 + paddingPercent);
+            group.add(sizeRect);
+
+            if (showTransformer) {
+              this.setState({
+                selectedShapeName: id
+              }, this.handleObjectSelection);
+            }
+            return group;
+          }
         }
+        return null;
       }
-      return null;
     }
   }
 
@@ -1946,7 +2051,7 @@ class Graphics extends Component {
   onObjectTransformEnd = (obj) => {
     this.setState({ isTransforming: false });
 
-    const object = this.refs[obj.ref];
+    const object = obj.evt ? this.refs.customRect : this.refs[obj.ref];
     const type = this.getObjType(object.attrs.id);
     let transformOptions = {};
     switch (type) {
@@ -2004,6 +2109,10 @@ class Graphics extends Component {
     if (!(type === "images" || type === "videos" || type === "audios")) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
+    }
+
+    if (obj.evt) {
+      this.getKonvaObj(obj.target.attrs.id);
     }
   }
 
@@ -2252,7 +2361,9 @@ class Graphics extends Component {
     return {
       onMouseUp: (e) => this.handleMouseUp(e, false),
       onMouseDown: (e) => this.onMouseDown(e, false),
-      onMouseMove: (e) => this.handleMouseOver(e, false)
+      onMouseMove: (e) => this.handleMouseOver(e, false),
+      onTransformEnd: (e) => this.onObjectTransformEnd(e),
+      updateKonva: this.getKonvaObj,
     };
   }
 

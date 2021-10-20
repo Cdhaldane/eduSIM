@@ -108,9 +108,19 @@ const CustomWrapper = forwardRef((props, ref) => {
   }
 
   return (
-    <KonvaHtml refName={ref._stringRef}>
+    <KonvaHtml refName={ref._stringRef} onTransformEnd={props.onTransformEnd}>
       <Draggable>
-        <div className={"customObj"} data-name={ref._stringRef} ref={ref}>
+        <div
+          onClick={() => {
+            props.updateKonva(ref._stringRef, true);
+          }}
+          onContextMenu={() => {
+            props.updateKonva(ref._stringRef, true);
+          }}
+          className={"customObj"}
+          data-name={ref._stringRef}
+          ref={ref}
+        >
           <div
             className="customPointerEventsOn"
             ref={obj}

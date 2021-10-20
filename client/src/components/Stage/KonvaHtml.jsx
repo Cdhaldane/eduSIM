@@ -20,7 +20,7 @@ const __rest = (this && this.__rest) || function (s, e) {
   return t;
 };
 
-const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, refName }) => {
+const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, refName, onTransformEnd }) => {
 
   const groupRef = useRef(null);
   const container = useRef();
@@ -94,7 +94,8 @@ const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, r
 
   return createElement(Group, Object.assign({ 
     ref: groupRef, 
-    id: refName 
+    id: refName,
+    onTransformEnd: onTransformEnd
   }, groupProps));
 };
 
