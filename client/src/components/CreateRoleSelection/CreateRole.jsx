@@ -69,7 +69,7 @@ const CreateRole = (props) => {
       <form className="areacsvform modal-role-select">
         <div className="modal-role-header">
           <h2>Welcome to the simulation!</h2>
-          <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name and role to continue."}</p>
+          <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name to continue."}</p>
         </div>
         <div id="rolesdrops">
           <span>Role</span>
@@ -79,7 +79,7 @@ const CreateRole = (props) => {
             editMode={false}
             rolesTaken={rolesTaken}
             initRole={role}
-            disabled={userExists}
+            disabled={props.roleSelection !== "student"}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">

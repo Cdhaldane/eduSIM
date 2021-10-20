@@ -8,7 +8,7 @@ import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
 
-  const PLACEHOLDER_TEXT = "Select Role";
+  const PLACEHOLDER_TEXT = props.disabled ? "None (unchangable)" : "Select Role";
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -17,7 +17,6 @@ const DropdownRoles = (props) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
   const [deleteIndex, setDeleteIndex] = useState(0);
-  const [initFlag, setInitFlag] = useState(false);
 
   const alertContext = useAlertContext();
 

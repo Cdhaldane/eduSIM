@@ -188,12 +188,11 @@ class Graphics extends Component {
     });
     let id = dbid
     if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
+    console.log(dbid, this.props.initialUserId, id);
     this.props.socket.emit("playerUpdate", {
-      role, name, dbid: id, ...(
-        this.props.initialUserId ? {dbid: this.props.initialUserId} : {}
-      )
+      role, name, dbid: this.props.initialUserId || id
     })
-    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: id}));
+    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: this.props.initialUserId || id}));
   }
 
   componentDidMount() {
@@ -281,6 +280,7 @@ class Graphics extends Component {
               gameroles={this.state.gameroles}
               players={this.props.players}
               initialUserInfo={this.props.initialUserInfo}
+              roleSelection={this.props.roleSelection}
             />
           </Modal>
         </div>
