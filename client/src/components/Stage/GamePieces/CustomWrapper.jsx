@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import "survey-react/survey.css";
 import KonvaHtml from "../KonvaHtml";
@@ -6,6 +6,7 @@ import KonvaHtml from "../KonvaHtml";
 const CustomWrapper = forwardRef((props, ref) => {
 
   const obj = useRef(null);
+  const [draggable, setDraggable] = useState(true);
 
   const getObj = () => {
     return obj.current.parentElement;

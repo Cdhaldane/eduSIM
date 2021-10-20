@@ -14,6 +14,10 @@ const ContextMenu = (props) => {
       setEditTitle("Edit Text");
     } else if (props.selectedShapeName.startsWith("poll")) {
       setEditTitle("Edit Poll");
+    } else if (props.selectedShapeName.startsWith("connect4")) {
+      setEditTitle("Edit Connect4");
+    } else if (props.selectedShapeName.startsWith("tic")) {
+      setEditTitle("Edit TicTacToe");
     } else {
       setEditTitle("Edit Shape");
     }

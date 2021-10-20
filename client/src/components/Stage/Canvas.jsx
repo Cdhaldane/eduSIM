@@ -258,6 +258,10 @@ class Graphics extends Component {
 
     this.handleWheel = this.handleWheel.bind(this);
 
+    this.reloadFromSavedState();
+  }
+
+  reloadFromSavedState = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
         adminid: this.state.adminid,
@@ -309,11 +313,12 @@ class Graphics extends Component {
     }).catch(error => {
       console.error(error);
     });
+
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
         gameinstanceid: this.state.gameinstanceid,
       }
-    })
+    });
   }
 
   recalculateCanvasSizeAndPosition = (personalArea) => {
@@ -524,7 +529,7 @@ class Graphics extends Component {
     status: this.state.gamepieceStatus[id] || {}
   })
 
-  handleSave = () => {
+  handleSave = (thenReload) => {
     let storedObj = {};
     for (let i = 0; i < this.savedState.length; i++) {
       const newObj = this.savedState[i];
@@ -546,7 +551,11 @@ class Graphics extends Component {
     }
 
     // Save the game_parameters
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
+    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then(() => {
+      if (thenReload) {
+        this.props.reloadCanvasFull();
+      }
+    }).catch(error => {
       console.error(error);
     });
   };
@@ -869,8 +878,9 @@ class Graphics extends Component {
                   groupSelection: [clickShapeGroup]
                 }, this.handleObjectSelection);
               } else {
+                const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
                 this.setState({
-                  selectedShapeName: this.checkName(shape.id()),
+                  selectedShapeName: this.checkName(shapeId),
                   groupSelection: []
                 }, this.handleObjectSelection);
               }
@@ -918,8 +928,9 @@ class Graphics extends Component {
             }
 
             if (!shapeIsInGroupSelection) {
+              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
               this.setState({
-                selectedShapeName: this.checkName(shape.id()),
+                selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
               }, this.handleObjectSelection);
             }
@@ -1038,6 +1049,7 @@ class Graphics extends Component {
               }, this.handleObjectSelection);
             } else {
               const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
+              //console.log(shapeId);
               this.setState({
                 selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
@@ -1316,8 +1328,12 @@ class Graphics extends Component {
 
     // Get a list of the affected types
     let affectedTypes = [];
+    let customObjDeleted = false;
     for (let i = 0; i < toDelete.length; i++) {
-      affectedTypes.push(this.getObjType(toDelete[i].attrs.id));
+      if (!toDelete[i].attrs) {
+        customObjDeleted = true;
+      }
+      affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
     }
     affectedTypes = [...new Set(affectedTypes)];
 
@@ -1327,8 +1343,8 @@ class Graphics extends Component {
       const type = affectedTypes[i];
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
-        if (this.getObjType(toDelete[j].attrs.id) === type) {
-          toDeleteOfType.push(toDelete[j].attrs.id);
+        if (this.getObjType(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name) === type) {
+          toDeleteOfType.push(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name);
         }
       }
       let objs = [...this.state[type]];
@@ -1341,6 +1357,8 @@ class Graphics extends Component {
       this.setState({
         [type]: objs,
         [deletedCountName]: deletedCount
+      }, () => {
+        this.handleSave(customObjDeleted);
       });
     }
 
@@ -1779,7 +1797,8 @@ class Graphics extends Component {
       // Print refs
       console.log("REFS:");
       console.log(this.refs.groupAreaLayer.find('Group'));
-      console.log(this.refs);
+      console.log({ ...this.refs });
+      console.log({ ...this.state });
     }
   }
 
@@ -1788,6 +1807,7 @@ class Graphics extends Component {
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
   getKonvaObj = (id) => {
+    //console.log(id);
     if (this.refs[id].attrs) {
       return this.refs[id];
     } else {
@@ -1906,7 +1926,6 @@ class Graphics extends Component {
     ];
 
     this.refs[arrow.ref].position({ x: 0, y: 0 });
-    this.refs.groupAreaLayer.draw();
 
     this.setState(prevState => ({
       arrows: prevState.arrows.map(a =>
