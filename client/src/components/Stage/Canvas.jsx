@@ -260,6 +260,36 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       savedstates: [],
       level: 1,
+
+      pollJson: {
+        questions: [
+          {
+            id: 0,
+            type: "text",
+            name: "0",
+            title: "Sample Text Question:",
+            isRequired: true,
+          }, {
+            id: 1,
+            type: "text",
+            name: "1",
+            inputType: "date",
+            title: "Sample Date Question:",
+            isRequired: true,
+            hasNone: null,
+            choices: null
+          }, {
+            id: 2,
+            type: "text",
+            name: "2",
+            inputType: "color",
+            title: "Sample Color Question:",
+            isRequired: false,
+            hasNone: null,
+            choices: null
+          }
+        ]
+      },
     };
 
     this.handleWheel = this.handleWheel.bind(this);
@@ -2021,6 +2051,12 @@ class Graphics extends Component {
     });
   }
 
+  setPollJson = (json) => {
+    this.setState({
+      pollJson: json
+    });
+  }
+
   onDragEndArrow = (arrow) => {
     // Set new points to current position
     let oldPoints = [
@@ -2461,6 +2497,7 @@ class Graphics extends Component {
               defaultProps={{ ...this.defaultObjProps(obj, index) }}
               {...this.defaultObjProps(obj, index)}
               {...this.customObjProps()}
+              pollJson={this.state.pollJson}
             /> : null
         })}
         {this.state.connect4s.map((obj, index) => {
@@ -2672,6 +2709,8 @@ class Graphics extends Component {
                       cut={this.handleCut}
                       paste={this.handlePaste}
                       delete={this.handleDelete}
+                      setJson={this.setPollJson}
+                      pollJson={this.state.pollJson}
                     />
                   </Portal>
                 )}

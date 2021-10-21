@@ -47,7 +47,7 @@ const Poll = forwardRef((props, ref) => {
     <CustomWrapper {...props} ref={ref}>
       <div className="poll">
         <Survey.Survey
-          json={surveyJson}
+          json={props.pollJson}
         />
       </div>
     </CustomWrapper>

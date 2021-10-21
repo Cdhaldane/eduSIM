@@ -8,7 +8,7 @@ const ContextMenu = (props) => {
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const menu = useRef();
-  
+
   const setContextMenuTitle = () => {
     if (props.selectedShapeName.startsWith("text")) {
       setEditTitle("Edit Text");
@@ -111,7 +111,7 @@ const ContextMenu = (props) => {
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         {!props.addGroup && !props.unGroup && (
-        <li onClick={handleEdit}>{editTitle}</li>
+          <li onClick={handleEdit}>{editTitle}</li>
         )}
         {props.addGroup && (
           <li onClick={handleGrouping}>Group Objects</li>
@@ -124,6 +124,8 @@ const ContextMenu = (props) => {
       {drop && (
         <div className="drop">
           <DropdownEditObject
+            setJson={props.setJson}
+            pollJson={props.pollJson}
             top={menu.current.offsetTop}
             title={editTitle}
             handleFillColor={props.handleFillColor}

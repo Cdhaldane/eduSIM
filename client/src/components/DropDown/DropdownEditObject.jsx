@@ -6,6 +6,7 @@ import FontPicker from "font-picker-react";
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
+import DropdownEditPoll from './DropdownEditPoll';
 
 const DEFAULT_FONT_SIZE = 50;
 
@@ -266,9 +267,11 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{props.title}</h1>
-              <b>Text Size:</b>
-              <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
+              <DropdownEditPoll
+                setJson={props.setJson}
+                pollJson={props.pollJson}
+                title={props.title}
+              />
             </div>
           </CSSTransition>
         </div>
