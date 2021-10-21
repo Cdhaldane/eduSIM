@@ -8,10 +8,6 @@
   box-shadow: var(--box-shadow);
 }
 
-.customPointerEventsOn {
-  pointer-events: auto;
-}
-
 .customObj {
   position: relative;
   user-select: none;

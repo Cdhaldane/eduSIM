@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, createElement, forwardRef } from 'react';
+import { useRef, useLayoutEffect, createElement } from 'react';
 import ReactDOM from 'react-dom';
 import { Group } from 'react-konva';
 

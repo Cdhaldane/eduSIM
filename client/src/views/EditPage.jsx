@@ -70,6 +70,7 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                doNotRecalculateBounds={updater > 0}
                 reloadCanvasFull={() => setUpdater(updater + 1)}
                 setDropdownType={dropdownContext.setType}
                 showAlert={alertContext.showAlert}

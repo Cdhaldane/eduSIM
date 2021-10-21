@@ -35,7 +35,7 @@ function DropdownEditObject(props) {
       setStrokeColor(props.shape.attrs.stroke);
       setFillColor(props.shape.attrs.fill);
       setStrokeWidth(props.shape.attrs.strokeWidth);
-    } else {
+    } else if (props.title === "Edit Text") {
       if (props.font) {
         setFillColor(props.font.attrs.fill);
         setOpacity(props.font.attrs.opacity);
@@ -44,6 +44,8 @@ function DropdownEditObject(props) {
       } else {
         console.log("No Font Error!");
       }
+    } else if (props.title === "Edit Poll") {
+
     }
 
     setLoading(false);
@@ -183,8 +185,8 @@ function DropdownEditObject(props) {
             </div>
           </CSSTransition>
         </div>
-      )
-    } else {
+      );
+    } else if (props.title === "Edit Text") {
       /* Edit a Text Object */
       return (
         <div
@@ -248,7 +250,29 @@ function DropdownEditObject(props) {
             </div>
           </CSSTransition>
         </div>
-      )
+      );
+    } else if (props.title === "Edit Poll") {
+      return (
+        <div
+          className="dropdownedit"
+          ref={dropdownRef}
+          style={{
+            ...leftOrRight,
+            transform: `translateY(${topOffset}px)`
+          }}>
+          <CSSTransition
+            in={activeMenu === 'main'}
+            timeout={500}
+            classNames="edit-menu-primary"
+            unmountOnExit>
+            <div className="menuedit">
+              <h1>{props.title}</h1>
+              <b>Text Size:</b>
+              <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
+            </div>
+          </CSSTransition>
+        </div>
+      );
     }
   } else {
     return null;
