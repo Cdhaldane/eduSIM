@@ -14,4 +14,5 @@
 
 .customObj {
   position: relative;
+  user-select: none;
 }

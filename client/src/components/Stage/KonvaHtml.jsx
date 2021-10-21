@@ -20,7 +20,15 @@ const __rest = (this && this.__rest) || function (s, e) {
   return t;
 };
 
-const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, refName, onTransformEnd }) => {
+const KonvaHtml = ({
+  children,
+  groupProps,
+  divProps,
+  transform,
+  transformFunc,
+  refName,
+  defaultProps
+}) => {
 
   const groupRef = useRef(null);
   const container = useRef();
@@ -92,10 +100,12 @@ const KonvaHtml = ({ children, groupProps, divProps, transform, transformFunc, r
     }
   });
 
-  return createElement(Group, Object.assign({ 
-    ref: groupRef, 
+  return createElement(Group, Object.assign({
+    ref: groupRef,
     id: refName,
-    onTransformEnd: onTransformEnd
+    draggable: true,
+    onTransformEnd: defaultProps.onTransformEnd,
+    onDragEnd: defaultProps.onDragEnd
   }, groupProps));
 };
 

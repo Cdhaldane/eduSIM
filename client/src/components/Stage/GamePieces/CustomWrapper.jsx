@@ -1,12 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import Draggable from 'react-draggable';
-import "survey-react/survey.css";
 import KonvaHtml from "../KonvaHtml";
 
 const CustomWrapper = forwardRef((props, ref) => {
 
   const obj = useRef(null);
-  const [draggable, setDraggable] = useState(true);
 
   const getObj = () => {
     return obj.current.parentElement;
@@ -106,34 +103,56 @@ const CustomWrapper = forwardRef((props, ref) => {
     setTimeout(() => {
     }, 1000);
   }
-
   return (
-    <KonvaHtml refName={ref._stringRef} onTransformEnd={props.onTransformEnd}>
-      <Draggable>
+    <KonvaHtml
+      refName={ref._stringRef}
+      defaultProps={props.defaultProps}
+    >
+      <div
+        onClick={() => {
+          props.updateKonva(ref._stringRef, true);
+        }}
+        onContextMenu={() => {
+          props.updateKonva(ref._stringRef, true);
+        }}
+        className={"customObj"}
+        data-name={ref._stringRef}
+        ref={ref}
+      >
         <div
-          onClick={() => {
-            props.updateKonva(ref._stringRef, true);
+          //className="customPointerEventsOn"
+          className=""
+          ref={obj}
+          onClick={props.onClick}
+          onContextMenu={props.onContextMenu}
+          onMouseUp={(e) => {
+            //console.log("UP");
+            //getObj().childNodes[0].classList.add("customPointerEventsOn");
+            props.onMouseUp(e);
           }}
-          onContextMenu={() => {
-            props.updateKonva(ref._stringRef, true);
+          onMouseDown={(e) => {
+            const thisDiv = getObj().childNodes[0];
+            if (props.currentObjId === ref._stringRef) {
+              console.log("TEST");
+              e.stopPropagation();
+              thisDiv.style.pointerEvents = "none";
+            } else {
+              const reClick = new MouseEvent("click", {
+                view: window,
+                clientX: thisDiv.clientX + 10,
+                clientY: thisDiv.clientY + 10
+              });
+              thisDiv.dispatchEvent(reClick);
+              props.onMouseDown(e);
+            }
+
+            props.setCurrentObjId(ref._stringRef);
           }}
-          className={"customObj"}
-          data-name={ref._stringRef}
-          ref={ref}
+          onMouseMove={props.onMouseMove}
         >
-          <div
-            className="customPointerEventsOn"
-            ref={obj}
-            onClick={props.onClick}
-            onContextMenu={props.onContextMenu}
-            onMouseUp={props.onMouseUp}
-            onMouseDown={props.onMouseDown}
-            onMouseMove={props.onMouseMove}
-          >
-            {props.children}
-          </div>
+          {props.children}
         </div>
-      </Draggable>
+      </div>
     </KonvaHtml>
   )
 });

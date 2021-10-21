@@ -142,6 +142,7 @@ class Graphics extends Component {
           id: "customRect",
           name: "customRect",
           ref: "customRect",
+          objId: "",
           opacity: 0,
         }
       ],
@@ -347,15 +348,8 @@ class Graphics extends Component {
     }
     if (group) {
       group.rotation(state.rotation);
-      group.scale({
-        x: state.scaleX,
-        y: state.scaleY
-      });
-
-      group.position({ x: state.newX, y: state.newY });
-
-      const ref = this.refs[state.id];
-      ref.style.transform = `translate(${state.x}px, ${state.y}px)`;
+      group.scale({ x: state.scaleX, y: state.scaleY });
+      group.position({ x: state.x, y: state.y });
     }
   }
 
@@ -637,6 +631,28 @@ class Graphics extends Component {
 
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
+
+    if (event.target.parentElement.className === "konvajs-content") {
+      const customObjs = document.getElementsByClassName("customObj");
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].dataset.name;
+        const rect = customObjs[i].getBoundingClientRect();
+        if (
+          event.x > rect.x &&
+          event.y > rect.y &&
+          event.x < rect.x + rect.width &&
+          event.y < rect.y + rect.height
+        ) {
+          // Clicked on a custom object
+          this.setState({
+            selectedShapeName: id,
+            groupSelection: []
+          }, this.handleObjectSelection);
+          return;
+        }
+      }
+    }
+
 
     if (!event.ctrlKey) {
       this.setState({
@@ -1124,7 +1140,19 @@ class Graphics extends Component {
   };
 
   handleDragEnd = (e, objectsName, ref) => {
-    const shape = this.refs[ref];
+    let shape = null;
+    if (this.customObjects.includes(objectsName)) {
+      const customObjs = this.refs.groupAreaLayer.find('Group');
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].attrs.id;
+        if (id === ref) {
+          shape = customObjs[i];
+        }
+      }
+    } else {
+      shape = this.refs[ref];
+    }
+
     this.setState(prevState => ({
       [objectsName]: prevState[objectsName].map(eachObj =>
         eachObj.id === shape.attrs.id
@@ -1888,9 +1916,38 @@ class Graphics extends Component {
         const groups = this.refs[layer].find('Group');
         for (let i = 0; i < groups.length; i++) {
           if (groups[i].attrs.id === id) {
+            const group = groups[i];
             const customState = [...this.state[this.getObjType(id)]];
 
             // Elem transforms (x, y, width, height)
+            /*const elem = this.refs[id];
+            const style = window.getComputedStyle(elem);
+            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
+            const y = matrix.translateY;
+            const width = elem.clientWidth;
+            const height = elem.clientHeight;*/
+
+            // Parent transforms (rotation, scale)
+            /*const parent = elem.parentElement;
+            const pstyle = window.getComputedStyle(parent);
+            const pmatrix = this.decomposeMatrix(new DOMMatrix(pstyle.transform));
+            const scale = pmatrix.scaleX;
+            const rot = pmatrix.rotation;
+            const pX = pmatrix.translateX;
+            const pY = pmatrix.translateY;*/
+
+            /*for (let j = 0; j < customState.length; j++) {
+              if (customState[j].id === id) {
+                customState[j].x = x;
+                customState[j].y = y;
+                customState[j].scaleX = scale;
+                customState[j].scaleY = scale;
+                customState[j].rotation = rot;
+              }
+            }*/
+
+            const sizeRect = this.refs.customRect;
+
             const elem = this.refs[id];
             const style = window.getComputedStyle(elem);
             const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
@@ -1899,29 +1956,7 @@ class Graphics extends Component {
             const width = elem.clientWidth;
             const height = elem.clientHeight;
 
-            // Parent transforms (rotation, scale)
-            const parent = elem.parentElement;
-            const pstyle = window.getComputedStyle(parent);
-            const pmatrix = this.decomposeMatrix(new DOMMatrix(pstyle.transform));
-            const scale = pmatrix.scaleX;
-            const rot = pmatrix.rotation;
-            const pX = pmatrix.translateX;
-            const pY = pmatrix.translateY;
-
-            const group = groups[i];
-            const sizeRect = this.refs.customRect;
             const paddingPercent = 0.05;
-            for (let j = 0; j < customState.length; j++) {
-              if (customState[j].id === id) {
-                customState[j].pX = pX;
-                customState[j].pY = pY;
-                customState[j].x = x;
-                customState[j].y = y;
-                customState[j].scaleX = scale;
-                customState[j].scaleY = scale;
-                customState[j].rotation = rot;
-              }
-            }
             this.setState({
               customRect: [{
                 ...this.state.customRect[0],
@@ -1945,6 +1980,15 @@ class Graphics extends Component {
         return null;
       }
     }
+  }
+
+  setCustomObj = (id) => {
+    this.setState({
+      customRect: [{
+        ...this.state.customRect[0],
+        objId: id
+      }]
+    });
   }
 
   onObjectDragMove = (obj) => {
@@ -2050,9 +2094,23 @@ class Graphics extends Component {
 
   onObjectTransformEnd = (obj) => {
     this.setState({ isTransforming: false });
+    let object = null;
+    let type = null;
+    if (obj.attrs) {
+      object = obj.attrs ? this.refs[obj.ref] : this.refs.customRect;
+      type = this.getObjType(object.attrs.id);
+    } else {
+      const customObjs = this.refs.groupAreaLayer.find('Group');
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].attrs.id;
+        if (id === obj.id) {
+          object = customObjs[i];
+          break;
+        }
+      }
+      type = this.getObjType(obj.id);
+    }
 
-    const object = obj.evt ? this.refs.customRect : this.refs[obj.ref];
-    const type = this.getObjType(object.attrs.id);
     let transformOptions = {};
     switch (type) {
       case "texts":
@@ -2090,6 +2148,13 @@ class Graphics extends Component {
         break;
     }
 
+    if (this.customObjects.includes(type)) {
+      transformOptions = {
+        scaleX: object.scaleX(),
+        scaleY: object.scaleY()
+      };
+    }
+
     this.setState(
       prevState => ({
         [type]: prevState[type].map(o =>
@@ -2106,13 +2171,9 @@ class Graphics extends Component {
       })
     );
 
-    if (!(type === "images" || type === "videos" || type === "audios")) {
+    if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
-    }
-
-    if (obj.evt) {
-      this.getKonvaObj(obj.target.attrs.id);
     }
   }
 
@@ -2359,11 +2420,13 @@ class Graphics extends Component {
 
   customObjProps = () => {
     return {
+      currentObjId: this.state.customRect[0].objId,
       onMouseUp: (e) => this.handleMouseUp(e, false),
       onMouseDown: (e) => this.onMouseDown(e, false),
       onMouseMove: (e) => this.handleMouseOver(e, false),
       onTransformEnd: (e) => this.onObjectTransformEnd(e),
       updateKonva: this.getKonvaObj,
+      setCurrentObjId: this.setCustomObj
     };
   }
 
@@ -2429,6 +2492,7 @@ class Graphics extends Component {
         {this.state.polls.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Poll
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
               {...this.defaultObjProps(obj, index)}
               {...this.customObjProps()}
             /> : null
@@ -2436,6 +2500,7 @@ class Graphics extends Component {
         {this.state.connect4s.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Connect4
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
               {...this.defaultObjProps(obj, index)}
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
@@ -2444,6 +2509,7 @@ class Graphics extends Component {
         {this.state.tics.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <TicTacToe
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
               {...this.defaultObjProps(obj, index)}
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
