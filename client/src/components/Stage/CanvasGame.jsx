@@ -184,7 +184,8 @@ class Graphics extends Component {
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
     let role = initRole;
-    if (this.props.roleSelection.startsWith("random")) role = -1; //seeded
+    if (this.props.roleSelection === "random") role = -1;
+    else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
     this.setState({
       rolelevel: role
     });

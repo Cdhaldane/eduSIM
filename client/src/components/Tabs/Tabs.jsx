@@ -272,6 +272,16 @@ function Tabs(props) {
                     />{" "}
                     Random
                   </div>
+                  <div>
+                    <input
+                      type="radio"
+                      checked={displayRole() === "randomByLevel"}
+                      value="randomByLevel"
+                      onChange={handleSetRole}
+                      disabled={tabs.length === 0}
+                    />{" "}
+                    Random (per level)
+                  </div>
                 </div>
               </div>
             </div>

@@ -155,19 +155,22 @@ function Game(props) {
     let newPlayers = {};
     if (roles && roles.length>0) {
       for (const id in players) {
-        let p = players[id];
+        let p = {...players[id]};
         newPlayers[id] = p;
-        if (!isNaN(p.role)) {
+        if (p.role === -1) {
           newPlayers[id].role = roles[parseInt(p.dbid, 16)%roles.length].roleName;
+        } else if (p.role === -2) {
+          newPlayers[id].role = roles[(actualLevel**actualLevel + parseInt(p.dbid, 16))%roles.length].roleName;
         }
       }
     }
     return newPlayers;
-  }, [players, roles]);
+  }, [players, roles, actualLevel]);
 
-  useEffect(() => {
-    if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
-  }, [actualLevel, parsedPlayers]);
+  // TESTING PURPOSES
+  // useEffect(() => {
+  //   if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
+  // }, [actualLevel, parsedPlayers]);
 
   return (
     !isLoading ? (
