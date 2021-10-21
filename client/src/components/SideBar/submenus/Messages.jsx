@@ -86,8 +86,6 @@ function Messages(props) {
   const [messageInput, setMessageInput] = useState("");
   const [sendGroup, setSendGroup] = useState(() => new Set());
 
-  console.log(props.messageBacklog);
-
   useEffect(() => {
     if (props.socket) {
       props.socket.on("message", ({ sender, message, group }) => {

@@ -181,14 +181,15 @@ class Graphics extends Component {
     };
   }
 
-  handlePlayerInfo = ({ role, name, dbid }) => {
+  handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
+    let role = initRole;
+    if (this.props.roleSelection.startsWith("random")) role = -1; //seeded
     this.setState({
       rolelevel: role
     });
     let id = dbid
     if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-    console.log(dbid, this.props.initialUserId, id);
     this.props.socket.emit("playerUpdate", {
       role, name, dbid: this.props.initialUserId || id
     })

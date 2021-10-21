@@ -8,7 +8,7 @@ import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
 
-  const PLACEHOLDER_TEXT = props.disabled ? "None (unchangable)" : "Select Role";
+  const PLACEHOLDER_TEXT = props.disabled ? "None (teacher assigned)" : "Select Role";
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -66,9 +66,9 @@ const DropdownRoles = (props) => {
 
   useEffect(() => {
     calcHeight(menuElem.current?.firstChild);
-    if (!roles.some(role => role.roleName === selectedRole)) {
-      setSelectedRole(null);
-    }
+    // if (!roles.some(role => role.roleName === selectedRole)) {
+    //   setSelectedRole(null);
+    // }
   }, [roles]);
 
   const calcHeight = (el) => {
@@ -135,7 +135,7 @@ const DropdownRoles = (props) => {
   }
 
   useEffect(() => {
-    if (props.initRole) {
+    if (props.initRole && !props.random) {
       setSelectedRole(props.initRole.name);
     }
   }, [props.initRole]);
@@ -219,7 +219,7 @@ const DropdownRoles = (props) => {
           <DropdownItem
             goToMenu="roles"
             icon={<i className="icons fab fa-critical-role"></i>}>
-            {selectedRole || PLACEHOLDER_TEXT}
+            {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
                 <i className="fa fa-times-circle"></i>
