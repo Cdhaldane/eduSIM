@@ -18,7 +18,6 @@ import "./Tabs.css";
 
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(0);
-  const [radio, setRadio] = useState("Teacher");
   const [isOpen, setIsOpen] = useState(false);
   const [newGroup, setNewGroup] = useState("");
   const [tabs, setTabs] = useState([]);
@@ -125,13 +124,22 @@ function Tabs(props) {
     }
   };
 
-  const handleRadio = (e) => {
+  const handleSetAdvancement = (e) => {
     const val = e.target.value;
-    setRadio(val);
     if (props.socket) {
       props.socket.emit("updateGameSettings", {
         settings: {
           advanceMode: val === "timed" ? time : val
+        }
+      });
+    }
+  };
+  const handleSetRole = (e) => {
+    const val = e.target.value;
+    if (props.socket) {
+      props.socket.emit("updateGameSettings", {
+        settings: {
+          roleMode: val
         }
       });
     }
@@ -142,6 +150,15 @@ function Tabs(props) {
     if (keys && keys.length > 0) {
       return props.roomStatus && (
         isNaN(props.roomStatus[keys[0]].settings?.advanceMode) ? props.roomStatus[keys[0]].settings?.advanceMode : "timed"
+      ) || "student"
+    }
+    return "student";
+  };
+  const displayRole = () => {
+    const keys = props.roomStatus && Object.keys(props.roomStatus);
+    if (keys && keys.length > 0) {
+      return props.roomStatus && (
+        props.roomStatus[keys[0]].settings?.roleMode
       ) || "student"
     }
     return "student";
@@ -186,7 +203,7 @@ function Tabs(props) {
                       type="radio"
                       checked={displayAdvance() === "teacher"}
                       value="teacher"
-                      onChange={handleRadio}
+                      onChange={handleSetAdvancement}
                       disabled={tabs.length === 0}
                     />{" "}
                     Teacher/Facilitator
@@ -196,7 +213,7 @@ function Tabs(props) {
                       type="radio"
                       checked={displayAdvance() === "student"}
                       value="student"
-                      onChange={handleRadio}
+                      onChange={handleSetAdvancement}
                       disabled={tabs.length === 0}
                     />{" "}
                     Student/Participants
@@ -206,7 +223,7 @@ function Tabs(props) {
                       type="radio"
                       checked={displayAdvance() === "timed"}
                       value="timed"
-                      onChange={handleRadio}
+                      onChange={handleSetAdvancement}
                       disabled={tabs.length === 0}
                     />{" "}
                     <span>Timed =</span>
@@ -216,9 +233,54 @@ function Tabs(props) {
                       type="text"
                       placeholder="Time"
                       className="content-timeinput"
-                      disabled={tabs.length === 0 || radio !== "timed"}
+                      disabled={tabs.length === 0 || displayAdvance() !== "timed"}
                     />
                     <span>min</span>
+                  </div>
+                </div>
+              </div>
+              <div className="simadv">
+                <h3>Role assignment</h3>
+                <div className="content-radiobuttons">
+                  <div>
+                    <input
+                      type="radio"
+                      checked={displayRole() === "teacher"}
+                      value="teacher"
+                      onChange={handleSetRole}
+                      disabled={tabs.length === 0}
+                    />{" "}
+                    Teacher/Facilitator
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      checked={displayRole() === "student"}
+                      value="student"
+                      onChange={handleSetRole}
+                      disabled={tabs.length === 0}
+                    />{" "}
+                    Student/Participants
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      checked={displayRole() === "random"}
+                      value="random"
+                      onChange={handleSetRole}
+                      disabled={tabs.length === 0}
+                    />{" "}
+                    Random
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      checked={displayRole() === "randomByLevel"}
+                      value="randomByLevel"
+                      onChange={handleSetRole}
+                      disabled={tabs.length === 0}
+                    />{" "}
+                    Random (per level)
                   </div>
                 </div>
               </div>

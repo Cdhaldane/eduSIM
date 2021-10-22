@@ -10,6 +10,8 @@ let playerIDs = new Map();
 // simulation actions, would probably be too large/unnecessary to include in room status
 let interactions = new Map();
 
+let chatlogs = new Map();
+
 // helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
 export const updateRoomStatus = async (id, val) => {
@@ -107,4 +109,14 @@ export const getInteractionBreakdown = async (roomid) => {
     counts[level] = (counts[level] || 0) + 1;
   });
   return counts;
+};
+
+export const updateChatlog = async (roomid, message) => {
+  const old = chatlogs.get(roomid) || [];
+  old.push(message);
+  chatlogs.set(roomid, old);
+  return true;
+};
+export const getChatlog = async (roomid) => {
+  return chatlogs.get(roomid) || [];
 };

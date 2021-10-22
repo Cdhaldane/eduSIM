@@ -9,6 +9,7 @@ import CreateRole from "../CreateRoleSelection/CreateRole";
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
+import { uniqueId } from "lodash";
 
 import {
   Rect,
@@ -180,17 +181,20 @@ class Graphics extends Component {
     };
   }
 
-  handlePlayerInfo = ({ role, name }) => {
+  handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
+    let role = initRole;
+    if (this.props.roleSelection === "random") role = -1;
+    else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
     this.setState({
       rolelevel: role
     });
+    let id = dbid
+    if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
     this.props.socket.emit("playerUpdate", {
-      role, name, ...(
-        this.props.initialUserId ? {dbid: this.props.initialUserId} : {}
-      )
+      role, name, dbid: this.props.initialUserId || id
     })
-    if (!sessionStorage.userInfo) sessionStorage.setItem('userInfo', JSON.stringify({role,name}));
+    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: this.props.initialUserId || id}));
   }
 
   componentDidMount() {
@@ -200,12 +204,15 @@ class Graphics extends Component {
 
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
+
       this.savedObjects.forEach((object) => {
         this.setState({
           [object]: objects[object]
         });
       });
     } catch(e) {};
+
+    console.log(this.state);
 
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
@@ -225,9 +232,12 @@ class Graphics extends Component {
   })
 
   handleLevel = (e) => {
-    this.setState({
+    this.props.socket.emit("goToPage", {
       level: e
-    }, this.handleLevelUpdate)
+    })
+    // this.setState({
+    //   level: e
+    // }, this.handleLevelUpdate)
   }
 
   toggleModal = () => {
@@ -236,8 +246,8 @@ class Graphics extends Component {
     })
   }
 
-  componentWillReceiveProps = ({ level, freeAdvance }) => {
-    if (level && !freeAdvance) {
+  componentWillReceiveProps = ({ level }) => {
+    if (level) {
       this.setState({
         level
       })
@@ -275,12 +285,13 @@ class Graphics extends Component {
               gameroles={this.state.gameroles}
               players={this.props.players}
               initialUserInfo={this.props.initialUserInfo}
+              roleSelection={this.props.roleSelection}
             />
           </Modal>
         </div>
         }
 
-        {this.state.tics.map(({i, level, id}) => {
+        {(this.state.tics || []).map(({i, level, id}) => {
           if (level === this.state.level) {
             return (
               <TicTacToe
@@ -293,7 +304,7 @@ class Graphics extends Component {
             return null
           }
         })}
-        {this.state.connect4.map(({level, id}) => {
+        {(this.state.connect4 || []).map(({level, id}) => {
           if (level === this.state.level) {
             return (
               <Connect4 
