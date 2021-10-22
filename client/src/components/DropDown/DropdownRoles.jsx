@@ -97,23 +97,22 @@ const DropdownRoles = (props) => {
     setRoleNum(roles[index].numOfSpots);
   }
 
-  const handleSubmitModification = () => {
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
+  const handleSubmitModification = async () => {
+    await props.handleEditRole({
       id: roles[modifyIndex].id,
-      name: roleName,
-      numspots: roleNum
-    }).then(() => {
-      setRoles(roles.map((v,i) => i === modifyIndex ? {
-        ...v,
-        roleName: roleName,
-        numOfSpots: roleNum
-      } : v));
-      setRoleName('');
-      setRoleNum('');
-      setModifyIndex(-1);
-    }).catch(error => {
-      console.log(error);
+      roleName,
+      roleNum
     });
+    setRoles(roles.map((v,i) => i === modifyIndex ? {
+      ...v,
+      roleName: roleName,
+      numOfSpots: roleNum
+    } : v));
+    setSelectedRole(roleName);
+    props.roleLevel(roleName, roleNum);
+    setRoleName('');
+    setRoleNum('');
+    setModifyIndex(-1);
   }
 
   const handleCopyRole = async (gameroleid) => {

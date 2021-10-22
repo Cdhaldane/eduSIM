@@ -138,6 +138,7 @@ exports.updateRole = async (req, res) => {
   }
 
   try {
+    let instance={};
     if (name) {
       // update players with this role
       await db.query(`
@@ -145,6 +146,27 @@ exports.updateRole = async (req, res) => {
         gamerole='${gamerole.gamerole}' and
         gameinstanceid='${gamerole.gameinstanceid}'
       `);
+      instance = await GameInstance.findOne({
+        where: {
+          gameinstanceid: gamerole.gameinstanceid,
+        },
+      });
+      const params = JSON.parse(instance.game_parameters);
+      for (const key in params) {
+        if (Array.isArray(params[key])) {
+          let newParam = [];
+          for (let item of params[key]) {
+            if (item?.rolelevel === gamerole.gamerole) {
+              item = {...item, rolelevel: name};
+            }
+            newParam.push(item);
+          }
+          params[key] = newParam;
+        }
+      }
+      instance.game_parameters = JSON.stringify(params);
+      instance.save();
+
       gamerole.gamerole = name;
     }
 
@@ -153,9 +175,10 @@ exports.updateRole = async (req, res) => {
     gamerole.save();
 
     return res.send({
-      message: `Game ${id} has been updated!`,
+      gameinstance: instance
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: `Error: ${err.message}`,
     });

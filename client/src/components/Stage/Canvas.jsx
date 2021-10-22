@@ -537,6 +537,39 @@ class Graphics extends Component {
     });
   }
 
+  handleEditRole = async ({id, roleName, roleNum}) => {
+    await this.handleSave();
+    return axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
+      id: id,
+      name: roleName,
+      numspots: roleNum
+    }).then((res) => {
+      let objects = JSON.parse(res.data.gameinstance.game_parameters);
+
+      // Parse the saved groups
+      let parsedSavedGroups = [];
+      for (let i = 0; i < objects.savedGroups.length; i++) {
+        let savedGroup = [];
+        for (let j = 0; j < objects.savedGroups[i].length; j++) {
+          savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
+        }
+        parsedSavedGroups.push(savedGroup);
+      }
+      objects.savedGroups = parsedSavedGroups;
+
+      // Put parsed saved data into state
+      this.savedState.forEach((object) => {
+        this.setState({
+          [object]: objects[object]
+        });
+      });
+
+      return true;
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
   onObjectContextMenu = e => {
     e.evt.preventDefault(true);
     const mousePosition = {
@@ -2507,6 +2540,7 @@ class Graphics extends Component {
                 roleLevel={this.handleRoleLevel}
                 gameid={this.state.gameinstanceid}
                 handleCopyRole={this.handleCopyRole}
+                handleEditRole={this.handleEditRole}
                 editMode={true}
               />
             </div>
