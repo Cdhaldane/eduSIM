@@ -6,7 +6,22 @@ import "./ContextMenu.css"
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
   const menu = useRef();
+
+  const setContextMenuTitle = () => {
+    if (props.selectedShapeName.startsWith("text")) {
+      setEditTitle("Edit Text");
+    } else if (props.selectedShapeName.startsWith("poll")) {
+      setEditTitle("Edit Poll");
+    } else if (props.selectedShapeName.startsWith("connect4")) {
+      setEditTitle("Edit Connect4");
+    } else if (props.selectedShapeName.startsWith("tic")) {
+      setEditTitle("Edit TicTacToe");
+    } else {
+      setEditTitle("Edit Shape");
+    }
+  }
 
   const handleClickOutside = e => {
     if (menu.current && !menu.current.contains(e.target)) {
@@ -49,6 +64,7 @@ const ContextMenu = (props) => {
     document.addEventListener('contextmenu', handleRightClick);
 
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
+    setContextMenuTitle();
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
@@ -67,22 +83,6 @@ const ContextMenu = (props) => {
 
   const handleEdit = () => {
     setDrop(!drop);
-  }
-
-  const handleColorF = (e) => {
-    props.choosecolorf(e);
-  }
-
-  const handleColorS = (e) => {
-    props.choosecolors(e);
-  }
-
-  const handleWidth = (e) => {
-    props.handleWidth(e);
-  }
-
-  const handleOpacity = (e) => {
-    props.handleOpacity(e);
   }
 
   const handleGrouping = () => {
@@ -111,7 +111,7 @@ const ContextMenu = (props) => {
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
         {!props.addGroup && !props.unGroup && (
-        <li onClick={handleEdit}>{props.editTitle}</li>
+          <li onClick={handleEdit}>{editTitle}</li>
         )}
         {props.addGroup && (
           <li onClick={handleGrouping}>Group Objects</li>
@@ -124,14 +124,16 @@ const ContextMenu = (props) => {
       {drop && (
         <div className="drop">
           <DropdownEditObject
+            setJson={props.setJson}
+            pollJson={props.pollJson}
             top={menu.current.offsetTop}
-            title={props.editTitle}
-            choosecolorf={handleColorF}
-            choosecolors={handleColorS}
-            handleWidth={handleWidth}
-            handleOpacity={handleOpacity}
-            handleSize={(e) => props.handleSize(e)}
-            handleFont={(e) => props.handleFont(e)}
+            title={editTitle}
+            handleFillColor={props.handleFillColor}
+            handleStrokeColor={props.handleStrokeColor}
+            handleWidth={props.handleWidth}
+            handleOpacity={props.handleOpacity}
+            handleSize={props.handleSize}
+            handleFont={props.handleFont}
             font={props.selectedFont}
             shape={props.shape}
             left={editModalLeft}

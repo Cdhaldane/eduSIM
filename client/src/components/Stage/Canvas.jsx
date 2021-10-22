@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import DropdownRoles from "../Dropdown/DropdownRoles";
-import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
-import Info from "../Information/InformationPopup";
 import fileDownload from 'js-file-download';
 import axios from 'axios';
 import Level from "../Level/Level";
-import Konva from "konva";
-import ContextMenu from "../ContextMenu/ContextMenu";
-import Portal from "./Shapes/Portal"
-import TransformerComponent from "./TransformerComponent";
+import Portal from "./Shapes/Portal";
+import Info from "../Information/InformationPopup";
 
+// Dropdowns
+import DropdownRoles from "../Dropdown/DropdownRoles";
+import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
+import ContextMenu from "../ContextMenu/ContextMenu";
+
+// Custom Konva Components
+import TransformerComponent from "./TransformerComponent";
 import URLVideo from "./URLVideos";
 import URLImage from "./URLImage";
 
@@ -17,8 +19,8 @@ import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import Poll from "./GamePieces/Poll/Poll";
 
-import "./Stage.css";
-
+// Standard Konva Components
+import Konva from "konva";
 import {
   Rect,
   Stage,
@@ -31,6 +33,8 @@ import {
   Arrow,
 } from "react-konva";
 
+import "./Stage.css";
+
 let history = [];
 let historyStep = 0;
 
@@ -38,8 +42,19 @@ class Graphics extends Component {
 
   // Save State
   // These are the names of the objects in state that are saved to the database
+  customObjects = [
+    "polls",
+    "connect4s",
+    "tics"
+  ];
+  customDeletes = [
+    "pollsDeleteCount",
+    "connect4sDeleteCount",
+    "ticsDeleteCount"
+  ];
   savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
+    ...this.customObjects,
     "rectangles",
     "ellipses",
     "stars",
@@ -51,11 +66,11 @@ class Graphics extends Component {
     "audios",
     "documents",
     "lines",
-    "polls"
   ];
   deletionCounts = [
     // Delete Counts (stored to keep object label #s in sync)
     // Must be in the same order as savedObjects
+    ...this.customDeletes,
     "rectDeleteCount",
     "ellipseDeleteCount",
     "starDeleteCount",
@@ -67,15 +82,11 @@ class Graphics extends Component {
     "audioDeleteCount",
     "documentDeleteCount",
     "linesDeleteCount",
-    "pollsDeleteCount"
   ];
   savedState = [
     // The complete save state
     ...this.savedObjects,
     ...this.deletionCounts,
-
-    "tics",
-    "connect4",
 
     "savedGroups",
 
@@ -113,7 +124,7 @@ class Graphics extends Component {
 
       // Interactive
       tics: [],
-      connect4: [],
+      connect4s: [],
       polls: [],
 
       // An array of arrays containing grouped items
@@ -121,6 +132,19 @@ class Graphics extends Component {
 
       connectors: [],
       gameroles: [],
+
+      // TESTING Custom Transformer
+      customRect: [
+        {
+          visible: true,
+          x: 0,
+          y: 0,
+          id: "customRect",
+          name: "customRect",
+          ref: "customRect",
+          opacity: 0,
+        }
+      ],
 
       // Object Deletion Count
       rectDeleteCount: 0,
@@ -135,6 +159,8 @@ class Graphics extends Component {
       linesDeleteCount: 0,
       arrowDeleteCount: 0,
       pollsDeleteCount: 0,
+      connect4sDeleteCount: 0,
+      ticsDeleteCount: 0,
 
       // Page Controls
       pages: ["1", "2", "3", "4", "5", "6"],
@@ -234,10 +260,78 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       savedstates: [],
       level: 1,
+
+      pollJson: {
+        showProgressBar: "bottom",
+        pages: [
+          {
+            questions: [
+              {
+                id: 0,
+                type: "text",
+                name: "0",
+                title: "Sample Text Question:",
+                isRequired: true,
+              }, {
+                id: 1,
+                type: "text",
+                name: "1",
+                inputType: "date",
+                title: "Sample Date Question:",
+                isRequired: true,
+                hasNone: null,
+                choices: null
+              }, {
+                id: 2,
+                type: "text",
+                name: "2",
+                inputType: "color",
+                title: "Sample Color Question:",
+                isRequired: false,
+                hasNone: null,
+                choices: null
+              }
+            ]
+          },
+          {
+            questions: [
+              {
+                id: 0,
+                type: "text",
+                name: "0",
+                title: "Sample Text Question:",
+                isRequired: true,
+              }, {
+                id: 1,
+                type: "text",
+                name: "1",
+                inputType: "date",
+                title: "Sample Date Question:",
+                isRequired: true,
+                hasNone: null,
+                choices: null
+              }, {
+                id: 2,
+                type: "text",
+                name: "2",
+                inputType: "color",
+                title: "Sample Color Question:",
+                isRequired: false,
+                hasNone: null,
+                choices: null
+              }
+            ]
+          }
+        ],
+      },
     };
 
     this.handleWheel = this.handleWheel.bind(this);
 
+    this.reloadFromSavedState(props.doNotRecalculateBounds);
+  }
+
+  reloadFromSavedState = (doNotRecalculateBounds) => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {
         adminid: this.state.adminid,
@@ -267,10 +361,6 @@ class Graphics extends Component {
         });
 
         setTimeout(() => {
-          // Calculate positions on initial load
-          this.recalculateCanvasSizeAndPosition(false);
-          this.recalculateCanvasSizeAndPosition(true);
-
           // Get full objects for saved groups
           let fullObjSavedGroups = [];
           for (let i = 0; i < this.state.savedGroups.length; i++) {
@@ -284,16 +374,48 @@ class Graphics extends Component {
           this.setState({
             savedGroups: fullObjSavedGroups
           });
+
+          for (let j = 0; j < this.customObjects.length; j++) {
+            const type = this.customObjects[j];
+            for (let i = 0; i < this.state[type].length; i++) {
+              const state = this.state[type][i];
+              this.setCustomGroupPos(state, "groupAreaLayer");
+              this.setCustomGroupPos(state, "personalAreaLayer");
+            }
+          }
+
+          // Calculate positions on initial load
+          if (!doNotRecalculateBounds) {
+            this.recalculateCanvasSizeAndPosition(false);
+            this.recalculateCanvasSizeAndPosition(true);
+          }
         }, 100);
       }
     }).catch(error => {
       console.error(error);
     });
+
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
         gameinstanceid: this.state.gameinstanceid,
       }
-    })
+    });
+  }
+
+  setCustomGroupPos = (state, layer) => {
+    const groups = this.refs[layer].find('Group');
+    let group = null;
+    for (let i = 0; i < groups.length; i++) {
+      if (groups[i].attrs.id === state.id) {
+        group = groups[i];
+        break;
+      }
+    }
+    if (group) {
+      group.rotation(state.rotation);
+      group.scale({ x: state.scaleX, y: state.scaleY });
+      group.position({ x: state.x, y: state.y });
+    }
   }
 
   recalculateCanvasSizeAndPosition = (personalArea) => {
@@ -316,7 +438,7 @@ class Graphics extends Component {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
-            const rect = this.refs[objects[j].id].getClientRect();
+            const rect = this.getRect(this.refs[objects[j].id]);
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
@@ -378,10 +500,10 @@ class Graphics extends Component {
       }, () => {
 
         // Adjust x, y position to center content again after scale is complete
-        const leftRect = leftmostObj.getClientRect();
-        const rightRect = rightmostObj.getClientRect();
-        const topRect = topmostObj.getClientRect();
-        const bottomRect = bottommostObj.getClientRect();
+        const leftRect = this.getRect(leftmostObj);
+        const rightRect = this.getRect(rightmostObj);
+        const topRect = this.getRect(topmostObj);
+        const bottomRect = this.getRect(bottommostObj);
 
         const newContentWidth = (rightRect.x + rightRect.width) - leftRect.x;
         const newContentHeight = (bottomRect.y + bottomRect.height) - topRect.y;
@@ -392,6 +514,19 @@ class Graphics extends Component {
         });
       });
     }
+  }
+
+  getRect = (obj) => {
+    let rect = null;
+    if (obj.nodeName === "DIV") {
+      // Custom Object
+      rect = obj.getBoundingClientRect();
+    } else {
+      // Konva Object
+      rect = obj.getClientRect();
+    }
+
+    return rect;
   }
 
   saveInterval = null;
@@ -427,6 +562,18 @@ class Graphics extends Component {
   componentWillUnmount = () => {
     clearInterval(this.saveInterval);
     clearInterval(this.drawInterval);
+  }
+
+  // Return current selectedShapeName if input is customRect or ContainerRect
+  // Return input otherwise
+  checkName = (name) => {
+    switch (name) {
+      case "customRect":
+      case "ContainerRect":
+        return this.state.selectedShapeName;
+      default:
+        return name;
+    }
   }
 
   componentDidUpdate = (prevProps, prevState) => {
@@ -479,7 +626,7 @@ class Graphics extends Component {
     status: this.state.gamepieceStatus[id] || {}
   })
 
-  handleSave = () => {
+  handleSave = (thenReload) => {
     let storedObj = {};
     for (let i = 0; i < this.savedState.length; i++) {
       const newObj = this.savedState[i];
@@ -501,16 +648,21 @@ class Graphics extends Component {
     }
 
     // Save the game_parameters
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
+    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then(() => {
+      if (thenReload) {
+        this.props.reloadCanvasFull();
+      }
+    }).catch(error => {
       console.error(error);
     });
   };
 
   onObjectContextMenu = e => {
-    e.evt.preventDefault(true);
+    const event = e.evt ? e.evt : e;
+    event.preventDefault(true);
     const mousePosition = {
-      x: e.evt.clientX,
-      y: e.evt.clientY
+      x: event.clientX,
+      y: event.clientY
     };
     let singleGroupSelected = false;
     if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
@@ -543,16 +695,53 @@ class Graphics extends Component {
   };
 
   onMouseDown = (e, personalArea) => {
-    if (!e.evt.ctrlKey) {
+    const event = e.evt ? e.evt : e;
+
+    if (event.target.parentElement.className === "konvajs-content") {
+      const customObjs = document.getElementsByClassName("customObj");
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].dataset.name;
+        const rect = customObjs[i].getBoundingClientRect();
+        if (
+          event.x > rect.x &&
+          event.y > rect.y &&
+          event.x < rect.x + rect.width &&
+          event.y < rect.y + rect.height
+        ) {
+          // Clicked on a custom object
+          this.setState({
+            selectedShapeName: id,
+            groupSelection: []
+          }, this.handleObjectSelection);
+          return;
+        }
+      }
+    }
+
+
+    if (!event.ctrlKey) {
       this.setState({
         layerDraggable: false
       });
     }
 
-    const pos = {
-      x: e.evt.layerX,
-      y: e.evt.layerY
-    };
+    let pos = null;
+    if (event.layerX) {
+      pos = {
+        x: event.layerX,
+        y: event.layerY
+      };
+    } else {
+      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      if (sidebarPx > 0 && personalArea) {
+        sidebarPx = 100;
+      }
+
+      pos = {
+        x: event.clientX - sidebarPx,
+        y: event.clientY
+      }
+    }
 
     if (this.state.drawMode === true) {
       this.setState({
@@ -570,10 +759,12 @@ class Graphics extends Component {
         }]
       });
     } else {
-      const isElement = e.target.findAncestor(".elements-container");
-      const isTransformer = e.target.findAncestor("Transformer");
-      if (isElement || isTransformer) {
-        return;
+      if (e.evt) {
+        const isElement = e.target.findAncestor(".elements-container");
+        const isTransformer = e.target.findAncestor("Transformer");
+        if (isElement || isTransformer) {
+          return;
+        }
       }
 
       let scale = this.state.groupLayerScale;
@@ -587,7 +778,10 @@ class Graphics extends Component {
 
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
-      const shape = this.refs[layer].getIntersection(pointerPos);
+      let shape = true;
+      if (e.evt) {
+        shape = this.refs[layer].getIntersection(pointerPos);
+      }
       this.setState({
         selection: {
           isDraggingShape: this.isShape(shape),
@@ -604,6 +798,8 @@ class Graphics extends Component {
   };
 
   handleMouseUp = (e, personalArea) => {
+    const event = e.evt ? e.evt : e;
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
@@ -616,10 +812,14 @@ class Graphics extends Component {
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
       const selectionRect = personalArea ? "personalSelectionRect" : "groupSelectionRect";
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
-      const shape = this.refs[layer].getIntersection(pointerPos);
-      const clickShapeGroup = this.getShapeGroup(shape);
+      let shape = null;
+      let clickShapeGroup = null;
+      if (pointerPos) {
+        shape = this.refs[layer].getIntersection(pointerPos);
+        clickShapeGroup = this.getShapeGroup(shape);
+      }
 
-      if (e.evt.button === 0) {
+      if (event.button === 0) {
         // LEFT CLICK
         const selBox = this.refs[selectionRect].getClientRect();
         if (selBox.width > 1 && selBox.height > 1) {
@@ -664,7 +864,7 @@ class Graphics extends Component {
 
             if (selectedGroups.length === 0 && elemIds.length === 1) {
               this.setState({
-                selectedShapeName: elements[0].id(),
+                selectedShapeName: this.checkName(elements[0].id()),
                 groupSelection: []
               }, this.handleObjectSelection);
             } else {
@@ -680,7 +880,7 @@ class Graphics extends Component {
         } else {
           // There has been a single left click
           if (this.isShape(shape)) {
-            if (e.evt.shiftKey) {
+            if (event.shiftKey) {
               // Shift selected -> create group selection
 
               // The object that was just shift selected
@@ -729,7 +929,7 @@ class Graphics extends Component {
                     // Shift select with nothing else selected so set it as the selection
                     if (!clickShapeGroup) {
                       this.setState({
-                        selectedShapeName: shape.id(),
+                        selectedShapeName: this.checkName(shape.id()),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     } else {
@@ -777,7 +977,7 @@ class Graphics extends Component {
                       }, this.handleObjectSelection);
                     } else {
                       this.setState({
-                        selectedShapeName: newGroupSelection[0].id(),
+                        selectedShapeName: this.checkName(newGroupSelection[0].id()),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     }
@@ -797,8 +997,9 @@ class Graphics extends Component {
                   groupSelection: [clickShapeGroup]
                 }, this.handleObjectSelection);
               } else {
+                const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
                 this.setState({
-                  selectedShapeName: shape.id(),
+                  selectedShapeName: this.checkName(shapeId),
                   groupSelection: []
                 }, this.handleObjectSelection);
               }
@@ -813,7 +1014,7 @@ class Graphics extends Component {
             }
           }
         }
-      } else if (e.evt.button === 2) {
+      } else if (event.button === 2) {
         // RIGHT CLICK
         if (this.isShape(shape)) {
           if (clickShapeGroup) {
@@ -846,8 +1047,9 @@ class Graphics extends Component {
             }
 
             if (!shapeIsInGroupSelection) {
+              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
               this.setState({
-                selectedShapeName: shape.id(),
+                selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
               }, this.handleObjectSelection);
             }
@@ -867,14 +1069,14 @@ class Graphics extends Component {
             selectedContextMenu: {
               type: type,
               position: {
-                x: e.evt.layerX + sidebarPx,
-                y: e.evt.layerY
+                x: event.layerX + sidebarPx,
+                y: event.layerY
               }
             },
             [notVisible]: false,
             [visible]: true,
-            [contextMenuX]: e.evt.layerX + sidebarPx,
-            [contextMenuY]: e.evt.layerY,
+            [contextMenuX]: event.layerX + sidebarPx,
+            [contextMenuY]: event.layerY,
           });
         }
       }
@@ -889,10 +1091,18 @@ class Graphics extends Component {
       // Disable click event
       Konva.listenClickTap = false;
       this.updateSelectionRect(personalArea);
+
+      // Update custom object transform
+      if (e.evt) {
+        this.getKonvaObj(this.state.selectedShapeName, true);
+      }
     }
   };
 
   isShape = (shape) => {
+    if (shape === true) {
+      return true;
+    }
     if (
       shape === null ||
       shape === undefined ||
@@ -906,11 +1116,12 @@ class Graphics extends Component {
     }
   }
 
+  // Put the Transform around the selected object / group
   handleObjectSelection = () => {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
     if (this.refs[this.state.selectedShapeName]) {
-      this.refs[transformer].nodes([this.refs[this.state.selectedShapeName]]);
+      this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName)]);
     } else if (type === "" && this.state.groupSelection.length) {
       this.refs[transformer].nodes(this.state.groupSelection.flat());
     } else {
@@ -919,6 +1130,8 @@ class Graphics extends Component {
   }
 
   handleMouseOver = (e, personalArea) => {
+    const event = e.evt ? e.evt : e;
+
     // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
@@ -947,9 +1160,9 @@ class Graphics extends Component {
 
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
-      } else {
+      } else if (shape) {
         // Only have drag select on left click and drag
-        if (e.evt.buttons === 1 && !this.state.layerDraggable) {
+        if (event.buttons === 1 && !this.state.layerDraggable) {
           if (this.state.selection.isDraggingShape) {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
@@ -959,8 +1172,9 @@ class Graphics extends Component {
                 groupSelection: [shapeGroup]
               }, this.handleObjectSelection);
             } else {
+              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
               this.setState({
-                selectedShapeName: shape.id(),
+                selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
               }, this.handleObjectSelection);
             }
@@ -991,7 +1205,20 @@ class Graphics extends Component {
   };
 
   handleDragEnd = (e, objectsName, ref) => {
-    const shape = this.refs[ref];
+    let shape = null;
+    const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
+    if (this.customObjects.includes(objectsName)) {
+      const customObjs = this.refs[layer].find('Group');
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].attrs.id;
+        if (id === ref) {
+          shape = customObjs[i];
+        }
+      }
+    } else {
+      shape = this.refs[ref];
+    }
+
     this.setState(prevState => ({
       [objectsName]: prevState[objectsName].map(eachObj =>
         eachObj.id === shape.attrs.id
@@ -1237,8 +1464,12 @@ class Graphics extends Component {
 
     // Get a list of the affected types
     let affectedTypes = [];
+    let customObjDeleted = false;
     for (let i = 0; i < toDelete.length; i++) {
-      affectedTypes.push(this.getObjType(toDelete[i].attrs.id));
+      if (!toDelete[i].attrs) {
+        customObjDeleted = true;
+      }
+      affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
     }
     affectedTypes = [...new Set(affectedTypes)];
 
@@ -1248,8 +1479,8 @@ class Graphics extends Component {
       const type = affectedTypes[i];
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
-        if (this.getObjType(toDelete[j].attrs.id) === type) {
-          toDeleteOfType.push(toDelete[j].attrs.id);
+        if (this.getObjType(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name) === type) {
+          toDeleteOfType.push(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name);
         }
       }
       let objs = [...this.state[type]];
@@ -1262,6 +1493,8 @@ class Graphics extends Component {
       this.setState({
         [type]: objs,
         [deletedCountName]: deletedCount
+      }, () => {
+        this.handleSave(customObjDeleted);
       });
     }
 
@@ -1281,7 +1514,7 @@ class Graphics extends Component {
     });
   }
 
-  handleClose = (e) => {
+  handleCloseContextMenu = (e) => {
     this.setState({
       selectedContextMenu: null
     })
@@ -1324,77 +1557,6 @@ class Graphics extends Component {
     }
     return true;
   };
-
-  addTic = (e) => {
-    let ticName = this.state.tics.length
-
-    let name = 'tic' + ticName
-    let ref = ticName
-    const tac = {
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      opacity: 1,
-      i: ref,
-    };
-
-    let toPush = tac;
-
-    this.setState(prevState => ({
-      tics: [...prevState.tics, toPush]
-    }));
-  }
-
-  handleTicDelete = (index) => {
-    this.setState({
-      tics: this.state.tics.filter((_, i) => i !== index)
-    })
-  }
-
-  addConnect4 = (e) => {
-    let conName = this.state.connect4.length + 1
-
-    let name = 'con' + conName
-    let ref = 'con' + conName
-    const conn = {
-      level: this.state.level,
-      visible: true,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      opacity: 1,
-      ref: ref,
-    };
-
-    let toPush = conn;
-
-    this.setState(prevState => ({
-      connect4: [...prevState.connect4, toPush]
-    }));
-  }
-
-  addPoll = () => {
-    const pollNum = this.state.polls.length + 1;
-    const name = "polls" + pollNum;
-    const newPoll = {
-      level: this.state.level,
-      visible: true,
-      opacity: 1,
-      x: 800,
-      y: 400,
-      id: name,
-      name: name,
-      ref: name,
-    };
-
-    this.setState({
-      polls: [...this.state.polls, newPoll]
-    });
-  }
 
   // Fill Color
   handleFillColor = (e) => {
@@ -1767,6 +1929,95 @@ class Graphics extends Component {
       this.setState({
         layerDraggable: true
       });
+    } else if (event.altKey && event.keyCode === r) {
+      // Print refs
+      console.log("REFS:");
+      console.log(this.refs.groupAreaLayer.find('Group'));
+      console.log({ ...this.refs });
+      console.log({ ...this.state });
+    }
+  }
+
+  deltaTransformPoint = (matrix, point) => {
+    const dx = point.x * matrix.a + point.y * matrix.c + 0;
+    const dy = point.x * matrix.b + point.y * matrix.d + 0;
+    return {
+      x: dx,
+      y: dy
+    };
+  }
+
+  decomposeMatrix = (matrix) => {
+    // @See https://gist.github.com/2052247
+
+    // Calculate delta transform point
+    const px = this.deltaTransformPoint(matrix, { x: 0, y: 1 });
+    const py = this.deltaTransformPoint(matrix, { x: 1, y: 0 });
+
+    // Calculate skew
+    const skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+    const skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+
+    return {
+      translateX: matrix.e,
+      translateY: matrix.f,
+      scaleX: Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
+      scaleY: Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d),
+      skewX: skewX,
+      skewY: skewY,
+      rotation: skewX // Rotation is the same as skew x
+    };
+  }
+
+  // For Konva Objects: 
+  // returns Konva object
+  // For Custom Objects:
+  // returns the Konva Group associated with the KonvaHtml of the object
+  getKonvaObj = (id, showTransformer) => {
+    if (id) {
+      if (this.refs[id].attrs) {
+        return this.refs[id];
+      } else {
+        const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
+        const groups = this.refs[layer].find('Group');
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i].attrs.id === id) {
+            const group = groups[i];
+            const customState = [...this.state[this.getObjType(id)]];
+
+            const elem = this.refs[id];
+            const style = window.getComputedStyle(elem);
+            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
+            const x = matrix.translateX;
+            const y = matrix.translateY;
+            const width = elem.clientWidth;
+            const height = elem.clientHeight;
+
+            const paddingPercent = 0.05;
+            this.setState({
+              customRect: [{
+                ...this.state.customRect[0],
+                x: x - ((width * paddingPercent) / 2),
+                y: y - ((height * paddingPercent) / 2)
+              }],
+              [this.getObjType(id)]: customState
+            });
+
+            const sizeRect = this.refs.customRect;
+            sizeRect.attrs.width = width * (1 + paddingPercent);
+            sizeRect.attrs.height = height * (1 + paddingPercent);
+            group.add(sizeRect);
+
+            if (showTransformer) {
+              this.setState({
+                selectedShapeName: id
+              }, this.handleObjectSelection);
+            }
+            return group;
+          }
+        }
+        return null;
+      }
     }
   }
 
@@ -1834,6 +2085,12 @@ class Graphics extends Component {
     });
   }
 
+  setPollJson = (json) => {
+    this.setState({
+      pollJson: json
+    });
+  }
+
   onDragEndArrow = (arrow) => {
     // Set new points to current position
     let oldPoints = [
@@ -1854,7 +2111,6 @@ class Graphics extends Component {
     ];
 
     this.refs[arrow.ref].position({ x: 0, y: 0 });
-    this.refs.groupAreaLayer.draw();
 
     this.setState(prevState => ({
       arrows: prevState.arrows.map(a =>
@@ -1874,9 +2130,25 @@ class Graphics extends Component {
 
   onObjectTransformEnd = (obj) => {
     this.setState({ isTransforming: false });
+    const custom = this.customObjects.includes(this.getObjType(obj.id));
+    let object = null;
+    let type = null;
+    if (!custom) {
+      object = this.refs[obj.ref];
+      type = this.getObjType(object.attrs.id);
+    } else {
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer";
+      const customObjs = this.refs[layer].find('Group');
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].attrs.id;
+        if (id === obj.id) {
+          object = customObjs[i];
+          break;
+        }
+      }
+      type = this.getObjType(obj.id);
+    }
 
-    const object = this.refs[obj.ref];
-    const type = this.getObjType(object.attrs.id);
     let transformOptions = {};
     switch (type) {
       case "texts":
@@ -1914,6 +2186,13 @@ class Graphics extends Component {
         break;
     }
 
+    if (this.customObjects.includes(type)) {
+      transformOptions = {
+        scaleX: object.scaleX(),
+        scaleY: object.scaleY()
+      };
+    }
+
     this.setState(
       prevState => ({
         [type]: prevState[type].map(o =>
@@ -1930,7 +2209,7 @@ class Graphics extends Component {
       })
     );
 
-    if (!(type === "images" || type === "videos" || type === "audios")) {
+    if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
     }
@@ -1985,7 +2264,7 @@ class Graphics extends Component {
   }
 
   // Component Props
-  defaultProps = (obj, index) => {
+  defaultObjProps = (obj, index) => {
     return {
       key: index,
       visible: obj.visible,
@@ -2177,6 +2456,16 @@ class Graphics extends Component {
     return obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel;
   }
 
+  customObjProps = () => {
+    return {
+      onMouseUp: (e) => this.handleMouseUp(e, false),
+      onMouseDown: (e) => this.onMouseDown(e, false),
+      onMouseMove: (e) => this.handleMouseOver(e, false),
+      onTransformEnd: (e) => this.onObjectTransformEnd(e),
+      updateKonva: this.getKonvaObj
+    };
+  }
+
   loadObjects = (stage) => {
     return (
       <>
@@ -2189,14 +2478,20 @@ class Graphics extends Component {
           width={window.innerWidth * 10}
         />
 
+        {/* This Rect acts as the transform object for custom objects */}
+        <Rect
+          {...this.defaultObjProps(this.state.customRect[0], 0)}
+          draggable={false}
+        />
+
         {/* Load objects in state */}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultProps(obj, index)} {...this.rectProps(obj)} /> : null
+            <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
         })}
         {this.state.ellipses.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Ellipse {...this.defaultProps(obj, index)} {...this.ellipseProps(obj)} /> : null
+            <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
         })}
         {this.state.lines.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
@@ -2204,31 +2499,58 @@ class Graphics extends Component {
         })}
         {this.state.images.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLImage {...this.defaultProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLImage {...this.defaultObjProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.videos.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.audios.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
         })}
         {this.state.documents.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultProps(obj, index)} {...this.documentProps(obj)} /> : null
+            <Rect {...this.defaultObjProps(obj, index)} {...this.documentProps(obj)} /> : null
         })}
         {this.state.triangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <RegularPolygon {...this.defaultProps(obj, index)} {...this.triangleProps(obj)} /> : null
+            <RegularPolygon {...this.defaultObjProps(obj, index)} {...this.triangleProps(obj)} /> : null
         })}
         {this.state.stars.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Star {...this.defaultProps(obj, index)} {...this.starProps(obj)} /> : null
+            <Star {...this.defaultObjProps(obj, index)} {...this.starProps(obj)} /> : null
         })}
         {this.state.texts.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
-            <Text {...this.defaultProps(obj, index)} {...this.textProps(obj)} /> : null
+            <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
+        })}
+        {this.state.polls.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Poll
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.customObjProps()}
+              pollJson={this.state.pollJson}
+            /> : null
+        })}
+        {this.state.connect4s.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Connect4
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
+            /> : null
+        })}
+        {this.state.tics.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <TicTacToe
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
+            /> : null
         })}
         {this.state.arrows.map((obj, index) => {
           return (
@@ -2249,47 +2571,34 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* Custom Items (Interactive) ***THIS SHOULD BE REFACTORED*** */}
-        {this.state.tics.map((eachTic, index) => {
-          if (eachTic.level === this.state.level) {
-            return (
-              <TicTacToe
-                key={index}
-                i={eachTic.i}
-                handleTicDelete={this.handleTicDelete}
-                {...this.getInteractiveProps(eachTic.id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-        {this.state.connect4.map(({ level, id }) => {
-          if (level === this.state.level) {
-            return (
-              <Connect4
-                {...this.getInteractiveProps(id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-        {this.state.polls.map((poll, index) => {
-          if (poll.level === this.state.level) {
-            return (
-              <Poll
-                ref={poll.ref}
-                key={index}
-                {...this.getInteractiveProps(poll.id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
+        {/* The Top Bar */}
+        <Level
+          saveGame={this.handleSave}
+          number={this.state.numberOfPages}
+          pages={this.state.pages}
+          level={this.handleLevel}
+          handlePageTitle={this.handlePageTitle}
+          handlePageNum={this.handleNumOfPagesChange}
+          numOfPages={this.state.numberOfPages}
+        />
 
-        {/* The Group Canvas */}
+        {/* The edit text area that appears when double clicking a Text object */}
+        <textarea
+          ref="textarea"
+          id="textEditArea"
+          value={this.state.text}
+          onChange={e => {
+            this.setState({
+              text: e.target.value,
+              shouldTextUpdate: false
+            });
+          }}
+          onKeyDown={(e) => this.updateText(e)}
+          onBlur={() => this.updateText()}
+          style={this.state.textareaInlineStyle}
+        />
+
+        {/* ---- GROUP CANVAS ---- */}
         <div
           onKeyDown={this.contextMenuEventShortcuts}
           onKeyUp={this.keyUp}
@@ -2310,11 +2619,9 @@ class Graphics extends Component {
                 setState={(obj) => {
                   this.setState(obj);
                 }}
-                addTic={this.addTic}
-                addConnect={this.addConnect4}
-                addPoll={this.addPoll}
+                objectLabels={this.savedObjects}
+                deleteLabels={this.deletionCounts}
                 drawLine={this.drawLine}
-                eraseLine={this.eraseLine}
                 stopDrawing={this.stopDrawing}
                 handleImage={this.handleImage}
                 handleVideo={this.handleVideo}
@@ -2353,149 +2660,119 @@ class Graphics extends Component {
           </Stage>
         </div>
 
-        <div className="eheader">
-          {/* The Top Bar */}
-          <Level
-            saveGame={this.handleSave}
-            number={this.state.numberOfPages}
-            pages={this.state.pages}
-            level={this.handleLevel}
-            handlePageTitle={this.handlePageTitle}
-            handlePageNum={this.handleNumOfPagesChange}
-            numOfPages={this.state.numberOfPages}
-          />
-
-          {/* The Personal Canvas */}
+        {/* ---- PERSONAL CANVAS ---- */}
+        <div
+          id={"editPersonalContainer"}
+          className={"info" + this.state.personalAreaOpen}
+        >
           <div
-            id={"editPersonalContainer"}
-            className={"info" + this.state.personalAreaOpen}
+            id="personalMainContainer"
+            name="pasteContainer"
+            tabIndex="0"
+            className="personalAreaStageContainer"
+            onKeyDown={this.contextMenuEventShortcuts}
+            onKeyUp={this.keyUp}
           >
-            <div
-              id="personalMainContainer"
-              name="pasteContainer"
-              tabIndex="0"
-              className="personalAreaStageContainer"
-              onKeyDown={this.contextMenuEventShortcuts}
-              onKeyUp={this.keyUp}
+            {/* The right click menu for the personal area */}
+            {this.state.personalAreaContextMenuVisible
+              && this.state.selectedContextMenu
+              && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
+                <DropdownAddObjects
+                  title={"Edit Personal Space"}
+                  xPos={this.state.personalAreaContextMenuX}
+                  yPos={this.state.personalAreaContextMenuY}
+                  state={this.state}
+                  layer={this.refs.personalAreaLayer}
+                  setState={(obj) => {
+                    this.setState(obj);
+                  }}
+                  objectLabels={this.savedObjects}
+                  deleteLabels={this.deletionCounts}
+                  drawLine={this.drawLine}
+                  stopDrawing={this.stopDrawing}
+                  handleImage={this.handleImage}
+                  handleVideo={this.handleVideo}
+                  handleAudio={this.handleAudio}
+                  handleDocument={this.handleDocument}
+                  choosecolor={this.chooseColor}
+                  close={() => this.setState({ personalAreaContextMenuVisible: false })}
+                />
+              )}
+            <Stage
+              style={{ position: "relative", overflow: "hidden" }}
+              height={document.getElementById("editPersonalContainer") ?
+                document.getElementById("editPersonalContainer").clientHeight : 0}
+              width={document.getElementById("editPersonalContainer") ?
+                document.getElementById("editPersonalContainer").clientWidth : 0}
+              ref="personalAreaStage"
+              onMouseMove={(e) => this.handleMouseOver(e, true)}
+              onMouseDown={(e) => this.onMouseDown(e, true)}
+              onMouseUp={(e) => this.handleMouseUp(e, true)}
+              onWheel={(e) => this.handleWheel(e, true)}
+              onContextMenu={(e) => e.evt.preventDefault()}
             >
-              {/* The right click menu for the personal area */}
-              {this.state.personalAreaContextMenuVisible
-                && this.state.selectedContextMenu
-                && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
-                  <DropdownAddObjects
-                    title={"Edit Personal Space"}
-                    xPos={this.state.personalAreaContextMenuX}
-                    yPos={this.state.personalAreaContextMenuY}
-                    state={this.state}
-                    layer={this.refs.personalAreaLayer}
-                    setState={(obj) => {
-                      this.setState(obj);
-                    }}
-                    addTic={this.addTic}
-                    addConnect={this.addConnect4}
-                    addPoll={this.addPoll}
-                    drawLine={this.drawLine}
-                    eraseLine={this.eraseLine}
-                    stopDrawing={this.stopDrawing}
-                    handleImage={this.handleImage}
-                    handleVideo={this.handleVideo}
-                    handleAudio={this.handleAudio}
-                    handleDocument={this.handleDocument}
-                    choosecolor={this.chooseColor}
-                    close={() => this.setState({ personalAreaContextMenuVisible: false })}
-                  />
-                )}
-              <Stage
-                height={document.getElementById("editPersonalContainer") ?
-                  document.getElementById("editPersonalContainer").clientHeight : 0}
-                width={document.getElementById("editPersonalContainer") ?
-                  document.getElementById("editPersonalContainer").clientWidth : 0}
-                ref="personalAreaStage"
-                onMouseMove={(e) => this.handleMouseOver(e, true)}
-                onMouseDown={(e) => this.onMouseDown(e, true)}
-                onMouseUp={(e) => this.handleMouseUp(e, true)}
-                onWheel={(e) => this.handleWheel(e, true)}
-                onContextMenu={(e) => e.evt.preventDefault()}
+              <Layer
+                ref="personalAreaLayer"
+                name="personal"
+                scaleX={this.state.personalLayerScale}
+                scaleY={this.state.personalLayerScale}
+                x={this.state.personalLayerX}
+                y={this.state.personalLayerY}
+                height={window.innerHeight}
+                width={window.innerWidth}
+                draggable={this.state.layerDraggable}
+                onDragMove={(e) => this.dragLayer(e, true)}
               >
-                <Layer
-                  ref="personalAreaLayer"
-                  name="personal"
-                  scaleX={this.state.personalLayerScale}
-                  scaleY={this.state.personalLayerScale}
-                  x={this.state.personalLayerX}
-                  y={this.state.personalLayerY}
-                  height={window.innerHeight}
-                  width={window.innerWidth}
-                  draggable={this.state.layerDraggable}
-                  onDragMove={(e) => this.dragLayer(e, true)}
-                >
-                  {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
-                    <Portal>
-                      <ContextMenu
-                        {...this.state.selectedContextMenu}
-                        handleUngrouping={this.handleUngrouping}
-                        handleGrouping={this.handleGrouping}
-                        selectedshape={this.state.selectedShapeName}
-                        onOptionSelected={this.handleOptionSelected}
-                        choosecolors={this.handleStrokeColor}
-                        choosecolorf={this.handleFillColor}
-                        handleWidth={this.handleWidth}
-                        handleOpacity={this.handleOpacity}
-                        shape={this.refs[this.state.selectedShapeName]}
-                        close={this.handleClose}
-                        copy={this.handleCopy}
-                        cut={this.handleCut}
-                        paste={this.handlePaste}
-                        delete={this.handleDelete}
-                        handleFont={this.handleFont}
-                        handleSize={this.handleSize}
-                        selectedFont={this.state.selectedFont}
-                        editTitle={this.state.selectedShapeName.startsWith("text") ? "Edit Text" : "Edit Shape"}
-                      />
-                    </Portal>
-                  )}
-                  {this.loadObjects("personal")}
-                </Layer>
-              </Stage>
-            </div>
+                {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
+                  <Portal>
+                    <ContextMenu
+                      {...this.state.selectedContextMenu}
+                      selectedShapeName={this.state.selectedShapeName}
+                      shape={this.refs[this.state.selectedShapeName]}
+                      selectedFont={this.state.selectedFont}
+                      handleUngrouping={this.handleUngrouping}
+                      handleGrouping={this.handleGrouping}
+                      handleStrokeColor={this.handleStrokeColor}
+                      handleFillColor={this.handleFillColor}
+                      handleWidth={this.handleWidth}
+                      handleOpacity={this.handleOpacity}
+                      handleFont={this.handleFont}
+                      handleSize={this.handleSize}
+                      close={this.handleCloseContextMenu}
+                      copy={this.handleCopy}
+                      cut={this.handleCut}
+                      paste={this.handlePaste}
+                      delete={this.handleDelete}
+                      setJson={this.setPollJson}
+                      pollJson={this.state.pollJson}
+                    />
+                  </Portal>
+                )}
+                {this.loadObjects("personal")}
+              </Layer>
+            </Stage>
+          </div>
 
-            {/* The Personal Area Open / Close Caret */}
-            {(this.state.personalAreaOpen !== 1)
-              ? <button onClick={() => this.handlePersonalAreaOpen(true)}>
-                <i className="fas fa-caret-square-up fa-3x" />
-              </button>
-              : <button onClick={() => this.handlePersonalAreaOpen(false)}>
-                <i className="fas fa-caret-square-down fa-3x" />
-              </button>
-            }
+          {/* The Personal Area Open / Close Caret */}
+          {(this.state.personalAreaOpen !== 1)
+            ? <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
+              <i className="fas fa-caret-square-up fa-3x" />
+            </button>
+            : <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
+              <i className="fas fa-caret-square-down fa-3x" />
+            </button>
+          }
 
-            {/* The Role Picker */}
-            <div id="rolesdrop">
-              <DropdownRoles
-                openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
-                roleLevel={this.handleRoleLevel}
-                gameid={this.state.gameinstanceid}
-                editMode={true}
-              />
-            </div>
+          {/* The Role Picker */}
+          <div id="rolesdrop">
+            <DropdownRoles
+              openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
+              roleLevel={this.handleRoleLevel}
+              gameid={this.state.gameinstanceid}
+              editMode={true}
+            />
           </div>
         </div>
-
-        {/* The edit text area that appears when double clicking a Text object */}
-        <textarea
-          ref="textarea"
-          id="textEditArea"
-          value={this.state.text}
-          onChange={e => {
-            this.setState({
-              text: e.target.value,
-              shouldTextUpdate: false
-            });
-          }}
-          onKeyDown={(e) => this.updateText(e)}
-          onBlur={() => this.updateText()}
-          style={this.state.textareaInlineStyle}
-        />
       </React.Fragment>
     );
   }

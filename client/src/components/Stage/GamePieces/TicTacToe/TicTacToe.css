@@ -1,8 +1,4 @@
 .gametic {
-  font: 40px 'Century Gothic', Futura, sans-serif;
-  margin: 20px;
-  min-height: 400px;
-  position: absolute;
   z-index: 1;
 }
 
@@ -17,12 +13,22 @@
 }
 
 .statustic {
+  display: inline;
   margin-bottom: 10px;
   position: relative;
-  top: 340px;
   font-family: "Montserrat", sans-serif;
   font-size: 1.4vw;
   font-weight: 700;
+}
+
+.ticTacToeButtons {
+  float: right;
+  height: 10px;
+}
+
+.ticTacToeButtons > button {
+  margin: 2px;
+  padding: 1px;
 }
 
 .squaretic {
@@ -45,11 +51,6 @@
   background: #ddd;
 }
 
-.gametic {
-  display: flex;
-  flex-direction: row;
-}
-
 .game-info {
   margin-left: 20px;
 }
@@ -62,14 +63,4 @@
   position: relative;
   left: 300px;
   top: -346px;
-}
-
-#resetbutton {
-  position: relative;
-  top: 10px;
-}
-
-#ticeditbutton {
-  position: relative;
-  top: 10px;
 }

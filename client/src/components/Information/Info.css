@@ -33,11 +33,9 @@
 }
 
 .info0 button {
-  color: var(--primary);
   z-index: 1;
   position: relative;
   float: right;
-  border: none;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
@@ -47,17 +45,20 @@
 }
 
 .info1 button {
-  color: var(--primary);
   z-index: 1;
   position: relative;
   float: right;
-  border: none;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .info1 button:hover {
   cursor: pointer;
+}
+
+.editPersonalAreaToggle {
+  color: var(--primary);
+  border: none;
 }
 
 #pencili1 {

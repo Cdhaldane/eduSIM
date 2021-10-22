@@ -37,6 +37,7 @@ const GridMain = styled.main`
 const EditPage = (props) => {
 
   const [showNav, setShowNav] = useState(false);
+  const [updater, setUpdater] = useState(0);
 
   const alertContext = useAlertContext();
   const dropdownContext = useDropdownContext();
@@ -50,6 +51,12 @@ const EditPage = (props) => {
 
   const toggle = () => setShowNav(!showNav);
 
+  useEffect(() => {
+    if (updater % 2 !== 0) {
+      setUpdater(updater + 1);
+    }
+  }, [updater]);
+
   return (
     <div className="editpage">
       <Container>
@@ -61,12 +68,16 @@ const EditPage = (props) => {
             />
           </GridNav>
           <GridMain>
-            <Canvas
-              setDropdownType={dropdownContext.setType}
-              showAlert={alertContext.showAlert}
-              adminid={localStorage.adminid}
-              gameinstance={localStorage.gameinstance}
-            />
+            {updater % 2 === 0 ? (
+              <Canvas
+                doNotRecalculateBounds={updater > 0}
+                reloadCanvasFull={() => setUpdater(updater + 1)}
+                setDropdownType={dropdownContext.setType}
+                showAlert={alertContext.showAlert}
+                adminid={localStorage.adminid}
+                gameinstance={localStorage.gameinstance}
+              />
+            ) : null}
           </GridMain>
         </Grid>
       </Container>
