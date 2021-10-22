@@ -262,33 +262,67 @@ class Graphics extends Component {
       level: 1,
 
       pollJson: {
-        questions: [
+        showProgressBar: "bottom",
+        pages: [
           {
-            id: 0,
-            type: "text",
-            name: "0",
-            title: "Sample Text Question:",
-            isRequired: true,
-          }, {
-            id: 1,
-            type: "text",
-            name: "1",
-            inputType: "date",
-            title: "Sample Date Question:",
-            isRequired: true,
-            hasNone: null,
-            choices: null
-          }, {
-            id: 2,
-            type: "text",
-            name: "2",
-            inputType: "color",
-            title: "Sample Color Question:",
-            isRequired: false,
-            hasNone: null,
-            choices: null
+            questions: [
+              {
+                id: 0,
+                type: "text",
+                name: "0",
+                title: "Sample Text Question:",
+                isRequired: true,
+              }, {
+                id: 1,
+                type: "text",
+                name: "1",
+                inputType: "date",
+                title: "Sample Date Question:",
+                isRequired: true,
+                hasNone: null,
+                choices: null
+              }, {
+                id: 2,
+                type: "text",
+                name: "2",
+                inputType: "color",
+                title: "Sample Color Question:",
+                isRequired: false,
+                hasNone: null,
+                choices: null
+              }
+            ]
+          },
+          {
+            questions: [
+              {
+                id: 0,
+                type: "text",
+                name: "0",
+                title: "Sample Text Question:",
+                isRequired: true,
+              }, {
+                id: 1,
+                type: "text",
+                name: "1",
+                inputType: "date",
+                title: "Sample Date Question:",
+                isRequired: true,
+                hasNone: null,
+                choices: null
+              }, {
+                id: 2,
+                type: "text",
+                name: "2",
+                inputType: "color",
+                title: "Sample Color Question:",
+                isRequired: false,
+                hasNone: null,
+                choices: null
+              }
+            ]
           }
-        ]
+        ],
       },
     };
 

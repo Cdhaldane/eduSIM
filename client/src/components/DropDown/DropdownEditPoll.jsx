@@ -5,7 +5,8 @@ import "./DropdownEditObject.css";
 
 const DropdownEditPoll = (props) => {
 
-  const [questions, setQuestions] = useState(props.pollJson.questions);
+  const [questions, setQuestions] = useState(props.pollJson.pages[0].questions);
+  const [pagePoints, setPagePoints] = useState([]);
 
   useEffect(() => {
     const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
@@ -33,7 +34,12 @@ const DropdownEditPoll = (props) => {
       }
     })
     const json = {
-      questions: jsonQs
+      "showProgressBar": "bottom",
+      "pages": [
+        {
+          questions: jsonQs
+        }
+      ]
     };
     props.setJson(json);
   }
@@ -149,11 +155,17 @@ const DropdownEditPoll = (props) => {
     setQuestions([...questions, newQ]);
   }
 
+  const addPage = () => {
+    const page = {
+      
+    }
+  }
+
   return (
     <>
       <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
       <table className="editPollQuestionBox">
-        <tbody>
+        <thead className="editPollTableHead">
           <tr>
             <th>
               Question
@@ -165,6 +177,8 @@ const DropdownEditPoll = (props) => {
               *
             </th>
           </tr>
+        </thead>
+        <tbody className="editPollQuestionsArea">
           {renderQuestions()}
         </tbody>
       </table>
@@ -172,8 +186,16 @@ const DropdownEditPoll = (props) => {
         onClick={addQuestion}
         className="editPollAddQuestionBtn"
       >
-        <i className="fas fa-plus-square" />
+        <i className="fas fa-question-circle" />
         Add Question
+      </button>
+
+      <button
+        onClick={addPage}
+        className="editPollAddQuestionBtn"
+      >
+        <i className="fas fa-scroll" />
+        Add New Page
       </button>
     </>
   );
