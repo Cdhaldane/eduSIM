@@ -204,12 +204,15 @@ class Graphics extends Component {
 
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
+
       this.savedObjects.forEach((object) => {
         this.setState({
           [object]: objects[object]
         });
       });
     } catch(e) {};
+
+    console.log(this.state);
 
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
@@ -288,7 +291,7 @@ class Graphics extends Component {
         </div>
         }
 
-        {this.state.tics.map(({i, level, id}) => {
+        {(this.state.tics || []).map(({i, level, id}) => {
           if (level === this.state.level) {
             return (
               <TicTacToe
@@ -301,7 +304,7 @@ class Graphics extends Component {
             return null
           }
         })}
-        {this.state.connect4.map(({level, id}) => {
+        {(this.state.connect4 || []).map(({level, id}) => {
           if (level === this.state.level) {
             return (
               <Connect4 
