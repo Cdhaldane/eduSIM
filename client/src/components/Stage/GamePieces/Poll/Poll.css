@@ -7,3 +7,8 @@
   border-radius: 5px 5px 5px 5px;
   box-shadow: var(--box-shadow);
 }
+
+.customObj {
+  position: relative;
+  user-select: none;
+}

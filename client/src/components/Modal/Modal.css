@@ -51,23 +51,32 @@
   font-size: 1.2rem;
   margin: 10px;
   padding: 5px;
-  border: 1px solid rgb(136, 136, 136);
+  border: 2px outset rgb(136, 136, 136);
   border-radius: 5px;
+  display: inline-block;
 }
 
 .confirmationModalButtons button:hover {
   cursor: pointer;
-  filter:brightness(0.9) saturate(1.5);
 }
 
-#confirmModalConfirmButton {
-  background-color: rgb(170, 247, 126);
+.confirmationModalButtons button:active {
+  transform: translateY(0.05rem);
 }
 
 #confirmModalConfirmButton:disabled {
   color: black;
 }
 
-#confirmModalCancelButton {
-  background-color: rgb(255, 178, 159);
+#confirmModalConfirmButton {
+  --color: rgb(161, 255, 148);
+  background-color: var(--color);
+  border-color: var(--color);
 }
+
+#confirmModalCancelButton {
+  --color: #ff9898;
+  background-color: var(--color);
+  border-color: var(--color);
+}
+

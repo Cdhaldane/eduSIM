@@ -177,8 +177,6 @@ a {
   color: white;
 }
 
-#pagetype {}
-
 #pagetype input, #pagetype textarea {
   position: absolute;
   left: 20px;
@@ -211,4 +209,111 @@ a {
 .slider {
   left: 2%;
   width: 98%;
+}
+
+/* Edit Poll */
+
+.editPollQuestionBox {
+  font-size: 19px;
+  border-radius: 2px;
+  border-top: 0px dashed white;
+  width: 500px;
+  padding-top: 0px;
+  display: block;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.editPollQuestionBox td {
+  font-weight: 100;
+  height: 35px;
+}
+
+.editPollQuestionBox td>input, select {
+  font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 100%;
+  height: 100%;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.editPollQuestionBox td>input::placeholder {
+  color: rgb(136, 136, 136);
+  font-style: italic;
+}
+
+.editPollQuestionBox td>input {
+  padding-left: 5px;
+}
+
+.editPollQuestionBox td>i {
+  padding-left: 5px;
+  color: var(--primary);
+  font-size: 25px;
+}
+
+.editPollEditBtns>i.disabled {
+  color: grey !important;
+}
+
+.editPollEditBtns>i.disabled:hover {
+  cursor: not-allowed;
+}
+
+.editPollEditBtns:hover>i {
+  cursor: pointer;
+  text-shadow: 2px 2px 0px rgb(255, 181, 181);
+}
+
+.editPollQuestionBox th {
+  padding-right: 10px;
+  font-weight: 1000;
+  text-align: left;
+}
+
+.pollsEditorRequiredCheck {
+  transform: translateY(2px);
+  width: 35px;
+}
+
+.editPollStar {
+  font-size: 30px;
+  transform: translateY(7px);
+  padding-left: 5px;
+  color: var(--primary);
+  text-align: center !important;
+}
+
+.editPollAddQuestionBtn {
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  height: 35px;
+  margin-top: 10px;
+  padding-right: 5px;
+  border-radius: 5px;
+  background-color: white;
+  margin-right: 10px;
+  border: none;
+  box-shadow: 0px 0px 0px 2px #a3a3a3;
+}
+
+.editPollAddQuestionBtn>i {
+  color: #a3a3a3;
+  padding: 0px 5px;
+}
+
+.editPollAddQuestionBtn:hover > i {
+  color: var(--primary);
+}
+
+.editPollAddQuestionBtn:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 0px 2px var(--primary);
+}
+
+.editPollTableHead > tr > td {
+  position: sticky;
+  top: 0;
 }
