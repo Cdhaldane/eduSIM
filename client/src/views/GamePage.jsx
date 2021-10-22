@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
 import moment from "moment";
@@ -156,6 +156,7 @@ function Game(props) {
             gamepieceStatus={roomStatus.gamepieces || {}}
             initialUserInfo={queryUser}
             initialUserId={userid}
+            alert={alertContext.showAlert}
           />
           {!roomStatus.running && (<PauseCover>
             <i class="fa fa-pause-circle fa-2x"></i>

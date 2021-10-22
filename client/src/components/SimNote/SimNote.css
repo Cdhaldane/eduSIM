@@ -46,12 +46,14 @@
 
 .notesim-icons {
   display: flex;
-  justify-content: space-between;
-  padding: 10px 20px 0px;
+  justify-content: center;
+  padding-top: 10px;
+  font-size: .9em;
 }
 
 .notesim-icon {
   color: var(--primary);
+  margin: 0 5px;
 }
 
 .notesim-icon:hover {

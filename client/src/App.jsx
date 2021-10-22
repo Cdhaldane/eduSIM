@@ -6,6 +6,7 @@ import Welcome from "./views/Welcome";
 import Home from "./views/Home";
 import About from "./views/About";
 import Profile from "./views/Profile";
+import CollabLogin from "./views/CollabLogin";
 import Dashboard from "./views/Dashboard";
 import GamePage from "./views/GamePage";
 import EditPage from "./views/EditPage";
@@ -38,6 +39,7 @@ const App = (props) => {
           <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
           <Route exact path="/about" render={(props) => <About {...props} />} />
           <Route exact path="/gamepage/:roomid" render={(props) => <GamePage {...props} />} />
+          <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
           <Route exact path="/editpage" render={(props) => <EditPage {...props} />} />
           <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
           <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />

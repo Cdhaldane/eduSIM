@@ -74,6 +74,41 @@ function Dashboard(props) {
     setShowNote(!showNote);
   }
 
+  const getConfirmMessage = () => {
+    if (gamedata[deletionId]) {
+      if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
+        return `Are you sure you want to delete the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation? This action cannot be undone.`;
+      } else {
+        return `Are you sure you want your access to the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation revoked? This action cannot be undone.`;
+      }
+    }
+  }
+
+  const confirmAction = () => {
+    if (gamedata[deletionId]) {
+      if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
+        deleteNote(deletionId);
+
+        var body = {
+          id: gamedata[deletionId].gameinstanceid
+        }
+
+        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).catch(error => {
+          console.error(error);
+        });
+      } else {
+        deleteNote(deletionId);
+
+        axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/revokeGameInstanceAccess', {
+          gameinstanceid: gamedata[deletionId].gameinstanceid,
+          adminid: localStorage.adminid
+        }).catch(error => {
+          console.error(error);
+        });
+      }
+    }
+  }
+
   return (
     <div className="dashboard">
 
@@ -98,6 +133,7 @@ function Dashboard(props) {
                   adminid={noteItem.createdby_adminid}
                   setConfirmationModal={setConfirmationModal}
                   title={noteItem.gameinstance_name}
+                  superadmin={noteItem.createdby_adminid === localStorage.adminid}
                 />
               </div>
             );
@@ -127,19 +163,9 @@ function Dashboard(props) {
       <ConfirmationModal
         visible={confirmationVisible}
         hide={() => setConfirmationModal(false)}
-        confirmFunction={() => {
-          deleteNote(deletionId);
-
-          var body = {
-            id: gamedata[deletionId].gameinstanceid
-          }
-
-          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).catch(error => {
-            console.error(error);
-          });
-        }}
+        confirmFunction={confirmAction}
         confirmMessage={"Yes - Delete Simulation"}
-        message={`Are you sure you want to delete the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation? This action cannot be undone.`}
+        message={getConfirmMessage()}
       />
     </div>
   );

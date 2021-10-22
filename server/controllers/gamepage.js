@@ -1,4 +1,7 @@
 const GameInstance = require("../models/GameInstances");
+const AdminAccounts = require("../models/AdminAccounts");
+const Collaborators = require("../models/Collaborators");
+const db = require('../databaseConnection');
 
 // Get all the game instances that a specific admin has created
 // Request has an admin id
@@ -11,10 +14,20 @@ exports.getGameInstances = async (req, res) => {
         createdby_adminid: id,
       },
     });
+    const [collabed] = await db.query(`
+      select g.* from gameinstances g, collaborators c where 
+      c.adminid='${id}' and 
+      g.gameinstanceid=c.gameinstanceid
+    `);
     let Array = [];
     for (i = 0; i < gameinstance.length; i++) {
       if (gameinstance[i].status === 'created' || gameinstance[i].status === 'started' || gameinstance[i].status === 'ended') {
         Array.push(gameinstance[i]);
+      }
+    }
+    for (i = 0; i < collabed.length; i++) {
+      if (collabed[i].status === 'created' || collabed[i].status === 'started' || collabed[i].status === 'ended') {
+        Array.push(collabed[i]);
       }
     }
     return res.json(Array);
@@ -140,6 +153,93 @@ exports.deleteGameInstance = async (req, res) => {
       message: `Game ${id} has been deleted!`,
       gameinstance
     });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.verifyCollaboratorStatus = async (req, res) => {
+  const { email, gameinstanceid, name } = req.body;
+
+  let admin = await AdminAccounts.findOne({
+    where: {
+      email
+    },
+  });
+
+  if (!admin) {
+    return res.status(400).send({
+      message: `No admin found with the email ${email}`,
+    });
+  }
+
+  let collab = await Collaborators.findOne({
+    where: {
+      gameinstanceid, adminid: admin.adminid
+    },
+  });
+
+  if (!collab || collab.verified === true) {
+    return res.status(400).send({
+      message: `No pending collab invites/invite already accepted`,
+    });
+  } else {
+    collab.verified = true;
+    collab.save();
+
+    admin.name = name;
+    admin.save();
+
+    return res.send({
+      message: `Successfully verified ${admin.adminid}`,
+    });
+  }
+};
+
+exports.revokeGameInstanceAccess = async (req, res) => {
+  const { gameinstanceid, adminid } = req.body;
+
+  const collab = await Collaborators.findOne({
+    where: {
+      gameinstanceid,
+      adminid
+    },
+  });
+
+  if (!collab) {
+    return res.status(400).send({
+      message: `Params do not fit any existing collaborator status`,
+    });
+  }
+
+  try {
+    // Updating a specific json field
+    await collab.destroy();
+    return res.send({
+      message: `Access to ${gameinstanceid} has been revoked for ${adminid}`,
+      collab
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+
+exports.getCollaborators = async (req, res) => {
+  const { gameinstanceid } = req.params;
+
+  try {
+    const admins = await db.query(`
+      select a.* from adminaccounts a, collaborators c where 
+      a.adminid=c.adminid and 
+      c.gameinstanceid='${gameinstanceid}' and
+      c.verified=true
+    `);
+    return res.json(admins[0]);
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,

@@ -5,7 +5,7 @@ import CreateCsv from "../components/CreateCsv/CreateCsv";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import Modal from "react-modal";
 import { Image } from "cloudinary-react";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 

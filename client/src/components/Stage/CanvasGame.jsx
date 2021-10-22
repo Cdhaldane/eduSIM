@@ -190,6 +190,7 @@ class Graphics extends Component {
         this.props.initialUserId ? {dbid: this.props.initialUserId} : {}
       )
     })
+    if (!sessionStorage.userInfo) sessionStorage.setItem('userInfo', JSON.stringify({role,name}));
   }
 
   componentDidMount() {
@@ -205,6 +206,12 @@ class Graphics extends Component {
         });
       });
     } catch(e) {};
+
+    if (sessionStorage.userInfo) {
+      const info = JSON.parse(sessionStorage.userInfo);
+      if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
+      this.handlePlayerInfo(info);
+    }
   }
 
   getInteractiveProps = (id) => ({
