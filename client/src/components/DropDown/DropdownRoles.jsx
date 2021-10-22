@@ -17,6 +17,7 @@ const DropdownRoles = (props) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
   const [deleteIndex, setDeleteIndex] = useState(0);
+  const [modifyIndex, setModifyIndex] = useState(-1);
 
   const alertContext = useAlertContext();
 
@@ -52,9 +53,11 @@ const DropdownRoles = (props) => {
   const handleClickOutside = e => {
     if (menuElem.current &&
       !menuElem.current.contains(e.target) &&
-      e.target.className !== "icons fa fa-trash" &&
-      !confirmationVisibleRef.current) {
+      !e.target.className.startsWith("icon") &&
+      !confirmationVisibleRef.current &&
+      activeMenu != 'main') {
       handleActiveMenuChange('main');
+      setModifyIndex(-1);
     }
   }
 
@@ -88,6 +91,40 @@ const DropdownRoles = (props) => {
     setActiveMenu(newMenu);
   }
 
+  const handleModifyRole = (e,index) => {
+    setModifyIndex(index);
+    setRoleName(roles[index].roleName);
+    setRoleNum(roles[index].numOfSpots);
+  }
+
+  const handleSubmitModification = () => {
+    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
+      id: roles[modifyIndex].id,
+      name: roleName,
+      numspots: roleNum
+    }).then(() => {
+      setRoles(roles.map((v,i) => i === modifyIndex ? {
+        ...v,
+        roleName: roleName,
+        numOfSpots: roleNum
+      } : v));
+      setRoleName('');
+      setRoleNum('');
+      setModifyIndex(-1);
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  const handleCopyRole = async (gameroleid) => {
+    const newRole = await props.handleCopyRole(gameroleid);
+    setRoles([...roles, {
+      id: newRole.gameroleid,
+      roleName: newRole.gamerole,
+      numOfSpots: newRole.numspots
+    }]);
+  }
+
   const DropdownItem = (props) => {
     return (
       <div className="menu-item" onClick={() => props.goToMenu && handleActiveMenuChange(props.goToMenu)}>
@@ -97,42 +134,83 @@ const DropdownRoles = (props) => {
     );
   }
 
-  const AvailableRoles = () => {
-    return (
-      <div>
-        {roles.map((role, index) => {
-          return (
-            props.editMode ? (
+  const handleRoleNameChange = (e) => {
+    setRoleName(e.target.value);
+  }
+
+  const handleRoleNumChange = (e) => {
+    setRoleNum(e.target.value);
+  }
+
+  const AvailableRoles = (
+    <div>
+      {roles.map((role, index) => {
+        return (
+          props.editMode ? (
+            modifyIndex === index ? (
+              <div
+                className="menu-item"
+                key={index}
+              >
+                <span className="icon-button" onClick={handleSubmitModification}>
+                  <i className="icons fas fa-check" />
+                </span>
+                <input
+                  id="roleNameAdd"
+                  className="add-dropdown-item-input"
+                  type="text"
+                  placeholder="New Role Name"
+                  onChange={handleRoleNameChange}
+                  value={roleName}/>
+                <input
+                  id="roleNumAdd"
+                  className="add-dropdown-item-input"
+                  type="text"
+                  placeholder="#"
+                  maxLength="3"
+                  onChange={handleRoleNumChange}
+                  value={roleNum} />
+              </div>
+              ) : (
               <div
                 className="menu-item"
                 onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
                 key={index}
+                disabled={modifyIndex>=0}
               >
-                <span className="icon-button">
-                  <i className="icons fa fa-trash" onClick={() => {
+                <span className="icon-button" onClick={() => {
                     setConfirmationModal(true);
                     setDeleteIndex(index);
-                  }} />
+                  }} >
+                  <i className="icons fa fa-trash"/>
                 </span>
                 {`${role.roleName} (${role.numOfSpots})`}
-              </div>
-            ) : (
-              <div
-                className="menu-item"
-                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
-                key={index}
-                disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
-              >
-                {props.rolesTaken[role.roleName]
-                  ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
-                  : `${role.roleName} (${role.numOfSpots})`}
+                <div className="icons-right">
+                  <span className="icon-button" onClick={(e) => handleModifyRole(e,index)}>
+                    <i className="icons fa fa-pencil"/>
+                  </span>
+                  <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
+                    <i className="icons fa fa-copy"/>
+                  </span>
+                </div>
               </div>
             )
-          );
-        })}
-      </div>
-    );
-  }
+          ) : (
+            <div
+              className="menu-item"
+              onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
+              key={index}
+              disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
+            >
+              {props.rolesTaken[role.roleName]
+                ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                : `${role.roleName} (${role.numOfSpots})`}
+            </div>
+          )
+        );
+      })}
+    </div>
+  );
 
   useEffect(() => {
     if (props.initRole && !props.random) {
@@ -141,18 +219,11 @@ const DropdownRoles = (props) => {
   }, [props.initRole]);
 
   const handleRoleSelected = (e, roleName, roleNum) => {
-    if (e.target.tagName.toLowerCase() !== "i") {
+    if (!e.target.className.startsWith("icon")) {
       setSelectedRole(roleName);
       props.roleLevel(roleName, roleNum);
+      handleActiveMenuChange('main');
     }
-  }
-
-  const handleRoleNameChange = (e) => {
-    setRoleName(e.target.value);
-  }
-
-  const handleRoleNumChange = (e) => {
-    setRoleNum(e.target.value);
   }
 
   const handleDeselectRole = (e) => {
@@ -241,9 +312,9 @@ const DropdownRoles = (props) => {
             icon={<i className="icons fas fa-arrow-left"></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
-          <AvailableRoles />
+          {AvailableRoles}
           {props.editMode && (
-            <div className="menu-item">
+            <div className="menu-item" disabled={modifyIndex>=0}>
               <span className="icon-button" onClick={handleAddRole}>
                 <i className="icons fas fa-plus" />
               </span>
@@ -252,16 +323,20 @@ const DropdownRoles = (props) => {
                 className="add-dropdown-item-input"
                 type="text"
                 placeholder="New Role Name"
-                onChange={handleRoleNameChange}
-                value={roleName} />
+                {...(modifyIndex === -1 && {
+                  onChange: handleRoleNameChange,
+                  value: roleName
+                })} />
               <input
                 id="roleNumAdd"
                 className="add-dropdown-item-input"
                 type="text"
                 placeholder="#"
                 maxLength="3"
-                onChange={handleRoleNumChange}
-                value={roleNum} />
+                {...(modifyIndex === -1 && {
+                  onChange: handleRoleNumChange,
+                  value: roleNum
+                })} />
             </div>
           )}
         </div>

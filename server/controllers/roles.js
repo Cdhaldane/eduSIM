@@ -1,4 +1,6 @@
 const GameRole = require("../models/GameRoles");
+const GameInstance = require("../models/GameInstances");
+const db = require('../databaseConnection');
 
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
@@ -55,6 +57,103 @@ exports.deleteRole = async (req, res) => {
     await gameinstance.destroy();
     return res.send({
       message: `Game ${id} has been deleted!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.copyRole = async (req, res) => {
+  const gameroleid = req.body.gameroleid;
+  
+  const {
+    gamerole,
+    numspots,
+    gameinstanceid
+  } = await GameRole.findOne({
+    where: {
+      gameroleid,
+    },
+  });
+
+  if (!gamerole) {
+    return res.status(400).send({
+      message: `No game role found with the id ${id}`,
+    });
+  }
+
+  try {
+    let newGameRole = await GameRole.create({
+      gameinstanceid,
+      gamerole: gamerole+" (Copy)",
+      numspots
+    });
+    const instance = await GameInstance.findOne({
+      where: {
+        gameinstanceid,
+      },
+    });
+    const params = JSON.parse(instance.game_parameters);
+    for (const key in params) {
+      if (Array.isArray(params[key])) {
+        let newParam = [];
+        for (let item of params[key]) {
+          if (item?.rolelevel === gamerole) {
+            let newItem = {...item, rolelevel: gamerole+" (Copy)"};
+            newParam.push(newItem);
+          }
+          newParam.push(item);
+        }
+        params[key] = newParam;
+      }
+    }
+    instance.game_parameters = JSON.stringify(params);
+    instance.save();
+    return res.send({
+      gamerole: newGameRole,
+      gameinstance: instance
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.updateRole = async (req, res) => {
+  const { id, name, numspots } = req.body;
+
+  const gamerole = await GameRole.findOne({
+    where: {
+      gameroleid: id,
+    },
+  });
+
+  if (!gamerole) {
+    return res.status(400).send({
+      message: `No role found with the id ${id}`,
+    });
+  }
+
+  try {
+    if (name) {
+      // update players with this role
+      await db.query(`
+        update gameplayers set gamerole = '${name}' where 
+        gamerole='${gamerole.gamerole}' and
+        gameinstanceid='${gamerole.gameinstanceid}'
+      `);
+      gamerole.gamerole = name;
+    }
+
+    if (numspots) gamerole.numspots = numspots;
+
+    gamerole.save();
+
+    return res.send({
+      message: `Game ${id} has been updated!`,
     });
   } catch (err) {
     return res.status(500).send({

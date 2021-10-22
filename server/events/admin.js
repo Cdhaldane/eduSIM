@@ -76,7 +76,8 @@ export default async (server, client, event, args) => {
         const newStatus = await clearRoomStatus(room, true);
         server.to(room).emit("roomStatusUpdate", {
           room,
-          status: newStatus
+          status: newStatus,
+          refresh: true
         });
       } else {
         const rooms = await getSimulationRooms(game);
@@ -84,7 +85,8 @@ export default async (server, client, event, args) => {
           const newStatus = await clearRoomStatus(room.gameroom_url, true);
           server.to(room.gameroom_url).emit("roomStatusUpdate", {
             room: room.gameroom_url,
-            status: newStatus
+            status: newStatus,
+            refresh: true
           });
         });
       }

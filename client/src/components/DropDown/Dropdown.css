@@ -15,6 +15,7 @@ a {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
+  min-width: var(--button-size);
   background-color: var(--primary);
   border-radius: 50%;
   padding: 5px;
@@ -33,6 +34,11 @@ a {
   fill: var(--text-color);
   width: 20px;
   height: 20px;
+}
+
+.icons-right {
+  display: flex;
+  margin-left: auto;
 }
 
 /* Dropdown Menu */
@@ -75,6 +81,7 @@ a {
 }
 
 .menu-item {
+  text-align: left;
   height: 55px;
   display: flex;
   color: #636363;
@@ -101,6 +108,9 @@ a {
   pointer-events: none;
   cursor: unset;
   opacity: 0.5;
+}
+.menu-item[disabled] * {
+  pointer-events: none;
 }
 
 .menu-item .icon-button {

@@ -113,7 +113,11 @@ function Game(props) {
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
       });
-      client.on("roomStatusUpdate", ({ status }) => {
+      client.on("roomStatusUpdate", ({ status, refresh }) => {
+        if (refresh) {
+          sessionStorage.removeItem("userInfo");
+          window.location.reload();
+        }
         setRoomStatus(status);
       });
       client.on("clientJoined", ({id, ...player}) => {
@@ -168,9 +172,9 @@ function Game(props) {
   }, [players, roles, actualLevel]);
 
   // TESTING PURPOSES
-  // useEffect(() => {
-  //   if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
-  // }, [actualLevel, parsedPlayers]);
+  useEffect(() => {
+    if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
+  }, [actualLevel, parsedPlayers]);
 
   return (
     !isLoading ? (

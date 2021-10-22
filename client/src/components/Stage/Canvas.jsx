@@ -479,7 +479,7 @@ class Graphics extends Component {
     status: this.state.gamepieceStatus[id] || {}
   })
 
-  handleSave = () => {
+  handleSave = async () => {
     let storedObj = {};
     for (let i = 0; i < this.savedState.length; i++) {
       const newObj = this.savedState[i];
@@ -501,10 +501,41 @@ class Graphics extends Component {
     }
 
     // Save the game_parameters
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
+    await axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
       console.error(error);
     });
   };
+
+  handleCopyRole = async (gameroleid) => {
+    await this.handleSave();
+    return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
+      gameroleid
+    }).then((res) => {
+      let objects = JSON.parse(res.data.gameinstance.game_parameters);
+
+      // Parse the saved groups
+      let parsedSavedGroups = [];
+      for (let i = 0; i < objects.savedGroups.length; i++) {
+        let savedGroup = [];
+        for (let j = 0; j < objects.savedGroups[i].length; j++) {
+          savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
+        }
+        parsedSavedGroups.push(savedGroup);
+      }
+      objects.savedGroups = parsedSavedGroups;
+
+      // Put parsed saved data into state
+      this.savedState.forEach((object) => {
+        this.setState({
+          [object]: objects[object]
+        });
+      });
+
+      return res.data.gamerole;
+    }).catch(error => {
+      console.log(error);
+    });
+  }
 
   onObjectContextMenu = e => {
     e.evt.preventDefault(true);
@@ -2475,6 +2506,7 @@ class Graphics extends Component {
                 openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
                 roleLevel={this.handleRoleLevel}
                 gameid={this.state.gameinstanceid}
+                handleCopyRole={this.handleCopyRole}
                 editMode={true}
               />
             </div>
