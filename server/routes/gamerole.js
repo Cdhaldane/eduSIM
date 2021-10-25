@@ -8,4 +8,8 @@ router.post('/createRole', gamerole.createRole);
 
 router.delete('/deleteRole/:gameroleid', gamerole.deleteRole);
 
+router.put('/update', gamerole.updateRole);
+
+router.post('/copy', gamerole.copyRole);
+
 export default router;

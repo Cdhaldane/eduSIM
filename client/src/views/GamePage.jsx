@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import CanvasGame from "../components/Stage/CanvasGame";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -56,7 +56,10 @@ function Game(props) {
   const [roomStatus, setRoomStatus] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
+  const [messageBacklog, setMessageBacklog] = useState([]);
   const [level, setLevel] = useState(1);
+  const [roles, setRoles] = useState(null);
+  const [isLoading, setLoading] = useState(true);
   const alertContext = useAlertContext();
 
   const toggle = () => setShowNav(!showNav);
@@ -66,13 +69,29 @@ function Game(props) {
 
   useEffect(() => {
     (async function () {
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
+      const { data: roomData } = await axios.get(
+        process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
         params: {
           id: roomid,
         }
+      })
+      setRoomInfo(roomData);
+
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
+        params: {
+          gameinstanceid: roomData.gameinstanceid,
+        }
       }).then((res) => {
-        setRoomInfo(res.data);
-      });
+        const rolesData = [];
+        for (let i = 0; i < res.data.length; i++) {
+          rolesData.push({
+            id: res.data[i].gameroleid,
+            roleName: res.data[i].gamerole,
+            numOfSpots: res.data[i].numspots
+          });
+        }
+        setRoles(rolesData);
+      })
       
       if (userid) {
         axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayer', {
@@ -89,11 +108,16 @@ function Game(props) {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ players, ...status }) => {
+      client.on("connectStatus", ({ players, chatlog, ...status }) => {
         setPlayers(players);
         setRoomStatus(status || {});
+        setMessageBacklog(chatlog);
       });
-      client.on("roomStatusUpdate", ({ status }) => {
+      client.on("roomStatusUpdate", ({ status, refresh }) => {
+        if (refresh) {
+          sessionStorage.removeItem("userInfo");
+          window.location.reload();
+        }
         setRoomStatus(status);
       });
       client.on("clientJoined", ({id, ...player}) => {
@@ -112,6 +136,7 @@ function Game(props) {
         alertContext.showAlert(message, "error");
       });
       setSocketInfo(client);
+      setLoading(false);
       return () => client.disconnect();
     }());
   }, [roomid]);
@@ -129,7 +154,27 @@ function Game(props) {
 
   const actualLevel = roomStatus.level || level;
 
-  const isLoading = room === null;
+  // parse seeded roles
+  const parsedPlayers = useMemo(() => {
+    let newPlayers = {};
+    if (roles && roles.length>0) {
+      for (const id in players) {
+        let p = {...players[id]};
+        newPlayers[id] = p;
+        if (p.role === -1) {
+          newPlayers[id].role = roles[parseInt(p.dbid, 16)%roles.length].roleName;
+        } else if (p.role === -2) {
+          newPlayers[id].role = roles[(actualLevel**actualLevel + parseInt(p.dbid, 16))%roles.length].roleName;
+        }
+      }
+    }
+    return newPlayers;
+  }, [players, roles, actualLevel]);
+
+  // TESTING PURPOSES
+  useEffect(() => {
+    if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
+  }, [actualLevel, parsedPlayers]);
 
   return (
     !isLoading ? (
@@ -142,6 +187,7 @@ function Game(props) {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          submenuProps={{messageBacklog}}
           game
           disabled={!roomStatus.running}
         />
@@ -150,10 +196,11 @@ function Game(props) {
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
-            players={players}
+            players={parsedPlayers}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
+            roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}
             initialUserId={userid}
             alert={alertContext.showAlert}
