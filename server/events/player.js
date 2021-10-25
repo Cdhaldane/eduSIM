@@ -17,11 +17,13 @@ export default async (server, client, event, args) => {
 
       const sender = await getPlayer(client.id);
 
+      if (!sender.invited) sender.dbid = undefined;
+
       updateChatlog(room, {
         sender,
         room,
         message,
-        group,
+        group: group.length > 0 ? group : undefined,
         timeSent: moment().valueOf()
       });
 
@@ -51,8 +53,7 @@ export default async (server, client, event, args) => {
       break;
     };
     case "playerUpdate": {
-      const { name, role, dbid } = args;
-      console.log(dbid);
+      const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
         client.emit("errorLog", "You are attempting to join as a player that has already joined.");
         return;
@@ -68,7 +69,8 @@ export default async (server, client, event, args) => {
       setPlayer(client.id, {
         name,
         role,
-        dbid
+        dbid,
+        invited
       });
 
       break;
@@ -95,13 +97,15 @@ export default async (server, client, event, args) => {
         status: newStatus
       });
 
-      // await addInteraction(room, {
-      //   timestamp: moment().valueOf(),
-      //   level,
-      //   gamepieceId,
-      //   parameters,
-      //   player: client.id
-      // });
+      const player = await getPlayer(client.id);
+
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        gamepieceId,
+        parameters,
+        player
+      });
 
       break;
     };

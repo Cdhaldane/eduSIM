@@ -110,6 +110,9 @@ export const getInteractionBreakdown = async (roomid) => {
   });
   return counts;
 };
+export const getInteractions = async (roomid) => {
+  return interactions.get(roomid) || [];
+};
 
 export const updateChatlog = async (roomid, message) => {
   const old = chatlogs.get(roomid) || [];

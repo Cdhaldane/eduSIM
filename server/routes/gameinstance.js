@@ -1,5 +1,6 @@
 import { Router } from 'express';
 const gameinstance = require('../controllers/gamepage');
+const gameroom = require('../controllers/joinpage');
 
 const router = Router();
 
@@ -25,6 +26,8 @@ router.put('/delete/:id', gameinstance.deleteGameInstance);
 router.post('/revokeGameInstanceAccess', gameinstance.revokeGameInstanceAccess)
 
 router.get('/getCollaborators/:gameinstanceid', gameinstance.getCollaborators)
+
+router.get('/getGameLog/:gameroomid', gameroom.getGameLog)
 
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
 export default router;
