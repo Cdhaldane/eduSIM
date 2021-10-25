@@ -153,6 +153,33 @@ exports.getGameLog = async (req, res) => {
   }
 }
 
+exports.getSimulationLogs = async (req, res) => {
+  const gameinstanceid = req.params.gameinstanceid;
+  try {
+    let rooms = await GameRoom.findAll({
+      where: {
+        gameinstanceid
+      }
+    });
+    const roomData = [];
+    for (let i=0; i<rooms.length; i++) {
+      const { dataValues } = rooms[i];
+      const messages = await getChatlog(dataValues.gameroom_url);
+      const interactions = await getInteractions(dataValues.gameroom_url);
+      roomData.push({
+        ...dataValues,
+        messages,
+        interactions
+      });
+    }
+    return res.send(roomData);
+  } catch (err) {
+    return res.status(400).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+}
+
 exports.getPlayer = async (req, res) => {
   const gameplayerid = req.query.id;
   try {

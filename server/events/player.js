@@ -4,7 +4,8 @@ import {
   getPlayerByDBID,
   getRoomStatus,
   updateRoomStatus,
-  updateChatlog
+  updateChatlog,
+  addInteraction
 } from './utils';
 import moment from "moment";
 
@@ -16,7 +17,6 @@ export default async (server, client, event, args) => {
       const { message, group } = args;
 
       const sender = await getPlayer(client.id);
-
       if (!sender.invited) sender.dbid = undefined;
 
       updateChatlog(room, {
@@ -78,7 +78,7 @@ export default async (server, client, event, args) => {
     case "interaction": {
       const { gamepieceId, parameters } = args;
       
-      const { running, gamepieces } = await getRoomStatus(room);
+      const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
         client.emit("errorLog", "Game is paused/stopped!");
@@ -98,6 +98,7 @@ export default async (server, client, event, args) => {
       });
 
       const player = await getPlayer(client.id);
+      if (!player.invited) player.dbid = undefined;
 
       await addInteraction(room, {
         timestamp: moment().valueOf(),

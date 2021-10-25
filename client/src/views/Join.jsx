@@ -81,8 +81,6 @@ function Join(props) {
     } return [];
   }, [roomMessages, currentRoom]);
 
-  console.log(roomMessages);
-
   const startSim = async () => {
     if (!socket) return;
     await socket.emit("gameStart", (currentRoom && {
