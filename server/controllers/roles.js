@@ -100,7 +100,7 @@ exports.copyRole = async (req, res) => {
       if (Array.isArray(params[key])) {
         let newParam = [];
         for (let item of params[key]) {
-          if (item?.rolelevel === gamerole) {
+          if (typeof item === "object" && item.rolelevel === gamerole) {
             let newItem = {...item, rolelevel: gamerole+" (Copy)"};
             newParam.push(newItem);
           }
@@ -156,7 +156,7 @@ exports.updateRole = async (req, res) => {
         if (Array.isArray(params[key])) {
           let newParam = [];
           for (let item of params[key]) {
-            if (item?.rolelevel === gamerole.gamerole) {
+            if (typeof item === "object" && item.rolelevel === gamerole.gamerole) {
               item = {...item, rolelevel: name};
             }
             newParam.push(item);
