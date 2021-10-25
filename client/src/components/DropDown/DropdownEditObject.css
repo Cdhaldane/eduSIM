@@ -317,3 +317,9 @@ a {
   position: sticky;
   top: 0;
 }
+
+.editPollNewPageIcon {
+  font-size: 1rem !important;
+  padding-right: 5px;
+  color: #a3a3a3 !important;
+}

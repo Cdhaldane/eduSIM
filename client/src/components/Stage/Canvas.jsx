@@ -260,70 +260,6 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       savedstates: [],
       level: 1,
-
-      pollJson: {
-        showProgressBar: "bottom",
-        pages: [
-          {
-            questions: [
-              {
-                id: 0,
-                type: "text",
-                name: "0",
-                title: "Sample Text Question:",
-                isRequired: true,
-              }, {
-                id: 1,
-                type: "text",
-                name: "1",
-                inputType: "date",
-                title: "Sample Date Question:",
-                isRequired: true,
-                hasNone: null,
-                choices: null
-              }, {
-                id: 2,
-                type: "text",
-                name: "2",
-                inputType: "color",
-                title: "Sample Color Question:",
-                isRequired: false,
-                hasNone: null,
-                choices: null
-              }
-            ]
-          },
-          {
-            questions: [
-              {
-                id: 0,
-                type: "text",
-                name: "0",
-                title: "Sample Text Question:",
-                isRequired: true,
-              }, {
-                id: 1,
-                type: "text",
-                name: "1",
-                inputType: "date",
-                title: "Sample Date Question:",
-                isRequired: true,
-                hasNone: null,
-                choices: null
-              }, {
-                id: 2,
-                type: "text",
-                name: "2",
-                inputType: "color",
-                title: "Sample Color Question:",
-                isRequired: false,
-                hasNone: null,
-                choices: null
-              }
-            ]
-          }
-        ],
-      },
     };
 
     this.handleWheel = this.handleWheel.bind(this);
@@ -1094,7 +1030,7 @@ class Graphics extends Component {
 
       // Update custom object transform
       if (e.evt) {
-        this.getKonvaObj(this.state.selectedShapeName, true);
+        this.getKonvaObj(this.state.selectedShapeName, true, true);
       }
     }
   };
@@ -1121,7 +1057,7 @@ class Graphics extends Component {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" : "groupTransformer";
     if (this.refs[this.state.selectedShapeName]) {
-      this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName)]);
+      this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
     } else if (type === "" && this.state.groupSelection.length) {
       this.refs[transformer].nodes(this.state.groupSelection.flat());
     } else {
@@ -1973,7 +1909,7 @@ class Graphics extends Component {
   // returns Konva object
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
-  getKonvaObj = (id, showTransformer) => {
+  getKonvaObj = (id, updateState, showTransformer) => {
     if (id) {
       if (this.refs[id].attrs) {
         return this.refs[id];
@@ -1983,35 +1919,37 @@ class Graphics extends Component {
         for (let i = 0; i < groups.length; i++) {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
-            const customState = [...this.state[this.getObjType(id)]];
+            if (updateState) {
+              const customState = [...this.state[this.getObjType(id)]];
 
-            const elem = this.refs[id];
-            const style = window.getComputedStyle(elem);
-            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
-            const x = matrix.translateX;
-            const y = matrix.translateY;
-            const width = elem.clientWidth;
-            const height = elem.clientHeight;
+              const elem = this.refs[id];
+              const style = window.getComputedStyle(elem);
+              const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
+              const x = matrix.translateX;
+              const y = matrix.translateY;
+              const width = elem.clientWidth;
+              const height = elem.clientHeight;
 
-            const paddingPercent = 0.05;
-            this.setState({
-              customRect: [{
-                ...this.state.customRect[0],
-                x: x - ((width * paddingPercent) / 2),
-                y: y - ((height * paddingPercent) / 2)
-              }],
-              [this.getObjType(id)]: customState
-            });
-
-            const sizeRect = this.refs.customRect;
-            sizeRect.attrs.width = width * (1 + paddingPercent);
-            sizeRect.attrs.height = height * (1 + paddingPercent);
-            group.add(sizeRect);
-
-            if (showTransformer) {
+              const paddingPercent = 0.05;
               this.setState({
-                selectedShapeName: id
-              }, this.handleObjectSelection);
+                customRect: [{
+                  ...this.state.customRect[0],
+                  x: x - ((width * paddingPercent) / 2),
+                  y: y - ((height * paddingPercent) / 2)
+                }],
+                [this.getObjType(id)]: customState
+              });
+
+              const sizeRect = this.refs.customRect;
+              sizeRect.attrs.width = width * (1 + paddingPercent);
+              sizeRect.attrs.height = height * (1 + paddingPercent);
+              group.add(sizeRect);
+
+              if (showTransformer) {
+                this.setState({
+                  selectedShapeName: id
+                }, this.handleObjectSelection);
+              }
             }
             return group;
           }
@@ -2085,10 +2023,17 @@ class Graphics extends Component {
     });
   }
 
-  setPollJson = (json) => {
-    this.setState({
-      pollJson: json
-    });
+  setPollJson = (json, id) => {
+    this.setState(prevState => ({
+      polls: prevState.polls.map(poll =>
+        poll.id === id
+          ? {
+            ...poll,
+            json: json
+          }
+          : poll
+      )
+    }));
   }
 
   onDragEndArrow = (arrow) => {
@@ -2466,6 +2411,40 @@ class Graphics extends Component {
     };
   }
 
+  pollProps = (obj) => {
+    return {
+      custom: {
+        pollJson: obj.json ? obj.json : {
+          pages: [
+            {
+              questions: [
+                {
+                  id: 0,
+                  type: "text",
+                  name: "0",
+                  title: "Sample Text Question:",
+                  isRequired: true
+                }, {
+                  id: 1,
+                  type: "text",
+                  name: "1",
+                  inputType: "date",
+                  title: "Sample Date Question:",
+                }, {
+                  id: 2,
+                  type: "text",
+                  name: "2",
+                  inputType: "color",
+                  title: "Sample Color Question:",
+                }
+              ]
+            }
+          ]
+        }
+      }
+    };
+  }
+
   loadObjects = (stage) => {
     return (
       <>
@@ -2528,10 +2507,12 @@ class Graphics extends Component {
         {this.state.polls.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Poll
-              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              defaultProps={{
+                ...this.defaultObjProps(obj, index),
+                ...this.pollProps(obj)
+              }}
               {...this.defaultObjProps(obj, index)}
               {...this.customObjProps()}
-              pollJson={this.state.pollJson}
             /> : null
         })}
         {this.state.connect4s.map((obj, index) => {
@@ -2728,7 +2709,7 @@ class Graphics extends Component {
                     <ContextMenu
                       {...this.state.selectedContextMenu}
                       selectedShapeName={this.state.selectedShapeName}
-                      shape={this.refs[this.state.selectedShapeName]}
+                      getObj={this.getKonvaObj}
                       selectedFont={this.state.selectedFont}
                       handleUngrouping={this.handleUngrouping}
                       handleGrouping={this.handleGrouping}
@@ -2744,7 +2725,6 @@ class Graphics extends Component {
                       paste={this.handlePaste}
                       delete={this.handleDelete}
                       setJson={this.setPollJson}
-                      pollJson={this.state.pollJson}
                     />
                   </Portal>
                 )}

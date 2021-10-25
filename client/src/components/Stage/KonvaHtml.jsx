@@ -105,7 +105,8 @@ const KonvaHtml = ({
     id: refName,
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
-    onDragEnd: defaultProps.onDragEnd
+    onDragEnd: defaultProps.onDragEnd,
+    customProps: defaultProps.custom
   }, groupProps));
 };
 
