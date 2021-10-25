@@ -701,12 +701,14 @@ class Graphics extends Component {
       const customObjs = document.getElementsByClassName("customObj");
       for (let i = 0; i < customObjs.length; i++) {
         const id = customObjs[i].dataset.name;
+        const customObj = this.getKonvaObj(id);
         const rect = customObjs[i].getBoundingClientRect();
         if (
           event.x > rect.x &&
           event.y > rect.y &&
           event.x < rect.x + rect.width &&
-          event.y < rect.y + rect.height
+          event.y < rect.y + rect.height &&
+          customObj
         ) {
           // Clicked on a custom object
           this.setState({
