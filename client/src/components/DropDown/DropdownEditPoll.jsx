@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 
 const DropdownEditPoll = (props) => {
 
+  const [activeMenu, setActiveMenu] = useState('main');
   const [pages, setPages] = useState(props.shape.attrs.customProps.pollJson.pages);
 
   useEffect(() => {
@@ -129,7 +131,7 @@ const DropdownEditPoll = (props) => {
             <td
               className="editPollEditBtns"
               onClick={() => {
-                createJson();
+                setActiveMenu("settings");
               }}
             >
               <i className="fas fa-cog" />
@@ -235,42 +237,78 @@ const DropdownEditPoll = (props) => {
   }
 
   return (
-    <>
-      <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
-      <table className="editPollQuestionBox">
-        <thead className="editPollTableHead">
-          <tr>
-            <th>
-              Question
-            </th>
-            <th>
-              Type
-            </th>
-            <th className="editPollStar">
-              *
-            </th>
-          </tr>
-        </thead>
-        <tbody className="editPollQuestionsArea">
-          {renderQuestions()}
-        </tbody>
-      </table>
-      <button
-        onClick={addQuestion}
-        className="editPollAddQuestionBtn"
+    <div className="editPollContainer">
+      <CSSTransition
+        in={activeMenu === 'main'}
+        timeout={500}
+        unmountOnExit
+        classNames="editPollPrimary"
       >
-        <i className="fas fa-question-circle" />
-        Add Question
-      </button>
+        <div>
+          <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
+          <table className="editPollQuestionBox">
+            <thead className="editPollTableHead">
+              <tr>
+                <th>
+                  Question
+                </th>
+                <th>
+                  Type
+                </th>
+                <th className="editPollStar">
+                  *
+                </th>
+              </tr>
+            </thead>
+            <tbody className="editPollQuestionsArea">
+              {renderQuestions()}
+            </tbody>
+          </table>
+          <button
+            onClick={addQuestion}
+            className="editPollAddQuestionBtn"
+          >
+            <i className="fas fa-question-circle" />
+            Add Question
+          </button>
 
-      <button
-        onClick={addPage}
-        className="editPollAddQuestionBtn"
+          <button
+            onClick={addPage}
+            className="editPollAddQuestionBtn"
+            style={{ marginLeft: "10px" }}
+          >
+            <i className="fas fa-scroll" />
+            Add New Page
+          </button>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'settings'}
+        timeout={500}
+        unmountOnExit
+        classNames="editPollSecondary"
       >
-        <i className="fas fa-scroll" />
-        Add New Page
-      </button>
-    </>
+        <div>
+          <button
+            onClick={() => {
+              setActiveMenu("main");
+            }}
+            className="editPollBackButton"
+          >
+            <i className="fas fa-arrow-left" />
+          </button>
+          <h1 style={{
+            paddingBottom: "0.5rem",
+            display: "inline"
+          }}
+          >
+            Edit Question:
+            What is your favourite color?
+          </h1>
+        </div>
+      </CSSTransition>
+    </div>
   );
 
 }
