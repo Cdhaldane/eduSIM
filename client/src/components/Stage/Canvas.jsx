@@ -374,34 +374,34 @@ class Graphics extends Component {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
-            const rect = this.getRect(this.refs[objects[j].id]);
+            const rect = this.getRect(objects[j]);
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
             if (leftmostX === null || leftX < leftmostX) {
               leftmostX = leftX;
-              leftmostObj = this.refs[objects[j].id];
+              leftmostObj = objects[j];
             }
 
             // Get furthest right x-coord
             const rightX = (rect.x - this.state[layerX] + rect.width) / this.state[layerScale];
             if (rightmostX === null || rightX > rightmostX) {
               rightmostX = rightX;
-              rightmostObj = this.refs[objects[j].id];
+              rightmostObj = objects[j];
             }
 
             // Get furthest top y-coord
             const topY = (rect.y - this.state[layerY]) / this.state[layerScale];
             if (topmostY === null || topY < topmostY) {
               topmostY = topY;
-              topmostObj = this.refs[objects[j].id];
+              topmostObj = objects[j];
             }
 
             // Get furthest bottom y-coord
             const bottomY = (rect.y - this.state[layerY] + rect.height) / this.state[layerScale];
             if (bottommostY === null || bottomY > bottommostY) {
               bottommostY = bottomY;
-              bottommostObj = this.refs[objects[j].id];
+              bottommostObj = objects[j];
             }
           }
         }
@@ -454,12 +454,50 @@ class Graphics extends Component {
 
   getRect = (obj) => {
     let rect = null;
-    if (obj.nodeName === "DIV") {
-      // Custom Object
-      rect = obj.getBoundingClientRect();
+    if (obj.tool) {
+      // Drawing
+      let xMax = null;
+      let yMax = null;
+      let xMin = null;
+      let yMin = null;
+      // Points array has form [x1, y1, x2, y2, ...] 
+      // Every even index is start of new coord so skip by 2 each iteration
+      for (let k = 0; k < obj.points.length; k += 2) {
+        const point = {
+          x: obj.points[k],
+          y: obj.points[k + 1],
+        }
+        if (xMax === null || point.x > xMax) {
+          xMax = point.x;
+        }
+        if (yMax === null || point.y > yMax) {
+          yMax = point.y;
+        }
+        if (xMin === null || point.x < xMin) {
+          xMin = point.x;
+        }
+        if (yMin === null || point.y < yMin) {
+          yMin = point.y;
+        }
+      }
+      const lineW = xMax - xMin;
+      const lineH = yMax - yMin;
+      rect = {
+        x: xMin,
+        y: yMin,
+        width: lineW,
+        height: lineH
+      }
     } else {
-      // Konva Object
-      rect = obj.getClientRect();
+      // Get the actual reference if not a drawing
+      obj = this.refs[obj.id];
+      if (obj.nodeName === "DIV") {
+        // Custom Object
+        rect = obj.getBoundingClientRect();
+      } else {
+        // Konva Object
+        rect = obj.getClientRect();
+      }
     }
 
     return rect;
@@ -624,7 +662,7 @@ class Graphics extends Component {
     });
   }
 
-  handleEditRole = async ({id, roleName, roleNum}) => {
+  handleEditRole = async ({ id, roleName, roleNum }) => {
     await this.handleSave();
     return axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
       id: id,
@@ -745,6 +783,15 @@ class Graphics extends Component {
       }
     }
 
+    let scale = this.state.groupLayerScale;
+    let xOffset = -this.state.groupLayerX;
+    let yOffset = -this.state.groupLayerY;
+    if (personalArea) {
+      scale = this.state.personalLayerScale;
+      xOffset = -this.state.personalLayerX;
+      yOffset = -this.state.personalLayerY;
+    }
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: true
@@ -753,7 +800,7 @@ class Graphics extends Component {
       this.setState({
         lines: [...this.state.lines, {
           tool,
-          points: [pos.x, pos.y],
+          points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
           level: this.state.level,
           color: this.state.color,
           id: "shape",
@@ -767,15 +814,6 @@ class Graphics extends Component {
         if (isElement || isTransformer) {
           return;
         }
-      }
-
-      let scale = this.state.groupLayerScale;
-      let xOffset = -this.state.groupLayerX;
-      let yOffset = -this.state.groupLayerY;
-      if (personalArea) {
-        scale = this.state.personalLayerScale;
-        xOffset = -this.state.personalLayerX;
-        yOffset = -this.state.personalLayerY;
       }
 
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
@@ -1134,6 +1172,15 @@ class Graphics extends Component {
   handleMouseOver = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
+    let scale = this.state.groupLayerScale;
+    let xOffset = -this.state.groupLayerX;
+    let yOffset = -this.state.groupLayerY;
+    if (personalArea) {
+      scale = this.state.personalLayerScale;
+      xOffset = -this.state.personalLayerX;
+      yOffset = -this.state.personalLayerY;
+    }
+
     // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
       if (!this.state.isDrawing) {
@@ -1144,7 +1191,10 @@ class Graphics extends Component {
       const point = stage.getPointerPosition();
       let lastLine = this.state.lines[this.state.lines.length - 1];
       // Add point
-      lastLine.points = lastLine.points.concat([point.x, point.y]);
+      lastLine.points = lastLine.points.concat([
+        (point.x + xOffset) / scale,
+        (point.y + yOffset) / scale
+      ]);
 
       // Replace last
       this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
@@ -1181,15 +1231,6 @@ class Graphics extends Component {
               }, this.handleObjectSelection);
             }
           } else {
-            let scale = this.state.groupLayerScale;
-            let xOffset = -this.state.groupLayerX;
-            let yOffset = -this.state.groupLayerY;
-            if (personalArea) {
-              scale = this.state.personalLayerScale;
-              xOffset = -this.state.personalLayerX;
-              yOffset = -this.state.personalLayerY;
-            }
-
             // Create drag selection rectangle
             this.setState({
               selection: {
@@ -1854,9 +1895,7 @@ class Graphics extends Component {
 
   drawLine = () => {
     this.setState({
-      drawMode: true
-    });
-    this.setState({
+      drawMode: true,
       tool: "pen"
     });
   }

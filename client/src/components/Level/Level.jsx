@@ -16,7 +16,6 @@ const Level = (props) => {
   let items = [];
 
   const handleClickOutside = e => {
-    console.log(e.target);
     if (infoPopup.current && infoBtn.current && !(
       infoPopup.current.contains(e.target) ||
       infoBtn.current.contains(e.target))) {
