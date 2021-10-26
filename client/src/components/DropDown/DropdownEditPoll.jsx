@@ -8,6 +8,11 @@ const DropdownEditPoll = (props) => {
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [pages, setPages] = useState(props.shape.attrs.customProps.pollJson.pages);
+  const [currentQuestion, setCurrentQuestion] = useState({
+    pIndex: 0,
+    qIndex: 0
+  });
+  const [correctAnswers, setCorrectAnswers] = useState([]);
 
   useEffect(() => {
     const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
@@ -84,6 +89,7 @@ const DropdownEditPoll = (props) => {
                   case "color":
                     setQuestionParam("type", pIndex, index, "text");
                     setQuestionParam("inputType", pIndex, index, e.target.value);
+                    setQuestionParam("choices", pIndex, index, null);
                     break;
                   case "dropdown":
                   case "radiogroup":
@@ -132,6 +138,10 @@ const DropdownEditPoll = (props) => {
               className="editPollEditBtns"
               onClick={() => {
                 setActiveMenu("settings");
+                setCurrentQuestion({
+                  pIndex: pIndex,
+                  qIndex: index
+                });
               }}
             >
               <i className="fas fa-cog" />
@@ -201,6 +211,45 @@ const DropdownEditPoll = (props) => {
         </React.Fragment>
       );
     });
+  }
+
+  const optionsForQuestion = () => {
+    const options = pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices;
+    if (options) {
+      return options.map((o, index) => {
+        return (
+          <tr key={index}>
+            <td>
+              <input
+                className="pollEditQuestionInput"
+                type="text"
+                placeholder="Option text here"
+                value={o}
+                onChange={(e) => {
+                  const newOptions = [...options];
+                  newOptions[index] = e.target.value;
+                  setQuestionParam("choices", currentQuestion.pIndex, currentQuestion.qIndex, newOptions);
+                }}
+              />
+            </td>
+            <td
+              className={"editPollEditBtns"}
+              onClick={() => {
+                if (options.length > 1) {
+                  const newOptions = [...options.slice(0, index), ...options.slice(index + 1)];
+                  setTimeout(
+                    setQuestionParam("choices", currentQuestion.pIndex, currentQuestion.qIndex, newOptions),
+                    0);
+                }
+              }}>
+              <i
+                className={`fas fa-trash-alt ${options.length === 1 ? "disabled" : ""}`}
+              />
+            </td>
+          </tr>
+        );
+      });
+    }
   }
 
   const defaultQ = () => {
@@ -299,13 +348,60 @@ const DropdownEditPoll = (props) => {
             <i className="fas fa-arrow-left" />
           </button>
           <h1 style={{
-            paddingBottom: "0.5rem",
             display: "inline"
           }}
           >
-            Edit Question:
-            What is your favourite color?
+            Edit Question: "{
+              pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].title ||
+              pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].name
+            }"
           </h1>
+          <table
+            style={{
+              marginTop: "10px",
+              display: "table"
+            }}
+            className="editPollQuestionBox"
+          >
+            <tbody className="editPollQuestionsArea">
+              {optionsForQuestion()}
+            </tbody>
+          </table>
+          {pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices && (
+            <>
+              <button
+                onClick={() => {
+                  const options = pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices;
+                  const newOptions = [...options, ""];
+                  setTimeout(
+                    setQuestionParam("choices", currentQuestion.pIndex, currentQuestion.qIndex, newOptions),
+                    0);
+                }}
+                className="editPollAddQuestionBtn"
+              >
+                <i className="fas fa-list" />
+                Add Option
+              </button>
+              <hr />
+            </>
+          )}
+          <div
+            style={{
+              width: "100%",
+              textAlign: "center"
+            }}
+          >
+            Correct Answer (Leave blank if not applicable):
+            <input
+              className="editPollAnswerBox"
+              type="text"
+              placeholder="Answer Value Here"
+              value={""}
+              onChange={(e) => {
+                //
+              }}
+            />
+          </div>
         </div>
       </CSSTransition>
     </div>
