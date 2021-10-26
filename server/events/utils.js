@@ -25,7 +25,11 @@ export const updateRoomStatus = async (id, val) => {
     ...val
   };
 }
-export const clearRoomStatus = async (id, keepSettings) => {
+export const clearRoomStatus = async (id, keepSettings=true, wipeLogs=true) => {
+  if (wipeLogs) {
+    chatlogs.delete(id);
+    interactions.delete(id);
+  }
   if (keepSettings) {
     const { settings } = await getRoomStatus(id);
     rooms.set(id, {

@@ -11,6 +11,7 @@
 
 .ReactModal__Overlay {
   opacity: 0;
+  z-index: 10000;
   transition: opacity 250ms ease-in-out;
 }
 

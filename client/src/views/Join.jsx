@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { withAuth0 } from "@auth0/auth0-react";
 import Tabs from "../components/Tabs/Tabs";
 import CreateCsv from "../components/CreateCsv/CreateCsv";
@@ -8,6 +8,7 @@ import { Image } from "cloudinary-react";
 import { io } from "socket.io-client";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
+import ConfirmationModal from "../components/Modal/ConfirmationModal";
 
 function Join(props) {
   const [showNote, setShowNote] = useState(false);
@@ -15,7 +16,9 @@ function Join(props) {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
+  const [resetID, setResetID] = useState(null);
   const alertContext = useAlertContext();
+  const downloadBtnRef = useRef();
 
   if (props.location.gameinstance !== undefined) {
     localStorage.setItem('gameid', props.location.gameinstance);
@@ -63,6 +66,9 @@ function Join(props) {
       });
       client.on("errorLog", (message) => {
         alertContext.showAlert(message, "error");
+      });
+      client.on("dumpLog", (data) => {
+        console.log("AAAAAAAAAA", data);
       });
       setSocketInfo(client);
       return () => client.disconnect();
@@ -175,7 +181,7 @@ function Join(props) {
               </button>
               <button
                 class="joinboard-button"
-                onClick={resetSim}
+                onClick={() => setResetID(true)}
                 title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
               >
                 <i class="fa fa-retweet"></i>
@@ -213,6 +219,20 @@ function Join(props) {
         chatMessages={currentRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
+      />
+
+      <ConfirmationModal
+        visible={!!resetID}
+        hide={() => setResetID(null)}
+        confirmFunction={resetSim}
+        confirmMessage={"Reset"}
+        message={`Are you sure you want to reset every simulation room? (A backup log will be saved.)`}
+      />
+      <a 
+        href={process.env.REACT_APP_API_ORIGIN + '/api/gameInstances/getSimulationLogs/' + localStorage.gameid} 
+        download 
+        style={{display: 'none'}}
+        ref={downloadBtnRef}
       />
     </div>
   );

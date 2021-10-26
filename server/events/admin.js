@@ -1,4 +1,11 @@
-import { updateRoomStatus, getSimulationRooms, getRoomStatus, clearRoomStatus } from './utils';
+import { 
+  updateRoomStatus, 
+  getSimulationRooms, 
+  getRoomStatus, 
+  clearRoomStatus,
+  getChatlog,
+  getInteractions
+} from './utils';
 import moment from "moment";
 
 export default async (server, client, event, args) => {
@@ -73,7 +80,7 @@ export default async (server, client, event, args) => {
       const { room } = args || {};
 
       if (room) {
-        const newStatus = await clearRoomStatus(room, true);
+        const newStatus = await clearRoomStatus(room);
         server.to(room).emit("roomStatusUpdate", {
           room,
           status: newStatus,
@@ -81,8 +88,22 @@ export default async (server, client, event, args) => {
         });
       } else {
         const rooms = await getSimulationRooms(game);
+        const roomData = [];
+        for (let i=0; i<rooms.length; i++) {
+          const { dataValues } = rooms[i];
+          const roomStatus = await getRoomStatus(dataValues.gameroom_url);
+          const messages = await getChatlog(dataValues.gameroom_url);
+          const interactions = await getInteractions(dataValues.gameroom_url);
+          roomData.push({
+            ...dataValues,
+            roomStatus,
+            messages,
+            interactions
+          });
+        }
+        client.emit("dumpLog", roomData);
         rooms.forEach(async ({ dataValues: room }) => {
-          const newStatus = await clearRoomStatus(room.gameroom_url, true);
+          const newStatus = await clearRoomStatus(room.gameroom_url);
           server.to(room.gameroom_url).emit("roomStatusUpdate", {
             room: room.gameroom_url,
             status: newStatus,
