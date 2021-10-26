@@ -67,9 +67,6 @@ function Join(props) {
       client.on("errorLog", (message) => {
         alertContext.showAlert(message, "error");
       });
-      client.on("dumpLog", (data) => {
-        console.log("AAAAAAAAAA", data);
-      });
       setSocketInfo(client);
       return () => client.disconnect();
     }());
@@ -227,12 +224,6 @@ function Join(props) {
         confirmFunction={resetSim}
         confirmMessage={"Reset"}
         message={`Are you sure you want to reset every simulation room? (A backup log will be saved.)`}
-      />
-      <a 
-        href={process.env.REACT_APP_API_ORIGIN + '/api/gameInstances/getSimulationLogs/' + localStorage.gameid} 
-        download 
-        style={{display: 'none'}}
-        ref={downloadBtnRef}
       />
     </div>
   );

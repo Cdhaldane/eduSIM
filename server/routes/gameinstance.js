@@ -27,9 +27,11 @@ router.post('/revokeGameInstanceAccess', gameinstance.revokeGameInstanceAccess)
 
 router.get('/getCollaborators/:gameinstanceid', gameinstance.getCollaborators)
 
-router.get('/getGameLog/:gameroomid', gameroom.getGameLog)
+router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
 
-router.get('/getSimulationLogs/:gameinstanceid', gameroom.getSimulationLogs)
+router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
+
+router.get('/getGameLogs/:gameroomid', gameroom.getGameLogs)
 
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
 export default router;

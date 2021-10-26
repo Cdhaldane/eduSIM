@@ -7,6 +7,7 @@ import {
   getInteractions
 } from './utils';
 import moment from "moment";
+const GameActions = require("../models/GameActions");
 
 export default async (server, client, event, args) => {
   const { game } = client.handshake.query;
@@ -88,20 +89,21 @@ export default async (server, client, event, args) => {
         });
       } else {
         const rooms = await getSimulationRooms(game);
-        const roomData = [];
         for (let i=0; i<rooms.length; i++) {
           const { dataValues } = rooms[i];
           const roomStatus = await getRoomStatus(dataValues.gameroom_url);
           const messages = await getChatlog(dataValues.gameroom_url);
           const interactions = await getInteractions(dataValues.gameroom_url);
-          roomData.push({
-            ...dataValues,
-            roomStatus,
-            messages,
-            interactions
+          await GameActions.create({
+            gamedata: {
+              roomStatus,
+              messages,
+              interactions
+            },
+            gameroomid: dataValues.gameroomid,
+            gameinstanceid: dataValues.gameinstanceid
           });
         }
-        client.emit("dumpLog", roomData);
         rooms.forEach(async ({ dataValues: room }) => {
           const newStatus = await clearRoomStatus(room.gameroom_url);
           server.to(room.gameroom_url).emit("roomStatusUpdate", {
