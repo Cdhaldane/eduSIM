@@ -21,6 +21,7 @@ function DropdownEditObject(props) {
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   const [loading, setLoading] = useState(true);
+  const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
 
   const calcTopOffset = () => {
     const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
@@ -32,10 +33,10 @@ function DropdownEditObject(props) {
 
   useEffect(() => {
     if (props.title === "Edit Shape") {
-      setOpacity(props.shape.attrs.opacity ? props.shape.attrs.opacity : 1);
-      setStrokeColor(props.shape.attrs.stroke);
-      setFillColor(props.shape.attrs.fill);
-      setStrokeWidth(props.shape.attrs.strokeWidth);
+      setOpacity(shape.attrs.opacity ? shape.attrs.opacity : 1);
+      setStrokeColor(shape.attrs.stroke);
+      setFillColor(shape.attrs.fill);
+      setStrokeWidth(shape.attrs.strokeWidth);
     } else if (props.title === "Edit Text") {
       if (props.font) {
         setFillColor(props.font.attrs.fill);
@@ -269,7 +270,7 @@ function DropdownEditObject(props) {
             <div className="menuedit">
               <DropdownEditPoll
                 setJson={props.setJson}
-                pollJson={props.pollJson}
+                shape={shape}
                 title={props.title}
               />
             </div>

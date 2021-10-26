@@ -125,7 +125,6 @@ const ContextMenu = (props) => {
         <div className="drop">
           <DropdownEditObject
             setJson={props.setJson}
-            pollJson={props.pollJson}
             top={menu.current.offsetTop}
             title={editTitle}
             handleFillColor={props.handleFillColor}
@@ -135,9 +134,10 @@ const ContextMenu = (props) => {
             handleSize={props.handleSize}
             handleFont={props.handleFont}
             font={props.selectedFont}
-            shape={props.shape}
             left={editModalLeft}
             close={props.close}
+            selectedShapeName={props.selectedShapeName}
+            getObj={props.getObj}
           />
         </div>
       )}

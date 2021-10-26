@@ -42,10 +42,10 @@ const SimNote = (props) => {
             >
               <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
             </Link>
-            <i class="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
+            <i className="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
           </>
         ) : (
-          <i class="fas fa-user-slash fa-2x notesim-icon" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"></i>
+          <i className="fas fa-user-slash fa-2x notesim-icon" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"></i>
         )}
         <Link
           to={{
