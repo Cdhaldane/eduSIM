@@ -23,6 +23,7 @@ function Tabs(props) {
   const [tabs, setTabs] = useState([]);
   const [time, setTime] = useState(1);
   const [interactionData, setInteractionData] = useState({});
+  const [logs, setLogs] = useState({});
 
   const alertContext = useAlertContext();
 
@@ -55,8 +56,22 @@ function Tabs(props) {
       }).then((res) => {
         setInteractionData(Object.entries(res.data).map((val) => ({name: "Level "+val[0], interactions: val[1]})));
       });
+      if (!logs[id]) {
+        axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getGameLogs", {
+          params: {
+            gameroomid: id,
+          },
+        }).then((res) => {
+          setLogs(prev => ({
+            ...prev,
+            [id]: res.data
+          }));
+        });
+      }
     }
   };
+
+  console.log(logs);
 
   const handleSubmit = (e) => {
     // Check if name is empty or a duplicate
@@ -362,6 +377,10 @@ function Tabs(props) {
                 </div>
               </div>
             </div>
+            <h3>Previous Runs:</h3>
+            {logs[tab[1]] && logs[tab[1]].map(data => (
+              <p key={data.gameactionid}>{data.createdAt}</p>
+            ))}
             <h3>Students / participants in room:</h3>
             <div className="group-table">
               <Table

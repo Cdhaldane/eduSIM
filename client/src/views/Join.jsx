@@ -18,7 +18,6 @@ function Join(props) {
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
   const alertContext = useAlertContext();
-  const downloadBtnRef = useRef();
 
   if (props.location.gameinstance !== undefined) {
     localStorage.setItem('gameid', props.location.gameinstance);

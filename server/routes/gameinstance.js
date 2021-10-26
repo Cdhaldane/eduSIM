@@ -31,7 +31,5 @@ router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
 
 router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
 
-router.get('/getGameLogs/:gameroomid', gameroom.getGameLogs)
-
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
 export default router;

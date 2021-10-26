@@ -187,9 +187,9 @@ exports.getRunningSimulationLogs = async (req, res) => {
 
 // this returns all SAVED DATA of PAST simuilation runs stored in GameActions
 exports.getGameLogs = async (req, res) => {
-  const gameroomid = req.params.gameroomid;
+  const gameroomid = req.query.gameroomid;
   try {
-    const gameactions = await GameActions.findOne({
+    const gameactions = await GameActions.findAll({
       where: {
         gameroomid
       }
