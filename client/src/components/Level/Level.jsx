@@ -76,12 +76,14 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <h1 id="editModeTitle">
-              Edit Mode
-            </h1>
-            <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
-              <i className="fa fa-info" />
-            </button>
+            <div style={{width: "180px"}}>
+              <h1 id="editModeTitle">
+                Edit Mode
+              </h1>
+              <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
+                <i className="fa fa-info" />
+              </button>
+            </div>
 
             <Modal
               isOpen={showInfoPopup}

@@ -11,15 +11,19 @@
 }
 
 #editModeTitle {
+  width: 150px;
   opacity: 0.7;
   font-family: 'Cedarville Cursive', cursive;
   font-size: 1.75em;
+  display: inline;
 }
 
 #levelInfoButton {
+  display: inline;
   width: 25px;
   height: 25px;
   border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 #levelInfoButton>i {

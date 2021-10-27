@@ -59,6 +59,7 @@
 .editPersonalAreaToggle {
   color: var(--primary);
   border: none;
+  background-color: transparent;
 }
 
 #pencili1 {

@@ -201,6 +201,7 @@ a {
 
 .react-switch {
   margin-left: auto;
+  margin-right: 10px;
 }
 
 .dropdown button {

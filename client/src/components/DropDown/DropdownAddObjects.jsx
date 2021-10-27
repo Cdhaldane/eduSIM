@@ -13,7 +13,6 @@ const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(214);
-  const [img, setImg] = useState();
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -22,8 +21,6 @@ const DropdownAddObjects = (props) => {
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
   const [validAudioURL, setValidAudioURL] = useState(false);
-  const [checkedd, setCheckedd] = useState(false);
-  const [checked, setChecked] = useState(false);
   const [imgsrc, setImgsrc] = useState("");
   const [vidsrc, setVidsrc] = useState("");
   const [audiosrc, setAudiosrc] = useState("");
@@ -403,16 +400,6 @@ const DropdownAddObjects = (props) => {
   }
 
   // Other
-  const drawLine = () => {
-    setCheckedd(!checkedd)
-    props.drawLine();
-  }
-
-  const stopDrawing = () => {
-    setChecked(!checked);
-    props.stopDrawing();
-  }
-
   const imageURLGood = (url) => {
     if ((
       url.includes("http://") ||
@@ -511,7 +498,7 @@ const DropdownAddObjects = (props) => {
         classNames="menu-primary"
         unmountOnExit
         onEnter={calcHeight}>
-        <div className="menu">
+        <div className="menu" style={{ textAlign: "left" }}>
           <h1>{props.title}</h1>
           <DropdownItem
             leftIcon={<i className="icons fas fa-shapes"></i>}
@@ -556,9 +543,12 @@ const DropdownAddObjects = (props) => {
           <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
 
           <DropdownItem
-            leftIcon={<i className="icons fas fa-marker"></i>}
-            onClick={() => setActiveMenu("draw")}>
-            Drawing
+            leftIcon={<i className="icons fas fa-marker" />}
+            onClick={() => {
+              props.setDrawMode(true);
+              props.close();
+            }}>
+            Draw Mode
           </DropdownItem>
 
         </div>
@@ -751,38 +741,6 @@ const DropdownAddObjects = (props) => {
             onClick={addDocument}
             leftIcon={<i className="icons fas fa-plus"
               onClick={addDocument}></i>}>Add</DropdownItem>
-        </div>
-      </CSSTransition>
-
-      <CSSTransition
-        in={activeMenu === 'draw'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
-            onClick={() => setActiveMenu("shapes")}>
-            <h2>Draw Mode</h2>
-          </DropdownItem>
-          <b id="colourp">
-            <ChromePicker
-              color={colour}
-              disableAlpha={true}
-              onChangeComplete={handleChange} />
-          </b>
-
-          <DropdownItem
-            onClick={drawLine}
-            leftIcon={<i className="icons fas fa-marker" onClick={drawLine}></i>}>
-            Draw</DropdownItem>
-
-          <DropdownItem
-            onClick={stopDrawing}
-            leftIcon={<i className="icons fas fa-mouse-pointer"
-              onClick={stopDrawing}></i>}>Select</DropdownItem>
-
         </div>
       </CSSTransition>
 
