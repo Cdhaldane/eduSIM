@@ -26,6 +26,7 @@ function Tabs(props) {
   const [time, setTime] = useState(1);
   const [interactionData, setInteractionData] = useState({});
   const [logs, setLogs] = useState({});
+  const [viewLogs, setViewLogs] = useState(false);
   const [removeLog, setRemoveLog] = useState(null);
 
   const alertContext = useAlertContext();
@@ -199,6 +200,17 @@ function Tabs(props) {
     document.body.removeChild(link);
   }
 
+  const downloadCSV = async (object) => {
+    const blob = new Blob([JSON.stringify(object)],{type:'application/json'});
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = "log.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   const handleRemoveLog = () => {
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/deleteGameLog', {
       gameactionid: removeLog.id
@@ -212,265 +224,276 @@ function Tabs(props) {
   }
 
   return (
-    <div className="page-margin tabs">
-      <ul className="selected-tab">
-        <li
-          onClick={() => toggleTab(0)}
-          className={toggleState === 0 ? "selected" : ""}
-        >
-          <span className="tab-text">Overview</span>
-        </li>
-        {tabs.map((tab, i) => (
-          <li
-            onClick={() => toggleTab(i + 1)}
-            className={toggleState === i + 1 ? "selected" : ""}
-          >
-            <span className="tab-text">{tab[0]}</span>
-          </li>
-        ))}
-        <li
-          onClick={() => toggleTab(tabs.length + 1)}
-          className={toggleState === tabs.length + 1 ? "selected" : ""}
-        >
-          <span className="tab-text">Add group</span>
-        </li>
-      </ul>
-      <div className="content-tabs">
-        <div
-          className={toggleState === 0 ? "content  active-content" : "content"}
-        >
-          <div className="content-row">
-            <div className="content-settings">
-              <h3>Settings:</h3>
-              <div className="simadv">
-                <h3>Simulation advancement</h3>
-                <div className="content-radiobuttons">
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayAdvance() === "teacher"}
-                      value="teacher"
-                      onChange={handleSetAdvancement}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Teacher/Facilitator
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayAdvance() === "student"}
-                      value="student"
-                      onChange={handleSetAdvancement}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Student/Participants
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayAdvance() === "timed"}
-                      value="timed"
-                      onChange={handleSetAdvancement}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    <span>Timed =</span>
-                    <input
-                      onChange={handleTime}
-                      value={time}
-                      type="text"
-                      placeholder="Time"
-                      className="content-timeinput"
-                      disabled={tabs.length === 0 || displayAdvance() !== "timed"}
-                    />
-                    <span>min</span>
-                  </div>
-                </div>
+    <>
+      {(toggleState > 0 && toggleState < tabs.length+1 && logs[tabs[toggleState-1][1]]) ? (
+        <div className="logs page-margin" hidden={!viewLogs}>
+          <div className="logs-show">
+            <h4 onClick={() => setViewLogs(!viewLogs)}>Display previous runs {viewLogs?'-':'+'}</h4>
+          </div>
+          {logs[tabs[toggleState-1][1]].map(data => (
+            <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
+              <div className="logrow-info">
+                <i class="fas fa-scroll"></i>
+                <p>
+                  Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")}, 
+                  lasted {getGameLength(data)}
+                </p>
               </div>
-              <div className="simadv">
-                <h3>Role assignment</h3>
-                <div className="content-radiobuttons">
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayRole() === "teacher"}
-                      value="teacher"
-                      onChange={handleSetRole}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Teacher/Facilitator
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayRole() === "student"}
-                      value="student"
-                      onChange={handleSetRole}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Student/Participants
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayRole() === "random"}
-                      value="random"
-                      onChange={handleSetRole}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Random
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      checked={displayRole() === "randomByLevel"}
-                      value="randomByLevel"
-                      onChange={handleSetRole}
-                      disabled={tabs.length === 0}
-                    />{" "}
-                    Random (per level)
-                  </div>
-                </div>
+              <div className="logrow-buttons">
+                <button onClick={() => downloadCSV(data)}><i class="fas fa-file-csv"></i></button>
+                <button onClick={() => downloadJSON(data)}><i class="fas fa-file-code"></i></button>
+                <button onClick={() => setRemoveLog({
+                  id: data.gameactionid,
+                  room: tabs[toggleState-1][1]
+                })}><i class="fas fa-trash-alt"></i></button>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="studentbuttonemail"
-            >
-              Email Student/Participant
-            </button>
-            <Modal
-              isOpen={isOpen}
-              onRequestClose={toggleModal}
-              contentLabel="My dialog"
-              className="createmodaltab"
-              overlayClassName="myoverlaytab"
-              closeTimeoutMS={250}
-              ariaHideApp={false}
-            >
-              <CreateEmail
-                addstudent={true}
-                gameid={props.gameid}
-                title={props.title}
-                close={() => setIsOpen(false)}
-              />
-            </Modal>
-          </div>
-          <h3>Student/participant list:</h3>
-          <Table addstudent={false} gameid={props.gameid} title={props.title} />
+          ))}
         </div>
-        {tabs.map((tab, i) => (
+      ) : (
+        <div className="logs-margin" />
+      )}
+      <div className="page-margin tabs">
+        <ul className="selected-tab">
+          <li
+            onClick={() => toggleTab(0)}
+            className={toggleState === 0 ? "selected" : ""}
+          >
+            <span className="tab-text">Overview</span>
+          </li>
+          {tabs.map((tab, i) => (
+            <li
+              onClick={() => toggleTab(i + 1)}
+              className={toggleState === i + 1 ? "selected" : ""}
+            >
+              <span className="tab-text">{tab[0]}</span>
+            </li>
+          ))}
+          <li
+            onClick={() => toggleTab(tabs.length + 1)}
+            className={toggleState === tabs.length + 1 ? "selected" : ""}
+          >
+            <span className="tab-text">Add group</span>
+          </li>
+        </ul>
+        <div className="content-tabs">
+          <div
+            className={toggleState === 0 ? "content  active-content" : "content"}
+          >
+            <div className="content-row">
+              <div className="content-settings">
+                <h3>Settings:</h3>
+                <div className="simadv">
+                  <h3>Simulation advancement</h3>
+                  <div className="content-radiobuttons">
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayAdvance() === "teacher"}
+                        value="teacher"
+                        onChange={handleSetAdvancement}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Teacher/Facilitator
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayAdvance() === "student"}
+                        value="student"
+                        onChange={handleSetAdvancement}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Student/Participants
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayAdvance() === "timed"}
+                        value="timed"
+                        onChange={handleSetAdvancement}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      <span>Timed =</span>
+                      <input
+                        onChange={handleTime}
+                        value={time}
+                        type="text"
+                        placeholder="Time"
+                        className="content-timeinput"
+                        disabled={tabs.length === 0 || displayAdvance() !== "timed"}
+                      />
+                      <span>min</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="simadv">
+                  <h3>Role assignment</h3>
+                  <div className="content-radiobuttons">
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayRole() === "teacher"}
+                        value="teacher"
+                        onChange={handleSetRole}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Teacher/Facilitator
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayRole() === "student"}
+                        value="student"
+                        onChange={handleSetRole}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Student/Participants
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayRole() === "random"}
+                        value="random"
+                        onChange={handleSetRole}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Random
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        checked={displayRole() === "randomByLevel"}
+                        value="randomByLevel"
+                        onChange={handleSetRole}
+                        disabled={tabs.length === 0}
+                      />{" "}
+                      Random (per level)
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="studentbuttonemail"
+              >
+                Email Student/Participant
+              </button>
+              <Modal
+                isOpen={isOpen}
+                onRequestClose={toggleModal}
+                contentLabel="My dialog"
+                className="createmodaltab"
+                overlayClassName="myoverlaytab"
+                closeTimeoutMS={250}
+                ariaHideApp={false}
+              >
+                <CreateEmail
+                  addstudent={true}
+                  gameid={props.gameid}
+                  title={props.title}
+                  close={() => setIsOpen(false)}
+                />
+              </Modal>
+            </div>
+            <h3>Student/participant list:</h3>
+            <Table addstudent={false} gameid={props.gameid} title={props.title} />
+          </div>
+          {tabs.map((tab, i) => (
+            <div
+              className={
+                toggleState === i + 1 ? "content  active-content" : "content"
+              }
+            >
+              <div className="content-header">
+                <h2>{tab[0]}</h2>
+                <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
+                  Join Room
+                </a>
+                <button
+                  onClick={() => handleDeleteGroup(tab)}
+                  className="deletegroup"
+                >
+                  Delete Group
+                </button>
+              </div>
+              <hr />
+              <div className="groupcontainer">
+                <div className="group-column">
+                  <h3>Chat: </h3>
+                  <div className="group-chatlog">
+                    <div>
+                      {props.chatMessages.map(({ sender, message }) => (
+                        <p><b>{sender.name}: </b>{message}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="group-column">
+                  <h3>Performance:</h3>
+                  <div className="chart" disabled={interactionData.length === 0}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart
+                        data={interactionData}
+                        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                      >
+                        <Line type="monotone" dataKey="interactions" stroke="#8884d8" />
+                        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                      </LineChart>
+                    </ResponsiveContainer>
+                      {interactionData.length === 0 && (
+                        <p>No data has been recorded yet.</p>
+                      )}
+                  </div>
+                </div>
+              </div>
+              <h3>Students / participants in room:</h3>
+              <div className="group-table">
+                <Table
+                  addstudent={true}
+                  gameroom={tab}
+                  gameid={props.gameid}
+                  title={props.title}
+                />
+              </div>
+            </div>
+          ))}
           <div
             className={
-              toggleState === i + 1 ? "content  active-content" : "content"
+              toggleState === tabs.length + 1
+                ? "content active-content"
+                : "content"
             }
           >
-            <div className="content-header">
-              <h2>{tab[0]}</h2>
-              <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
-                Join Room
-              </a>
-              <button
-                onClick={() => handleDeleteGroup(tab)}
-                className="deletegroup"
-              >
-                Delete Group
-              </button>
-            </div>
+            <h2>Add Group!</h2>
             <hr />
-            <div className="groupcontainer">
-              <div className="group-column">
-                <h3>Chat: </h3>
-                <div className="group-chatlog">
-                  <div>
-                    {props.chatMessages.map(({ sender, message }) => (
-                      <p><b>{sender.name}: </b>{message}</p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="group-column">
-                <h3>Performance:</h3>
-                <div className="chart" disabled={interactionData.length === 0}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart
-                      data={interactionData}
-                      margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
-                    >
-                      <Line type="monotone" dataKey="interactions" stroke="#8884d8" />
-                      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                    </LineChart>
-                  </ResponsiveContainer>
-                    {interactionData.length === 0 && (
-                      <p>No data has been recorded yet.</p>
-                    )}
-                </div>
-              </div>
-            </div>
-            <h3>Previous Runs:</h3>
-            {logs[tab[1]] && logs[tab[1]].map(data => (
-              <div className="logrow" key={data.gameactionid}>
-                <div className="logrow-info">
-                  <i class="fas fa-scroll"></i>
-                  <p>
-                    Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")}, 
-                    lasted {getGameLength(data)}
-                  </p>
-                </div>
-                <div className="logrow-buttons">
-                  <button onClick={() => downloadJSON(data)}><i class="fas fa-file-download"></i></button>
-                  <button onClick={() => setRemoveLog({
-                    id: data.gameactionid,
-                    room: tab[1]
-                  })}><i class="fas fa-trash-alt"></i></button>
-                </div>
-              </div>
-            ))}
-            <h3>Students / participants in room:</h3>
-            <div className="group-table">
-              <Table
-                addstudent={true}
-                gameroom={tab}
-                gameid={props.gameid}
-                title={props.title}
+            <p>
+              Group name
+              <input
+                onChange={handleChange}
+                type="text"
+                className="textbox"
+                placeholder="Group Name"
+                id="namei"
               />
-            </div>
+            </p>
+            <button className="addgroup" onClick={handleSubmit}>
+              Add
+            </button>
           </div>
-        ))}
-        <div
-          className={
-            toggleState === tabs.length + 1
-              ? "content active-content"
-              : "content"
-          }
-        >
-          <h2>Add Group!</h2>
-          <hr />
-          <p>
-            Group name
-            <input
-              onChange={handleChange}
-              type="text"
-              className="textbox"
-              placeholder="Group Name"
-              id="namei"
-            />
-          </p>
-          <button className="addgroup" onClick={handleSubmit}>
-            Add
-          </button>
         </div>
+        <ConfirmationModal
+          visible={!!removeLog}
+          hide={() => setRemoveLog(null)}
+          confirmFunction={handleRemoveLog}
+          confirmMessage={"Delete"}
+          message={`Are you sure you want to delete this game log?`}
+        />
       </div>
-      <ConfirmationModal
-        visible={!!removeLog}
-        hide={() => setRemoveLog(null)}
-        confirmFunction={handleRemoveLog}
-        confirmMessage={"Delete"}
-        message={`Are you sure you want to delete this game log?`}
-      />
-    </div>
+    </>
   );
 }
 

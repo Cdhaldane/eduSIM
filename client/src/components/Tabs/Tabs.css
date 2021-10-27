@@ -3,7 +3,6 @@
 .selected-tab {
   text-align: center;
   list-style: none;
-  margin: 50px 0 0;
   font-size: 24px;
   padding: 0;
   line-height: 24px;
@@ -423,10 +422,36 @@ hr {
   font-size: 1.3em;
 }
 
+.logs-margin {
+  height: 50px;
+}
+
+.logs {
+  display: flex;
+  height: auto;
+  margin-bottom: 10px;
+  flex-direction: column;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.logs[hidden] {
+  height: 30px;
+  margin-bottom: 20px;
+}
+.logs-show {
+  background-color: var(--primary);
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
 .logrow {
   display: flex;
   align-items: center;
   margin-top: 5px;
+  transition: opacity .3s;
+}
+.logrow[hidden] {
+  opacity: 0;
 }
 .logrow-info {
   background-color: rgba(0,0,0,0.1);
@@ -456,7 +481,7 @@ hr {
   border: none;
   height: 36px;
   width: 36px;
-  font-size: 1em;
+  font-size: 1.3em;
   display: flex;
   align-items: center;
   justify-content: center;
