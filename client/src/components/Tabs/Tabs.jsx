@@ -13,6 +13,8 @@ import {
 } from "recharts";
 import Modal from "react-modal";
 import { useAlertContext } from "../Alerts/AlertContext";
+import moment from "moment";
+import ConfirmationModal from "../Modal/ConfirmationModal";
 
 import "./Tabs.css";
 
@@ -24,6 +26,7 @@ function Tabs(props) {
   const [time, setTime] = useState(1);
   const [interactionData, setInteractionData] = useState({});
   const [logs, setLogs] = useState({});
+  const [removeLog, setRemoveLog] = useState(null);
 
   const alertContext = useAlertContext();
 
@@ -178,6 +181,35 @@ function Tabs(props) {
     }
     return "student";
   };
+
+  const getGameLength = (data) => {
+    let start = moment(data.gamedata.roomStatus.startTime);
+    let end = moment(data.createdAt).add(data.gamedata.roomStatus.timeElapsed || 0, 'milliseconds');
+    return moment.duration(start.diff(end)).humanize();
+  }
+
+  const downloadJSON = async (object) => {
+    const blob = new Blob([JSON.stringify(object)],{type:'application/json'});
+    const href = await URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = "log.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const handleRemoveLog = () => {
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/deleteGameLog', {
+      gameactionid: removeLog.id
+    }).then((res) => {
+      setLogs(prev => ({
+        ...prev,
+        [removeLog.room]: prev[removeLog.room].filter(val => val.gameactionid !== removeLog.id)
+      }));
+      setRemoveLog(null);
+    }).catch(error => console.log(error.response));
+  }
 
   return (
     <div className="page-margin tabs">
@@ -379,7 +411,22 @@ function Tabs(props) {
             </div>
             <h3>Previous Runs:</h3>
             {logs[tab[1]] && logs[tab[1]].map(data => (
-              <p key={data.gameactionid}>{data.createdAt}</p>
+              <div className="logrow" key={data.gameactionid}>
+                <div className="logrow-info">
+                  <i class="fas fa-scroll"></i>
+                  <p>
+                    Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")}, 
+                    lasted {getGameLength(data)}
+                  </p>
+                </div>
+                <div className="logrow-buttons">
+                  <button onClick={() => downloadJSON(data)}><i class="fas fa-file-download"></i></button>
+                  <button onClick={() => setRemoveLog({
+                    id: data.gameactionid,
+                    room: tab[1]
+                  })}><i class="fas fa-trash-alt"></i></button>
+                </div>
+              </div>
             ))}
             <h3>Students / participants in room:</h3>
             <div className="group-table">
@@ -416,6 +463,13 @@ function Tabs(props) {
           </button>
         </div>
       </div>
+      <ConfirmationModal
+        visible={!!removeLog}
+        hide={() => setRemoveLog(null)}
+        confirmFunction={handleRemoveLog}
+        confirmMessage={"Delete"}
+        message={`Are you sure you want to delete this game log?`}
+      />
     </div>
   );
 }

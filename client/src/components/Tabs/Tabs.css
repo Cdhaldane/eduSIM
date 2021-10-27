@@ -423,6 +423,46 @@ hr {
   font-size: 1.3em;
 }
 
+.logrow {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+.logrow-info {
+  background-color: rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  opacity: 0.9;
+}
+.logrow-info > i {
+  padding-right: 10px;
+}
+.logrow-info > p {
+  font-size: .9em;
+  padding: 0;
+}
+.logrow-buttons {
+  display: flex;
+  margin-left: 5px;
+}
+.logrow-buttons > button {
+  color: white;
+  background-color: var(--primary);
+  padding: 10px;
+  border-radius: 999px;
+  margin-left: 5px;
+  border: none;
+  height: 36px;
+  width: 36px;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 #roomh3 {
   position: relative;
   top: 250px;

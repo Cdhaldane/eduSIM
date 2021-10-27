@@ -202,6 +202,33 @@ exports.getGameLogs = async (req, res) => {
   }
 }
 
+exports.deleteGameLog = async (req, res) => {
+  const gameactionid = req.body.gameactionid;
+
+  const gameaction = await GameActions.findOne({
+    where: {
+      gameactionid
+    },
+  });
+
+  if (!gameaction) {
+    return res.status(400).send({
+      message: `No game log found with the id ${id}`,
+    });
+  }
+
+  try {
+    await gameaction.destroy();
+    return res.send({
+      message: `Log ${gameaction} has been deleted!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+}
+
 exports.getPlayer = async (req, res) => {
   const gameplayerid = req.query.id;
   try {
