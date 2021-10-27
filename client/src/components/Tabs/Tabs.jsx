@@ -190,7 +190,7 @@ function Tabs(props) {
   }
 
   const downloadJSON = async (object) => {
-    const blob = new Blob([JSON.stringify(object)],{type:'application/json'});
+    const blob = new Blob([JSON.stringify(object,null,2)],{type:'application/json'});
     const href = await URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
@@ -200,12 +200,48 @@ function Tabs(props) {
     document.body.removeChild(link);
   }
 
-  const downloadCSV = async (object) => {
-    const blob = new Blob([JSON.stringify(object)],{type:'application/json'});
+  const downloadCSV = async ({ gamedata }) => {
+    const parsedMessages = gamedata.messages.map(msg => [
+      msg.sender.name,
+      msg.sender.role,
+      msg.sender.invited ? msg.sender.dbid : '',
+      msg.message,
+      msg.timeSent
+    ].join(','));
+    const parsedInteractions = gamedata.interactions.map(int => [
+      int.player.name,
+      int.player.role,
+      int.player.invited ? int.player.dbid : '',
+      int.gamepieceId,
+      `"`+JSON.stringify(int.parameters).replace(/"([^"]+)":/g, '$1:').replaceAll("\"", "'")+`"`,
+      int.timestamp
+    ].join(','));
+
+    let content = [
+      "Messages","","","","",
+      "Interactions","","","","",""
+    ].join(',') + "\n" + [
+      "Name","Role","Database ID","Message","Timestamp",
+      "Name","Role","Database ID","Gamepiece","Parameters","Timestamp"
+    ].join(',') + "\n";
+
+    for (let i=0; i<Math.max(parsedMessages.length,parsedInteractions.length); i++) {
+      let str="";
+      if (parsedMessages[i]) {
+        str += parsedMessages[i];
+      } else str += ",,,,";
+      str += ",";
+      if (parsedInteractions[i]) {
+        str += parsedInteractions[i]
+      }
+      content += str + "\n";
+    }
+
+    const blob = new Blob([content],{type:'text/csv'});
     const href = await URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
-    link.download = "log.json";
+    link.download = "log.csv";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -240,8 +276,8 @@ function Tabs(props) {
                 </p>
               </div>
               <div className="logrow-buttons">
-                <button onClick={() => downloadCSV(data)}><i class="fas fa-file-csv"></i></button>
-                <button onClick={() => downloadJSON(data)}><i class="fas fa-file-code"></i></button>
+                <button onClick={() => downloadCSV(data)} title="Download spreadsheet"><i class="fas fa-file-csv"></i></button>
+                <button onClick={() => downloadJSON(data)} title="Download JSON data"><i class="fas fa-file-code"></i></button>
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState-1][1]

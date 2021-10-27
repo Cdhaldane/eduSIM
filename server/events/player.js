@@ -17,7 +17,6 @@ export default async (server, client, event, args) => {
       const { message, group } = args;
 
       const sender = await getPlayer(client.id);
-      if (!sender.invited) sender.dbid = undefined;
 
       updateChatlog(room, {
         sender,
