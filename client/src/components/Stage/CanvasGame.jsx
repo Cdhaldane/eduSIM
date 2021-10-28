@@ -192,7 +192,7 @@ class Graphics extends Component {
     let id = dbid
     if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
     this.props.socket.emit("playerUpdate", {
-      role, name, dbid: this.props.initialUserId || id
+      role, name, dbid: this.props.initialUserId || id, invited: !!this.props.initialUserId
     })
     sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: this.props.initialUserId || id}));
   }

@@ -17,6 +17,10 @@ const Level = (props) => {
     // setCount(count + 1);
     handleLevel(count + 1);
   }
+  
+  const handleBack = () => {
+    if (count > 0) handleLevel(count - 1);
+  }
 
   useEffect(() => {
     if (props.levelVal) {
@@ -86,10 +90,16 @@ const Level = (props) => {
           )}
 
           {props.freeAdvance && (
-            <button
-              onClick={handleCount}>
-              Next
-            </button>
+            <>
+              <button
+                onClick={handleBack}>
+                Back
+              </button>
+              <button
+                onClick={handleCount}>
+                Next
+              </button>
+            </>
           )}
         </div>
 

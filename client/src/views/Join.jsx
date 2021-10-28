@@ -8,6 +8,7 @@ import { Image } from "cloudinary-react";
 import { io } from "socket.io-client";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
+import ConfirmationModal from "../components/Modal/ConfirmationModal";
 
 function Join(props) {
   const [showNote, setShowNote] = useState(false);
@@ -15,6 +16,7 @@ function Join(props) {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
+  const [resetID, setResetID] = useState(null);
   const alertContext = useAlertContext();
 
   if (props.location.gameinstance !== undefined) {
@@ -81,8 +83,6 @@ function Join(props) {
     } return [];
   }, [roomMessages, currentRoom]);
 
-  console.log(roomMessages);
-
   const startSim = async () => {
     if (!socket) return;
     await socket.emit("gameStart", (currentRoom && {
@@ -113,6 +113,12 @@ function Join(props) {
   const handleNextPage = (room) => {
     if (!socket) return;
     socket.emit("goToNextPage", (currentRoom && {
+      room: currentRoom[2]
+    }));
+  };
+  const handlePrevPage = (room) => {
+    if (!socket) return;
+    socket.emit("goToPrevPage", (currentRoom && {
       room: currentRoom[2]
     }));
   };
@@ -177,19 +183,28 @@ function Join(props) {
               </button>
               <button
                 class="joinboard-button"
-                onClick={resetSim}
+                onClick={() => setResetID(true)}
                 title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
               >
                 <i class="fa fa-retweet"></i>
               </button>
               {advanceMode === "teacher" && (
-                <button
-                  class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                  onClick={handleNextPage}
-                  title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
-                >
-                  <i class="fa fa-angle-double-right"></i>
-                </button>
+                <>
+                  <button
+                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handlePrevPage}
+                    title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
+                  >
+                    <i class="fa fa-angle-double-left"></i>
+                  </button>
+                  <button
+                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handleNextPage}
+                    title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
+                  >
+                    <i class="fa fa-angle-double-right"></i>
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -215,6 +230,14 @@ function Join(props) {
         chatMessages={currentRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
+      />
+
+      <ConfirmationModal
+        visible={!!resetID}
+        hide={() => setResetID(null)}
+        confirmFunction={resetSim}
+        confirmMessage={"Reset"}
+        message={`Are you sure you want to reset every simulation room? (A backup log will be saved.)`}
       />
     </div>
   );
