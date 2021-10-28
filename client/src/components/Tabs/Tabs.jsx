@@ -75,8 +75,6 @@ function Tabs(props) {
     }
   };
 
-  console.log(logs);
-
   const handleSubmit = (e) => {
     // Check if name is empty or a duplicate
     if (newGroup.trim() === "") {

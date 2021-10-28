@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { withAuth0 } from "@auth0/auth0-react";
 import Tabs from "../components/Tabs/Tabs";
 import CreateCsv from "../components/CreateCsv/CreateCsv";
