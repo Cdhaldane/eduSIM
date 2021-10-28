@@ -263,8 +263,8 @@ function Tabs(props) {
     <>
       {(toggleState > 0 && toggleState < tabs.length+1 && logs[tabs[toggleState-1][1]]) ? (
         <div className="logs page-margin" hidden={!viewLogs}>
-          <div className="logs-show">
-            <h4 onClick={() => setViewLogs(!viewLogs)}>Display previous runs {viewLogs?'-':'+'}</h4>
+          <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
+            <h4>Display previous runs {viewLogs?'-':'+'}</h4>
           </div>
           {logs[tabs[toggleState-1][1]].map(data => (
             <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
