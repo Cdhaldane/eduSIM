@@ -157,10 +157,10 @@ function Game(props) {
   // parse seeded roles
   const parsedPlayers = useMemo(() => {
     let newPlayers = {};
-    if (roles && roles.length>0) {
-      for (const id in players) {
-        let p = {...players[id]};
-        newPlayers[id] = p;
+    for (const id in players) {
+      let p = {...players[id]};
+      newPlayers[id] = p;
+      if (roles && roles.length>0) {
         if (p.role === -1) {
           newPlayers[id].role = roles[parseInt(p.dbid, 16)%roles.length].roleName;
         } else if (p.role === -2) {
