@@ -698,7 +698,11 @@ class Graphics extends Component {
   }
 
   onObjectContextMenu = e => {
-    if (this.state.selectedShapeName !== "lines") {
+    if (
+      (this.state.selectedShapeName || this.state.groupSelection.length) &&
+      this.state.selectedShapeName !== "lines" &&
+      !this.state.drawMode
+    ) {
       const event = e.evt ? e.evt : e;
       event.preventDefault(true);
       const mousePosition = {
@@ -1064,7 +1068,7 @@ class Graphics extends Component {
         }
       } else if (event.button === 2) {
         // RIGHT CLICK
-        if (this.isShape(shape)) {
+        if (this.isShape(shape) && shape.attrs.id !== "lines") {
           if (clickShapeGroup) {
             // Check if group already selected to avoid duplicates
             let alreadySelected = false;
@@ -1947,6 +1951,11 @@ class Graphics extends Component {
   keyUp = (e) => {
     if (e.key === "Control") {
       document.body.style.cursor = "default";
+      const mainContainer = document.getElementById("editMainContainer");
+      mainContainer.classList.remove("grabCursor");
+      if (this.state.drawMode) {
+        mainContainer.classList.add("noCursor");
+      }
       this.setState({
         layerDraggable: false
       });
@@ -1981,6 +1990,9 @@ class Graphics extends Component {
       this.handlePaste();
     } else if (event.ctrlKey) {
       document.body.style.cursor = "grab";
+      const mainContainer = document.getElementById("editMainContainer");
+      mainContainer.classList.remove("noCursor");
+      mainContainer.classList.add("grabCursor");
       this.setState({
         layerDraggable: true
       });
@@ -2669,19 +2681,6 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.drawMode && (
-          <DrawModal
-            xPos={this.state.personalAreaOpen ?
-              this.state.personalAreaContextMenuX : this.state.groupAreaContextMenuX}
-            yPos={this.state.personalAreaOpen ?
-              this.state.personalAreaContextMenuY : this.state.groupAreaContextMenuY}
-            chooseColor={this.chooseColor}
-            setDrawMode={this.setDrawMode}
-            setDrawStrokeWidth={this.setDrawStrokeWidth}
-            setDrawTool={this.setDrawTool}
-          />
-        )}
-
         {/* The Top Bar */}
         <Level
           saveGame={this.handleSave}
@@ -2739,6 +2738,23 @@ class Graphics extends Component {
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
               />
             )}
+          {this.state.drawMode && (
+            <>
+              <div className='cursor' id="cursor" />
+              <DrawModal
+                xPos={this.state.personalAreaOpen ?
+                  this.state.personalAreaContextMenuX : this.state.groupAreaContextMenuX}
+                yPos={this.state.personalAreaOpen ?
+                  this.state.personalAreaContextMenuY : this.state.groupAreaContextMenuY}
+                scale={this.state.personalAreaOpen ?
+                  this.state.personalLayerScale : this.state.groupLayerScale}
+                chooseColor={this.chooseColor}
+                setDrawMode={this.setDrawMode}
+                setDrawStrokeWidth={this.setDrawStrokeWidth}
+                setDrawTool={this.setDrawTool}
+              />
+            </>
+          )}
           <Stage
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}

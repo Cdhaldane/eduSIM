@@ -1,5 +1,5 @@
 .drawModalContainer {
-  border: 2px solid rgb(97, 97, 97);
+  border: 2px solid rgb(59, 59, 59);
   border-radius: 5px;
   z-index: 1000;
   position: absolute;
@@ -8,6 +8,10 @@
   box-shadow: var(--box-shadow);
   border-top: none;
   background-color: white;
+}
+
+.drawModalContainer:hover {
+  cursor: default;
 }
 
 @media screen and (orientation: portrait) {
@@ -25,7 +29,7 @@
 }
 
 .drawModalExitButton>i {
-  color: #ef5757;
+  color: #ff0000;
   font-size: 26px;
 }
 
@@ -34,13 +38,13 @@
 }
 
 .drawModalExitButton:hover>i {
-  color: #ff3737;
+  color: #e60d0d;
 }
 
 .drawModalDragBar {
   width: 100%;
   height: 28px;
-  background-image: linear-gradient(rgb(97, 97, 97), rgb(0, 0, 0));
+  background-image: linear-gradient(rgb(59, 59, 59), rgb(0, 0, 0));
 }
 
 .drawModalBottomControls {
@@ -54,6 +58,14 @@
 
 .drawModalBottomControls>label {
   padding-right: 5px;
+}
+
+.drawModalBottomControls>label:hover {
+  cursor: pointer;
+}
+
+.drawModalBottomControls>input[type=radio]:hover {
+  cursor: pointer;
 }
 
 .drawModalStrokeSlider {

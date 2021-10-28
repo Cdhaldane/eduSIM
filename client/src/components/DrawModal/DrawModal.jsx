@@ -11,13 +11,41 @@ const DrawModal = (props) => {
   const [height, setHeight] = useState(0);
   const [sidebarW, setSidebarW] = useState(0);
   const [topbarH, setTopbarH] = useState(0);
-  const [strokeW, setStrokeW] = useState(5);
+  const [strokeW, _setStrokeW] = useState(5);
   const [tool, setTool] = useState("pen");
   const ref = useRef();
+  const scaleRef = useRef(props.scale);
+
+  useEffect(() => {
+    scaleRef.current = props.scale;
+  }, [props.scale]);
+
+  const drawCursor = (e) => {
+    const cursor = document.getElementById("cursor");
+    cursor.style.height = strokeWRef.current*scaleRef.current + "px";
+    cursor.style.width = strokeWRef.current*scaleRef.current + "px";
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+  }
+
+  const strokeWRef = useRef(strokeW);
+  const setStrokeW = data => {
+    strokeWRef.current = data;
+    _setStrokeW(data);
+  };
 
   useEffect(() => {
     setWidth(ref.current.clientWidth);
     setHeight(ref.current.clientHeight);
+
+    const mainContainer = document.getElementById("editMainContainer");
+    mainContainer.classList.add("noCursor");
+
+    document.body.addEventListener("mousemove", drawCursor);
+    return () => {
+      mainContainer.classList.remove("noCursor");
+      document.body.removeEventListener("mousemove", drawCursor);
+    }
   }, []);
 
   useEffect(() => {
@@ -74,7 +102,12 @@ const DrawModal = (props) => {
             }}
           />
           <h4>Tool:</h4>
-          <label>Pen</label>
+          <label
+            onClick={() => {
+              props.setDrawTool("pen");
+              setTool("pen");
+            }}
+          >Pen</label>
           <input
             type="radio"
             name="drawModalTool"
@@ -85,7 +118,15 @@ const DrawModal = (props) => {
               setTool("pen");
             }}
           />
-          <label style={{ paddingLeft: "5px" }}>Eraser</label>
+          <label
+            style={{ paddingLeft: "5px" }}
+            onClick={() => {
+              props.setDrawTool("eraser");
+              setTool("eraser");
+            }}
+          >
+            Eraser
+          </label>
           <input
             type="radio"
             name="drawModalTool"
