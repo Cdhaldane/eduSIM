@@ -116,6 +116,12 @@ function Join(props) {
       room: currentRoom[2]
     }));
   };
+  const handlePrevPage = (room) => {
+    if (!socket) return;
+    socket.emit("goToPrevPage", (currentRoom && {
+      room: currentRoom[2]
+    }));
+  };
 
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
@@ -183,13 +189,22 @@ function Join(props) {
                 <i class="fa fa-retweet"></i>
               </button>
               {advanceMode === "teacher" && (
-                <button
-                  class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                  onClick={handleNextPage}
-                  title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
-                >
-                  <i class="fa fa-angle-double-right"></i>
-                </button>
+                <>
+                  <button
+                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handlePrevPage}
+                    title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
+                  >
+                    <i class="fa fa-angle-double-left"></i>
+                  </button>
+                  <button
+                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handleNextPage}
+                    title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
+                  >
+                    <i class="fa fa-angle-double-right"></i>
+                  </button>
+                </>
               )}
             </div>
           </div>

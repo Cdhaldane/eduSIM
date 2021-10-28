@@ -216,5 +216,41 @@ export default async (server, client, event, args) => {
 
       break;
     }
+    
+    case "goToPrevPage": {
+      const { room } = args || {};
+
+      if (room) {
+        const { level = 1 } = await getRoomStatus(room);
+
+        if (level-1 > 0) {
+          const newStatus = await updateRoomStatus(room, {
+            level: level - 1
+          });
+
+          server.to(room).emit("roomStatusUpdate", {
+            room,
+            status: newStatus
+          });
+        }
+      } else {
+        const rooms = await getSimulationRooms(game);
+        rooms.forEach(async ({ dataValues: room }) => {
+          const { running, timeElapsed, level = 1 } = await getRoomStatus(room.gameroom_url);
+
+          if (running || timeElapsed && level-1 > 0) {
+            const newStatus = await updateRoomStatus(room.gameroom_url, {
+              level: level - 1
+            });
+            server.to(room.gameroom_url).emit("roomStatusUpdate", {
+              room: room.gameroom_url,
+              status: newStatus
+            });
+          }
+        });
+      }
+
+      break;
+    }
   };
 }
