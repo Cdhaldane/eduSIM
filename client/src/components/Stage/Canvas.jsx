@@ -1227,7 +1227,7 @@ class Graphics extends Component {
       } else if (shape) {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
-          if (this.state.selection.isDraggingShape) {
+          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "lines") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
@@ -2593,6 +2593,10 @@ class Graphics extends Component {
         />
 
         {/* Load objects in state */}
+        {this.state.lines.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Line {...this.lineProps(obj, index)} /> : null
+        })}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
@@ -2600,10 +2604,6 @@ class Graphics extends Component {
         {this.state.ellipses.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
-        })}
-        {this.state.lines.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Line {...this.lineProps(obj, index)} /> : null
         })}
         {this.state.images.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
