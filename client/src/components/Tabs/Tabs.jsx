@@ -206,7 +206,7 @@ function Tabs(props) {
       msg.sender.role,
       msg.sender.invited ? msg.sender.dbid : '',
       msg.message,
-      msg.timeSent
+      moment(msg.timeSent).format()
     ].join(','));
     const parsedInteractions = gamedata.interactions.map(int => [
       int.player.name,
@@ -214,14 +214,14 @@ function Tabs(props) {
       int.player.invited ? int.player.dbid : '',
       int.gamepieceId,
       `"`+JSON.stringify(int.parameters).replace(/"([^"]+)":/g, '$1:').replaceAll("\"", "'")+`"`,
-      int.timestamp
+      moment(int.timestamp).format()
     ].join(','));
 
     let content = [
-      "Messages","","","","",
+      "Messages","","","","","",
       "Interactions","","","","",""
     ].join(',') + "\n" + [
-      "Name","Role","Database ID","Message","Timestamp",
+      "Name","Role","Database ID","Message","Timestamp","",
       "Name","Role","Database ID","Gamepiece","Parameters","Timestamp"
     ].join(',') + "\n";
 
@@ -230,7 +230,7 @@ function Tabs(props) {
       if (parsedMessages[i]) {
         str += parsedMessages[i];
       } else str += ",,,,";
-      str += ",";
+      str += ",,";
       if (parsedInteractions[i]) {
         str += parsedInteractions[i]
       }

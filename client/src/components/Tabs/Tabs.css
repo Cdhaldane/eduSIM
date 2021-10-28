@@ -443,6 +443,7 @@ hr {
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+  user-select: none;
 }
 .logrow {
   display: flex;
