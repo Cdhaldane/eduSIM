@@ -134,26 +134,93 @@ const DropdownEditPoll = (props) => {
               </select>
             </td>
             <td className="pollsEditorRequiredCheck">
-              <input 
-              type="checkbox" 
-              checked={q.isRequired} 
-              value={q.isRequired} 
-              onChange={(e) => {
-                setQuestionParam("isRequired", pIndex, index, e.target.checked);
-              }} />
+              <input
+                type="checkbox"
+                checked={q.isRequired}
+                value={q.isRequired}
+                onChange={(e) => {
+                  setQuestionParam("isRequired", pIndex, index, e.target.checked);
+                }} />
             </td>
             <td
               className={`editPollEditBtns`}
+              onClick={() => {
+                if (!(pIndex === 0 && index === 0)) {
+                  if (index !== 0) {
+                    // It is not the first question on the page (move it up one)
+                    const pageQs = pages[pIndex].questions;
+                    const prevQ = pageQs[index - 1];
+                    pageQs[index - 1] = q;
+                    pageQs[index] = prevQ;
+                    const newPages = [...pages];
+                    newPages[pIndex] = {
+                      questions: pageQs
+                    };
+                    setPages(newPages);
+                  } else {
+                    // It is the first question on the page (move to end of previous page)
+                    const prevPage = {
+                      questions: [...pages[pIndex - 1].questions, q]
+                    };
+                    const thisPage = {
+                      questions: [...p.questions].slice(1)
+                    };
+                    let newPages = [...pages];
+                    newPages[pIndex - 1] = prevPage;
+                    if (thisPage.questions.length) {
+                      newPages[pIndex] = thisPage;
+                    } else {
+                      newPages[pIndex] = null;
+                      newPages = newPages.filter(e => e);
+                    }
+                    setTimeout(() => setPages(newPages), 0);
+                  }
+                }
+              }}
             >
               <i
-                className={`fas fa-caret-up`}
+                className={`fas fa-caret-up ${pIndex === 0 && index === 0 ? "disabled" : ""}`}
               />
             </td>
             <td
               className={`editPollEditBtns`}
+              onClick={() => {
+                if (!(pIndex === (pages.length - 1) && index === (p.questions.length - 1))) {
+                  if (index !== (p.questions.length - 1)) {
+                    // It is not the last question on the page (move it down one)
+                    const pageQs = pages[pIndex].questions;
+                    const nextQ = pageQs[index + 1];
+                    pageQs[index + 1] = q;
+                    pageQs[index] = nextQ;
+                    const newPages = [...pages];
+                    newPages[pIndex] = {
+                      questions: pageQs
+                    };
+                    setPages(newPages);
+                  } else {
+                    // It is the last question on the page (move to start of next page)
+                    const nextPage = {
+                      questions: [q, ...pages[pIndex + 1].questions]
+                    };
+                    const thisPage = {
+                      questions: [...p.questions].slice(0, -1)
+                    };
+                    let newPages = [...pages];
+                    newPages[pIndex + 1] = nextPage;
+                    if (thisPage.questions.length) {
+                      newPages[pIndex] = thisPage;
+                    } else {
+                      newPages[pIndex] = null;
+                      newPages = newPages.filter(e => e);
+                    }
+                    setTimeout(() => setPages(newPages), 0);
+                  }
+                }
+              }}
             >
               <i
-                className={`fas fa-caret-down`}
+                className={`fas fa-caret-down 
+                ${pIndex === (pages.length - 1) && index === (p.questions.length - 1) ? "disabled" : ""}`}
               />
             </td>
             <td
@@ -212,6 +279,26 @@ const DropdownEditPoll = (props) => {
               <td></td>
               <td
                 className={`editPollEditBtns`}
+                onClick={() => {
+                  // Move question above down to next page
+                  const prevQs = pages[pIndex - 1].questions;
+                  const q = prevQs[prevQs.length - 1];
+                  const nextPage = {
+                    questions: [q, ...pages[pIndex].questions]
+                  };
+                  const thisPage = {
+                    questions: [...prevQs].slice(0, -1)
+                  };
+                  let newPages = [...pages];
+                  newPages[pIndex] = nextPage;
+                  if (thisPage.questions.length) {
+                    newPages[pIndex - 1] = thisPage;
+                  } else {
+                    newPages[pIndex - 1] = null;
+                    newPages = newPages.filter(e => e);
+                  }
+                  setTimeout(() => setPages(newPages), 0);
+                }}
               >
                 <i
                   className={`fas fa-caret-up`}
@@ -219,6 +306,26 @@ const DropdownEditPoll = (props) => {
               </td>
               <td
                 className={`editPollEditBtns`}
+                onClick={() => {
+                  // Move question below page above to previous page
+                  const p = pages[pIndex - 1].questions;
+                  const q = pages[pIndex].questions[0];
+                  const prevPage = {
+                    questions: [...p, q]
+                  };
+                  const thisPage = {
+                    questions: [...pages[pIndex].questions].slice(1)
+                  };
+                  let newPages = [...pages];
+                  newPages[pIndex - 1] = prevPage;
+                  if (thisPage.questions.length) {
+                    newPages[pIndex] = thisPage;
+                  } else {
+                    newPages[pIndex] = null;
+                    newPages = newPages.filter(e => e);
+                  }
+                  setTimeout(() => setPages(newPages), 0);
+                }}
               >
                 <i
                   className={`fas fa-caret-down`}
@@ -279,7 +386,7 @@ const DropdownEditPoll = (props) => {
               onClick={() => {
                 if (options.length > 1) {
                   const newOptions = [...options.slice(0, index), ...options.slice(index + 1)];
-                  setTimeout(
+                  setTimeout(() =>
                     setQuestionParam("choices", currentQuestion.pIndex, currentQuestion.qIndex, newOptions),
                     0);
                 }

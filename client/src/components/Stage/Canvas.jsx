@@ -2561,12 +2561,13 @@ class Graphics extends Component {
                   name: "1",
                   inputType: "date",
                   title: "Sample Date Question:",
+                  isRequired: false
                 }, {
                   id: 2,
-                  type: "text",
+                  type: "boolean",
                   name: "2",
-                  inputType: "color",
-                  title: "Sample Color Question:",
+                  title: "Sample Yes/No Question:",
+                  isRequired: false
                 }
               ]
             }
