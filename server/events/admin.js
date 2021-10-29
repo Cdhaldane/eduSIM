@@ -1,5 +1,14 @@
-import { updateRoomStatus, getSimulationRooms, getRoomStatus, clearRoomStatus } from './utils';
+import { 
+  updateRoomStatus, 
+  getSimulationRooms, 
+  getRoomStatus, 
+  clearRoomStatus,
+  getChatlog,
+  getInteractions
+} from './utils';
 import moment from "moment";
+const GameActions = require("../models/GameActions");
+const GameRoom = require("../models/GameRooms");
 
 export default async (server, client, event, args) => {
   const { game } = client.handshake.query;
@@ -73,7 +82,24 @@ export default async (server, client, event, args) => {
       const { room } = args || {};
 
       if (room) {
-        const newStatus = await clearRoomStatus(room, true);
+        const roomStatus = await getRoomStatus(room);
+        const messages = await getChatlog(room);
+        const interactions = await getInteractions(room);
+        let { dataValues } = await GameRoom.findOne({
+          where: {
+            gameroom_url: room
+          }
+        });
+        await GameActions.create({
+          gamedata: {
+            roomStatus,
+            messages,
+            interactions
+          },
+          gameroomid: dataValues.gameroomid,
+          gameinstanceid: dataValues.gameinstanceid
+        });
+        const newStatus = await clearRoomStatus(room);
         server.to(room).emit("roomStatusUpdate", {
           room,
           status: newStatus,
@@ -81,8 +107,23 @@ export default async (server, client, event, args) => {
         });
       } else {
         const rooms = await getSimulationRooms(game);
+        for (let i=0; i<rooms.length; i++) {
+          const { dataValues } = rooms[i];
+          const roomStatus = await getRoomStatus(dataValues.gameroom_url);
+          const messages = await getChatlog(dataValues.gameroom_url);
+          const interactions = await getInteractions(dataValues.gameroom_url);
+          await GameActions.create({
+            gamedata: {
+              roomStatus,
+              messages,
+              interactions
+            },
+            gameroomid: dataValues.gameroomid,
+            gameinstanceid: dataValues.gameinstanceid
+          });
+        }
         rooms.forEach(async ({ dataValues: room }) => {
-          const newStatus = await clearRoomStatus(room.gameroom_url, true);
+          const newStatus = await clearRoomStatus(room.gameroom_url);
           server.to(room.gameroom_url).emit("roomStatusUpdate", {
             room: room.gameroom_url,
             status: newStatus,
@@ -164,6 +205,42 @@ export default async (server, client, event, args) => {
           if (running || timeElapsed) {
             const newStatus = await updateRoomStatus(room.gameroom_url, {
               level: level+1
+            });
+            server.to(room.gameroom_url).emit("roomStatusUpdate", {
+              room: room.gameroom_url,
+              status: newStatus
+            });
+          }
+        });
+      }
+
+      break;
+    }
+    
+    case "goToPrevPage": {
+      const { room } = args || {};
+
+      if (room) {
+        const { level = 1 } = await getRoomStatus(room);
+
+        if (level-1 > 0) {
+          const newStatus = await updateRoomStatus(room, {
+            level: level - 1
+          });
+
+          server.to(room).emit("roomStatusUpdate", {
+            room,
+            status: newStatus
+          });
+        }
+      } else {
+        const rooms = await getSimulationRooms(game);
+        rooms.forEach(async ({ dataValues: room }) => {
+          const { running, timeElapsed, level = 1 } = await getRoomStatus(room.gameroom_url);
+
+          if (running || timeElapsed && level-1 > 0) {
+            const newStatus = await updateRoomStatus(room.gameroom_url, {
+              level: level - 1
             });
             server.to(room.gameroom_url).emit("roomStatusUpdate", {
               room: room.gameroom_url,

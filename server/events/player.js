@@ -4,7 +4,8 @@ import {
   getPlayerByDBID,
   getRoomStatus,
   updateRoomStatus,
-  updateChatlog
+  updateChatlog,
+  addInteraction
 } from './utils';
 import moment from "moment";
 
@@ -21,7 +22,7 @@ export default async (server, client, event, args) => {
         sender,
         room,
         message,
-        group,
+        group: group.length > 0 ? group : undefined,
         timeSent: moment().valueOf()
       });
 
@@ -51,8 +52,7 @@ export default async (server, client, event, args) => {
       break;
     };
     case "playerUpdate": {
-      const { name, role, dbid } = args;
-      console.log(dbid);
+      const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
         client.emit("errorLog", "You are attempting to join as a player that has already joined.");
         return;
@@ -68,7 +68,8 @@ export default async (server, client, event, args) => {
       setPlayer(client.id, {
         name,
         role,
-        dbid
+        dbid,
+        invited
       });
 
       break;
@@ -76,7 +77,7 @@ export default async (server, client, event, args) => {
     case "interaction": {
       const { gamepieceId, parameters } = args;
       
-      const { running, gamepieces } = await getRoomStatus(room);
+      const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
         client.emit("errorLog", "Game is paused/stopped!");
@@ -95,13 +96,16 @@ export default async (server, client, event, args) => {
         status: newStatus
       });
 
-      // await addInteraction(room, {
-      //   timestamp: moment().valueOf(),
-      //   level,
-      //   gamepieceId,
-      //   parameters,
-      //   player: client.id
-      // });
+      const player = await getPlayer(client.id);
+      if (!player.invited) player.dbid = undefined;
+
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        gamepieceId,
+        parameters,
+        player
+      });
 
       break;
     };

@@ -25,7 +25,11 @@ export const updateRoomStatus = async (id, val) => {
     ...val
   };
 }
-export const clearRoomStatus = async (id, keepSettings) => {
+export const clearRoomStatus = async (id, keepSettings=true, wipeLogs=true) => {
+  if (wipeLogs) {
+    chatlogs.delete(id);
+    interactions.delete(id);
+  }
   if (keepSettings) {
     const { settings } = await getRoomStatus(id);
     rooms.set(id, {
@@ -109,6 +113,9 @@ export const getInteractionBreakdown = async (roomid) => {
     counts[level] = (counts[level] || 0) + 1;
   });
   return counts;
+};
+export const getInteractions = async (roomid) => {
+  return interactions.get(roomid) || [];
 };
 
 export const updateChatlog = async (roomid, message) => {

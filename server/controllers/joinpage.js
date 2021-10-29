@@ -3,9 +3,13 @@ const GameRoom = require("../models/GameRooms");
 const GameRole = require("../models/GameRoles");
 const GamePlayer = require("../models/GamePlayers");
 const GameInstance = require("../models/GameInstances");
+const GameActions = require("../models/GameActions");
 import cryptoRandomString from 'crypto-random-string';
 import { 
-  getInteractionBreakdown
+  getInteractionBreakdown,
+  getInteractions,
+  getChatlog,
+  getRoomStatus
 } from '../events/utils';
 
 // Create Players using csv
@@ -128,6 +132,102 @@ exports.getRoomInteractionBreakdown = async (req, res) => {
     });
   }
 };
+
+// these next two endpoints return the CURRENT STATUS of the room
+exports.getRunningGameLog = async (req, res) => {
+  const gameroomid = req.params.gameroomid;
+  try {
+    let { dataValues } = await GameRoom.findOne({
+      where: {
+        gameroomid
+      }
+    });
+    const messages = await getChatlog(dataValues.gameroom_url);
+    const interactions = await getInteractions(dataValues.gameroom_url);
+    return res.send({
+      ...dataValues,
+      messages,
+      interactions
+    });
+  } catch (err) {
+    return res.status(400).send({
+      message: `No game rooms found with the id ${gameroomid}`,
+    });
+  }
+}
+
+exports.getRunningSimulationLogs = async (req, res) => {
+  const gameinstanceid = req.params.gameinstanceid;
+  try {
+    let rooms = await GameRoom.findAll({
+      where: {
+        gameinstanceid
+      }
+    });
+    const roomData = [];
+    for (let i=0; i<rooms.length; i++) {
+      const { dataValues } = rooms[i];
+      const roomStatus = await getRoomStatus(dataValues.gameroom_url);
+      const messages = await getChatlog(dataValues.gameroom_url);
+      const interactions = await getInteractions(dataValues.gameroom_url);
+      roomData.push({
+        ...dataValues,
+        messages,
+        interactions,
+        roomStatus
+      });
+    }
+    return res.send(roomData);
+  } catch (err) {
+    return res.status(400).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+}
+
+// this returns all SAVED DATA of PAST simuilation runs stored in GameActions
+exports.getGameLogs = async (req, res) => {
+  const gameroomid = req.query.gameroomid;
+  try {
+    const gameactions = await GameActions.findAll({
+      where: {
+        gameroomid
+      }
+    });
+    return res.send(gameactions);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No game logs found with the id ${gameroomid}`,
+    });
+  }
+}
+
+exports.deleteGameLog = async (req, res) => {
+  const gameactionid = req.body.gameactionid;
+
+  const gameaction = await GameActions.findOne({
+    where: {
+      gameactionid
+    },
+  });
+
+  if (!gameaction) {
+    return res.status(400).send({
+      message: `No game log found with the id ${id}`,
+    });
+  }
+
+  try {
+    await gameaction.destroy();
+    return res.send({
+      message: `Log ${gameaction} has been deleted!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+}
 
 exports.getPlayer = async (req, res) => {
   const gameplayerid = req.query.id;

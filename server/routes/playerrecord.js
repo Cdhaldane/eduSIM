@@ -26,5 +26,8 @@ router.get('/getAllPlayers/:gameinstanceid', playerrecord.getAllPlayers);
 
 router.put('/updatePlayer', playerrecord.updatePlayer);
 
+router.get('/getGameLogs', playerrecord.getGameLogs);
+
+router.post('/deleteGameLog', playerrecord.deleteGameLog);
 
 export default router;

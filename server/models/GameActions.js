@@ -13,17 +13,13 @@ const gameactions = db.define('gameactions', {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
-  gameplayerid: {
+  gameroomid: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
-  gameroles: {
+  gamedata: {
     type: Sequelize.JSON
-  },
-  createdtimestamp: {
-    type: Sequelize.DATE,
-    allowNull: false
   }
 });
 

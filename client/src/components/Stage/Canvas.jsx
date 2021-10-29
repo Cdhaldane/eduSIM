@@ -294,7 +294,7 @@ class Graphics extends Component {
         // Put parsed saved data into state
         this.savedState.forEach((object) => {
           this.setState({
-            [object]: objects[object]
+            [object]: objects[object] || []
           });
         });
 
@@ -377,6 +377,7 @@ class Graphics extends Component {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
             const rect = this.getRect(objects[j]);
+            if (!rect) continue;
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
@@ -455,6 +456,7 @@ class Graphics extends Component {
   }
 
   getRect = (obj) => {
+    if (!obj) return;
     let rect = null;
     if (obj.tool) {
       // Drawing
