@@ -134,7 +134,11 @@ const DropdownEditPoll = (props) => {
               </select>
             </td>
             <td className="pollsEditorRequiredCheck">
-              <input type="checkbox" checked={q.isRequired} onChange={(e) => {
+              <input 
+              type="checkbox" 
+              checked={q.isRequired} 
+              value={q.isRequired} 
+              onChange={(e) => {
                 setQuestionParam("isRequired", pIndex, index, e.target.checked);
               }} />
             </td>
