@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import Backdrop from "../../ui/Backdrop"
-import NavLinksGroup from "./NavLinksGroup"
-import NavToggle from "./NavToggle"
+import Backdrop from "../../ui/Backdrop";
+import NavLinksGroup from "./NavLinksGroup";
+import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
+import Modal from "react-modal";
+
+import "./Performance.css";
 
 const StyledNav = styled.nav`
   background-color: #8f001a;
@@ -56,7 +59,7 @@ const Submenu = styled.div`
   @media screen and (orientation: portrait) {
     transition-property: 
       ${(p) => p.open ? "width" : "width, transform"} !important;
-    transition-timing-function: ${(p) => p.open ? "cubic-bezier(0, 0, 0.2, 1)" : "cubic-bezier(0, 0, 0.31, 1)" } !important;
+    transition-timing-function: ${(p) => p.open ? "cubic-bezier(0, 0, 0.2, 1)" : "cubic-bezier(0, 0, 0.31, 1)"} !important;
     width: ${(p) => (p.open ? "350px" : "256px")};
   }
 `;
@@ -68,37 +71,46 @@ const Disabled = styled.div`
   `}
 `;
 
-function Sidebar(props) {
+const Sidebar = (props) => {
   const sidebarRef = useRef();
   const [compact, setCompact] = useState(0);
   const [submenu, setSubmenu] = useState(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
 
-  const [mvisible, setMvisible] = useState("false")
-  const [avisible, setAvisible] = useState("false")
-  const [pavisible, setPavisible] = useState("false")
-  const [svisible, setSvisible] = useState("false")
-  const [pevisible, setPevisible] = useState("false")
+  const [mvisible, setMvisible] = useState("false");
+  const [avisible, setAvisible] = useState("false");
+  const [pavisible, setPavisible] = useState("false");
+  const [svisible, setSvisible] = useState("false");
+  const [pevisible, setPevisible] = useState("false");
 
-  function handleMvisible(e) {
+  const [showPerformanceModal, setShowPerformanceModal] = useState(false);
+  const performanceModal = new useRef(showPerformanceModal);
+  const performanceBtn = new useRef();
+
+  const handleMvisible = (e) => {
     setMvisible(e);
   }
-  function handleAvisible(e) {
+  const handleAvisible = (e) => {
     setAvisible(e);
   }
-  function handlePavisible(e) {
+  const handlePavisible = (e) => {
     setPavisible(e);
   }
-  function handleSvisible(e) {
+  const handleSvisible = (e) => {
     setSvisible(e);
   }
-  function handlePevisible(e) {
+  const handlePevisible = (e) => {
     setPevisible(e);
   }
-  
+
   const handleClickOutside = e => {
     if (!sidebarRef.current.contains(e.target)) {
       props.close();
+    }
+
+    if (performanceModal.current && performanceBtn.current &&
+      !(performanceModal.current.contains(e.target) || performanceBtn.current.contains(e.target))) {
+      setShowPerformanceModal(false);
     }
   }
 
@@ -118,6 +130,12 @@ function Sidebar(props) {
         setSubmenuVisible(false);
       }
     }
+
+    switch (nav) {
+      case "performance":
+        setTimeout(setShowPerformanceModal(true));
+        break;
+    }
   };
 
   const toggleCompact = (val) => {
@@ -133,7 +151,7 @@ function Sidebar(props) {
     setCompact(false);
     setSubmenuVisible(false);
   }, [props.disabled]);
-  
+
   const links = [
     {
       img: props.img,
@@ -160,11 +178,11 @@ function Sidebar(props) {
       visible: avisible
     },
     {
-      to: "/parameters",
-      icon: "fas fa-sliders-h",
-      id: "parameters",
-      label: "Parameters",
-      visible: pavisible
+      to: "/performance",
+      icon: "fas fa-chart-bar",
+      id: "performance",
+      label: "Performance",
+      visible: pevisible
     },
     {
       to: "/settings",
@@ -174,57 +192,151 @@ function Sidebar(props) {
       visible: svisible
 
     },
-    {
-      to: "/performance",
-      icon: "fas fa-chart-bar",
-      id: "performance",
-      label: "Performance",
-      visible: pevisible
-    },
   ];
 
   return (
-    <div ref={sidebarRef}>
-      <Backdrop visible={compact} onClick={props.close} />
-      <Submenu open={submenuVisible && compact}>
-        {links.map(({ id, submenu: el }, index) => (
-          el && (
-            <div key={index} className={(id !== submenu ? "hidden" : "")}>{el}</div>
-          )
-        ))}
-      </Submenu>
-      <StyledNav compact={!compact || submenuVisible} submenu={submenuVisible} {...props}>
-        <NavLinksGroup 
-          compact={!compact || submenuVisible}
-          links={links}
-          action={onNavClick}
-          disabled={props.disabled}
-        />
-
-        <NavToggle 
-          compact={!compact} 
-          submenu={submenuVisible} 
-          setCompact={toggleCompact} 
-          disabled={props.disabled}
-        />
-        
-        <Disabled disabled={props.disabled}>
-          <Pencil
-            id="4"
-            psize="2"
-            type="nav"
-            title=""
-            hidden={!compact}
-            submenu={submenuVisible}
-            mvisible={handleMvisible}
-            avisible={handleAvisible}
-            pavisible={handlePavisible}
-            svisible={handleSvisible}
-            pevisible={handlePevisible}
+    <>
+      <div ref={sidebarRef}>
+        <Backdrop visible={compact} onClick={props.close} />
+        <Submenu open={submenuVisible && compact}>
+          {links.map(({ id, submenu: el }, index) => (
+            el && (
+              <div key={index} className={(id !== submenu ? "hidden" : "")}>{el}</div>
+            )
+          ))}
+        </Submenu>
+        <StyledNav compact={!compact || submenuVisible} submenu={submenuVisible} {...props}>
+          <NavLinksGroup
+            compact={!compact || submenuVisible}
+            links={links}
+            action={onNavClick}
+            disabled={props.disabled}
+            ref={performanceBtn}
           />
-        </Disabled>
-      </StyledNav>
-    </div>
+
+          <NavToggle
+            compact={!compact}
+            submenu={submenuVisible}
+            setCompact={toggleCompact}
+            disabled={props.disabled}
+          />
+
+          <Disabled disabled={props.disabled}>
+            <Pencil
+              id="4"
+              psize="2"
+              type="nav"
+              title=""
+              hidden={!compact}
+              submenu={submenuVisible}
+              mvisible={handleMvisible}
+              avisible={handleAvisible}
+              pavisible={handlePavisible}
+              svisible={handleSvisible}
+              pevisible={handlePevisible}
+            />
+          </Disabled>
+        </StyledNav>
+      </div>
+      <Modal
+        isOpen={showPerformanceModal}
+        onRequestClose={() => setShowPerformanceModal(false)}
+        className="createmodalarea"
+        overlayClassName="myoverlay"
+        closeTimeoutMS={250}
+        ariaHideApp={false}
+      >
+        <div className="area">
+          <form className="form-input performanceForm" ref={performanceModal}>
+            <div className="performanceContainer">
+              <h2 className="performanceTitle">Performance Report Settings</h2>
+              <div className="performanceTableContainer">
+                <table className="performanceTable">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h4>
+                          Poll1
+                        </h4>
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Show Answers Report
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 2
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 3
+                        </label><br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h4>
+                          Poll2
+                        </h4>
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Show Answers Report
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 2
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 3
+                        </label><br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h4>
+                          Poll3
+                        </h4>
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Show Answers Report
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 2
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 3
+                        </label><br />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h4>
+                          Poll4
+                        </h4>
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Show Answers Report
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 2
+                        </label><br />
+                        <input type="checkbox" name="" value="" />
+                        <label htmlFor="">
+                          Setting 3
+                        </label><br />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
+        </div>
+      </Modal>
+    </>
   );
 }
 export default Sidebar;

@@ -105,6 +105,10 @@ const DropdownEditPoll = (props) => {
                     setQuestionParam("inputType", pIndex, index, null);
                     break;
                 }
+
+                if (e.target.value === "boolean") {
+                  setQuestionParam("choices", pIndex, index, null);
+                }
               }}>
                 <option value="text">
                   Text
@@ -135,19 +139,35 @@ const DropdownEditPoll = (props) => {
               }} />
             </td>
             <td
-              className="editPollEditBtns"
-              onClick={() => {
-                setActiveMenu("settings");
-                setCurrentQuestion({
-                  pIndex: pIndex,
-                  qIndex: index
-                });
-              }}
+              className={`editPollEditBtns`}
             >
-              <i className="fas fa-cog" />
+              <i
+                className={`fas fa-caret-up`}
+              />
             </td>
             <td
-              className={"editPollEditBtns"}
+              className={`editPollEditBtns`}
+            >
+              <i
+                className={`fas fa-caret-down`}
+              />
+            </td>
+            <td
+              className="editPollEditBtns"
+              onClick={() => {
+                if ((q.inputType || q.type) !== "color") {
+                  setActiveMenu("settings");
+                  setCurrentQuestion({
+                    pIndex: pIndex,
+                    qIndex: index
+                  });
+                }
+              }}
+            >
+              <i className={`fas fa-cog ${(q.inputType || q.type) === "color" ? "disabled" : ""}`} />
+            </td>
+            <td
+              className={`editPollEditBtns`}
               onClick={() => {
                 if (pages.map((p) => {
                   return p.questions;
@@ -186,7 +206,25 @@ const DropdownEditPoll = (props) => {
               </td>
               <td></td>
               <td></td>
-              <td></td>
+              <td
+                className={`editPollEditBtns`}
+              >
+                <i
+                  className={`fas fa-caret-up`}
+                />
+              </td>
+              <td
+                className={`editPollEditBtns`}
+              >
+                <i
+                  className={`fas fa-caret-down`}
+                />
+              </td>
+              <td
+                className="editPollEditBtns"
+              >
+                <i className={`fas fa-cog disabled`} />
+              </td>
               <td
                 className={"editPollEditBtns"}
                 onClick={() => {
@@ -266,6 +304,43 @@ const DropdownEditPoll = (props) => {
     }
   }
 
+  const getSelectedQType = () => {
+    const q = pages[currentQuestion.pIndex].questions[currentQuestion.qIndex];
+    return q.inputType || q.type;
+  }
+
+  const setDropdownAnswerOptions = () => {
+    if (getSelectedQType() === "boolean") {
+      return (
+        <>
+          <option value="none">Select an Answer</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </>
+      );
+    } else {
+      const choices = pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices;
+      return (
+        <>
+          <option value="none">Select an Answer</option>
+          {choices.map((c, i) => {
+            return (
+              <option key={i} value={c}>{c}</option>
+            );
+          })}
+        </>
+      );
+    }
+  }
+
+  const setNewAnswers = (e) => {
+    // For text -> save the answer string (e.g: "Mount Everest")
+    // For dropdown, radiogroup, checkboxes -> save answer index (e.g: 3)
+    // For boolean -> save "Yes" or "No" string
+    // For date -> save date as string with YYYY-MM-DD format
+    console.log(e.target.value);
+  }
+
   const addQuestion = () => {
     let lastPageQuestions = pages[pages.length - 1].questions;
     lastPageQuestions.push(defaultQ());
@@ -306,6 +381,10 @@ const DropdownEditPoll = (props) => {
                 </th>
                 <th className="editPollStar">
                   *
+                </th>
+                <th>
+                </th>
+                <th>
                 </th>
               </tr>
             </thead>
@@ -392,15 +471,34 @@ const DropdownEditPoll = (props) => {
             }}
           >
             Correct Answer (Leave blank if not applicable):
-            <input
-              className="editPollAnswerBox"
-              type="text"
-              placeholder="Answer Value Here"
-              value={""}
-              onChange={(e) => {
-                //
-              }}
-            />
+            {["text"].includes(getSelectedQType()) && (
+              <input
+                className="editPollAnswerBox"
+                type="text"
+                placeholder="Answer Value Here"
+                value={""}
+                onChange={(e) => {
+                  //
+                }}
+              />
+            )}
+
+            {["dropdown", "checkbox", "boolean", "radiogroup"].includes(getSelectedQType()) && (
+              <select className="editPollAnswerBox" onChange={setNewAnswers}>
+                {setDropdownAnswerOptions()}
+              </select>
+            )}
+
+            {["date"].includes(getSelectedQType()) && (
+              <input
+                className="editPollAnswerBox"
+                type="date"
+                value=""
+                min=""
+                max=""
+                onChange={setNewAnswers}
+              />
+            )}
           </div>
         </div>
       </CSSTransition>
