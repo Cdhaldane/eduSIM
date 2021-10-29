@@ -57,6 +57,29 @@ footer {
   }
 }
 
+.cursor {
+  position: fixed;
+  border-radius: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  pointer-events: none;
+  left: -100px;
+  top: 50%;
+  mix-blend-mode: difference;
+  background-color: transparent;
+  z-index: 3;
+  border: 1px solid white;
+  height: 15px;
+  width: 15px;
+}
+
+.noCursor:hover {
+  cursor: none;
+}
+
+.grabCursor:hover {
+  cursor: grab;
+}
+
 .welcome {
   color: white;
   font-family: "Montserrat", sans-serif;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components"
 import NavLink from "./NavLink"
 
@@ -34,15 +34,16 @@ const DenseNavLinks = styled(NavLink)`
   }
 `;
 
-const NavLinksGroup = (props) => {
+const NavLinksGroup = forwardRef((props, ref) => {
   return (
     <LinksGroup>
       {props.links.map((link, index) => {
         return link.visible &&
           <DenseNavLinks
+            ref={link.id === "performance" ? ref : null}
             compact={props.compact}
             key={index}
-            to={link.to}
+            //to={link.to}
             disabled={props.disabled}
             iconClassName={link.icon}
             label={link.label}
@@ -53,6 +54,6 @@ const NavLinksGroup = (props) => {
       })}
     </LinksGroup>
   );
-}
+});
 
 export default NavLinksGroup;

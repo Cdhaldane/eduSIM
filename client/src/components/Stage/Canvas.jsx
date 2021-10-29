@@ -4,6 +4,7 @@ import axios from 'axios';
 import Level from "../Level/Level";
 import Portal from "./Shapes/Portal";
 import Info from "../Information/InformationPopup";
+import DrawModal from "../DrawModal/DrawModal";
 
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
@@ -193,9 +194,11 @@ class Graphics extends Component {
       docimage: null,
 
       // Draw
-      tool: 'pen',
+      tool: 'pen', // eraser or pen
       isDrawing: false,
       drawMode: false,
+      color: "black",
+      drawStrokeWidth: 5,
 
       // Variables for calculating responsive sizing 
       // (for different screen sizes)
@@ -210,7 +213,6 @@ class Graphics extends Component {
       // Fill and Stroke
       colorf: "black",
       colors: "black",
-      color: "white",
       strokeWidth: 3.75,
       opacity: 1,
       lastFill: null,
@@ -374,35 +376,35 @@ class Graphics extends Component {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           if (objects[j].infolevel === personalArea) {
-            const rect = this.getRect(this.refs[objects[j].id]);
+            const rect = this.getRect(objects[j]);
             if (!rect) continue;
 
             // Get furthest left x-coord
             const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
             if (leftmostX === null || leftX < leftmostX) {
               leftmostX = leftX;
-              leftmostObj = this.refs[objects[j].id];
+              leftmostObj = objects[j];
             }
 
             // Get furthest right x-coord
             const rightX = (rect.x - this.state[layerX] + rect.width) / this.state[layerScale];
             if (rightmostX === null || rightX > rightmostX) {
               rightmostX = rightX;
-              rightmostObj = this.refs[objects[j].id];
+              rightmostObj = objects[j];
             }
 
             // Get furthest top y-coord
             const topY = (rect.y - this.state[layerY]) / this.state[layerScale];
             if (topmostY === null || topY < topmostY) {
               topmostY = topY;
-              topmostObj = this.refs[objects[j].id];
+              topmostObj = objects[j];
             }
 
             // Get furthest bottom y-coord
             const bottomY = (rect.y - this.state[layerY] + rect.height) / this.state[layerScale];
             if (bottommostY === null || bottomY > bottommostY) {
               bottommostY = bottomY;
-              bottommostObj = this.refs[objects[j].id];
+              bottommostObj = objects[j];
             }
           }
         }
@@ -456,12 +458,50 @@ class Graphics extends Component {
   getRect = (obj) => {
     if (!obj) return;
     let rect = null;
-    if (obj.nodeName === "DIV") {
-      // Custom Object
-      rect = obj.getBoundingClientRect();
+    if (obj.tool) {
+      // Drawing
+      let xMax = null;
+      let yMax = null;
+      let xMin = null;
+      let yMin = null;
+      // Points array has form [x1, y1, x2, y2, ...] 
+      // Every even index is start of new coord so skip by 2 each iteration
+      for (let k = 0; k < obj.points.length; k += 2) {
+        const point = {
+          x: obj.points[k],
+          y: obj.points[k + 1],
+        }
+        if (xMax === null || point.x > xMax) {
+          xMax = point.x;
+        }
+        if (yMax === null || point.y > yMax) {
+          yMax = point.y;
+        }
+        if (xMin === null || point.x < xMin) {
+          xMin = point.x;
+        }
+        if (yMin === null || point.y < yMin) {
+          yMin = point.y;
+        }
+      }
+      const lineW = xMax - xMin;
+      const lineH = yMax - yMin;
+      rect = {
+        x: xMin,
+        y: yMin,
+        width: lineW,
+        height: lineH
+      }
     } else {
-      // Konva Object
-      rect = obj.getClientRect();
+      // Get the actual reference if not a drawing
+      obj = this.refs[obj.id];
+      if (obj.nodeName === "DIV") {
+        // Custom Object
+        rect = obj.getBoundingClientRect();
+      } else {
+        // Konva Object
+        rect = obj.getClientRect();
+      }
     }
 
     return rect;
@@ -622,11 +662,11 @@ class Graphics extends Component {
 
       return res.data.gamerole;
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   }
 
-  handleEditRole = async ({id, roleName, roleNum}) => {
+  handleEditRole = async ({ id, roleName, roleNum }) => {
     await this.handleSave();
     return axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
       id: id,
@@ -655,29 +695,37 @@ class Graphics extends Component {
 
       return true;
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   }
 
   onObjectContextMenu = e => {
-    const event = e.evt ? e.evt : e;
-    event.preventDefault(true);
-    const mousePosition = {
-      x: event.clientX,
-      y: event.clientY
-    };
-    let singleGroupSelected = false;
-    if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
-      singleGroupSelected = true;
-    }
-    this.setState({
-      selectedContextMenu: {
-        unGroup: singleGroupSelected ? true : false,
-        addGroup: this.state.groupSelection.length && !singleGroupSelected ? true : false,
-        type: "ObjectMenu",
-        position: mousePosition
+    if (
+      (this.state.selectedShapeName || this.state.groupSelection.length) &&
+      this.state.selectedShapeName !== "lines" &&
+      !this.state.drawMode
+    ) {
+      const event = e.evt ? e.evt : e;
+      event.preventDefault(true);
+      const mousePosition = {
+        x: event.clientX,
+        y: event.clientY
+      };
+
+      let singleGroupSelected = false;
+      if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
+        singleGroupSelected = true;
       }
-    });
+      this.setState({
+        selectedContextMenu: {
+          unGroup: singleGroupSelected ? true : false,
+          addGroup: this.state.groupSelection.length && !singleGroupSelected ? true : false,
+          type: "ObjectMenu",
+          position: mousePosition
+        }
+      });
+    }
+
   }
 
   updateSelectionRect = (personalArea) => {
@@ -747,6 +795,15 @@ class Graphics extends Component {
       }
     }
 
+    let scale = this.state.groupLayerScale;
+    let xOffset = -this.state.groupLayerX;
+    let yOffset = -this.state.groupLayerY;
+    if (personalArea) {
+      scale = this.state.personalLayerScale;
+      xOffset = -this.state.personalLayerX;
+      yOffset = -this.state.personalLayerY;
+    }
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: true
@@ -755,11 +812,13 @@ class Graphics extends Component {
       this.setState({
         lines: [...this.state.lines, {
           tool,
-          points: [pos.x, pos.y],
+          points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
           level: this.state.level,
           color: this.state.color,
-          id: "shape",
-          infolevel: personalArea
+          id: "lines",
+          infolevel: personalArea,
+          rolelevel: this.state.rolelevel,
+          strokeWidth: this.state.drawStrokeWidth
         }]
       });
     } else {
@@ -769,15 +828,6 @@ class Graphics extends Component {
         if (isElement || isTransformer) {
           return;
         }
-      }
-
-      let scale = this.state.groupLayerScale;
-      let xOffset = -this.state.groupLayerX;
-      let yOffset = -this.state.groupLayerY;
-      if (personalArea) {
-        scale = this.state.personalLayerScale;
-        xOffset = -this.state.personalLayerX;
-        yOffset = -this.state.personalLayerY;
       }
 
       const layer = personalArea ? "personalAreaLayer" : "groupAreaLayer";
@@ -1020,7 +1070,7 @@ class Graphics extends Component {
         }
       } else if (event.button === 2) {
         // RIGHT CLICK
-        if (this.isShape(shape)) {
+        if (this.isShape(shape) && shape.attrs.id !== "lines") {
           if (clickShapeGroup) {
             // Check if group already selected to avoid duplicates
             let alreadySelected = false;
@@ -1136,9 +1186,18 @@ class Graphics extends Component {
   handleMouseOver = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
+    let scale = this.state.groupLayerScale;
+    let xOffset = -this.state.groupLayerX;
+    let yOffset = -this.state.groupLayerY;
+    if (personalArea) {
+      scale = this.state.personalLayerScale;
+      xOffset = -this.state.personalLayerX;
+      yOffset = -this.state.personalLayerY;
+    }
+
     // Get the current arrow ref and modify its position by filtering & pushing again
     if (this.state.drawMode === true) {
-      if (!this.state.isDrawing) {
+      if (!this.state.isDrawing || event.ctrlKey) {
         return;
       }
 
@@ -1146,7 +1205,10 @@ class Graphics extends Component {
       const point = stage.getPointerPosition();
       let lastLine = this.state.lines[this.state.lines.length - 1];
       // Add point
-      lastLine.points = lastLine.points.concat([point.x, point.y]);
+      lastLine.points = lastLine.points.concat([
+        (point.x + xOffset) / scale,
+        (point.y + yOffset) / scale
+      ]);
 
       // Replace last
       this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
@@ -1167,7 +1229,7 @@ class Graphics extends Component {
       } else if (shape) {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
-          if (this.state.selection.isDraggingShape) {
+          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "lines") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
@@ -1183,15 +1245,6 @@ class Graphics extends Component {
               }, this.handleObjectSelection);
             }
           } else {
-            let scale = this.state.groupLayerScale;
-            let xOffset = -this.state.groupLayerX;
-            let yOffset = -this.state.groupLayerY;
-            if (personalArea) {
-              scale = this.state.personalLayerScale;
-              xOffset = -this.state.personalLayerX;
-              yOffset = -this.state.personalLayerY;
-            }
-
             // Create drag selection rectangle
             this.setState({
               selection: {
@@ -1531,6 +1584,10 @@ class Graphics extends Component {
       selectedShapeName: "",
     }, this.handleObjectSelection);
 
+    if (this.state.drawMode) {
+      this.setDrawMode(false);
+    }
+
     if (open) {
       document.getElementById("personalMainContainer").focus();
     } else {
@@ -1854,36 +1911,36 @@ class Graphics extends Component {
     }
   }
 
-  drawLine = () => {
+  setDrawMode = (drawing) => {
     this.setState({
-      drawMode: true
-    });
-    this.setState({
-      tool: "pen"
+      drawMode: drawing,
+      color: drawing ? this.state.color : "black",
+      tool: drawing ? this.state.tool : "pen",
+      drawStrokeWidth: drawing ? this.state.drawStrokeWidth : 5
+    }, () => {
+      if (!this.state.drawMode) {
+        this.props.showAlert("Draw mode deactivated", "info");
+      } else {
+        this.props.showAlert("Draw mode activated", "info");
+      }
     });
   }
 
-  stopDrawing = () => {
+  setDrawStrokeWidth = (newWidth) => {
     this.setState({
-      drawMode: false
+      drawStrokeWidth: newWidth
+    });
+  }
+
+  setDrawTool = (newTool) => {
+    this.setState({
+      tool: newTool
     });
   }
 
   chooseColor = (e) => {
     this.setState({
       color: e.hex
-    });
-  }
-
-  editMode = () => {
-    this.setState({
-      infolevel: true
-    });
-  }
-
-  editModeOff = () => {
-    this.setState({
-      infolevel: false
     });
   }
 
@@ -1896,6 +1953,11 @@ class Graphics extends Component {
   keyUp = (e) => {
     if (e.key === "Control") {
       document.body.style.cursor = "default";
+      const mainContainer = document.getElementById("editMainContainer");
+      mainContainer.classList.remove("grabCursor");
+      if (this.state.drawMode) {
+        mainContainer.classList.add("noCursor");
+      }
       this.setState({
         layerDraggable: false
       });
@@ -1930,14 +1992,17 @@ class Graphics extends Component {
       this.handlePaste();
     } else if (event.ctrlKey) {
       document.body.style.cursor = "grab";
+      const mainContainer = document.getElementById("editMainContainer");
+      mainContainer.classList.remove("noCursor");
+      mainContainer.classList.add("grabCursor");
       this.setState({
         layerDraggable: true
       });
     } else if (event.altKey && event.keyCode === r) {
-      // Print refs
-      console.log("REFS:");
-      console.log(this.refs.groupAreaLayer.find('Group'));
+      // Print state + ref info (for debugging)
+      console.log("Refs:");
       console.log({ ...this.refs });
+      console.log("State:");
       console.log({ ...this.state });
     }
   }
@@ -1973,12 +2038,10 @@ class Graphics extends Component {
     };
   }
 
-  // For Konva Objects: 
-  // returns Konva object
-  // For Custom Objects:
-  // returns the Konva Group associated with the KonvaHtml of the object
+  // For Konva Objects -> Return Konva Object
+  // For Custom Objects -> Return Konva Group associated with custom object's KonvaHtml
   getKonvaObj = (id, updateState, showTransformer) => {
-    if (id) {
+    if (id && id !== "lines") {
       if (this.refs[id].attrs) {
         return this.refs[id];
       } else {
@@ -2292,7 +2355,7 @@ class Graphics extends Component {
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
       strokeScaleEnabled: false,
-      draggable: !this.state.layerDraggable,
+      draggable: !(this.state.layerDraggable || this.state.drawMode),
       onClick: () => this.onObjectClick(obj),
       onTransformStart: this.onObjectTransformStart,
       onTransformEnd: () => this.onObjectTransformEnd(obj),
@@ -2412,11 +2475,11 @@ class Graphics extends Component {
       key: index,
       points: obj.points,
       stroke: obj.color,
-      strokeWidth: 5,
+      strokeWidth: obj.strokeWidth,
       tension: 0.5,
       lineCap: "round",
       globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
-      draggable: !this.state.layerDraggable,
+      draggable: false,
       onContextMenu: this.onObjectContextMenu,
     }
   }
@@ -2532,6 +2595,10 @@ class Graphics extends Component {
         />
 
         {/* Load objects in state */}
+        {this.state.lines.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Line {...this.lineProps(obj, index)} /> : null
+        })}
         {this.state.rectangles.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
@@ -2539,10 +2606,6 @@ class Graphics extends Component {
         {this.state.ellipses.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
             <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
-        })}
-        {this.state.lines.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Line {...this.lineProps(obj, index)} /> : null
         })}
         {this.state.images.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
@@ -2665,13 +2728,10 @@ class Graphics extends Component {
                 yPos={this.state.groupAreaContextMenuY}
                 state={this.state}
                 layer={this.refs.groupAreaLayer}
-                setState={(obj) => {
-                  this.setState(obj);
-                }}
                 objectLabels={this.savedObjects}
                 deleteLabels={this.deletionCounts}
-                drawLine={this.drawLine}
-                stopDrawing={this.stopDrawing}
+                setState={(obj) => this.setState(obj)}
+                setDrawMode={this.setDrawMode}
                 handleImage={this.handleImage}
                 handleVideo={this.handleVideo}
                 handleAudio={this.handleAudio}
@@ -2680,6 +2740,23 @@ class Graphics extends Component {
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
               />
             )}
+          {this.state.drawMode && (
+            <>
+              <div className='cursor' id="cursor" />
+              <DrawModal
+                xPos={this.state.personalAreaOpen ?
+                  this.state.personalAreaContextMenuX : this.state.groupAreaContextMenuX}
+                yPos={this.state.personalAreaOpen ?
+                  this.state.personalAreaContextMenuY : this.state.groupAreaContextMenuY}
+                scale={this.state.personalAreaOpen ?
+                  this.state.personalLayerScale : this.state.groupLayerScale}
+                chooseColor={this.chooseColor}
+                setDrawMode={this.setDrawMode}
+                setDrawStrokeWidth={this.setDrawStrokeWidth}
+                setDrawTool={this.setDrawTool}
+              />
+            </>
+          )}
           <Stage
             height={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientHeight : 0}
@@ -2732,13 +2809,10 @@ class Graphics extends Component {
                   yPos={this.state.personalAreaContextMenuY}
                   state={this.state}
                   layer={this.refs.personalAreaLayer}
-                  setState={(obj) => {
-                    this.setState(obj);
-                  }}
                   objectLabels={this.savedObjects}
                   deleteLabels={this.deletionCounts}
-                  drawLine={this.drawLine}
-                  stopDrawing={this.stopDrawing}
+                  setState={(obj) => this.setState(obj)}
+                  setDrawMode={this.setDrawMode}
                   handleImage={this.handleImage}
                   handleVideo={this.handleVideo}
                   handleAudio={this.handleAudio}

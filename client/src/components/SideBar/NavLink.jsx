@@ -1,6 +1,6 @@
 import { NavLink as Link } from "react-router-dom"
 import styled from "styled-components"
-import React from "react"
+import React, { forwardRef } from "react"
 import { Image } from "cloudinary-react";
 
 const StyledLink = styled.a`
@@ -65,13 +65,14 @@ const StyledLink = styled.a`
   }
 `;
 
-const NavLink = (props) => {
+const NavLink = forwardRef((props, ref) => {
 
   return (
-    <StyledLink 
-      href={!props.disabled && props.to} 
-      onClick={props.action} 
-      disabled={props.disabled} 
+    <StyledLink
+      ref={ref}
+      href={!props.disabled && props.to}
+      onClick={props.action}
+      disabled={props.disabled}
       textopacity={props.compact ? 0 : 1}
     >
       {props.children || (
@@ -95,6 +96,6 @@ const NavLink = (props) => {
 
     </StyledLink>
   );
-}
+});
 
 export default NavLink;
