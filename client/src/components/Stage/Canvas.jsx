@@ -15,10 +15,10 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import TransformerComponent from "./TransformerComponent";
 import URLVideo from "./URLVideos";
 import URLImage from "./URLImage";
-
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import Poll from "./GamePieces/Poll/Poll";
+import HTMLFrame from "./GamePieces/HTMLFrame";
 
 // Standard Konva Components
 import Konva from "konva";
@@ -46,12 +46,14 @@ class Graphics extends Component {
   customObjects = [
     "polls",
     "connect4s",
-    "tics"
+    "tics",
+    "htmlFrames"
   ];
   customDeletes = [
     "pollsDeleteCount",
     "connect4sDeleteCount",
-    "ticsDeleteCount"
+    "ticsDeleteCount",
+    "htmlFramesDeleteCount"
   ];
   savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
@@ -127,6 +129,7 @@ class Graphics extends Component {
       tics: [],
       connect4s: [],
       polls: [],
+      htmlFrames: [],
 
       // An array of arrays containing grouped items
       savedGroups: [],
@@ -162,6 +165,7 @@ class Graphics extends Component {
       pollsDeleteCount: 0,
       connect4sDeleteCount: 0,
       ticsDeleteCount: 0,
+      htmlFramesDeleteCount: 0,
 
       // Page Controls
       pages: ["1", "2", "3", "4", "5", "6"],
@@ -495,6 +499,7 @@ class Graphics extends Component {
     } else {
       // Get the actual reference if not a drawing
       obj = this.refs[obj.id];
+      if (!obj) return;
       if (obj.nodeName === "DIV") {
         // Custom Object
         rect = obj.getBoundingClientRect();
@@ -2038,8 +2043,41 @@ class Graphics extends Component {
     };
   }
 
-  // For Konva Objects -> Return Konva Object
-  // For Custom Objects -> Return Konva Group associated with custom object's KonvaHtml
+  getSelectedObj = () => {
+    if (this.state.selectedShapeName) {
+      for (let name of this.savedObjects) {
+        if (this.state.selectedShapeName.startsWith(name)) {
+          return this.state[name].filter(({ id }) => id === this.state.selectedShapeName)[0]
+        }
+      }
+    }
+  }
+  updateSelectedObj = (newState) => {
+    let type;
+    if (this.state.selectedShapeName) {
+      for (let name of this.savedObjects) {
+        if (this.state.selectedShapeName.startsWith(name)) {
+          type=name;
+        }
+      }
+    } else return;
+    if (!type) return;
+    this.setState(prevState => ({
+      [type]: prevState[type].map(obj =>
+        obj.id === this.state.selectedShapeName
+          ? {
+            ...obj,
+            ...newState
+          }
+          : obj
+      )
+    }));
+  }
+
+  // For Konva Objects: 
+  // returns Konva object
+  // For Custom Objects:
+  // returns the Konva Group associated with the KonvaHtml of the object
   getKonvaObj = (id, updateState, showTransformer) => {
     if (id && id !== "lines") {
       if (this.refs[id].attrs) {
@@ -2664,6 +2702,17 @@ class Graphics extends Component {
               {...this.customObjProps()}
             /> : null
         })}
+        {this.state.htmlFrames.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <HTMLFrame
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
+              iframeSrc={obj.iframeSrc}
+              htmlValue={obj.htmlValue || "<h1>Edit me!</h1>"}
+            /> : null
+        })}
         {this.state.arrows.map((obj, index) => {
           return (
             !obj.from &&
@@ -2852,6 +2901,8 @@ class Graphics extends Component {
                       {...this.state.selectedContextMenu}
                       selectedShapeName={this.state.selectedShapeName}
                       getObj={this.getKonvaObj}
+                      getObjState={this.getSelectedObj}
+                      updateObjState={this.updateSelectedObj}
                       selectedFont={this.state.selectedFont}
                       handleUngrouping={this.handleUngrouping}
                       handleGrouping={this.handleGrouping}

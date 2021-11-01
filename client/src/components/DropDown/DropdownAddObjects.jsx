@@ -387,6 +387,12 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addHTMLFrame = () => {
+    addObjectToLayer(
+      "htmlFrames", {}
+    );
+  }
+
   const addConnect4 = () => {
     addObjectToLayer(
       "connect4s", {}
@@ -771,6 +777,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-poll"
               onClick={addPoll}></i>}>
             Poll</DropdownItem>
+          <DropdownItem
+            onClick={addHTMLFrame}
+            leftIcon={<i className="icons fa fa-code"
+              onClick={addHTMLFrame}></i>}>
+            HTML Frame</DropdownItem>
         </div>
       </CSSTransition>
     </div>

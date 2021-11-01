@@ -458,6 +458,12 @@ a {
   color: #636363;
 }
 
+.htmltextarea {
+  width: 300px;
+  height: 200px;
+  resize: none;
+}
+
 #imginputvname {
   position: absolute;
   top: 116px;

@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
 import FontPicker from "font-picker-react";
+import debounce from 'lodash.debounce';
+import DOMPurify from 'dompurify';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
@@ -22,6 +24,7 @@ function DropdownEditObject(props) {
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
+  const [objState, setObjState] = useState(props.getObjState());
 
   const calcTopOffset = () => {
     const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
@@ -103,6 +106,31 @@ function DropdownEditObject(props) {
   function handleSize(e) {
     setFontSize(e.target.value);
     props.handleSize(e.target.value);
+  }
+
+  const debounceObjState = useCallback(
+		debounce(state => props.updateObjState(state), 1000),
+		[], // will be created only once initially
+	);
+
+  function handleIFrameURL(val) {
+    debounceObjState({
+      iframeSrc: val
+    });
+    setObjState(prev => ({
+      ...prev,
+      iframeSrc: val
+    }));
+  }
+  function handleHTML(val) {
+    let sanitized = DOMPurify.sanitize(val);
+    debounceObjState({
+      htmlValue: sanitized
+    });
+    setObjState(prev => ({
+      ...prev,
+      htmlValue: val
+    }));
   }
 
   if (!loading) {
@@ -273,6 +301,29 @@ function DropdownEditObject(props) {
                 shape={shape}
                 title={props.title}
               />
+            </div>
+          </CSSTransition>
+        </div>
+      );
+    } else if (props.title === "Edit HTML") {
+      return (
+        <div
+          className="dropdownedit"
+          ref={dropdownRef}
+          style={{
+            ...leftOrRight,
+            transform: `translateY(${topOffset}px)`
+          }}>
+          <CSSTransition
+            in={activeMenu === 'main'}
+            timeout={500}
+            classNames="edit-menu-primary"
+            unmountOnExit>
+            <div className="menuedit">
+              HTML Content:
+              <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue}/>
+              iFrame URL:
+              <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} />
             </div>
           </CSSTransition>
         </div>
