@@ -11,7 +11,9 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const handleLoad = () => {
     const thisObj = getObj();
-    thisObj.parentElement.style.pointerEvents = "none";
+    if (thisObj.parentElement.parentElement.parentElement.id === "editMainContainer") {
+      thisObj.parentElement.style.pointerEvents = "none";
+    }
   }
 
   let scrollTimeout = null;

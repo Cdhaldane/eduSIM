@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import 'rc-slider/assets/index.css';
@@ -12,7 +12,12 @@ const DropdownEditPoll = (props) => {
     pIndex: 0,
     qIndex: 0
   });
-  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [menuHeight, setMenuHeight] = useState(null);
+  const pollMenu = useRef();
+
+  useEffect(() => {
+    setMenuHeight(pollMenu.current.clientHeight);
+  }, []);
 
   useEffect(() => {
     const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
@@ -38,7 +43,8 @@ const DropdownEditPoll = (props) => {
           title: q.title,
           isRequired: q.isRequired,
           choices: q.choices,
-          hasNone: false
+          hasNone: false,
+          correctAnswer: q.correctAnswer
         }
       });
       return {
@@ -109,6 +115,8 @@ const DropdownEditPoll = (props) => {
                 if (e.target.value === "boolean") {
                   setQuestionParam("choices", pIndex, index, null);
                 }
+
+                setQuestionParam("correctAnswer", pIndex, index, null);
               }}>
                 <option value="text">
                   Text
@@ -444,14 +452,6 @@ const DropdownEditPoll = (props) => {
     }
   }
 
-  const setNewAnswers = (e) => {
-    // For text -> save the answer string (e.g: "Mount Everest")
-    // For dropdown, radiogroup, checkboxes -> save answer index (e.g: 3)
-    // For boolean -> save "Yes" or "No" string
-    // For date -> save date as string with YYYY-MM-DD format
-    console.log(e.target.value);
-  }
-
   const addQuestion = () => {
     let lastPageQuestions = pages[pages.length - 1].questions;
     lastPageQuestions.push(defaultQ());
@@ -471,13 +471,25 @@ const DropdownEditPoll = (props) => {
     setPages(newPages);
   }
 
+  const calcHeight = (el) => {
+    const height = el.offsetHeight;
+    setMenuHeight(height);
+  }
+
   return (
-    <div className="editPollContainer">
+    <div
+      className="editPollContainer"
+      ref={pollMenu}
+      style={{
+        height: menuHeight
+      }}
+    >
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
         unmountOnExit
         classNames="editPollPrimary"
+        onEnter={calcHeight}
       >
         <div>
           <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
@@ -527,6 +539,7 @@ const DropdownEditPoll = (props) => {
         timeout={500}
         unmountOnExit
         classNames="editPollSecondary"
+        onEnter={calcHeight}
       >
         <div>
           <button
@@ -587,15 +600,37 @@ const DropdownEditPoll = (props) => {
                 className="editPollAnswerBox"
                 type="text"
                 placeholder="Answer Value Here"
-                value={""}
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
                 onChange={(e) => {
-                  //
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
                 }}
               />
             )}
 
             {["dropdown", "checkbox", "boolean", "radiogroup"].includes(getSelectedQType()) && (
-              <select className="editPollAnswerBox" onChange={setNewAnswers}>
+              <select
+                className="editPollAnswerBox"
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
+                onChange={(e) => {
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
+                }}
+              >
                 {setDropdownAnswerOptions()}
               </select>
             )}
@@ -604,10 +639,20 @@ const DropdownEditPoll = (props) => {
               <input
                 className="editPollAnswerBox"
                 type="date"
-                value=""
                 min=""
                 max=""
-                onChange={setNewAnswers}
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
+                onChange={(e) => {
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
+                }}
               />
             )}
           </div>
