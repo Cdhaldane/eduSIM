@@ -200,8 +200,6 @@ class Graphics extends Component {
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
 
-      console.log(objects);
-
       this.savedObjects.forEach((object) => {
         this.setState({
           [object]: objects[object]
@@ -437,13 +435,10 @@ class Graphics extends Component {
 
   objectIsOnStage = (obj) => {
     if (obj.level === this.state.level && obj.infolevel === false) {
-      console.log('group', obj);
       return "group";
     } else if (obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel) {
-      console.log('personal', obj);
       return "personal";
     } else {
-      console.log('none', obj);
       return "";
     }
   }
