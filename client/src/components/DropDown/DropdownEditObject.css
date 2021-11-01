@@ -411,3 +411,19 @@ a {
   color: rgb(136, 136, 136);
   font-style: italic;
 }
+
+.editPollNameBox {
+  font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  font-size: 20px;
+  height: 100%;
+  padding-left: 5px;
+  width: 70%;
+  margin-left: 10px !important;
+  display: inline-block;
+}
+
+.editPollNameBox::placeholder {
+  color: rgb(136, 136, 136);
+  font-style: italic;
+}

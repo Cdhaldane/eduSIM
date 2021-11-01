@@ -7,6 +7,7 @@ import "./DropdownEditObject.css";
 const DropdownEditPoll = (props) => {
 
   const [activeMenu, setActiveMenu] = useState('main');
+  const [name, setName] = useState(props.shape.attrs.customProps.customName);
   const [pages, setPages] = useState(props.shape.attrs.customProps.pollJson.pages);
   const [currentQuestion, setCurrentQuestion] = useState({
     pIndex: 0,
@@ -29,6 +30,7 @@ const DropdownEditPoll = (props) => {
         setTimeout(() => theInput.focus(), 0);
       }
     }
+    calcHeight();
   }, [pages]);
 
   const createJson = () => {
@@ -472,8 +474,11 @@ const DropdownEditPoll = (props) => {
   }
 
   const calcHeight = (el) => {
-    const height = el.offsetHeight;
-    setMenuHeight(height);
+    if (el) {
+      setMenuHeight(el.offsetHeight);
+    } else {
+      setMenuHeight(pollMenu.current.childNodes[0].offsetHeight);
+    }
   }
 
   return (
@@ -492,7 +497,17 @@ const DropdownEditPoll = (props) => {
         onEnter={calcHeight}
       >
         <div>
-          <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
+          <h1 style={{ paddingBottom: "0.5rem", display: "inline-block" }}>Poll Name:</h1>
+          <input
+            type="text"
+            placeholder="Poll Name"
+            className="editPollNameBox"
+            value={name}
+            onChange={(e) => {
+              props.setName(e.target.value, props.shape.attrs.id);
+              setName(e.target.value);
+            }}
+          />
           <table className="editPollQuestionBox">
             <thead className="editPollTableHead">
               <tr>

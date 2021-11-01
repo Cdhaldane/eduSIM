@@ -2167,6 +2167,19 @@ class Graphics extends Component {
     }));
   }
 
+  setPollCustomName = (customName, id) => {
+    this.setState(prevState => ({
+      polls: prevState.polls.map(poll =>
+        poll.id === id
+          ? {
+            ...poll,
+            customName: customName
+          }
+          : poll
+      )
+    }));
+  }
+
   onDragEndArrow = (arrow) => {
     // Set new points to current position
     let oldPoints = [
@@ -2545,6 +2558,7 @@ class Graphics extends Component {
   pollProps = (obj) => {
     return {
       custom: {
+        customName: obj.customName ? obj.customName : "",
         pollJson: obj.json ? obj.json : {
           pages: [
             {
@@ -2868,6 +2882,7 @@ class Graphics extends Component {
                       paste={this.handlePaste}
                       delete={this.handleDelete}
                       setJson={this.setPollJson}
+                      setName={this.setPollCustomName}
                     />
                   </Portal>
                 )}
