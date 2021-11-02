@@ -2072,6 +2072,9 @@ class Graphics extends Component {
           : obj
       )
     }));
+    // there's a timeout here since placing this func in the
+    // setState callback lags the transformer behind a little
+    setTimeout(() => this.handleObjectSelection(), 20)
   }
 
   // For Konva Objects: 
