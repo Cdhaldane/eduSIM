@@ -450,6 +450,8 @@ class Graphics extends Component {
     }
   }
 
+  // we need to render this outside of the konva stage
+  // since otherwise they become static/unable to interact with
   loadInterativeObjects = (stage) => (
     <>
       {this.state.polls.map((obj, index) => {

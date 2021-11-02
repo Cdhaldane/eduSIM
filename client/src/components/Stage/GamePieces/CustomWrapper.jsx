@@ -5,6 +5,8 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const obj = useRef(null);
 
+  // if rendering outside a konva canvas:
+  // use the transform properties and apply them directly to style
   if (props.static) {
     return (
       <div
