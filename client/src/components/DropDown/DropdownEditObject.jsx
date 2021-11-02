@@ -114,9 +114,7 @@ function DropdownEditObject(props) {
 	);
 
   function handleIFrameURL(val) {
-    debounceObjState({
-      iframeSrc: val
-    });
+    debounceObjState({ iframeSrc: val });
     setObjState(prev => ({
       ...prev,
       iframeSrc: val
@@ -124,12 +122,24 @@ function DropdownEditObject(props) {
   }
   function handleHTML(val) {
     let sanitized = DOMPurify.sanitize(val);
-    debounceObjState({
-      htmlValue: sanitized
-    });
+    debounceObjState({ htmlValue: sanitized });
     setObjState(prev => ({
       ...prev,
       htmlValue: val
+    }));
+  }
+  function handleWidth(val) {
+    props.updateObjState({ containerWidth: val });
+    setObjState(prev => ({
+      ...prev,
+      containerWidth: val
+    }));
+  }
+  function handleHeight(val) {
+    props.updateObjState({ containerHeight: val });
+    setObjState(prev => ({
+      ...prev,
+      containerHeight: val
     }));
   }
 
@@ -319,11 +329,24 @@ function DropdownEditObject(props) {
             timeout={500}
             classNames="edit-menu-primary"
             unmountOnExit>
-            <div className="menuedit">
-              HTML Content:
+            <div className="menuedit htmledit">
+              <h1>{props.title}</h1>
+              <div className="htmlwhinput">
+                <div>
+                  <p>Width</p>
+                  <input type="number" onChange={e => handleWidth(e.target.value)} value={objState?.containerWidth} placeholder="Auto"/>
+                </div>
+                <div>
+                  <p>Height</p>
+                  <input type="number" onChange={e => handleHeight(e.target.value)} value={objState?.containerHeight} placeholder="Auto"/>
+                </div>
+              </div>
+              <p>HTML Content:</p>
               <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue}/>
-              iFrame URL:
-              <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} />
+              <p>iFrame URL:</p>
+              <div className="htmliframeinput">
+                <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
+              </div>
             </div>
           </CSSTransition>
         </div>

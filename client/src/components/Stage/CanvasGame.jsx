@@ -399,6 +399,13 @@ class Graphics extends Component {
       }
     };
   }
+  
+  htmlProps = (obj) => ({
+    iframeSrc: obj.iframeSrc,
+    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
+    containerWidth: obj.containerWidth,
+    containerHeight: obj.containerHeight
+  });
 
   getInteractiveProps = (id) => ({
     updateStatus: (parameters) => {
@@ -477,8 +484,7 @@ class Graphics extends Component {
             defaultProps={{ ...this.defaultObjProps(obj, index) }}
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
-            iframeSrc={obj.iframeSrc}
-            htmlValue={obj.htmlValue || "<h1>Edit me!</h1>"}
+            {...this.htmlProps(obj)}
           /> : null
       })}
     </>

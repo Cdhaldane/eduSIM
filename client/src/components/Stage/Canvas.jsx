@@ -2579,6 +2579,13 @@ class Graphics extends Component {
       updateKonva: this.getKonvaObj
     };
   }
+  
+  htmlProps = (obj) => ({
+    iframeSrc: obj.iframeSrc,
+    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
+    containerWidth: obj.containerWidth,
+    containerHeight: obj.containerHeight
+  });
 
   pollProps = (obj) => {
     return {
@@ -2709,8 +2716,7 @@ class Graphics extends Component {
               {...this.defaultObjProps(obj, index)}
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
-              iframeSrc={obj.iframeSrc}
-              htmlValue={obj.htmlValue || "<h1>Edit me!</h1>"}
+              {...this.htmlProps(obj)}
             /> : null
         })}
         {this.state.arrows.map((obj, index) => {
