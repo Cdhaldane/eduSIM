@@ -356,109 +356,113 @@ class Graphics extends Component {
     }
   }
 
-  recalculateCanvasSizeAndPosition = (personalArea) => {
-    const layerX = personalArea ? "personalLayerX" : "groupLayerX";
-    const layerY = personalArea ? "personalLayerY" : "groupLayerY";
-    const layerScale = personalArea ? "personalLayerScale" : "groupLayerScale";
+  recalculateCanvasSizeAndPosition = (isPersonalArea) => {
+    const areaString = isPersonalArea ? "personal" : "group";
+    // Reset to default position and scale
+    this.setState({
+      [`${areaString}LayerX`]: 0,
+      [`${areaString}LayerY`]: 0,
+      [`${areaString}LayerScale`]: 1
+    }, () => {
+      const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
+      const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
+      const personalArea = document.getElementById("editPersonalContainer").getBoundingClientRect();
+      const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
+      const sideMenuW = isPersonalArea ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+      const topMenuH = isPersonalArea ? 80 : topBar.height;
+      const padding = 80;
+      const doublePad = 2 * padding;
+      const screenW = window.innerWidth;
+      const screenH = window.innerHeight;
+      const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
+      const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
+      const availableRatio = availableW / availableH;
 
-    let leftmostX = null;
-    let leftmostObj = null;
-    let rightmostX = null;
-    let rightmostObj = null;
-    let topmostY = null;
-    let topmostObj = null;
-    let bottommostY = null;
-    let bottommostObj = null;
+      let { minX, maxX, minY, maxY } = this.recalculateMaxMin(isPersonalArea, sideMenuW);
+      if (minX && maxX && minY && maxY) {
+        let x = null;
+        let y = null;
+        let scale = null;
+        const contentW = maxX - minX;
+        const contentH = maxY - minY;
+        const contentRatio = contentW / contentH;
+        if (availableRatio > contentRatio) {
+          // Content proportionally taller
+          scale = availableH / contentH;
+        } else {
+          // Content proportionally wider
+          scale = availableW / contentW;
+        }
+        x = -minX * scale;
+        y = -minY * scale;
+        // Scale and fit to top left
+        this.setState({
+          [`${areaString}LayerX`]: x,
+          [`${areaString}LayerY`]: y + topMenuH,
+          [`${areaString}LayerScale`]: scale
+        }, () => {
+          // Center contents
+          if (availableRatio > contentRatio) {
+            y = scale > 1 ? padding / scale : padding;
+            x = (availableW - (contentW * scale)) / 2;
+          } else {
+            x = scale > 1 ? padding / scale : padding;
+            y = (availableH - (contentH * scale)) / 2;
+          }
+          this.setState({
+            [`${areaString}LayerX`]: this.state[`${areaString}LayerX`] + x,
+            [`${areaString}LayerY`]: this.state[`${areaString}LayerY`] + y
+          });
+        });
+      }
+    });
+  }
 
+  recalculateMaxMin = (isPersonalArea, sideMenuW) => {
+    let minX = null;
+    let maxX = null;
+    let minY = null;
+    let maxY = null;
     for (let i = 0; i < this.savedObjects.length; i++) {
       const objectType = this.savedObjects[i];
       const objects = this.state[objectType];
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
-          if (objects[j].infolevel === personalArea) {
-            const rect = this.getRect(objects[j]);
+          const object = objects[j];
+          if (object.infolevel === isPersonalArea) {
+            const rect = this.getRect(object, sideMenuW, isPersonalArea);
             if (!rect) continue;
-
-            // Get furthest left x-coord
-            const leftX = (rect.x - this.state[layerX]) / this.state[layerScale];
-            if (leftmostX === null || leftX < leftmostX) {
-              leftmostX = leftX;
-              leftmostObj = objects[j];
+            if (minX === null || minX > rect.x) {
+              minX = rect.x;
             }
-
-            // Get furthest right x-coord
-            const rightX = (rect.x - this.state[layerX] + rect.width) / this.state[layerScale];
-            if (rightmostX === null || rightX > rightmostX) {
-              rightmostX = rightX;
-              rightmostObj = objects[j];
+            if (minY === null || minY > rect.y) {
+              minY = rect.y;
             }
-
-            // Get furthest top y-coord
-            const topY = (rect.y - this.state[layerY]) / this.state[layerScale];
-            if (topmostY === null || topY < topmostY) {
-              topmostY = topY;
-              topmostObj = objects[j];
+            if (maxX === null || maxX < (rect.x + rect.width)) {
+              maxX = (rect.x + rect.width);
             }
-
-            // Get furthest bottom y-coord
-            const bottomY = (rect.y - this.state[layerY] + rect.height) / this.state[layerScale];
-            if (bottommostY === null || bottomY > bottommostY) {
-              bottommostY = bottomY;
-              bottommostObj = objects[j];
+            if (maxY === null || maxY < (rect.y + rect.height)) {
+              maxY = (rect.y + rect.height);
             }
           }
         }
       }
     }
-
-    if (leftmostObj && rightmostObj && topmostObj && bottommostObj) {
-      let sidebarVal = 70;
-      if (personalArea) {
-        sidebarVal = 130;
-      }
-      const sidebarWidth = window.matchMedia("(orientation: portrait)").matches ? 0 : sidebarVal;
-      const topbarHeight = window.matchMedia("(orientation: portrait)").matches ? 110 : 55;
-      const personalAreaHeight = personalArea ? 0 : 90;
-
-      const contentWidth = rightmostX - leftmostX;
-      const totalWidth = window.innerWidth - sidebarWidth;
-
-      const contentHeight = bottommostY - topmostY;
-      const totalHeight = Math.max(window.innerHeight - topbarHeight - personalAreaHeight, 1);
-
-      const xScale = totalWidth / contentWidth;
-      const yScale = totalHeight / contentHeight;
-
-      // Scale so that everything fits on screen vertically and horizontally
-      const newScale = Math.min(xScale, yScale);
-
-      this.setState({
-        [layerX]: -leftmostX,
-        [layerY]: -topmostY,
-        [layerScale]: newScale,
-      }, () => {
-
-        // Adjust x, y position to center content again after scale is complete
-        const leftRect = this.getRect(leftmostObj);
-        const rightRect = this.getRect(rightmostObj);
-        const topRect = this.getRect(topmostObj);
-        const bottomRect = this.getRect(bottommostObj);
-
-        const newContentWidth = (rightRect.x + rightRect.width) - leftRect.x;
-        const newContentHeight = (bottomRect.y + bottomRect.height) - topRect.y;
-
-        this.setState({
-          [layerX]: this.state[layerX] - leftRect.x + ((totalWidth - newContentWidth) / 2),
-          [layerY]: this.state[layerY] + topbarHeight
-        });
-      });
+    return {
+      maxX: maxX,
+      minX: minX,
+      maxY: maxY,
+      minY: minY
     }
   }
 
-  getRect = (obj) => {
+  getRect = (obj, sideMenuW, isPersonalArea) => {
     if (!obj) return;
     let rect = null;
     if (obj.tool) {
+      if (obj.tool === "eraser") {
+        return null;
+      }
       // Drawing
       let xMax = null;
       let yMax = null;
@@ -466,22 +470,23 @@ class Graphics extends Component {
       let yMin = null;
       // Points array has form [x1, y1, x2, y2, ...] 
       // Every even index is start of new coord so skip by 2 each iteration
+      const strokeW = parseInt(obj.strokeWidth);
       for (let k = 0; k < obj.points.length; k += 2) {
         const point = {
           x: obj.points[k],
           y: obj.points[k + 1],
         }
-        if (xMax === null || point.x > xMax) {
-          xMax = point.x;
+        if (xMax === null || point.x + (strokeW / 2) > xMax) {
+          xMax = point.x + (strokeW / 2);
         }
-        if (yMax === null || point.y > yMax) {
-          yMax = point.y;
+        if (yMax === null || point.y + (strokeW / 2) > yMax) {
+          yMax = point.y + (strokeW / 2);
         }
-        if (xMin === null || point.x < xMin) {
-          xMin = point.x;
+        if (xMin === null || point.x - (strokeW / 2) < xMin) {
+          xMin = point.x - (strokeW / 2);
         }
-        if (yMin === null || point.y < yMin) {
-          yMin = point.y;
+        if (yMin === null || point.y - (strokeW / 2) < yMin) {
+          yMin = point.y - (strokeW / 2);
         }
       }
       const lineW = xMax - xMin;
@@ -498,6 +503,12 @@ class Graphics extends Component {
       if (obj.nodeName === "DIV") {
         // Custom Object
         rect = obj.getBoundingClientRect();
+        rect.x = rect.x - sideMenuW;
+        if (!this.state.personalAreaOpen && isPersonalArea) {
+          const pArea = document.getElementById("editPersonalContainer").getBoundingClientRect();
+          const yDiff = pArea.height - (window.innerHeight - pArea.y);
+          rect.y = rect.y - yDiff;
+        }
       } else {
         // Konva Object
         rect = obj.getClientRect();
@@ -575,6 +586,18 @@ class Graphics extends Component {
             historyStep++;
           }
         }
+      }
+    }
+
+    // Update the custom objects state in the parent component (if custom objs changed)
+    for (let i = 0; i < this.customObjects.length; i++) {
+      if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
+        const customObjs = {};
+        for (let j = 0; j < this.customObjects.length; j++) {
+          customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
+        }
+        this.props.setCustomObjs(customObjs);
+        break;
       }
     }
   }

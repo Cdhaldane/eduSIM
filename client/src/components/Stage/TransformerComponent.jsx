@@ -39,7 +39,6 @@ const TransformerComponent = forwardRef((props, ref) => {
           <Transformer
             ref={ref}
             name="transformer"
-            centeredScaling={true}
             enabledAnchors={[
               "top-left",
               "top-right",
@@ -74,7 +73,6 @@ const TransformerComponent = forwardRef((props, ref) => {
             ref={ref}
             name="transformer"
             keepRatio={true}
-            centeredScaling={true}
             rotationSnaps={[0, 90, 180, 270]}
           />
         );

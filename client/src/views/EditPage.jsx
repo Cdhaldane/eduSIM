@@ -36,6 +36,7 @@ const GridMain = styled.main`
 
 const EditPage = (props) => {
 
+  const [customObjs, setCustomObjs] = useState(null);
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
 
@@ -62,7 +63,11 @@ const EditPage = (props) => {
       <Container>
         <Grid>
           <GridNav>
-            <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
+            <Sidebar
+              customObjs={customObjs}
+              className="grid-sidebar"
+              visible={showNav}
+              close={toggle}
               img={props.location.img}
               title={props.location.title}
             />
@@ -70,6 +75,7 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                setCustomObjs={setCustomObjs}
                 doNotRecalculateBounds={updater > 0}
                 reloadCanvasFull={() => setUpdater(updater + 1)}
                 setDropdownType={dropdownContext.setType}
