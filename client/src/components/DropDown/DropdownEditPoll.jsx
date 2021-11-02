@@ -3,6 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
+import "./DropdownEditPoll.css";
 
 const DropdownEditPoll = (props) => {
 

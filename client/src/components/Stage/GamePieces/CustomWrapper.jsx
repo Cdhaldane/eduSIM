@@ -34,7 +34,10 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const handleLoad = () => {
     const thisObj = getObj();
-    if (thisObj.parentElement.parentElement.parentElement.id === "editMainContainer") {
+    if (
+      thisObj.parentElement.parentElement.parentElement.id === "editMainContainer" ||
+      thisObj.parentElement.parentElement.parentElement.parentElement.id === "editPersonalContainer"
+    ) {
       thisObj.parentElement.style.pointerEvents = "none";
     }
   }

@@ -182,7 +182,9 @@ class Graphics extends Component {
       currentTextRef: "",
       textareaWidth: 0,
       textareaHeight: 0,
-      textareaInlineStyle: {},
+      textareaInlineStyle: {
+        display: "none"
+      },
       textareaFill: null,
       textareaFontFamily: null,
       textareaFontSize: 10,
@@ -1882,7 +1884,7 @@ class Graphics extends Component {
   }
 
   // Turn <Text> into <textarea> for editing on double click
-  handleTextDblClick = (stage, text, layer) => {
+  handleTextDblClick = (text, layer) => {
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -2080,7 +2082,7 @@ class Graphics extends Component {
     if (this.state.selectedShapeName) {
       for (let name of this.savedObjects) {
         if (this.state.selectedShapeName.startsWith(name)) {
-          type=name;
+          type = name;
         }
       }
     } else return;
@@ -2535,7 +2537,10 @@ class Graphics extends Component {
       text: obj.text,
       link: obj.link,
       onTransform: this.handleTextTransform,
-      onDblClick: () => this.handleTextDblClick(this.refs.graphicStage, this.refs[obj.ref], this.refs.groupAreaLayer),
+      onDblClick: () => this.handleTextDblClick(
+        this.refs[obj.ref],
+        obj.infolevel ? this.refs.personalAreaLayer : this.refs.groupAreaLayer
+      ),
       onContextMenu: (e) => {
         this.onObjectContextMenu(e);
         this.setState({
@@ -2618,7 +2623,7 @@ class Graphics extends Component {
       updateKonva: this.getKonvaObj
     };
   }
-  
+
   htmlProps = (obj) => ({
     iframeSrc: obj.iframeSrc,
     htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
