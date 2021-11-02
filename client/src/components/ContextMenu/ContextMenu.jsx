@@ -18,6 +18,8 @@ const ContextMenu = (props) => {
       setEditTitle("Edit Connect4");
     } else if (props.selectedShapeName.startsWith("tic")) {
       setEditTitle("Edit TicTacToe");
+    } else if (props.selectedShapeName.startsWith("html")) {
+      setEditTitle("Edit HTML");
     } else {
       setEditTitle("Edit Shape");
     }
@@ -139,6 +141,8 @@ const ContextMenu = (props) => {
             close={props.close}
             selectedShapeName={props.selectedShapeName}
             getObj={props.getObj}
+            getObjState={props.getObjState}
+            updateObjState={props.updateObjState}
           />
         </div>
       )}

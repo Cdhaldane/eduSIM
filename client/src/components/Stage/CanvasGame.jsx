@@ -5,10 +5,13 @@ import axios from "axios";
 // import {Link } from "react-router-dom";
 import Level from "../Level/Level";
 import Modal from "react-modal";
+import URLVideo from "./URLVideos";
 import CreateRole from "../CreateRoleSelection/CreateRole";
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
+import Poll from "./GamePieces/Poll/Poll";
+import HTMLFrame from "./GamePieces/HTMLFrame";
 import { uniqueId } from "lodash";
 
 import {
@@ -20,7 +23,8 @@ import {
   Text,
   RegularPolygon,
   Line,
-  Image
+  Image,
+  Arrow
 } from "react-konva";
 
 const EndScreen = styled.div`
@@ -134,20 +138,9 @@ class Graphics extends Component {
     "documents",
     "lines",
     "tics",
-    "connect4",
-
-    // Delete Counts (stored to keep object label #s in sync)
-    "rectDeleteCount",
-    "ellipseDeleteCount",
-    "starDeleteCount",
-    "triangleDeleteCount",
-    "imageDeleteCount",
-    "videoDeleteCount",
-    "audioDeleteCount",
-    "documentDeleteCount",
-    "textDeleteCount",
-    "linesDeleteCount",
-    "arrowDeleteCount",
+    "connect4s",
+    "polls",
+    "htmlFrames",
 
     "status"
   ];
@@ -168,8 +161,10 @@ class Graphics extends Component {
       documents: [],
       lines: [],
       tics: [],
-      connect4: [],
+      connect4s: [],
       gameroles: [],
+      polls: [],
+      htmlFrames: [],
       open: 0,
       isOpen: true,
       state: false,
@@ -187,7 +182,7 @@ class Graphics extends Component {
     if (this.props.roleSelection === "random") role = -1;
     else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
     this.setState({
-      rolelevel: role
+      rolelevel: role || ''
     });
     let id = dbid
     if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
@@ -212,14 +207,205 @@ class Graphics extends Component {
       });
     } catch(e) {};
 
-    console.log(this.state);
-
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
       if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
       this.handlePlayerInfo(info);
     }
   }
+  
+  defaultObjProps = (obj, index) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      rotation: obj.rotation,
+      ref: obj.ref,
+      fill: obj.fill,
+      opacity: obj.opacity,
+      name: "shape",
+      id: obj.id,
+      x: obj.x,
+      y: obj.y,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth,
+      strokeScaleEnabled: false,
+      draggable: false,
+      static: true
+    }
+  }
+
+  rectProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: obj.fillPatternImage,
+      fillPatternOffset: obj.fillPatternOffset,
+      image: obj.image
+    }
+  }
+
+  ellipseProps = (obj) => {
+    return {
+      radiusX: obj.radiusX,
+      radiusY: obj.radiusY
+    }
+  }
+
+  imageProps = (obj, layer) => {
+    return {
+      src: obj.imgsrc,
+      image: obj.imgsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  videoProps = (obj, layer) => {
+    return {
+      type: "video",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  audioProps = (obj, layer) => {
+    return {
+      type: "audio",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: true
+    }
+  }
+
+  documentProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: this.state.docimage,
+      fillPatternOffset: obj.fillPatternOffset,
+      fillPatternScaleY: 0.2,
+      fillPatternScaleX: 0.2,
+      image: obj.image
+    }
+  }
+
+  triangleProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      sides: obj.sides
+    }
+  }
+
+  starProps = (obj) => {
+    return {
+      innerRadius: obj.innerRadius,
+      outerRadius: obj.outerRadius,
+      numPoints: obj.numPoints
+    }
+  }
+
+  textProps = (obj) => {
+    return {
+      textDecoration: obj.link ? "underline" : "",
+      width: obj.width,
+      fontFamily: obj.fontFamily,
+      fontSize: obj.fontSize,
+      text: obj.text,
+      link: obj.link
+    }
+  }
+
+  lineProps = (obj, index) => {
+    return {
+      id: obj.id,
+      level: obj.level,
+      key: index,
+      points: obj.points,
+      stroke: obj.color,
+      strokeWidth: obj.strokeWidth,
+      tension: 0.5,
+      lineCap: "round",
+      globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
+      draggable: false,
+      onContextMenu: this.onObjectContextMenu,
+    }
+  }
+
+  arrowProps = (obj, index) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      ref: obj.ref,
+      id: obj.id,
+      name: "shape",
+      points: [
+        obj.points[0],
+        obj.points[1],
+        obj.points[2],
+        obj.points[3]
+      ],
+      stroke: obj.stroke,
+      fill: obj.fill,
+      draggable: !this.state.layerDraggable
+    }
+  }
+
+  pollProps = (obj) => {
+    return {
+      custom: {
+        pollJson: obj.json ? obj.json : {
+          pages: [
+            {
+              questions: [
+                {
+                  id: 0,
+                  type: "text",
+                  name: "0",
+                  title: "Sample Text Question:",
+                  isRequired: true
+                }, {
+                  id: 1,
+                  type: "text",
+                  name: "1",
+                  inputType: "date",
+                  title: "Sample Date Question:",
+                }, {
+                  id: 2,
+                  type: "text",
+                  name: "2",
+                  inputType: "color",
+                  title: "Sample Color Question:",
+                }
+              ]
+            }
+          ]
+        }
+      }
+    };
+  }
+  
+  htmlProps = (obj) => ({
+    iframeSrc: obj.iframeSrc,
+    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
+    containerWidth: obj.containerWidth,
+    containerHeight: obj.containerHeight
+  });
 
   getInteractiveProps = (id) => ({
     updateStatus: (parameters) => {
@@ -252,6 +438,126 @@ class Graphics extends Component {
         level
       })
     }
+  }
+
+  objectIsOnStage = (obj) => {
+    if (obj.level === this.state.level && obj.infolevel === false) {
+      return "group";
+    } else if (obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel) {
+      return "personal";
+    } else {
+      return "";
+    }
+  }
+
+  // we need to render this outside of the konva stage
+  // since otherwise they become static/unable to interact with
+  loadInterativeObjects = (stage) => (
+    <>
+      {this.state.polls.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <Poll
+            defaultProps={{
+              ...this.defaultObjProps(obj, index),
+              ...this.pollProps(obj)
+            }}
+            {...this.defaultObjProps(obj, index)}
+          /> : null
+      })}
+      {this.state.connect4s.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <Connect4
+            defaultProps={{ ...this.defaultObjProps(obj, index) }}
+            {...this.defaultObjProps(obj, index)}
+            {...this.getInteractiveProps(obj.id)}
+          /> : null
+      })}
+      {this.state.tics.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <TicTacToe
+            defaultProps={{ ...this.defaultObjProps(obj, index) }}
+            {...this.defaultObjProps(obj, index)}
+            {...this.getInteractiveProps(obj.id)}
+          /> : null
+      })}
+      {this.state.htmlFrames.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <HTMLFrame
+            defaultProps={{ ...this.defaultObjProps(obj, index) }}
+            {...this.defaultObjProps(obj, index)}
+            {...this.getInteractiveProps(obj.id)}
+            {...this.htmlProps(obj)}
+          /> : null
+      })}
+    </>
+  );
+
+  loadObjects = (stage) => {
+    return (
+      <>
+        {/* This Rect is for dragging the canvas */}
+        <Rect
+          id="ContainerRect"
+          x={-5 * window.innerWidth}
+          y={-5 * window.innerHeight}
+          height={window.innerHeight * 10}
+          width={window.innerWidth * 10}
+        />
+
+        {/* Load objects in state */}
+        {this.state.lines.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Line {...this.lineProps(obj, index)} /> : null
+        })}
+        {this.state.rectangles.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
+        })}
+        {this.state.ellipses.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
+        })}
+        {this.state.images.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLImage {...this.defaultObjProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.videos.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.audios.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <URLVideo {...this.defaultObjProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
+        })}
+        {this.state.documents.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Rect {...this.defaultObjProps(obj, index)} {...this.documentProps(obj)} /> : null
+        })}
+        {this.state.triangles.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <RegularPolygon {...this.defaultObjProps(obj, index)} {...this.triangleProps(obj)} /> : null
+        })}
+        {this.state.stars.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Star {...this.defaultObjProps(obj, index)} {...this.starProps(obj)} /> : null
+        })}
+        {this.state.texts.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
+        })}
+        {this.state.arrows.map((obj, index) => {
+          return (
+            !obj.from &&
+            !obj.to &&
+            obj.level === this.state.level &&
+            obj.infolevel === (stage === "personal")
+          ) ?
+            <Arrow {...this.arrowProps(obj, index)} /> : null
+        })}
+
+        <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
+      </>
+    );
   }
 
   render() {
@@ -290,31 +596,6 @@ class Graphics extends Component {
           </Modal>
         </div>
         }
-
-        {(this.state.tics || []).map(({i, level, id}) => {
-          if (level === this.state.level) {
-            return (
-              <TicTacToe
-                i={i}
-                handleTicDelete={this.handleTicDelete}
-                {...this.getInteractiveProps(id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
-        {(this.state.connect4 || []).map(({level, id}) => {
-          if (level === this.state.level) {
-            return (
-              <Connect4 
-                {...this.getInteractiveProps(id)}
-              />
-            )
-          } else {
-            return null
-          }
-        })}
         <div>
           <Stage
             height={window.innerHeight}
@@ -330,280 +611,10 @@ class Graphics extends Component {
               width={window.innerWidth}
               ref="layer2"
             >
-              <Rect
-                x={-5 * window.innerWidth}
-                y={-5 * window.innerHeight}
-                height={window.innerHeight * 10}
-                width={window.innerWidth * 10}
-                name=""
-                id="ContainerRect"
-              />
-              {this.state.rectangles.map(eachRect => {
-                if (eachRect.level === this.state.level && eachRect.infolevel === false) {
-                  return (
-                    <Rect
-                      visible={eachRect.visible}
-                      rotation={eachRect.rotation}
-                      ref={eachRect.ref}
-                      fill={eachRect.fill}
-                      fillPatternImage={eachRect.fillPatternImage}
-                      fillPatternOffset={eachRect.fillPatternOffset}
-                      image={eachRect.image}
-                      opacity={eachRect.opacity}
-                      id={eachRect.id}
-                      name="shape"
-                      x={eachRect.x}
-                      y={eachRect.y}
-                      width={eachRect.width}
-                      height={eachRect.height}
-                      stroke={eachRect.stroke}
-                      strokeWidth={eachRect.strokeWidth}
-                      strokeScaleEnabled={false}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-
-              {this.state.ellipses.map(eachEllipse => {
-                if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
-                  return (
-                    <Ellipse
-                      visible={eachEllipse.visible}
-                      ref={eachEllipse.ref}
-                      name="shape"
-                      id={eachEllipse.id}
-                      x={eachEllipse.x}
-                      y={eachEllipse.y}
-                      opacity={eachEllipse.opacity}
-                      rotation={eachEllipse.rotation}
-                      radiusX={eachEllipse.radiusX}
-                      radiusY={eachEllipse.radiusY}
-                      fill={eachEllipse.fill}
-                      stroke={eachEllipse.stroke}
-                      strokeWidth={eachEllipse.strokeWidth}
-                      strokeScaleEnabled={false}
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.lines.map((eachLine, i) => {
-                if (eachLine.level === this.state.level && eachLine.infolevel === false) {
-                  return (
-                    <Line
-                      id={eachLine.id}
-                      level={eachLine.level}
-                      key={i}
-                      points={eachLine.points}
-                      stroke={eachLine.color}
-                      strokeWidth={5}
-                      tension={0.5}
-                      lineCap="round"
-                      globalCompositeOperation={
-                        eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
-                      }
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-
-              {this.state.images.map(eachImage => {
-                if (eachImage.level === this.state.level && eachImage.infolevel === false) {
-                  return (
-                    <URLImage
-                      visible={eachImage.visible}
-                      src={eachImage.imgsrc}
-                      image={eachImage.imgsrc}
-                      ref={eachImage.ref}
-                      name="shape"
-                      id={eachImage.id}
-                      layer={this.refs.layer2}
-                      x={eachImage.x}
-                      y={eachImage.y}
-                      width={eachImage.width}
-                      height={eachImage.height}
-                      stroke={eachImage.stroke}
-                      strokeWidth={eachImage.strokeWidth}
-                      rotation={eachImage.rotation}
-                      opacity={eachImage.opacity}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.videos.map(eachVideo => {
-                if (eachVideo.level === this.state.level && eachVideo.infolevel === false) {
-                  return (
-                    <URLvideo
-                      visible={eachVideo.visible}
-                      src={eachVideo.vidsrc}
-                      image={eachVideo.vidsrc}
-                      ref={eachVideo.ref}
-                      id={eachVideo.id}
-                      name="shape"
-                      layer={this.refs.layer2}
-                      x={eachVideo.x}
-                      y={eachVideo.y}
-                      width={eachVideo.width}
-                      height={eachVideo.height}
-                      stroke={eachVideo.stroke}
-                      strokeWidth={eachVideo.strokeWidth}
-                      rotation={eachVideo.rotation}
-                      opacity={eachVideo.opacity}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.audios.map(eachAudio => {
-                if (eachAudio.level === this.state.level && eachAudio.infolevel === false) {
-                  return (
-                    <URLvideo
-                      visible={eachAudio.visible}
-                      fillPatternImage={true}
-                      src={eachAudio.audsrc}
-                      image={eachAudio.imgsrc}
-                      ref={eachAudio.ref}
-                      id={eachAudio.id}
-                      name="shape"
-                      layer={this.refs.layer2}
-                      x={eachAudio.x}
-                      y={eachAudio.y}
-                      width={eachAudio.width}
-                      height={eachAudio.height}
-                      stroke={eachAudio.stroke}
-                      strokeWidth={eachAudio.strokeWidth}
-                      rotation={eachAudio.rotation}
-                      opacity={eachAudio.opacity}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.documents.map(eachDoc => {
-                if (eachDoc.level === this.state.level && eachDoc.infolevel === false) {
-                  return (
-                    <Rect
-                      rotation={eachDoc.rotation}
-                      ref={eachDoc.ref}
-                      fill={eachDoc.fill}
-                      fillPatternImage={this.state.docimage}
-                      fillPatternOffset={eachDoc.fillPatternOffset}
-                      fillPatternScaleY={0.2}
-                      fillPatternScaleX={0.2}
-                      image={eachDoc.image}
-                      opacity={eachDoc.opacity}
-                      id={eachDoc.id}
-                      name="shape"
-                      x={eachDoc.x}
-                      y={eachDoc.y}
-                      width={eachDoc.width}
-                      height={eachDoc.height}
-                      stroke={eachDoc.stroke}
-                      strokeWidth={eachDoc.strokeWidth}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.triangles.map(eachEllipse => {
-                if (eachEllipse.level === this.state.level && eachEllipse.infolevel === false) {
-                  return (
-                    <RegularPolygon
-                      visible={eachEllipse.visible}
-                      ref={eachEllipse.ref}
-                      id={eachEllipse.id}
-                      name="shape"
-                      x={eachEllipse.x}
-                      y={eachEllipse.y}
-                      opacity={eachEllipse.opacity}
-                      rotation={eachEllipse.rotation}
-                      height={eachEllipse.height}
-                      sides={eachEllipse.sides}
-                      radius={eachEllipse.radius}
-                      fill={eachEllipse.fill}
-                      stroke={eachEllipse.stroke}
-                      strokeWidth={eachEllipse.strokeWidth}
-                      strokeScaleEnabled={false}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-              {this.state.stars.map(eachStar => {
-                if (eachStar.level === this.state.level && eachStar.infolevel === false) {
-                  return (
-                    <Star
-                      visible={eachStar.visible}
-                      ref={eachStar.ref}
-                      id={eachStar.id}
-                      name="shape"
-                      x={eachStar.x}
-                      y={eachStar.y}
-                      innerRadius={eachStar.innerRadius}
-                      outerRadius={eachStar.outerRadius}
-                      numPoints={eachStar.numPoints}
-                      stroke={eachStar.stroke}
-                      strokeWidth={eachStar.strokeWidth}
-                      fill={eachStar.fill}
-                      opacity={eachStar.opacity}
-                      strokeScaleEnabled={false}
-                      rotation={eachStar.rotation}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-
-              {this.state.texts.map(eachText => {
-                if (eachText.level === this.state.level && eachText.infolevel === false) {
-                  return (
-                    //perhaps this.state.texts only need to contain refs?
-                    //so that we only need to store the refs to get more information
-                    <Text
-                      visible={eachText.visible}
-                      textDecoration={eachText.link ? "underline" : ""}
-
-                      link={eachText.link}
-                      width={eachText.width}
-                      fill={eachText.fill}
-                      opacity={eachText.opacity}
-                      id={eachText.id}
-                      name="shape"
-                      ref={eachText.ref}
-                      rotation={eachText.rotation}
-                      fontFamily={eachText.fontFamily}
-                      fontSize={eachText.fontSize}
-                      x={eachText.x}
-                      y={eachText.y}
-                      text={eachText.text}
-
-                    />
-                  )
-                } else {
-                  return null
-                }
-              })}
-
+              {this.loadObjects("group")}
             </Layer>
           </Stage>
+          {this.loadInterativeObjects("group")}
         </div>
         <div className="eheader">
           <Level
@@ -616,277 +627,30 @@ class Graphics extends Component {
           />
           <div>
             <div className={"info" + this.state.open}>
-              <div className="personalAreaStageContainer">
-
-                <Stage width={1500} height={600}
-                  ref="graphicStage1"
+              <div className="personalAreaStageContainer" id="personalGameContainer">
+                <Stage
+                  style={{ position: "relative", overflow: "hidden" }}
+                  height={document.getElementById("personalGameContainer") ?
+                    document.getElementById("personalGameContainer").clientHeight : 0}
+                  width={document.getElementById("personalGameContainer") ?
+                    document.getElementById("personalGameContainer").clientWidth : 0}
+                  ref="personalAreaStage"
                 >
-                  <Layer ref="layer3">
-                    {this.state.rectangles.map(eachRect => {
-                      if (eachRect.level === this.state.level && eachRect.infolevel === true && eachRect.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Rect
-                            visible={eachRect.visible}
-                            rotation={eachRect.rotation}
-                            ref={eachRect.ref}
-                            fill={eachRect.fill}
-                            fillPatternImage={eachRect.fillPatternImage}
-                            fillPatternOffset={eachRect.fillPatternOffset}
-                            image={eachRect.image}
-                            opacity={eachRect.opacity}
-                            id={eachRect.id}
-                            name="shape"
-                            x={eachRect.x}
-                            y={eachRect.y}
-                            width={eachRect.width}
-                            height={eachRect.height}
-                            stroke={eachRect.stroke}
-                            strokeWidth={eachRect.strokeWidth}
-                            strokeScaleEnabled={false}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-
-                    {this.state.ellipses.map(eachEllipse => {
-                      if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Ellipse
-                            visible={eachEllipse.visible}
-                            ref={eachEllipse.ref}
-                            name="shape"
-                            id={eachEllipse.id}
-                            x={eachEllipse.x}
-                            y={eachEllipse.y}
-                            opacity={eachEllipse.opacity}
-                            rotation={eachEllipse.rotation}
-                            radiusX={eachEllipse.radiusX}
-                            radiusY={eachEllipse.radiusY}
-                            fill={eachEllipse.fill}
-                            stroke={eachEllipse.stroke}
-                            strokeWidth={eachEllipse.strokeWidth}
-                            strokeScaleEnabled={false}
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.lines.map((eachLine, i) => {
-                      if (eachLine.level === this.state.level && eachLine.infolevel === true && eachLine.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Line
-                            id={eachLine.id}
-                            level={eachLine.level}
-                            key={i}
-                            points={eachLine.points}
-                            stroke={eachLine.color}
-                            strokeWidth={5}
-                            tension={0.5}
-                            lineCap="round"
-                            globalCompositeOperation={
-                              eachLine.tool === 'eraser' ? 'destination-out' : 'source-over'
-                            }
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-
-                    {this.state.images.map(eachImage => {
-                      if (eachImage.level === this.state.level && eachImage.infolevel === true && eachImage.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLImage
-                            visible={eachImage.visible}
-                            src={eachImage.imgsrc}
-                            image={eachImage.imgsrc}
-                            ref={eachImage.ref}
-                            name="shape"
-                            id={eachImage.id}
-                            layer={this.refs.layer2}
-                            x={eachImage.x}
-                            y={eachImage.y}
-                            width={eachImage.width}
-                            height={eachImage.height}
-                            stroke={eachImage.stroke}
-                            strokeWidth={eachImage.strokeWidth}
-                            rotation={eachImage.rotation}
-                            opacity={eachImage.opacity}
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.videos.map(eachVideo => {
-                      if (eachVideo.level === this.state.level && eachVideo.infolevel === true && eachVideo.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLvideo
-                            visible={eachVideo.visible}
-                            src={eachVideo.vidsrc}
-                            image={eachVideo.vidsrc}
-                            ref={eachVideo.ref}
-                            id={eachVideo.id}
-                            name="shape"
-                            layer={this.refs.layer2}
-                            x={eachVideo.x}
-                            y={eachVideo.y}
-                            width={eachVideo.width}
-                            height={eachVideo.height}
-                            stroke={eachVideo.stroke}
-                            strokeWidth={eachVideo.strokeWidth}
-                            rotation={eachVideo.rotation}
-                            opacity={eachVideo.opacity}
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.audios.map(eachAudio => {
-                      if (eachAudio.level === this.state.level && eachAudio.infolevel === true && eachAudio.rolelevel === this.state.rolelevel) {
-                        return (
-                          <URLvideo
-                            visible={eachAudio.visible}
-                            fillPatternImage={true}
-                            src={eachAudio.audsrc}
-                            image={eachAudio.imgsrc}
-                            ref={eachAudio.ref}
-                            id={eachAudio.id}
-                            name="shape"
-                            layer={this.refs.layer2}
-                            x={eachAudio.x}
-                            y={eachAudio.y}
-                            width={eachAudio.width}
-                            height={eachAudio.height}
-                            stroke={eachAudio.stroke}
-                            strokeWidth={eachAudio.strokeWidth}
-                            rotation={eachAudio.rotation}
-                            opacity={eachAudio.opacity}
-
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.documents.map(eachDoc => {
-                      if (eachDoc.level === this.state.level && eachDoc.infolevel === true && eachDoc.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Rect
-                            rotation={eachDoc.rotation}
-                            ref={eachDoc.ref}
-                            fill={eachDoc.fill}
-                            fillPatternImage={this.state.docimage}
-                            fillPatternOffset={eachDoc.fillPatternOffset}
-                            fillPatternScaleY={0.2}
-                            fillPatternScaleX={0.2}
-                            image={eachDoc.image}
-                            opacity={eachDoc.opacity}
-                            id={eachDoc.id}
-                            name="shape"
-                            x={eachDoc.x}
-                            y={eachDoc.y}
-                            width={eachDoc.width}
-                            height={eachDoc.height}
-                            stroke={eachDoc.stroke}
-                            strokeWidth={eachDoc.strokeWidth}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.triangles.map(eachEllipse => {
-                      if (eachEllipse.level === this.state.level && eachEllipse.infolevel === true && eachEllipse.rolelevel === this.state.rolelevel) {
-                        return (
-                          <RegularPolygon
-                            visible={eachEllipse.visible}
-                            ref={eachEllipse.ref}
-                            id={eachEllipse.id}
-                            name="shape"
-                            x={eachEllipse.x}
-                            y={eachEllipse.y}
-                            opacity={eachEllipse.opacity}
-                            rotation={eachEllipse.rotation}
-                            height={eachEllipse.height}
-                            sides={eachEllipse.sides}
-                            radius={eachEllipse.radius}
-                            fill={eachEllipse.fill}
-                            stroke={eachEllipse.stroke}
-                            strokeWidth={eachEllipse.strokeWidth}
-                            strokeScaleEnabled={false}
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-                    {this.state.stars.map(eachStar => {
-                      if (eachStar.level === this.state.level && eachStar.infolevel === true && eachStar.rolelevel === this.state.rolelevel) {
-                        return (
-                          <Star
-                            visible={eachStar.visible}
-                            ref={eachStar.ref}
-                            id={eachStar.id}
-                            name="shape"
-                            x={eachStar.x}
-                            y={eachStar.y}
-                            innerRadius={eachStar.innerRadius}
-                            outerRadius={eachStar.outerRadius}
-                            numPoints={eachStar.numPoints}
-                            stroke={eachStar.stroke}
-                            strokeWidth={eachStar.strokeWidth}
-                            fill={eachStar.fill}
-                            opacity={eachStar.opacity}
-                            strokeScaleEnabled={false}
-                            rotation={eachStar.rotation}
-
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
-
-                    {this.state.texts.map(eachText => {
-                      if (eachText.level === this.state.level && eachText.infolevel === true && eachText.rolelevel === this.state.rolelevel) {
-                        return (
-                          // Perhaps this.state.texts only need to contain refs?
-                          // So that we only need to store the refs to get more information
-                          <Text
-                            visible={eachText.visible}
-                            textDecoration={eachText.link ? "underline" : ""}
-                            link={eachText.link}
-                            width={eachText.width}
-                            fill={eachText.fill}
-                            opacity={eachText.opacity}
-                            id={eachText.id}
-                            name="shape"
-                            ref={eachText.ref}
-                            rotation={eachText.rotation}
-                            fontFamily={eachText.fontFamily}
-                            fontSize={eachText.fontSize}
-                            x={eachText.x}
-                            y={eachText.y}
-                            text={eachText.text}
-                          />
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
+                  <Layer
+                    ref="personalAreaLayer"
+                    name="personal"
+                    scaleX={this.state.personalLayerScale}
+                    scaleY={this.state.personalLayerScale}
+                    x={this.state.personalLayerX}
+                    y={this.state.personalLayerY}
+                    height={window.innerHeight}
+                    width={window.innerWidth}
+                    draggable={false}
+                  >
+                    {this.loadObjects("personal")}
                   </Layer>
                 </Stage>
+                {this.loadInterativeObjects("personal")}
               </div>
               {(this.state.open !== 1)
                 ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
