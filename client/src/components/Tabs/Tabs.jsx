@@ -51,14 +51,14 @@ function Tabs(props) {
     setToggleState(index);
     // for updating controls in admin header
     props.setRoom(tabs[index - 1]);
-    if (index > 0 && index < tabs.length+1) {
-      const id = tabs[index-1][1];
+    if (index > 0 && index < tabs.length + 1) {
+      const id = tabs[index - 1][1];
       axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getRoomInteractionBreakdown", {
         params: {
           gameroomid: id,
         },
       }).then((res) => {
-        setInteractionData(Object.entries(res.data).map((val) => ({name: "Level "+val[0], interactions: val[1]})));
+        setInteractionData(Object.entries(res.data).map((val) => ({ name: "Level " + val[0], interactions: val[1] })));
       });
       if (!logs[id]) {
         axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getGameLogs", {
@@ -188,7 +188,7 @@ function Tabs(props) {
   }
 
   const downloadJSON = async (object) => {
-    const blob = new Blob([JSON.stringify(object,null,2)],{type:'application/json'});
+    const blob = new Blob([JSON.stringify(object, null, 2)], { type: 'application/json' });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
@@ -211,20 +211,20 @@ function Tabs(props) {
       int.player.role,
       int.player.invited ? int.player.dbid : '',
       int.gamepieceId,
-      `"`+JSON.stringify(int.parameters).replace(/"([^"]+)":/g, '$1:').replaceAll("\"", "'")+`"`,
+      `"` + JSON.stringify(int.parameters).replace(/"([^"]+)":/g, '$1:').replaceAll("\"", "'") + `"`,
       moment(int.timestamp).format()
     ].join(','));
 
     let content = [
-      "Messages","","","","","",
-      "Interactions","","","","",""
+      "Messages", "", "", "", "", "",
+      "Interactions", "", "", "", "", ""
     ].join(',') + "\n" + [
-      "Name","Role","Database ID","Message","Timestamp","",
-      "Name","Role","Database ID","Gamepiece","Parameters","Timestamp"
+      "Name", "Role", "Database ID", "Message", "Timestamp", "",
+      "Name", "Role", "Database ID", "Gamepiece", "Parameters", "Timestamp"
     ].join(',') + "\n";
 
-    for (let i=0; i<Math.max(parsedMessages.length,parsedInteractions.length); i++) {
-      let str="";
+    for (let i = 0; i < Math.max(parsedMessages.length, parsedInteractions.length); i++) {
+      let str = "";
       if (parsedMessages[i]) {
         str += parsedMessages[i];
       } else str += ",,,,";
@@ -235,7 +235,7 @@ function Tabs(props) {
       content += str + "\n";
     }
 
-    const blob = new Blob([content],{type:'text/csv'});
+    const blob = new Blob([content], { type: 'text/csv' });
     const href = await URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
@@ -259,17 +259,17 @@ function Tabs(props) {
 
   return (
     <>
-      {(toggleState > 0 && toggleState < tabs.length+1 && logs[tabs[toggleState-1][1]]) ? (
+      {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]]) ? (
         <div className="logs page-margin" hidden={!viewLogs}>
           <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
-            <h4>Display previous runs {viewLogs?'-':'+'}</h4>
+            <h4>Display previous runs {viewLogs ? '-' : '+'}</h4>
           </div>
-          {logs[tabs[toggleState-1][1]].map(data => (
+          {logs[tabs[toggleState - 1][1]].map(data => (
             <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
               <div className="logrow-info">
                 <i class="fas fa-scroll"></i>
                 <p>
-                  Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")}, 
+                  Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")},
                   lasted {getGameLength(data)}
                 </p>
               </div>
@@ -278,7 +278,7 @@ function Tabs(props) {
                 <button onClick={() => downloadJSON(data)} title="Download JSON data"><i class="fas fa-file-code"></i></button>
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
-                  room: tabs[toggleState-1][1]
+                  room: tabs[toggleState - 1][1]
                 })}><i class="fas fa-trash-alt"></i></button>
               </div>
             </div>
@@ -297,6 +297,7 @@ function Tabs(props) {
           </li>
           {tabs.map((tab, i) => (
             <li
+              key={i}
               onClick={() => toggleTab(i + 1)}
               className={toggleState === i + 1 ? "selected" : ""}
             >
@@ -435,6 +436,7 @@ function Tabs(props) {
           </div>
           {tabs.map((tab, i) => (
             <div
+              key={i}
               className={
                 toggleState === i + 1 ? "content  active-content" : "content"
               }
@@ -478,9 +480,9 @@ function Tabs(props) {
                         <Tooltip />
                       </LineChart>
                     </ResponsiveContainer>
-                      {interactionData.length === 0 && (
-                        <p>No data has been recorded yet.</p>
-                      )}
+                    {interactionData.length === 0 && (
+                      <p>No data has been recorded yet.</p>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef } from "react";
+import React, { useState, forwardRef } from "react";
 
 import "./Performance.css";
 
@@ -18,7 +18,6 @@ const Performance = forwardRef((props, ref) => {
                   switch (key) {
                     case "polls":
                       return customObjs[key].map((poll, i) => {
-                        console.log(poll);
                         return (
                           <tr key={i} className="performancePollRow">
                             <h4>
@@ -41,10 +40,6 @@ const Performance = forwardRef((props, ref) => {
                                 ))}
                               </React.Fragment>
                             ))}
-                            {/*<input type="checkbox" name="" value="" />
-                              <label htmlFor="">
-                                Show Answers Report
-                            </label><br />*/}
                           </tr>
                         );
                       });

@@ -101,7 +101,7 @@ const Table = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      let items = [(<option value="">Select a role</option>)];
+      let items = [(<option key={0} value="">Select a role</option>)];
       for (let i = 0; i <= allData.length - 1; i++) {
         // Here I will be creating my options dynamically based on
         items.push(<option value={allData[i].gamerole}>{allData[i].gamerole}</option>);

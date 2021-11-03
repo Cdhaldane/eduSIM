@@ -450,9 +450,9 @@ class Graphics extends Component {
     }
   }
 
-  // we need to render this outside of the konva stage
+  // We need to render this outside of the konva stage
   // since otherwise they become static/unable to interact with
-  loadInterativeObjects = (stage) => (
+  loadInteractiveObjects = (stage) => (
     <>
       {this.state.polls.map((obj, index) => {
         return this.objectIsOnStage(obj) === stage ?
@@ -614,7 +614,7 @@ class Graphics extends Component {
               {this.loadObjects("group")}
             </Layer>
           </Stage>
-          {this.loadInterativeObjects("group")}
+          {this.loadInteractiveObjects("group")}
         </div>
         <div className="eheader">
           <Level
@@ -650,7 +650,7 @@ class Graphics extends Component {
                     {this.loadObjects("personal")}
                   </Layer>
                 </Stage>
-                {this.loadInterativeObjects("personal")}
+                {this.loadInteractiveObjects("personal")}
               </div>
               {(this.state.open !== 1)
                 ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
