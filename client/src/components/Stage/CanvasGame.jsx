@@ -12,6 +12,7 @@ import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
 import Poll from "./GamePieces/Poll/Poll";
 import HTMLFrame from "./GamePieces/HTMLFrame";
+import JSRunner from "./GamePieces/JSRunner";
 import { uniqueId } from "lodash";
 
 import {
@@ -487,6 +488,17 @@ class Graphics extends Component {
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
             {...this.htmlProps(obj)}
+          /> : null
+      })}
+
+      {/* see JSRunner.jsx for warnings about this */}
+      {this.state.texts.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <JSRunner
+            defaultProps={{ ...this.defaultObjProps(obj, index) }}
+            {...this.defaultObjProps(obj, index)}
+            {...this.getInteractiveProps(obj.id)}
+            {...this.textProps(obj)}
           /> : null
       })}
     </>
