@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
-import DropdownRoles from "../Dropdown/DropdownRoles";
-import URLvideo from "./URLVideos";
-import axios from "axios";
-// import {Link } from "react-router-dom";
 import Level from "../Level/Level";
 import Modal from "react-modal";
-import URLVideo from "./URLVideos";
 import CreateRole from "../CreateRoleSelection/CreateRole";
+import styled from "styled-components";
+
+// Custom Konva Components
+import URLVideo from "./URLVideos";
+import URLImage from "./URLImage";
 import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
-import styled from "styled-components";
 import Poll from "./GamePieces/Poll/Poll";
 import HTMLFrame from "./GamePieces/HTMLFrame";
-import { uniqueId } from "lodash";
 
+// Standard Konva Components
 import {
   Rect,
   Stage,
@@ -64,89 +63,19 @@ const EndScreen = styled.div`
   }
 `;
 
-class URLImage extends React.Component {
-  state = {
-    image: null
-  };
-
-  componentDidMount() {
-    this.loadImage();
-  }
-
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
-      this.loadImage();
-    }
-  }
-
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-
-  render() {
-    return (
-      <Image
-        visible={this.props.visible}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        image={this.state.image}
-        ref={this.props.ref}
-        id={this.props.id}
-        name="shape"
-        opacity={this.props.opacity}
-        rotation={this.props.rotation}
-        stroke={this.props.stroke}
-        strokeWidth={this.props.strokeWidth}
-      />
-    );
-  }
-}
-
 class Graphics extends Component {
 
   savedObjects = [
     // Objects
-    "rectangles",
-    "ellipses",
-    "stars",
-    "texts",
-    "arrows",
-    "triangles",
-    "images",
-    "videos",
-    "audios",
-    "documents",
-    "lines",
-    "tics",
-    "connect4s",
-    "polls",
-    "htmlFrames",
+    ...this.props.savedObjects,
 
     "status"
   ];
 
   constructor(props) {
     super(props);
+
+    this.setState = this.setState.bind(this);
 
     this.state = {
       rectangles: [],
@@ -174,6 +103,20 @@ class Graphics extends Component {
       level: 1,
       pageNumber: 6,
     };
+
+    setTimeout(() => this.props.reCenter("play"), 100);
+  }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    // This passes info all the way up to the App component so that it can be used in functions
+    // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
+    if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
+      this.props.setGamePlayProps({
+        setState: this.setState,
+        state: this.state,
+        refs: this.refs
+      });
+    }
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
@@ -189,7 +132,7 @@ class Graphics extends Component {
     this.props.socket.emit("playerUpdate", {
       role, name, dbid: this.props.initialUserId || id, invited: !!this.props.initialUserId
     })
-    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: this.props.initialUserId || id}));
+    sessionStorage.setItem('userInfo', JSON.stringify({ role, name, dbid: this.props.initialUserId || id }));
   }
 
   componentDidMount() {
@@ -205,15 +148,24 @@ class Graphics extends Component {
           [object]: objects[object]
         });
       });
-    } catch(e) {};
+    } catch (e) { };
 
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
-      if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
+      if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
       this.handlePlayerInfo(info);
     }
+
+    // Reposition / scale objects on screen resize
+    let resizeTimeout;
+    window.onresize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.props.reCenter("play");
+      }, 100);
+    };
   }
-  
+
   defaultObjProps = (obj, index) => {
     return {
       key: index,
@@ -399,7 +351,7 @@ class Graphics extends Component {
       }
     };
   }
-  
+
   htmlProps = (obj) => ({
     iframeSrc: obj.iframeSrc,
     htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
@@ -603,10 +555,10 @@ class Graphics extends Component {
             ref="graphicStage"
           >
             <Layer
-              scaleX={this.state.layerScale}
-              scaleY={this.state.layerScale}
-              x={this.state.layerX}
-              y={this.state.layerY}
+              scaleX={this.state.groupLayerScale}
+              scaleY={this.state.groupLayerScale}
+              x={this.state.groupLayerX}
+              y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
               ref="layer2"

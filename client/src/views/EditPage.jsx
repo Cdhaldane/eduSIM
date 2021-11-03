@@ -5,7 +5,6 @@ import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
-import FontPicker from "font-picker-react";
 
 const Grid = styled.div`
   display: grid;
@@ -75,6 +74,12 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                customDeletes={props.customDeletes}
+                allDeletes={props.allDeletes}
+                customObjects={props.customObjects}
+                savedObjects={props.savedObjects}
+                reCenter={props.reCenter}
+                setGameEditProps={props.setGameEditProps}
                 setCustomObjs={setCustomObjs}
                 doNotRecalculateBounds={updater > 0}
                 reloadCanvasFull={() => setUpdater(updater + 1)}
@@ -87,11 +92,6 @@ const EditPage = (props) => {
           </GridMain>
         </Grid>
       </Container>
-      {/*<div style={{display: "hidden"}}>
-        <FontPicker
-          apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
-        />
-  </div>*/}
     </div>
   );
 }
