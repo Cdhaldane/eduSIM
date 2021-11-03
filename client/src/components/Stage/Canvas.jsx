@@ -19,6 +19,7 @@ import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./GamePieces/Connect4/Board";
 import Poll from "./GamePieces/Poll/Poll";
 import HTMLFrame from "./GamePieces/HTMLFrame";
+import Input from "./GamePieces/Input";
 
 // Standard Konva Components
 import Konva from "konva";
@@ -47,13 +48,15 @@ class Graphics extends Component {
     "polls",
     "connect4s",
     "tics",
-    "htmlFrames"
+    "htmlFrames",
+    "inputs"
   ];
   customDeletes = [
     "pollsDeleteCount",
     "connect4sDeleteCount",
     "ticsDeleteCount",
-    "htmlFramesDeleteCount"
+    "htmlFramesDeleteCount",
+    "inputsDeleteCount"
   ];
   savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
@@ -130,6 +133,7 @@ class Graphics extends Component {
       connect4s: [],
       polls: [],
       htmlFrames: [],
+      inputs: [],
 
       // An array of arrays containing grouped items
       savedGroups: [],
@@ -2720,6 +2724,15 @@ class Graphics extends Component {
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
               {...this.htmlProps(obj)}
+            /> : null
+        })}
+        {this.state.inputs.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Input
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.customObjProps()}
             /> : null
         })}
         {this.state.arrows.map((obj, index) => {

@@ -405,6 +405,11 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addButton = () => {
+    addObjectToLayer(
+      "inputs", { type: "button" }
+    );
+  }
   // Other
   const imageURLGood = (url) => {
     if ((
@@ -777,6 +782,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-poll"
               onClick={addPoll}></i>}>
             Poll</DropdownItem>
+          <DropdownItem
+            onClick={addButton}
+            leftIcon={<i className="icons fa fa-mouse-pointer"
+              onClick={addButton}></i>}>
+            Button</DropdownItem>
           <DropdownItem
             onClick={addHTMLFrame}
             leftIcon={<i className="icons fa fa-code"

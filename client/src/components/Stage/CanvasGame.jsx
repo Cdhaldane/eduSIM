@@ -12,7 +12,7 @@ import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
 import Poll from "./GamePieces/Poll/Poll";
 import HTMLFrame from "./GamePieces/HTMLFrame";
-import { uniqueId } from "lodash";
+import Input from "./GamePieces/Input";
 
 import {
   Rect,
@@ -141,6 +141,7 @@ class Graphics extends Component {
     "connect4s",
     "polls",
     "htmlFrames",
+    "inputs",
 
     "status"
   ];
@@ -165,6 +166,7 @@ class Graphics extends Component {
       gameroles: [],
       polls: [],
       htmlFrames: [],
+      inputs: [],
       open: 0,
       isOpen: true,
       state: false,
@@ -212,7 +214,38 @@ class Graphics extends Component {
       if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
       this.handlePlayerInfo(info);
     }
+
+    window.addEventListener("storage",(e) => {
+      console.log('hi');
+    });
   }
+
+  formatTextMacros = (text) => {
+    let start=false, newText=text;
+    for (let i=0;i<newText.length;i++) {
+      const c=newText[i];
+      if (c==="{") start=i;
+      if (c==="}" && start!==false) {
+        let content, key;
+        switch (key=newText.slice(start+1,i)) {
+          case "playername":
+            content=this.props.players[this.props.socket.id]?.name;
+            break;
+          case "playerrole":
+            content=this.props.players[this.props.socket.id]?.role || "(no role selected)";
+            break;
+          default:
+            let vars = {};
+            if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+            content=vars[key];
+        }
+        newText = newText.slice(0,start) + (content || "unknown") + newText.slice(i+1);
+        i=start;
+        start=false;
+      }
+    }
+    return newText;
+  };
   
   defaultObjProps = (obj, index) => {
     return {
@@ -326,7 +359,7 @@ class Graphics extends Component {
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize,
-      text: obj.text,
+      text: this.formatTextMacros(obj.text),
       link: obj.link
     }
   }
@@ -487,6 +520,15 @@ class Graphics extends Component {
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
             {...this.htmlProps(obj)}
+          /> : null
+      })}
+      {this.state.inputs.map((obj, index) => {
+        return this.objectIsOnStage(obj) === stage ?
+          <Input
+            defaultProps={{ ...this.defaultObjProps(obj, index) }}
+            {...this.defaultObjProps(obj, index)}
+            {...this.getInteractiveProps(obj.id)}
+            refresh={() => this.forceUpdate()}
           /> : null
       })}
     </>
