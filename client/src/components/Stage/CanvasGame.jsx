@@ -237,7 +237,7 @@ class Graphics extends Component {
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-            content=vars[key];
+            content=vars[key] || "0";
         }
         newText = newText.slice(0,start) + (content || "unknown") + newText.slice(i+1);
         i=start;
@@ -246,11 +246,24 @@ class Graphics extends Component {
     }
     return newText;
   };
+
+  checkObjConditions = (conditions) => {
+    if (!conditions || !conditions.varName) return true;
+    let vars = {};
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    switch (conditions.condition) {
+      case "equalto":
+        return vars[conditions.varName] == conditions.trueValue
+      case "negative":
+        return !vars[conditions.varName];
+      default: return !!vars[conditions.varName];
+    }
+  }
   
   defaultObjProps = (obj, index) => {
     return {
       key: index,
-      visible: obj.visible,
+      visible: obj.visible && this.checkObjConditions(obj.conditions),
       rotation: obj.rotation,
       ref: obj.ref,
       fill: obj.fill,
@@ -528,6 +541,8 @@ class Graphics extends Component {
             defaultProps={{ ...this.defaultObjProps(obj, index) }}
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
+            type={obj.type}
+            varName={obj.varName}
             refresh={() => this.forceUpdate()}
           /> : null
       })}

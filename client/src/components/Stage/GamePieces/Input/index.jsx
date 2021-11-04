@@ -15,6 +15,7 @@ const Input = forwardRef((props, ref) => {
         ...vars,
         [varName]: value
       }));
+      props.refresh();
     }
   }
 

@@ -1,28 +1,33 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import debounce from 'lodash.debounce';
 import DropdownEditObject from "../Dropdown/DropdownEditObject";
 
 import "./ContextMenu.css"
 
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
+  const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
+  const [conditionsVisible, setConditionsVisible] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const menu = useRef();
 
   const setContextMenuTitle = () => {
-    if (props.selectedShapeName.startsWith("text")) {
-      setEditTitle("Edit Text");
-    } else if (props.selectedShapeName.startsWith("poll")) {
-      setEditTitle("Edit Poll");
-    } else if (props.selectedShapeName.startsWith("connect4")) {
-      setEditTitle("Edit Connect4");
-    } else if (props.selectedShapeName.startsWith("tic")) {
-      setEditTitle("Edit TicTacToe");
-    } else if (props.selectedShapeName.startsWith("html")) {
-      setEditTitle("Edit HTML");
-    } else {
-      setEditTitle("Edit Shape");
-    }
+    let set = false;
+    [
+      ["text",      "Edit Text"],
+      ["poll",      "Edit Poll"],
+      ["connect4",  "Edit Connect4"],
+      ["tic",       "Edit TicTacToe"],
+      ["html",      "Edit HTML"],
+      ["input",    "Edit Input"]
+    ].forEach(([key, text]) => {
+      if (props.selectedShapeName.startsWith(key)) {
+        set = true;
+        setEditTitle(text);
+      }
+    })
+    if (!set) setEditTitle("Edit Shape");
   }
 
   const handleClickOutside = e => {
@@ -85,6 +90,21 @@ const ContextMenu = (props) => {
 
   const handleEdit = () => {
     setDrop(!drop);
+    if (conditionsVisible) {
+      props.updateObjState({
+        conditions
+      });
+    }
+    setConditionsVisible(false);
+  }
+  const handleConditionsVisible = () => {
+    setDrop(false);
+    if (conditionsVisible) {
+      props.updateObjState({
+        conditions
+      });
+    }
+    setConditionsVisible(!conditionsVisible);
   }
 
   const handleGrouping = () => {
@@ -95,6 +115,22 @@ const ContextMenu = (props) => {
   const handleUngrouping = () => {
     props.handleUngrouping();
     props.close();
+  }
+
+  const debounceObjState = useCallback(
+		debounce(state => props.updateObjState(state), 100),
+		[], // will be created only once initially
+	);
+
+  const handleUpdateConditions = (key, value) => {
+    setConditions(old => ({
+      ...old,
+      [key]: value ? value : undefined
+    }))
+    debounceObjState({ conditions: {
+      ...conditions,
+      [key]: value ? value : undefined
+    }});
   }
 
   return (
@@ -112,6 +148,9 @@ const ContextMenu = (props) => {
         <li onClick={props.copy}>Copy</li>
         <li onClick={props.paste}>Paste</li>
         <li onClick={props.delete}>Delete</li>
+        {!props.addGroup && !props.unGroup && (
+          <li onClick={handleConditionsVisible}>Change Conditions</li>
+        )}
         {!props.addGroup && !props.unGroup && (
           <li onClick={handleEdit}>{editTitle}</li>
         )}
@@ -143,6 +182,42 @@ const ContextMenu = (props) => {
             getObjState={props.getObjState}
             updateObjState={props.updateObjState}
           />
+        </div>
+      )}
+      {conditionsVisible && (
+        <div className="drop">
+          <div 
+            className="dropdownedit conditionsedit"
+            style={{
+              ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
+            }}
+          >
+            <p>Only display this if...</p>
+            <input 
+              type="text" 
+              placeholder="Variable name" 
+              value={conditions?.varName || ""} 
+              onChange={(e) => handleUpdateConditions("varName", e.target.value)} 
+            />
+            <select 
+              name="inputtype"
+              value={conditions?.condition} 
+              onChange={(e) => handleUpdateConditions("condition", e.target.value)} 
+            >
+              <option value="positive">contains a positive value</option>
+              <option value="negative">contains a negative/null value</option>
+              <option value="equalto">is equal to</option>
+              <option value="onchange">changes</option>
+            </select>
+            {conditions?.condition==="equalto" && (
+              <input 
+                type="text" 
+                placeholder="Value to check against" 
+                value={conditions?.trueValue || ""} 
+                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
