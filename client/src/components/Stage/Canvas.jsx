@@ -2733,6 +2733,7 @@ class Graphics extends Component {
               {...this.defaultObjProps(obj, index)}
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
+              varType={obj.varType}
             /> : null
         })}
         {this.state.arrows.map((obj, index) => {

@@ -120,6 +120,13 @@ function DropdownEditObject(props) {
       varName: val
     }));
   }
+  function handleVarType(val) {
+    props.updateObjState({ varType: val });
+    setObjState(prev => ({
+      ...prev,
+      varType: val
+    }));
+  }
   function handleIFrameURL(val) {
     debounceObjState({ iframeSrc: val });
     setObjState(prev => ({
@@ -375,7 +382,7 @@ function DropdownEditObject(props) {
             <div className="menuedit htmledit">
               <h1>{props.title}</h1>
               <p>Input type:</p>
-              <select name="inputtype" value={objState?.type}>
+              <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
                 <option value="checkbox">Checkbox</option>
                 <option value="text">Text</option>
                 <option value="button">Button</option>

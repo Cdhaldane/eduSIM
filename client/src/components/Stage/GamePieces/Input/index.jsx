@@ -15,6 +15,7 @@ const Input = forwardRef((props, ref) => {
         ...vars,
         [varName]: value
       }));
+      sessionStorage.setItem('lastSetVar', varName);
       props.refresh();
     }
   }
@@ -31,7 +32,26 @@ const Input = forwardRef((props, ref) => {
 
   return (
     <CustomWrapper {...props} ref={ref}>
-      <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>CLICK ME</button>
+      {({
+        button: (
+          <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>click me</button>
+        ),
+        text: (
+          <input 
+            type="text" 
+            placeholder="put text in me"
+            value={getValue()}
+            onChange={(e) => handleChangeValue(e.target.value)} 
+          />
+        ),
+        checkbox: (
+          <input 
+            type="checkbox" 
+            checked={!!getValue()} 
+            onChange={(e) => handleChangeValue((!!getValue() ? false : true))} 
+          />
+        )
+      })[props.varType]}
     </CustomWrapper>
   );
 });

@@ -13,6 +13,7 @@ import styled from "styled-components";
 import Poll from "./GamePieces/Poll/Poll";
 import HTMLFrame from "./GamePieces/HTMLFrame";
 import Input from "./GamePieces/Input";
+import moment from "moment";
 
 import {
   Rect,
@@ -234,12 +235,18 @@ class Graphics extends Component {
           case "playerrole":
             content=this.props.players[this.props.socket.id]?.role || "(no role selected)";
             break;
+          case "lastsetvar":
+            content=sessionStorage.lastSetVar;
+            break;
+          case "currentdate":
+            content=moment().format("dddd, MMMM Do YYYY");
+            break;
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-            content=vars[key] || "0";
+            content=vars[key];
         }
-        newText = newText.slice(0,start) + (content || "unknown") + newText.slice(i+1);
+        newText = newText.slice(0,start) + (content!==undefined ? content : "unknown") + newText.slice(i+1);
         i=start;
         start=false;
       }
@@ -256,6 +263,8 @@ class Graphics extends Component {
         return vars[conditions.varName] == conditions.trueValue
       case "negative":
         return !vars[conditions.varName];
+      case "onchange":
+        return sessionStorage.lastSetVar === conditions.varName
       default: return !!vars[conditions.varName];
     }
   }
@@ -541,7 +550,7 @@ class Graphics extends Component {
             defaultProps={{ ...this.defaultObjProps(obj, index) }}
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
-            type={obj.type}
+            varType={obj.varType}
             varName={obj.varName}
             refresh={() => this.forceUpdate()}
           /> : null

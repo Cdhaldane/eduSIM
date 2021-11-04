@@ -407,7 +407,7 @@ const DropdownAddObjects = (props) => {
 
   const addButton = () => {
     addObjectToLayer(
-      "inputs", { type: "button" }
+      "inputs", { varType: "button" }
     );
   }
   // Other
