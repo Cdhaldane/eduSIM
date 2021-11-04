@@ -74,6 +74,7 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                loadObjects={props.loadObjects}
                 customDeletes={props.customDeletes}
                 allDeletes={props.allDeletes}
                 customObjects={props.customObjects}

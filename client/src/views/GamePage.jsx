@@ -189,6 +189,7 @@ const Game = (props) => {
         />
         <Main>
           <CanvasGame
+            loadObjects={props.loadObjects}
             reCenter={props.reCenter}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}

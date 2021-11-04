@@ -11,27 +11,11 @@ import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import ContextMenu from "../ContextMenu/ContextMenu";
 
-// Custom Konva Components
-import TransformerComponent from "./TransformerComponent";
-import URLVideo from "./URLVideos";
-import URLImage from "./URLImage";
-import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
-import Connect4 from "./GamePieces/Connect4/Board";
-import Poll from "./GamePieces/Poll/Poll";
-import HTMLFrame from "./GamePieces/HTMLFrame";
-
 // Standard Konva Components
 import Konva from "konva";
 import {
-  Rect,
   Stage,
-  Layer,
-  Ellipse,
-  Star,
-  Text,
-  RegularPolygon,
-  Line,
-  Arrow,
+  Layer
 } from "react-konva";
 
 import "./Stage.css";
@@ -75,7 +59,7 @@ class Graphics extends Component {
   constructor(props) {
     super(props);
 
-    this.setState = this.setState.bind(this); 
+    this.setState = this.setState.bind(this);
 
     this.state = {
       // Right click menus (for group and personal space)
@@ -423,7 +407,24 @@ class Graphics extends Component {
       this.props.setGameEditProps({
         setState: this.setState,
         state: this.state,
-        refs: this.refs
+        refs: this.refs,
+
+        // These are functions used for manipulating objects that are directly used in object props
+        onObjectClick: this.onObjectClick,
+        onObjectTransformStart: this.onObjectTransformStart,
+        onObjectDragMove: this.onObjectDragMove,
+        onObjectContextMenu: this.onObjectContextMenu,
+        onObjectTransformEnd: this.onObjectTransformEnd,
+        handleDragEnd: this.handleDragEnd,
+        handleTextTransform: this.handleTextTransform,
+        handleTextDblClick: this.handleTextDblClick,
+        onDragEndArrow: this.onDragEndArrow,
+        handleMouseUp: this.handleMouseUp,
+        handleMouseOver: this.handleMouseOver,
+        onMouseDown: this.onMouseDown,
+        getKonvaObj: this.getKonvaObj,
+        getObjType: this.getObjType,
+        getInteractiveProps: this.getInteractiveProps
       });
     }
   }
@@ -477,6 +478,7 @@ class Graphics extends Component {
     // Save the game_parameters
     await axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then(() => {
       if (thenReload) {
+        this.props.setGameEditProps(undefined);
         this.props.reloadCanvasFull();
       }
     }).catch(error => {
@@ -618,7 +620,6 @@ class Graphics extends Component {
         }
       }
     }
-
 
     if (!event.ctrlKey) {
       this.setState({
@@ -1662,14 +1663,6 @@ class Graphics extends Component {
     }, this.handleLevelUpdate)
   }
 
-  handleLayerClear = () => {
-    this.refs.groupAreaLayer.clear();
-  }
-
-  handleLayerDraw = () => {
-    //
-  }
-
   handleImage = (e) => {
     this.setState({
       imgsrc: e
@@ -2236,375 +2229,12 @@ class Graphics extends Component {
     }
   }
 
-  // Component Props
-  defaultObjProps = (obj, index) => {
-    return {
-      key: index,
-      visible: obj.visible,
-      rotation: obj.rotation,
-      ref: obj.ref,
-      fill: obj.fill,
-      opacity: obj.opacity,
-      name: "shape",
-      id: obj.id,
-      x: obj.x,
-      y: obj.y,
-      stroke: obj.stroke,
-      strokeWidth: obj.strokeWidth,
-      strokeScaleEnabled: false,
-      draggable: !(this.state.layerDraggable || this.state.drawMode),
-      editMode: true,
-      onClick: () => this.onObjectClick(obj),
-      onTransformStart: this.onObjectTransformStart,
-      onTransformEnd: () => this.onObjectTransformEnd(obj),
-      onDragMove: () => this.onObjectDragMove(obj),
-      onDragEnd: e => this.handleDragEnd(e, this.getObjType(obj.id), obj.ref),
-      onContextMenu: this.onObjectContextMenu
-    }
-  }
-
-  rectProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: obj.fillPatternImage,
-      fillPatternOffset: obj.fillPatternOffset,
-      image: obj.image
-    }
-  }
-
-  ellipseProps = (obj) => {
-    return {
-      radiusX: obj.radiusX,
-      radiusY: obj.radiusY
-    }
-  }
-
-  imageProps = (obj, layer) => {
-    return {
-      src: obj.imgsrc,
-      image: obj.imgsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height
-    }
-  }
-
-  videoProps = (obj, layer) => {
-    return {
-      type: "video",
-      src: obj.vidsrc,
-      image: obj.vidsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height
-    }
-  }
-
-  audioProps = (obj, layer) => {
-    return {
-      type: "audio",
-      src: obj.vidsrc,
-      image: obj.vidsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: true
-    }
-  }
-
-  documentProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: this.state.docimage,
-      fillPatternOffset: obj.fillPatternOffset,
-      fillPatternScaleY: 0.2,
-      fillPatternScaleX: 0.2,
-      image: obj.image
-    }
-  }
-
-  triangleProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      sides: obj.sides
-    }
-  }
-
-  starProps = (obj) => {
-    return {
-      innerRadius: obj.innerRadius,
-      outerRadius: obj.outerRadius,
-      numPoints: obj.numPoints
-    }
-  }
-
-  textProps = (obj) => {
-    return {
-      textDecoration: obj.link ? "underline" : "",
-      width: obj.width,
-      fontFamily: obj.fontFamily,
-      fontSize: obj.fontSize,
-      text: obj.text,
-      link: obj.link,
-      onTransform: this.handleTextTransform,
-      onDblClick: () => this.handleTextDblClick(
-        this.refs[obj.ref],
-        obj.infolevel ? this.refs.personalAreaLayer : this.refs.groupAreaLayer
-      ),
-      onContextMenu: (e) => {
-        this.onObjectContextMenu(e);
-        this.setState({
-          selectedFont: this.refs[obj.ref]
-        });
-      }
-    }
-  }
-
-  lineProps = (obj, index) => {
-    return {
-      id: obj.id,
-      level: obj.level,
-      key: index,
-      points: obj.points,
-      stroke: obj.color,
-      strokeWidth: obj.strokeWidth,
-      tension: 0.5,
-      lineCap: "round",
-      globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
-      draggable: false,
-      onContextMenu: this.onObjectContextMenu,
-    }
-  }
-
-  arrowProps = (obj, index) => {
-    return {
-      key: index,
-      visible: obj.visible,
-      ref: obj.ref,
-      id: obj.id,
-      name: "shape",
-      points: [
-        obj.points[0],
-        obj.points[1],
-        obj.points[2],
-        obj.points[3]
-      ],
-      stroke: obj.stroke,
-      fill: obj.fill,
-      draggable: !this.state.layerDraggable,
-      onDragEnd: () => this.onDragEndArrow(obj)
-    }
-  }
-
-  transformerProps = (type) => {
-    return {
-      selectedShapeName: this.state.selectedShapeName,
-      ref: type + "Transformer",
-      boundBoxFunc: (oldBox, newBox) => {
-        // Limit resize
-        if (newBox.width < 5 || newBox.height < 5) {
-          return oldBox;
-        }
-        return newBox;
-      }
-    }
-  }
-
-  objectIsOnStage = (obj) => {
-    if (obj.level === this.state.level && obj.infolevel === false) {
-      return "group";
-    } else if (obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel) {
-      return "personal";
-    } else {
-      return "";
-    }
-  }
-
-  objectIsOnPersonalStage = (obj) => {
-    return obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel;
-  }
-
-  customObjProps = () => {
-    return {
-      onMouseUp: (e) => this.handleMouseUp(e, false),
-      onMouseDown: (e) => this.onMouseDown(e, false),
-      onMouseMove: (e) => this.handleMouseOver(e, false),
-      onTransformEnd: (e) => this.onObjectTransformEnd(e),
-      updateKonva: this.getKonvaObj
-    };
-  }
-
-  htmlProps = (obj) => ({
-    iframeSrc: obj.iframeSrc,
-    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
-    containerWidth: obj.containerWidth,
-    containerHeight: obj.containerHeight
-  });
-
-  pollProps = (obj) => {
-    return {
-      custom: {
-        customName: obj.customName ? obj.customName : "",
-        pollJson: obj.json ? obj.json : {
-          pages: [
-            {
-              questions: [
-                {
-                  id: 0,
-                  type: "text",
-                  name: "0",
-                  title: "Sample Text Question:",
-                  isRequired: true
-                }, {
-                  id: 1,
-                  type: "text",
-                  name: "1",
-                  inputType: "date",
-                  title: "Sample Date Question:",
-                  isRequired: false
-                }, {
-                  id: 2,
-                  type: "boolean",
-                  name: "2",
-                  title: "Sample Yes/No Question:",
-                  isRequired: false
-                }
-              ]
-            }
-          ]
-        }
-      }
-    };
-  }
-
-  loadObjects = (stage) => {
-    return (
-      <>
-        {/* This Rect is for dragging the canvas */}
-        <Rect
-          id="ContainerRect"
-          x={-5 * window.innerWidth}
-          y={-5 * window.innerHeight}
-          height={window.innerHeight * 10}
-          width={window.innerWidth * 10}
-        />
-
-        {/* This Rect acts as the transform object for custom objects */}
-        <Rect
-          {...this.defaultObjProps(this.state.customRect[0], 0)}
-          draggable={false}
-        />
-
-        {/* Load objects in state */}
-        {this.state.lines.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Line {...this.lineProps(obj, index)} /> : null
-        })}
-        {this.state.rectangles.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
-        })}
-        {this.state.ellipses.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
-        })}
-        {this.state.images.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLImage {...this.defaultObjProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.videos.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultObjProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.audios.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultObjProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.documents.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultObjProps(obj, index)} {...this.documentProps(obj)} /> : null
-        })}
-        {this.state.triangles.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <RegularPolygon {...this.defaultObjProps(obj, index)} {...this.triangleProps(obj)} /> : null
-        })}
-        {this.state.stars.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Star {...this.defaultObjProps(obj, index)} {...this.starProps(obj)} /> : null
-        })}
-        {this.state.texts.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
-        })}
-        {this.state.polls.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Poll
-              defaultProps={{
-                ...this.defaultObjProps(obj, index),
-                ...this.pollProps(obj)
-              }}
-              {...this.defaultObjProps(obj, index)}
-              {...this.customObjProps()}
-            /> : null
-        })}
-        {this.state.connect4s.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Connect4
-              defaultProps={{ ...this.defaultObjProps(obj, index) }}
-              {...this.defaultObjProps(obj, index)}
-              {...this.getInteractiveProps(obj.id)}
-              {...this.customObjProps()}
-            /> : null
-        })}
-        {this.state.tics.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <TicTacToe
-              defaultProps={{ ...this.defaultObjProps(obj, index) }}
-              {...this.defaultObjProps(obj, index)}
-              {...this.getInteractiveProps(obj.id)}
-              {...this.customObjProps()}
-            /> : null
-        })}
-        {this.state.htmlFrames.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <HTMLFrame
-              defaultProps={{ ...this.defaultObjProps(obj, index) }}
-              {...this.defaultObjProps(obj, index)}
-              {...this.getInteractiveProps(obj.id)}
-              {...this.customObjProps()}
-              {...this.htmlProps(obj)}
-            /> : null
-        })}
-        {this.state.arrows.map((obj, index) => {
-          return (
-            !obj.from &&
-            !obj.to &&
-            obj.level === this.state.level &&
-            obj.infolevel === (stage === "personal")
-          ) ?
-            <Arrow {...this.arrowProps(obj, index)} /> : null
-        })}
-
-        <TransformerComponent {...this.transformerProps(stage)} />
-        <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
-      </>
-    );
-  }
-
   render() {
     return (
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          clearCanvasData={() => this.props.setGameEditProps(undefined)}
           saveGame={this.handleSave}
           number={this.state.numberOfPages}
           pages={this.state.pages}
@@ -2700,7 +2330,7 @@ class Graphics extends Component {
               draggable={this.state.layerDraggable}
               onDragMove={(e) => this.dragLayer(e, false)}
             >
-              {this.loadObjects("group")}
+              {this.props.loadObjects("group", "edit")}
             </Layer>
           </Stage>
         </div>
@@ -2792,7 +2422,7 @@ class Graphics extends Component {
                     />
                   </Portal>
                 )}
-                {this.loadObjects("personal")}
+                {this.props.loadObjects("personal", "edit")}
               </Layer>
             </Stage>
           </div>

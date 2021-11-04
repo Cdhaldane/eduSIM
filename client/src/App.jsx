@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
@@ -15,6 +15,26 @@ import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
+
+// Custom Konva Components
+import TransformerComponent from "./components/Stage/TransformerComponent";
+import URLVideo from "./components/Stage/URLVideos";
+import URLImage from "./components/Stage/URLImage";
+import TicTacToe from "./components/Stage/GamePieces/TicTacToe/TicTacToe";
+import Connect4 from "./components/Stage/GamePieces/Connect4/Board";
+import Poll from "./components/Stage/GamePieces/Poll/Poll";
+import HTMLFrame from "./components/Stage/GamePieces/HTMLFrame";
+
+// Standard Konva Components
+import {
+  Rect,
+  Ellipse,
+  Star,
+  Text,
+  RegularPolygon,
+  Line,
+  Arrow,
+} from "react-konva";
 
 // Save State
 // These are the names of the objects in state that are saved to the database
@@ -257,6 +277,395 @@ const App = (props) => {
     return rect;
   }
 
+  // Component Props
+  const defaultObjProps = (obj, index, canvas, editMode) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      rotation: obj.rotation,
+      ref: obj.ref,
+      fill: obj.fill,
+      opacity: obj.opacity,
+      name: "shape",
+      id: obj.id,
+      x: obj.x,
+      y: obj.y,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth,
+      strokeScaleEnabled: false,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
+      editMode: editMode,
+      ...(editMode ?
+        {
+          onClick: () => canvas.onObjectClick(obj),
+          onTransformStart: canvas.onObjectTransformStart,
+          onTransformEnd: () => canvas.onObjectTransformEnd(obj),
+          onDragMove: () => canvas.onObjectDragMove(obj),
+          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
+          onContextMenu: canvas.onObjectContextMenu
+        } : {})
+    }
+  }
+
+  const rectProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: obj.fillPatternImage,
+      fillPatternOffset: obj.fillPatternOffset,
+      image: obj.image
+    }
+  }
+
+  const ellipseProps = (obj) => {
+    return {
+      radiusX: obj.radiusX,
+      radiusY: obj.radiusY
+    }
+  }
+
+  const imageProps = (obj, layer) => {
+    return {
+      src: obj.imgsrc,
+      image: obj.imgsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  const videoProps = (obj, layer) => {
+    return {
+      type: "video",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height
+    }
+  }
+
+  const audioProps = (obj, layer) => {
+    return {
+      type: "audio",
+      src: obj.vidsrc,
+      image: obj.vidsrc,
+      layer: layer,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: true
+    }
+  }
+
+  const documentProps = (obj, canvas) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: canvas.state.docimage,
+      fillPatternOffset: obj.fillPatternOffset,
+      fillPatternScaleY: 0.2,
+      fillPatternScaleX: 0.2,
+      image: obj.image
+    }
+  }
+
+  const triangleProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      sides: obj.sides
+    }
+  }
+
+  const starProps = (obj) => {
+    return {
+      innerRadius: obj.innerRadius,
+      outerRadius: obj.outerRadius,
+      numPoints: obj.numPoints
+    }
+  }
+
+  const textProps = (obj, canvas, editMode) => {
+    return {
+      textDecoration: obj.link ? "underline" : "",
+      width: obj.width,
+      fontFamily: obj.fontFamily,
+      fontSize: obj.fontSize,
+      text: obj.text,
+      link: obj.link,
+      ...(editMode ?
+        {
+          onTransform: canvas.handleTextTransform,
+          onDblClick: () => canvas.handleTextDblClick(
+            canvas.refs[obj.ref],
+            obj.infolevel ? canvas.refs.personalAreaLayer : canvas.refs.groupAreaLayer
+          ),
+          onContextMenu: (e) => {
+            canvas.onObjectContextMenu(e);
+            canvas.setState({
+              selectedFont: canvas.refs[obj.ref]
+            });
+          }
+        } : {})
+    }
+  }
+
+  const lineProps = (obj, index, canvas, editMode) => {
+    return {
+      id: obj.id,
+      level: obj.level,
+      key: index,
+      points: obj.points,
+      stroke: obj.color,
+      strokeWidth: obj.strokeWidth,
+      tension: 0.5,
+      lineCap: "round",
+      globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
+      draggable: false,
+      ...(editMode ?
+        {
+          onContextMenu: canvas.onObjectContextMenu
+        } : {})
+    }
+  }
+
+  const arrowProps = (obj, index, canvas, editMode) => {
+    return {
+      key: index,
+      visible: obj.visible,
+      ref: obj.ref,
+      id: obj.id,
+      name: "shape",
+      points: [
+        obj.points[0],
+        obj.points[1],
+        obj.points[2],
+        obj.points[3]
+      ],
+      stroke: obj.stroke,
+      fill: obj.fill,
+      draggable: !canvas.state.layerDraggable,
+      ...(editMode ?
+        {
+          onDragEnd: () => canvas.onDragEndArrow(obj)
+        } : {})
+    }
+  }
+
+  const transformerProps = (type, canvas) => {
+    return {
+      selectedShapeName: canvas.state.selectedShapeName,
+      ref: type + "Transformer",
+      boundBoxFunc: (oldBox, newBox) => {
+        // Limit resize
+        if (newBox.width < 5 || newBox.height < 5) {
+          return oldBox;
+        }
+        return newBox;
+      }
+    }
+  }
+
+  const objectIsOnStage = (obj, canvas) => {
+    if (obj.level === canvas.state.level && obj.infolevel === false) {
+      return "group";
+    } else if (obj.level === canvas.state.level && obj.infolevel === true && obj.rolelevel === canvas.state.rolelevel) {
+      return "personal";
+    } else {
+      return "";
+    }
+  }
+
+  const customObjProps = (canvas) => {
+    return {
+      onMouseUp: (e) => canvas.handleMouseUp(e, false),
+      onMouseDown: (e) => canvas.onMouseDown(e, false),
+      onMouseMove: (e) => canvas.handleMouseOver(e, false),
+      onTransformEnd: (e) => canvas.onObjectTransformEnd(e),
+      updateKonva: canvas.getKonvaObj
+    };
+  }
+
+  const htmlProps = (obj) => ({
+    iframeSrc: obj.iframeSrc,
+    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
+    containerWidth: obj.containerWidth,
+    containerHeight: obj.containerHeight
+  });
+
+  const pollProps = (obj) => {
+    return {
+      custom: {
+        customName: obj.customName ? obj.customName : "",
+        pollJson: obj.json ? obj.json : {
+          pages: [
+            {
+              questions: [
+                {
+                  id: 0,
+                  type: "text",
+                  name: "0",
+                  title: "Sample Text Question:",
+                  isRequired: true
+                }, {
+                  id: 1,
+                  type: "text",
+                  name: "1",
+                  inputType: "date",
+                  title: "Sample Date Question:",
+                  isRequired: false
+                }, {
+                  id: 2,
+                  type: "boolean",
+                  name: "2",
+                  title: "Sample Yes/No Question:",
+                  isRequired: false
+                }
+              ]
+            }
+          ]
+        }
+      }
+    };
+  }
+
+  // This is the render function for objects onto Konva Canvasses
+  const loadObjects = (stage, mode) => {
+    const editMode = mode === "edit";
+    const canvas = getUpdatedCanvasState(mode);
+    if (!canvas || !(canvas.state && canvas.refs)) {
+      return (
+        <>
+        </>
+      );
+    }
+    return (
+      <>
+        {editMode && (
+          <>
+            {/* This Rect is for dragging the canvas */}
+            <Rect
+              id="ContainerRect"
+              x={-5 * window.innerWidth}
+              y={-5 * window.innerHeight}
+              height={window.innerHeight * 10}
+              width={window.innerWidth * 10}
+            />
+
+            {/* This Rect acts as the transform object for custom objects */}
+            <Rect
+              {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
+              draggable={false}
+            />
+          </>
+        )}
+
+        {/* Load objects in state */}
+        {canvas.state.lines.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Line {...lineProps(obj, index, canvas, editMode)} /> : null
+        })}
+        {canvas.state.rectangles.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
+        })}
+        {canvas.state.ellipses.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Ellipse {...defaultObjProps(obj, index, canvas, editMode)} {...ellipseProps(obj)} /> : null
+        })}
+        {canvas.state.images.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <URLImage {...defaultObjProps(obj, index, canvas, editMode)} {...imageProps(obj, canvas.refs.groupAreaLayer)} /> : null
+        })}
+        {canvas.state.videos.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...videoProps(obj, canvas.refs.groupAreaLayer)} /> : null
+        })}
+        {canvas.state.audios.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...audioProps(obj, canvas.refs.groupAreaLayer)} /> : null
+        })}
+        {canvas.state.documents.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...documentProps(obj, canvas)} /> : null
+        })}
+        {canvas.state.triangles.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <RegularPolygon {...defaultObjProps(obj, index, canvas, editMode)} {...triangleProps(obj)} /> : null
+        })}
+        {canvas.state.stars.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Star {...defaultObjProps(obj, index, canvas, editMode)} {...starProps(obj)} /> : null
+        })}
+        {canvas.state.texts.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} /> : null
+        })}
+        {canvas.state.polls.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Poll
+              defaultProps={{
+                ...defaultObjProps(obj, index, canvas, editMode),
+                ...pollProps(obj)
+              }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        {canvas.state.connect4s.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Connect4
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        {canvas.state.tics.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <TicTacToe
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        {canvas.state.htmlFrames.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <HTMLFrame
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...htmlProps(obj)}
+              {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        {canvas.state.arrows.map((obj, index) => {
+          return (
+            !obj.from &&
+            !obj.to &&
+            obj.level === canvas.state.level &&
+            obj.infolevel === (stage === "personal")
+          ) ?
+            <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+        })}
+
+        {editMode && (
+          <>
+            <TransformerComponent {...transformerProps(stage, canvas)} />
+            <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
+          </>
+        )}
+      </>
+    );
+  }
+
   return (
     <AlertContextProvider>
       <AlertPopup />
@@ -275,6 +684,7 @@ const App = (props) => {
           <Route exact path="/about" render={(props) => <About {...props} />} />
           <Route exact path="/gamepage/:roomid" render={(props) =>
             <GamePage
+              loadObjects={loadObjects}
               reCenter={recalculateCanvasSizeAndPosition}
               setGamePlayProps={setGamePlayProps}
               savedObjects={savedObjects}
@@ -284,6 +694,7 @@ const App = (props) => {
           <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
           <Route exact path="/editpage" render={(props) =>
             <EditPage
+              loadObjects={loadObjects}
               reCenter={recalculateCanvasSizeAndPosition}
               setGameEditProps={setGameEditProps}
               customObjects={customObjects}
