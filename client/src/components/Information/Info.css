@@ -56,7 +56,7 @@
   cursor: pointer;
 }
 
-.editPersonalAreaToggle {
+.personalAreaToggle {
   color: var(--primary);
   border: none;
   background-color: transparent;

@@ -125,17 +125,17 @@ class Graphics extends Component {
       ],
 
       // Object Deletion Count
-      rectDeleteCount: 0,
-      ellipseDeleteCount: 0,
-      starDeleteCount: 0,
-      triangleDeleteCount: 0,
-      imageDeleteCount: 0,
-      videoDeleteCount: 0,
-      audioDeleteCount: 0,
-      documentDeleteCount: 0,
-      textDeleteCount: 0,
+      rectanglesDeleteCount: 0,
+      ellipsesDeleteCount: 0,
+      starsDeleteCount: 0,
+      trianglesDeleteCount: 0,
+      imagesDeleteCount: 0,
+      videosDeleteCount: 0,
+      audiosDeleteCount: 0,
+      documentsDeleteCount: 0,
+      textsDeleteCount: 0,
       linesDeleteCount: 0,
-      arrowDeleteCount: 0,
+      arrowsDeleteCount: 0,
       pollsDeleteCount: 0,
       connect4sDeleteCount: 0,
       ticsDeleteCount: 0,
@@ -2253,6 +2253,7 @@ class Graphics extends Component {
       strokeWidth: obj.strokeWidth,
       strokeScaleEnabled: false,
       draggable: !(this.state.layerDraggable || this.state.drawMode),
+      editMode: true,
       onClick: () => this.onObjectClick(obj),
       onTransformStart: this.onObjectTransformStart,
       onTransformEnd: () => this.onObjectTransformEnd(obj),
@@ -2690,7 +2691,6 @@ class Graphics extends Component {
           >
             <Layer
               ref="groupAreaLayer"
-              name="group"
               scaleX={this.state.groupLayerScale}
               scaleY={this.state.groupLayerScale}
               x={this.state.groupLayerX}
@@ -2799,10 +2799,10 @@ class Graphics extends Component {
 
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
-            ? <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
+            ? <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
               <i className="fas fa-caret-square-up fa-3x" />
             </button>
-            : <button className="editPersonalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
+            : <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
               <i className="fas fa-caret-square-down fa-3x" />
             </button>
           }

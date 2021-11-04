@@ -197,7 +197,7 @@ const DropdownAddObjects = (props) => {
     const objectsDeletedState = props.state[deleteName];
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
-
+    
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",

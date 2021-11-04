@@ -22,7 +22,6 @@ import {
   Text,
   RegularPolygon,
   Line,
-  Image,
   Arrow
 } from "react-konva";
 
@@ -102,6 +101,12 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       level: 1,
       pageNumber: 6,
+      groupLayerScale: 1,
+      groupLayerX: 0,
+      groupLayerY: 0,
+      personalLayerScale: 1,
+      personalLayerX: 0,
+      personalLayerY: 0,
     };
 
     setTimeout(() => this.props.reCenter("play"), 100);
@@ -184,7 +189,7 @@ class Graphics extends Component {
       strokeWidth: obj.strokeWidth,
       strokeScaleEnabled: false,
       draggable: false,
-      static: true
+      editMode: false
     }
   }
 
@@ -402,60 +407,9 @@ class Graphics extends Component {
     }
   }
 
-  // We need to render this outside of the konva stage
-  // since otherwise they become static/unable to interact with
-  loadInteractiveObjects = (stage) => (
-    <>
-      {this.state.polls.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <Poll
-            defaultProps={{
-              ...this.defaultObjProps(obj, index),
-              ...this.pollProps(obj)
-            }}
-            {...this.defaultObjProps(obj, index)}
-          /> : null
-      })}
-      {this.state.connect4s.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <Connect4
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-          /> : null
-      })}
-      {this.state.tics.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <TicTacToe
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-          /> : null
-      })}
-      {this.state.htmlFrames.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <HTMLFrame
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-            {...this.htmlProps(obj)}
-          /> : null
-      })}
-    </>
-  );
-
   loadObjects = (stage) => {
     return (
       <>
-        {/* This Rect is for dragging the canvas */}
-        <Rect
-          id="ContainerRect"
-          x={-5 * window.innerWidth}
-          y={-5 * window.innerHeight}
-          height={window.innerHeight * 10}
-          width={window.innerWidth * 10}
-        />
-
         {/* Load objects in state */}
         {this.state.lines.map((obj, index) => {
           return this.objectIsOnStage(obj) === stage ?
@@ -497,6 +451,41 @@ class Graphics extends Component {
           return this.objectIsOnStage(obj) === stage ?
             <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
         })}
+        {this.state.polls.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Poll
+              defaultProps={{
+                ...this.defaultObjProps(obj, index),
+                ...this.pollProps(obj)
+              }}
+              {...this.defaultObjProps(obj, index)}
+            /> : null
+        })}
+        {this.state.connect4s.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <Connect4
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+            /> : null
+        })}
+        {this.state.tics.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <TicTacToe
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+            /> : null
+        })}
+        {this.state.htmlFrames.map((obj, index) => {
+          return this.objectIsOnStage(obj) === stage ?
+            <HTMLFrame
+              defaultProps={{ ...this.defaultObjProps(obj, index) }}
+              {...this.defaultObjProps(obj, index)}
+              {...this.getInteractiveProps(obj.id)}
+              {...this.htmlProps(obj)}
+            /> : null
+        })}
         {this.state.arrows.map((obj, index) => {
           return (
             !obj.from &&
@@ -506,8 +495,6 @@ class Graphics extends Component {
           ) ?
             <Arrow {...this.arrowProps(obj, index)} /> : null
         })}
-
-        <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
       </>
     );
   }
@@ -555,18 +542,17 @@ class Graphics extends Component {
             ref="graphicStage"
           >
             <Layer
+              ref="groupAreaLayer"
               scaleX={this.state.groupLayerScale}
               scaleY={this.state.groupLayerScale}
               x={this.state.groupLayerX}
               y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              ref="layer2"
             >
               {this.loadObjects("group")}
             </Layer>
           </Stage>
-          {this.loadInteractiveObjects("group")}
         </div>
         <div className="eheader">
           <Level
@@ -602,11 +588,14 @@ class Graphics extends Component {
                     {this.loadObjects("personal")}
                   </Layer>
                 </Stage>
-                {this.loadInteractiveObjects("personal")}
               </div>
               {(this.state.open !== 1)
-                ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
-                : <button onClick={() => this.setState({ open: 0 })}><i className="fas fa-caret-square-down fa-3x"></i></button>
+                ? <button className="personalAreaToggle" onClick={() => this.setState({ open: 1 })}>
+                  <i className="fas fa-caret-square-up fa-3x" />
+                </button>
+                : <button className="personalAreaToggle" onClick={() => this.setState({ open: 0 })}>
+                  <i className="fas fa-caret-square-down fa-3x" />
+                </button>
               }
             </div>
           </div>

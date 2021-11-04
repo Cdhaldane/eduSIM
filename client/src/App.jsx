@@ -115,7 +115,7 @@ const App = (props) => {
       const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
       const availableRatio = availableW / availableH;
 
-      let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas);
+      let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas, personalId);
       if (minX && maxX && minY && maxY) {
         let x = null;
         let y = null;
@@ -157,7 +157,7 @@ const App = (props) => {
     }, 0));
   }
 
-  const recalculateMaxMin = (isPersonalArea, sideMenuW, canvas) => {
+  const recalculateMaxMin = (isPersonalArea, sideMenuW, canvas, personalId) => {
     let minX = null;
     let maxX = null;
     let minY = null;
@@ -169,7 +169,7 @@ const App = (props) => {
         for (let j = 0; j < objects.length; j++) {
           const object = objects[j];
           if (object.infolevel === isPersonalArea) {
-            const rect = getRect(object, sideMenuW, isPersonalArea, canvas);
+            const rect = getRect(object, sideMenuW, isPersonalArea, canvas, personalId);
             if (!rect) continue;
             if (minX === null || minX > rect.x) {
               minX = rect.x;
@@ -195,7 +195,7 @@ const App = (props) => {
     }
   }
 
-  const getRect = (obj, sideMenuW, isPersonalArea, canvas) => {
+  const getRect = (obj, sideMenuW, isPersonalArea, canvas, personalId) => {
     if (!obj) return;
     let rect = null;
     if (obj.tool) {
@@ -245,7 +245,7 @@ const App = (props) => {
         rect = obj.getBoundingClientRect();
         rect.x = rect.x - sideMenuW;
         if (!canvas.state.personalAreaOpen && isPersonalArea) {
-          const pArea = document.getElementById("editPersonalContainer").getBoundingClientRect();
+          const pArea = document.getElementById(personalId).getBoundingClientRect();
           const yDiff = pArea.height - (window.innerHeight - pArea.y);
           rect.y = rect.y - yDiff;
         }
