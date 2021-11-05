@@ -258,6 +258,7 @@ class Graphics extends Component {
     if (!conditions || !conditions.varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
     switch (conditions.condition) {
       case "equalto":
         return vars[conditions.varName] == conditions.trueValue
@@ -462,6 +463,13 @@ class Graphics extends Component {
     containerHeight: obj.containerHeight
   });
 
+  inputProps = (obj) => ({
+    varType: obj.varType,
+    varName: obj.varName,
+    refresh: () => this.forceUpdate(),
+    label: obj.label
+  })
+
   getInteractiveProps = (id) => ({
     updateStatus: (parameters) => {
       this.props.socket.emit("interaction", {
@@ -550,9 +558,7 @@ class Graphics extends Component {
             defaultProps={{ ...this.defaultObjProps(obj, index) }}
             {...this.defaultObjProps(obj, index)}
             {...this.getInteractiveProps(obj.id)}
-            varType={obj.varType}
-            varName={obj.varName}
-            refresh={() => this.forceUpdate()}
+            {...this.inputProps(obj)}
           /> : null
       })}
     </>

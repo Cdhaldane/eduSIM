@@ -2593,6 +2593,13 @@ class Graphics extends Component {
     containerWidth: obj.containerWidth,
     containerHeight: obj.containerHeight
   });
+  
+  inputProps = (obj) => ({
+    varType: obj.varType,
+    varName: obj.varName,
+    refresh: () => this.forceUpdate(),
+    label: obj.label
+  })
 
   pollProps = (obj) => {
     return {
@@ -2733,7 +2740,7 @@ class Graphics extends Component {
               {...this.defaultObjProps(obj, index)}
               {...this.getInteractiveProps(obj.id)}
               {...this.customObjProps()}
-              varType={obj.varType}
+              {...this.inputProps(obj)}
             /> : null
         })}
         {this.state.arrows.map((obj, index) => {

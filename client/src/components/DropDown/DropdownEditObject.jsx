@@ -113,6 +113,13 @@ function DropdownEditObject(props) {
 		[], // will be created only once initially
 	);
 
+  function handleVarLabel(val) {
+    debounceObjState({ label: val });
+    setObjState(prev => ({
+      ...prev,
+      label: val
+    }));
+  }
   function handleVarName(val) {
     debounceObjState({ varName: val });
     setObjState(prev => ({
@@ -389,6 +396,8 @@ function DropdownEditObject(props) {
               </select>
               <p>Variable name to set:</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+              <p>Label:</p>
+              <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
             </div>
           </CSSTransition>
         </div>

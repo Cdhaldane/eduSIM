@@ -34,12 +34,12 @@ const Input = forwardRef((props, ref) => {
     <CustomWrapper {...props} ref={ref}>
       {({
         button: (
-          <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>click me</button>
+          <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
         ),
         text: (
           <input 
-            type="text" 
-            placeholder="put text in me"
+            type="text"
+            placeholder={props.label}
             value={getValue()}
             onChange={(e) => handleChangeValue(e.target.value)} 
           />
