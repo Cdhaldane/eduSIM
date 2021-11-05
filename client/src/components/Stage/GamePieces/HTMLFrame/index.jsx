@@ -19,7 +19,7 @@ const HTMLFrame = forwardRef((props, ref) => {
     <CustomWrapper {...props} ref={ref}>
       <HTMLWrapper padded={!props.iframeSrc} width={props.containerWidth} height={props.containerHeight}>
       {props.iframeSrc 
-        ? <iframe src={props.iframeSrc} height="100%" width="100%" />
+        ? <iframe src={props.iframeSrc} height="100%" width="100%" style={{border: 'none'}} />
         : <div dangerouslySetInnerHTML={{__html: sanitizedHTML}} />
       }
       </HTMLWrapper>

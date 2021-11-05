@@ -25,3 +25,26 @@
   position: relative;
   width: 100px;
 }
+
+.conditionsedit {
+  width: 320px;
+}
+.conditionsedit select {
+  font-size: .7em;
+  padding: 4px 0;
+  border-width: 1px;
+  border-radius: 2px;
+}
+.conditionsedit p {
+  font-size: .8em;
+  margin-bottom: 4px;
+}
+.conditionsedit input {
+  font-family: inherit;
+  padding: 4px;
+  font-size: .7em;
+  width: 100%;
+}
+.conditionsedit input::placeholder {
+  opacity: 0.5;
+}

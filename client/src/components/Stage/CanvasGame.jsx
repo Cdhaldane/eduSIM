@@ -3,6 +3,7 @@ import Level from "../Level/Level";
 import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
+import moment from "moment";
 
 import {
   Stage,
@@ -60,6 +61,8 @@ class Graphics extends Component {
 
     this.setState = this.setState.bind(this);
 
+    this.forceUpdate = this.forceUpdate.bind(this);
+
     this.state = {
       rectangles: [],
       ellipses: [],
@@ -77,6 +80,7 @@ class Graphics extends Component {
       gameroles: [],
       polls: [],
       htmlFrames: [],
+      inputs: [],
       open: 0,
       isOpen: true,
       state: false,
@@ -96,6 +100,55 @@ class Graphics extends Component {
     setTimeout(() => this.props.reCenter("play"), 100);
   }
 
+  formatTextMacros = (text) => {
+    let start=false, newText=text;
+    for (let i=0;i<newText.length;i++) {
+      const c=newText[i];
+      if (c==="{") start=i;
+      if (c==="}" && start!==false) {
+        let content, key;
+        switch (key=newText.slice(start+1,i)) {
+          case "playername":
+            content=this.props.players[this.props.socket.id]?.name;
+            break;
+          case "playerrole":
+            content=this.props.players[this.props.socket.id]?.role || "(no role selected)";
+            break;
+          case "lastsetvar":
+            content=sessionStorage.lastSetVar;
+            break;
+          case "currentdate":
+            content=moment().format("dddd, MMMM Do YYYY");
+            break;
+          default:
+            let vars = {};
+            if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+            content=vars[key];
+        }
+        newText = newText.slice(0,start) + (content!==undefined ? content : "unknown") + newText.slice(i+1);
+        i=start;
+        start=false;
+      }
+    }
+    return newText;
+  };
+
+  checkObjConditions = (conditions) => {
+    if (!conditions || !conditions.varName) return true;
+    let vars = {};
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    switch (conditions.condition) {
+      case "equalto":
+        return vars[conditions.varName] == conditions.trueValue
+      case "negative":
+        return !vars[conditions.varName];
+      case "onchange":
+        return sessionStorage.lastSetVar === conditions.varName
+      default: return !!vars[conditions.varName];
+    }
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
@@ -104,7 +157,10 @@ class Graphics extends Component {
         setState: this.setState,
         state: this.state,
         refs: this.refs,
-        getInteractiveProps: this.getInteractiveProps
+        getInteractiveProps: this.getInteractiveProps,
+        checkObjConditions: this.checkObjConditions,
+        formatTextMacros: this.formatTextMacros,
+        refresh: this.forceUpdate
       });
     }
   }
@@ -176,6 +232,14 @@ class Graphics extends Component {
     this.setState({
       isOpen: !this.state.isOpen
     });
+  }
+  
+  componentWillReceiveProps = ({ level }) => {
+    if (level) {
+      this.setState({
+        level
+      })
+    }
   }
 
   render() {

@@ -88,6 +88,7 @@ class Graphics extends Component {
       connect4s: [],
       polls: [],
       htmlFrames: [],
+      inputs: [],
 
       // An array of arrays containing grouped items
       savedGroups: [],

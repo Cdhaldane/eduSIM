@@ -20,7 +20,8 @@ const CustomWrapper = forwardRef((props, ref) => {
             ${props.scaleX ? `scaleX(${props.scaleX}) ` : ''}
             ${props.scaleY ? `scaleY(${props.scaleY}) ` : ''}
           `,
-          transformOrigin: 'top left'
+          transformOrigin: 'top left',
+          ...(!props.visible ? {display: 'none'} : {})
         }}
       >
         {props.children}

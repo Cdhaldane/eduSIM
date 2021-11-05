@@ -109,10 +109,31 @@ function DropdownEditObject(props) {
   }
 
   const debounceObjState = useCallback(
-		debounce(state => props.updateObjState(state), 1000),
+		debounce(state => props.updateObjState(state), 100),
 		[], // will be created only once initially
 	);
 
+  function handleVarLabel(val) {
+    debounceObjState({ label: val });
+    setObjState(prev => ({
+      ...prev,
+      label: val
+    }));
+  }
+  function handleVarName(val) {
+    debounceObjState({ varName: val });
+    setObjState(prev => ({
+      ...prev,
+      varName: val
+    }));
+  }
+  function handleVarType(val) {
+    props.updateObjState({ varType: val });
+    setObjState(prev => ({
+      ...prev,
+      varType: val
+    }));
+  }
   function handleIFrameURL(val) {
     debounceObjState({ iframeSrc: val });
     setObjState(prev => ({
@@ -348,6 +369,36 @@ function DropdownEditObject(props) {
               <div className="htmliframeinput">
                 <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
               </div>
+            </div>
+          </CSSTransition>
+        </div>
+      );
+    } else if (props.title === "Edit Input") {
+      return (
+        <div
+          className="dropdownedit"
+          ref={dropdownRef}
+          style={{
+            ...leftOrRight,
+            transform: `translateY(${topOffset}px)`
+          }}>
+          <CSSTransition
+            in={activeMenu === 'main'}
+            timeout={500}
+            classNames="edit-menu-primary"
+            unmountOnExit>
+            <div className="menuedit htmledit">
+              <h1>{props.title}</h1>
+              <p>Input type:</p>
+              <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
+                <option value="checkbox">Checkbox</option>
+                <option value="text">Text</option>
+                <option value="button">Button</option>
+              </select>
+              <p>Variable name to set:</p>
+              <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+              <p>Label:</p>
+              <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
             </div>
           </CSSTransition>
         </div>

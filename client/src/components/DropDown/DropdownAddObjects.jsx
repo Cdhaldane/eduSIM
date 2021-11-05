@@ -12,7 +12,7 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(214);
+  const [menuHeight, setMenuHeight] = useState(269);
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -435,6 +435,11 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addInput = (varType) => {
+    addObjectToLayer(
+      "inputs", { varType, label: "Label text" }
+    );
+  }
   // Other
   const imageURLGood = (url) => {
     if ((
@@ -550,6 +555,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
             onClick={() => setActiveMenu("pieces")}>
             Add Interactive
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-question-circle"></i>}
+            onClick={() => setActiveMenu("inputs")}>
+            Add Input
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -812,6 +822,36 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
+        </div>
+      </CSSTransition>
+      
+      <CSSTransition
+        in={activeMenu === 'inputs'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>Add Input</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("button")}
+            leftIcon={<i className="icons fas fa-mouse-pointer"
+              onClick={() => addInput("button")}></i>}>
+            Button</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("text")}
+            leftIcon={<i className="icons fa fa-quote-right"
+              onClick={() => addInput("text")}></i>}>
+            Textbox</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("checkbox")}
+            leftIcon={<i className="icons fa fa-check-square"
+              onClick={() => addInput("checkbox")}></i>}>
+            Checkbox</DropdownItem>
         </div>
       </CSSTransition>
     </div>

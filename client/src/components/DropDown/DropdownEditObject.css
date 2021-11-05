@@ -220,7 +220,16 @@ a {
 .htmledit {
   width: 250px;
 }
-
+.htmledit h1 {
+  padding-bottom: 5px;
+}
+.htmledit select {
+  font-size: .7em;
+  padding: 4px 0;
+  border-width: 1px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+}
 .htmledit p {
   font-size: .8em;
   margin-bottom: 4px;
@@ -228,7 +237,7 @@ a {
 
 .htmlwhinput {
   display: flex;
-  margin: -10px -10px 5px;
+  margin: 0px -10px 5px;
 }
 
 .htmlwhinput>div {

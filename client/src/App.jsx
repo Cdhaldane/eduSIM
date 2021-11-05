@@ -24,6 +24,7 @@ import TicTacToe from "./components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "./components/Stage/GamePieces/Connect4/Board";
 import Poll from "./components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "./components/Stage/GamePieces/HTMLFrame";
+import Input from "./components/Stage/GamePieces/Input";
 
 // Standard Konva Components
 import {
@@ -50,7 +51,8 @@ const App = (props) => {
     "polls",
     "connect4s",
     "tics",
-    "htmlFrames"
+    "htmlFrames",
+    "inputs"
   ];
   const savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
@@ -294,7 +296,7 @@ const App = (props) => {
   const defaultObjProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
-      visible: obj.visible,
+      visible: obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true),
       rotation: obj.rotation,
       ref: obj.ref,
       fill: obj.fill,
@@ -410,7 +412,7 @@ const App = (props) => {
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize,
-      text: obj.text,
+      text: editMode ? obj.text : canvas.formatTextMacros(obj.text),
       link: obj.link,
       ...(editMode ?
         {
@@ -511,6 +513,13 @@ const App = (props) => {
     containerWidth: obj.containerWidth,
     containerHeight: obj.containerHeight
   });
+
+  const inputProps = (obj, canvas) => ({
+    varType: obj.varType,
+    varName: obj.varName,
+    refresh: canvas.refresh,
+    label: obj.label
+  })
 
   const pollProps = (obj) => {
     return {
@@ -659,6 +668,17 @@ const App = (props) => {
               {...defaultObjProps(obj, index, canvas, editMode)}
               {...canvas.getInteractiveProps(obj.id)}
               {...htmlProps(obj)}
+              {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        
+        {canvas.state.inputs.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Input
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...inputProps(obj, canvas)}
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null
         })}
