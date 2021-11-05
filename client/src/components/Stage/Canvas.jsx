@@ -125,6 +125,7 @@ class Graphics extends Component {
       connect4sDeleteCount: 0,
       ticsDeleteCount: 0,
       htmlFramesDeleteCount: 0,
+      inputsDeleteCount: 0,
 
       // Page Controls
       pages: ["1", "2", "3", "4", "5", "6"],

@@ -305,6 +305,8 @@ const App = (props) => {
       id: obj.id,
       x: obj.x,
       y: obj.y,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY, 
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
       strokeScaleEnabled: false,
