@@ -193,6 +193,8 @@ const Sidebar = (props) => {
     },
   ];
 
+  console.log(props);
+
   return (
     <>
       <div ref={sidebarRef}>
@@ -206,6 +208,7 @@ const Sidebar = (props) => {
         </Submenu>
         <StyledNav compact={!compact || submenuVisible} submenu={submenuVisible} {...props}>
           <NavLinksGroup
+            isPlayMode={props.game}
             compact={!compact || submenuVisible}
             links={links}
             action={onNavClick}
@@ -220,21 +223,24 @@ const Sidebar = (props) => {
             disabled={props.disabled}
           />
 
-          <Disabled disabled={props.disabled}>
-            <Pencil
-              id="4"
-              psize="2"
-              type="nav"
-              title=""
-              hidden={!compact}
-              submenu={submenuVisible}
-              mvisible={handleMvisible}
-              avisible={handleAvisible}
-              pavisible={handlePavisible}
-              svisible={handleSvisible}
-              pevisible={handlePevisible}
-            />
-          </Disabled>
+          {!props.game && (
+            <Disabled disabled={props.disabled}>
+              <Pencil
+                id="4"
+                psize="2"
+                type="nav"
+                title=""
+                hidden={!compact}
+                submenu={submenuVisible}
+                mvisible={handleMvisible}
+                avisible={handleAvisible}
+                pavisible={handlePavisible}
+                svisible={handleSvisible}
+                pevisible={handlePevisible}
+              />
+            </Disabled>
+          )}
+
         </StyledNav>
       </div>
       <Modal
