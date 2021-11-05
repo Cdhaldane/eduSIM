@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
+import "./DropdownEditPoll.css";
 
 const DropdownEditPoll = (props) => {
 
   const [activeMenu, setActiveMenu] = useState('main');
+  const [name, setName] = useState(props.shape.attrs.customProps.customName);
   const [pages, setPages] = useState(props.shape.attrs.customProps.pollJson.pages);
   const [currentQuestion, setCurrentQuestion] = useState({
     pIndex: 0,
     qIndex: 0
   });
-  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [menuHeight, setMenuHeight] = useState(null);
+  const pollMenu = useRef();
+
+  useEffect(() => {
+    setMenuHeight(pollMenu.current.clientHeight);
+  }, []);
 
   useEffect(() => {
     const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
@@ -24,6 +31,7 @@ const DropdownEditPoll = (props) => {
         setTimeout(() => theInput.focus(), 0);
       }
     }
+    calcHeight();
   }, [pages]);
 
   const createJson = () => {
@@ -38,7 +46,8 @@ const DropdownEditPoll = (props) => {
           title: q.title,
           isRequired: q.isRequired,
           choices: q.choices,
-          hasNone: false
+          hasNone: false,
+          correctAnswer: q.correctAnswer
         }
       });
       return {
@@ -109,6 +118,8 @@ const DropdownEditPoll = (props) => {
                 if (e.target.value === "boolean") {
                   setQuestionParam("choices", pIndex, index, null);
                 }
+
+                setQuestionParam("correctAnswer", pIndex, index, null);
               }}>
                 <option value="text">
                   Text
@@ -134,26 +145,93 @@ const DropdownEditPoll = (props) => {
               </select>
             </td>
             <td className="pollsEditorRequiredCheck">
-              <input 
-              type="checkbox" 
-              checked={q.isRequired} 
-              value={q.isRequired} 
-              onChange={(e) => {
-                setQuestionParam("isRequired", pIndex, index, e.target.checked);
-              }} />
+              <input
+                type="checkbox"
+                checked={q.isRequired}
+                value={q.isRequired}
+                onChange={(e) => {
+                  setQuestionParam("isRequired", pIndex, index, e.target.checked);
+                }} />
             </td>
             <td
               className={`editPollEditBtns`}
+              onClick={() => {
+                if (!(pIndex === 0 && index === 0)) {
+                  if (index !== 0) {
+                    // It is not the first question on the page (move it up one)
+                    const pageQs = pages[pIndex].questions;
+                    const prevQ = pageQs[index - 1];
+                    pageQs[index - 1] = q;
+                    pageQs[index] = prevQ;
+                    const newPages = [...pages];
+                    newPages[pIndex] = {
+                      questions: pageQs
+                    };
+                    setPages(newPages);
+                  } else {
+                    // It is the first question on the page (move to end of previous page)
+                    const prevPage = {
+                      questions: [...pages[pIndex - 1].questions, q]
+                    };
+                    const thisPage = {
+                      questions: [...p.questions].slice(1)
+                    };
+                    let newPages = [...pages];
+                    newPages[pIndex - 1] = prevPage;
+                    if (thisPage.questions.length) {
+                      newPages[pIndex] = thisPage;
+                    } else {
+                      newPages[pIndex] = null;
+                      newPages = newPages.filter(e => e);
+                    }
+                    setTimeout(() => setPages(newPages), 0);
+                  }
+                }
+              }}
             >
               <i
-                className={`fas fa-caret-up`}
+                className={`fas fa-caret-up ${pIndex === 0 && index === 0 ? "disabled" : ""}`}
               />
             </td>
             <td
               className={`editPollEditBtns`}
+              onClick={() => {
+                if (!(pIndex === (pages.length - 1) && index === (p.questions.length - 1))) {
+                  if (index !== (p.questions.length - 1)) {
+                    // It is not the last question on the page (move it down one)
+                    const pageQs = pages[pIndex].questions;
+                    const nextQ = pageQs[index + 1];
+                    pageQs[index + 1] = q;
+                    pageQs[index] = nextQ;
+                    const newPages = [...pages];
+                    newPages[pIndex] = {
+                      questions: pageQs
+                    };
+                    setPages(newPages);
+                  } else {
+                    // It is the last question on the page (move to start of next page)
+                    const nextPage = {
+                      questions: [q, ...pages[pIndex + 1].questions]
+                    };
+                    const thisPage = {
+                      questions: [...p.questions].slice(0, -1)
+                    };
+                    let newPages = [...pages];
+                    newPages[pIndex + 1] = nextPage;
+                    if (thisPage.questions.length) {
+                      newPages[pIndex] = thisPage;
+                    } else {
+                      newPages[pIndex] = null;
+                      newPages = newPages.filter(e => e);
+                    }
+                    setTimeout(() => setPages(newPages), 0);
+                  }
+                }
+              }}
             >
               <i
-                className={`fas fa-caret-down`}
+                className={`fas fa-caret-down 
+                ${pIndex === (pages.length - 1) && index === (p.questions.length - 1) ? "disabled" : ""}`}
               />
             </td>
             <td
@@ -212,6 +290,26 @@ const DropdownEditPoll = (props) => {
               <td></td>
               <td
                 className={`editPollEditBtns`}
+                onClick={() => {
+                  // Move question above down to next page
+                  const prevQs = pages[pIndex - 1].questions;
+                  const q = prevQs[prevQs.length - 1];
+                  const nextPage = {
+                    questions: [q, ...pages[pIndex].questions]
+                  };
+                  const thisPage = {
+                    questions: [...prevQs].slice(0, -1)
+                  };
+                  let newPages = [...pages];
+                  newPages[pIndex] = nextPage;
+                  if (thisPage.questions.length) {
+                    newPages[pIndex - 1] = thisPage;
+                  } else {
+                    newPages[pIndex - 1] = null;
+                    newPages = newPages.filter(e => e);
+                  }
+                  setTimeout(() => setPages(newPages), 0);
+                }}
               >
                 <i
                   className={`fas fa-caret-up`}
@@ -219,6 +317,26 @@ const DropdownEditPoll = (props) => {
               </td>
               <td
                 className={`editPollEditBtns`}
+                onClick={() => {
+                  // Move question below page above to previous page
+                  const p = pages[pIndex - 1].questions;
+                  const q = pages[pIndex].questions[0];
+                  const prevPage = {
+                    questions: [...p, q]
+                  };
+                  const thisPage = {
+                    questions: [...pages[pIndex].questions].slice(1)
+                  };
+                  let newPages = [...pages];
+                  newPages[pIndex - 1] = prevPage;
+                  if (thisPage.questions.length) {
+                    newPages[pIndex] = thisPage;
+                  } else {
+                    newPages[pIndex] = null;
+                    newPages = newPages.filter(e => e);
+                  }
+                  setTimeout(() => setPages(newPages), 0);
+                }}
               >
                 <i
                   className={`fas fa-caret-down`}
@@ -279,7 +397,7 @@ const DropdownEditPoll = (props) => {
               onClick={() => {
                 if (options.length > 1) {
                   const newOptions = [...options.slice(0, index), ...options.slice(index + 1)];
-                  setTimeout(
+                  setTimeout(() =>
                     setQuestionParam("choices", currentQuestion.pIndex, currentQuestion.qIndex, newOptions),
                     0);
                 }
@@ -337,14 +455,6 @@ const DropdownEditPoll = (props) => {
     }
   }
 
-  const setNewAnswers = (e) => {
-    // For text -> save the answer string (e.g: "Mount Everest")
-    // For dropdown, radiogroup, checkboxes -> save answer index (e.g: 3)
-    // For boolean -> save "Yes" or "No" string
-    // For date -> save date as string with YYYY-MM-DD format
-    console.log(e.target.value);
-  }
-
   const addQuestion = () => {
     let lastPageQuestions = pages[pages.length - 1].questions;
     lastPageQuestions.push(defaultQ());
@@ -364,16 +474,41 @@ const DropdownEditPoll = (props) => {
     setPages(newPages);
   }
 
+  const calcHeight = (el) => {
+    if (el) {
+      setMenuHeight(el.offsetHeight);
+    } else {
+      setMenuHeight(pollMenu.current.childNodes[0].offsetHeight);
+    }
+  }
+
   return (
-    <div className="editPollContainer">
+    <div
+      className="editPollContainer"
+      ref={pollMenu}
+      style={{
+        height: menuHeight
+      }}
+    >
       <CSSTransition
         in={activeMenu === 'main'}
         timeout={500}
         unmountOnExit
         classNames="editPollPrimary"
+        onEnter={calcHeight}
       >
         <div>
-          <h1 style={{ paddingBottom: "0.5rem" }}>{props.title}</h1>
+          <h1 style={{ paddingBottom: "0.5rem", display: "inline-block" }}>Poll Name:</h1>
+          <input
+            type="text"
+            placeholder="Poll Name"
+            className="editPollNameBox"
+            value={name}
+            onChange={(e) => {
+              props.setName(e.target.value, props.shape.attrs.id);
+              setName(e.target.value);
+            }}
+          />
           <table className="editPollQuestionBox">
             <thead className="editPollTableHead">
               <tr>
@@ -420,6 +555,7 @@ const DropdownEditPoll = (props) => {
         timeout={500}
         unmountOnExit
         classNames="editPollSecondary"
+        onEnter={calcHeight}
       >
         <div>
           <button
@@ -480,15 +616,37 @@ const DropdownEditPoll = (props) => {
                 className="editPollAnswerBox"
                 type="text"
                 placeholder="Answer Value Here"
-                value={""}
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
                 onChange={(e) => {
-                  //
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
                 }}
               />
             )}
 
             {["dropdown", "checkbox", "boolean", "radiogroup"].includes(getSelectedQType()) && (
-              <select className="editPollAnswerBox" onChange={setNewAnswers}>
+              <select
+                className="editPollAnswerBox"
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
+                onChange={(e) => {
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
+                }}
+              >
                 {setDropdownAnswerOptions()}
               </select>
             )}
@@ -497,10 +655,20 @@ const DropdownEditPoll = (props) => {
               <input
                 className="editPollAnswerBox"
                 type="date"
-                value=""
                 min=""
                 max=""
-                onChange={setNewAnswers}
+                value={
+                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                }
+                onChange={(e) => {
+                  setQuestionParam(
+                    "correctAnswer",
+                    currentQuestion.pIndex,
+                    currentQuestion.qIndex,
+                    e.target.value
+                  );
+                }}
               />
             )}
           </div>

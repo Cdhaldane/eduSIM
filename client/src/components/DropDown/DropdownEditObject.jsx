@@ -328,6 +328,7 @@ function DropdownEditObject(props) {
             unmountOnExit>
             <div className="menuedit">
               <DropdownEditPoll
+                setName={props.setName}
                 setJson={props.setJson}
                 shape={shape}
                 title={props.title}

@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, createElement } from 'react';
+import { useRef, useLayoutEffect, createElement, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Group } from 'react-konva';
 
@@ -106,7 +106,12 @@ const KonvaHtml = ({
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
     onDragEnd: defaultProps.onDragEnd,
-    customProps: defaultProps.custom
+    customProps: defaultProps.custom,
+    x: !defaultProps.editMode ? defaultProps.x : null,
+    y: !defaultProps.editMode ? defaultProps.y : null,
+    rotation: !defaultProps.editMode ? defaultProps.rotation : null,
+    scaleX: !defaultProps.editMode ? defaultProps.scaleX : null,
+    scaleY: !defaultProps.editMode ? defaultProps.scaleY : null
   }, groupProps));
 };
 

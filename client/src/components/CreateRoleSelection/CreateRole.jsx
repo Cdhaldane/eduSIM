@@ -66,7 +66,7 @@ const CreateRole = (props) => {
 
   return (
     <div className="areacsv" >
-      <form className="areacsvform modal-role-select">
+      <div className="areacsvform modal-role-select">
         <div className="modal-role-header">
           <h2>Welcome to the simulation!</h2>
           <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name to continue."}</p>
@@ -88,14 +88,14 @@ const CreateRole = (props) => {
           <NameInput 
             type="text" 
             placeholder="Your name" 
-            value={name} 
+            value={name ? name : ""} 
             onChange={(e) => setName(e.target.value)} 
             required
             maxLength="25"
           />
           <Submit type="submit">Go</Submit>
         </form>
-      </form>
+      </div>
     </div>
   );
 }

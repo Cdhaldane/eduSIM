@@ -49,7 +49,8 @@ const Time = styled.div`
   }
 `;
 
-function Game(props) {
+const Game = (props) => {
+
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
@@ -92,7 +93,7 @@ function Game(props) {
         }
         setRoles(rolesData);
       })
-      
+
       if (userid) {
         axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayer', {
           params: {
@@ -120,7 +121,7 @@ function Game(props) {
         }
         setRoomStatus(status);
       });
-      client.on("clientJoined", ({id, ...player}) => {
+      client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
           ...l,
           [id]: player
@@ -142,57 +143,56 @@ function Game(props) {
   }, [roomid]);
 
   const timeFromNow = () => (
-    roomStatus.running 
-    ? moment(moment()).diff(roomStatus.startTime - (roomStatus.timeElapsed || 0))
-    : (roomStatus.timeElapsed || 0)
+    roomStatus.running
+      ? moment(moment()).diff(roomStatus.startTime - (roomStatus.timeElapsed || 0))
+      : (roomStatus.timeElapsed || 0)
   );
 
   const countdown = () => {
-    const count = (roomStatus.settings?.advanceMode || 1)*60000;
-    return (count - timeFromNow()) - Math.floor((count - timeFromNow())/count)*count
+    const count = (roomStatus.settings?.advanceMode || 1) * 60000;
+    return (count - timeFromNow()) - Math.floor((count - timeFromNow()) / count) * count
   };
 
   const actualLevel = roomStatus.level || level;
 
-  // parse seeded roles
+  // Parse seeded roles
   const parsedPlayers = useMemo(() => {
     let newPlayers = {};
     for (const id in players) {
-      let p = {...players[id]};
+      let p = { ...players[id] };
       newPlayers[id] = p;
-      if (roles && roles.length>0) {
+      if (roles && roles.length > 0) {
         if (p.role === -1) {
-          newPlayers[id].role = roles[parseInt(p.dbid, 16)%roles.length].roleName;
+          newPlayers[id].role = roles[parseInt(p.dbid, 16) % roles.length].roleName;
         } else if (p.role === -2) {
-          newPlayers[id].role = roles[(actualLevel**actualLevel + parseInt(p.dbid, 16))%roles.length].roleName;
+          newPlayers[id].role = roles[(actualLevel ** actualLevel + parseInt(p.dbid, 16)) % roles.length].roleName;
         }
       }
     }
     return newPlayers;
   }, [players, roles, actualLevel]);
 
-  // TESTING PURPOSES
-  // useEffect(() => {
-  //   if (parsedPlayers[socket?.id]?.role) alertContext.showAlert("Your role is currently "+parsedPlayers[socket?.id]?.role, "info")
-  // }, [actualLevel, parsedPlayers]);
-
   return (
     !isLoading ? (
       <>
-        <Sidebar 
-          className="grid-sidebar" 
-          visible={showNav} 
+        <Sidebar
+          className="grid-sidebar"
+          visible={showNav}
           close={toggle}
           img={room.gameinstance.gameinstance_photo_path}
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
-          submenuProps={{messageBacklog}}
+          submenuProps={{ messageBacklog }}
           game
           disabled={!roomStatus.running}
         />
         <Main>
           <CanvasGame
+            loadObjects={props.loadObjects}
+            reCenter={props.reCenter}
+            setGamePlayProps={props.setGamePlayProps}
+            savedObjects={props.savedObjects}
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
@@ -206,7 +206,7 @@ function Game(props) {
             alert={alertContext.showAlert}
           />
           {!roomStatus.running && (<PauseCover>
-            <i class="fa fa-pause-circle fa-2x"></i>
+            <i className="fa fa-pause-circle fa-2x"></i>
             <p>Paused</p>
           </PauseCover>)}
         </Main>
@@ -219,7 +219,7 @@ function Game(props) {
                 enabled
               />
               <AutoUpdate
-                value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode*60000))+1}
+                value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode * 60000)) + 1}
                 intervalTime={20}
                 enabled
                 noDisplay

@@ -70,7 +70,7 @@ const NavLink = forwardRef((props, ref) => {
   return (
     <StyledLink
       ref={ref}
-      href={!props.disabled && props.to}
+      href={!props.disabled && props.to ? "#" : undefined}
       onClick={props.action}
       disabled={props.disabled}
       textopacity={props.compact ? 0 : 1}

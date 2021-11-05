@@ -6,8 +6,7 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Modal from "react-modal";
-
-import "./Performance.css";
+import Performance from "./Performance";
 
 const StyledNav = styled.nav`
   background-color: #8f001a;
@@ -84,7 +83,7 @@ const Sidebar = (props) => {
   const [pevisible, setPevisible] = useState("false");
 
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
-  const performanceModal = new useRef(showPerformanceModal);
+  const performanceModal = new useRef();
   const performanceBtn = new useRef();
 
   const handleMvisible = (e) => {
@@ -246,95 +245,10 @@ const Sidebar = (props) => {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <div className="area">
-          <form className="form-input performanceForm" ref={performanceModal}>
-            <div className="performanceContainer">
-              <h2 className="performanceTitle">Performance Report Settings</h2>
-              <div className="performanceTableContainer">
-                <table className="performanceTable">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <h4>
-                          Poll1
-                        </h4>
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Show Answers Report
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 2
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 3
-                        </label><br />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h4>
-                          Poll2
-                        </h4>
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Show Answers Report
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 2
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 3
-                        </label><br />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h4>
-                          Poll3
-                        </h4>
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Show Answers Report
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 2
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 3
-                        </label><br />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <h4>
-                          Poll4
-                        </h4>
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Show Answers Report
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 2
-                        </label><br />
-                        <input type="checkbox" name="" value="" />
-                        <label htmlFor="">
-                          Setting 3
-                        </label><br />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </form>
-        </div>
+        <Performance
+          customObjs={props.customObjs}
+          ref={performanceModal}
+        />
       </Modal>
     </>
   );

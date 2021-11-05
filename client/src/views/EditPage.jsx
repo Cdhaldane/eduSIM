@@ -5,7 +5,6 @@ import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
-import FontPicker from "font-picker-react";
 
 const Grid = styled.div`
   display: grid;
@@ -36,6 +35,7 @@ const GridMain = styled.main`
 
 const EditPage = (props) => {
 
+  const [customObjs, setCustomObjs] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
 
@@ -62,7 +62,11 @@ const EditPage = (props) => {
       <Container>
         <Grid>
           <GridNav>
-            <Sidebar className="grid-sidebar" visible={showNav} close={toggle}
+            <Sidebar
+              customObjs={customObjs}
+              className="grid-sidebar"
+              visible={showNav}
+              close={toggle}
               img={props.location.img}
               title={props.location.title}
             />
@@ -70,6 +74,14 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                loadObjects={props.loadObjects}
+                customDeletes={props.customDeletes}
+                allDeletes={props.allDeletes}
+                customObjects={props.customObjects}
+                savedObjects={props.savedObjects}
+                reCenter={props.reCenter}
+                setGameEditProps={props.setGameEditProps}
+                setCustomObjs={setCustomObjs}
                 doNotRecalculateBounds={updater > 0}
                 reloadCanvasFull={() => setUpdater(updater + 1)}
                 setDropdownType={dropdownContext.setType}
@@ -81,11 +93,6 @@ const EditPage = (props) => {
           </GridMain>
         </Grid>
       </Container>
-      {/*<div style={{display: "hidden"}}>
-        <FontPicker
-          apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
-        />
-  </div>*/}
     </div>
   );
 }

@@ -22,7 +22,7 @@ const URLImage = forwardRef((props, ref) => {
 
   return (
     <Image
-      draggable
+      draggable={props.draggable}
       visible={props.visible}
       x={props.x}
       y={props.y}
