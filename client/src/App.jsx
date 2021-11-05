@@ -36,38 +36,43 @@ import {
   Arrow,
 } from "react-konva";
 
-// Save State
-// These are the names of the objects in state that are saved to the database
-// Used on CanvasGame and Canvas
-const customObjects = [
-  "polls",
-  "connect4s",
-  "tics",
-  "htmlFrames"
-];
-const savedObjects = [
-  // Rendered Objects Only (shapes, media, etc.)
-  ...customObjects,
-  "rectangles",
-  "ellipses",
-  "stars",
-  "texts",
-  "arrows",
-  "triangles",
-  "images",
-  "videos",
-  "audios",
-  "documents",
-  "lines",
-];
-const customDeletes = [
-  ...customObjects.map(name => `${name}DeleteCount`)
-];
-const allDeletes = [
-  ...savedObjects.map(name => `${name}DeleteCount`)
-];
-
 const App = (props) => {
+
+  /*------------------------------------------------------------------------------/
+   * CANVAS FUNCTIONS
+   * The following functions are used on both Edit Mode and Play Mode in order to
+   * render the canvasses. They are passed down from here to both canvasses.
+   *------------------------------------------------------------------------------*/
+
+  // Save State
+  // These are the names of the objects in state that are saved to the database
+  const customObjects = [
+    "polls",
+    "connect4s",
+    "tics",
+    "htmlFrames"
+  ];
+  const savedObjects = [
+    // Rendered Objects Only (shapes, media, etc.)
+    ...customObjects,
+    "rectangles",
+    "ellipses",
+    "stars",
+    "texts",
+    "arrows",
+    "triangles",
+    "images",
+    "videos",
+    "audios",
+    "documents",
+    "lines",
+  ];
+  const customDeletes = [
+    ...customObjects.map(name => `${name}DeleteCount`)
+  ];
+  const allDeletes = [
+    ...savedObjects.map(name => `${name}DeleteCount`)
+  ];
 
   const [gameEditProps, _setGameEditProps] = useState();
   const gameEditPropsRef = useRef();
@@ -83,9 +88,6 @@ const App = (props) => {
     gamePlayPropsRef.current = props;
   }
 
-  const { isLoading } = props.auth0;
-  if (isLoading) return <Loading />;
-
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
       return gameEditPropsRef.current;
@@ -96,87 +98,93 @@ const App = (props) => {
     }
   }
 
-  const recalculateCanvasSizeAndPosition = (mode) => {
-    _recalculateCanvasSizeAndPosition(true, mode);
-    _recalculateCanvasSizeAndPosition(false, mode);
-  }
-
-  const _recalculateCanvasSizeAndPosition = (isPersonalArea, mode) => {
-    let canvas = getUpdatedCanvasState(mode);
-    if (
-      !(canvas.setState &&
-        canvas.state &&
-        canvas.refs)
-    ) {
-      return;
-    }
-
-    const areaString = isPersonalArea ? "personal" : "group";
-    // Reset to default position and scale
-    canvas.setState({
-      [`${areaString}LayerX`]: 0,
-      [`${areaString}LayerY`]: 0,
-      [`${areaString}LayerScale`]: 1
-    }, () => setTimeout(() => {
-      canvas = getUpdatedCanvasState(mode);
-
-      const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
-      const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
-      const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
-      const personalArea = document.getElementById(personalId).getBoundingClientRect();
-      const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
-      const sideMenuW = isPersonalArea ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-      const topMenuH = isPersonalArea ? 80 : topBar.height;
-      const padding = 80;
-      const doublePad = 2 * padding;
-      const screenW = window.innerWidth;
-      const screenH = window.innerHeight;
-      const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
-      const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
-      const availableRatio = availableW / availableH;
-
-      let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas, personalId);
-      if (minX && maxX && minY && maxY) {
-        let x = null;
-        let y = null;
-        let scale = null;
-        const contentW = maxX - minX;
-        const contentH = maxY - minY;
-        const contentRatio = contentW / contentH;
-        if (availableRatio > contentRatio) {
-          // Content proportionally taller
-          scale = availableH / contentH;
-        } else {
-          // Content proportionally wider
-          scale = availableW / contentW;
-        }
-        x = -minX * scale;
-        y = -minY * scale;
-        // Scale and fit to top left
-        canvas.setState({
-          [`${areaString}LayerX`]: x,
-          [`${areaString}LayerY`]: y + topMenuH,
-          [`${areaString}LayerScale`]: scale
-        }, () => setTimeout(() => {
-          canvas = getUpdatedCanvasState(mode);
-
-          // Center contents
-          if (availableRatio > contentRatio) {
-            y = scale > 1 ? padding / scale : padding;
-            x = (availableW - (contentW * scale)) / 2;
-          } else {
-            x = scale > 1 ? padding / scale : padding;
-            y = (availableH - (contentH * scale)) / 2;
-          }
-          canvas.setState({
-            [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
-            [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y
-          });
-        }, 0));
+  /*-------------------------------------------------------------------------------------------/
+   * RECENTER OBJECTS
+   * The following functions are used to reposition the objects so they all fit on the canvas
+   *------------------------------------------------------------------------------------------*/
+  const reCenterObjects = (mode) => {
+    // Runs for personal and group area
+    const _reCenterObjects = (isPersonalArea, mode) => {
+      let canvas = getUpdatedCanvasState(mode);
+      if (
+        !(canvas.setState &&
+          canvas.state &&
+          canvas.refs)
+      ) {
+        return;
       }
-    }, 0));
+
+      const areaString = isPersonalArea ? "personal" : "group";
+      // Reset to default position and scale
+      canvas.setState({
+        [`${areaString}LayerX`]: 0,
+        [`${areaString}LayerY`]: 0,
+        [`${areaString}LayerScale`]: 1
+      }, () => setTimeout(() => {
+        canvas = getUpdatedCanvasState(mode);
+
+        const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
+        const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
+        const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
+        const personalArea = document.getElementById(personalId).getBoundingClientRect();
+        const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
+        const sideMenuW = isPersonalArea ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+        const topMenuH = isPersonalArea ? 80 : topBar.height;
+        const padding = 80;
+        const doublePad = 2 * padding;
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
+        const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
+        const availableRatio = availableW / availableH;
+
+        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas, personalId);
+        if (minX && maxX && minY && maxY) {
+          let x = null;
+          let y = null;
+          let scale = null;
+          const contentW = maxX - minX;
+          const contentH = maxY - minY;
+          const contentRatio = contentW / contentH;
+          if (availableRatio > contentRatio) {
+            // Content proportionally taller
+            scale = availableH / contentH;
+          } else {
+            // Content proportionally wider
+            scale = availableW / contentW;
+          }
+          x = -minX * scale;
+          y = -minY * scale;
+          // Scale and fit to top left
+          canvas.setState({
+            [`${areaString}LayerX`]: x,
+            [`${areaString}LayerY`]: y + topMenuH,
+            [`${areaString}LayerScale`]: scale
+          }, () => setTimeout(() => {
+            canvas = getUpdatedCanvasState(mode);
+
+            // Center contents
+            if (availableRatio > contentRatio) {
+              y = scale > 1 ? padding / scale : padding;
+              x = (availableW - (contentW * scale)) / 2;
+            } else {
+              x = scale > 1 ? padding / scale : padding;
+              y = (availableH - (contentH * scale)) / 2;
+            }
+            canvas.setState({
+              [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
+              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y
+            });
+          }, 0));
+        }
+      }, 0));
+    }
+    _reCenterObjects(true, mode);
+    _reCenterObjects(false, mode);
   }
 
+  // This gets the farthest left, top, right, and bottom coordinates of the objects
+  // to create a bounding rectangle with coordinates
   const recalculateMaxMin = (isPersonalArea, sideMenuW, canvas, personalId) => {
     let minX = null;
     let maxX = null;
@@ -215,14 +223,15 @@ const App = (props) => {
     }
   }
 
+  // This gets the x, y, width & height of one specified object
   const getRect = (obj, sideMenuW, isPersonalArea, canvas, personalId) => {
     if (!obj) return;
     let rect = null;
+    // Object is a drawing
     if (obj.tool) {
       if (obj.tool === "eraser") {
         return null;
       }
-      // Drawing
       let xMax = null;
       let yMax = null;
       let xMin = null;
@@ -277,7 +286,11 @@ const App = (props) => {
     return rect;
   }
 
-  // Component Props
+  /*-----------------------------------------------------/
+   * OBJECT PROPS
+   * The following functions return the props that 
+   * are used by the objects rendered to the canvasses.
+   *----------------------------------------------------*/
   const defaultObjProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
@@ -535,7 +548,10 @@ const App = (props) => {
     };
   }
 
-  // This is the render function for objects onto Konva Canvasses
+  /*-------------------------------------------------------------/
+   * RENDER FUNCTION
+   * This renders the objects with their props to the canvasses.
+   *------------------------------------------------------------*/
   const loadObjects = (stage, mode) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
@@ -566,7 +582,7 @@ const App = (props) => {
           </>
         )}
 
-        {/* Load objects in state */}
+        {/* Render the object saved in state */}
         {canvas.state.lines.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Line {...lineProps(obj, index, canvas, editMode)} /> : null
@@ -656,6 +672,7 @@ const App = (props) => {
             <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
         })}
 
+        {/* This is the blue transformer rectangle that pops up when objects are selected */}
         {editMode && (
           <>
             <TransformerComponent {...transformerProps(stage, canvas)} />
@@ -665,6 +682,9 @@ const App = (props) => {
       </>
     );
   }
+
+  const { isLoading } = props.auth0;
+  if (isLoading) return <Loading />;
 
   return (
     <AlertContextProvider>
@@ -685,7 +705,7 @@ const App = (props) => {
           <Route exact path="/gamepage/:roomid" render={(props) =>
             <GamePage
               loadObjects={loadObjects}
-              reCenter={recalculateCanvasSizeAndPosition}
+              reCenter={reCenterObjects}
               setGamePlayProps={setGamePlayProps}
               savedObjects={savedObjects}
               {...props}
@@ -695,7 +715,7 @@ const App = (props) => {
           <Route exact path="/editpage" render={(props) =>
             <EditPage
               loadObjects={loadObjects}
-              reCenter={recalculateCanvasSizeAndPosition}
+              reCenter={reCenterObjects}
               setGameEditProps={setGameEditProps}
               customObjects={customObjects}
               savedObjects={savedObjects}

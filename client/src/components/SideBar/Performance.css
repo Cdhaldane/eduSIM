@@ -4,14 +4,15 @@
 }
 
 .performanceTableContainer {
+  min-height: 400px;
   max-height: 500px;
   overflow: auto;
 }
 
-.performanceTable>tbody>tr {
+.performanceTable>tbody>tr>td {
   display: table-cell;
-  padding-top: 10px;
-  border-top: 1px solid black;
+  padding-top: 5px;
+  border-top: 1px solid rgb(160, 160, 160);
 }
 
 .performanceContainer {
@@ -19,7 +20,7 @@
 }
 
 .performanceTitle {
-  font-size: 1.3em;
+  font-size: 1.2em;
   padding-bottom: 0.5em;
 }
 
@@ -27,32 +28,46 @@
   padding: 5px 10px;
 }
 
-.performanceTable>tbody>tr>h4 {
+.performanceTable>tbody>tr>td>span {
   font-size: 1.1em;
 }
 
-.performancePollRow>h3 {
+.performancePollRow>td>h3 {
+  font-family: "Montserrat", sans-serif;
   padding-top: 0.5em;
-  font-size: 1em;
+  font-size: 0.9em;
 }
 
 .performanceQNames {
+  font-size: 0.9em;
   width: 30%;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  background-color: rgb(217, 237, 255);
+  background: linear-gradient(90deg, #ffe9ed, 90%, white);
   padding: 0em 0.25em;
-  border-left: 5px solid rgb(53, 161, 255);
+  border-left: 5px solid var(--primary);
 }
 
 .performanceQOptions {
-  background-color: rgb(217, 237, 255);
+  font-size: 0.9em;
+  background: linear-gradient(90deg, #ffe9ed, 70%, white);
   padding-left: 0.25em;
-  border-left: 5px solid rgb(53, 161, 255);
+  border-left: 2px solid  var(--primary);
   width: 70%;
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
+}
+
+.performanceNoObjects>div {
+  font-weight: 800;
+  font-size: 1.1em;
+  padding-bottom: 10px;
+}
+
+.performanceNoObjects>p {
+  font-size: 1em;
+  padding-bottom: 10px;
 }

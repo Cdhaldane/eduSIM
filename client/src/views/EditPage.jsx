@@ -35,7 +35,7 @@ const GridMain = styled.main`
 
 const EditPage = (props) => {
 
-  const [customObjs, setCustomObjs] = useState(null);
+  const [customObjs, setCustomObjs] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
 

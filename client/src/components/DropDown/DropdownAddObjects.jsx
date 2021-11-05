@@ -383,7 +383,37 @@ const DropdownAddObjects = (props) => {
   // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
-      "polls", {}
+      "polls", 
+      {
+        json: {
+          pages: [
+            {
+              questions: [
+                {
+                  id: 0,
+                  type: "text",
+                  name: "0",
+                  title: "Sample Text Question:",
+                  isRequired: true
+                }, {
+                  id: 1,
+                  type: "text",
+                  name: "1",
+                  inputType: "date",
+                  title: "Sample Date Question:",
+                  isRequired: false
+                }, {
+                  id: 2,
+                  type: "boolean",
+                  name: "2",
+                  title: "Sample Yes/No Question:",
+                  isRequired: false
+                }
+              ]
+            }
+          ]
+        }
+      }
     );
   }
 
