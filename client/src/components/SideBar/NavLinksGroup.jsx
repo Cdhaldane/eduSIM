@@ -6,7 +6,7 @@ const LinksGroup = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px 0 14px 0;
-  margin-top: 50px;
+  margin-top: ${props => props.isPlayMode ? 0 : 50}px;
   margin-right: 2px;
   overflow: hidden;
   overflow-y: auto;
@@ -36,7 +36,7 @@ const DenseNavLinks = styled(NavLink)`
 
 const NavLinksGroup = forwardRef((props, ref) => {
   return (
-    <LinksGroup>
+    <LinksGroup isPlayMode={props.isPlayMode}>
       {props.links.map((link, index) => {
         return link.visible &&
           <DenseNavLinks

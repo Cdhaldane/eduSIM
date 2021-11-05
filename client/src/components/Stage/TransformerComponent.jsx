@@ -35,6 +35,7 @@ const TransformerComponent = forwardRef((props, ref) => {
       case "polls":
       case "connect4s":
       case "tics":
+      case "inputs":
         return (
           <Transformer
             ref={ref}
