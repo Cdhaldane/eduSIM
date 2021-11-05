@@ -1,30 +1,12 @@
 import React, { Component } from 'react';
-import DropdownRoles from "../Dropdown/DropdownRoles";
-import URLvideo from "./URLVideos";
-import axios from "axios";
-// import {Link } from "react-router-dom";
 import Level from "../Level/Level";
 import Modal from "react-modal";
-import URLVideo from "./URLVideos";
 import CreateRole from "../CreateRoleSelection/CreateRole";
-import TicTacToe from "./GamePieces/TicTacToe/TicTacToe";
-import Connect4 from "./GamePieces/Connect4/Board";
 import styled from "styled-components";
-import Poll from "./GamePieces/Poll/Poll";
-import HTMLFrame from "./GamePieces/HTMLFrame";
-import { uniqueId } from "lodash";
 
 import {
-  Rect,
   Stage,
-  Layer,
-  Ellipse,
-  Star,
-  Text,
-  RegularPolygon,
-  Line,
-  Image,
-  Arrow
+  Layer
 } from "react-konva";
 
 const EndScreen = styled.div`
@@ -64,89 +46,19 @@ const EndScreen = styled.div`
   }
 `;
 
-class URLImage extends React.Component {
-  state = {
-    image: null
-  };
-
-  componentDidMount() {
-    this.loadImage();
-  }
-
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
-      this.loadImage();
-    }
-  }
-
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-
-  render() {
-    return (
-      <Image
-        visible={this.props.visible}
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height}
-        image={this.state.image}
-        ref={this.props.ref}
-        id={this.props.id}
-        name="shape"
-        opacity={this.props.opacity}
-        rotation={this.props.rotation}
-        stroke={this.props.stroke}
-        strokeWidth={this.props.strokeWidth}
-      />
-    );
-  }
-}
-
 class Graphics extends Component {
 
   savedObjects = [
     // Objects
-    "rectangles",
-    "ellipses",
-    "stars",
-    "texts",
-    "arrows",
-    "triangles",
-    "images",
-    "videos",
-    "audios",
-    "documents",
-    "lines",
-    "tics",
-    "connect4s",
-    "polls",
-    "htmlFrames",
+    ...this.props.savedObjects,
 
     "status"
   ];
 
   constructor(props) {
     super(props);
+
+    this.setState = this.setState.bind(this);
 
     this.state = {
       rectangles: [],
@@ -173,7 +85,28 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       level: 1,
       pageNumber: 6,
+      groupLayerScale: 1,
+      groupLayerX: 0,
+      groupLayerY: 0,
+      personalLayerScale: 1,
+      personalLayerX: 0,
+      personalLayerY: 0,
     };
+
+    setTimeout(() => this.props.reCenter("play"), 100);
+  }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    // This passes info all the way up to the App component so that it can be used in functions
+    // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
+    if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
+      this.props.setGamePlayProps({
+        setState: this.setState,
+        state: this.state,
+        refs: this.refs,
+        getInteractiveProps: this.getInteractiveProps
+      });
+    }
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
@@ -189,7 +122,7 @@ class Graphics extends Component {
     this.props.socket.emit("playerUpdate", {
       role, name, dbid: this.props.initialUserId || id, invited: !!this.props.initialUserId
     })
-    sessionStorage.setItem('userInfo', JSON.stringify({role,name,dbid: this.props.initialUserId || id}));
+    sessionStorage.setItem('userInfo', JSON.stringify({ role, name, dbid: this.props.initialUserId || id }));
   }
 
   componentDidMount() {
@@ -205,207 +138,23 @@ class Graphics extends Component {
           [object]: objects[object]
         });
       });
-    } catch(e) {};
+    } catch (e) { };
 
     if (sessionStorage.userInfo) {
       const info = JSON.parse(sessionStorage.userInfo);
-      if (this.props.alert) this.props.alert("Logged back in as: "+info.name, "info");
+      if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
       this.handlePlayerInfo(info);
     }
-  }
-  
-  defaultObjProps = (obj, index) => {
-    return {
-      key: index,
-      visible: obj.visible,
-      rotation: obj.rotation,
-      ref: obj.ref,
-      fill: obj.fill,
-      opacity: obj.opacity,
-      name: "shape",
-      id: obj.id,
-      x: obj.x,
-      y: obj.y,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      stroke: obj.stroke,
-      strokeWidth: obj.strokeWidth,
-      strokeScaleEnabled: false,
-      draggable: false,
-      static: true
-    }
-  }
 
-  rectProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: obj.fillPatternImage,
-      fillPatternOffset: obj.fillPatternOffset,
-      image: obj.image
-    }
-  }
-
-  ellipseProps = (obj) => {
-    return {
-      radiusX: obj.radiusX,
-      radiusY: obj.radiusY
-    }
-  }
-
-  imageProps = (obj, layer) => {
-    return {
-      src: obj.imgsrc,
-      image: obj.imgsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height
-    }
-  }
-
-  videoProps = (obj, layer) => {
-    return {
-      type: "video",
-      src: obj.vidsrc,
-      image: obj.vidsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height
-    }
-  }
-
-  audioProps = (obj, layer) => {
-    return {
-      type: "audio",
-      src: obj.vidsrc,
-      image: obj.vidsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: true
-    }
-  }
-
-  documentProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: this.state.docimage,
-      fillPatternOffset: obj.fillPatternOffset,
-      fillPatternScaleY: 0.2,
-      fillPatternScaleX: 0.2,
-      image: obj.image
-    }
-  }
-
-  triangleProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      sides: obj.sides
-    }
-  }
-
-  starProps = (obj) => {
-    return {
-      innerRadius: obj.innerRadius,
-      outerRadius: obj.outerRadius,
-      numPoints: obj.numPoints
-    }
-  }
-
-  textProps = (obj) => {
-    return {
-      textDecoration: obj.link ? "underline" : "",
-      width: obj.width,
-      fontFamily: obj.fontFamily,
-      fontSize: obj.fontSize,
-      text: obj.text,
-      link: obj.link
-    }
-  }
-
-  lineProps = (obj, index) => {
-    return {
-      id: obj.id,
-      level: obj.level,
-      key: index,
-      points: obj.points,
-      stroke: obj.color,
-      strokeWidth: obj.strokeWidth,
-      tension: 0.5,
-      lineCap: "round",
-      globalCompositeOperation: obj.tool === 'eraser' ? 'destination-out' : 'source-over',
-      draggable: false,
-      onContextMenu: this.onObjectContextMenu,
-    }
-  }
-
-  arrowProps = (obj, index) => {
-    return {
-      key: index,
-      visible: obj.visible,
-      ref: obj.ref,
-      id: obj.id,
-      name: "shape",
-      points: [
-        obj.points[0],
-        obj.points[1],
-        obj.points[2],
-        obj.points[3]
-      ],
-      stroke: obj.stroke,
-      fill: obj.fill,
-      draggable: !this.state.layerDraggable
-    }
-  }
-
-  pollProps = (obj) => {
-    return {
-      custom: {
-        pollJson: obj.json ? obj.json : {
-          pages: [
-            {
-              questions: [
-                {
-                  id: 0,
-                  type: "text",
-                  name: "0",
-                  title: "Sample Text Question:",
-                  isRequired: true
-                }, {
-                  id: 1,
-                  type: "text",
-                  name: "1",
-                  inputType: "date",
-                  title: "Sample Date Question:",
-                }, {
-                  id: 2,
-                  type: "text",
-                  name: "2",
-                  inputType: "color",
-                  title: "Sample Color Question:",
-                }
-              ]
-            }
-          ]
-        }
-      }
+    // Reposition / scale objects on screen resize
+    let resizeTimeout;
+    window.onresize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        this.props.reCenter("play");
+      }, 100);
     };
   }
-  
-  htmlProps = (obj) => ({
-    iframeSrc: obj.iframeSrc,
-    htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
-    containerWidth: obj.containerWidth,
-    containerHeight: obj.containerHeight
-  });
 
   getInteractiveProps = (id) => ({
     updateStatus: (parameters) => {
@@ -415,149 +164,18 @@ class Graphics extends Component {
       })
     },
     status: this.props.gamepieceStatus[id] || {}
-  })
+  });
 
   handleLevel = (e) => {
     this.props.socket.emit("goToPage", {
       level: e
-    })
-    // this.setState({
-    //   level: e
-    // }, this.handleLevelUpdate)
+    });
   }
 
   toggleModal = () => {
     this.setState({
       isOpen: !this.state.isOpen
-    })
-  }
-
-  componentWillReceiveProps = ({ level }) => {
-    if (level) {
-      this.setState({
-        level
-      })
-    }
-  }
-
-  objectIsOnStage = (obj) => {
-    if (obj.level === this.state.level && obj.infolevel === false) {
-      return "group";
-    } else if (obj.level === this.state.level && obj.infolevel === true && obj.rolelevel === this.state.rolelevel) {
-      return "personal";
-    } else {
-      return "";
-    }
-  }
-
-  // we need to render this outside of the konva stage
-  // since otherwise they become static/unable to interact with
-  loadInterativeObjects = (stage) => (
-    <>
-      {this.state.polls.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <Poll
-            defaultProps={{
-              ...this.defaultObjProps(obj, index),
-              ...this.pollProps(obj)
-            }}
-            {...this.defaultObjProps(obj, index)}
-          /> : null
-      })}
-      {this.state.connect4s.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <Connect4
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-          /> : null
-      })}
-      {this.state.tics.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <TicTacToe
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-          /> : null
-      })}
-      {this.state.htmlFrames.map((obj, index) => {
-        return this.objectIsOnStage(obj) === stage ?
-          <HTMLFrame
-            defaultProps={{ ...this.defaultObjProps(obj, index) }}
-            {...this.defaultObjProps(obj, index)}
-            {...this.getInteractiveProps(obj.id)}
-            {...this.htmlProps(obj)}
-          /> : null
-      })}
-    </>
-  );
-
-  loadObjects = (stage) => {
-    return (
-      <>
-        {/* This Rect is for dragging the canvas */}
-        <Rect
-          id="ContainerRect"
-          x={-5 * window.innerWidth}
-          y={-5 * window.innerHeight}
-          height={window.innerHeight * 10}
-          width={window.innerWidth * 10}
-        />
-
-        {/* Load objects in state */}
-        {this.state.lines.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Line {...this.lineProps(obj, index)} /> : null
-        })}
-        {this.state.rectangles.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultObjProps(obj, index)} {...this.rectProps(obj)} /> : null
-        })}
-        {this.state.ellipses.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Ellipse {...this.defaultObjProps(obj, index)} {...this.ellipseProps(obj)} /> : null
-        })}
-        {this.state.images.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLImage {...this.defaultObjProps(obj, index)} {...this.imageProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.videos.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultObjProps(obj, index)} {...this.videoProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.audios.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <URLVideo {...this.defaultObjProps(obj, index)} {...this.audioProps(obj, this.refs.groupAreaLayer)} /> : null
-        })}
-        {this.state.documents.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Rect {...this.defaultObjProps(obj, index)} {...this.documentProps(obj)} /> : null
-        })}
-        {this.state.triangles.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <RegularPolygon {...this.defaultObjProps(obj, index)} {...this.triangleProps(obj)} /> : null
-        })}
-        {this.state.stars.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Star {...this.defaultObjProps(obj, index)} {...this.starProps(obj)} /> : null
-        })}
-        {this.state.texts.map((obj, index) => {
-          return this.objectIsOnStage(obj) === stage ?
-            <Text {...this.defaultObjProps(obj, index)} {...this.textProps(obj)} /> : null
-        })}
-        {this.state.arrows.map((obj, index) => {
-          return (
-            !obj.from &&
-            !obj.to &&
-            obj.level === this.state.level &&
-            obj.infolevel === (stage === "personal")
-          ) ?
-            <Arrow {...this.arrowProps(obj, index)} /> : null
-        })}
-
-        <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
-      </>
-    );
+    });
   }
 
   render() {
@@ -603,18 +221,17 @@ class Graphics extends Component {
             ref="graphicStage"
           >
             <Layer
-              scaleX={this.state.layerScale}
-              scaleY={this.state.layerScale}
-              x={this.state.layerX}
-              y={this.state.layerY}
+              ref="groupAreaLayer"
+              scaleX={this.state.groupLayerScale}
+              scaleY={this.state.groupLayerScale}
+              x={this.state.groupLayerX}
+              y={this.state.groupLayerY}
               height={window.innerHeight}
               width={window.innerWidth}
-              ref="layer2"
             >
-              {this.loadObjects("group")}
+              {this.props.loadObjects("group", "play")}
             </Layer>
           </Stage>
-          {this.loadInterativeObjects("group")}
         </div>
         <div className="eheader">
           <Level
@@ -647,14 +264,17 @@ class Graphics extends Component {
                     width={window.innerWidth}
                     draggable={false}
                   >
-                    {this.loadObjects("personal")}
+                    {this.props.loadObjects("personal", "play")}
                   </Layer>
                 </Stage>
-                {this.loadInterativeObjects("personal")}
               </div>
               {(this.state.open !== 1)
-                ? <button onClick={() => this.setState({ open: 1 })}><i className="fas fa-caret-square-up fa-3x"></i></button>
-                : <button onClick={() => this.setState({ open: 0 })}><i className="fas fa-caret-square-down fa-3x"></i></button>
+                ? <button className="personalAreaToggle" onClick={() => this.setState({ open: 1 })}>
+                  <i className="fas fa-caret-square-up fa-3x" />
+                </button>
+                : <button className="personalAreaToggle" onClick={() => this.setState({ open: 0 })}>
+                  <i className="fas fa-caret-square-down fa-3x" />
+                </button>
               }
             </div>
           </div>

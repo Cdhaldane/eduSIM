@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import KonvaHtml from "../KonvaHtml";
 
 const CustomWrapper = forwardRef((props, ref) => {
@@ -34,7 +34,9 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const handleLoad = () => {
     const thisObj = getObj();
-    thisObj.parentElement.style.pointerEvents = "none";
+    if (props.defaultProps.editMode) {
+      thisObj.parentElement.style.pointerEvents = "none";
+    }
   }
 
   let scrollTimeout = null;
@@ -83,8 +85,8 @@ const CustomWrapper = forwardRef((props, ref) => {
       defaultProps={props.defaultProps}
     >
       <div
-        onClick={() => props.updateKonva(ref._stringRef, true)}
-        onContextMenu={() => props.updateKonva(ref._stringRef, true)}
+        onClick={() => props.updateKonva ? props.updateKonva(ref._stringRef, true) : null}
+        onContextMenu={() => props.updateKonva ? props.updateKonva(ref._stringRef, true) : null}
         className={"customObj"}
         data-name={ref._stringRef}
         ref={ref}

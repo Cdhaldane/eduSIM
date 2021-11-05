@@ -36,7 +36,7 @@ function Join(props) {
   }
 
   useEffect(() => {
-    (async function () {
+    const run = async () => {
       const client = await io(process.env.REACT_APP_API_ORIGIN, {
         auth: {
           token: localStorage.adminid
@@ -68,7 +68,8 @@ function Join(props) {
       });
       setSocketInfo(client);
       return () => client.disconnect();
-    }());
+    };
+    run();
   }, []);
 
   const currentRoomStatus = useMemo(() => {
@@ -168,41 +169,41 @@ function Join(props) {
             )}
             <div className="joinboard-buttons">
               <button
-                class={`joinboard-button ${currentRoom && currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                className={`joinboard-button ${currentRoom && currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                 onClick={startSim}
                 title={currentRoom ? "Start this simulation" : "Start all simulations"}
               >
-                <i class="fa fa-play"></i>
+                <i className="fa fa-play"></i>
               </button>
               <button
-                class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                 onClick={pauseSim}
                 title={currentRoom ? "Pause this simulation" : "Pause all simulations"}
               >
-                <i class="fa fa-pause"></i>
+                <i className="fa fa-pause"></i>
               </button>
               <button
-                class="joinboard-button"
+                className="joinboard-button"
                 onClick={() => setResetID(true)}
                 title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
               >
-                <i class="fa fa-retweet"></i>
+                <i className="fa fa-retweet"></i>
               </button>
               {advanceMode === "teacher" && (
                 <>
                   <button
-                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                     onClick={handlePrevPage}
                     title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
                   >
-                    <i class="fa fa-angle-double-left"></i>
+                    <i className="fa fa-angle-double-left"></i>
                   </button>
                   <button
-                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                     onClick={handleNextPage}
                     title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
                   >
-                    <i class="fa fa-angle-double-right"></i>
+                    <i className="fa fa-angle-double-right"></i>
                   </button>
                 </>
               )}

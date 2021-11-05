@@ -43,7 +43,6 @@ const Pencil = (props) => {
             <DropdownNavigationBar
               mvisible={props.mvisible}
               avisible={props.avisible}
-              pavisible={props.pavisible}
               svisible={props.svisible}
               pevisible={props.pevisible}
               close={handleClose} />

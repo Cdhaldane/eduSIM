@@ -107,12 +107,12 @@ const ConnectFour = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
-    if (props.status.board && board != props.status.board) {
+    if (props.status.board && board !== props.status.board) {
       (async () => {
         if (!firstRefresh) {
           let r = null, c = null, ii = null, clear = false;
           for (let i = 0; i < boardSettings.rows * boardSettings.columns; i++) {
-            if (props.status.board[i] != board[i]) {
+            if (props.status.board[i] !== board[i]) {
               if (r || c) clear = true;
               ii = i;
               r = Math.floor(i / boardSettings.columns);
