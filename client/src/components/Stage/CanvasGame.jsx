@@ -155,6 +155,14 @@ class Graphics extends Component {
     }
   }
 
+  sendInteraction = (gamepieceId, parameters) => {
+    this.props.socket.emit("interaction", {
+      gamepieceId,
+      parameters,
+      sameState: true
+    })
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
@@ -166,7 +174,8 @@ class Graphics extends Component {
         getInteractiveProps: this.getInteractiveProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        refresh: this.forceUpdate
+        refresh: this.forceUpdate,
+        sendInteraction: this.sendInteraction
       });
     }
   }

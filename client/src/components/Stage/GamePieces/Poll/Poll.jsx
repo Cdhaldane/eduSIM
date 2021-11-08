@@ -12,10 +12,14 @@ const Poll = forwardRef((props, ref) => {
     /*props.updateStatus({
       data: survey.data
     });*/
+    //props.defaultProps.onComplete(survey.data);
   }
 
   useEffect(() => {
     console.log(props.status);
+    for (q in props.status) {
+      console.log(q);
+    }
   }, [props.status]);
 
   const onValueChanged = (survey) => {
@@ -24,6 +28,9 @@ const Poll = forwardRef((props, ref) => {
     });
     //console.log(survey.data);
     //survey.setValue("Page 1 Question 1", "OOGA");
+    // props.updateStatus({
+    //   data: survey.data
+    // });
   }
 
   return (
