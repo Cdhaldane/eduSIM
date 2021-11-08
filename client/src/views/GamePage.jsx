@@ -172,8 +172,6 @@ const Game = (props) => {
     return newPlayers;
   }, [players, roles, actualLevel]);
 
-  console.log(roomStatus);
-
   return (
     !isLoading ? (
       <>

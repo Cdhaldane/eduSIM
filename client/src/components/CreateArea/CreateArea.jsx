@@ -33,6 +33,8 @@ function CreateArea(props) {
   }, []);
 
   const uploadImage = async event => {
+    console.log("UPLOADING");
+
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
       alertContext.showAlert("A name is required for the simulation.", "warning");
@@ -87,7 +89,7 @@ function CreateArea(props) {
         props.onAdd(note);
       }
 
-      window.location.reload();
+      //window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -172,7 +174,7 @@ function CreateArea(props) {
           </div>
         )}
         <div className="gradient-border">
-          Enter a ‎name‎‏‏‎ ‎
+          Enter a name
           <input
             tpye="text"
             id="namei"

@@ -103,8 +103,6 @@ class Graphics extends Component {
       pageNumber: 6
     };
 
-    console.log(this.props.gamepieceStatus);
-
     setTimeout(() => this.props.reCenter("play"), 100);
   }
 
