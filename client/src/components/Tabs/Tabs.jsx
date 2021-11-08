@@ -127,6 +127,8 @@ function Tabs(props) {
       })
       .catch(error => console.log(error.response));
     setTabs(tabs.filter((_, i) => i != index));
+    setToggleState(0);
+    props.setRoom(null);
   }
 
   const handleTime = (e) => {
@@ -256,6 +258,10 @@ function Tabs(props) {
       setRemoveLog(null);
     }).catch(error => console.log(error.response));
   }
+
+  useEffect(() => {
+    props.updateNumTabs(tabs.length);
+  }, [tabs]);
 
   return (
     <>
