@@ -191,7 +191,7 @@ class Graphics extends Component {
 
       this.savedObjects.forEach((object) => {
         this.setState({
-          [object]: objects[object]
+          [object]: objects[object] || []
         });
       });
     } catch (e) { };
