@@ -1,18 +1,39 @@
 .performanceTable {
-  width: 100%;
   border-collapse: collapse;
 }
 
 .performanceTableContainer {
   min-height: 400px;
   max-height: 500px;
+  padding: 0px 10px;
   overflow: auto;
 }
 
 .performanceTable>tbody>tr>td {
   display: table-cell;
-  padding: 5px 0;
-  border-top: 1px solid rgb(160, 160, 160);
+}
+
+.performanceQOptions>table>tbody>tr>td>label:hover {
+  cursor: pointer;
+}
+
+.performanceQOptions>table>tbody>tr>td>label {
+  padding-right: 0.5em;
+  font-size: 0.9em;
+}
+
+.performanceQOptions>table>tbody>tr>td>label>input {
+  margin: 0px 0.5em;
+  transform: translateY(-0.1em);
+}
+
+.performanceQOptions>table>tbody>tr>td{
+  width: 350px;
+}
+
+.performanceQOptions>table {
+  border: 1px solid var(--primary);
+  border-left: 5px solid var(--primary);
 }
 
 .performanceContainer {
@@ -22,10 +43,13 @@
 .performanceTitle {
   font-size: 1.2em;
   padding-bottom: 0.5em;
+  padding-left: 10px;
 }
 
 .performanceForm {
-  padding: 5px 10px;
+  padding: 5px 0px;
+  width: auto !important;
+  min-width: 740px;
 }
 
 .performanceTable>tbody>tr>td>span {
@@ -40,46 +64,16 @@
 .performancePollRow>td>h3 {
   font-family: "Montserrat", sans-serif;
   padding-top: 0.5em;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .performanceQNames {
+  padding-top: 0.25em;
   font-weight: 800;
   font-size: 0.9em;
-  width: 50%;
+  width: 100%;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  background: linear-gradient(90deg, #ffe9ed, 90%, white);
-  padding: 0em 0.25em;
-  border-left: 5px solid var(--primary);
-}
-
-.performanceQOptions {
-  font-size: 0.9em;
-  background: linear-gradient(90deg, #ffe9ed, 90%, white);
-  padding-left: 0.25em;
-  border-left: 5px solid  var(--primary);
-  width: 50%;
-  white-space: nowrap;
-  overflow: hidden;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.performanceQOptions>div>label {
-  display: inline-block;
-  padding-left: 0.25em;
-}
-
-.performanceNoObjects>div {
-  font-weight: 800;
-  font-size: 1.1em;
-  padding-bottom: 10px;
-}
-
-.performanceNoObjects>p {
-  font-size: 1em;
-  padding-bottom: 10px;
 }

@@ -385,6 +385,8 @@ const DropdownAddObjects = (props) => {
     addObjectToLayer(
       "polls", 
       {
+        performanceEnabled: false,
+        customName: "",
         json: {
           pages: [
             {
@@ -394,20 +396,23 @@ const DropdownAddObjects = (props) => {
                   type: "text",
                   name: "0",
                   title: "Sample Text Question:",
-                  isRequired: true
+                  isRequired: true,
+                  performanceOption: "allAnswers"
                 }, {
                   id: 1,
                   type: "text",
                   name: "1",
                   inputType: "date",
                   title: "Sample Date Question:",
-                  isRequired: false
+                  isRequired: false,
+                  performanceOption: "allAnswers"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
                   title: "Sample Yes/No Question:",
-                  isRequired: false
+                  isRequired: false,
+                  performanceOption: "allAnswers"
                 }
               ]
             }

@@ -192,9 +192,7 @@ const Sidebar = (props) => {
 
     },
   ];
-
-  console.log(props);
-
+  
   return (
     <>
       <div ref={sidebarRef}>
@@ -254,6 +252,7 @@ const Sidebar = (props) => {
         <Performance
           customObjs={props.customObjs}
           ref={performanceModal}
+          setData={props.performanceFunctions}
         />
       </Modal>
     </>

@@ -5,18 +5,17 @@ import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
 
-  const [customObjs, setCustomObjs] = useState(props.customObjs);
-  const [pollChecks, setPollChecks] = useState(props.customObjs.polls ? Array(props.customObjs.polls.length).fill(false) : []);
+  const pollQOptionChanged = (e, pollI, pageI, qI) => {
+    const val = e.target.value;
+    const id = props.customObjs.polls[pollI].id;
 
-  const savePerformanceInfo = () => {
-    const json = {
-      polls: null
-    }
-
-    // Save poll info
-    for (let i = 0; i < customObjs.polls.length; i++) {
-      const poll = customObjs.polls[i].json;
-    }
+    // Set the performance option on the question
+    const newQ = { ...props.customObjs.polls[pollI].json.pages[pageI].questions[qI] };
+    newQ.performanceOption = val;
+    const newPollJson = { ...props.customObjs.polls[pollI].json };
+    newPollJson.pages[pageI].questions[qI] = newQ;
+  
+    props.setData.setPollData("json", newPollJson, id);
   }
 
   return (
@@ -27,10 +26,10 @@ const Performance = forwardRef((props, ref) => {
           <div className="performanceTableContainer">
             <table className="performanceTable">
               <tbody>
-                {Object.keys(customObjs).map((key) => {
+                {Object.keys(props.customObjs).map((key) => {
                   switch (key) {
                     case "polls":
-                      return customObjs[key].map((poll, i) => {
+                      return props.customObjs[key].map((poll, i) => {
                         return (
                           <tr key={i} className="performancePollRow">
                             <td>
@@ -38,48 +37,88 @@ const Performance = forwardRef((props, ref) => {
                                 height={30}
                                 width={50}
                                 onChange={(val) => {
-                                  const newChecks = [...pollChecks];
-                                  newChecks[i] = val;
-                                  setPollChecks(newChecks);
+                                  props.setData.setPollData("performanceEnabled", val, poll.id);
                                 }}
-                                checked={pollChecks[i]}
+                                checked={poll.performanceEnabled}
                                 className="react-switch"
                               />
                               <span>
                                 {`Poll ${i + 1} - ${poll.customName ? poll.customName : "Untitled"}`}
                               </span>
-                              {pollChecks[i] && (
+                              {poll.performanceEnabled && (
                                 <>
                                   {poll.json.pages.map((page, pageI) => (
                                     <React.Fragment key={pageI}>
                                       <h3>
                                         Page #{pageI + 1}
                                       </h3>
-                                      {page.questions.map((q, qI) => (
-                                        <div key={qI}>
-                                          <div className="performanceQNames">
-                                            {q.title}
+                                      {page.questions.map((q, qI) => {
+                                        return (
+                                          <div key={qI}>
+                                            <div className="performanceQNames">
+                                              {q.title}
+                                            </div>
+                                            <div className="performanceQOptions">
+                                              <table>
+                                                <tbody>
+                                                  <tr>
+                                                    <td>
+                                                      <label>
+                                                        <input
+                                                          checked={q.performanceOption === "allAnswers"}
+                                                          onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                          type="radio"
+                                                          name={`poll${i}P${pageI}Q${qI}`}
+                                                          value="allAnswers"
+                                                        />
+                                                        List All User Answers
+                                                      </label>
+                                                    </td>
+                                                    <td>
+                                                      <label>
+                                                        <input
+                                                          checked={q.performanceOption === "mostCommon"}
+                                                          onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                          type="radio"
+                                                          name={`poll${i}P${pageI}Q${qI}`}
+                                                          value="mostCommon"
+                                                        />
+                                                        Show Most Common Answer
+                                                      </label>
+                                                    </td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>
+                                                      <label>
+                                                        <input
+                                                          checked={q.performanceOption === "usersOwn"}
+                                                          onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                          type="radio"
+                                                          name={`poll${i}P${pageI}Q${qI}`}
+                                                          value="usersOwn"
+                                                        />
+                                                        Show Only User's Own Answer
+                                                      </label>
+                                                    </td>
+                                                    <td>
+                                                      <label>
+                                                        <input
+                                                          checked={q.performanceOption === "doNotShow"}
+                                                          onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                          type="radio"
+                                                          name={`poll${i}P${pageI}Q${qI}`}
+                                                          value="doNotShow"
+                                                        />
+                                                        Do Not Show This Question
+                                                      </label>
+                                                    </td>
+                                                  </tr>
+                                                </tbody>
+                                              </table>
+                                            </div>
                                           </div>
-                                          <div className="performanceQOptions">
-                                            <div>
-                                              <input defaultChecked type="radio" name={`poll${i}Q${qI}`} value="allAnswers" />
-                                              <label>List All User Answers</label>
-                                            </div>
-                                            <div>
-                                              <input type="radio" name={`poll${i}Q${qI}`} value="mostCommon" />
-                                              <label>Show Most Common Answer</label>
-                                            </div>
-                                            <div>
-                                              <input type="radio" name={`poll${i}Q${qI}`} value="usersOwn" />
-                                              <label>Show Only User's Own Answer</label>
-                                            </div>
-                                            <div>
-                                              <input type="radio" name={`poll${i}Q${qI}`} value="doNotShow" />
-                                              <label>Do Not Show This Question</label>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      ))}
+                                        )
+                                      })}
                                     </React.Fragment>
                                   ))}
                                 </>
@@ -94,7 +133,7 @@ const Performance = forwardRef((props, ref) => {
                 })}
               </tbody>
             </table>
-            {!Object.keys(customObjs).some(key => customObjs[key].length) && (
+            {!Object.keys(props.customObjs).some(key => props.customObjs[key].length) && (
               <div className="performanceNoObjects">
                 <div>There are currently no interactive objects.</div>
                 <p>

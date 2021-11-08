@@ -64,23 +64,35 @@ class Graphics extends Component {
     this.forceUpdate = this.forceUpdate.bind(this);
 
     this.state = {
+      // Objects
       rectangles: [],
       ellipses: [],
       stars: [],
-      texts: [],
-      arrows: [],
       triangles: [],
       images: [],
       videos: [],
       audios: [],
       documents: [],
+      texts: [],
       lines: [],
+      arrows: [],
+      
+      // Interactive Objects
       tics: [],
       connect4s: [],
-      gameroles: [],
       polls: [],
       htmlFrames: [],
       inputs: [],
+
+      // Layer Position and Scales
+      groupLayerScale: 1,
+      groupLayerX: 0,
+      groupLayerY: 0,
+      personalLayerScale: 1,
+      personalLayerX: 0,
+      personalLayerY: 0,
+
+      gameroles: [],
       open: 0,
       isOpen: true,
       state: false,
@@ -88,14 +100,10 @@ class Graphics extends Component {
       gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
       level: 1,
-      pageNumber: 6,
-      groupLayerScale: 1,
-      groupLayerX: 0,
-      groupLayerY: 0,
-      personalLayerScale: 1,
-      personalLayerX: 0,
-      personalLayerY: 0,
+      pageNumber: 6
     };
+
+    console.log(this.props.gamepieceStatus);
 
     setTimeout(() => this.props.reCenter("play"), 100);
   }

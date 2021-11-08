@@ -83,7 +83,7 @@ class Graphics extends Component {
       lines: [], // Lines are the drawings
       arrows: [], // Arrows are used for transformations
 
-      // Interactive
+      // Interactive Objects
       tics: [],
       connect4s: [],
       polls: [],
@@ -93,10 +93,8 @@ class Graphics extends Component {
       // An array of arrays containing grouped items
       savedGroups: [],
 
-      connectors: [],
-      gameroles: [],
-
-      // TESTING Custom Transformer
+      // Transformer for custom objects
+      // This manually gets updated to simulate a normal Konva transformer
       customRect: [
         {
           visible: true,
@@ -204,6 +202,8 @@ class Graphics extends Component {
 
       gamepieceStatus: {},
 
+      connectors: [],
+      gameroles: [],
       errMsg: "",
       arrowDraggable: false,
       newArrowRef: "",
@@ -348,6 +348,10 @@ class Graphics extends Component {
     };
 
     history.push(this.state);
+
+    this.props.setPerformanceFunctions({
+      setPollData: this.setPollData
+    });
   }
 
   componentWillUnmount = () => {
@@ -2033,26 +2037,13 @@ class Graphics extends Component {
     });
   }
 
-  setPollJson = (json, id) => {
+  setPollData = (type, data, id) => {
     this.setState(prevState => ({
       polls: prevState.polls.map(poll =>
         poll.id === id
           ? {
             ...poll,
-            json: json
-          }
-          : poll
-      )
-    }));
-  }
-
-  setPollCustomName = (customName, id) => {
-    this.setState(prevState => ({
-      polls: prevState.polls.map(poll =>
-        poll.id === id
-          ? {
-            ...poll,
-            customName: customName
+            [type]: data
           }
           : poll
       )
@@ -2419,8 +2410,7 @@ class Graphics extends Component {
                       cut={this.handleCut}
                       paste={this.handlePaste}
                       delete={this.handleDelete}
-                      setJson={this.setPollJson}
-                      setName={this.setPollCustomName}
+                      setPollData={this.setPollData}
                     />
                   </Portal>
                 )}

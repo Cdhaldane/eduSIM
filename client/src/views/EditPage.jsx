@@ -36,6 +36,7 @@ const GridMain = styled.main`
 const EditPage = (props) => {
 
   const [customObjs, setCustomObjs] = useState({});
+  const [performanceFunctions, setPerformanceFunctions] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
 
@@ -63,6 +64,7 @@ const EditPage = (props) => {
         <Grid>
           <GridNav>
             <Sidebar
+              performanceFunctions={performanceFunctions}
               customObjs={customObjs}
               className="grid-sidebar"
               visible={showNav}
@@ -81,6 +83,7 @@ const EditPage = (props) => {
                 savedObjects={props.savedObjects}
                 reCenter={props.reCenter}
                 setGameEditProps={props.setGameEditProps}
+                setPerformanceFunctions={setPerformanceFunctions}
                 setCustomObjs={setCustomObjs}
                 doNotRecalculateBounds={updater > 0}
                 reloadCanvasFull={() => setUpdater(updater + 1)}

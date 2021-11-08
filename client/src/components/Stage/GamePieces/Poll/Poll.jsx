@@ -6,10 +6,19 @@ import './Poll.css';
 import "survey-react/survey.css";
 
 const Poll = forwardRef((props, ref) => {
+
+  const onComplete = (survey, options) => {
+    // Save survey results
+    props.updateStatus({
+      data: survey.data
+    });
+  }
+
   return (
     <CustomWrapper {...props} ref={ref}>
       <div className="poll">
         <Survey.Survey
+          onComplete={onComplete}
           json={props.defaultProps.custom.pollJson}
         />
       </div>

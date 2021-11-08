@@ -23,7 +23,7 @@ const DropdownEditPoll = (props) => {
 
   useEffect(() => {
     const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
-    const inputFocused = inputs.some((input) => input === document.activeElement)
+    const inputFocused = inputs.some((input) => input === document.activeElement);
     if (pages) {
       const theInput = document.activeElement;
       createJson();
@@ -35,19 +35,20 @@ const DropdownEditPoll = (props) => {
   }, [pages]);
 
   const createJson = () => {
-    const pagesJson = pages.map((p) => {
+    const pagesJson = pages.map((p, pIndex) => {
       const questions = p.questions;
       const qJson = questions.map((q, index) => {
         return {
           id: q.id,
-          name: "Question #" + (index + 1),
+          name: `Page ${pIndex+1} Question ${index+1}`,
           type: q.type,
           inputType: q.inputType,
           title: q.title,
           isRequired: q.isRequired,
           choices: q.choices,
           hasNone: false,
-          correctAnswer: q.correctAnswer
+          correctAnswer: q.correctAnswer,
+          performanceOption: q.performanceOption
         }
       });
       return {
@@ -58,7 +59,7 @@ const DropdownEditPoll = (props) => {
       "showProgressBar": pages.length === 1 ? null : "bottom",
       "pages": pagesJson
     };
-    props.setJson(json, props.shape.attrs.id);
+    props.setData("json", json, props.shape.attrs.id);
   }
 
   const setQuestionParam = (type, pIndex, qIndex, val) => {
@@ -505,7 +506,7 @@ const DropdownEditPoll = (props) => {
             className="editPollNameBox"
             value={name}
             onChange={(e) => {
-              props.setName(e.target.value, props.shape.attrs.id);
+              props.setData("customName", e.target.value, props.shape.attrs.id);
               setName(e.target.value);
             }}
           />

@@ -165,8 +165,7 @@ const ContextMenu = (props) => {
       {drop && (
         <div className="drop">
           <DropdownEditObject
-            setJson={props.setJson}
-            setName={props.setName}
+            setPollData={props.setPollData}
             top={menu.current.offsetTop}
             title={editTitle}
             handleFillColor={props.handleFillColor}
