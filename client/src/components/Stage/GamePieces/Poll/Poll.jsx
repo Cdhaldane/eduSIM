@@ -9,9 +9,10 @@ const Poll = forwardRef((props, ref) => {
 
   const onComplete = (survey, options) => {
     // Save survey results
-    props.updateStatus({
-      data: survey.data
-    });
+    // props.updateStatus({
+    //   data: survey.data
+    // });
+    props.defaultProps.onComplete(survey.data);
   }
 
   return (

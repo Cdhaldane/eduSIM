@@ -523,13 +523,16 @@ const App = (props) => {
     label: obj.label
   })
 
-  const pollProps = (obj) => {
+  const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
         performanceEnabled: obj.performanceEnabled,
         customName: obj.customName,
         pollJson: obj.json
-      }
+      },
+      onComplete: !editMode 
+        ? (data) => canvas.sendInteraction(obj.id, data) 
+        : () => {}
     };
   }
 
@@ -613,7 +616,7 @@ const App = (props) => {
             <Poll
               defaultProps={{
                 ...defaultObjProps(obj, index, canvas, editMode),
-                ...pollProps(obj)
+                ...pollProps(obj, canvas, editMode)
               }}
               {...canvas.getInteractiveProps(obj.id)}
               {...defaultObjProps(obj, index, canvas, editMode)}

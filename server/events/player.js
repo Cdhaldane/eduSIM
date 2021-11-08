@@ -75,7 +75,7 @@ export default async (server, client, event, args) => {
       break;
     };
     case "interaction": {
-      const { gamepieceId, parameters } = args;
+      const { gamepieceId, parameters, sameState } = args;
       
       const { running, gamepieces, level } = await getRoomStatus(room);
 
@@ -84,17 +84,19 @@ export default async (server, client, event, args) => {
         return;
       }
 
-      const newStatus = await updateRoomStatus(room, {
-        gamepieces: {
-          ...gamepieces,
-          [gamepieceId]: parameters
-        }
-      });
+      if (!sameState) {
+        const newStatus = await updateRoomStatus(room, {
+          gamepieces: {
+            ...gamepieces,
+            [gamepieceId]: parameters
+          }
+        });
 
-      server.to(room).emit("roomStatusUpdate", {
-        room,
-        status: newStatus
-      });
+        server.to(room).emit("roomStatusUpdate", {
+          room,
+          status: newStatus
+        });
+      }
 
       const player = await getPlayer(client.id);
       if (!player.invited) player.dbid = undefined;
@@ -104,7 +106,8 @@ export default async (server, client, event, args) => {
         level,
         gamepieceId,
         parameters,
-        player
+        player,
+        changedState: !sameState
       });
 
       break;
