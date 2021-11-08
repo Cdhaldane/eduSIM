@@ -61,10 +61,12 @@ const Poll = forwardRef((props, ref) => {
   }
 
   const onComplete = (survey) => {
-    props.updateStatus({
-      ...props.status,
-      isComplete: true
-    });
+    if (!props.status.isComplete) {
+      props.updateStatus({
+        ...props.status,
+        isComplete: true
+      });
+    }
 
     // Save survey results
     /*props.updateStatus({
