@@ -48,6 +48,10 @@ const EndScreen = styled.div`
 `;
 
 class Graphics extends Component {
+  
+  customObjects = [
+    ...this.props.customObjectsLabels
+  ]
 
   savedObjects = [
     // Objects
@@ -76,7 +80,7 @@ class Graphics extends Component {
       texts: [],
       lines: [],
       arrows: [],
-      
+
       // Interactive Objects
       tics: [],
       connect4s: [],
@@ -107,33 +111,33 @@ class Graphics extends Component {
   }
 
   formatTextMacros = (text) => {
-    let start=false, newText=text;
-    for (let i=0;i<newText.length;i++) {
-      const c=newText[i];
-      if (c==="{") start=i;
-      if (c==="}" && start!==false) {
+    let start = false, newText = text;
+    for (let i = 0; i < newText.length; i++) {
+      const c = newText[i];
+      if (c === "{") start = i;
+      if (c === "}" && start !== false) {
         let content, key;
-        switch (key=newText.slice(start+1,i)) {
+        switch (key = newText.slice(start + 1, i)) {
           case "playername":
-            content=this.props.players[this.props.socket.id]?.name;
+            content = this.props.players[this.props.socket.id]?.name;
             break;
           case "playerrole":
-            content=this.props.players[this.props.socket.id]?.role || "(no role selected)";
+            content = this.props.players[this.props.socket.id]?.role || "(no role selected)";
             break;
           case "lastsetvar":
-            content=sessionStorage.lastSetVar;
+            content = sessionStorage.lastSetVar;
             break;
           case "currentdate":
-            content=moment().format("dddd, MMMM Do YYYY");
+            content = moment().format("dddd, MMMM Do YYYY");
             break;
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-            content=vars[key];
+            content = vars[key];
         }
-        newText = newText.slice(0,start) + (content!==undefined ? content : "unknown") + newText.slice(i+1);
-        i=start;
-        start=false;
+        newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
+        i = start;
+        start = false;
       }
     }
     return newText;
@@ -177,6 +181,18 @@ class Graphics extends Component {
         refresh: this.forceUpdate,
         sendInteraction: this.sendInteraction
       });
+    }
+
+    // Update the custom objects state in the parent component (if custom objs changed)
+    for (let i = 0; i < this.customObjects.length; i++) {
+      if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
+        const customObjs = {};
+        for (let j = 0; j < this.customObjects.length; j++) {
+          customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
+        }
+        this.props.setCustomObjs(customObjs);
+        break;
+      }
     }
   }
 
@@ -248,7 +264,7 @@ class Graphics extends Component {
       isOpen: !this.state.isOpen
     });
   }
-  
+
   componentWillReceiveProps = ({ level }) => {
     if (level) {
       this.setState({

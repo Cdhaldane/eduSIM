@@ -306,9 +306,10 @@ const App = (props) => {
       x: obj.x,
       y: obj.y,
       scaleX: obj.scaleX,
-      scaleY: obj.scaleY, 
+      scaleY: obj.scaleY,
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
+      infolevel: obj.infolevel,
       strokeScaleEnabled: false,
       draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
       editMode: editMode,
@@ -530,9 +531,9 @@ const App = (props) => {
         customName: obj.customName,
         pollJson: obj.json
       },
-      onComplete: !editMode 
-        ? (data) => canvas.sendInteraction(obj.id, data) 
-        : () => {}
+      onComplete: !editMode
+        ? (data) => canvas.sendInteraction(obj.id, data)
+        : () => { }
     };
   }
 
@@ -651,7 +652,7 @@ const App = (props) => {
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null
         })}
-        
+
         {canvas.state.inputs.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Input
@@ -704,6 +705,7 @@ const App = (props) => {
           <Route exact path="/about" render={(props) => <About {...props} />} />
           <Route exact path="/gamepage/:roomid" render={(props) =>
             <GamePage
+              customObjectsLabels={customObjects}
               loadObjects={loadObjects}
               reCenter={reCenterObjects}
               setGamePlayProps={setGamePlayProps}

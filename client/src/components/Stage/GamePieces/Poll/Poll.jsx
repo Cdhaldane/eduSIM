@@ -14,25 +14,27 @@ const Poll = forwardRef((props, ref) => {
   }, [props.defaultProps.custom.pollJson]);
 
   useEffect(() => {
-    // Synchronize the poll answers, page, and completion for all users
-    // by reading from the saved synched status variable
-    if (props.status.data) {
-      for (const q in props.status.data) {
-        const answer = props.status.data[q];
-        survey.setValue(q, answer);
+    if (!props.infolevel) {
+      // Synchronize the poll answers, page, and completion for all users
+      // by reading from the saved synched status variable
+      if (props.status.data) {
+        for (const q in props.status.data) {
+          const answer = props.status.data[q];
+          survey.setValue(q, answer);
+        }
       }
-    }
 
-    if (props.status.page) {
-      if (props.status.page === "next") {
-        survey.nextPage();
-      } else {
-        survey.prevPage();
+      if (props.status.page) {
+        if (props.status.page === "next") {
+          survey.nextPage();
+        } else {
+          survey.prevPage();
+        }
+        props.updateStatus({
+          ...props.status,
+          page: null,
+        });
       }
-      props.updateStatus({
-        ...props.status,
-        page: null,
-      });
     }
 
     if (props.status.isComplete) {
@@ -41,31 +43,39 @@ const Poll = forwardRef((props, ref) => {
   }, [props.status]);
 
   const onValueChanged = (survey) => {
-    props.updateStatus({
-      ...props.status,
-      data: survey.data
-    });
+    if (!props.infolevel) {
+      props.updateStatus({
+        ...props.status,
+        data: survey.data
+      });
+    }
   }
 
   const onCurrentPageChanged = (survey, options) => {
-    let pageStatus = null;
-    if (options.isNextPage) {
-      pageStatus = "next";
-    } else if (options.isPrevPage) {
-      pageStatus = "prev";
+    if (!props.infolevel) {
+      let pageStatus = null;
+      if (options.isNextPage) {
+        pageStatus = "next";
+      } else if (options.isPrevPage) {
+        pageStatus = "prev";
+      }
+      props.updateStatus({
+        ...props.status,
+        page: pageStatus,
+      });
     }
-    props.updateStatus({
-      ...props.status,
-      page: pageStatus,
-    });
   }
 
   const onComplete = (survey) => {
-    if (!props.status.isComplete) {
-      props.updateStatus({
-        ...props.status,
-        isComplete: true
-      });
+    if (!props.infolevel) {
+      if (!props.status.isComplete) {
+        props.updateStatus({
+          ...props.status,
+          isComplete: true
+        });
+      }
+    } else {
+
     }
 
     // Save survey results

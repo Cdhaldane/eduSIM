@@ -27,7 +27,7 @@
   transform: translateY(-0.1em);
 }
 
-.performanceQOptions>table>tbody>tr>td{
+.performanceQOptions>table>tbody>tr>td {
   width: 350px;
 }
 
@@ -42,8 +42,8 @@
 
 .performanceTitle {
   font-size: 1.2em;
-  padding-bottom: 0.5em;
   padding-left: 10px;
+  padding-bottom: 5px;
 }
 
 .performanceForm {
@@ -61,6 +61,15 @@
   transform: translateY(5px);
 }
 
+.performancePollRow {
+  border-top: 1px dashed black;
+}
+
+.performancePollRow>td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 .performancePollRow>td>h3 {
   font-family: "Montserrat", sans-serif;
   padding-top: 0.5em;
@@ -76,4 +85,47 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.performancePollResult {
+  display: block !important;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.performancePollResult .h2 {
+  font-weight: 800;
+  font-size: 1.1em;
+  display: block !important;
+  width: 30%;
+}
+
+.performancePieChartContainer {
+  height: 300px;
+  width: 100%;
+  margin-bottom: 200px;
+}
+
+.recharts-pie-label-text {
+  font-weight: 800;
+  font-size: 1.2rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.performancePollResult div>span {
+  font-weight: 800;
+}
+
+.performancePollResult .newQ {
+  border-top: 1px dashed black;
+  padding-top: 5px;
+}
+
+.performancePollResult {
+  padding: 10px;
+  padding-top: 0px;
+}
+
+.performanceContainer {
+  display: block !important;
 }

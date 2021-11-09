@@ -380,6 +380,8 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  console.log(props);
+
   // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
@@ -397,7 +399,7 @@ const DropdownAddObjects = (props) => {
                   name: "0",
                   title: "Sample Text Question:",
                   isRequired: true,
-                  performanceOption: "allAnswers"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
                 }, {
                   id: 1,
                   type: "text",
@@ -405,14 +407,14 @@ const DropdownAddObjects = (props) => {
                   inputType: "date",
                   title: "Sample Date Question:",
                   isRequired: false,
-                  performanceOption: "allAnswers"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
                   title: "Sample Yes/No Question:",
                   isRequired: false,
-                  performanceOption: "allAnswers"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
                 }
               ]
             }

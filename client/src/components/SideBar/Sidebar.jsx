@@ -250,6 +250,7 @@ const Sidebar = (props) => {
         ariaHideApp={false}
       >
         <Performance
+          status={props.gamepieceStatus}
           customObjs={props.customObjs}
           ref={performanceModal}
           setData={props.performanceFunctions}
