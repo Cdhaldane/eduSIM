@@ -18,6 +18,7 @@ function Join(props) {
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
+  const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
 
   if (props.location.gameinstance !== undefined) {
@@ -232,7 +233,12 @@ function Join(props) {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <CreateCsv gameid={localStorage.gameid} isOpen={showNote} close={toggleModal} />
+        <CreateCsv 
+        gameid={localStorage.gameid} 
+        isOpen={showNote} 
+        close={toggleModal} 
+        success={() => setRefreshRooms(r => r+1)}
+        />
       </Modal>
 
       <Tabs
@@ -242,6 +248,7 @@ function Join(props) {
         chatMessages={currentRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
+        refreshRooms={refreshRooms}
         updateNumTabs={l => setNumTabs(l)}
       />
 
