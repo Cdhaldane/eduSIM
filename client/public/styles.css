@@ -270,6 +270,7 @@ footer {
   flex-direction: column;
   text-align: center;
   line-height: 1.3em;
+  font-size: .9em;
 }
 .joinboard-buttons {
   display: flex;

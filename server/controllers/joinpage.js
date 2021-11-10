@@ -18,33 +18,24 @@ exports.createGamePlayers = async (req, res) => {
     const lookuproom = [];
     const gameinstanceid = req.query.id;
 
-    // Destroys previously existing csv file
-    GamePlayer.destroy({
-      where: {
-        gameinstanceid: gameinstanceid
-      }
-    });
-
     for (let i = 0; i < req.body.data.length; i++) {
       const fname = req.body.data[i].First_Name;
       const lname = req.body.data[i].Last_Name;
       const game_room = req.body.data[i].Room.toLowerCase();
       const player_email = req.body.data[i].Email;
-      const gamerole = req.body.data[i].Role.toLowerCase();
+      const gamerole = req.body.data[i].Role;
 
-      // Game role validation
-      // Check it against game instance id 
-      const gameroles = await GameRole.findOne({
-        where: {
-          gameinstanceid: gameinstanceid,
-          gamerole: gamerole,
-        },
-      });
-
-      if (!gameroles) {
-        return res.status(400).send({
-          message: `No game role found: ${gamerole} found for this game`,
+      if (gamerole) {
+        const gameroles = await GameRole.findOne({
+          where: {
+            gameinstanceid: gameinstanceid,
+            gamerole: gamerole,
+          },
         });
+
+        if (!gameroles) {
+          gamerole = "";
+        }
       }
 
       let newGamePlayer = await GamePlayer.create({
@@ -57,22 +48,29 @@ exports.createGamePlayers = async (req, res) => {
       });
 
       if (lookuproom.indexOf(game_room) === -1) {
-        lookuproom.push(game_room);
-        const gameroom_name = game_room
-        const gameroomid = uuid.v4();
-        const gameroom_url = req.headers.origin + "/gamepage?" + gameroomid + "&" + gameroom_name + "&" + fname;
-        let newGameRoom = await GameRoom.create({
-          gameroomid,
-          gameinstanceid,
-          gameroom_name,
-          gameroom_url
+        const realGameRoom = await GameRoom.findOne({
+          where: {
+            gameinstanceid: gameinstanceid,
+            gameroom_name: game_room,
+          },
         });
-        // How to emit states on websockets
-        // Add professor
+        if (realGameRoom) {
+          lookuproom.push(realGameRoom);
+        } else {
+          const gameroom_name = game_room
+          const gameroomid = uuid.v4();
+          const gameroom_url = req.headers.origin + "/gamepage?" + gameroomid + "&" + gameroom_name + "&" + fname;
+          let newGameRoom = await GameRoom.create({
+            gameroomid,
+            gameinstanceid,
+            gameroom_name,
+            gameroom_url
+          });
+        }
       }
     }
 
-    return res.send("Success");
+    return res.send({ success: true });
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,

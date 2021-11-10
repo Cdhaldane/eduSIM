@@ -45,7 +45,7 @@ function Tabs(props) {
     }).catch((error) => {
       console.log(error);
     });
-  }, [props.gameid]);
+  }, [props.gameid, props.refreshRooms]);
 
   const toggleTab = (index) => {
     setToggleState(index);
@@ -127,6 +127,8 @@ function Tabs(props) {
       })
       .catch(error => console.log(error.response));
     setTabs(tabs.filter((_, i) => i != index));
+    setToggleState(0);
+    props.setRoom(null);
   }
 
   const handleTime = (e) => {
@@ -257,9 +259,13 @@ function Tabs(props) {
     }).catch(error => console.log(error.response));
   }
 
+  useEffect(() => {
+    props.updateNumTabs(tabs.length);
+  }, [tabs]);
+
   return (
     <>
-      {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]]) ? (
+      {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length>0) ? (
         <div className="logs page-margin" hidden={!viewLogs}>
           <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
             <h4>Display previous runs {viewLogs ? '-' : '+'}</h4>
