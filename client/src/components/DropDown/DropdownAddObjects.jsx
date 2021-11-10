@@ -399,7 +399,7 @@ const DropdownAddObjects = (props) => {
                   name: "0",
                   title: "Sample Text Question:",
                   isRequired: true,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 1,
                   type: "text",
@@ -407,14 +407,14 @@ const DropdownAddObjects = (props) => {
                   inputType: "date",
                   title: "Sample Date Question:",
                   isRequired: false,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
                   title: "Sample Yes/No Question:",
                   isRequired: false,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "allResponses"
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }
               ]
             }

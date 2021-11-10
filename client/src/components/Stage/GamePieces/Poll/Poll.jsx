@@ -75,14 +75,15 @@ const Poll = forwardRef((props, ref) => {
         });
       }
     } else {
-
+      // Save info to server for just this player (by id)
+      props.updateStatus({
+        ...props.status,
+        [props.defaultProps.userId]: {
+          data: survey.data,
+          isComplete: true
+        }
+      });
     }
-
-    // Save survey results
-    /*props.updateStatus({
-      data: survey.data
-    });*/
-    //props.defaultProps.onComplete(survey.data);
   }
 
   return (

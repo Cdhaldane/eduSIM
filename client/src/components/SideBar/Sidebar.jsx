@@ -192,7 +192,7 @@ const Sidebar = (props) => {
 
     },
   ];
-  
+
   return (
     <>
       <div ref={sidebarRef}>
@@ -250,6 +250,7 @@ const Sidebar = (props) => {
         ariaHideApp={false}
       >
         <Performance
+          userId={props.userId}
           status={props.gamepieceStatus}
           customObjs={props.customObjs}
           ref={performanceModal}

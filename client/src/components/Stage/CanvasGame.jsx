@@ -48,7 +48,7 @@ const EndScreen = styled.div`
 `;
 
 class Graphics extends Component {
-  
+
   customObjects = [
     ...this.props.customObjectsLabels
   ]
@@ -171,16 +171,22 @@ class Graphics extends Component {
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
     if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
+      const userId = JSON.parse(sessionStorage.getItem('userInfo')) ?
+        JSON.parse(sessionStorage.getItem('userInfo')).dbid : null;
+
       this.props.setGamePlayProps({
+        refresh: this.forceUpdate,
         setState: this.setState,
         state: this.state,
         refs: this.refs,
+        userId: userId,
         getInteractiveProps: this.getInteractiveProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        refresh: this.forceUpdate,
         sendInteraction: this.sendInteraction
       });
+
+      this.props.setUserId(userId);
     }
 
     // Update the custom objects state in the parent component (if custom objs changed)

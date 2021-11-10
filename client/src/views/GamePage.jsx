@@ -63,6 +63,7 @@ const Game = (props) => {
   const [isLoading, setLoading] = useState(true);
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
+  const [userId, setUserId] = useState();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -177,6 +178,7 @@ const Game = (props) => {
     !isLoading ? (
       <>
         <Sidebar
+          userId={userId}
           customObjs={customObjs}
           gamepieceStatus={roomStatus.gamepieces || {}}
           className="grid-sidebar"
@@ -195,6 +197,7 @@ const Game = (props) => {
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
             reCenter={props.reCenter}
+            setUserId={setUserId}
             setCustomObjs={setCustomObjs}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}

@@ -109,7 +109,8 @@ const App = (props) => {
     const _reCenterObjects = (isPersonalArea, mode) => {
       let canvas = getUpdatedCanvasState(mode);
       if (
-        !(canvas.setState &&
+        !(canvas &&
+          canvas.setState &&
           canvas.state &&
           canvas.refs)
       ) {
@@ -531,9 +532,10 @@ const App = (props) => {
         customName: obj.customName,
         pollJson: obj.json
       },
-      onComplete: !editMode
-        ? (data) => canvas.sendInteraction(obj.id, data)
-        : () => { }
+      ...(!editMode ?
+        {
+          userId: canvas.userId
+        } : {})
     };
   }
 

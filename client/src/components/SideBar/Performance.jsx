@@ -19,26 +19,36 @@ const Performance = forwardRef((props, ref) => {
     props.setData.setPollData("json", newPollJson, id);
   }
 
-  const COLORS = ["#edae49", "#d1495b", "#00798c", "#30638e", "#003d5b", "#7dce82", "#3cdbd3"];
+  const PIE_CHART_COLORS = ["#edae49", "#d1495b", "#00798c", "#30638e", "#003d5b", "#7dce82", "#3cdbd3"];
 
-  const data = [
-    { name: 'Answer 1', value: 5 },
-    { name: 'Answer 2', value: 3 },
-    { name: 'Answer 3', value: 2 },
-    { name: 'Answer 4', value: 1 },
-    { name: 'Answer 5', value: 1 },
-    { name: 'Answer 6', value: 4 },
-  ];
-
-  //console.log(props.status);
-  //console.log(props.customObjs);
+  const pollAnswerHTML = (answer, question) => {
+    if (answer === true) {
+      return "Yes";
+    } else if (answer === false) {
+      return "No";
+    } else if (question.inputType && question.inputType === "color") {
+      return (
+        <div style={{
+          display: "inline-block",
+          height: "25px",
+          width: "25px",
+          borderRadius: "50%",
+          transform: "translateY(4px)",
+          border: "1px solid black",
+          backgroundColor: answer
+        }} />
+      );
+    } else {
+      return answer;
+    }
+  }
 
   return (
     <div className="area">
       <form className="form-input performanceForm" ref={ref}>
-        <div className="performanceContainer">
-          <h2 className="performanceTitle">Performance Report Settings</h2>
-          {props.setData && (
+        {props.setData && (
+          <div className="performanceContainer">
+            <h2 className="performanceTitle">Performance Report Settings</h2>
             <div className="performanceTableContainer">
               <table className="performanceTable">
                 <tbody>
@@ -50,13 +60,19 @@ const Performance = forwardRef((props, ref) => {
                             <tr key={i} className="performancePollRow">
                               <td>
                                 <Switch
-                                  height={30}
-                                  width={50}
+                                  onColor="#1b65f3"
+                                  uncheckedIcon={false}
+                                  checkedIcon={false}
+                                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                  className="react-switch"
+                                  height={25}
+                                  width={45}
+                                  handleDiameter={23}
                                   onChange={(val) => {
                                     props.setData.setPollData("performanceEnabled", val, poll.id);
                                   }}
                                   checked={poll.performanceEnabled}
-                                  className="react-switch"
                                 />
                                 <span>
                                   {`Poll ${i + 1} - ${poll.customName ? poll.customName : "Untitled"}`}
@@ -65,9 +81,9 @@ const Performance = forwardRef((props, ref) => {
                                   <>
                                     {poll.json.pages.map((page, pageI) => (
                                       <React.Fragment key={pageI}>
-                                        <h3>
+                                        {/*<h3>
                                           Page #{pageI + 1}
-                                        </h3>
+                                        </h3>*/}
                                         {page.questions.map((q, qI) => {
                                           return (
                                             <div key={qI}>
@@ -83,13 +99,13 @@ const Performance = forwardRef((props, ref) => {
                                                           <td>
                                                             <label>
                                                               <input
-                                                                checked={q.performanceOption === "allResponses"}
+                                                                checked={q.performanceOption === "personalResponse"}
                                                                 onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
                                                                 type="radio"
                                                                 name={`poll${i}P${pageI}Q${qI}`}
-                                                                value="allResponses"
+                                                                value="personalResponse"
                                                               />
-                                                              Show All User Answers
+                                                              Show Only User's Own Answer
                                                             </label>
                                                           </td>
                                                           <td>
@@ -109,13 +125,13 @@ const Performance = forwardRef((props, ref) => {
                                                           <td>
                                                             <label>
                                                               <input
-                                                                checked={q.performanceOption === "personalResponse"}
+                                                                checked={q.performanceOption === "allResponses"}
                                                                 onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
                                                                 type="radio"
                                                                 name={`poll${i}P${pageI}Q${qI}`}
-                                                                value="personalResponse"
+                                                                value="allResponses"
                                                               />
-                                                              Show Only User's Own Answer
+                                                              Show All User Answers
                                                             </label>
                                                           </td>
                                                           <td>
@@ -197,85 +213,150 @@ const Performance = forwardRef((props, ref) => {
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
         {!props.setData && (
           <div className="performancePollResult">
-            {props.status && (
-              <>
-                {props.customObjs.polls.map((poll, pollI) => {
-                  if (props.status[poll.id] && props.status[poll.id].data && poll.performanceEnabled) {
-                    let questions = [];
-                    for (let i = 0; i < poll.json.pages.length; i++) {
-                      questions.push(poll.json.pages[i].questions);
+            <h2>Performance Report</h2>
+            <div>
+              {props.status && (
+                <>
+                  {props.customObjs.polls.map((poll, pollI) => {
+                    if (props.status[poll.id] && poll.performanceEnabled) {
+                      const pollData = poll.infolevel ? props.status[poll.id][props.userId].data : props.status[poll.id].data;
+                      if (pollData) {
+                        let questions = [];
+                        for (let i = 0; i < poll.json.pages.length; i++) {
+                          questions.push(poll.json.pages[i].questions);
+                        }
+                        questions = questions.flat();
+                        return (
+                          <React.Fragment key={pollI}>
+                            <div className="h2">{`Poll: ${poll.customName ? poll.customName : "Untitled"}`}</div>
+                            {questions.map((question, questionI) => {
+                              let answer = "";
+                              if (pollData[question.name] || pollData[question.name] === false) {
+                                if (question.performanceOption === "noShow") {
+                                  answer = "";
+                                } else if (
+                                  question.performanceOption === "groupResponse" ||
+                                  question.performanceOption === "personalResponse"
+                                ) {
+                                  answer = pollAnswerHTML(pollData[question.name], question);
+                                } else {
+                                  // The performance option is either allResponses or commonResponse
+                                  // so get all responses from users
+                                  const allData = props.status[poll.id];
+                                  const responses = [];
+                                  for (const userId in allData) {
+                                    const personalResponse = allData[userId].data[question.name];
+                                    responses.push(personalResponse);
+                                  }
+                                  const responseSet = new Set(responses);
+                                  responseSet.delete(undefined);
+                                  const responsesNoDupes = [...responseSet];
+                                  if (question.performanceOption === "allResponses") {
+                                    // Convert all data to Pie Chart format
+                                    const pieChartData = [];
+                                    for (let i = 0; i < responsesNoDupes.length; i++) {
+                                      pieChartData.push({
+                                        name: responsesNoDupes[i],
+                                        value: responses.filter((response) => response === responsesNoDupes[i]).length
+                                      });
+                                    }
+                                    answer = (
+                                      <div className="performancePieChartContainer">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                          <PieChart>
+                                            <Pie
+                                              dataKey="value"
+                                              isAnimationActive={false}
+                                              data={pieChartData}
+                                              cx="50%"
+                                              cy="50%"
+                                              outerRadius={65}
+                                              fill="#8f001a"
+                                              label={(entry) => {
+                                                if (question.inputType && question.inputType === "color") {
+                                                  return (
+                                                    <>
+                                                      <circle cx={entry.x} cy={entry.y} r="15" stroke="black" stroke-width="1" fill={entry.name} />
+                                                    </>
+                                                  );
+                                                }
+                                                if (entry.name === true) {
+                                                  return "Yes";
+                                                } else if (entry.name === false) {
+                                                  return "No";
+                                                } else {
+                                                  return entry.name;
+                                                }
+                                              }}
+                                            >
+                                              {pieChartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
+                                              ))}
+                                            </Pie>
+                                            <Tooltip />
+                                          </PieChart>
+                                        </ResponsiveContainer>
+                                      </div>
+                                    );
+                                  } else if (question.performanceOption === "commonResponse") {
+                                    // Get most common response from data
+                                    const numOfResponses = [];
+                                    for (let i = 0; i < responsesNoDupes.length; i++) {
+                                      numOfResponses.push(responses.filter((response) => response === responsesNoDupes[i]).length);
+                                    }
+                                    const maxResponseI = numOfResponses.indexOf(Math.max(...numOfResponses));
+                                    answer = pollAnswerHTML(responsesNoDupes[maxResponseI], question);
+                                  } else {
+                                    answer = "";
+                                  }
+                                }
+                              } else {
+                                answer = "No Response Yet";
+                              }
+                              return (
+                                <React.Fragment key={questionI}>
+                                  {question.performanceOption !== "noShow" && (
+                                    <>
+                                      <div className="newQ"><span>Q: </span>{question.title}</div>
+                                      <div><span>A: </span>
+                                        {answer === "No Response Yet" && (
+                                          <i>
+                                            {answer}
+                                          </i>
+                                        )}
+                                        {answer !== "No Response Yet" && (
+                                          <>
+                                            {answer}
+                                          </>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </React.Fragment>
+                              );
+                            })}
+                          </React.Fragment>
+                        )
+                      }
                     }
-                    questions = questions.flat();
-                    return (
-                      <React.Fragment key={pollI}>
-                        <div className="h2">{`Poll: ${poll.customName ? poll.customName : "Untitled"}`}</div>
-                        {questions.map((question, questionI) => {
-                          let answer = "";
-                          if (props.status[poll.id].data[question.name]) {
-                            answer = props.status[poll.id].data[question.name];
-                          } else {
-                            answer = "No Response Yet";
-                          }
-                          return (
-                            <React.Fragment key={questionI}>
-                              <div className="newQ"><span>Question: </span>{question.title}</div>
-                              <div><span>Answer: </span>
-                                {answer === "No Response Yet" && (
-                                  <i>
-                                    {answer}
-                                  </i>
-                                )}
-                                {answer !== "No Response Yet" && (
-                                  <>
-                                    {answer}
-                                  </>
-                                )}
-                              </div>
-                            </React.Fragment>
-                          );
-                        })}
-                      </React.Fragment>
-                    )
-                  }
-                })}
-              </>
-            )}
+                  })}
+                </>
+              )}
 
-            {!props.status && (
-              <>
-                <p><b>
-                  There is currently no data to display.
-                </b></p>
-                <p>
-                  Interact with parts of the simulation to see your progress here.
-                </p>
-              </>
-            )}
-
-            <div className="performancePieChartContainer">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart width={400} height={400}>
-                  <Pie
-                    dataKey="value"
-                    isAnimationActive={false}
-                    data={data}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8f001a"
-                    label={(entry) => entry.name}
-                  >
-                    {data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              {!props.status && (
+                <>
+                  <p><b>
+                    There is currently no data to display.
+                  </b></p>
+                  <p>
+                    Interact with parts of the simulation to see your progress here.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         )}
