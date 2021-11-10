@@ -223,7 +223,11 @@ const Performance = forwardRef((props, ref) => {
                 <>
                   {props.customObjs.polls.map((poll, pollI) => {
                     if (props.status[poll.id] && poll.performanceEnabled) {
-                      const pollData = poll.infolevel ? props.status[poll.id][props.userId].data : props.status[poll.id].data;
+                      const pollData = poll.infolevel ?
+                        (props.status[poll.id][props.userId] ? props.status[poll.id][props.userId].data : null) :
+                        props.status[poll.id].data;
+                        console.log(props.status[poll.id]);
+                        console.log(pollData);
                       if (pollData) {
                         let questions = [];
                         for (let i = 0; i < poll.json.pages.length; i++) {
@@ -249,7 +253,7 @@ const Performance = forwardRef((props, ref) => {
                                   const allData = props.status[poll.id];
                                   const responses = [];
                                   for (const userId in allData) {
-                                    const personalResponse = allData[userId].data[question.name];
+                                    const personalResponse = allData[userId].data ? allData[userId].data[question.name] : undefined;
                                     responses.push(personalResponse);
                                   }
                                   const responseSet = new Set(responses);
