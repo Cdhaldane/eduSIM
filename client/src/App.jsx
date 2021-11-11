@@ -513,7 +513,9 @@ const App = (props) => {
     iframeSrc: obj.iframeSrc,
     htmlValue: obj.htmlValue || "<h1>Edit me!</h1>",
     containerWidth: obj.containerWidth,
-    containerHeight: obj.containerHeight
+    containerHeight: obj.containerHeight,
+    varName: obj.varName,
+    varEnable: obj.varEnable || false
   });
 
   const inputProps = (obj, canvas) => ({
