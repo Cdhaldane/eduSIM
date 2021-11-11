@@ -57,9 +57,11 @@ const DropdownAddObjects = (props) => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleReposition);
     return () => {
       document.removeEventListener('click', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.removeEventListener('contextmenu', handleReposition);
     }
   }, []);
@@ -74,11 +76,6 @@ const DropdownAddObjects = (props) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       props.close();
     }
-  }
-
-  function handleChange(e) {
-    setColour(e);
-    props.choosecolor(e);
   }
 
   function calcHeight(el) {
@@ -379,8 +376,6 @@ const DropdownAddObjects = (props) => {
       }
     );
   }
-
-  console.log(props);
 
   // Custom Components (Interactive)
   const addPoll = () => {

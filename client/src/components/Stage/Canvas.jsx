@@ -200,6 +200,10 @@ class Graphics extends Component {
       description: "",
       thumbnail: "",
 
+      // This is used to time the touch click on mobile devices to see if it was a right click
+      touchTime: null,
+      touchEvent: null,
+
       gamepieceStatus: {},
 
       connectors: [],
@@ -564,9 +568,20 @@ class Graphics extends Component {
     ) {
       const event = e.evt ? e.evt : e;
       event.preventDefault(true);
+
+      let mouseX = 0;
+      let mouseY = 0;
+      if (event.changedTouches) {
+        mouseX = event.changedTouches[0].clientX;
+        mouseY = event.changedTouches[0].clientY;
+      } else {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+      }
+
       const mousePosition = {
-        x: event.clientX,
-        y: event.clientY
+        x: mouseX,
+        y: mouseY
       };
 
       let singleGroupSelected = false;
@@ -604,6 +619,18 @@ class Graphics extends Component {
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
+    if (event.targetTouches) {
+      this.setState({
+        touchTime: Date.now(),
+        touchEvent: event
+      });
+    } else {
+      this.setState({
+        touchTime: null,
+        touchEvent: null
+      });
+    }
+
     if (event.target.parentElement.className === "konvajs-content") {
       const customObjs = document.getElementsByClassName("customObj");
       for (let i = 0; i < customObjs.length; i++) {
@@ -611,10 +638,10 @@ class Graphics extends Component {
         const customObj = this.getKonvaObj(id);
         const rect = customObjs[i].getBoundingClientRect();
         if (
-          event.x > rect.x &&
-          event.y > rect.y &&
-          event.x < rect.x + rect.width &&
-          event.y < rect.y + rect.height &&
+          (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
+          (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
+          (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
+          (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
           customObj
         ) {
           // Clicked on a custom object
@@ -646,8 +673,8 @@ class Graphics extends Component {
       }
 
       pos = {
-        x: event.clientX - sidebarPx,
-        y: event.clientY
+        x: (event.clientX ? event.clientX : event.targetTouches[0].clientX) - sidebarPx,
+        y: (event.clientY ? event.clientY : event.targetTouches[0].clientY)
       }
     }
 
@@ -710,12 +737,34 @@ class Graphics extends Component {
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
+    let layerX = event.layerX;
+    let layerY = event.layerY;
+
+    // Determine how long screen has been clicked (if on mobile)
+    if (this.state.touchTime && this.state.touchEvent) {
+      const elapsedTimeMS = Date.now() - this.state.touchTime;
+      if (elapsedTimeMS > 500) {
+        event.button = 2;
+      } else {
+        event.button = 0;
+      }
+
+      const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      layerX = event.changedTouches[0].clientX - sidebarPx;
+      layerY = event.changedTouches[0].clientY;
+
+      this.setState({
+        touchTime: null,
+        touchEvent: null
+      });
+    }
+
     if (this.state.drawMode === true) {
       this.setState({
         isDrawing: false
       });
     } else {
-      if (!this.state.selection.visible) {
+      if (!this.state.selection.visible && !event.changedTouches) {
         return;
       }
 
@@ -962,6 +1011,10 @@ class Graphics extends Component {
                 selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
               }, this.handleObjectSelection);
+
+              if (event.changedTouches) {
+                this.onObjectContextMenu(event);
+              }
             }
           }
         } else {
@@ -979,14 +1032,14 @@ class Graphics extends Component {
             selectedContextMenu: {
               type: type,
               position: {
-                x: event.layerX + sidebarPx,
-                y: event.layerY
+                x: layerX + sidebarPx,
+                y: layerY
               }
             },
             [notVisible]: false,
             [visible]: true,
-            [contextMenuX]: event.layerX + sidebarPx,
-            [contextMenuY]: event.layerY,
+            [contextMenuX]: layerX + sidebarPx,
+            [contextMenuY]: layerY,
           });
         }
       }
@@ -2306,11 +2359,14 @@ class Graphics extends Component {
             width={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientWidth : 0}
             ref="graphicStage"
-            onMouseMove={(e) => this.handleMouseOver(e, false)}
             onMouseDown={(e) => this.onMouseDown(e, false)}
             onMouseUp={(e) => this.handleMouseUp(e, false)}
+            onMouseMove={(e) => this.handleMouseOver(e, false)}
             onWheel={(e) => this.handleWheel(e, false)}
             onContextMenu={(e) => e.evt.preventDefault()}
+            // Mobile Event Listeners
+            onTouchStart={(e) => this.onMouseDown(e, false)}
+            onTouchEnd={(e) => this.handleMouseUp(e, false)}
           >
             <Layer
               ref="groupAreaLayer"
@@ -2375,6 +2431,9 @@ class Graphics extends Component {
               onMouseUp={(e) => this.handleMouseUp(e, true)}
               onWheel={(e) => this.handleWheel(e, true)}
               onContextMenu={(e) => e.evt.preventDefault()}
+              // Mobile Event Listeners
+              onTouchStart={(e) => this.onMouseDown(e, true)}
+              onTouchEnd={(e) => this.handleMouseUp(e, true)}
             >
               <Layer
                 ref="personalAreaLayer"
