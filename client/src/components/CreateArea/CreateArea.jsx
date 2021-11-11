@@ -33,8 +33,6 @@ function CreateArea(props) {
   }, []);
 
   const uploadImage = async event => {
-    console.log("UPLOADING");
-
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
       alertContext.showAlert("A name is required for the simulation.", "warning");
@@ -44,10 +42,13 @@ function CreateArea(props) {
       alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
       return;
     }
+    if ((imageSelected.size / 1000000) > 10) {
+      alertContext.showAlert("Image must be 10MB or less. Please pick a smaller image.", "warning");
+      return;
+    }
 
     event.preventDefault();
     const formData = new FormData();
-    console.log(imageSelected);
     formData.append("file", imageSelected);
     formData.append("folder", "images");
     formData.append("uploader", localStorage.adminid);
@@ -89,7 +90,7 @@ function CreateArea(props) {
         props.onAdd(note);
       }
 
-      //window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }

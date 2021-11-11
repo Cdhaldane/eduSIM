@@ -749,9 +749,13 @@ class Graphics extends Component {
         event.button = 0;
       }
 
-      const sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      if (this.state.personalAreaOpen) {
+        sidebarPx += 20;
+      }
+      const topbarPx = this.state.personalAreaOpen ? 80 : 0;
       layerX = event.changedTouches[0].clientX - sidebarPx;
-      layerY = event.changedTouches[0].clientY;
+      layerY = event.changedTouches[0].clientY - topbarPx;
 
       this.setState({
         touchTime: null,
