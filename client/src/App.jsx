@@ -729,7 +729,7 @@ const App = (props) => {
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <Navbar />
         )}
-        <div >
+        <Parent {...localSettings} >
           <Switch>
             <Route exact path="/" >
               <Home />
@@ -766,7 +766,7 @@ const App = (props) => {
             <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
             <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
           </Switch>
-        </div>
+        </Parent>
       </AlertContextProvider>
     </SettingsContext.Provider>
   );
