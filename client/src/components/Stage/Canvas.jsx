@@ -2318,6 +2318,7 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
           saveGame={this.handleSave}
           pages={this.state.pages}

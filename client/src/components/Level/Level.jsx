@@ -195,10 +195,10 @@ const Level = (props) => {
           )}
 
           <div className="level-bar">
-            {times(props.numOfPages, (num) => ( // dynamically scaling level bar
+            {times(props.number, (num) => ( // dynamically scaling level bar
               <div key={num} className="level-bar-section">
                 <div className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`} />
-                {num != props.numOfPages - 1 && (<div className="level-bar-line" />)}
+                {num != props.number - 1 && (<div className="level-bar-line" />)}
               </div>
             ))}
           </div>
