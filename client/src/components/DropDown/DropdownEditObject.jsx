@@ -127,6 +127,13 @@ function DropdownEditObject(props) {
       varName: val
     }));
   }
+  function handleVarEnable(val) {
+    props.updateObjState({ varEnable: val });
+    setObjState(prev => ({
+      ...prev,
+      varEnable: val
+    }));
+  }
   function handleVarType(val) {
     props.updateObjState({ varType: val });
     setObjState(prev => ({
@@ -366,9 +373,14 @@ function DropdownEditObject(props) {
               <p>HTML Content:</p>
               <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue}/>
               <p>iFrame URL:</p>
+              <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
+              
               <div className="htmliframeinput">
-                <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
+                <input type="checkbox" checked={objState?.varEnable} onChange={() => handleVarEnable(!objState?.varEnable)} />
+                <p>Listen to messages</p>
               </div>
+              <p>Variables to send (separated by commas):</p>
+              <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} />
             </div>
           </CSSTransition>
         </div>
