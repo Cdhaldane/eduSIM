@@ -194,7 +194,7 @@ const DropdownAddObjects = (props) => {
     const objectsDeletedState = props.state[deleteName];
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
-    
+
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",
@@ -380,7 +380,7 @@ const DropdownAddObjects = (props) => {
   // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
-      "polls", 
+      "polls",
       {
         performanceEnabled: false,
         customName: "",
@@ -442,6 +442,17 @@ const DropdownAddObjects = (props) => {
       "inputs", { varType, label: "Label text" }
     );
   }
+
+  const addOverlayWindow = () => {
+    console.log("YO");
+    console.log(props);
+    if (props.state.personalAreaOpen) {
+      props.setState({
+        //personalOver
+      });
+    }
+  }
+
   // Other
   const imageURLGood = (url) => {
     if ((
@@ -824,9 +835,14 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
+          <DropdownItem
+            onClick={addOverlayWindow}
+            leftIcon={<i className="icons fa fa-window-restore"
+              onClick={addOverlayWindow}></i>}>
+            Overlay Window</DropdownItem>
         </div>
       </CSSTransition>
-      
+
       <CSSTransition
         in={activeMenu === 'inputs'}
         timeout={500}

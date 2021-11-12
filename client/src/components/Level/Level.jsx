@@ -48,20 +48,22 @@ const Level = (props) => {
 
   const createSelectItems = () => {
     // Replace empty names with Untitled#
-    let pageNames = [...props.pages];
+    let pages = [...props.pages];
     let untitledNum = 1;
-    for (let i = 0; i < pageNames.length; i++) {
-      if (pageNames[i] === "") {
-        pageNames[i] = "Untitled " + untitledNum;
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i].name === "") {
+        pages[i].name = "Untitled " + untitledNum;
         untitledNum++;
       }
     }
-    for (let i = 0; i < props.number; i++) {
-      items.push(
-        <option key={i} value={i + 1}>
-          {pageNames[i]}
-        </option>
-      );
+    for (let i = 0; i < props.numOfPages; i++) {
+      if (pages[i]) {
+        items.push(
+          <option key={i} value={i + 1}>
+            {pages[i].name}
+          </option>
+        );
+      }
     }
     return items;
   }
@@ -193,10 +195,10 @@ const Level = (props) => {
           )}
 
           <div className="level-bar">
-            {times(props.number, (num) => ( // dynamically scaling level bar
+            {times(props.numOfPages, (num) => ( // dynamically scaling level bar
               <div key={num} className="level-bar-section">
                 <div className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`} />
-                {num != props.number - 1 && (<div className="level-bar-line" />)}
+                {num != props.numOfPages - 1 && (<div className="level-bar-line" />)}
               </div>
             ))}
           </div>

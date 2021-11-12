@@ -126,8 +126,16 @@ class Graphics extends Component {
       inputsDeleteCount: 0,
 
       // Page Controls
-      pages: ["1", "2", "3", "4", "5", "6"],
+      pages: [
+        { name: "1", hasOverlay: false },
+        { name: "2", hasOverlay: false },
+        { name: "3", hasOverlay: false },
+        { name: "4", hasOverlay: false },
+        { name: "5", hasOverlay: false },
+        { name: "6", hasOverlay: false }
+      ],
       numberOfPages: 6,
+      level: 1, // Current page
 
       // Context Menu
       selectedContextMenu: null,
@@ -231,7 +239,7 @@ class Graphics extends Component {
       gameinstanceid: this.props.gameinstance,
       adminid: this.props.adminid,
       savedstates: [],
-      level: 1,
+      savedStateLoaded: false,
     };
 
     this.handleWheel = this.handleWheel.bind(this);
@@ -249,7 +257,6 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
-
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -262,9 +269,16 @@ class Graphics extends Component {
         objects.savedGroups = parsedSavedGroups;
 
         // Put parsed saved data into state
-        this.savedState.forEach((object) => {
+        this.savedState.forEach((object, index, arr) => {
           this.setState({
             [object]: objects[object] || []
+          }, () => {
+            if (index === arr.length - 1){ 
+              // This is the last loop so all saved data has been loaded
+              this.setState({
+                savedStateLoaded: true
+              });
+            }
           });
         });
 
@@ -297,6 +311,10 @@ class Graphics extends Component {
             this.props.reCenter("edit");
           }
         }, 100);
+      } else {
+        this.setState({
+          savedStateLoaded: true
+        });
       }
     }).catch(error => {
       console.error(error);
@@ -338,8 +356,10 @@ class Graphics extends Component {
 
     // Redraw the canvas every 1 second
     this.drawInterval = setInterval(() => {
-      this.refs.graphicStage.draw();
-      this.refs.personalAreaStage.draw();
+      if (this.state.savedStateLoaded) {
+        this.refs.graphicStage.draw();
+        this.refs.personalAreaStage.draw();
+      }
     }, 1000);
 
     // Reposition / scale objects on screen resize
@@ -376,66 +396,68 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    const prevMainShapes = [];
-    const currentMainShapes = [];
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const type = this.savedObjects[i];
-      prevMainShapes.push(prevState[type]);
-      currentMainShapes.push(this.state[type]);
-    }
+    if (this.state.savedStateLoaded) {
+      const prevMainShapes = [];
+      const currentMainShapes = [];
+      for (let i = 0; i < this.savedObjects.length; i++) {
+        const type = this.savedObjects[i];
+        prevMainShapes.push(prevState[type]);
+        currentMainShapes.push(this.state[type]);
+      }
 
-    if (!this.state.redoing && !this.state.isTransforming) {
-      if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
-        if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
-          // If text shouldn't update, don't append to history
-          if (this.state.shouldTextUpdate) {
-            let uh = history;
-            history = uh.slice(0, historyStep + 1);
-            let toAppend = this.state;
-            history = history.concat(toAppend);
-            historyStep++;
+      if (!this.state.redoing && !this.state.isTransforming) {
+        if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
+          if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
+            // If text shouldn't update, don't append to history
+            if (this.state.shouldTextUpdate) {
+              let uh = history;
+              history = uh.slice(0, historyStep + 1);
+              let toAppend = this.state;
+              history = history.concat(toAppend);
+              historyStep++;
+            }
           }
         }
       }
-    }
 
-    // Update the custom objects state in the parent component (if custom objs changed)
-    for (let i = 0; i < this.customObjects.length; i++) {
-      if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
-        const customObjs = {};
-        for (let j = 0; j < this.customObjects.length; j++) {
-          customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
+      // Update the custom objects state in the parent component (if custom objs changed)
+      for (let i = 0; i < this.customObjects.length; i++) {
+        if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
+          const customObjs = {};
+          for (let j = 0; j < this.customObjects.length; j++) {
+            customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
+          }
+          this.props.setCustomObjs(customObjs);
+          break;
         }
-        this.props.setCustomObjs(customObjs);
-        break;
       }
-    }
 
-    // This passes info all the way up to the App component so that it can be used in functions
-    // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
-    if (prevState !== this.state) {
-      this.props.setGameEditProps({
-        setState: this.setState,
-        state: this.state,
-        refs: this.refs,
+      // This passes info all the way up to the App component so that it can be used in functions
+      // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
+      if (prevState !== this.state) {
+        this.props.setGameEditProps({
+          setState: this.setState,
+          state: this.state,
+          refs: this.refs,
 
-        // These are functions used for manipulating objects that are directly used in object props
-        onObjectClick: this.onObjectClick,
-        onObjectTransformStart: this.onObjectTransformStart,
-        onObjectDragMove: this.onObjectDragMove,
-        onObjectContextMenu: this.onObjectContextMenu,
-        onObjectTransformEnd: this.onObjectTransformEnd,
-        handleDragEnd: this.handleDragEnd,
-        handleTextTransform: this.handleTextTransform,
-        handleTextDblClick: this.handleTextDblClick,
-        onDragEndArrow: this.onDragEndArrow,
-        handleMouseUp: this.handleMouseUp,
-        handleMouseOver: this.handleMouseOver,
-        onMouseDown: this.onMouseDown,
-        getKonvaObj: this.getKonvaObj,
-        getObjType: this.getObjType,
-        getInteractiveProps: this.getInteractiveProps
-      });
+          // These are functions used for manipulating objects that are directly used in object props
+          onObjectClick: this.onObjectClick,
+          onObjectTransformStart: this.onObjectTransformStart,
+          onObjectDragMove: this.onObjectDragMove,
+          onObjectContextMenu: this.onObjectContextMenu,
+          onObjectTransformEnd: this.onObjectTransformEnd,
+          handleDragEnd: this.handleDragEnd,
+          handleTextTransform: this.handleTextTransform,
+          handleTextDblClick: this.handleTextDblClick,
+          onDragEndArrow: this.onDragEndArrow,
+          handleMouseUp: this.handleMouseUp,
+          handleMouseOver: this.handleMouseOver,
+          onMouseDown: this.onMouseDown,
+          getKonvaObj: this.getKonvaObj,
+          getObjType: this.getObjType,
+          getInteractiveProps: this.getInteractiveProps
+        });
+      }
     }
   }
 
@@ -447,7 +469,7 @@ class Graphics extends Component {
 
   handleNumOfPagesChange = (e) => {
     this.setState({
-      numberOfPages: e
+      numberOfPages: parseInt(e)
     })
   }
 
@@ -2280,13 +2302,13 @@ class Graphics extends Component {
   }
 
   render() {
+    if (!this.state.savedStateLoaded) return null;
     return (
       <React.Fragment>
         {/* The Top Bar */}
         <Level
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
           saveGame={this.handleSave}
-          number={this.state.numberOfPages}
           pages={this.state.pages}
           level={this.handleLevel}
           handlePageTitle={this.handlePageTitle}

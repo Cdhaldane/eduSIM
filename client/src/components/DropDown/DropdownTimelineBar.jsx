@@ -32,9 +32,10 @@ function DropdownTimelineBar(props) {
   useEffect(() => {
     const currentNum = pages.length;
     if (numOfPages > currentNum) {
+      console.log("YEET");
       const newArr = [];
       for (let i = 0; i < numOfPages - currentNum; i++) {
-        newArr[i] = (currentNum + i + 1).toString();
+        newArr[i] = {name: (currentNum + i + 1).toString(), hasOverlay: false};
       }
       setPages([...pages, ...newArr]);
     } else if (numOfPages < currentNum) {
@@ -49,7 +50,7 @@ function DropdownTimelineBar(props) {
 
   const pageNameChanged = (name, index) => {
     const newArr = pages.slice();
-    newArr[index] = name;
+    newArr[index].name = name;
     setPages(newArr);
   }
 
@@ -85,7 +86,7 @@ function DropdownTimelineBar(props) {
               onClick={() => {
                 const num = document.getElementById("numOfPagesInput");
                 num.stepUp();
-                setNumOfPages(num.value);
+                setNumOfPages(parseInt(num.value));
               }} >
               +
             </button>
@@ -95,7 +96,7 @@ function DropdownTimelineBar(props) {
         <div style={{
           margin: "10px 0px"
         }}>
-          {pages.map((pageName, index) => {
+          {pages.map((page, index) => {
             return (
               <input
                 key={index}
@@ -103,7 +104,7 @@ function DropdownTimelineBar(props) {
                 type="text"
                 placeholder="Page Name"
                 onChange={(e) => pageNameChanged(e.target.value, index)}
-                value={pageName} />
+                value={page.name} />
             );
           })}
         </div>
@@ -114,12 +115,12 @@ function DropdownTimelineBar(props) {
         hide={() => setConfirmationModal(false)}
         confirmFunction={() => {
           const num = document.getElementById("numOfPagesInput");
-          num.stepDown()
-          setNumOfPages(num.value);
+          num.stepDown();
+          setNumOfPages(parseInt(num.value));
         }}
         confirmMessage={"Yes - Delete Page"}
         message={`Are you sure you want to delete page 
-        ${pages[numOfPages - 1] ? (pages[numOfPages - 1].trim() !== "" ? pages[numOfPages - 1] : "Untitled") : ""}? 
+        ${pages[numOfPages - 1] ? (pages[numOfPages - 1].name.trim() !== "" ? pages[numOfPages - 1].name : "Untitled") : ""}? 
         This action cannot be undone.`}
       />
     </div>
