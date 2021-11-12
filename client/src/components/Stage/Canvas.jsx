@@ -5,6 +5,7 @@ import Level from "../Level/Level";
 import Portal from "./Shapes/Portal";
 import Info from "../Information/InformationPopup";
 import DrawModal from "../DrawModal/DrawModal";
+import Overlay from "./Overlay";
 
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
@@ -61,34 +62,34 @@ class Graphics extends Component {
 
     this.setState = this.setState.bind(this);
 
+    let objectState = {};
+    let objectDeleteState = {};
+    for (let i = 0; i < this.props.savedObjects.length; i++) {
+      objectState = {
+        ...objectState,
+        [this.props.savedObjects[i]]: []
+      }
+      objectDeleteState = {
+        ...objectDeleteState,
+        [`${this.props.savedObjects[i]}DeleteCount`]: 0
+      }
+    }
+
     this.state = {
-      // Right click menus (for group and personal space)
+      // Objects and Delete Counts
+      ...objectState,
+      ...objectDeleteState,
+
+      // Right click menus
       groupAreaContextMenuVisible: false,
       groupAreaContextMenuX: 0,
       groupAreaContextMenuY: 0,
       personalAreaContextMenuVisible: false,
       personalAreaContextMenuX: 0,
       personalAreaContextMenuY: 0,
-
-      // Objects
-      rectangles: [],
-      ellipses: [],
-      stars: [],
-      triangles: [],
-      images: [],
-      videos: [],
-      audios: [],
-      documents: [],
-      texts: [],
-      lines: [], // Lines are the drawings
-      arrows: [], // Arrows are used for transformations
-
-      // Interactive Objects
-      tics: [],
-      connect4s: [],
-      polls: [],
-      htmlFrames: [],
-      inputs: [],
+      overlayAreaContextMenuVisible: false,
+      overlayAreaContextMenuX: 0,
+      overlayAreaContextMenuY: 0,
 
       // An array of arrays containing grouped items
       savedGroups: [],
@@ -107,24 +108,6 @@ class Graphics extends Component {
         }
       ],
 
-      // Object Deletion Count
-      rectanglesDeleteCount: 0,
-      ellipsesDeleteCount: 0,
-      starsDeleteCount: 0,
-      trianglesDeleteCount: 0,
-      imagesDeleteCount: 0,
-      videosDeleteCount: 0,
-      audiosDeleteCount: 0,
-      documentsDeleteCount: 0,
-      textsDeleteCount: 0,
-      linesDeleteCount: 0,
-      arrowsDeleteCount: 0,
-      pollsDeleteCount: 0,
-      connect4sDeleteCount: 0,
-      ticsDeleteCount: 0,
-      htmlFramesDeleteCount: 0,
-      inputsDeleteCount: 0,
-
       // Page Controls
       pages: [
         { name: "1", hasOverlay: false },
@@ -136,6 +119,7 @@ class Graphics extends Component {
       ],
       numberOfPages: 6,
       level: 1, // Current page
+      overlayOpen: false,
 
       // Context Menu
       selectedContextMenu: null,
@@ -242,8 +226,6 @@ class Graphics extends Component {
       savedStateLoaded: false,
     };
 
-    this.handleWheel = this.handleWheel.bind(this);
-
     this.reloadFromSavedState(props.doNotRecalculateBounds);
   }
 
@@ -273,7 +255,7 @@ class Graphics extends Component {
           this.setState({
             [object]: objects[object] || []
           }, () => {
-            if (index === arr.length - 1){ 
+            if (index === arr.length - 1) {
               // This is the last loop so all saved data has been loaded
               this.setState({
                 savedStateLoaded: true
@@ -1045,11 +1027,31 @@ class Graphics extends Component {
           }
         } else {
           // Right click on the canvas -> show the add object menu
-          const type = personalArea ? "PersonalAddMenu" : "GroupAddMenu";
-          const notVisible = personalArea ? "groupAreaContextMenuVisible" : "personalAreaContextMenuVisible";
-          const visible = personalArea ? "personalAreaContextMenuVisible" : "groupAreaContextMenuVisible";
-          const contextMenuX = personalArea ? "personalAreaContextMenuX" : "groupAreaContextMenuX";
-          const contextMenuY = personalArea ? "personalAreaContextMenuY" : "groupAreaContextMenuY";
+          const areaClicked = personalArea ? "personal" : (this.state.overlayOpen ? "overlay" : "group");
+          let type;
+          let notVisible;
+          let visible;
+          let contextMenuX;
+          let contextMenuY;
+          if (areaClicked === "personal") {
+            type = "PersonalAddMenu";
+            notVisible = "groupAreaContextMenuVisible";
+            visible = "personalAreaContextMenuVisible";
+            contextMenuX = "personalAreaContextMenuX";
+            contextMenuY = "personalAreaContextMenuY";
+          } else if (areaClicked === "overlay") {
+            type = "OverlayAddMenu";
+            notVisible = "groupAreaContextMenuVisible";
+            visible = "overlayAreaContextMenuVisible";
+            contextMenuX = "overlayAreaContextMenuX";
+            contextMenuY = "overlayAreaContextMenuY";
+          } else {
+            type = "GroupAddMenu";
+            notVisible = "personalAreaContextMenuVisible";
+            visible = "groupAreaContextMenuVisible";
+            contextMenuX = "groupAreaContextMenuX";
+            contextMenuY = "groupAreaContextMenuY";
+          }
           let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
           if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
             sidebarPx = 100;
@@ -1066,6 +1068,9 @@ class Graphics extends Component {
             [visible]: true,
             [contextMenuX]: layerX + sidebarPx,
             [contextMenuY]: layerY,
+          }, () => {
+            console.log(this.state.overlayAreaContextMenuVisible);
+            console.log(this.state.selectedContextMenu);
           });
         }
       }
@@ -2301,6 +2306,12 @@ class Graphics extends Component {
     }
   }
 
+  setOverlayOpen = (val) => {
+    this.setState({
+      overlayOpen: val
+    });
+  }
+
   render() {
     if (!this.state.savedStateLoaded) return null;
     return (
@@ -2331,6 +2342,53 @@ class Graphics extends Component {
           onBlur={() => this.updateText()}
           style={this.state.textareaInlineStyle}
         />
+
+        {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
+        {this.state.pages[this.state.level - 1].hasOverlay && (
+          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
+            <i className="icons fa fa-window-restore" />
+          </div>
+        )}
+
+        {/* ---- OVERLAY CANVAS ---- */}
+        {this.state.overlayOpen && (
+          <>
+            {/* The right click menu for the overlay area */}
+            {this.state.overlayAreaContextMenuVisible
+              && this.state.selectedContextMenu
+              && this.state.selectedContextMenu.type === "OverlayAddMenu" && (
+                <>
+                  <DropdownAddObjects
+                    title={"Edit Overlay Space"}
+                    xPos={this.state.overlayAreaContextMenuX}
+                    yPos={this.state.overlayAreaContextMenuY}
+                    state={this.state}
+                    layer={this.refs.groupAreaLayer}
+                    objectLabels={this.savedObjects}
+                    deleteLabels={this.deletionCounts}
+                    setState={(obj) => this.setState(obj)}
+                    setDrawMode={this.setDrawMode}
+                    handleImage={this.handleImage}
+                    handleVideo={this.handleVideo}
+                    handleAudio={this.handleAudio}
+                    handleDocument={this.handleDocument}
+                    choosecolor={this.chooseColor}
+                    close={() => this.setState({ overlayAreaContextMenuVisible: false })}
+                  />
+                </>
+              )}
+            <Overlay
+              closeOverlay={() => this.setOverlayOpen(false)}
+              state={this.state}
+              propsIn={this.props}
+              onMouseDown={this.onMouseDown}
+              onMouseUp={this.handleMouseUp}
+              onMouseMove={this.handleMouseOver}
+              onWheel={this.handleWheel}
+              onDragMove={this.dragLayer}
+            />
+          </>
+        )}
 
         {/* ---- GROUP CANVAS ---- */}
         <div

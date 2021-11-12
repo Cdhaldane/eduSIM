@@ -64,29 +64,19 @@ class Graphics extends Component {
     super(props);
 
     this.setState = this.setState.bind(this);
-
     this.forceUpdate = this.forceUpdate.bind(this);
+
+    let objectState = {};
+    for (let i = 0; i < this.props.savedObjects.length; i++) {
+      objectState = {
+        ...objectState,
+        [this.props.savedObjects[i]]: []
+      }
+    }
 
     this.state = {
       // Objects
-      rectangles: [],
-      ellipses: [],
-      stars: [],
-      triangles: [],
-      images: [],
-      videos: [],
-      audios: [],
-      documents: [],
-      texts: [],
-      lines: [],
-      arrows: [],
-
-      // Interactive Objects
-      tics: [],
-      connect4s: [],
-      polls: [],
-      htmlFrames: [],
-      inputs: [],
+      ...objectState,
 
       // Layer Position and Scales
       groupLayerScale: 1,

@@ -61,13 +61,13 @@ const App = (props) => {
     "ellipses",
     "stars",
     "texts",
-    "arrows",
+    "arrows", // Arrows are used for transformations
     "triangles",
     "images",
     "videos",
     "audios",
     "documents",
-    "lines",
+    "lines", // Lines are the drawings
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)

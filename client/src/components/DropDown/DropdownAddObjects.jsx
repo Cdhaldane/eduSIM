@@ -444,13 +444,15 @@ const DropdownAddObjects = (props) => {
   }
 
   const addOverlayWindow = () => {
-    console.log("YO");
-    console.log(props);
-    if (props.state.personalAreaOpen) {
-      props.setState({
-        //personalOver
-      });
+    // Activate the overlay window on the current page
+    const newPages = [...props.state.pages];
+    newPages[props.state.level - 1] = {
+      ...newPages[props.state.level - 1],
+      hasOverlay: !newPages[props.state.level - 1].hasOverlay
     }
+    props.setState({
+      pages: newPages
+    });
   }
 
   // Other
@@ -839,7 +841,7 @@ const DropdownAddObjects = (props) => {
             onClick={addOverlayWindow}
             leftIcon={<i className="icons fa fa-window-restore"
               onClick={addOverlayWindow}></i>}>
-            Overlay Window</DropdownItem>
+            Toggle Overlay</DropdownItem>
         </div>
       </CSSTransition>
 
