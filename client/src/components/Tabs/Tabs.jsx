@@ -273,19 +273,19 @@ function Tabs(props) {
           {logs[tabs[toggleState - 1][1]].map(data => (
             <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
               <div className="logrow-info">
-                <i class="fas fa-scroll"></i>
+                <i className="fas fa-scroll"></i>
                 <p>
                   Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")},
                   lasted {getGameLength(data)}
                 </p>
               </div>
               <div className="logrow-buttons">
-                <button onClick={() => downloadCSV(data)} title="Download spreadsheet"><i class="fas fa-file-csv"></i></button>
-                <button onClick={() => downloadJSON(data)} title="Download JSON data"><i class="fas fa-file-code"></i></button>
+                <button onClick={() => downloadCSV(data)} title="Download spreadsheet"><i className="fas fa-file-csv"></i></button>
+                <button onClick={() => downloadJSON(data)} title="Download JSON data"><i className="fas fa-file-code"></i></button>
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
-                })}><i class="fas fa-trash-alt"></i></button>
+                })}><i className="fas fa-trash-alt"></i></button>
               </div>
             </div>
           ))}

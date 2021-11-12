@@ -68,6 +68,7 @@ const ContextMenu = (props) => {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
 
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
@@ -75,6 +76,7 @@ const ContextMenu = (props) => {
 
     return () => {
       document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('contextmenu', handleRightClick);
     }
   }, []);
@@ -165,8 +167,7 @@ const ContextMenu = (props) => {
       {drop && (
         <div className="drop">
           <DropdownEditObject
-            setJson={props.setJson}
-            setName={props.setName}
+            setPollData={props.setPollData}
             top={menu.current.offsetTop}
             title={editTitle}
             handleFillColor={props.handleFillColor}

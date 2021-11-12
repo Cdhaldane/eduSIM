@@ -61,7 +61,9 @@ const Game = (props) => {
   const [level, setLevel] = useState(1);
   const [roles, setRoles] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
+  const [userId, setUserId] = useState();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -176,6 +178,9 @@ const Game = (props) => {
     !isLoading ? (
       <>
         <Sidebar
+          userId={userId}
+          customObjs={customObjs}
+          gamepieceStatus={roomStatus.gamepieces || {}}
           className="grid-sidebar"
           visible={showNav}
           close={toggle}
@@ -189,8 +194,11 @@ const Game = (props) => {
         />
         <Main>
           <CanvasGame
+            customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
             reCenter={props.reCenter}
+            setUserId={setUserId}
+            setCustomObjs={setCustomObjs}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}
             adminid={localStorage.adminid}

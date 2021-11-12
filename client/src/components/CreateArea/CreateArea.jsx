@@ -42,10 +42,13 @@ function CreateArea(props) {
       alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
       return;
     }
+    if ((imageSelected.size / 1000000) > 10) {
+      alertContext.showAlert("Image must be 10MB or less. Please pick a smaller image.", "warning");
+      return;
+    }
 
     event.preventDefault();
     const formData = new FormData();
-    console.log(imageSelected);
     formData.append("file", imageSelected);
     formData.append("folder", "images");
     formData.append("uploader", localStorage.adminid);
@@ -172,7 +175,7 @@ function CreateArea(props) {
           </div>
         )}
         <div className="gradient-border">
-          Enter a ‎name‎‏‏‎ ‎
+          Enter a name
           <input
             tpye="text"
             id="namei"

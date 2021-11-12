@@ -57,9 +57,11 @@ const DropdownAddObjects = (props) => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleReposition);
     return () => {
       document.removeEventListener('click', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.removeEventListener('contextmenu', handleReposition);
     }
   }, []);
@@ -74,11 +76,6 @@ const DropdownAddObjects = (props) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       props.close();
     }
-  }
-
-  function handleChange(e) {
-    setColour(e);
-    props.choosecolor(e);
   }
 
   function calcHeight(el) {
@@ -197,7 +194,7 @@ const DropdownAddObjects = (props) => {
     const objectsDeletedState = props.state[deleteName];
     const numOfObj = objectsState.length + objectsDeletedState + 1;
     const name = objectName + numOfObj;
-    
+
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",
@@ -383,8 +380,10 @@ const DropdownAddObjects = (props) => {
   // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
-      "polls", 
+      "polls",
       {
+        performanceEnabled: false,
+        customName: "",
         json: {
           pages: [
             {
@@ -394,20 +393,23 @@ const DropdownAddObjects = (props) => {
                   type: "text",
                   name: "0",
                   title: "Sample Text Question:",
-                  isRequired: true
+                  isRequired: true,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 1,
                   type: "text",
                   name: "1",
                   inputType: "date",
                   title: "Sample Date Question:",
-                  isRequired: false
+                  isRequired: false,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
                   title: "Sample Yes/No Question:",
-                  isRequired: false
+                  isRequired: false,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
                 }
               ]
             }
@@ -440,6 +442,19 @@ const DropdownAddObjects = (props) => {
       "inputs", { varType, label: "Label text" }
     );
   }
+
+  const addOverlayWindow = () => {
+    // Activate the overlay window on the current page
+    const newPages = [...props.state.pages];
+    newPages[props.state.level - 1] = {
+      ...newPages[props.state.level - 1],
+      hasOverlay: !newPages[props.state.level - 1].hasOverlay
+    }
+    props.setState({
+      pages: newPages
+    });
+  }
+
   // Other
   const imageURLGood = (url) => {
     if ((
@@ -822,9 +837,14 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
+          <DropdownItem
+            onClick={addOverlayWindow}
+            leftIcon={<i className="icons fa fa-window-restore"
+              onClick={addOverlayWindow}></i>}>
+            Toggle Overlay</DropdownItem>
         </div>
       </CSSTransition>
-      
+
       <CSSTransition
         in={activeMenu === 'inputs'}
         timeout={500}

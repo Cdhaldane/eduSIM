@@ -61,13 +61,13 @@ const App = (props) => {
     "ellipses",
     "stars",
     "texts",
-    "arrows",
+    "arrows", // Arrows are used for transformations
     "triangles",
     "images",
     "videos",
     "audios",
     "documents",
-    "lines",
+    "lines", // Lines are the drawings
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -109,7 +109,8 @@ const App = (props) => {
     const _reCenterObjects = (isPersonalArea, mode) => {
       let canvas = getUpdatedCanvasState(mode);
       if (
-        !(canvas.setState &&
+        !(canvas &&
+          canvas.setState &&
           canvas.state &&
           canvas.refs)
       ) {
@@ -306,9 +307,10 @@ const App = (props) => {
       x: obj.x,
       y: obj.y,
       scaleX: obj.scaleX,
-      scaleY: obj.scaleY, 
+      scaleY: obj.scaleY,
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
+      infolevel: obj.infolevel,
       strokeScaleEnabled: false,
       draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
       editMode: editMode,
@@ -525,39 +527,17 @@ const App = (props) => {
     label: obj.label
   })
 
-  const pollProps = (obj) => {
+  const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
-        customName: obj.customName ? obj.customName : "",
-        pollJson: obj.json ? obj.json : {
-          pages: [
-            {
-              questions: [
-                {
-                  id: 0,
-                  type: "text",
-                  name: "0",
-                  title: "Sample Text Question:",
-                  isRequired: true
-                }, {
-                  id: 1,
-                  type: "text",
-                  name: "1",
-                  inputType: "date",
-                  title: "Sample Date Question:",
-                  isRequired: false
-                }, {
-                  id: 2,
-                  type: "boolean",
-                  name: "2",
-                  title: "Sample Yes/No Question:",
-                  isRequired: false
-                }
-              ]
-            }
-          ]
-        }
-      }
+        performanceEnabled: obj.performanceEnabled,
+        customName: obj.customName,
+        pollJson: obj.json
+      },
+      ...(!editMode ?
+        {
+          userId: canvas.userId
+        } : {})
     };
   }
 
@@ -641,8 +621,9 @@ const App = (props) => {
             <Poll
               defaultProps={{
                 ...defaultObjProps(obj, index, canvas, editMode),
-                ...pollProps(obj)
+                ...pollProps(obj, canvas, editMode)
               }}
+              {...canvas.getInteractiveProps(obj.id)}
               {...defaultObjProps(obj, index, canvas, editMode)}
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null
@@ -675,7 +656,7 @@ const App = (props) => {
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null
         })}
-        
+
         {canvas.state.inputs.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Input
@@ -728,6 +709,7 @@ const App = (props) => {
           <Route exact path="/about" render={(props) => <About {...props} />} />
           <Route exact path="/gamepage/:roomid" render={(props) =>
             <GamePage
+              customObjectsLabels={customObjects}
               loadObjects={loadObjects}
               reCenter={reCenterObjects}
               setGamePlayProps={setGamePlayProps}

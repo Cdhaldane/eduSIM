@@ -1,18 +1,52 @@
 .performanceTable {
-  width: 100%;
   border-collapse: collapse;
 }
 
 .performanceTableContainer {
   min-height: 400px;
-  max-height: 500px;
-  overflow: auto;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0px 10px;
+}
+
+.performanceTableContainer:before {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.8em;
+  top: 45px;
+  background: linear-gradient( to top, rgba(0, 0, 0, 0), rgba(255, 255, 255) 70%);
+  z-index: 1;
 }
 
 .performanceTable>tbody>tr>td {
   display: table-cell;
-  padding: 5px 0;
-  border-top: 1px solid rgb(160, 160, 160);
+}
+
+.performanceQOptions>table>tbody>tr>td>label:hover {
+  cursor: pointer;
+}
+
+.performanceQOptions>table>tbody>tr>td>label {
+  padding-right: 0.5em;
+  font-size: 0.8em;
+  font-weight: 0;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+.performanceQOptions>table>tbody>tr>td>label>input {
+  margin: 0px 0.5em;
+  transform: translateY(-0.1em);
+}
+
+.performanceQOptions>table>tbody>tr>td {
+  width: 350px;
+}
+
+.performanceQOptions>table {
+  border-top: 1px solid var(--primary);
+  border-bottom: none;
 }
 
 .performanceContainer {
@@ -21,11 +55,14 @@
 
 .performanceTitle {
   font-size: 1.2em;
-  padding-bottom: 0.5em;
+  padding-left: 10px;
+  padding-bottom: 5px;
 }
 
 .performanceForm {
-  padding: 5px 10px;
+  padding: 5px 0px !important;
+  width: auto !important;
+  min-width: 740px;
 }
 
 .performanceTable>tbody>tr>td>span {
@@ -37,49 +74,96 @@
   transform: translateY(5px);
 }
 
+.performancePollRow {
+  border-top: 1px dashed black;
+}
+
+.performancePollRow>td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 .performancePollRow>td>h3 {
   font-family: "Montserrat", sans-serif;
   padding-top: 0.5em;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .performanceQNames {
+  padding-top: 0.25em;
   font-weight: 800;
   font-size: 0.9em;
-  width: 50%;
+  width: 100%;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  background: linear-gradient(90deg, #ffe9ed, 90%, white);
-  padding: 0em 0.25em;
-  border-left: 5px solid var(--primary);
 }
 
-.performanceQOptions {
-  font-size: 0.9em;
-  background: linear-gradient(90deg, #ffe9ed, 90%, white);
-  padding-left: 0.25em;
-  border-left: 5px solid  var(--primary);
-  width: 50%;
-  white-space: nowrap;
-  overflow: hidden;
-  display: block;
-  margin-bottom: 10px;
+.performancePollResult {
+  display: block !important;
 }
 
-.performanceQOptions>div>label {
-  display: inline-block;
-  padding-left: 0.25em;
+.performancePollResult>div {
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
-.performanceNoObjects>div {
+.performancePollResult>div:before {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.8em;
+  top: 50px;
+  background: linear-gradient( to top, rgba(0, 0, 0, 0), rgba(255, 255, 255) 70%);
+  z-index: 1;
+}
+
+.performancePollResult>h2 {
+  font-weight: 800;
+  font-size: 1.3em;
+}
+
+.performancePollResult .h2:first-child {
+  border: none;
+}
+
+.performancePollResult .h2 {
   font-weight: 800;
   font-size: 1.1em;
-  padding-bottom: 10px;
+  display: block !important;
+  width: 100%;
+  padding-top: 5px;
+  margin-top: 5px;
+  border-top: 1px solid black;
 }
 
-.performanceNoObjects>p {
-  font-size: 1em;
-  padding-bottom: 10px;
+.performancePieChartContainer {
+  height: 200px;
+  width: 100%;
+}
+
+.recharts-pie-label-text {
+  font-weight: 800;
+  font-size: 1.2rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.performancePollResult div>span {
+  font-weight: 800;
+}
+
+.performancePollResult .newQ {
+  border-top: 1px dashed black;
+  padding-top: 5px;
+}
+
+.performancePollResult {
+  padding: 10px;
+  padding-top: 0px;
+}
+
+.performanceContainer {
+  display: block !important;
 }

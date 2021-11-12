@@ -49,6 +49,10 @@ const EndScreen = styled.div`
 
 class Graphics extends Component {
 
+  customObjects = [
+    ...this.props.customObjectsLabels
+  ]
+
   savedObjects = [
     // Objects
     ...this.props.savedObjects,
@@ -60,27 +64,29 @@ class Graphics extends Component {
     super(props);
 
     this.setState = this.setState.bind(this);
-
     this.forceUpdate = this.forceUpdate.bind(this);
 
+    let objectState = {};
+    for (let i = 0; i < this.props.savedObjects.length; i++) {
+      objectState = {
+        ...objectState,
+        [this.props.savedObjects[i]]: []
+      }
+    }
+
     this.state = {
-      rectangles: [],
-      ellipses: [],
-      stars: [],
-      texts: [],
-      arrows: [],
-      triangles: [],
-      images: [],
-      videos: [],
-      audios: [],
-      documents: [],
-      lines: [],
-      tics: [],
-      connect4s: [],
+      // Objects
+      ...objectState,
+
+      // Layer Position and Scales
+      groupLayerScale: 1,
+      groupLayerX: 0,
+      groupLayerY: 0,
+      personalLayerScale: 1,
+      personalLayerX: 0,
+      personalLayerY: 0,
+
       gameroles: [],
-      polls: [],
-      htmlFrames: [],
-      inputs: [],
       open: 0,
       isOpen: true,
       state: false,
@@ -88,46 +94,40 @@ class Graphics extends Component {
       gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
       level: 1,
-      pageNumber: 6,
-      groupLayerScale: 1,
-      groupLayerX: 0,
-      groupLayerY: 0,
-      personalLayerScale: 1,
-      personalLayerX: 0,
-      personalLayerY: 0,
+      pageNumber: 6
     };
 
     setTimeout(() => this.props.reCenter("play"), 100);
   }
 
   formatTextMacros = (text) => {
-    let start=false, newText=text;
-    for (let i=0;i<newText.length;i++) {
-      const c=newText[i];
-      if (c==="{") start=i;
-      if (c==="}" && start!==false) {
+    let start = false, newText = text;
+    for (let i = 0; i < newText.length; i++) {
+      const c = newText[i];
+      if (c === "{") start = i;
+      if (c === "}" && start !== false) {
         let content, key;
-        switch (key=newText.slice(start+1,i)) {
+        switch (key = newText.slice(start + 1, i)) {
           case "playername":
-            content=this.props.players[this.props.socket.id]?.name;
+            content = this.props.players[this.props.socket.id]?.name;
             break;
           case "playerrole":
-            content=this.props.players[this.props.socket.id]?.role || "(no role selected)";
+            content = this.props.players[this.props.socket.id]?.role || "(no role selected)";
             break;
           case "lastsetvar":
-            content=sessionStorage.lastSetVar;
+            content = sessionStorage.lastSetVar;
             break;
           case "currentdate":
-            content=moment().format("dddd, MMMM Do YYYY");
+            content = moment().format("dddd, MMMM Do YYYY");
             break;
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-            content=vars[key];
+            content = vars[key];
         }
-        newText = newText.slice(0,start) + (content!==undefined ? content : "unknown") + newText.slice(i+1);
-        i=start;
-        start=false;
+        newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
+        i = start;
+        start = false;
       }
     }
     return newText;
@@ -149,19 +149,46 @@ class Graphics extends Component {
     }
   }
 
+  sendInteraction = (gamepieceId, parameters) => {
+    this.props.socket.emit("interaction", {
+      gamepieceId,
+      parameters,
+      sameState: true
+    })
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
     if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
+      const userId = JSON.parse(sessionStorage.getItem('userInfo')) ?
+        JSON.parse(sessionStorage.getItem('userInfo')).dbid : null;
+
       this.props.setGamePlayProps({
+        refresh: this.forceUpdate,
         setState: this.setState,
         state: this.state,
         refs: this.refs,
+        userId: userId,
         getInteractiveProps: this.getInteractiveProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        refresh: this.forceUpdate
+        sendInteraction: this.sendInteraction
       });
+
+      this.props.setUserId(userId);
+    }
+
+    // Update the custom objects state in the parent component (if custom objs changed)
+    for (let i = 0; i < this.customObjects.length; i++) {
+      if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
+        const customObjs = {};
+        for (let j = 0; j < this.customObjects.length; j++) {
+          customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
+        }
+        this.props.setCustomObjs(customObjs);
+        break;
+      }
     }
   }
 
@@ -233,7 +260,7 @@ class Graphics extends Component {
       isOpen: !this.state.isOpen
     });
   }
-  
+
   componentWillReceiveProps = ({ level }) => {
     if (level) {
       this.setState({
