@@ -5,6 +5,7 @@ import NavLinksGroup from "./NavLinksGroup";
 import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
+import Settings from "./submenus/Settings";
 import Modal from "react-modal";
 import Performance from "./Performance";
 
@@ -184,12 +185,13 @@ const Sidebar = (props) => {
       visible: pevisible
     },
     {
-      to: "/settings",
       icon: "fas fa-cog",
       id: "settings",
       label: "Settings",
-      visible: svisible
-
+      visible: svisible,
+      submenu: (
+        <Settings />
+      )
     },
   ];
 

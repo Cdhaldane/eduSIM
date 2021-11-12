@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { createContext, useState, useRef, useContext } from "react";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
@@ -26,6 +26,8 @@ import Poll from "./components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "./components/Stage/GamePieces/HTMLFrame";
 import Input from "./components/Stage/GamePieces/Input";
 
+import styled from "styled-components";
+
 // Standard Konva Components
 import {
   Rect,
@@ -37,7 +39,36 @@ import {
   Arrow,
 } from "react-konva";
 
+export const SettingsContext = createContext({
+  settings: {}
+});
+
+const Parent = styled.div`
+  filter: ${p => p.contrast && window.location.pathname !== "/editpage" ? 'saturate(1.25) grayscale(.1) contrast(1.2)' : 'none'};
+  font-size: ${p => p.textsize || '1'}em;
+  ${p => p.notransition && `
+    & * {
+      transition-duration: 0s !important;
+      animation: none !important;
+    }
+  `}
+`;
+
 const App = (props) => {
+
+  const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
+
+  const updateSetting = (key, val) => {
+    const obj = JSON.parse(localStorage.userSettings || '{}');
+    localStorage.setItem('userSettings', JSON.stringify({
+      ...obj,
+      [key]: val
+    }));
+    setLocalSettings({
+      ...obj,
+      [key]: val
+    });
+  }
 
   /*------------------------------------------------------------------------------/
    * CANVAS FUNCTIONS
@@ -415,7 +446,7 @@ const App = (props) => {
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,
       fontFamily: obj.fontFamily,
-      fontSize: obj.fontSize,
+      fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(obj.text),
       link: obj.link,
       ...(editMode ?
@@ -555,7 +586,7 @@ const App = (props) => {
       );
     }
     return (
-      <>
+      <SettingsContext.Provider value={{settings: localSettings || {}}}>
         {editMode && (
           <>
             {/* This Rect is for dragging the canvas */}
@@ -684,7 +715,7 @@ const App = (props) => {
             <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
           </>
         )}
-      </>
+      </SettingsContext.Provider>
     );
   }
 
@@ -692,50 +723,52 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
-    <AlertContextProvider>
-      <AlertPopup />
-      {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-        <Navbar />
-      )}
-      <div >
-        <Switch>
-          <Route exact path="/" >
-            <Home />
-          </Route>
-          {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-            <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
-          )}
-          <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
-          <Route exact path="/about" render={(props) => <About {...props} />} />
-          <Route exact path="/gamepage/:roomid" render={(props) =>
-            <GamePage
-              customObjectsLabels={customObjects}
-              loadObjects={loadObjects}
-              reCenter={reCenterObjects}
-              setGamePlayProps={setGamePlayProps}
-              savedObjects={savedObjects}
-              {...props}
-            />}
-          />
-          <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
-          <Route exact path="/editpage" render={(props) =>
-            <EditPage
-              loadObjects={loadObjects}
-              reCenter={reCenterObjects}
-              setGameEditProps={setGameEditProps}
-              customObjects={customObjects}
-              savedObjects={savedObjects}
-              customDeletes={customDeletes}
-              allDeletes={allDeletes}
-              {...props}
-            />}
-          />
-          <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
-          <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-          <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
-        </Switch>
-      </div>
-    </AlertContextProvider>
+    <SettingsContext.Provider value={{updateSetting, settings: localSettings || {}}}>
+      <AlertContextProvider>
+        <AlertPopup />
+        {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+          <Navbar />
+        )}
+        <div >
+          <Switch>
+            <Route exact path="/" >
+              <Home />
+            </Route>
+            {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+              <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
+            )}
+            <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
+            <Route exact path="/about" render={(props) => <About {...props} />} />
+            <Route exact path="/gamepage/:roomid" render={(props) =>
+              <GamePage
+                customObjectsLabels={customObjects}
+                loadObjects={loadObjects}
+                reCenter={reCenterObjects}
+                setGamePlayProps={setGamePlayProps}
+                savedObjects={savedObjects}
+                {...props}
+              />}
+            />
+            <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
+            <Route exact path="/editpage" render={(props) =>
+              <EditPage
+                loadObjects={loadObjects}
+                reCenter={reCenterObjects}
+                setGameEditProps={setGameEditProps}
+                customObjects={customObjects}
+                savedObjects={savedObjects}
+                customDeletes={customDeletes}
+                allDeletes={allDeletes}
+                {...props}
+              />}
+            />
+            <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
+            <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
+            <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
+          </Switch>
+        </div>
+      </AlertContextProvider>
+    </SettingsContext.Provider>
   );
 }
 
