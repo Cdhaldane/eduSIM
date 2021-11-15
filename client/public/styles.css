@@ -271,6 +271,7 @@ footer {
 .joinboard-controls {
   margin-left: auto;
   display: flex;
+  align-items: center;
   flex-direction: column;
   text-align: center;
   line-height: 1.3em;
