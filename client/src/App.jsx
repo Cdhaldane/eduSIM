@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { createContext, useState, useRef, useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Loading from "./components/Loading/Loading";
@@ -26,6 +26,8 @@ import Poll from "./components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "./components/Stage/GamePieces/HTMLFrame";
 import Input from "./components/Stage/GamePieces/Input";
 
+import styled from "styled-components";
+
 // Standard Konva Components
 import {
   Rect,
@@ -37,7 +39,33 @@ import {
   Arrow,
 } from "react-konva";
 
+export const SettingsContext = createContext({
+  settings: {}
+});
+
 const App = (props) => {
+
+  const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
+
+  const updateSetting = (key, val) => {
+    const obj = JSON.parse(localStorage.userSettings || '{}');
+    localStorage.setItem('userSettings', JSON.stringify({
+      ...obj,
+      [key]: val
+    }));
+    setLocalSettings({
+      ...obj,
+      [key]: val
+    });
+  }
+
+  useEffect(() => {
+    document.documentElement.style.filter = (
+      localSettings.contrast ? 'saturate(1.25) grayscale(.1) contrast(1.2)' : ''
+    );
+    document.documentElement.style.fontSize = (localSettings.textsize || 1)+'em';
+    document.documentElement.className = localSettings.notransition ? 'notransition' : '';
+  }, [localSettings]);
 
   /*------------------------------------------------------------------------------/
    * CANVAS FUNCTIONS
@@ -415,7 +443,7 @@ const App = (props) => {
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,
       fontFamily: obj.fontFamily,
-      fontSize: obj.fontSize,
+      fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(obj.text),
       link: obj.link,
       ...(editMode ?
@@ -555,7 +583,7 @@ const App = (props) => {
       );
     }
     return (
-      <>
+      <SettingsContext.Provider value={{settings: localSettings || {}}}>
         {editMode && (
           <>
             {/* This Rect is for dragging the canvas */}
@@ -684,7 +712,7 @@ const App = (props) => {
             <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
           </>
         )}
-      </>
+      </SettingsContext.Provider>
     );
   }
 
@@ -692,12 +720,12 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
-    <AlertContextProvider>
-      <AlertPopup />
-      {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-        <Navbar />
-      )}
-      <div >
+    <SettingsContext.Provider value={{updateSetting, settings: localSettings || {}}}>
+      <AlertContextProvider>
+        <AlertPopup />
+        {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+          <Navbar />
+        )}
         <Switch>
           <Route exact path="/" >
             <Home />
@@ -734,8 +762,8 @@ const App = (props) => {
           <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
           <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
         </Switch>
-      </div>
-    </AlertContextProvider>
+      </AlertContextProvider>
+    </SettingsContext.Provider>
   );
 }
 

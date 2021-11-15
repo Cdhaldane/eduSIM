@@ -24,6 +24,10 @@
 html {
   font-family: "Montserrat",
 }
+html.notransition * {
+  transition-duration: 0s !important;
+  animation: none !important;
+}
 body {
   background-color: #636363;
   margin: 0;

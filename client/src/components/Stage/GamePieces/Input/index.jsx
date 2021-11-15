@@ -1,7 +1,17 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useContext } from "react";
 import CustomWrapper from "../CustomWrapper";
+import styled from "styled-components";
+import { SettingsContext } from "../../../../App";
+
+const Wrapper = styled.div`
+  & > * {
+    font-size: ${p => p.textsize || '1'}em;
+  } 
+`;
 
 const Input = forwardRef((props, ref) => {
+
+  const { settings } = useContext(SettingsContext);
 
   const varName = props.varName || props.id;
 
@@ -32,6 +42,7 @@ const Input = forwardRef((props, ref) => {
 
   return (
     <CustomWrapper {...props} ref={ref}>
+      <Wrapper {...settings}>
       {({
         button: (
           <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
@@ -52,6 +63,7 @@ const Input = forwardRef((props, ref) => {
           />
         )
       })[props.varType]}
+      </Wrapper>
     </CustomWrapper>
   );
 });
