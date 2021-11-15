@@ -92,7 +92,7 @@ const Poll = forwardRef((props, ref) => {
       }
     }
   }
-
+  
   return (
     <CustomWrapper {...props} ref={ref}>
       <div className="poll">

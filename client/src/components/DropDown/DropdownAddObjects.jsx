@@ -198,6 +198,7 @@ const DropdownAddObjects = (props) => {
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",
+      overlay: props.title === "Edit Overlay Space",
       level: props.state.level,
       visible: true,
       x: 800,

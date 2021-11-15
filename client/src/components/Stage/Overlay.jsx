@@ -149,21 +149,23 @@ class Overlay extends Component {
     };
   }
 
+  componentDidUpdate = () => {
+    for (let i = 0; i < Object.keys(this.refs).length; i++) {
+      const key = Object.keys(this.refs)[i];
+      this.props.setRefs(key, this.refs[key]);
+    }
+  }
+
   render() {
     return (
       <div className="overlayMain">
         <div>
-          {/*<Modal
-        isOpen={true}
-        onRequestClose={null}
-        overlayClassName="myoverlay overlayWindowMainContainer"
-        closeTimeoutMS={250}
-        ariaHideApp={false}
-      >*/}
           <div className="area overlayCanvas">
             <i className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />
             {/* The Konva Stage */}
             <div
+              onKeyDown={this.props.onKeyDown}
+              onKeyUp={this.props.onKeyUp}
               id="overlayCanvasContainer"
               tabIndex="0"
               onContextMenu={(e) => e.preventDefault()}
@@ -185,22 +187,20 @@ class Overlay extends Component {
               >
                 <Layer
                   ref={"overlayLayer"}
-                  scaleX={this.props.state.groupLayerScale}
-                  scaleY={this.props.state.groupLayerScale}
-                  x={this.props.state.groupLayerX}
-                  y={this.props.state.groupLayerY}
+                  scaleX={this.props.state.overlayLayerScale}
+                  scaleY={this.props.state.overlayLayerScale}
+                  x={this.props.state.overlayLayerX}
+                  y={this.props.state.overlayLayerY}
                   height={window.innerHeight}
                   width={window.innerWidth}
                   draggable={this.props.state.layerDraggable}
                   onDragMove={(e) => this.props.onDragMove(e, false)}
                 >
-                  {/*props.propsIn.loadObjects("group", "edit")*/}
+                  {this.props.propsIn.loadObjects("overlay", "edit")}
                 </Layer>
               </Stage>
             </div>
           </div>
-
-          {/*</Modal>*/}
         </div>
       </div>
     );

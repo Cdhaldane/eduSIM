@@ -26,8 +26,6 @@ import Poll from "./components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "./components/Stage/GamePieces/HTMLFrame";
 import Input from "./components/Stage/GamePieces/Input";
 
-import styled from "styled-components";
-
 // Standard Konva Components
 import {
   Rect,
@@ -63,7 +61,7 @@ const App = (props) => {
     document.documentElement.style.filter = (
       localSettings.contrast ? 'saturate(1.25) grayscale(.1) contrast(1.2)' : ''
     );
-    document.documentElement.style.fontSize = (localSettings.textsize || 1)+'em';
+    document.documentElement.style.fontSize = (localSettings.textsize || 1) + 'em';
     document.documentElement.className = localSettings.notransition ? 'notransition' : '';
   }, [localSettings]);
 
@@ -132,9 +130,9 @@ const App = (props) => {
    * RECENTER OBJECTS
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
-  const reCenterObjects = (mode) => {
+  const reCenterObjects = (mode, layer) => {
     // Runs for personal and group area
-    const _reCenterObjects = (isPersonalArea, mode) => {
+    const _reCenterObjects = (isPersonalArea, mode, overlay) => {
       let canvas = getUpdatedCanvasState(mode);
       if (
         !(canvas &&
@@ -145,12 +143,13 @@ const App = (props) => {
         return;
       }
 
-      const areaString = isPersonalArea ? "personal" : "group";
+      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       // Reset to default position and scale
       canvas.setState({
         [`${areaString}LayerX`]: 0,
         [`${areaString}LayerY`]: 0,
-        [`${areaString}LayerScale`]: 1
+        [`${areaString}LayerScale`]: 1,
+        canvasLoading: true,
       }, () => setTimeout(() => {
         canvas = getUpdatedCanvasState(mode);
 
@@ -159,7 +158,7 @@ const App = (props) => {
         const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
         const personalArea = document.getElementById(personalId).getBoundingClientRect();
         const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
-        const sideMenuW = isPersonalArea ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+        const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
         const topMenuH = isPersonalArea ? 80 : topBar.height;
         const padding = 80;
         const doublePad = 2 * padding;
@@ -168,8 +167,9 @@ const App = (props) => {
         const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
         const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
         const availableRatio = availableW / availableH;
+        const level = canvas.state.level;
 
-        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas, personalId);
+        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, overlay, sideMenuW, canvas, personalId, level);
         if (minX && maxX && minY && maxY) {
           let x = null;
           let y = null;
@@ -204,19 +204,31 @@ const App = (props) => {
             }
             canvas.setState({
               [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
-              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y
+              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y,
+              canvasLoading: false,
             });
           }, 0));
+        } else {
+          canvas.setState({
+            canvasLoading: false,
+          });
         }
       }, 0));
     }
-    _reCenterObjects(true, mode);
-    _reCenterObjects(false, mode);
+    if (!layer || layer === "group") {
+      _reCenterObjects(false, mode, false);
+    }
+    if (!layer || layer === "overlay") {
+      _reCenterObjects(false, mode, true);
+    }
+    if (!layer || layer === "personal") {
+      _reCenterObjects(true, mode, false);
+    }
   }
 
   // This gets the farthest left, top, right, and bottom coordinates of the objects
   // to create a bounding rectangle with coordinates
-  const recalculateMaxMin = (isPersonalArea, sideMenuW, canvas, personalId) => {
+  const recalculateMaxMin = (isPersonalArea, overlay, sideMenuW, canvas, personalId, level) => {
     let minX = null;
     let maxX = null;
     let minY = null;
@@ -227,7 +239,7 @@ const App = (props) => {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           const object = objects[j];
-          if (object.infolevel === isPersonalArea) {
+          if (object.infolevel === isPersonalArea && object.overlay === overlay && object.level === level) {
             const rect = getRect(object, sideMenuW, isPersonalArea, canvas, personalId);
             if (!rect) continue;
             if (minX === null || minX > rect.x) {
@@ -325,7 +337,8 @@ const App = (props) => {
   const defaultObjProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
-      visible: obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true),
+      visible: canvas.state.canvasLoading ? false :
+        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
       rotation: obj.rotation,
       ref: obj.ref,
       fill: obj.fill,
@@ -339,6 +352,7 @@ const App = (props) => {
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
       infolevel: obj.infolevel,
+      overlay: obj.overlay,
       strokeScaleEnabled: false,
       draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
       editMode: editMode,
@@ -520,7 +534,9 @@ const App = (props) => {
   }
 
   const objectIsOnStage = (obj, canvas) => {
-    if (obj.level === canvas.state.level && obj.infolevel === false) {
+    if (obj.level === canvas.state.level && obj.overlay) {
+      return "overlay";
+    } else if (obj.level === canvas.state.level && obj.infolevel === false) {
       return "group";
     } else if (obj.level === canvas.state.level && obj.infolevel === true && obj.rolelevel === canvas.state.rolelevel) {
       return "personal";
@@ -583,7 +599,7 @@ const App = (props) => {
       );
     }
     return (
-      <SettingsContext.Provider value={{settings: localSettings || {}}}>
+      <SettingsContext.Provider value={{ settings: localSettings || {} }}>
         {editMode && (
           <>
             {/* This Rect is for dragging the canvas */}
@@ -705,6 +721,18 @@ const App = (props) => {
             <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
         })}
 
+        {/* Show loading symbol if objects are loading */}
+        {/*canvas.state.canvasLoading && (
+          <Rect
+            x={-5 * window.innerWidth}
+            y={-5 * window.innerHeight}
+            height={window.innerHeight * 10}
+            width={window.innerWidth * 10}
+            fill={"black"}
+            opacity={0.5}
+          />
+        )*/}
+
         {/* This is the blue transformer rectangle that pops up when objects are selected */}
         {editMode && (
           <>
@@ -720,7 +748,7 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
-    <SettingsContext.Provider value={{updateSetting, settings: localSettings || {}}}>
+    <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
         <AlertPopup />
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (

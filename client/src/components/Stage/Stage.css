@@ -58,6 +58,10 @@
   box-shadow: var(--box-shadow);
 }
 
+#overlayCanvasContainer>div {
+  overflow: hidden;
+}
+
 .overlayWindowMainContainer>div {
   padding: 0 !important;
 }
@@ -84,4 +88,20 @@
   top: 50%;
   transform: translate(-50%, -50%);
   position: absolute;
+}
+
+.gameLoadingOverlay {
+  z-index: 100;
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.gameLoadingOverlay>.spinner {
+  background-color: rgb(0, 0, 0, 0);
+  height: 100%;
+  width: 100%;
 }
