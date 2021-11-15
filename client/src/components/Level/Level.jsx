@@ -48,20 +48,22 @@ const Level = (props) => {
 
   const createSelectItems = () => {
     // Replace empty names with Untitled#
-    let pageNames = [...props.pages];
+    let pages = [...props.pages];
     let untitledNum = 1;
-    for (let i = 0; i < pageNames.length; i++) {
-      if (pageNames[i] === "") {
-        pageNames[i] = "Untitled " + untitledNum;
+    for (let i = 0; i < pages.length; i++) {
+      if (pages[i].name === "") {
+        pages[i].name = "Untitled " + untitledNum;
         untitledNum++;
       }
     }
-    for (let i = 0; i < props.number; i++) {
-      items.push(
-        <option key={i} value={i + 1}>
-          {pageNames[i]}
-        </option>
-      );
+    for (let i = 0; i < props.numOfPages; i++) {
+      if (pages[i]) {
+        items.push(
+          <option key={i} value={i + 1}>
+            {pages[i].name}
+          </option>
+        );
+      }
     }
     return items;
   }
@@ -72,6 +74,7 @@ const Level = (props) => {
   }
 
   const saveOnClose = () => {
+    props.clearCanvasData();
     props.saveGame();
   }
 
@@ -215,6 +218,8 @@ const Level = (props) => {
           {props.freeAdvance && (
             <>
               <button
+                className="level-nav-back"
+                disabled={count == 1}
                 onClick={handleBack}>
                 Back
               </button>

@@ -180,7 +180,7 @@ function InviteCollaboratorsModal(props) {
                   />
                   {ind !== 0 && (
                     <button type="button" className="removeuser" onClick={() => handleRemoveUser(ind)}>
-                      <i class="fas fa-times-circle"></i>
+                      <i className="fas fa-times-circle"></i>
                     </button>
                   )}
                 </div>
@@ -197,7 +197,7 @@ function InviteCollaboratorsModal(props) {
                     <h4>{name}</h4>
                     <p>{email}</p>
                   </div>
-                  <i class="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>
+                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>
                 </div>
               )) : <p>No one currently has access to {props.title}.</p>}
             </Collaborators>

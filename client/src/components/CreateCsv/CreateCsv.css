@@ -69,6 +69,10 @@
   display: none; 
 }
 
+.modal-csv {
+  height: 320px;
+}
+
 .modal-title {
   font-size: 2rem;
   font-weight: bold;
@@ -78,19 +82,31 @@
 
 .areacsv-filename {
   display: flex;
-  font-size: 1.2rem;
-  margin: 0 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  font-size: 1.5em;
 }
-.areacsv-filename > p {
-  margin-right: 20px;
+.areacsv-filename[disabled] {
+  opacity: 0.6;
 }
-.areacsv-filename > input {
-  flex: 1;
-  font-size: 1.2rem;
+.areacsv-filename > div {
+  text-align: left;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.areacsv-filename > i {
+  color: var(--primary);
+}
+.areacsv-remove {
+  cursor: pointer;
+}
+.areacsv-filename > div p {
+  font-size: .7em;
 }
 .areacsv-links {
   display: flex;
-  margin: 40px 20px;
+  margin: 20px 20px 0px;
   justify-content: space-between;
 }
 
@@ -136,6 +152,15 @@
   max-width: 50%;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+#csv-filedownload {
+  background: none;
+  color: blue;
+  border: none;
+  text-decoration: underline;
+  font-size: 1.5rem;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 #addj {

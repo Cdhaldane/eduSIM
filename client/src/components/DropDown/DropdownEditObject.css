@@ -211,255 +211,71 @@ a {
   width: 98%;
 }
 
-/* Edit Poll */
-
-.editPollQuestionBox {
-  font-size: 19px;
-  border-radius: 2px;
-  border-top: 0px dashed white;
-  width: 500px;
-  padding-top: 0px;
-  display: block;
-  max-height: 300px;
-  overflow: auto;
-}
-
-.editPollQuestionBox td {
-  font-weight: 100;
-  height: 35px;
-}
-
-.editPollQuestionBox td>input, select {
-  font-family: "Montserrat", sans-serif;
-  border-radius: 5px;
-  font-size: 20px;
-  width: 100%;
-  height: 100%;
-  top: 0 !important;
-  left: 0 !important;
-}
-
-.editPollQuestionBox td>input::placeholder {
-  color: rgb(136, 136, 136);
-  font-style: italic;
-}
-
-.editPollQuestionBox td>input {
-  padding-left: 5px;
-}
-
-.editPollQuestionBox td>i {
-  padding-left: 5px;
-  color: var(--primary);
-  font-size: 25px;
-}
-
-.editPollEditBtns>i.disabled {
-  color: grey !important;
-}
-
-.editPollEditBtns>i.disabled:hover {
-  cursor: not-allowed;
-}
-
-.editPollEditBtns:hover>i {
-  cursor: pointer;
-  text-shadow: 2px 2px 0px rgb(255, 181, 181);
-}
-
-.editPollQuestionBox th {
-  padding-right: 10px;
-  font-weight: 1000;
-  text-align: left;
-}
-
-.pollsEditorRequiredCheck {
-  transform: translateY(2px);
-  width: 35px;
-}
-
-.editPollStar {
-  font-size: 30px;
-  transform: translateY(7px);
-  padding-left: 5px;
-  color: var(--primary);
-  text-align: center !important;
-}
-
-.editPollAddQuestionBtn {
-  font-family: "Montserrat", sans-serif;
-  font-size: 18px;
-  height: 35px;
-  margin: 10px 0px 5px 5px;
-  padding-right: 5px;
-  border-radius: 5px;
-  background-color: white;
-  border: none;
-  box-shadow: 0px 0px 0px 2px #a3a3a3;
-}
-
-.editPollAddQuestionBtn>i {
-  color: #a3a3a3;
-  padding: 0px 5px;
-}
-
-.editPollAddQuestionBtn:hover>i {
-  color: var(--primary);
-}
-
-.editPollAddQuestionBtn:hover {
-  cursor: pointer;
-  box-shadow: 0px 0px 0px 2px var(--primary);
-}
-
-.editPollTableHead>tr>td {
-  position: sticky;
-  top: 0;
-}
-
-.editPollNewPageIcon {
-  font-size: 1rem !important;
-  padding-right: 5px;
-  color: #a3a3a3 !important;
-}
-
-.editPollPrimary-enter {
-  opacity: 0.5;
-  transform: translateX(-110%);
-  position: absolute;
-}
-
-.editPollPrimary-enter-active {
-  opacity: 1;
-  transform: translateX(0%);
-  transition: all var(--speed) ease;
-}
-
-.editPollPrimary-exit {
-  opacity: 1;
-  transform: translateX(0%);
-  position: absolute;
-}
-
-.editPollPrimary-exit-active {
-  opacity: 0.5;
-  transform: translateX(-110%);
-  transition: all var(--speed) ease;
-}
-
-.editPollSecondary-enter {
-  opacity: 0.5;
-  transform: translateX(110%);
-}
-
-.editPollSecondary-enter-active {
-  opacity: 1;
-  transform: translateX(0%);
-  transition: all var(--speed) ease;
-}
-
-.editPollSecondary-exit {
-  opacity: 1;
-  transform: translateX(0%);
-}
-
-.editPollSecondary-exit-active {
-  opacity: 0.5;
-  transform: translateX(110%);
-  transition: all var(--speed) ease;
-}
-
-.editPollContainer {
-  min-width: 500px;
-  overflow: hidden;
-  position: relative;
-  transition: all var(--speed) ease;
-}
-
-.editPollBackButton {
-  color: #a3a3a3;
-  font-size: 20px;
-  border: 2px solid #a3a3a3;
-  border-radius: 5px;
-  padding: 2px;
-  margin-right: 10px;
-  width: 40px;
-  background-color: transparent;
-  display: inline;
-}
-
-.editPollBackButton:hover {
-  cursor: pointer;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-}
-
-.editPollAnswerBox {
-  font-family: "Montserrat", sans-serif;
-  border-radius: 5px;
-  font-size: 20px;
-  display: block;
-  margin: 0 auto !important;
-  width: 98%;
-  height: 100%;
-  padding: 2px 0px 2px 5px;
-  margin-top: 5px !important;
-  margin-bottom: 5px !important;
-}
-
-.editPollAnswerBox::placeholder {
-  color: rgb(136, 136, 136);
-  font-style: italic;
-}
-
 .htmltextarea {
   width: 100%;
-  height: 200px;
+  height: 140px;
   resize: none;
 }
+
 .htmledit {
   width: 250px;
+}
+.htmledit h1 {
+  padding-bottom: 5px;
+}
+.htmledit select {
+  font-size: .7em;
+  padding: 4px 0;
+  border-width: 1px;
+  margin-bottom: 10px;
+  border-radius: 2px;
 }
 .htmledit p {
   font-size: .8em;
   margin-bottom: 4px;
 }
+
 .htmlwhinput {
   display: flex;
-  margin: -10px -10px 5px;
+  margin: 0px -10px 5px;
 }
-.htmlwhinput > div {
+
+.htmlwhinput>div {
   flex: 1;
   padding: 0 10px;
 }
+
 .htmledit input[type="number"] {
   width: 100%;
 }
+
 .htmledit input {
   font-family: inherit;
   padding: 4px;
   font-size: .7em;
+  width: 100%;
 }
+
 .htmledit input::placeholder {
   opacity: 0.5;
-}
-.htmledit input[type="checkbox"] {
-  font-family: "Montserrat", sans-serif;
-  border-radius: 5px;
-  font-size: 20px;
-  top: 0 !important;
-  left: 0 !important;
 }
 
 .htmledit input[type="checkbox"] {
   color: rgb(136, 136, 136);
   font-style: italic;
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
 }
 
 .htmliframeinput {
   display: flex;
+  margin: 8px 0;
+  align-items: center;
+}
+.htmliframeinput > p {
+  margin: 0;
 }
 .htmliframeinput > input {
-  flex: 1;
   margin: 0;
 }

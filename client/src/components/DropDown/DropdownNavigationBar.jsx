@@ -10,7 +10,6 @@ const DropdownNavigationBar = (props) => {
   const [menuHeight, setMenuHeight] = useState(null);
   const [messagesChecked, setMessagesChecked] = useState(true);
   const [alertsChecked, setAlertsChecked] = useState(true);
-  const [parametersChecked, setParametersChecked] = useState(true);
   const [settingsChecked, setSettingsChecked] = useState(true);
   const [performanceChecked, setPerformanceChecked] = useState(true);
   const dropdownRef = useRef();
@@ -41,11 +40,6 @@ const DropdownNavigationBar = (props) => {
   const handleAlerts = () => {
     setAlertsChecked(!alertsChecked);
     props.avisible(!alertsChecked);
-  }
-
-  const handleParameters = () => {
-    setParametersChecked(!parametersChecked);
-    props.pavisible(!parametersChecked);
   }
 
   const handleSettings = () => {
@@ -89,12 +83,12 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-sliders-h"></i>}
-            onClick={handleParameters}>
-            Parameters
+            leftIcon={<i className="icons fas fa-chart-bar"></i>}
+            onClick={handlePerformance}>
+            Performance
             <Switch
-              onChange={handleParameters}
-              checked={parametersChecked}
+              onChange={handlePerformance}
+              checked={performanceChecked}
               className="react-switch"
             />
           </DropdownItem>
@@ -105,16 +99,6 @@ const DropdownNavigationBar = (props) => {
             <Switch
               onChange={handleSettings}
               checked={settingsChecked}
-              className="react-switch"
-            />
-          </DropdownItem>
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-chart-bar"></i>}
-            onClick={handlePerformance}>
-            Performance
-            <Switch
-              onChange={handlePerformance}
-              checked={performanceChecked}
               className="react-switch"
             />
           </DropdownItem>

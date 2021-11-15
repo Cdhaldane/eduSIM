@@ -1,4 +1,4 @@
-import React, { useMemo, forwardRef } from "react";
+import React, { useMemo, forwardRef, useEffect, useRef } from "react";
 import CustomWrapper from "../CustomWrapper";
 import styled from "styled-components";
 import DOMPurify from 'dompurify';
@@ -15,11 +15,33 @@ const HTMLFrame = forwardRef((props, ref) => {
 
   const sanitizedHTML = useMemo(() => DOMPurify.sanitize(props.htmlValue), [props.htmlValue]);
 
+  const iframeRef = useRef();
+
+  useEffect(() => {
+    if (props.varEnable) {
+      window.addEventListener('message', event => {
+        if (props.iframeSrc.startsWith(event.origin)) { 
+          sessionStorage.setItem("iframe_"+event.data?.name,event.data?.value); 
+        }
+      });
+    }
+  }, []);
+
+  const onLoad = () => {
+    if (iframeRef.current && props.varName) {
+      let vars = props.varName.split(',').reduce((a,v) => ({
+        ...a,
+        [v]: sessionStorage[`iframe_${v}`]
+      }), {});
+      iframeRef.current.contentWindow.postMessage(vars, "*");
+    }
+  }
+
   return (
     <CustomWrapper {...props} ref={ref}>
       <HTMLWrapper padded={!props.iframeSrc} width={props.containerWidth} height={props.containerHeight}>
       {props.iframeSrc 
-        ? <iframe src={props.iframeSrc} height="100%" width="100%" />
+        ? <iframe src={props.iframeSrc} height="100%" width="100%" style={{border: 'none'}} ref={iframeRef} onLoad={onLoad} />
         : <div dangerouslySetInnerHTML={{__html: sanitizedHTML}} />
       }
       </HTMLWrapper>

@@ -17,6 +17,8 @@ function Join(props) {
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
+  const [numTabs, setNumTabs] = useState(0);
+  const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
 
   if (props.location.gameinstance !== undefined) {
@@ -36,7 +38,7 @@ function Join(props) {
   }
 
   useEffect(() => {
-    (async function () {
+    const run = async () => {
       const client = await io(process.env.REACT_APP_API_ORIGIN, {
         auth: {
           token: localStorage.adminid
@@ -68,7 +70,8 @@ function Join(props) {
       });
       setSocketInfo(client);
       return () => client.disconnect();
-    }());
+    };
+    run();
   }, []);
 
   const currentRoomStatus = useMemo(() => {
@@ -125,6 +128,14 @@ function Join(props) {
 
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
+  const displayPause = currentRoom
+    ? !!currentRoomStatus?.running
+    : Object.values(roomStatus).some(s => s.running);
+
+  const allRunning = numTabs !== 0 && 
+    numTabs <= Object.values(roomStatus).length && 
+    !Object.values(roomStatus).some(s => !s.running);
+
   return (
     <div className="dashboard">
       <div className="page-margin joinboard-header">
@@ -164,45 +175,47 @@ function Join(props) {
                 </p>
               </>
             ) : (
-              <p>All rooms</p>
+              <>
+                <p>All rooms</p>
+                <p>{displayPause ? (
+                  allRunning ? "(All running)" : "(Some running)"
+                 ) : "(All paused)"}</p>
+              </>
             )}
             <div className="joinboard-buttons">
               <button
-                class={`joinboard-button ${currentRoom && currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                onClick={startSim}
-                title={currentRoom ? "Start this simulation" : "Start all simulations"}
-              >
-                <i class="fa fa-play"></i>
-              </button>
-              <button
-                class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                onClick={pauseSim}
+                className="joinboard-button"
+                onClick={displayPause ? pauseSim : startSim}
                 title={currentRoom ? "Pause this simulation" : "Pause all simulations"}
               >
-                <i class="fa fa-pause"></i>
+                {displayPause ? (
+                  <i className="fa fa-pause"></i>
+                ) : (
+                  <i className="fa fa-play"></i>
+                )}
               </button>
               <button
-                class="joinboard-button"
+                className="joinboard-button"
                 onClick={() => setResetID(true)}
                 title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
               >
-                <i class="fa fa-retweet"></i>
+                <i className="fa fa-retweet"></i>
               </button>
               {advanceMode === "teacher" && (
                 <>
                   <button
-                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                     onClick={handlePrevPage}
                     title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
                   >
-                    <i class="fa fa-angle-double-left"></i>
+                    <i className="fa fa-angle-double-left"></i>
                   </button>
                   <button
-                    class={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                     onClick={handleNextPage}
                     title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
                   >
-                    <i class="fa fa-angle-double-right"></i>
+                    <i className="fa fa-angle-double-right"></i>
                   </button>
                 </>
               )}
@@ -220,7 +233,12 @@ function Join(props) {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <CreateCsv gameid={localStorage.gameid} isOpen={showNote} close={toggleModal} />
+        <CreateCsv 
+        gameid={localStorage.gameid} 
+        isOpen={showNote} 
+        close={toggleModal} 
+        success={() => setRefreshRooms(r => r+1)}
+        />
       </Modal>
 
       <Tabs
@@ -230,6 +248,8 @@ function Join(props) {
         chatMessages={currentRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
+        refreshRooms={refreshRooms}
+        updateNumTabs={l => setNumTabs(l)}
       />
 
       <ConfirmationModal

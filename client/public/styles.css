@@ -24,6 +24,10 @@
 html {
   font-family: "Montserrat",
 }
+html.notransition * {
+  transition-duration: 0s !important;
+  animation: none !important;
+}
 body {
   background-color: #636363;
   margin: 0;
@@ -31,7 +35,7 @@ body {
   font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow: hidden;
   height: 100%;
   width: 100%;
 }
@@ -270,6 +274,7 @@ footer {
   flex-direction: column;
   text-align: center;
   line-height: 1.3em;
+  font-size: .9em;
 }
 .joinboard-buttons {
   display: flex;

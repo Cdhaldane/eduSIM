@@ -12,7 +12,7 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(214);
+  const [menuHeight, setMenuHeight] = useState(269);
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -57,9 +57,11 @@ const DropdownAddObjects = (props) => {
     setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
 
     document.addEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleReposition);
     return () => {
       document.removeEventListener('click', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.removeEventListener('contextmenu', handleReposition);
     }
   }, []);
@@ -74,11 +76,6 @@ const DropdownAddObjects = (props) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       props.close();
     }
-  }
-
-  function handleChange(e) {
-    setColour(e);
-    props.choosecolor(e);
   }
 
   function calcHeight(el) {
@@ -383,7 +380,42 @@ const DropdownAddObjects = (props) => {
   // Custom Components (Interactive)
   const addPoll = () => {
     addObjectToLayer(
-      "polls", {}
+      "polls",
+      {
+        performanceEnabled: false,
+        customName: "",
+        json: {
+          pages: [
+            {
+              questions: [
+                {
+                  id: 0,
+                  type: "text",
+                  name: "0",
+                  title: "Sample Text Question:",
+                  isRequired: true,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                }, {
+                  id: 1,
+                  type: "text",
+                  name: "1",
+                  inputType: "date",
+                  title: "Sample Date Question:",
+                  isRequired: false,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                }, {
+                  id: 2,
+                  type: "boolean",
+                  name: "2",
+                  title: "Sample Yes/No Question:",
+                  isRequired: false,
+                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                }
+              ]
+            }
+          ]
+        }
+      }
     );
   }
 
@@ -403,6 +435,24 @@ const DropdownAddObjects = (props) => {
     addObjectToLayer(
       "tics", {}
     );
+  }
+
+  const addInput = (varType) => {
+    addObjectToLayer(
+      "inputs", { varType, label: "Label text" }
+    );
+  }
+
+  const addOverlayWindow = () => {
+    // Activate the overlay window on the current page
+    const newPages = [...props.state.pages];
+    newPages[props.state.level - 1] = {
+      ...newPages[props.state.level - 1],
+      hasOverlay: !newPages[props.state.level - 1].hasOverlay
+    }
+    props.setState({
+      pages: newPages
+    });
   }
 
   // Other
@@ -520,6 +570,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
             onClick={() => setActiveMenu("pieces")}>
             Add Interactive
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-question-circle"></i>}
+            onClick={() => setActiveMenu("inputs")}>
+            Add Input
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -782,6 +837,41 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
+          <DropdownItem
+            onClick={addOverlayWindow}
+            leftIcon={<i className="icons fa fa-window-restore"
+              onClick={addOverlayWindow}></i>}>
+            Toggle Overlay</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'inputs'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>Add Input</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("button")}
+            leftIcon={<i className="icons fas fa-mouse-pointer"
+              onClick={() => addInput("button")}></i>}>
+            Button</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("text")}
+            leftIcon={<i className="icons fa fa-quote-right"
+              onClick={() => addInput("text")}></i>}>
+            Textbox</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("checkbox")}
+            leftIcon={<i className="icons fa fa-check-square"
+              onClick={() => addInput("checkbox")}></i>}>
+            Checkbox</DropdownItem>
         </div>
       </CSSTransition>
     </div>
