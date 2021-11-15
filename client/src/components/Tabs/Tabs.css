@@ -28,6 +28,22 @@
   font-size: .6em;
 }
 
+.selected-tab button {    
+  font-family: inherit;
+  background: white;
+  border: none;
+  height: min-content;
+  padding: 8px 12px;
+  border-radius: 100px;
+  margin-left: 24px;
+  margin-top: 6px;
+  cursor: pointer;
+}
+.selected-tab button:hover {
+  background-color: #636363 !important;
+  color: white;
+}
+
 .selected-tab li.selected {
   background: #FFF;
   z-index: 2;
@@ -257,6 +273,20 @@
 .content-radiobuttons {
   margin: 2px 20px;
   flex: 1;
+}
+.content-editname {    
+  align-self: center;
+  color: white;
+  background-color: var(--primary);
+  padding: 8px;
+  border-radius: 100px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.content-inputname {
+  font-size: 1.3em;
+  font-family: inherit;
+  padding: 4px;
 }
 .content-roomlink {
   align-self: center;

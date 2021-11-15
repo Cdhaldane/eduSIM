@@ -296,6 +296,34 @@ exports.createRoom = async (req, res) => {
   }
 };
 
+exports.updateRoomName = async (req, res) => {
+  const { gameroomid, gameroom_name } = req.body;
+
+  const gameroom = await GameRoom.findOne({
+    where: {
+      gameroomid,
+    },
+  });
+
+  if (!gameroom) {
+    return res.status(400).send({
+      message: `No game room found with the id ${id}`,
+    });
+  }
+
+  try {
+    gameroom.gameroom_name = gameroom_name;
+    gameroom.save();
+    return res.send({
+      message: `Game room has been updated!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
 GameRoom.belongsTo(GameInstance, { foreignKey: 'gameinstanceid' });
 
 exports.getRoomByURL = async (req, res) => {
