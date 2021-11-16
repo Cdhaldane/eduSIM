@@ -139,12 +139,13 @@ footer {
   margin: 20px 50px;
   max-width: 350px;
   text-align: center;
+  cursor: pointer;
   flex: 1;
 }
 
 .welcome-navbutton h1 {
   font-family: "Montserrat", sans-serif;
-  font-size: 1em;
+  font-size: 24px;
   margin-bottom: 20px;
   color: #181818;
 }

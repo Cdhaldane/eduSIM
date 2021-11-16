@@ -9,7 +9,7 @@ function AuthenticationButton(props) {
   const { user } = useAuth0();
 
   function handleClick() {
-    loginWithRedirect({ redirectUri: window.location.origin });
+    loginWithRedirect({ redirectUri: window.location.origin, prompt: "select_account" });
     axios.get(process.env.REACT_APP_API_ORIGIN + '/adminaccounts/getAdminbyEmail/:email/:name', {
       params: {
         email: user.email,

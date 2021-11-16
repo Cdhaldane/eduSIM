@@ -45,7 +45,7 @@ function CollabLogin(props) {
       } else {
         localStorage.setItem("inviteEmail", query.get("email"));
         localStorage.setItem("inviteSim", query.get("sim"));
-        loginWithRedirect({ redirectUri: window.location.href });
+        loginWithRedirect({ redirectUri: window.location.href, prompt: "select_account" });
       }
     } else {
       history.push('/');
