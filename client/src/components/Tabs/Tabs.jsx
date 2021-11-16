@@ -2,19 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Table from "../Table/Table";
 import CreateEmail from "../CreateEmail/CreateEmail";
-import {
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
 import Modal from "react-modal";
 import { useAlertContext } from "../Alerts/AlertContext";
 import moment from "moment";
 import ConfirmationModal from "../Modal/ConfirmationModal";
+import Performance from "../SideBar/Performance";
 
 import "./Tabs.css";
 
@@ -28,6 +20,7 @@ function Tabs(props) {
   const [logs, setLogs] = useState({});
   const [viewLogs, setViewLogs] = useState(false);
   const [removeLog, setRemoveLog] = useState(null);
+  const [customObjs, setCustomObjs] = useState();
 
   const alertContext = useAlertContext();
 
@@ -45,6 +38,22 @@ function Tabs(props) {
     }).catch((error) => {
       console.log(error);
     });
+
+    // Get the object data for this game
+    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
+      params: {
+        adminid: props.adminid,
+        gameid: props.gameid
+      }
+    }).then((res) => {
+      if (res.data.game_parameters) {
+        // Load saved object data
+        const objects = JSON.parse(res.data.game_parameters);
+        const customObjs = Object.fromEntries(Object.entries(objects).filter(([key]) =>
+          props.customObjNames.includes(key)));
+        setCustomObjs(customObjs);
+      }
+    }).catch(error => console.error(error));
   }, [props.gameid, props.refreshRooms]);
 
   const toggleTab = (index) => {
@@ -58,7 +67,10 @@ function Tabs(props) {
           gameroomid: id,
         },
       }).then((res) => {
-        setInteractionData(Object.entries(res.data).map((val) => ({ name: "Level " + val[0], interactions: val[1] })));
+        setInteractionData(Object.entries(res.data).map((val) => ({
+          name: "Level " + val[0],
+          interactions: val[1]
+        })));
       });
       if (!logs[id]) {
         axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getGameLogs", {
@@ -265,7 +277,7 @@ function Tabs(props) {
 
   return (
     <>
-      {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length>0) ? (
+      {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
         <div className="logs page-margin" hidden={!viewLogs}>
           <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
             <h4>Display previous runs {viewLogs ? '-' : '+'}</h4>
@@ -472,24 +484,13 @@ function Tabs(props) {
                   </div>
                 </div>
                 <div className="group-column">
-                  <h3>Performance:</h3>
-                  <div className="chart" disabled={interactionData.length === 0}>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <LineChart
-                        data={interactionData}
-                        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
-                      >
-                        <Line type="monotone" dataKey="interactions" stroke="#8884d8" />
-                        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                      </LineChart>
-                    </ResponsiveContainer>
-                    {interactionData.length === 0 && (
-                      <p>No data has been recorded yet.</p>
-                    )}
-                  </div>
+                  <h3>Performance Report:</h3>
+                  <Performance
+                    adminMode={true}
+                    status={props.roomStatus[Object.keys(props.roomStatus)[0]]
+                      ? props.roomStatus[Object.keys(props.roomStatus)[0]].gamepieces : {}}
+                    customObjs={customObjs}
+                  />
                 </div>
               </div>
               <h3>Students / participants in room:</h3>

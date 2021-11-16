@@ -778,7 +778,12 @@ const App = (props) => {
           />
           <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
           <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-          <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
+          <ProtectedRoute path="/join" render={(props) =>
+            <Join
+              customObjects={customObjects}
+              {...props}
+            />}
+          />
         </Switch>
       </AlertContextProvider>
     </SettingsContext.Provider>
