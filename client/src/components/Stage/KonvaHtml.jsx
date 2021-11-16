@@ -22,7 +22,6 @@ const __rest = (this && this.__rest) || function (s, e) {
 
 const KonvaHtml = ({
   children,
-  groupProps,
   divProps,
   transform,
   transformFunc,
@@ -111,12 +110,12 @@ const KonvaHtml = ({
     div.style.opacity = visible ? "1" : "0";
   }, [visible]);
 
-  return createElement(Group, Object.assign({
+  return createElement(Group, {
     ref: groupRef,
     id: refName,
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
-    onDragEnd: defaultProps.onDragEnd,
+    onDragEnd: () => {console.log("meep"); defaultProps.onDragEnd;},
     customProps: defaultProps.custom,
     x: defaultProps.x,
     y: defaultProps.y,
@@ -124,7 +123,7 @@ const KonvaHtml = ({
     rotation: defaultProps.rotation,
     scaleX: defaultProps.scaleX,
     scaleY: defaultProps.scaleY
-  }, groupProps));
+  });
 };
 
 export default KonvaHtml;

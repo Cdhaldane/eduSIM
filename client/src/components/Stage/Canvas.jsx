@@ -1183,7 +1183,8 @@ class Graphics extends Component {
         return;
       }
 
-      const stage = personalArea ? "personalAreaStage" : "graphicStage";
+      const stage = personalArea ? "personalAreaStage" :
+        (this.state.overlayOpen ? "overlayStage" : "graphicStage");
       const pos = this.refs[stage].getPointerPosition();
       const shape = this.refs[stage].getIntersection(pos);
 
@@ -1818,10 +1819,14 @@ class Graphics extends Component {
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
       if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
         sidebarPx = 100;
+      } else if (sidebarPx > 0 && layer === this.refs.overlayLayer) {
+        sidebarPx = 100;
       }
       let topPx = 0;
       if (layer === this.refs.personalAreaLayer) {
         topPx = 70;
+      } else if (layer === this.refs.overlayLayer) {
+        topPx = 30;
       }
       const scaleVal = layer === this.refs.personalAreaLayer ?
         this.state.personalLayerScale :

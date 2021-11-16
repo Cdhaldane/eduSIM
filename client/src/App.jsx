@@ -465,7 +465,8 @@ const App = (props) => {
           onTransform: canvas.handleTextTransform,
           onDblClick: () => canvas.handleTextDblClick(
             canvas.refs[obj.ref],
-            obj.infolevel ? canvas.refs.personalAreaLayer : canvas.refs.groupAreaLayer
+            obj.infolevel ? canvas.refs.personalAreaLayer :
+              (obj.overlay ? canvas.refs.overlayLayer : canvas.refs.groupAreaLayer)
           ),
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
@@ -598,6 +599,7 @@ const App = (props) => {
         </>
       );
     }
+    console.log(canvas);
     return (
       <SettingsContext.Provider value={{ settings: localSettings || {} }}>
         {editMode && (

@@ -51,13 +51,13 @@ const CustomWrapper = forwardRef((props, ref) => {
   }
 
   const noDrag = (e) => {
-    if (e.ctrlKey) {
+    if (e.ctrlKey && obj.current) {
       obj.current.classList.remove("customPointerEventsOn");
     }
   }
 
   const activateDrag = (e) => {
-    if (e.key === "Control") {
+    if (e.key === "Control" && obj.current) {
       obj.current.classList.add("customPointerEventsOn");
     }
   }
