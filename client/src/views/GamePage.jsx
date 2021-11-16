@@ -118,7 +118,7 @@ const Game = (props) => {
       });
       client.on("roomStatusUpdate", ({ status, refresh }) => {
         if (refresh) {
-          sessionStorage.removeItem("userInfo");
+          localStorage.removeItem("userInfo");
           window.location.reload();
         }
         setRoomStatus(status);
