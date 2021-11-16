@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
 import moment from "moment";
+import Overlay from "./Overlay";
 
 import {
   Stage,
@@ -57,7 +58,8 @@ class Graphics extends Component {
     // Objects
     ...this.props.savedObjects,
 
-    "status"
+    "status",
+    "pages"
   ];
 
   constructor(props) {
@@ -85,16 +87,31 @@ class Graphics extends Component {
       personalLayerScale: 1,
       personalLayerX: 0,
       personalLayerY: 0,
+      overlayLayerScale: 1,
+      overlayLayerX: 0,
+      overlayLayerY: 0,
+
+      startModalOpen: true,
+      personalAreaOpen: 0, // 0 is closed, 1 is open
+      overlayOpen: false,
+
+      level: 1,
+      pageNumber: 6,
+      pages: [
+        { name: "1", hasOverlay: false },
+        { name: "2", hasOverlay: false },
+        { name: "3", hasOverlay: false },
+        { name: "4", hasOverlay: false },
+        { name: "5", hasOverlay: false },
+        { name: "6", hasOverlay: false }
+      ],
 
       gameroles: [],
-      open: 0,
-      isOpen: true,
       state: false,
       selectrole: false,
       gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
-      level: 1,
-      pageNumber: 6
+      canvasLoading: false,
     };
 
     setTimeout(() => this.props.reCenter("play"), 100);
@@ -158,6 +175,10 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
+    if (prevState.canvasLoading !== this.state.canvasLoading) {
+      this.props.setCanvasLoading(this.state.canvasLoading);
+    }
+
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
     if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
@@ -177,6 +198,18 @@ class Graphics extends Component {
       });
 
       this.props.setUserId(userId);
+
+      // Recenter if the canvas has changed
+      // This includes opening/closing personal and overlay areas and changing levels
+      if (
+        this.state.personalAreaOpen !== prevState.personalAreaOpen ||
+        this.state.overlayOpen !== prevState.overlayOpen ||
+        this.state.level !== prevState.level
+      ) {
+        const layer = this.state.personalAreaOpen ? "personal" :
+          (this.state.overlayOpen ? "overlay" : "group");
+        setTimeout(() => this.props.reCenter("play", layer), 300);
+      }
     }
 
     // Update the custom objects state in the parent component (if custom objs changed)
@@ -257,7 +290,7 @@ class Graphics extends Component {
 
   toggleModal = () => {
     this.setState({
-      isOpen: !this.state.isOpen
+      startModalOpen: !this.state.startModalOpen
     });
   }
 
@@ -267,6 +300,12 @@ class Graphics extends Component {
         level
       })
     }
+  }
+
+  setOverlayOpen = (val) => {
+    this.setState({
+      overlayOpen: val
+    });
   }
 
   render() {
@@ -285,26 +324,49 @@ class Graphics extends Component {
 
     return (
       <React.Fragment>
-        {this.state.selectrole && <div>
-          <Modal
-            isOpen={!this.props.players[this.props.socket.id]}
-            contentLabel="My dialog"
-            className="createmodaltab"
-            overlayClassName="myoverlaytab"
-            closeTimeoutMS={250}
-            ariaHideApp={false}
-          >
-            <CreateRole
-              gameid={this.state.gameinstanceid}
-              handleSubmit={this.handlePlayerInfo}
-              gameroles={this.state.gameroles}
-              players={this.props.players}
-              initialUserInfo={this.props.initialUserInfo}
-              roleSelection={this.props.roleSelection}
-            />
-          </Modal>
-        </div>
-        }
+        {this.state.selectrole && (
+          <div>
+            <Modal
+              isOpen={!this.props.players[this.props.socket.id]}
+              contentLabel="My dialog"
+              className="createmodaltab"
+              overlayClassName="myoverlaytab"
+              closeTimeoutMS={250}
+              ariaHideApp={false}
+            >
+              <CreateRole
+                gameid={this.state.gameinstanceid}
+                handleSubmit={this.handlePlayerInfo}
+                gameroles={this.state.gameroles}
+                players={this.props.players}
+                initialUserInfo={this.props.initialUserInfo}
+                roleSelection={this.props.roleSelection}
+              />
+            </Modal>
+          </div>
+        )}
+
+        {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
+        {this.state.pages[this.state.level - 1].hasOverlay && (
+          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
+            <i className="icons fa fa-window-restore" />
+          </div>
+        )}
+
+        {/* ---- OVERLAY CANVAS ---- */}
+        {this.state.overlayOpen && (
+          <Overlay
+            playMode={true}
+            closeOverlay={() => this.setOverlayOpen(false)}
+            state={this.state}
+            propsIn={this.props}
+            setRefs={(type, ref) => {
+              this.refs[type] = ref;
+            }}
+          />
+        )}
+
+        {/* ---- GROUP CANVAS ---- */}
         <div>
           <Stage
             height={window.innerHeight}
@@ -324,6 +386,8 @@ class Graphics extends Component {
             </Layer>
           </Stage>
         </div>
+
+
         <div className="eheader">
           <Level
             number={this.state.pageNumber}
@@ -334,7 +398,9 @@ class Graphics extends Component {
             freeAdvance={this.props.freeAdvance}
           />
           <div>
-            <div className={"info" + this.state.open}>
+
+            {/* ---- PERSONAL CANVAS ---- */}
+            <div className={"info" + this.state.personalAreaOpen}>
               <div className="personalAreaStageContainer" id="personalGameContainer">
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
@@ -359,11 +425,15 @@ class Graphics extends Component {
                   </Layer>
                 </Stage>
               </div>
-              {(this.state.open !== 1)
-                ? <button className="personalAreaToggle" onClick={() => this.setState({ open: 1 })}>
+              {(this.state.personalAreaOpen !== 1)
+                ? <button
+                  className="personalAreaToggle"
+                  onClick={() => this.setState({ personalAreaOpen: 1 })}>
                   <i className="fas fa-caret-square-up fa-3x" />
                 </button>
-                : <button className="personalAreaToggle" onClick={() => this.setState({ open: 0 })}>
+                : <button
+                  className="personalAreaToggle"
+                  onClick={() => this.setState({ personalAreaOpen: 0 })}>
                   <i className="fas fa-caret-square-down fa-3x" />
                 </button>
               }

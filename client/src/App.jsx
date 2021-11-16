@@ -599,7 +599,7 @@ const App = (props) => {
         </>
       );
     }
-    console.log(canvas);
+
     return (
       <SettingsContext.Provider value={{ settings: localSettings || {} }}>
         {editMode && (
@@ -722,18 +722,6 @@ const App = (props) => {
           ) ?
             <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
         })}
-
-        {/* Show loading symbol if objects are loading */}
-        {/*canvas.state.canvasLoading && (
-          <Rect
-            x={-5 * window.innerWidth}
-            y={-5 * window.innerHeight}
-            height={window.innerHeight * 10}
-            width={window.innerWidth * 10}
-            fill={"black"}
-            opacity={0.5}
-          />
-        )*/}
 
         {/* This is the blue transformer rectangle that pops up when objects are selected */}
         {editMode && (

@@ -2413,6 +2413,7 @@ class Graphics extends Component {
                 </>
               )}
             <Overlay
+              playMode={false}
               closeOverlay={() => this.setOverlayOpen(false)}
               state={this.state}
               propsIn={this.props}

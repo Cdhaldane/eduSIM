@@ -27,8 +27,12 @@ class Overlay extends Component {
             <i className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />
             {/* The Konva Stage */}
             <div
-              onKeyDown={this.props.onKeyDown}
-              onKeyUp={this.props.onKeyUp}
+              {...(this.props.playMode ? {} :
+                {
+                  onKeyDown: this.props.onKeyDown,
+                  onKeyUp: this.props.onKeyUp
+                }
+              )}
               id="overlayCanvasContainer"
               tabIndex="0"
               onContextMenu={(e) => e.preventDefault()}
@@ -39,14 +43,18 @@ class Overlay extends Component {
                   document.getElementById("overlayCanvasContainer").clientHeight : 0}
                 width={document.getElementById("overlayCanvasContainer") ?
                   document.getElementById("overlayCanvasContainer").clientWidth : 0}
-                onMouseDown={(e) => this.props.onMouseDown(e, false)}
-                onMouseUp={(e) => this.props.onMouseUp(e, false)}
-                onMouseMove={(e) => this.props.onMouseMove(e, false)}
-                onWheel={(e) => this.props.onWheel(e, false)}
-                onContextMenu={(e) => e.evt.preventDefault()}
-                // Mobile Event Listeners
-                onTouchStart={(e) => this.props.onMouseDown(e, false)}
-                onTouchEnd={(e) => this.props.onMouseUp(e, false)}
+                {...(this.props.playMode ? {} :
+                  {
+                    onMouseDown: (e) => this.props.onMouseDown(e, false),
+                    onMouseUp: (e) => this.props.onMouseUp(e, false),
+                    onMouseMove: (e) => this.props.onMouseMove(e, false),
+                    onWheel: (e) => this.props.onWheel(e, false),
+                    onContextMenu: (e) => e.evt.preventDefault(),
+                    // Mobile Event Listeners
+                    onTouchStart: (e) => this.props.onMouseDown(e, false),
+                    onTouchEnd: (e) => this.props.onMouseUp(e, false),
+                  }
+                )}
               >
                 <Layer
                   ref={"overlayLayer"}
@@ -56,10 +64,14 @@ class Overlay extends Component {
                   y={this.props.state.overlayLayerY}
                   height={window.innerHeight}
                   width={window.innerWidth}
-                  draggable={this.props.state.layerDraggable}
-                  onDragMove={(e) => this.props.onDragMove(e, false)}
+                  draggable={this.props.playMode ? false : this.props.state.layerDraggable}
+                  {...(this.props.playMode ? {} :
+                    {
+                      onDragMove: (e) => this.props.onDragMove(e, false)
+                    }
+                  )}
                 >
-                  {this.props.propsIn.loadObjects("overlay", "edit")}
+                  {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit")}
                 </Layer>
               </Stage>
             </div>

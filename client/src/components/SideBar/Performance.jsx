@@ -81,9 +81,6 @@ const Performance = forwardRef((props, ref) => {
                                   <>
                                     {poll.json.pages.map((page, pageI) => (
                                       <React.Fragment key={pageI}>
-                                        {/*<h3>
-                                          Page #{pageI + 1}
-                                        </h3>*/}
                                         {page.questions.map((q, qI) => {
                                           return (
                                             <div key={qI}>
@@ -93,7 +90,7 @@ const Performance = forwardRef((props, ref) => {
                                               <div className="performanceQOptions">
                                                 <table>
                                                   <tbody>
-                                                    {poll.infolevel && (
+                                                    {poll.infolevel || poll.overlay && (
                                                       <>
                                                         <tr>
                                                           <td>
@@ -149,7 +146,7 @@ const Performance = forwardRef((props, ref) => {
                                                         </tr>
                                                       </>
                                                     )}
-                                                    {!poll.infolevel && (
+                                                    {!(poll.infolevel || poll.overlay) && (
                                                       <>
                                                         <tr>
                                                           <td>
@@ -223,11 +220,9 @@ const Performance = forwardRef((props, ref) => {
                 <>
                   {props.customObjs.polls.map((poll, pollI) => {
                     if (props.status[poll.id] && poll.performanceEnabled) {
-                      const pollData = poll.infolevel ?
+                      const pollData = (poll.infolevel || poll.overlay) ?
                         (props.status[poll.id][props.userId] ? props.status[poll.id][props.userId].data : null) :
                         props.status[poll.id].data;
-                        console.log(props.status[poll.id]);
-                        console.log(pollData);
                       if (pollData) {
                         let questions = [];
                         for (let i = 0; i < poll.json.pages.length; i++) {

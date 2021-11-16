@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import { useAlertContext } from "../components/Alerts/AlertContext";
+import Loading from "../components/Loading/Loading";
 
 const Main = styled.main`
   grid-area: main;
@@ -64,6 +65,7 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [userId, setUserId] = useState();
+  const [canvasLoading, setCanvasLoading] = useState(false);
 
   const toggle = () => setShowNav(!showNav);
 
@@ -199,6 +201,7 @@ const Game = (props) => {
             reCenter={props.reCenter}
             setUserId={setUserId}
             setCustomObjs={setCustomObjs}
+            setCanvasLoading={setCanvasLoading}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}
             adminid={localStorage.adminid}
@@ -236,6 +239,11 @@ const Game = (props) => {
             </>
           )}
         </Time>
+        {canvasLoading && (
+        <div className="gameLoadingOverlay">
+           <Loading />
+        </div>
+      )}
       </>
     ) : (
       <h1>loading...</h1>
