@@ -112,6 +112,7 @@ class Graphics extends Component {
       gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
       canvasLoading: false,
+      updateRanOnce: false,
     };
 
     setTimeout(() => this.props.reCenter("play"), 100);
@@ -177,6 +178,23 @@ class Graphics extends Component {
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
+    }
+
+    // Show overlay if just entered page (going forwards, not backwards)
+    if (
+      !this.state.overlayOpen &&
+      (prevState.level < this.state.level || !this.state.updateRanOnce) &&
+      this.state.pages[this.state.level - 1].hasOverlay
+    ) {
+      this.setState({
+        overlayOpen: true
+      });
+    }
+
+    if (!this.state.updateRanOnce) {
+      this.setState({
+        updateRanOnce: true
+      })
     }
 
     // This passes info all the way up to the App component so that it can be used in functions

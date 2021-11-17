@@ -13,9 +13,7 @@ class Overlay extends Component {
   componentDidUpdate = () => {
     for (let i = 0; i < Object.keys(this.refs).length; i++) {
       const key = Object.keys(this.refs)[i];
-      if (key !== "customRect") {
-        this.props.setRefs(key, this.refs[key]);
-      }
+      this.props.setRefs(key, this.refs[key]);
     }
   }
 

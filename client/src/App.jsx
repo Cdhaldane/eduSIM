@@ -159,7 +159,7 @@ const App = (props) => {
         const personalArea = document.getElementById(personalId).getBoundingClientRect();
         const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
         const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-        const topMenuH = isPersonalArea ? 80 : topBar.height;
+        const topMenuH = overlay ? 20 : (isPersonalArea ? 80 : topBar.height);
         const padding = 80;
         const doublePad = 2 * padding;
         const screenW = window.innerWidth;

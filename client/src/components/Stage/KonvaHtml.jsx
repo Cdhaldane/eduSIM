@@ -115,7 +115,7 @@ const KonvaHtml = ({
     id: refName,
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
-    onDragEnd: () => {console.log("meep"); defaultProps.onDragEnd;},
+    onDragEnd: defaultProps.onDragEnd,
     customProps: defaultProps.custom,
     x: defaultProps.x,
     y: defaultProps.y,

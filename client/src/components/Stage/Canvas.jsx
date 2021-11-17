@@ -347,8 +347,9 @@ class Graphics extends Component {
     // Redraw the canvas every 1 second
     this.drawInterval = setInterval(() => {
       if (this.state.savedStateLoaded) {
-        this.refs.graphicStage.draw();
-        this.refs.personalAreaStage.draw();
+        const stageType = this.state.overlayOpen ? "overlayStage" :
+          (this.personalAreaOpen ? "personalStage" : "groupStage");
+        this.refs[stageType].draw();
       }
     }, 1000);
 
@@ -630,9 +631,12 @@ class Graphics extends Component {
 
   updateSelectionRect = (personalArea) => {
     let node = this.refs.groupSelectionRect;
-    if (personalArea) {
+    if (this.state.overlayOpen) {
+      node = this.refs.overlaySelectionRect;
+    } else if (personalArea) {
       node = this.refs.personalSelectionRect;
     }
+    if (!node) return;
     node.setAttrs({
       visible: this.state.selection.visible,
       x: Math.min(this.state.selection.x1, this.state.selection.x2),
@@ -709,7 +713,11 @@ class Graphics extends Component {
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
-    if (personalArea) {
+    if (this.state.overlayOpen) {
+      scale = this.state.overlayLayerScale;
+      xOffset = -this.state.overlayLayerX;
+      yOffset = -this.state.overlayLayerY;
+    } else if (personalArea) {
       scale = this.state.personalLayerScale;
       xOffset = -this.state.personalLayerX;
       yOffset = -this.state.personalLayerY;
@@ -801,9 +809,10 @@ class Graphics extends Component {
         return;
       }
 
-      const layer = personalArea ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
-      const selectionRect = personalArea ? "personalSelectionRect" : "groupSelectionRect";
+      const layer = this.state.overlayOpen ? "overlayLayer" :
+        (personalArea ? "personalAreaLayer" : "groupAreaLayer");
+      const selectionRect = this.state.overlayOpen ? "overlaySelectionRect" :
+        (personalArea ? "personalSelectionRect" : "groupSelectionRect");
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
       let shape = null;
       let clickShapeGroup = null;
@@ -814,7 +823,8 @@ class Graphics extends Component {
 
       if (event.button === 0) {
         // LEFT CLICK
-        const selBox = this.refs[selectionRect].getClientRect();
+        const selBox = this.refs[selectionRect] ? this.refs[selectionRect].getClientRect() : null;
+        if (!selBox) return;
         if (selBox.width > 1 && selBox.height > 1) {
           // This only runs if there has been a rectangle selection (click and drag selection)
           const elements = [];
@@ -1142,7 +1152,7 @@ class Graphics extends Component {
       this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
     } else if (type === "" && this.state.groupSelection.length) {
       this.refs[transformer].nodes(this.state.groupSelection.flat());
-    } else {
+    } else if (this.refs[transformer]) {
       this.refs[transformer].nodes([]);
     }
   }
@@ -1153,7 +1163,11 @@ class Graphics extends Component {
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
-    if (personalArea) {
+    if (this.state.overlayOpen) {
+      scale = this.state.overlayLayerScale;
+      xOffset = -this.state.overlayLayerX;
+      yOffset = -this.state.overlayLayerY;
+    } else if (personalArea) {
       scale = this.state.personalLayerScale;
       xOffset = -this.state.personalLayerX;
       yOffset = -this.state.personalLayerY;
@@ -1184,8 +1198,8 @@ class Graphics extends Component {
         return;
       }
 
-      const stage = personalArea ? "personalAreaStage" :
-        (this.state.overlayOpen ? "overlayStage" : "graphicStage");
+      const stage = personalArea ? "personalStage" :
+        (this.state.overlayOpen ? "overlayStage" : "groupStage");
       const pos = this.refs[stage].getPointerPosition();
       const shape = this.refs[stage].getIntersection(pos);
 
@@ -1254,7 +1268,9 @@ class Graphics extends Component {
       )
     }));
 
-    this.refs.graphicStage.draw();
+    const stageType = this.state.overlayOpen ? "overlayStage" :
+      (this.personalAreaOpen ? "personalStage" : "groupStage");
+    this.refs[stageType].draw();
   }
 
   handleWheel = (e, personalArea) => {
@@ -1308,7 +1324,11 @@ class Graphics extends Component {
         for (let i = 0; i < this.savedObjects.length; i++) {
           this.setState({
             [this.savedObjects[i]]: history[historyStep][this.savedObjects[i]]
-          }, () => this.refs.graphicStage.draw());
+          }, () => {
+            const stageType = this.state.overlayOpen ? "overlayStage" :
+              (this.personalAreaOpen ? "personalStage" : "groupStage");
+            this.refs[stageType].draw();
+          });
         }
       }
       this.setState({
@@ -1632,8 +1652,9 @@ class Graphics extends Component {
       })
     }, () => {
       setTimeout(() => {
-        this.refs.personalAreaStage.draw();
-        this.refs.graphicStage.draw();
+        const stageType = this.state.overlayOpen ? "overlayStage" :
+          (this.personalAreaOpen ? "personalStage" : "groupStage");
+        this.refs[stageType].draw();
       }, 300);
     });
   }
@@ -2336,8 +2357,10 @@ class Graphics extends Component {
         }
       );
       node.show();
-      this.refs.graphicStage.findOne(".transformer").show();
-      this.refs.graphicStage.draw();
+      const stageType = this.state.overlayOpen ? "overlayStage" :
+        (this.personalAreaOpen ? "personalStage" : "groupStage");
+      this.refs[stageType].findOne(".transformer").show();
+      this.refs[stageType].draw();
     }
   }
 
@@ -2484,7 +2507,7 @@ class Graphics extends Component {
               document.getElementById("editMainContainer").clientHeight : 0}
             width={document.getElementById("editMainContainer") ?
               document.getElementById("editMainContainer").clientWidth : 0}
-            ref="graphicStage"
+            ref="groupStage"
             onMouseDown={(e) => this.onMouseDown(e, false)}
             onMouseUp={(e) => this.handleMouseUp(e, false)}
             onMouseMove={(e) => this.handleMouseOver(e, false)}
@@ -2505,7 +2528,11 @@ class Graphics extends Component {
               draggable={this.state.layerDraggable}
               onDragMove={(e) => this.dragLayer(e, false)}
             >
-              {this.props.loadObjects("group", "edit")}
+              {!this.state.personalAreaOpen && !this.state.overlayOpen && (
+                <>
+                  {this.props.loadObjects("group", "edit")}
+                </>
+              )}
             </Layer>
           </Stage>
         </div>
@@ -2545,13 +2572,39 @@ class Graphics extends Component {
                   close={() => this.setState({ personalAreaContextMenuVisible: false })}
                 />
               )}
+            {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
+              <Portal>
+                <ContextMenu
+                  {...this.state.selectedContextMenu}
+                  selectedShapeName={this.state.selectedShapeName}
+                  getObj={this.getKonvaObj}
+                  getObjState={this.getSelectedObj}
+                  updateObjState={this.updateSelectedObj}
+                  selectedFont={this.state.selectedFont}
+                  handleUngrouping={this.handleUngrouping}
+                  handleGrouping={this.handleGrouping}
+                  handleStrokeColor={this.handleStrokeColor}
+                  handleFillColor={this.handleFillColor}
+                  handleWidth={this.handleWidth}
+                  handleOpacity={this.handleOpacity}
+                  handleFont={this.handleFont}
+                  handleSize={this.handleSize}
+                  close={this.handleCloseContextMenu}
+                  copy={this.handleCopy}
+                  cut={this.handleCut}
+                  paste={this.handlePaste}
+                  delete={this.handleDelete}
+                  setPollData={this.setPollData}
+                />
+              </Portal>
+            )}
             <Stage
               style={{ position: "relative", overflow: "hidden" }}
               height={document.getElementById("editPersonalContainer") ?
                 document.getElementById("editPersonalContainer").clientHeight : 0}
               width={document.getElementById("editPersonalContainer") ?
                 document.getElementById("editPersonalContainer").clientWidth : 0}
-              ref="personalAreaStage"
+              ref="personalStage"
               onMouseMove={(e) => this.handleMouseOver(e, true)}
               onMouseDown={(e) => this.onMouseDown(e, true)}
               onMouseUp={(e) => this.handleMouseUp(e, true)}
@@ -2573,33 +2626,11 @@ class Graphics extends Component {
                 draggable={this.state.layerDraggable}
                 onDragMove={(e) => this.dragLayer(e, true)}
               >
-                {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
-                  <Portal>
-                    <ContextMenu
-                      {...this.state.selectedContextMenu}
-                      selectedShapeName={this.state.selectedShapeName}
-                      getObj={this.getKonvaObj}
-                      getObjState={this.getSelectedObj}
-                      updateObjState={this.updateSelectedObj}
-                      selectedFont={this.state.selectedFont}
-                      handleUngrouping={this.handleUngrouping}
-                      handleGrouping={this.handleGrouping}
-                      handleStrokeColor={this.handleStrokeColor}
-                      handleFillColor={this.handleFillColor}
-                      handleWidth={this.handleWidth}
-                      handleOpacity={this.handleOpacity}
-                      handleFont={this.handleFont}
-                      handleSize={this.handleSize}
-                      close={this.handleCloseContextMenu}
-                      copy={this.handleCopy}
-                      cut={this.handleCut}
-                      paste={this.handlePaste}
-                      delete={this.handleDelete}
-                      setPollData={this.setPollData}
-                    />
-                  </Portal>
+                {this.state.personalAreaOpen === 1 && !this.state.overlayOpen && (
+                  <>
+                    {this.props.loadObjects("personal", "edit")}
+                  </>
                 )}
-                {this.props.loadObjects("personal", "edit")}
               </Layer>
             </Stage>
           </div>

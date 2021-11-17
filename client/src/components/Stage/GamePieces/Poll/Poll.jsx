@@ -15,15 +15,6 @@ const Poll = forwardRef((props, ref) => {
   }, [props.defaultProps.custom.pollJson]);
 
   useEffect(() => {
-    console.log("P");
-  }, [props]);
-
-  useEffect(() => {
-    console.log("S");
-  }, [survey]);
-
-
-  useEffect(() => {
     let data = null;
     let page = null;
     let isComplete = null;
@@ -79,7 +70,6 @@ const Poll = forwardRef((props, ref) => {
   }
 
   const onComplete = (survey) => {
-    console.log("BOOM");
     if (!props.status.isComplete) {
       setCompleted(true);
       props.updateStatus(formatData("isComplete", true));
