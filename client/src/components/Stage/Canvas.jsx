@@ -265,6 +265,7 @@ class Graphics extends Component {
               this.setState({
                 savedStateLoaded: true
               });
+              setTimeout(this.props.reCenter("edit"), 100);
             }
           });
         });

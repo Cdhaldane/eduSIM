@@ -67,7 +67,7 @@ const Performance = forwardRef((props, ref) => {
         });
       }
       answer = (
-        <div className="performancePieChartContainer">
+        <div className={`performancePieChartContainer ${props.adminMode ? "adminModePieChart" : ""}`}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -76,7 +76,7 @@ const Performance = forwardRef((props, ref) => {
                 data={pieChartData}
                 cx="50%"
                 cy="50%"
-                outerRadius={65}
+                outerRadius={props.adminMode ? 40 : 65}
                 fill="#8f001a"
                 label={(entry) => {
                   if (question.inputType && question.inputType === "color") {
@@ -289,7 +289,7 @@ const Performance = forwardRef((props, ref) => {
             </div>
           )}
           {!props.setData && (
-            <div className={`performancePollResult ${props.adminMode ? "noGradientBefore" : ""}`}>
+            <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
               <h2 style={{ display: props.adminMode ? "none" : "block" }}>Performance Report</h2>
               <div>
                 {props.status && props.customObjs && (

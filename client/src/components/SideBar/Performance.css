@@ -7,6 +7,8 @@
 
 .noForm {
   overflow: hidden;
+  height: 300px !important;
+  box-shadow: none !important;
 }
 
 .noForm:after {
@@ -47,7 +49,7 @@
   padding-right: 0.5em;
   font-size: 0.8em;
   font-weight: 0;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 .performanceQOptions>table>tbody>tr>td>label>input {
@@ -115,6 +117,12 @@
   text-overflow: ellipsis;
 }
 
+.adminPagePerformancePollResult {
+  max-height: 300px !important;
+  font-size: 0.7em !important;
+  font-family: "Montserrat", sans-serif;
+}
+
 .performancePollResult {
   max-height: 85vh;
   overflow: auto;
@@ -147,6 +155,10 @@
 .performancePieChartContainer {
   height: 200px;
   width: 100%;
+}
+
+.performancePieChartContainer.adminModePieChart {
+  height: 150px !important;
 }
 
 .recharts-pie-label-text {

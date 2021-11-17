@@ -8,10 +8,20 @@ import "survey-react/survey.css";
 const Poll = forwardRef((props, ref) => {
 
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
+  const [completed, setCompleted] = useState();
 
   useEffect(() => {
     setSurvey(new Survey.Model(props.defaultProps.custom.pollJson));
   }, [props.defaultProps.custom.pollJson]);
+
+  useEffect(() => {
+    console.log("P");
+  }, [props]);
+
+  useEffect(() => {
+    console.log("S");
+  }, [survey]);
+
 
   useEffect(() => {
     let data = null;
@@ -69,7 +79,9 @@ const Poll = forwardRef((props, ref) => {
   }
 
   const onComplete = (survey) => {
+    console.log("BOOM");
     if (!props.status.isComplete) {
+      setCompleted(true);
       props.updateStatus(formatData("isComplete", true));
     }
   }
@@ -99,7 +111,11 @@ const Poll = forwardRef((props, ref) => {
           model={survey}
           onValueChanged={onValueChanged}
           onCurrentPageChanged={onCurrentPageChanged}
-          onComplete={onComplete}
+          onComplete={(survey) => {
+            if (!completed) {
+              onComplete(survey);
+            }
+          }}
         />
       </div>
     </CustomWrapper>

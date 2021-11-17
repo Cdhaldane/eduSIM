@@ -5,7 +5,7 @@
   list-style: none;
   font-size: 24px;
   padding: 0;
-  line-height: 24px;
+  line-height: 20px;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -207,7 +207,7 @@
 .content-tabs {
   flex-grow: 1;
   font-size: 1.3rem;
-  max-height: 550px;
+  height: calc(100vh - 350px);
 }
 
 .content {
@@ -229,7 +229,7 @@
   font-size: 1em;
 }
 .content > h3 {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .content p {
@@ -363,6 +363,7 @@ hr {
 
 .groupcontainer {
   display: flex;
+  border-bottom: 1px dotted black;
 }
 .group-column {
   flex: 1;
@@ -374,10 +375,10 @@ hr {
 .group-chatlog {
   font-size: .7em;
   height: 300px;
-  padding: 10px;
 }
 .group-chatlog > div {
   height: 100%;
+  padding: 10px;
   overflow-y: auto;
 }
 .group-chatlog p {
@@ -423,7 +424,7 @@ hr {
 }
 
 .logs-margin {
-  height: 50px;
+  height: 40px;
 }
 
 .logs {
@@ -436,7 +437,7 @@ hr {
 }
 .logs[hidden] {
   height: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .logs-show {
   background-color: var(--primary);
