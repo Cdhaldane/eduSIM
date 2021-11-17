@@ -17,13 +17,14 @@ exports.createGamePlayers = async (req, res) => {
   try {
     const lookuproom = [];
     const gameinstanceid = req.query.id;
+    let replacedroles = [];
 
     for (let i = 0; i < req.body.data.length; i++) {
       const fname = req.body.data[i].First_Name;
       const lname = req.body.data[i].Last_Name;
       const game_room = req.body.data[i].Room.toLowerCase();
       const player_email = req.body.data[i].Email;
-      const gamerole = req.body.data[i].Role;
+      let gamerole = req.body.data[i].Role;
 
       if (gamerole) {
         const gameroles = await GameRole.findOne({
@@ -34,6 +35,7 @@ exports.createGamePlayers = async (req, res) => {
         });
 
         if (!gameroles) {
+          replacedroles.push(gamerole);
           gamerole = "";
         }
       }
@@ -70,7 +72,7 @@ exports.createGamePlayers = async (req, res) => {
       }
     }
 
-    return res.send({ success: true });
+    return res.send({ success: true, replacedroles });
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,

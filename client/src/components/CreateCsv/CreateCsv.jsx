@@ -33,7 +33,13 @@ function CreateCsv(props) {
         id: props.gameid
       }
     }).then(response => {
-      alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.`, "info");
+      console.log(response);
+      if (response.data.replacedroles.length>0) {
+        alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.
+        Nonexistant roles "${response.data.replacedroles.join(', ')}" have been replaced with empty slots.`, "warning");
+      } else {
+        alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.`, "info");
+      }
       props.success();
       props.close();
     }).catch(err => {
