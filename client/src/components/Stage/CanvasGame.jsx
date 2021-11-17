@@ -111,11 +111,18 @@ class Graphics extends Component {
       selectrole: false,
       gameinstanceid: this.props.gameinstance.gameinstanceid,
       adminid: this.props.adminid,
-      canvasLoading: false,
+      canvasLoading: true,
       updateRanOnce: false,
     };
 
-    setTimeout(() => this.props.reCenter("play"), 100);
+    setTimeout(() => {
+      this.setState({
+        canvasLoading: true
+      }, () => {
+        this.props.setCanvasLoading(this.state.canvasLoading);
+        this.props.reCenter("play");
+      });
+    }, 500);
   }
 
   formatTextMacros = (text) => {
@@ -226,6 +233,9 @@ class Graphics extends Component {
       ) {
         const layer = this.state.personalAreaOpen ? "personal" :
           (this.state.overlayOpen ? "overlay" : "group");
+        this.setState({
+          canvasLoading: true
+        });
         setTimeout(() => this.props.reCenter("play", layer), 300);
       }
     }

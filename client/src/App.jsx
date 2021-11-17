@@ -148,8 +148,7 @@ const App = (props) => {
       canvas.setState({
         [`${areaString}LayerX`]: 0,
         [`${areaString}LayerY`]: 0,
-        [`${areaString}LayerScale`]: 1,
-        canvasLoading: true,
+        [`${areaString}LayerScale`]: 1
       }, () => setTimeout(() => {
         canvas = getUpdatedCanvasState(mode);
 
@@ -186,7 +185,7 @@ const App = (props) => {
           }
           x = -minX * scale;
           y = -minY * scale;
-          // Scale and fit to top left
+          // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
             [`${areaString}LayerY`]: y + topMenuH,
@@ -353,7 +352,7 @@ const App = (props) => {
       strokeWidth: obj.strokeWidth,
       infolevel: obj.infolevel,
       overlay: obj.overlay,
-      strokeScaleEnabled: false,
+      strokeScaleEnabled: true,
       draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
       editMode: editMode,
       ...(editMode ?
@@ -481,6 +480,7 @@ const App = (props) => {
   const lineProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,
       key: index,
       points: obj.points,

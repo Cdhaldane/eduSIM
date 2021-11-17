@@ -1,8 +1,7 @@
 import React from "react";
 import "./Loading.css";
 
-const loadingImg =
-  "https://cdn.auth0.com/blog/auth0-react-sample/assets/loading.svg";
+const loadingImg = "https://samherbert.net/svg-loaders/svg-loaders/three-dots.svg";
 
 class Loading extends React.Component {
   render() {

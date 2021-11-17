@@ -228,7 +228,7 @@ class Graphics extends Component {
       savedstates: [],
       savedStateLoaded: false,
 
-      canvasLoading: false
+      canvasLoading: true
     };
 
     this.reloadFromSavedState(props.doNotRecalculateBounds);
@@ -265,41 +265,42 @@ class Graphics extends Component {
               this.setState({
                 savedStateLoaded: true
               });
-              setTimeout(this.props.reCenter("edit"), 100);
+              // Get full objects for saved groups
+              let fullObjSavedGroups = [];
+              for (let i = 0; i < this.state.savedGroups.length; i++) {
+                let savedGroup = [];
+                for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+                  const id = this.state.savedGroups[i][j].attrs.id;
+                  savedGroup.push(this.refs[id]);
+                }
+                fullObjSavedGroups.push(savedGroup);
+              }
+              this.setState({
+                savedGroups: fullObjSavedGroups
+              }, () => {
+                // Calculate positions on initial load
+                if (!doNotRecalculateBounds) {
+                  this.setState({
+                    canvasLoading: true
+                  }, () => {
+                    this.props.setCanvasLoading(this.state.canvasLoading);
+                    setTimeout(() => this.props.reCenter("edit"), 1000);
+                  });
+                }
+              });
+
+              for (let j = 0; j < this.customObjects.length; j++) {
+                const type = this.customObjects[j];
+                for (let i = 0; i < this.state[type].length; i++) {
+                  const state = this.state[type][i];
+                  this.setCustomGroupPos(state, "groupAreaLayer");
+                  this.setCustomGroupPos(state, "personalAreaLayer");
+                  this.setCustomGroupPos(state, "overlayLayer");
+                }
+              }
             }
           });
         });
-
-        setTimeout(() => {
-          // Get full objects for saved groups
-          let fullObjSavedGroups = [];
-          for (let i = 0; i < this.state.savedGroups.length; i++) {
-            let savedGroup = [];
-            for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-              const id = this.state.savedGroups[i][j].attrs.id;
-              savedGroup.push(this.refs[id]);
-            }
-            fullObjSavedGroups.push(savedGroup);
-          }
-          this.setState({
-            savedGroups: fullObjSavedGroups
-          });
-
-          for (let j = 0; j < this.customObjects.length; j++) {
-            const type = this.customObjects[j];
-            for (let i = 0; i < this.state[type].length; i++) {
-              const state = this.state[type][i];
-              this.setCustomGroupPos(state, "groupAreaLayer");
-              this.setCustomGroupPos(state, "personalAreaLayer");
-              this.setCustomGroupPos(state, "overlayLayer");
-            }
-          }
-
-          // Calculate positions on initial load
-          if (!doNotRecalculateBounds) {
-            this.props.reCenter("edit");
-          }
-        }, 100);
       } else {
         this.setState({
           savedStateLoaded: true
@@ -462,6 +463,9 @@ class Graphics extends Component {
         ) {
           const layer = this.state.personalAreaOpen ? "personal" :
             (this.state.overlayOpen ? "overlay" : "group");
+          this.setState({
+            canvasLoading: true
+          });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
       }

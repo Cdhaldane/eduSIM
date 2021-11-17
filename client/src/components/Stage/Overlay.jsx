@@ -28,12 +28,12 @@ class Overlay extends Component {
               {...(this.props.playMode ? {} :
                 {
                   onKeyDown: this.props.onKeyDown,
-                  onKeyUp: this.props.onKeyUp
+                  onKeyUp: this.props.onKeyUp,
+                  onContextMenu: (e) => e.preventDefault()
                 }
               )}
               id="overlayCanvasContainer"
               tabIndex="0"
-              onContextMenu={(e) => e.preventDefault()}
             >
               <Stage
                 ref={"overlayStage"}

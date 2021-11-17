@@ -88,8 +88,8 @@
 
 .gameLoadingOverlay {
   z-index: 100;
-  width: 50%;
-  height: 50%;
+  width: 10%;
+  height: 10%;
   position: absolute;
   left: 50%;
   top: 50%;

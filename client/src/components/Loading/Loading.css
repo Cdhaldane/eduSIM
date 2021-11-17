@@ -17,3 +17,7 @@
   align-items: center;
   justify-content: center;
 }
+
+.spinner > img {
+  filter: sepia(10) brightness(0.6) hue-rotate(-70deg) saturate(45) brightness(1.1);
+}
