@@ -38,7 +38,7 @@ function NavToggle(props) {
     <Button
       {...props}
       className="nav-toggle"
-      onClick={() => props.setCompact(Number(props.compact))}
+      onClick={() => props.setExpanded(props.compact)}
     >
       <i className="fas fa-chevron-left"></i>
     </Button>
