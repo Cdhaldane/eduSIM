@@ -132,7 +132,7 @@ function Messages(props) {
 
   const removeWhisper = () => setSendGroup(() => new Set());
 
-  const sessionId = sessionStorage.userInfo && JSON.parse(sessionStorage.userInfo).dbid;
+  const sessionId = localStorage.userInfo && JSON.parse(localStorage.userInfo).dbid;
 
   return (props.socket ? (
     <MessageContainer>

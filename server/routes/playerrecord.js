@@ -8,6 +8,8 @@ router.post('/createPlayer', playerrecord.createPlayer);
 
 router.post('/createRoom', playerrecord.createRoom);
 
+router.post('/updateRoomName', playerrecord.updateRoomName);
+
 router.delete('/deletePlayers/:gameplayerid', playerrecord.deletePlayers);
 
 router.delete('/deleteRoom/:gameroomid', playerrecord.deleteRoom);

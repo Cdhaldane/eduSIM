@@ -5,9 +5,10 @@ const dotenv = require('dotenv');
 
 module.exports = {
   devtool: 'eval-source-map',
+  entry: './src/index.jsx',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     publicPath: '/'
   },
   resolve: {
@@ -16,6 +17,9 @@ module.exports = {
       react: path.join(__dirname, 'node_modules', 'react'),
     },
     extensions: ['.js', '.jsx']
+  },
+  performance: {
+    hints: false
   },
   module: {
     rules: [

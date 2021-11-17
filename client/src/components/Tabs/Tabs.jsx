@@ -21,13 +21,14 @@ import "./Tabs.css";
 function Tabs(props) {
   const [toggleState, setToggleState] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [newGroup, setNewGroup] = useState("");
+  const [newName, setNewName] = useState("");
   const [tabs, setTabs] = useState([]);
   const [time, setTime] = useState(1);
   const [interactionData, setInteractionData] = useState({});
   const [logs, setLogs] = useState({});
   const [viewLogs, setViewLogs] = useState(false);
   const [removeLog, setRemoveLog] = useState(null);
+  const [editingName, setEditingName] = useState(false);
 
   const alertContext = useAlertContext();
 
@@ -75,27 +76,30 @@ function Tabs(props) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleNewGroup = (e) => {
     // Check if name is empty or a duplicate
-    if (newGroup.trim() === "") {
-      console.log(tabs);
-      alertContext.showAlert("Group name cannot be empty.", "warning");
-      return;
-    }
-    if (tabs.some((tab) => tab[0] === newGroup.trim())) {
-      alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
-      return;
-    }
+    // if (newGroup.trim() === "") {
+    //   console.log(tabs);
+    //   alertContext.showAlert("Group name cannot be empty.", "warning");
+    //   return;
+    // }
+    // if (tabs.some((tab) => tab[0] === newGroup.trim())) {
+    //   alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
+    //   return;
+    // }
 
     e.preventDefault();
+    let index = tabs.length + 1;
+    tabs.forEach(tab => {
+      if (tab[0] === `New group ${index}`) index++
+    });
     let data = {
       gameinstanceid: props.gameid,
-      gameroom_name: newGroup.trim()
+      gameroom_name: `New group ${index}`
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
         setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid, res.data.gameroom_url]]);
-        setToggleState(toggleState + 1);
         if (props.socket) {
           props.socket.emit("joinRoom", res.data.gameroom_url);
         }
@@ -103,10 +107,31 @@ function Tabs(props) {
       .catch(error => console.log(error.response));
   }
 
-  const handleChange = (e) => {
-    e.preventDefault();
-    setNewGroup(e.target.value);
-  };
+  const handleGroupName = (e) => {
+    if (newName.trim() === "") {
+      alertContext.showAlert("Group name cannot be empty.", "warning");
+      return;
+    }
+    if (tabs.some((tab, ind) => tab[0] === newName.trim() && toggleState-1 !== ind)) {
+      alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
+      return;
+    }
+    let data = {
+      gameroomid: tabs[toggleState-1][1],
+      gameroom_name: newName
+    }
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updateRoomName', data)
+      .then((res) => {
+        setTabs(tabs.map((val, ind) => {
+          if (ind === toggleState - 1) {
+            val[0] = newName;
+          }
+          return val;
+        }))
+        setEditingName(false);
+      })
+      .catch(error => console.log(error.response));
+  }
 
   const toggleModal = (e) => {
     e.preventDefault();
@@ -310,12 +335,12 @@ function Tabs(props) {
               <span className="tab-text">{tab[0]}</span>
             </li>
           ))}
-          <li
-            onClick={() => toggleTab(tabs.length + 1)}
+          <button
+            onClick={handleNewGroup}
             className={toggleState === tabs.length + 1 ? "selected" : ""}
           >
-            <span className="tab-text">Add group</span>
-          </li>
+            <span className="tab-add-group">Add group +</span>
+          </button>
         </ul>
         <div className="content-tabs">
           <div
@@ -448,7 +473,19 @@ function Tabs(props) {
               }
             >
               <div className="content-header">
-                <h2>{tab[0]}</h2>
+                {editingName ? (
+                  <>
+                    <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
+                    <i className="fas fa-check content-editname" onClick={handleGroupName} />
+                  </>
+                ) : (
+                  <>
+                    <h2>{tab[0]}</h2>
+                    <i className="fas fa-pencil-alt content-editname" onClick={() => {
+                      setEditingName(true); setNewName(tab[0]);
+                    }} />
+                  </>
+                )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                   Join Room
                 </a>
@@ -503,29 +540,6 @@ function Tabs(props) {
               </div>
             </div>
           ))}
-          <div
-            className={
-              toggleState === tabs.length + 1
-                ? "content active-content"
-                : "content"
-            }
-          >
-            <h2>Add Group!</h2>
-            <hr />
-            <p>
-              Group name
-              <input
-                onChange={handleChange}
-                type="text"
-                className="textbox"
-                placeholder="Group Name"
-                id="namei"
-              />
-            </p>
-            <button className="addgroup" onClick={handleSubmit}>
-              Add
-            </button>
-          </div>
         </div>
         <ConfirmationModal
           visible={!!removeLog}
