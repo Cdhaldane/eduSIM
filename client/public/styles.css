@@ -61,6 +61,11 @@ footer {
   }
 }
 
+a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
 .cursor {
   position: fixed;
   border-radius: 50%;
@@ -185,6 +190,10 @@ footer {
   height: 100%; 
   overflow: hidden;
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
+}
+hr {
+  margin: 10px 0;
+  border-width: 1px;
 }
 .dashboard > hr {
   align-self: stretch;

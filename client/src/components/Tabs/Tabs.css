@@ -29,6 +29,7 @@
 }
 
 .selected-tab button {    
+  color: var(--text-color);
   font-family: inherit;
   background: white;
   border: none;
@@ -350,10 +351,6 @@
 .studentbuttonemail:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
-}
-
-hr {
-  margin: 10px 0;
 }
 
 .deletegroup {

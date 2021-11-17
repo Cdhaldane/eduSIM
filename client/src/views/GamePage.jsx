@@ -7,6 +7,7 @@ import Sidebar from "../components/SideBar/Sidebar";
 import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
+import Loading from "../components/Loading/Loading";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 
 const Main = styled.main`
@@ -238,7 +239,7 @@ const Game = (props) => {
         </Time>
       </>
     ) : (
-      <h1>loading...</h1>
+      <Loading />
     )
   );
 }
