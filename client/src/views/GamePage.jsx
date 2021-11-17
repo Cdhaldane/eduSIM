@@ -9,6 +9,8 @@ import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import Loading from "../components/Loading/Loading";
 import { useAlertContext } from "../components/Alerts/AlertContext";
+import "../components/Information/Info.css";
+import "../components/Tabs/Tabs.css";
 
 const Main = styled.main`
   grid-area: main;
