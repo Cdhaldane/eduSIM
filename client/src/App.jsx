@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
 import "./components/CreateCsv/CreateCsv.css";
+import "./components/CreateArea/CreateArea.css";
 
 const Welcome = React.lazy(() => import("./views/Welcome"));
 const Home = React.lazy(() => import("./views/Home"));

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Backdrop from "../../ui/Backdrop";
 import NavLinksGroup from "./NavLinksGroup";
@@ -76,6 +76,7 @@ const Sidebar = (props) => {
   const [compact, setCompact] = useState(0);
   const [submenu, setSubmenu] = useState(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
+  const [navCountTickers, setNavCountTickers] = useState({});
 
   const [mvisible, setMvisible] = useState("false");
   const [avisible, setAvisible] = useState("false");
@@ -122,6 +123,10 @@ const Sidebar = (props) => {
   const onNavClick = (nav) => {
     if (links.find(({ id }) => id === nav).submenu && !props.disabled) {
       if (submenu != nav || !submenuVisible) {
+        setNavCountTickers(old => ({
+          ...old,
+          [nav]: 0
+        }));
         setSubmenu(nav);
         setSubmenuVisible(true);
         setCompact(true);
@@ -147,6 +152,22 @@ const Sidebar = (props) => {
     }
   }
 
+  const handleIncrementTicker = useCallback((id) => {
+    setNavCountTickers(old => ({
+      ...old,
+      [id]: (old[id] || 0)+1
+    }));
+  }, [submenu]);
+
+  useEffect(() => {
+    if (Object.keys(navCountTickers).length>0 && submenuVisible) {
+      setNavCountTickers(old => Object.entries(old).reduce((prev, [key, val]) => ({
+        ...prev,
+        [key]: (submenu == key) ? 0 : val
+      }, {})));
+    }
+  }, [submenu, submenuVisible, navCountTickers]);
+
   useEffect(() => {
     setCompact(false);
     setSubmenuVisible(false);
@@ -167,7 +188,11 @@ const Sidebar = (props) => {
       visible: mvisible,
       id: "messaging",
       submenu: (
-        <Messages socket={props.socket} messageBacklog={props.submenuProps?.messageBacklog} />
+        <Messages 
+          incrementTicker={() => handleIncrementTicker("messaging")}
+          socket={props.socket} 
+          messageBacklog={props.submenuProps?.messageBacklog}
+        />
       )
     },
     {
@@ -214,6 +239,7 @@ const Sidebar = (props) => {
             action={onNavClick}
             disabled={props.disabled}
             ref={performanceBtn}
+            counts={navCountTickers}
           />
 
           <NavToggle

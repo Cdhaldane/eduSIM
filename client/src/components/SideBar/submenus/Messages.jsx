@@ -89,6 +89,7 @@ function Messages(props) {
   useEffect(() => {
     if (props.socket) {
       props.socket.on("message", ({ sender, message, group }) => {
+        props.incrementTicker();
         setMessageLog(list => list.concat({
           sender, message, group
         }));
