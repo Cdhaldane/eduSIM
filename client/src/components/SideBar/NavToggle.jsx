@@ -22,7 +22,7 @@ const Button = styled.button`
       top: calc(50% - 50px);
       color: white;
       font-size: 1.5em;
-      background-color: #8f001a;
+      background-color: var(--primary);
       border-radius: 0 999px 999px 0;
       display: flex;
       align-items: center;

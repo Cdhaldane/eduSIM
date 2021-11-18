@@ -10,7 +10,7 @@ import Modal from "react-modal";
 import Performance from "./Performance";
 
 const StyledNav = styled.nav`
-  background-color: #8f001a;
+  background-color: var(--primary);
   width: ${(p) => (p.compact ? "70px" : "256px")};
   height: 100vh;
   position: absolute;
@@ -25,7 +25,7 @@ const StyledNav = styled.nav`
   overflow: hidden;
   &::before {
     content: "";
-    background-color: #8f001a;
+    background-color: var(--primary);
     position: absolute;
     width: 100%;
     height: 100%;
