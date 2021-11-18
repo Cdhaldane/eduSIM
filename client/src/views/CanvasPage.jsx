@@ -541,6 +541,7 @@ const CanvasPage = (props) => {
     containerWidth: obj.containerWidth,
     containerHeight: obj.containerHeight,
     varName: obj.varName,
+    varInterval: obj.varInterval || false,
     varEnable: obj.varEnable || false
   });
 
