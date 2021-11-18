@@ -728,6 +728,7 @@ const CanvasPage = (props) => {
         />
       ) : (
         <GamePage
+          canvasHeights={playModeCanvasHeights}
           customObjectsLabels={customObjects}
           loadObjects={loadObjects}
           reCenter={reCenterObjects}
