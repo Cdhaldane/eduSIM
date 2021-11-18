@@ -8,6 +8,7 @@
     "axios": "^0.21.4",
     "cloudinary-react": "^1.7.0",
     "dompurify": "^2.3.3",
+    "express": "^4.17.1",
     "font-picker-react": "^3.5.2",
     "js-file-download": "^0.4.12",
     "konva": "^8.0.4",
@@ -31,6 +32,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode=development --open --hot --port 3000",
+    "prod": "node runbuild.js",
     "build": "webpack --mode=production"
   },
   "eslintConfig": {
@@ -57,6 +59,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
     "@babel/preset-react": "^7.16.0",
     "babel-loader": "^8.2.3",

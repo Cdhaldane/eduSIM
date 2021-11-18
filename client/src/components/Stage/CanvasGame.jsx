@@ -207,8 +207,8 @@ class Graphics extends Component {
     // This passes info all the way up to the App component so that it can be used in functions
     // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
     if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
-      const userId = JSON.parse(sessionStorage.getItem('userInfo')) ?
-        JSON.parse(sessionStorage.getItem('userInfo')).dbid : null;
+      const userId = JSON.parse(localStorage.getItem('userInfo')) ?
+        JSON.parse(localStorage.getItem('userInfo')).dbid : null;
 
       this.props.setGamePlayProps({
         refresh: this.forceUpdate,
@@ -266,7 +266,7 @@ class Graphics extends Component {
     this.props.socket.emit("playerUpdate", {
       role, name, dbid: this.props.initialUserId || id, invited: !!this.props.initialUserId
     })
-    sessionStorage.setItem('userInfo', JSON.stringify({ role, name, dbid: this.props.initialUserId || id }));
+    localStorage.setItem('userInfo', JSON.stringify({ role, name, dbid: this.props.initialUserId || id }));
   }
 
   componentDidMount() {
@@ -284,8 +284,8 @@ class Graphics extends Component {
       });
     } catch (e) { };
 
-    if (sessionStorage.userInfo) {
-      const info = JSON.parse(sessionStorage.userInfo);
+    if (localStorage.userInfo) {
+      const info = JSON.parse(localStorage.userInfo);
       if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
       this.handlePlayerInfo(info);
     }
@@ -337,19 +337,6 @@ class Graphics extends Component {
   }
 
   render() {
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    let gradient = ctx.createLinearGradient(0, 0, 100, 100);
-    gradient.addColorStop(0.0, "red");
-    gradient.addColorStop(1 / 6, "orange");
-    gradient.addColorStop(2 / 6, "yellow");
-    gradient.addColorStop(3 / 6, "green");
-    gradient.addColorStop(4 / 6, "aqua");
-    gradient.addColorStop(5 / 6, "blue");
-    gradient.addColorStop(1.0, "purple");
-
     return (
       <React.Fragment>
         {this.state.selectrole && (

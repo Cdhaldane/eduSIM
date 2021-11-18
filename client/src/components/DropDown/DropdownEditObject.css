@@ -4,11 +4,6 @@ ul {
   padding: 0;
 }
 
-a {
-  color: var(--text-color);
-  text-decoration: none;
-}
-
 /* Icon Button */
 
 .icon-button {

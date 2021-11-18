@@ -1,7 +1,10 @@
 import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import Note from "../components/Note/Note";
 
 function Home(props) {
+  const { loginWithRedirect } = useAuth0();
+
   return (
     <div className="welcome-container">
       <h1 className="welcome">Welcome!</h1>
@@ -14,7 +17,7 @@ function Home(props) {
         />
         <Note
           title="Are you a Teacher / Facilitator?"
-          url="/dashboard"
+          onClick={() => loginWithRedirect({ redirectUri: window.location.origin + "/dashboard", prompt: "select_account" })}
           img="teacher.png"
           className="welcome-navbutton"
         />
