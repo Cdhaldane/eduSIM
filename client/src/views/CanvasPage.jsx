@@ -30,20 +30,14 @@ const CanvasPage = (props) => {
   const { settings: localSettings } = useContext(SettingsContext);
 
   /*------------------------------------------------------------------------------/
-   * CANVAS FUNCTIONS
-   * The following functions are used on both Edit Mode and Play Mode in order to
-   * render the canvasses. They are passed down from here to both canvasses.
-   *------------------------------------------------------------------------------*/
+    * CANVAS FUNCTIONS
+    * The following functions are used on both Edit Mode and Play Mode in order to
+    * render the canvasses. They are passed down from here to both canvasses.
+    *------------------------------------------------------------------------------*/
 
   // Save State
   // These are the names of the objects in state that are saved to the database
-  const customObjects = [
-    "polls",
-    "connect4s",
-    "tics",
-    "htmlFrames",
-    "inputs"
-  ];
+  const customObjects = props.customObjects;
   const savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
     ...customObjects,
@@ -80,6 +74,12 @@ const CanvasPage = (props) => {
     gamePlayPropsRef.current = props;
   }
 
+  const [playModeCanvasHeights, setPlayModeCanvasHeights] = useState({
+    group: 2000,
+    overlay: 1000,
+    personal: 1000
+  });
+
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
       return gameEditPropsRef.current;
@@ -94,9 +94,10 @@ const CanvasPage = (props) => {
    * RECENTER OBJECTS
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
-  const reCenterObjects = (mode) => {
+  const reCenterObjects = (mode, layer) => {
+    console.log(layer);
     // Runs for personal and group area
-    const _reCenterObjects = (isPersonalArea, mode) => {
+    const _reCenterObjects = (isPersonalArea, mode, overlay) => {
       let canvas = getUpdatedCanvasState(mode);
       if (
         !(canvas &&
@@ -107,7 +108,7 @@ const CanvasPage = (props) => {
         return;
       }
 
-      const areaString = isPersonalArea ? "personal" : "group";
+      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       // Reset to default position and scale
       canvas.setState({
         [`${areaString}LayerX`]: 0,
@@ -121,8 +122,8 @@ const CanvasPage = (props) => {
         const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
         const personalArea = document.getElementById(personalId).getBoundingClientRect();
         const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
-        const sideMenuW = isPersonalArea ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-        const topMenuH = isPersonalArea ? 80 : topBar.height;
+        const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+        const topMenuH = overlay ? 20 : (isPersonalArea ? 80 : topBar.height);
         const padding = 80;
         const doublePad = 2 * padding;
         const screenW = window.innerWidth;
@@ -130,8 +131,9 @@ const CanvasPage = (props) => {
         const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
         const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
         const availableRatio = availableW / availableH;
+        const level = canvas.state.level;
 
-        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, sideMenuW, canvas, personalId);
+        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, overlay, sideMenuW, canvas, personalId, level);
         if (minX && maxX && minY && maxY) {
           let x = null;
           let y = null;
@@ -139,16 +141,30 @@ const CanvasPage = (props) => {
           const contentW = maxX - minX;
           const contentH = maxY - minY;
           const contentRatio = contentW / contentH;
-          if (availableRatio > contentRatio) {
+          if (availableRatio > contentRatio && mode !== "play") {
             // Content proportionally taller
             scale = availableH / contentH;
           } else {
             // Content proportionally wider
             scale = availableW / contentW;
+
+            if (mode === "play" && layer === "group") {
+              // Adjust the canvas container height (scroll-y will automatically appear if needed)
+              const height = (scale * contentH) + topMenuH;
+              console.log("NEW");
+              console.log(scale);
+              console.log(contentH);
+              console.log(height);
+              const canvasH = Math.max(height, window.innerHeight);
+              setPlayModeCanvasHeights({
+                ...playModeCanvasHeights,
+                group: canvasH
+              });
+            }
           }
           x = -minX * scale;
           y = -minY * scale;
-          // Scale and fit to top left
+          // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
             [`${areaString}LayerY`]: y + topMenuH,
@@ -166,19 +182,31 @@ const CanvasPage = (props) => {
             }
             canvas.setState({
               [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
-              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y
+              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y,
+              canvasLoading: false,
             });
           }, 0));
+        } else {
+          canvas.setState({
+            canvasLoading: false,
+          });
         }
       }, 0));
     }
-    _reCenterObjects(true, mode);
-    _reCenterObjects(false, mode);
+    if (!layer || layer === "group") {
+      _reCenterObjects(false, mode, false);
+    }
+    if (!layer || layer === "overlay") {
+      _reCenterObjects(false, mode, true);
+    }
+    if (!layer || layer === "personal") {
+      _reCenterObjects(true, mode, false);
+    }
   }
 
   // This gets the farthest left, top, right, and bottom coordinates of the objects
   // to create a bounding rectangle with coordinates
-  const recalculateMaxMin = (isPersonalArea, sideMenuW, canvas, personalId) => {
+  const recalculateMaxMin = (isPersonalArea, overlay, sideMenuW, canvas, personalId, level) => {
     let minX = null;
     let maxX = null;
     let minY = null;
@@ -189,7 +217,7 @@ const CanvasPage = (props) => {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           const object = objects[j];
-          if (object.infolevel === isPersonalArea) {
+          if (object.infolevel === isPersonalArea && object.overlay === overlay && object.level === level) {
             const rect = getRect(object, sideMenuW, isPersonalArea, canvas, personalId);
             if (!rect) continue;
             if (minX === null || minX > rect.x) {
@@ -287,7 +315,8 @@ const CanvasPage = (props) => {
   const defaultObjProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
-      visible: obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true),
+      visible: canvas.state.canvasLoading ? false :
+        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
       rotation: obj.rotation,
       ref: obj.ref,
       fill: obj.fill,
@@ -301,7 +330,8 @@ const CanvasPage = (props) => {
       stroke: obj.stroke,
       strokeWidth: obj.strokeWidth,
       infolevel: obj.infolevel,
-      strokeScaleEnabled: false,
+      overlay: obj.overlay,
+      strokeScaleEnabled: true,
       draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
       editMode: editMode,
       ...(editMode ?
@@ -413,7 +443,8 @@ const CanvasPage = (props) => {
           onTransform: canvas.handleTextTransform,
           onDblClick: () => canvas.handleTextDblClick(
             canvas.refs[obj.ref],
-            obj.infolevel ? canvas.refs.personalAreaLayer : canvas.refs.groupAreaLayer
+            obj.infolevel ? canvas.refs.personalAreaLayer :
+              (obj.overlay ? canvas.refs.overlayLayer : canvas.refs.groupAreaLayer)
           ),
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
@@ -428,6 +459,7 @@ const CanvasPage = (props) => {
   const lineProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,
       key: index,
       points: obj.points,
@@ -482,7 +514,9 @@ const CanvasPage = (props) => {
   }
 
   const objectIsOnStage = (obj, canvas) => {
-    if (obj.level === canvas.state.level && obj.infolevel === false) {
+    if (obj.level === canvas.state.level && obj.overlay) {
+      return "overlay";
+    } else if (obj.level === canvas.state.level && obj.infolevel === false) {
       return "group";
     } else if (obj.level === canvas.state.level && obj.infolevel === true && obj.rolelevel === canvas.state.rolelevel) {
       return "personal";
@@ -544,6 +578,7 @@ const CanvasPage = (props) => {
         </>
       );
     }
+
     return (
       <>
         {editMode && (

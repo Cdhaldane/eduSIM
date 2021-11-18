@@ -17,3 +17,7 @@
   align-items: center;
   justify-content: center;
 }
+
+.spinner > svg {
+  filter: sepia(5) brightness(0.5) hue-rotate(-70deg) saturate(25) brightness(0.7);
+}

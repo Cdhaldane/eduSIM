@@ -15,7 +15,7 @@
   border: none;
 }
 
-.area form:after {
+.area > form:after {
   --borderWidth: 3px;
   content: "";
   position: absolute;
@@ -49,7 +49,7 @@
   font-weight: 700;
 } */
 
-.area form {
+.area > form {
   position: relative;
   background: #fff;
   width: 60%;

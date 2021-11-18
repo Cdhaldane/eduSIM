@@ -1,4 +1,4 @@
-import React, { Suspense, createContext, useState, useRef, useEffect } from "react";
+import React, { Suspense, createContext, useState, useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
@@ -21,6 +21,14 @@ export const SettingsContext = createContext({
   settings: {}
 });
 
+const customObjects = [
+  "polls",
+  "connect4s",
+  "tics",
+  "htmlFrames",
+  "inputs"
+];
+
 const App = (props) => {
 
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
@@ -41,7 +49,7 @@ const App = (props) => {
     document.documentElement.style.filter = (
       localSettings.contrast ? 'saturate(1.25) grayscale(.1) contrast(1.2)' : ''
     );
-    document.documentElement.style.fontSize = (localSettings.textsize || 1)+'em';
+    document.documentElement.style.fontSize = (localSettings.textsize || 1) + 'em';
     document.documentElement.className = localSettings.notransition ? 'notransition' : '';
   }, [localSettings]);
 
@@ -49,7 +57,7 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
-    <SettingsContext.Provider value={{updateSetting, settings: localSettings || {}}}>
+    <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
         <AlertPopup />
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
@@ -65,12 +73,17 @@ const App = (props) => {
             )}
             <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
             <Route exact path="/about" render={(props) => <About {...props} />} />
-            <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} />}/>
-            <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} />} />
+            <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
+            <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
             <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
             <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
             <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-            <ProtectedRoute path="/join" render={(props) => <Join {...props} />} />
+            <ProtectedRoute path="/join" render={(props) =>
+              <Join
+                customObjects={customObjects}
+                {...props}
+              />}
+            />
           </Switch>
         </Suspense>
       </AlertContextProvider>
