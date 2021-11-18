@@ -10,6 +10,13 @@ class Overlay extends Component {
     super(props);
   }
 
+  componentDidMount = () => {
+    for (let i = 0; i < Object.keys(this.refs).length; i++) {
+      const key = Object.keys(this.refs)[i];
+      this.props.setRefs(key, this.refs[key]);
+    }
+  }
+
   componentDidUpdate = () => {
     for (let i = 0; i < Object.keys(this.refs).length; i++) {
       const key = Object.keys(this.refs)[i];
@@ -55,7 +62,7 @@ class Overlay extends Component {
                 )}
               >
                 <Layer
-                  ref={"overlayLayer"}
+                  ref={"overlayAreaLayer"}
                   scaleX={this.props.state.overlayLayerScale}
                   scaleY={this.props.state.overlayLayerScale}
                   x={this.props.state.overlayLayerX}

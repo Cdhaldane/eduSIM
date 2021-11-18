@@ -754,7 +754,7 @@ class Graphics extends Component {
       }
 
       const layer = personalArea ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const pointerPos = this.refs[layer].getStage().getPointerPosition();
       let shape = true;
       if (e.evt) {
@@ -813,7 +813,7 @@ class Graphics extends Component {
         return;
       }
 
-      const layer = this.state.overlayOpen ? "overlayLayer" :
+      const layer = this.state.overlayOpen ? "overlayAreaLayer" :
         (personalArea ? "personalAreaLayer" : "groupAreaLayer");
       const selectionRect = this.state.overlayOpen ? "overlaySelectionRect" :
         (personalArea ? "personalSelectionRect" : "groupSelectionRect");
@@ -1096,12 +1096,15 @@ class Graphics extends Component {
           if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
             sidebarPx = 100;
           }
+          const rel = this.refs[`${areaClicked}AreaLayer`].getRelativePointerPosition();
           this.setState({
             selectedContextMenu: {
               type: type,
               position: {
                 x: layerX + sidebarPx,
-                y: layerY
+                y: layerY,
+                relX: rel.x,
+                relY: rel.y
               }
             },
             [notVisible]: false,
