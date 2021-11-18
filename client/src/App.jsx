@@ -116,6 +116,12 @@ const App = (props) => {
     gamePlayPropsRef.current = props;
   }
 
+  const [playModeCanvasHeights, setPlayModeCanvasHeights] = useState({
+    group: 2000,
+    overlay: 1000,
+    personal: 1000
+  });
+
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
       return gameEditPropsRef.current;
@@ -131,6 +137,7 @@ const App = (props) => {
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
   const reCenterObjects = (mode, layer) => {
+    console.log(layer);
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
       let canvas = getUpdatedCanvasState(mode);
@@ -176,12 +183,26 @@ const App = (props) => {
           const contentW = maxX - minX;
           const contentH = maxY - minY;
           const contentRatio = contentW / contentH;
-          if (availableRatio > contentRatio) {
+          if (availableRatio > contentRatio && mode !== "play") {
             // Content proportionally taller
             scale = availableH / contentH;
           } else {
             // Content proportionally wider
             scale = availableW / contentW;
+
+            if (mode === "play" && layer === "group") {
+              // Adjust the canvas container height (scroll-y will automatically appear if needed)
+              const height = (scale * contentH) + topMenuH;
+              console.log("NEW");
+              console.log(scale);
+              console.log(contentH);
+              console.log(height);
+              const canvasH = Math.max(height, window.innerHeight);
+              setPlayModeCanvasHeights({
+                ...playModeCanvasHeights,
+                group: canvasH
+              });
+            }
           }
           x = -minX * scale;
           y = -minY * scale;
@@ -755,6 +776,7 @@ const App = (props) => {
           <Route exact path="/about" render={(props) => <About {...props} />} />
           <Route exact path="/gamepage/:roomid" render={(props) =>
             <GamePage
+              canvasHeights={playModeCanvasHeights}
               customObjectsLabels={customObjects}
               loadObjects={loadObjects}
               reCenter={reCenterObjects}

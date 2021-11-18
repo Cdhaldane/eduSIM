@@ -395,9 +395,9 @@ class Graphics extends Component {
         )}
 
         {/* ---- GROUP CANVAS ---- */}
-        <div>
+        <div id="playModeCanvasContainer">
           <Stage
-            height={window.innerHeight}
+            height={this.props.canvasHeights.group}
             width={window.innerWidth}
             ref="graphicStage"
           >

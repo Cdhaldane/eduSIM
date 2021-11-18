@@ -196,6 +196,7 @@ const Game = (props) => {
         />
         <Main>
           <CanvasGame
+            canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
             reCenter={props.reCenter}
@@ -240,10 +241,10 @@ const Game = (props) => {
           )}
         </Time>
         {canvasLoading && (
-        <div className="gameLoadingOverlay">
-           <Loading />
-        </div>
-      )}
+          <div className="gameLoadingOverlay">
+            <Loading />
+          </div>
+        )}
       </>
     ) : (
       <h1>loading...</h1>

@@ -110,3 +110,12 @@
   height: 100%;
   width: 100%;
 }
+
+#playModeCanvasContainer {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#playModeCanvasContainer > div {
+  height: 100vh;
+}
