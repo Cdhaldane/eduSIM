@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
+import Loading from "../components/Loading/Loading";
 
 const Grid = styled.div`
   display: grid;
@@ -39,6 +40,7 @@ const EditPage = (props) => {
   const [performanceFunctions, setPerformanceFunctions] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
+  const [canvasLoading, setCanvasLoading] = useState(false);
 
   const alertContext = useAlertContext();
   const dropdownContext = useDropdownContext();
@@ -76,6 +78,7 @@ const EditPage = (props) => {
           <GridMain>
             {updater % 2 === 0 ? (
               <Canvas
+                setCanvasLoading={setCanvasLoading}
                 loadObjects={props.loadObjects}
                 customDeletes={props.customDeletes}
                 allDeletes={props.allDeletes}
@@ -96,6 +99,11 @@ const EditPage = (props) => {
           </GridMain>
         </Grid>
       </Container>
+      {canvasLoading && (
+        <div className="gameLoadingOverlay">
+           <Loading />
+        </div>
+      )}
     </div>
   );
 }

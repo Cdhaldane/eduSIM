@@ -10,7 +10,7 @@ import Modal from "react-modal";
 import Performance from "./Performance";
 
 const StyledNav = styled.nav`
-  background-color: #8f001a;
+  background-color: var(--primary);
   width: ${(p) => (p.compact ? "70px" : "256px")};
   height: 100vh;
   position: absolute;
@@ -25,7 +25,7 @@ const StyledNav = styled.nav`
   overflow: hidden;
   &::before {
     content: "";
-    background-color: #8f001a;
+    background-color: var(--primary);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -73,7 +73,8 @@ const Disabled = styled.div`
 
 const Sidebar = (props) => {
   const sidebarRef = useRef();
-  const [compact, setCompact] = useState(0);
+  const backdropRef = useRef();
+  const [expanded, setExpanded] = useState(false);
   const [submenu, setSubmenu] = useState(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
   const [navCountTickers, setNavCountTickers] = useState({});
@@ -105,8 +106,9 @@ const Sidebar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (!sidebarRef.current.contains(e.target)) {
-      props.close();
+    if (!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) {
+      setExpanded(false);
+      setSubmenuVisible(false);
     }
 
     if (performanceModal.current && performanceBtn.current &&
@@ -129,10 +131,10 @@ const Sidebar = (props) => {
         }));
         setSubmenu(nav);
         setSubmenuVisible(true);
-        setCompact(true);
+        setExpanded(true);
       } else {
-        setCompact(false);
         setSubmenuVisible(false);
+        setExpanded(false);
       }
     }
 
@@ -143,9 +145,14 @@ const Sidebar = (props) => {
     }
   };
 
+  useEffect(() => {
+    setExpanded(false);
+    setSubmenuVisible(false);
+  }, [props.disabled]);
+
   const toggleCompact = (val) => {
     if (!props.disabled) {
-      setCompact(val);
+      setExpanded(val);
       if (!val) {
         setSubmenuVisible(false);
       }
@@ -167,11 +174,6 @@ const Sidebar = (props) => {
       }, {})));
     }
   }, [submenu, submenuVisible, navCountTickers]);
-
-  useEffect(() => {
-    setCompact(false);
-    setSubmenuVisible(false);
-  }, [props.disabled]);
 
   const links = [
     {
@@ -223,18 +225,18 @@ const Sidebar = (props) => {
   return (
     <>
       <div ref={sidebarRef}>
-        <Backdrop visible={compact} onClick={props.close} />
-        <Submenu open={submenuVisible && compact}>
+        <Backdrop visible={expanded} onClick={props.close} ref={backdropRef}/>
+        <Submenu open={submenuVisible && expanded}>
           {links.map(({ id, submenu: el }, index) => (
             el && (
               <div key={index} className={(id !== submenu ? "hidden" : "")}>{el}</div>
             )
           ))}
         </Submenu>
-        <StyledNav compact={!compact || submenuVisible} submenu={submenuVisible} {...props}>
+        <StyledNav compact={!expanded || submenuVisible} submenu={submenuVisible} {...props}>
           <NavLinksGroup
             isPlayMode={props.game}
-            compact={!compact || submenuVisible}
+            compact={!expanded || submenuVisible}
             links={links}
             action={onNavClick}
             disabled={props.disabled}
@@ -243,9 +245,9 @@ const Sidebar = (props) => {
           />
 
           <NavToggle
-            compact={!compact}
+            compact={!expanded}
             submenu={submenuVisible}
-            setCompact={toggleCompact}
+            setExpanded={toggleCompact}
             disabled={props.disabled}
           />
 
@@ -256,7 +258,7 @@ const Sidebar = (props) => {
                 psize="2"
                 type="nav"
                 title=""
-                hidden={!compact}
+                hidden={!expanded}
                 submenu={submenuVisible}
                 mvisible={handleMvisible}
                 avisible={handleAvisible}

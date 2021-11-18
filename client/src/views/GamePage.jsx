@@ -67,6 +67,7 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [userId, setUserId] = useState();
+  const [canvasLoading, setCanvasLoading] = useState(false);
 
   const toggle = () => setShowNav(!showNav);
 
@@ -197,11 +198,13 @@ const Game = (props) => {
         />
         <Main>
           <CanvasGame
+            canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
             reCenter={props.reCenter}
             setUserId={setUserId}
             setCustomObjs={setCustomObjs}
+            setCanvasLoading={setCanvasLoading}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}
             adminid={localStorage.adminid}
@@ -239,6 +242,11 @@ const Game = (props) => {
             </>
           )}
         </Time>
+        {canvasLoading && (
+          <div className="gameLoadingOverlay">
+            <Loading />
+          </div>
+        )}
       </>
     ) : (
       <Loading />

@@ -192,35 +192,24 @@ const DropdownAddObjects = (props) => {
     const objectsState = props.state[objectName];
     const deleteName = props.deleteLabels[props.objectLabels.indexOf(objectName)];
     const objectsDeletedState = props.state[deleteName];
-    const numOfObj = objectsState.length + objectsDeletedState + 1;
+    const numOfObj = objectsState.length + objectsDeletedState.length + 1;
     const name = objectName + numOfObj;
+    const objX = props.state.selectedContextMenu.position.relX;
+    const objY = props.state.selectedContextMenu.position.relY;
 
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",
+      overlay: props.title === "Edit Overlay Space",
       level: props.state.level,
       visible: true,
-      x: 800,
-      y: 400,
+      x: objX,
+      y: objY,
       id: name,
       name: name,
       ref: name,
       ...objectParameters
     };
-
-    const layer = props.layer;
-    const transform = props.layer.getAbsoluteTransform().copy();
-    transform.invert();
-
-    const pos = transform.point({
-      x: object.x,
-      y: object.y
-    });
-
-    if (layer.attrs.x) {
-      object.x = pos.x;
-      object.y = pos.y;
-    }
 
     props.setState({
       [objectName]: [...objectsState, object],

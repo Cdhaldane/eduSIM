@@ -25,6 +25,10 @@ function Join(props) {
     localStorage.setItem('gameid', props.location.gameinstance);
   }
 
+  if (props.location.adminid !== undefined) {
+    localStorage.setItem('adminid', props.location.adminid);
+  }
+
   if (props.location.title !== undefined) {
     localStorage.setItem('title', props.location.title);
   }
@@ -132,8 +136,8 @@ function Join(props) {
     ? !!currentRoomStatus?.running
     : Object.values(roomStatus).some(s => s.running);
 
-  const allRunning = numTabs !== 0 && 
-    numTabs <= Object.values(roomStatus).length && 
+  const allRunning = numTabs !== 0 &&
+    numTabs <= Object.values(roomStatus).length &&
     !Object.values(roomStatus).some(s => !s.running);
 
   return (
@@ -231,15 +235,17 @@ function Join(props) {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <CreateCsv 
-        gameid={localStorage.gameid} 
-        isOpen={showNote} 
-        close={toggleModal} 
-        success={() => setRefreshRooms(r => r+1)}
+        <CreateCsv
+          gameid={localStorage.gameid}
+          isOpen={showNote}
+          close={toggleModal}
+          success={() => setRefreshRooms(r => r + 1)}
         />
       </Modal>
 
       <Tabs
+        customObjNames={props.customObjects}
+        adminid={localStorage.adminid}
         gameid={localStorage.gameid}
         title={localStorage.title}
         setRoom={setCurrentRoom}

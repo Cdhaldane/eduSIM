@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, createElement } from 'react';
+import { useRef, useLayoutEffect, createElement, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Group } from 'react-konva';
 
@@ -22,12 +22,12 @@ const __rest = (this && this.__rest) || function (s, e) {
 
 const KonvaHtml = ({
   children,
-  groupProps,
   divProps,
   transform,
   transformFunc,
   refName,
-  defaultProps
+  defaultProps,
+  visible
 }) => {
 
   const groupRef = useRef(null);
@@ -100,19 +100,30 @@ const KonvaHtml = ({
     }
   });
 
-  return createElement(Group, Object.assign({
+
+  useEffect(() => {
+    const div = container.current;
+    if (!div) {
+      return;
+    }
+    // Set object visiblity
+    div.style.opacity = visible ? "1" : "0";
+  }, [visible]);
+
+  return createElement(Group, {
     ref: groupRef,
     id: refName,
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
     onDragEnd: defaultProps.onDragEnd,
     customProps: defaultProps.custom,
-    x: !defaultProps.editMode ? defaultProps.x : null,
-    y: !defaultProps.editMode ? defaultProps.y : null,
-    rotation: !defaultProps.editMode ? defaultProps.rotation : null,
-    scaleX: !defaultProps.editMode ? defaultProps.scaleX : null,
-    scaleY: !defaultProps.editMode ? defaultProps.scaleY : null
-  }, groupProps));
+    x: defaultProps.x,
+    y: defaultProps.y,
+    visible: visible,
+    rotation: defaultProps.rotation,
+    scaleX: defaultProps.scaleX,
+    scaleY: defaultProps.scaleY
+  });
 };
 
 export default KonvaHtml;

@@ -8,6 +8,7 @@ import "survey-react/survey.css";
 const Poll = forwardRef((props, ref) => {
 
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
+  const [completed, setCompleted] = useState();
 
   useEffect(() => {
     setSurvey(new Survey.Model(props.defaultProps.custom.pollJson));
@@ -17,18 +18,17 @@ const Poll = forwardRef((props, ref) => {
     let data = null;
     let page = null;
     let isComplete = null;
-    if (!props.infolevel) {
-      if (props.status === undefined) return;
-      data = props.status.data;
-      page = props.status.page;
-      isComplete = props.status.isComplete;
-    } else {
+    if (props.infolevel || props.overlay) {
       if (props.status[props.defaultProps.userId] === undefined) return;
       data = props.status[props.defaultProps.userId].data;
       page = props.status[props.defaultProps.userId].page;
       isComplete = props.status[props.defaultProps.userId].isComplete;
+    } else {
+      if (props.status === undefined) return;
+      data = props.status.data;
+      page = props.status.page;
+      isComplete = props.status.isComplete;
     }
-
     // Synchronize the poll answers, page, and completion for all users
     // by reading from the saved synched status variable
     if (data) {
@@ -71,13 +71,14 @@ const Poll = forwardRef((props, ref) => {
 
   const onComplete = (survey) => {
     if (!props.status.isComplete) {
+      setCompleted(true);
       props.updateStatus(formatData("isComplete", true));
     }
   }
 
   // Formats the status data according to if it is for personal or group area
   const formatData = (type, val) => {
-    if (props.infolevel) {
+    if (props.infolevel || props.overlay) {
       return {
         ...props.status,
         [props.defaultProps.userId]: {
@@ -100,7 +101,11 @@ const Poll = forwardRef((props, ref) => {
           model={survey}
           onValueChanged={onValueChanged}
           onCurrentPageChanged={onCurrentPageChanged}
-          onComplete={onComplete}
+          onComplete={(survey) => {
+            if (!completed) {
+              onComplete(survey);
+            }
+          }}
         />
       </div>
     </CustomWrapper>
