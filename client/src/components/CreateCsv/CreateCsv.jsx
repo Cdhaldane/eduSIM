@@ -36,7 +36,7 @@ function CreateCsv(props) {
       console.log(response);
       if (response.data.replacedroles.length>0) {
         alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.
-        Nonexistant roles "${response.data.replacedroles.join(', ')}" have been replaced with empty slots.`, "warning");
+        Nonexistant roles "${response.data.replacedroles.join(', ')}" have been replaced with empty slots.`, "warning", 6000);
       } else {
         alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.`, "info");
       }
