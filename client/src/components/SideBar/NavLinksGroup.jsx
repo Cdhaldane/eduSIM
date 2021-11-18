@@ -50,6 +50,7 @@ const NavLinksGroup = forwardRef((props, ref) => {
             sublabel={link.sublabel}
             img={link.img}
             action={(e) => props.action(link.id, e)}
+            count={props.counts[link.id] || 0}
           />
       })}
     </LinksGroup>

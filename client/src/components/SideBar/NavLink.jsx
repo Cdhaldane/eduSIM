@@ -23,6 +23,17 @@ const StyledLink = styled.a`
     align-items: center;
     justify-content: center;
   }
+  .countIndicator {
+    position: absolute;
+    background-color: rgb(34 125 204);
+    color: white;
+    font-size: .7em;
+    padding: 2px 6px;
+    border-radius: 12px;
+    top: 16p;
+    margin-top: 20px;
+    margin-left: 12px;
+  }
   span {
     padding-left: 14px;
     line-height: 19px;
@@ -80,6 +91,7 @@ const NavLink = forwardRef((props, ref) => {
           {props.iconClassName !== null ? (
             <>
               <i className={props.iconClassName} ></i>
+              {props.count>0 && <div className="countIndicator">{props.count}</div>}
               <span className="label">{props.label}</span>
             </>
           ) : (
