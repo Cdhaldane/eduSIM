@@ -206,10 +206,6 @@ function Join(props) {
             </button>
             {advanceMode === "teacher" && (
               <>
-                <p>All rooms</p>
-                <p>{displayPause ? (
-                  allRunning ? "(All running)" : "(Some running)"
-                ) : "(All paused)"}</p>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handlePrevPage}
