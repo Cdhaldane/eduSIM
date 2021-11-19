@@ -605,6 +605,8 @@ const CanvasPage = (props) => {
             <Line {...lineProps(obj, index, canvas, editMode)} /> : null
         })}
         {canvas.state.rectangles.map((obj, index) => {
+          //console.log(obj);
+          //console.log(objectIsOnStage(obj, canvas) === stage);
           return objectIsOnStage(obj, canvas) === stage ?
             <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
         })}
