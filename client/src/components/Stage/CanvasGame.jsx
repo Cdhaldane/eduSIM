@@ -122,7 +122,7 @@ class Graphics extends Component {
         this.props.setCanvasLoading(this.state.canvasLoading);
         this.props.reCenter("play");
       });
-    }, 500);
+    }, 1000);
   }
 
   formatTextMacros = (text) => {
@@ -382,9 +382,9 @@ class Graphics extends Component {
         )}
 
         {/* ---- GROUP CANVAS ---- */}
-        <div id="playModeCanvasContainer">
+        <div id="groupGameContainer" className="playModeCanvasContainer">
           <Stage
-            height={this.props.canvasHeights.group}
+            height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
           >
@@ -416,11 +416,12 @@ class Graphics extends Component {
 
             {/* ---- PERSONAL CANVAS ---- */}
             <div className={"info" + this.state.personalAreaOpen}>
-              <div className="personalAreaStageContainer" id="personalGameContainer">
+              <div id="personalGameContainer" className="personalAreaStageContainer playModeCanvasContainer">
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
-                  height={document.getElementById("personalGameContainer") ?
-                    document.getElementById("personalGameContainer").clientHeight : 0}
+                  height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :
+                    (document.getElementById("personalGameContainer") ?
+                      document.getElementById("personalGameContainer").clientHeight * 0.95 : 0)}
                   width={document.getElementById("personalGameContainer") ?
                     document.getElementById("personalGameContainer").clientWidth : 0}
                   ref="personalAreaStage"

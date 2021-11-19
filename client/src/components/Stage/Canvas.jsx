@@ -228,7 +228,7 @@ class Graphics extends Component {
       savedstates: [],
       savedStateLoaded: false,
 
-      canvasLoading: true
+      canvasLoading: false
     };
 
     this.reloadFromSavedState(props.doNotRecalculateBounds);

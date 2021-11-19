@@ -43,26 +43,26 @@ const Input = forwardRef((props, ref) => {
   return (
     <CustomWrapper {...props} ref={ref}>
       <Wrapper {...settings}>
-      {({
-        button: (
-          <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
-        ),
-        text: (
-          <input 
-            type="text"
-            placeholder={props.label}
-            value={getValue()}
-            onChange={(e) => handleChangeValue(e.target.value)} 
-          />
-        ),
-        checkbox: (
-          <input 
-            type="checkbox" 
-            checked={!!getValue()} 
-            onChange={(e) => handleChangeValue((!!getValue() ? false : true))} 
-          />
-        )
-      })[props.varType]}
+        {({
+          button: (
+            <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
+          ),
+          text: (
+            <input
+              type="text"
+              placeholder={props.label}
+              value={getValue()}
+              onChange={(e) => handleChangeValue(e.target.value)}
+            />
+          ),
+          checkbox: (
+            <input
+              type="checkbox"
+              checked={!!getValue()}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+            />
+          )
+        })[props.varType]}
       </Wrapper>
     </CustomWrapper>
   );
