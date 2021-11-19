@@ -190,9 +190,9 @@ const DropdownAddObjects = (props) => {
   // Adding Objects
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
-    const deleteName = props.deleteLabels[props.objectLabels.indexOf(objectName)];
-    const objectsDeletedState = props.state[deleteName];
-    const numOfObj = objectsState.length + objectsDeletedState.length + 1;
+    const objectsDeletedState = props.state[`${objectName}DeleteCount`];
+    const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+    
     const name = objectName + numOfObj;
     const objX = props.state.selectedContextMenu.position.relX;
     const objY = props.state.selectedContextMenu.position.relY;

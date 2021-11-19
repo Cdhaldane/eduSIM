@@ -11,6 +11,7 @@ import Loading from "../components/Loading/Loading";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import "../components/Information/Info.css";
 import "../components/Tabs/Tabs.css";
+import '../components/Stage/Stage.css';
 
 const Main = styled.main`
   grid-area: main;

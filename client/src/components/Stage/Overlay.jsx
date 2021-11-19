@@ -25,6 +25,13 @@ class Overlay extends Component {
   }
 
   render() {
+    let stageHeight = 0;
+    if (this.props.playMode && this.props.propsIn.canvasHeights.overlay) {
+      stageHeight = this.props.propsIn.canvasHeights.overlay;
+    } else if (document.getElementById("overlayGameContainer")) {
+      stageHeight = document.getElementById("overlayGameContainer").clientHeight*0.95;
+    }
+
     return (
       <div className="overlayMain">
         <div>
@@ -39,15 +46,15 @@ class Overlay extends Component {
                   onContextMenu: (e) => e.preventDefault()
                 }
               )}
-              id="overlayCanvasContainer"
+              id="overlayGameContainer"
+              className="playModeCanvasContainer"
               tabIndex="0"
             >
               <Stage
                 ref={"overlayStage"}
-                height={document.getElementById("overlayCanvasContainer") ?
-                  document.getElementById("overlayCanvasContainer").clientHeight : 0}
-                width={document.getElementById("overlayCanvasContainer") ?
-                  document.getElementById("overlayCanvasContainer").clientWidth : 0}
+                height={stageHeight}
+                width={document.getElementById("overlayGameContainer") ?
+                  document.getElementById("overlayGameContainer").clientWidth : 0}
                 {...(this.props.playMode ? {} :
                   {
                     onMouseDown: (e) => this.props.onMouseDown(e, false),

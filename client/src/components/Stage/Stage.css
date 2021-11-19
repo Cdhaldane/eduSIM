@@ -50,7 +50,7 @@
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
 }
 
-#overlayCanvasContainer {
+#overlayGameContainer {
   background-color: white;
   height: 100%;
   width: 100%;
@@ -58,7 +58,7 @@
   box-shadow: var(--box-shadow);
 }
 
-#overlayCanvasContainer>div {
+#overlayGameContainer>div {
   overflow: hidden;
 }
 
@@ -111,11 +111,8 @@
   width: 100%;
 }
 
-#playModeCanvasContainer {
+.playModeCanvasContainer {
+  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-#playModeCanvasContainer > div {
-  height: 100vh;
 }
