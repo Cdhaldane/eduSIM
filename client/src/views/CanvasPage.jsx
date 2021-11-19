@@ -75,9 +75,9 @@ const CanvasPage = (props) => {
   }
 
   const [playModeCanvasHeights, setPlayModeCanvasHeights] = useState({
-    group: 2000,
-    overlay: 1000,
-    personal: 1000
+    group: null,
+    overlay: null,
+    personal: null
   });
 
   const getUpdatedCanvasState = (mode) => {
@@ -95,7 +95,6 @@ const CanvasPage = (props) => {
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
   const reCenterObjects = (mode, layer) => {
-    console.log(layer);
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
       let canvas = getUpdatedCanvasState(mode);
@@ -109,6 +108,9 @@ const CanvasPage = (props) => {
       }
 
       const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
+      if (mode === "play" && document.getElementById(`${areaString}GameContainer`)) {
+        document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
+      }
       // Reset to default position and scale
       canvas.setState({
         [`${areaString}LayerX`]: 0,
@@ -147,30 +149,27 @@ const CanvasPage = (props) => {
           } else {
             // Content proportionally wider
             scale = availableW / contentW;
-
-            if (mode === "play" && layer === "group") {
-              // Adjust the canvas container height (scroll-y will automatically appear if needed)
-              const height = (scale * contentH) + topMenuH;
-              console.log("NEW");
-              console.log(scale);
-              console.log(contentH);
-              console.log(height);
-              const canvasH = Math.max(height, window.innerHeight);
-              setPlayModeCanvasHeights({
-                ...playModeCanvasHeights,
-                group: canvasH
-              });
-            }
           }
           x = -minX * scale;
           y = -minY * scale;
+          const scaleDown = 0.85;
+          scale = scale * (mode === "play" ? scaleDown : 1); // Add padding
           // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
-            [`${areaString}LayerY`]: y + topMenuH,
+            [`${areaString}LayerY`]: y + (mode === "play" ? 0 : topMenuH),
             [`${areaString}LayerScale`]: scale
           }, () => setTimeout(() => {
             canvas = getUpdatedCanvasState(mode);
+
+            if (mode === "play") {
+              // Adjust the canvas container height (scroll-y will automatically appear if needed)
+              const canvasH = Math.max((scale * contentH) + topMenuH * 3.5, window.innerHeight);
+              setPlayModeCanvasHeights({
+                ...playModeCanvasHeights,
+                [areaString]: availableRatio * scaleDown > contentRatio ? canvasH : null
+              });
+            }
 
             // Center contents
             if (availableRatio > contentRatio) {
@@ -709,6 +708,17 @@ const CanvasPage = (props) => {
             <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
           </>
         )}
+
+        {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
+        {/*<Ellipse
+          fill={"red"}
+          x={0}
+          y={0}
+          radius={{
+            x: 100,
+            y: 100
+          }}
+        />*/}
       </>
     );
   }
