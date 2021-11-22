@@ -112,9 +112,10 @@ function Join(props) {
   };
 
   const timeFromNow = () => {
-    return currentRoomStatus?.startTime && moment(
-      moment(moment()).diff(currentRoomStatus.startTime - (currentRoomStatus.timeElapsed || 0))
-    ).format("mm:ss");
+    if (currentRoomStatus?.startTime) {
+      const diff = currentRoomStatus.startTime - (currentRoomStatus.timeElapsed || 0);
+      return moment().diff(diff, 'hours') + ":" + moment(moment().diff(diff)).format("mm:ss")
+    } return false;
   };
 
   const handleNextPage = (room) => {
@@ -167,7 +168,7 @@ function Join(props) {
                 <AutoUpdate
                   value={(currentRoomStatus.running
                     ? timeFromNow
-                    : () => moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
+                    : () => moment.duration(currentRoomStatus.timeElapsed || 0).hours() + ":" + moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
                   )}
                   intervalTime={20}
                   enabled

@@ -229,7 +229,7 @@ const Game = (props) => {
           {!isNaN(roomStatus.settings?.advanceMode) && (
             <>
               <AutoUpdate
-                value={() => moment(countdown()).format("mm:ss")}
+                value={() => moment.duration(countdown()).hours()+":"+moment(countdown()).format("mm:ss")}
                 intervalTime={20}
                 enabled
               />
