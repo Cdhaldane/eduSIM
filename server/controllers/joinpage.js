@@ -61,7 +61,7 @@ exports.createGamePlayers = async (req, res) => {
         } else {
           const gameroom_name = game_room
           const gameroomid = uuid.v4();
-          const gameroom_url = req.headers.origin + "/gamepage?" + gameroomid + "&" + gameroom_name + "&" + fname;
+          const gameroom_url = cryptoRandomString(10);
           let newGameRoom = await GameRoom.create({
             gameroomid,
             gameinstanceid,
