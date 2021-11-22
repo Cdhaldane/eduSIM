@@ -25,8 +25,21 @@ const HTMLFrame = forwardRef((props, ref) => {
         }
       });
     }
-  }, []);
-
+    let interval;
+    if (props.varName && props.varInterval) {
+      interval = setInterval(() => {
+        if (iframeRef.current) {
+          let vars = props.varName.split(',').reduce((a,v) => ({
+            ...a,
+            [v]: sessionStorage[`iframe_${v}`]
+          }), {});
+          iframeRef.current.contentWindow.postMessage(vars, "*");
+        }
+      }, 3000);
+    }
+    return () => clearInterval(interval);
+  }, []); 
+  
   const onLoad = () => {
     if (iframeRef.current && props.varName) {
       let vars = props.varName.split(',').reduce((a,v) => ({

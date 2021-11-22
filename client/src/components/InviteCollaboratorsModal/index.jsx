@@ -165,7 +165,7 @@ function InviteCollaboratorsModal(props) {
   return (
     <>
       <div className="areacsv">
-        <form ref={detailsArea} className="areacsvform areainvitecollabs">
+        <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
           <h1 className="modal-title">Invite Collaborators</h1>
           <p>To add a collaborator, enter their email address. They will be sent a personal invitation link to create an account and join the simulation.</p>
           <div>
@@ -191,10 +191,10 @@ function InviteCollaboratorsModal(props) {
             </EmailInput>
             <Collaborators>
               <h3>People with access to {props.title}:</h3>
-              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email}) => (
+              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email, verified}) => (
                 <div>
                   <div>
-                    <h4>{name}</h4>
+                    <h4>{name} {verified ? "(accepted)" : "(invited)"}</h4>
                     <p>{email}</p>
                   </div>
                   <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>

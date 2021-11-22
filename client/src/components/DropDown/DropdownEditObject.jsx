@@ -134,6 +134,13 @@ function DropdownEditObject(props) {
       varEnable: val
     }));
   }
+  function handleVarInterval(val) {
+    props.updateObjState({ varInterval: val });
+    setObjState(prev => ({
+      ...prev,
+      varInterval: val
+    }));
+  }
   function handleVarType(val) {
     props.updateObjState({ varType: val });
     setObjState(prev => ({
@@ -380,6 +387,10 @@ function DropdownEditObject(props) {
               </div>
               <p>Variables to send (separated by commas):</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} />
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={objState?.varInterval} onChange={() => handleVarInterval(!objState?.varInterval)} />
+                <p>Send at intervals</p>
+              </div>
             </div>
           </CSSTransition>
         </div>
