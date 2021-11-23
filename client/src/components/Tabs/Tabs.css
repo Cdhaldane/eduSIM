@@ -265,6 +265,9 @@
   justify-content: space-between;
   align-items: flex-end;
 }
+.content-header > div {
+  display: flex;
+}
 .content-settings {
   display: flex;
   flex-direction: column;

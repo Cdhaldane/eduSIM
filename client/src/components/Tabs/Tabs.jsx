@@ -486,17 +486,17 @@ function Tabs(props) {
             >
               <div className="content-header">
                 {editingName ? (
-                  <>
+                  <div>
                     <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
                     <i className="fas fa-check content-editname" onClick={handleGroupName} />
-                  </>
+                  </div>
                 ) : (
-                  <>
+                  <div>
                     <h2>{tab[0]}</h2>
                     <i className="fas fa-pencil-alt content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
                     }} />
-                  </>
+                  </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                   Join Room
