@@ -300,12 +300,14 @@ const Table = (props) => {
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
                       rolelist={rolelist}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
                       handleEditClick={handleEditClick}
                       handleDeleteClick={() => handleDeleteClick(contact.id)}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   )}
                 </Fragment>

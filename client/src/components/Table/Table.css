@@ -28,6 +28,13 @@
   background-color: #b0b0b0;
 }
 
+.app-container .user-online > td {
+  background-color: #a4db7f;
+}
+.app-container .user-online > td > span {
+  color: #3e7d14;
+}
+
 .app-container form {
   display: flex;
 }

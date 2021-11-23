@@ -537,6 +537,7 @@ function Tabs(props) {
                   gameroom={tab}
                   gameid={props.gameid}
                   title={props.title}
+                  players={props.players}
                 />
               </div>
             </div>

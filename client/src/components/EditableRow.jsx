@@ -5,11 +5,12 @@ const EditableRow = ({
   handleEditFormChange,
   handleCancelClick,
   handleUpdate,
+  online,
   rolelist
 }) => {
   
   return (
-    <tr>
+    <tr className={online ? "user-online" : ""}>
       <td>
         <input
           type="text"

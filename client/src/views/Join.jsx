@@ -14,6 +14,7 @@ function Join(props) {
   const [showNote, setShowNote] = useState(false);
   const [socket, setSocketInfo] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
+  const [players, setPlayers] = useState({});
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
@@ -62,6 +63,25 @@ function Join(props) {
             [data.room]: data.chatlog
           }));
         }
+        if (data.players) {
+          setPlayers((players) => ({
+            ...players,
+            ...data.players
+          }));
+        }
+      });
+      client.on("clientJoined", (player) => {
+        setPlayers((players) => ({
+          ...players,
+          [player.id]: player
+        }));
+      });
+      client.on("clientLeft", (id) => {
+        setPlayers((players) => {
+          let n = {...players};
+          delete n[id];
+          return n;
+        });
       });
       client.on("message", (data) => {
         setRoomMessages((messages) => ({
@@ -140,6 +160,8 @@ function Join(props) {
   const allRunning = numTabs !== 0 &&
     numTabs <= Object.values(roomStatus).length &&
     !Object.values(roomStatus).some(s => !s.running);
+
+  const playerDBIDS = useMemo(() => Object.values(players).map(({dbid}) => dbid), [players]);
 
   return (
     <div className="dashboard">
@@ -254,6 +276,7 @@ function Join(props) {
         socket={socket}
         roomStatus={roomStatus}
         refreshRooms={refreshRooms}
+        players={playerDBIDS}
         updateNumTabs={l => setNumTabs(l)}
       />
 

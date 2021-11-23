@@ -19,11 +19,13 @@ export default async (server, client) => {
     rooms.forEach(async ({ dataValues: room }) => {
       const status = await getRoomStatus(room.gameroom_url);
       const chatlog = await getChatlog(room.gameroom_url);
+      const players = await getPlayersInRoom(room.gameroom_url, server);
       client.join(room.gameroom_url);
       client.emit("roomStatusUpdate", {
         room: room.gameroom_url,
         status,
-        chatlog
+        chatlog,
+        players
       });
     });
 
