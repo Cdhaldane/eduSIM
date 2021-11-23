@@ -9,6 +9,22 @@ a {
   text-decoration: none;
 }
 
+.inputButtonDefault {
+  border: 1px solid black;
+  border-radius: 0.5em;
+  padding: 0.2em;
+}
+
+.inputButtonDefault:hover {
+  filter: brightness(0.85) saturate(1.25) contrast(1.05);
+  cursor: pointer;
+}
+
+.inputButtonDefault:active {
+  filter: brightness(0.8);
+  transform: scale(0.98) translateY(1px);
+}
+
 /* Icon Button */
 
 .icon-button {
@@ -50,6 +66,7 @@ a {
   z-index: 200000;
   background-color: var(--bg);
   border: var(--border);
+  border: 1px solid rgb(65, 65, 65);
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
@@ -82,7 +99,7 @@ a {
 
 .menu-item {
   text-align: left;
-  height: 55px;
+  height: 45px;
   display: flex;
   color: #636363;
   align-items: center;

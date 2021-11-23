@@ -389,6 +389,13 @@ class Graphics extends Component {
 
   componentDidUpdate = (prevProps, prevState) => {
     if (this.state.savedStateLoaded) {
+
+      // Testing for layers
+      if (this.refs['rectangles1']) {
+        //this.refs['rectangles1'].moveToTop();
+        //his.refs['rectangles1'].moveToBottom();
+      }
+
       const prevMainShapes = [];
       const currentMainShapes = [];
       for (let i = 0; i < this.savedObjects.length; i++) {
@@ -2080,6 +2087,9 @@ class Graphics extends Component {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
+              console.log(this.getObjType(id));
+              console.log(this.state);
+              console.log("BOOM");
               const customState = [...this.state[this.getObjType(id)]];
 
               const elem = this.refs[id];
@@ -2645,10 +2655,10 @@ class Graphics extends Component {
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
             ? <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
-              <i className="fas fa-caret-square-up fa-3x" />
+              <i className="fas fa-angle-up fa-3x" />
             </button>
             : <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
-              <i className="fas fa-caret-square-down fa-3x" />
+              <i className="fas fa-angle-down fa-3x" />
             </button>
           }
 

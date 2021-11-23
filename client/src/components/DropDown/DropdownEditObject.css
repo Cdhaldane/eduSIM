@@ -40,6 +40,9 @@ ul {
   border-radius: 5px;
   padding: 10px;
   box-shadow: var(--box-shadow);
+}
+
+.dropdownedit.paddingRight {
   padding-right: 20px;
 }
 
@@ -57,6 +60,29 @@ ul {
 .menuedit input {
   margin-right: 2px;
   margin-left: 0px;
+}
+
+.menuedit>div>button {
+  height: 30px;
+  width: 50px;
+  margin: 10px 0px 5px 0px;
+  border-radius: 0px;
+  border: none;
+}
+
+.menuedit>div>button:hover {
+  cursor: pointer;
+}
+
+.compactPickerEditInput {
+  margin: 5px !important;
+  padding: 0px !important;
+  width: 100% !important;
+}
+
+.editInputOptionSelected {
+  background-color: #bcd6ff;
+  border: 1px solid rgb(112, 112, 112) !important;
 }
 
 .menu-itemedit {
@@ -215,9 +241,11 @@ ul {
 .htmledit {
   width: 250px;
 }
+
 .htmledit h1 {
   padding-bottom: 5px;
 }
+
 .htmledit select {
   font-size: .7em;
   padding: 4px 0;
@@ -225,6 +253,7 @@ ul {
   margin-bottom: 10px;
   border-radius: 2px;
 }
+
 .htmledit p {
   font-size: .8em;
   margin-bottom: 4px;
@@ -268,9 +297,11 @@ ul {
   margin: 8px 0;
   align-items: center;
 }
-.htmliframeinput > p {
+
+.htmliframeinput>p {
   margin: 0;
 }
-.htmliframeinput > input {
+
+.htmliframeinput>input {
   margin: 0;
 }

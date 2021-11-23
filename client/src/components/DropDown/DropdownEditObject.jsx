@@ -5,6 +5,7 @@ import Slider from 'rc-slider';
 import FontPicker from "font-picker-react";
 import debounce from 'lodash.debounce';
 import DOMPurify from 'dompurify';
+import { CompactPicker } from 'react-color';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
@@ -16,6 +17,8 @@ function DropdownEditObject(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("");
+  const [inputFillColor, setInputFillColor] = useState("white");
+  const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
   const [strokeColor, setStrokeColor] = useState("");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
@@ -109,9 +112,9 @@ function DropdownEditObject(props) {
   }
 
   const debounceObjState = useCallback(
-		debounce(state => props.updateObjState(state), 100),
-		[], // will be created only once initially
-	);
+    debounce(state => props.updateObjState(state), 100),
+    [], // will be created only once initially
+  );
 
   function handleVarLabel(val) {
     debounceObjState({ label: val });
@@ -119,6 +122,28 @@ function DropdownEditObject(props) {
       ...prev,
       label: val
     }));
+  }
+  function handleInputColor(type, val) {
+    const style = {
+      ...objState.style,
+      [type]: val,
+      borderWidth: "2px"
+    }
+
+    setObjState(prev => {
+      debounceObjState({
+        style: {
+          ...style
+        }
+      });
+      return ({
+        ...prev,
+        style: {
+          ...style
+        }
+      })
+    }
+    );
   }
   function handleVarName(val) {
     debounceObjState({ varName: val });
@@ -176,7 +201,7 @@ function DropdownEditObject(props) {
       /* Edit a Shape Object */
       return (
         <div
-          className="dropdownedit"
+          className="dropdownedit paddingRight"
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -258,7 +283,7 @@ function DropdownEditObject(props) {
       /* Edit a Text Object */
       return (
         <div
-          className="dropdownedit"
+          className="dropdownedit paddingRight"
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -362,18 +387,18 @@ function DropdownEditObject(props) {
               <div className="htmlwhinput">
                 <div>
                   <p>Width</p>
-                  <input type="number" onChange={e => handleWidth(e.target.value)} value={objState?.containerWidth} placeholder="Auto"/>
+                  <input type="number" onChange={e => handleWidth(e.target.value)} value={objState?.containerWidth} placeholder="Auto" />
                 </div>
                 <div>
                   <p>Height</p>
-                  <input type="number" onChange={e => handleHeight(e.target.value)} value={objState?.containerHeight} placeholder="Auto"/>
+                  <input type="number" onChange={e => handleHeight(e.target.value)} value={objState?.containerHeight} placeholder="Auto" />
                 </div>
               </div>
               <p>HTML Content:</p>
-              <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue}/>
+              <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue} />
               <p>iFrame URL:</p>
               <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
-              
+
               <div className="htmliframeinput">
                 <input type="checkbox" checked={objState?.varEnable} onChange={() => handleVarEnable(!objState?.varEnable)} />
                 <p>Listen to messages</p>
@@ -410,6 +435,68 @@ function DropdownEditObject(props) {
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
               <p>Label:</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
+              <div>
+                <button
+                  className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
+                  onClick={() => setInputCurrentOptions("fill")}
+                >
+                  Fill
+                </button>
+                <button
+                  className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
+                  onClick={() => setInputCurrentOptions("stroke")}
+                >
+                  Stroke
+                </button>
+                <button
+                  className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
+                  onClick={() => setInputCurrentOptions("text")}
+                >
+                  Text
+                </button>
+              </div>
+              {inputCurrentOptions === "fill" && (
+                <CompactPicker
+                  className="compactPickerEditInput"
+                  color={inputFillColor}
+                  disableAlpha={true}
+                  onChange={(color) => {
+                    setInputFillColor(color.hex);
+                    handleInputColor("backgroundColor", color.hex);
+                  }}
+                  style={{
+                    boxShadow: "none"
+                  }}
+                />
+              )}
+              {inputCurrentOptions === "stroke" && (
+                <>
+                  <CompactPicker
+                    className="compactPickerEditInput"
+                    color={inputFillColor}
+                    disableAlpha={true}
+                    onChange={(color) => {
+                      setInputFillColor(color.hex);
+                      handleInputColor("borderColor", color.hex);
+                    }}
+                  />
+                  Stroke Width
+                </>
+              )}
+
+              {inputCurrentOptions === "text" && (
+                <>
+                  <CompactPicker
+                    className="compactPickerEditInput"
+                    color={inputFillColor}
+                    disableAlpha={true}
+                    onChange={(color) => {
+                      setInputFillColor(color.hex);
+                      handleInputColor("color", color.hex);
+                    }}
+                  />
+                </>
+              )}
             </div>
           </CSSTransition>
         </div>

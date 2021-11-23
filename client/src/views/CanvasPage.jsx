@@ -544,6 +544,7 @@ const CanvasPage = (props) => {
   });
 
   const inputProps = (obj, canvas) => ({
+    style: obj.style,
     varType: obj.varType,
     varName: obj.varName,
     refresh: canvas.refresh,

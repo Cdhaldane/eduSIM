@@ -45,7 +45,12 @@ const Input = forwardRef((props, ref) => {
       <Wrapper {...settings}>
         {({
           button: (
-            <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
+            <button
+              className="inputButtonDefault"
+              style={{
+                ...props.style
+              }}
+              onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
           ),
           text: (
             <input

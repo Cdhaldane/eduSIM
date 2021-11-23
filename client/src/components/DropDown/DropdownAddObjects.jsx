@@ -191,8 +191,9 @@ const DropdownAddObjects = (props) => {
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
     const objectsDeletedState = props.state[`${objectName}DeleteCount`];
+    console.log(objectsState);
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
-    
+
     const name = objectName + numOfObj;
     const objX = props.state.selectedContextMenu.position.relX;
     const objY = props.state.selectedContextMenu.position.relY;
@@ -282,16 +283,27 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const getMeta = (url, callback) => {
+    const img = new Image();
+    img.src = url;
+    img.onload = function () { callback(this.width, this.height); }
+  }
+
   const addImage = () => {
-    addObjectToLayer(
-      "images",
-      {
-        imgsrc: props.state.imgsrc,
-        stroke: 'black',
-        strokeWidth: 0,
-        opacity: 1,
-        width: 200,
-        height: 200
+    getMeta(
+      props.state.imgsrc,
+      (width, height) => { 
+        addObjectToLayer(
+          "images",
+          {
+            imgsrc: props.state.imgsrc,
+            stroke: 'black',
+            strokeWidth: 0,
+            opacity: 1,
+            width: width,
+            height: height
+          }
+        );
       }
     );
   }
