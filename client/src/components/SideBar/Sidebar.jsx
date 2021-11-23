@@ -106,7 +106,8 @@ const Sidebar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) {
+    if ((!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) &&
+      !e.target.className.includes('remove-whisper')) {
       setExpanded(false);
       setSubmenuVisible(false);
     }
