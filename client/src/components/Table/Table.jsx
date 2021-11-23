@@ -138,7 +138,6 @@ const Table = (props) => {
 
   // Add submit
   const handleAddFormSubmit = (event) => {
-    window.location.reload();
     event.preventDefault();
     let data = {
       gameinstanceid: props.gameid,
@@ -161,6 +160,7 @@ const Table = (props) => {
     }).catch(error => {
       console.log(error);
     });
+    return false;
   };
 
   const handleEditFormSubmit = (event) => {
