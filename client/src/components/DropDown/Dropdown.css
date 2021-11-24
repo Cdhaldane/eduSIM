@@ -10,9 +10,10 @@ a {
 }
 
 .inputButtonDefault {
-  border: 1px solid black;
   border-radius: 0.5em;
   padding: 0.2em;
+  background-color: #e4e4e4;
+  border: 2px solid rgb(44, 44, 44);
 }
 
 .inputButtonDefault:hover {
@@ -22,7 +23,18 @@ a {
 
 .inputButtonDefault:active {
   filter: brightness(0.8);
-  transform: scale(0.98) translateY(1px);
+  transform: scale(0.99);
+}
+
+.inputTextDefault {
+  padding-left: 1px;
+  padding-top: 1px;
+  border-radius: 2px;
+}
+
+.inputTextDefault::placeholder {
+  color: inherit;
+  opacity: 0.7;
 }
 
 /* Icon Button */

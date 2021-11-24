@@ -17,8 +17,6 @@ function DropdownEditObject(props) {
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("");
-  const [inputFillColor, setInputFillColor] = useState("white");
-  const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
   const [strokeColor, setStrokeColor] = useState("");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
@@ -28,6 +26,16 @@ function DropdownEditObject(props) {
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.getObjState());
+
+  // Input Settings
+  const DEFAULT_INPUT_FILL = "#e4e4e4";
+  const DEFAULT_INPUT_STROKE_W = 2;
+  //const DEFAULT_INPUT_STROKE = "rgb(44, 44, 44)";
+  const [inputFillColor, setInputFillColor] = useState(objState.style ?
+    (objState.style.backgroundColor ? objState.style.backgroundColor : DEFAULT_INPUT_FILL) : DEFAULT_INPUT_FILL);
+  const [inputStrokeWidth, setInputStrokeWidth] = useState(objState.style ?
+    (objState.style.borderWidth ? objState.style.borderWidth : DEFAULT_INPUT_STROKE_W) : DEFAULT_INPUT_STROKE_W);
+  const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
 
   const calcTopOffset = () => {
     const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
@@ -123,11 +131,10 @@ function DropdownEditObject(props) {
       label: val
     }));
   }
-  function handleInputColor(type, val) {
+  function handleInputStyle(type, val) {
     const style = {
       ...objState.style,
-      [type]: val,
-      borderWidth: "2px"
+      [type]: val
     }
 
     setObjState(prev => {
@@ -194,6 +201,14 @@ function DropdownEditObject(props) {
       ...prev,
       containerHeight: val
     }));
+  }
+
+  const newTabInputSettings = (tab) => {
+    setInputStrokeWidth(objState.style.borderWidth ?
+      parseInt(objState.style.borderWidth.slice(0, -2)) : DEFAULT_INPUT_STROKE_W);
+    setInputFillColor(tab === "fill" ? objState.style.backgroundColor :
+      (tab === "stroke" ? objState.style.borderColor : objState.style.color));
+    setInputCurrentOptions(tab);
   }
 
   if (!loading) {
@@ -435,66 +450,80 @@ function DropdownEditObject(props) {
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
               <p>Label:</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
-              <div>
-                <button
-                  className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
-                  onClick={() => setInputCurrentOptions("fill")}
-                >
-                  Fill
-                </button>
-                <button
-                  className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
-                  onClick={() => setInputCurrentOptions("stroke")}
-                >
-                  Stroke
-                </button>
-                <button
-                  className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
-                  onClick={() => setInputCurrentOptions("text")}
-                >
-                  Text
-                </button>
-              </div>
-              {inputCurrentOptions === "fill" && (
-                <CompactPicker
-                  className="compactPickerEditInput"
-                  color={inputFillColor}
-                  disableAlpha={true}
-                  onChange={(color) => {
-                    setInputFillColor(color.hex);
-                    handleInputColor("backgroundColor", color.hex);
-                  }}
-                  style={{
-                    boxShadow: "none"
-                  }}
-                />
-              )}
-              {inputCurrentOptions === "stroke" && (
+              {objState.varType !== "checkbox" && (
                 <>
-                  <CompactPicker
-                    className="compactPickerEditInput"
-                    color={inputFillColor}
-                    disableAlpha={true}
-                    onChange={(color) => {
-                      setInputFillColor(color.hex);
-                      handleInputColor("borderColor", color.hex);
-                    }}
-                  />
-                  Stroke Width
-                </>
-              )}
-
-              {inputCurrentOptions === "text" && (
-                <>
-                  <CompactPicker
-                    className="compactPickerEditInput"
-                    color={inputFillColor}
-                    disableAlpha={true}
-                    onChange={(color) => {
-                      setInputFillColor(color.hex);
-                      handleInputColor("color", color.hex);
-                    }}
-                  />
+                  <div>
+                    <button
+                      className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => newTabInputSettings("fill")}
+                    >
+                      Fill
+                    </button>
+                    <button
+                      className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => newTabInputSettings("stroke")}
+                    >
+                      Stroke
+                    </button>
+                    <button
+                      className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => newTabInputSettings("text")}
+                    >
+                      Text
+                    </button>
+                  </div>
+                  {inputCurrentOptions === "fill" && (
+                    <CompactPicker
+                      className="compactPickerEditInput"
+                      color={inputFillColor}
+                      disableAlpha={true}
+                      onChange={(color) => {
+                        setInputFillColor(color.hex);
+                        handleInputStyle("backgroundColor", color.hex);
+                      }}
+                      style={{
+                        boxShadow: "none"
+                      }}
+                    />
+                  )}
+                  {inputCurrentOptions === "stroke" && (
+                    <>
+                      <CompactPicker
+                        className="compactPickerEditInput"
+                        color={inputFillColor}
+                        disableAlpha={true}
+                        onChange={(color) => {
+                          setInputFillColor(color.hex);
+                          handleInputStyle("borderColor", color.hex);
+                        }}
+                      />
+                      <span>Stroke Width:</span>
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={inputStrokeWidth}
+                        className="inputEditSlider"
+                        onChange={(e) => {
+                          setInputStrokeWidth(e.target.value);
+                          handleInputStyle("borderWidth", e.target.value + "px");
+                        }}
+                      />
+                    </>
+                  )}
+                  {inputCurrentOptions === "text" && (
+                    <>
+                      <CompactPicker
+                        className="compactPickerEditInput"
+                        color={inputFillColor}
+                        disableAlpha={true}
+                        onChange={(color) => {
+                          setInputFillColor(color.hex);
+                          handleInputStyle("color", color.hex);
+                        }}
+                      />
+                    </>
+                  )}
                 </>
               )}
             </div>

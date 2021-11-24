@@ -55,6 +55,10 @@ const Input = forwardRef((props, ref) => {
           text: (
             <input
               type="text"
+              className="inputTextDefault"
+              style={{
+                ...props.style
+              }}
               placeholder={props.label}
               value={getValue()}
               onChange={(e) => handleChangeValue(e.target.value)}

@@ -30,6 +30,10 @@ ul {
   height: 20px;
 }
 
+.htmledit > span {
+  font-size: 0.8em;
+}
+
 /* Dropdown Menu */
 
 .dropdownedit {

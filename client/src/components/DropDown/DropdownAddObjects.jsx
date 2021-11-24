@@ -191,7 +191,6 @@ const DropdownAddObjects = (props) => {
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
     const objectsDeletedState = props.state[`${objectName}DeleteCount`];
-    console.log(objectsState);
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
 
     const name = objectName + numOfObj;

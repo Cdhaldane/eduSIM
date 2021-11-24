@@ -2087,9 +2087,9 @@ class Graphics extends Component {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
-              console.log(this.getObjType(id));
-              console.log(this.state);
-              console.log("BOOM");
+              //console.log(this.getObjType(id));
+              //console.log(this.state);
+              //console.log("BOOM");
               const customState = [...this.state[this.getObjType(id)]];
 
               const elem = this.refs[id];
