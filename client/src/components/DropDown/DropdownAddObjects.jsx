@@ -216,6 +216,8 @@ const DropdownAddObjects = (props) => {
       selectedShapeName: name
     });
 
+    console.log(objectName);
+
     props.close();
   }
 
@@ -265,6 +267,17 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addLine = () => {
+    addObjectToLayer(
+      "lines",
+      {
+        stroke: 'black',
+        strokeWidth: DEFAULT_STROKE,
+        points: [0,70,100,1000]
+      }
+    );
+  }
+
   const addTriangle = () => {
     addObjectToLayer(
       "triangles",
@@ -291,7 +304,7 @@ const DropdownAddObjects = (props) => {
   const addImage = () => {
     getMeta(
       props.state.imgsrc,
-      (width, height) => { 
+      (width, height) => {
         addObjectToLayer(
           "images",
           {
@@ -602,6 +615,17 @@ const DropdownAddObjects = (props) => {
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
           <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
           <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
+
+          <DropdownItem
+            onClick={addLine}
+            leftIcon={<i className="icons" onClick={addLine} style={{
+              fontWeight: 800
+            }}>
+              /
+            </i>}
+          >
+            Line
+          </DropdownItem>
 
           <DropdownItem
             leftIcon={<i className="icons fas fa-marker" />}

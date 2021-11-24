@@ -51,7 +51,8 @@ const CanvasPage = (props) => {
     "videos",
     "audios",
     "documents",
-    "lines", // Lines are the drawings
+    "lines",
+    "pencils" // The drawings
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -355,6 +356,13 @@ const CanvasPage = (props) => {
     }
   }
 
+  const lineObjProps = (obj) => {
+    return {
+      width: obj.width ? obj.width : 10,
+      height: obj.height ? obj.height : 500,
+    }
+  }
+
   const ellipseProps = (obj) => {
     return {
       radiusX: obj.radiusX,
@@ -501,6 +509,7 @@ const CanvasPage = (props) => {
   const transformerProps = (type, canvas) => {
     return {
       selectedShapeName: canvas.state.selectedShapeName,
+      refs: canvas.refs,
       ref: type + "Transformer",
       boundBoxFunc: (oldBox, newBox) => {
         // Limit resize
@@ -601,13 +610,11 @@ const CanvasPage = (props) => {
         )}
 
         {/* Render the object saved in state */}
-        {canvas.state.lines.map((obj, index) => {
+        {canvas.state.pencils.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Line {...lineProps(obj, index, canvas, editMode)} /> : null
         })}
         {canvas.state.rectangles.map((obj, index) => {
-          //console.log(obj);
-          //console.log(objectIsOnStage(obj, canvas) === stage);
           return objectIsOnStage(obj, canvas) === stage ?
             <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
         })}
@@ -642,6 +649,17 @@ const CanvasPage = (props) => {
         {canvas.state.texts.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} /> : null
+        })}
+        {canvas.state.lines.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Line
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              //{...rectProps(obj)}
+              {...lineObjProps(obj)}
+              points={obj.points}
+              strokeWidth={50}
+              stroke={"black"}
+            /> : null
         })}
         {canvas.state.polls.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?

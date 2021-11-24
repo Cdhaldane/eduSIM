@@ -187,8 +187,6 @@ class Graphics extends Component {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
 
-    console.log(this.state);
-
     // Show overlay if just entered page (going forwards, not backwards)
     if (
       !this.state.overlayOpen &&

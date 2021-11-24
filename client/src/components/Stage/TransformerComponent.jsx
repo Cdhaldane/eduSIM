@@ -1,9 +1,15 @@
 import React, { forwardRef } from "react";
 import { Transformer } from "react-konva";
 
+import {
+  Ellipse
+} from "react-konva";
+
 const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
+    const shape = props.refs[props.selectedShapeName] ? props.refs[props.selectedShapeName].attrs : null;
+    //console.log(shape);
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
       case "":
         // This is a group selection
@@ -48,6 +54,46 @@ const TransformerComponent = forwardRef((props, ref) => {
             ]}
             rotationSnaps={[0, 90, 180, 270]}
           />
+        );
+      case "lines":
+        return (
+          <>
+            <Transformer
+              ref={ref}
+              name="transformer"
+              resizeEnabled={false}
+              rotateEnabled={false}
+              borderEnabled={false}
+            />
+            {shape && (
+              <>
+                <Ellipse
+                  fill={"white"}
+                  stroke={"#1eacff"}
+                  strokeWidth={8}
+                  radiusX={shape.strokeWidth}
+                  radiusY={shape.strokeWidth}
+                  x={shape.x + shape.points[0]}
+                  y={shape.y + shape.points[1]}
+                  onMouseMove={(e) => {
+                    document.body.style.cursor = "move";
+                  }}
+                  onMouseLeave={(e) => {
+                    document.body.style.cursor = "auto";
+                  }}
+                />
+                <Ellipse
+                  fill={"white"}
+                  stroke={"#1eacff"}
+                  strokeWidth={8}
+                  radiusX={shape.strokeWidth}
+                  radiusY={shape.strokeWidth}
+                  x={shape.x + shape.points[2]}
+                  y={shape.y + shape.points[3]}
+                />
+              </>
+            )}
+          </>
         );
       case "arrows":
         return (

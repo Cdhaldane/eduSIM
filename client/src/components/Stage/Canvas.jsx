@@ -389,13 +389,6 @@ class Graphics extends Component {
 
   componentDidUpdate = (prevProps, prevState) => {
     if (this.state.savedStateLoaded) {
-
-      // Testing for layers
-      if (this.refs['rectangles1']) {
-        //this.refs['rectangles1'].moveToTop();
-        //his.refs['rectangles1'].moveToBottom();
-      }
-
       const prevMainShapes = [];
       const currentMainShapes = [];
       for (let i = 0; i < this.savedObjects.length; i++) {
@@ -603,7 +596,7 @@ class Graphics extends Component {
   onObjectContextMenu = e => {
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
-      this.state.selectedShapeName !== "lines" &&
+      this.state.selectedShapeName !== "pencils" &&
       !this.state.drawMode
     ) {
       const event = e.evt ? e.evt : e;
@@ -740,12 +733,12 @@ class Graphics extends Component {
       });
       const tool = this.state.tool;
       this.setState({
-        lines: [...this.state.lines, {
+        pencils: [...this.state.pencils, {
           tool,
           points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
           level: this.state.level,
           color: this.state.color,
-          id: "lines",
+          id: "pencils",
           infolevel: personalArea,
           rolelevel: this.state.rolelevel,
           strokeWidth: this.state.drawStrokeWidth
@@ -1030,7 +1023,12 @@ class Graphics extends Component {
         }
       } else if (event.button === 2) {
         // RIGHT CLICK
-        if (this.isShape(shape) && shape.attrs.id !== "lines") {
+        if (personalArea && !this.state.rolelevel) {
+          this.props.showAlert("Cannot edit the personal area without a role selected. Please select a role to add objects.", "warning");
+          return;
+        }
+
+        if (this.isShape(shape) && shape.attrs.id !== "pencils") {
           if (clickShapeGroup) {
             // Check if group already selected to avoid duplicates
             let alreadySelected = false;
@@ -1195,7 +1193,7 @@ class Graphics extends Component {
 
       const stage = e.target.getStage();
       const point = stage.getPointerPosition();
-      let lastLine = this.state.lines[this.state.lines.length - 1];
+      let lastLine = this.state.pencils[this.state.pencils.length - 1];
       // Add point
       lastLine.points = lastLine.points.concat([
         (point.x + xOffset) / scale,
@@ -1203,9 +1201,9 @@ class Graphics extends Component {
       ]);
 
       // Replace last
-      this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
+      this.state.pencils.splice(this.state.pencils.length - 1, 1, lastLine);
       this.setState({
-        lines: this.state.lines.concat()
+        pencils: this.state.pencils.concat()
       });
     } else {
       if (!this.state.selection.visible && !this.state.layerDraggable) {
@@ -1222,7 +1220,7 @@ class Graphics extends Component {
       } else if (shape) {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
-          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "lines") {
+          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
@@ -2076,7 +2074,7 @@ class Graphics extends Component {
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
   getKonvaObj = (id, updateState, showTransformer) => {
-    if (id && id !== "lines") {
+    if (id && id !== "pencils") {
       if (this.refs[id].attrs) {
         return this.refs[id];
       } else {
@@ -2665,6 +2663,7 @@ class Graphics extends Component {
           {/* The Role Picker */}
           <div id="rolesdrop">
             <DropdownRoles
+              personalAreaOpen={this.state.personalAreaOpen}
               openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
               roleLevel={this.handleRoleLevel}
               gameid={this.state.gameinstanceid}

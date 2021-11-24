@@ -160,6 +160,7 @@ a {
 
 .role-deselect-icon {
   margin-left: auto;
+  margin-right: 6px;
   border-radius: 0 !important;
 }
 
