@@ -1,8 +1,20 @@
 import React from "react";
 
-const ReadOnlyRow = ({ contact, handleEditClick, handleDeleteClick, online }) => {
+const ReadOnlyRow = ({ 
+  contact, 
+  handleEditClick, 
+  handleDeleteClick, 
+  online, 
+  onCheck, 
+  checked 
+}) => {
   return (
     <tr className={online ? "user-online" : ""}>
+      {onCheck && (
+        <td className="table-checkrow">
+          <input type="checkbox" onClick={onCheck} checked={checked} />
+        </td>
+      )}
       <td>{contact.firstName} {online && <span>(ingame)</span>}</td>
       <td>{contact.lastName}</td>
       <td>{contact.email}</td>

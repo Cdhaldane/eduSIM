@@ -6,11 +6,18 @@ const EditableRow = ({
   handleCancelClick,
   handleUpdate,
   online,
-  rolelist
+  rolelist,
+  onCheck,
+  checked
 }) => {
   
   return (
     <tr className={online ? "user-online" : ""}>
+      {onCheck && (
+        <td className="table-checkrow">
+          <input type="checkbox" onClick={onCheck} checked={checked} />
+        </td>
+      )}
       <td>
         <input
           type="text"

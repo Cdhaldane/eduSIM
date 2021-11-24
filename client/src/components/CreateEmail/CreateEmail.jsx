@@ -6,7 +6,8 @@ function CreateEmail(props) {
 
   const handleClickOutside = e => {
     if (detailsArea.current &&
-      !(detailsArea.current.contains(e.target))) {
+      !detailsArea.current.contains(e.target) &&
+      e.target.tagName != "BUTTON") {
       props.close();
     }
   };
