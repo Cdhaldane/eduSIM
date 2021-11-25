@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { ChromePicker } from 'react-color';
 import axios from "axios";
 import DropdownItem from "./DropdownItem";
 import { useAlertContext } from "../Alerts/AlertContext";
+import Loading from "../Loading/Loading";
 
 import "./Dropdown.css";
 
@@ -15,9 +15,13 @@ const DropdownAddObjects = (props) => {
   const [menuHeight, setMenuHeight] = useState(269);
   const dropdownRef = useRef(null);
   const [colour, setColour] = useState("");
+
   const [imageUploaded, setImageUploaded] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
   const [audioUploaded, setAudioUploaded] = useState(false);
+
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
   const [validAudioURL, setValidAudioURL] = useState(false);
@@ -109,7 +113,7 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  const uploadFile = async (file, type) => {
+  const uploadFile = async (file, type, isGIF) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folder", type + "s");
@@ -117,19 +121,23 @@ const DropdownAddObjects = (props) => {
 
     try {
       if (type === "image") {
+        setImageUploading(true);
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
             const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
             setImageUploaded(true);
+            setImageUploading(false);
             props.handleImage(name);
           });
       } else if (type === "video") {
+        setVideoUploading(true);
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
+            const name = `https://res.cloudinary.com/uottawaedusim/${isGIF ? "image" : "video"}/upload/${allData}${isGIF ? ".gif" : ".mp4"}`;
             setVideoUploaded(true);
+            setVideoUploading(false);
             props.handleVideo(name);
           });
       } else if (type === "audio") {
@@ -165,12 +173,12 @@ const DropdownAddObjects = (props) => {
 
   const handleVideoFromComputer = () => {
     const file = document.getElementById("filePickerVideoEdit").files[0];
-    if (!file.type.toString().includes("video")) {
+    if (!(file.type.toString().includes("video") || file.type.toString().includes("gif"))) {
       alertContext.showAlert("Uploaded file is not a video.", "error");
       return;
     }
 
-    uploadFile(file, "video");
+    uploadFile(file, "video", file.type.toString().includes("gif"));
   }
 
   const handleAudioFromComputer = () => {
@@ -293,10 +301,20 @@ const DropdownAddObjects = (props) => {
     );
   }
 
-  const getMeta = (url, callback) => {
-    const img = new Image();
-    img.src = url;
-    img.onload = function () { callback(this.width, this.height); }
+  const getMeta = (url, type, callback) => {
+    if (type === "img" || url.includes(".gif")) {
+      const img = new Image();
+      img.src = url;
+      img.onload = function () {
+        callback(this.width, this.height);
+      }
+    } else {
+      const video = document.createElement("video");
+      video.src = url;
+      video.addEventListener('loadedmetadata', function (e) {
+        callback(video.videoWidth, video.videoHeight);
+      });
+    }
   }
 
   const addImage = () => {
@@ -307,12 +325,12 @@ const DropdownAddObjects = (props) => {
     // https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Abecedarium.png/1280px-Abecedarium.png
     // https://dmzn2b8hkpq8b.cloudfront.net/images/products/515x515/S396079.jpg
     // https://thumbor.forbes.com/thumbor/fit-in/416x416/filters%3Aformat%28jpg%29/https%3A%2F%2Fi.forbesimg.com%2Fmedia%2Flists%2Fcompanies%2Falphabet_416x416.jpg
-    console.log(props);
+    // https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif
+    // https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d0/Foucault_pendulum_1.webm/Foucault_pendulum_1.webm.480p.webm
     addObjectToLayer(
       "videos",
       {
         temporary: true,
-        //vidsrc: "https://thumbs.gfycat.com/DearestWebbedGrassspider-mobile.mp4",
         vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
         stroke: 'black',
         strokeWidth: 0,
@@ -323,6 +341,7 @@ const DropdownAddObjects = (props) => {
     );
     getMeta(
       props.state.imgsrc,
+      "img",
       (width, height) => {
         addObjectToLayer(
           "images",
@@ -343,12 +362,30 @@ const DropdownAddObjects = (props) => {
     addObjectToLayer(
       "videos",
       {
-        width: 400,
-        height: 400,
-        vidsrc: props.state.vidsrc,
+        temporary: true,
+        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
         stroke: 'black',
         strokeWidth: 0,
-        opacity: 1
+        opacity: 1,
+        width: 1500,
+        height: 1500
+      }
+    );
+    getMeta(
+      props.state.vidsrc,
+      "video",
+      (width, height) => {
+        addObjectToLayer(
+          "videos",
+          {
+            width: width,
+            height: height,
+            vidsrc: props.state.vidsrc,
+            stroke: 'black',
+            strokeWidth: 0,
+            opacity: 1
+          }
+        );
       }
     );
   }
@@ -515,7 +552,6 @@ const DropdownAddObjects = (props) => {
   }
 
   const videoURLGood = (url) => {
-    //console.log(file.type.toString());
     if ((
       url.includes("http://") ||
       url.includes("https://")) && (
@@ -680,7 +716,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-video"></i>}
             onClick={() => setActiveMenu("video")}>
-            Video
+            Video / GIF
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-volume-up"></i>}
@@ -708,11 +744,19 @@ const DropdownAddObjects = (props) => {
           </DropdownItem>
           <div className={`${imageUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
-                if (imageUploaded) {
-                  addImage(e);
-                }
-              }}></i>}>
+              leftIcon={
+                !imageUploading ? (
+                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                    if (imageUploaded) {
+                      addImage(e);
+                    }
+                  }} />
+                ) : (
+                  <div className="loadingMediaAddMenuContainer">
+                    <Loading />
+                  </div>
+                )
+              }>
               <input
                 type="file"
                 name="img"
@@ -750,11 +794,19 @@ const DropdownAddObjects = (props) => {
 
           <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
-                if (videoUploaded) {
-                  addVideo(e);
-                }
-              }}></i>}>
+              leftIcon={
+                !videoUploading ? (
+                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                    if (videoUploaded) {
+                      addVideo(e);
+                    }
+                  }} />
+                ) : (
+                  <div className="loadingMediaAddMenuContainer">
+                    <Loading />
+                  </div>
+                )
+              }>
               <input
                 type="file"
                 name="img"

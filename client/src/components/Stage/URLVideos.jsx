@@ -1,7 +1,6 @@
 import Konva from "konva"
 import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import { Image, Text } from "react-konva";
-import gifler from "gifler";
 
 const URLVideo = forwardRef((props, ref) => {
   const [isPlaying, setIsPlaying] = useState(props.temporary);
@@ -48,26 +47,27 @@ const URLVideo = forwardRef((props, ref) => {
     };
   }, [videoElement]);
 
-  useEffect(() => {
-    console.log(props);
-    
-    if (props.src.includes(".gif")) {
-      const gifCanvas = document.createElement('canvas');
-
-      // Use external library to parse and draw gif animation
-      const onDrawFrame = (ctx, frame) => {
-        gifCanvas.width = frame.width;
-        gifCanvas.height = frame.height;
-        // Update canvas that we are using for Konva.Image
-        ctx.drawImage(frame.buffer, 0, 0);
-        // Redraw the layer
-        layer.draw();
-      }
-
-      gifler(props.src).frames(gifCanvas, onDrawFrame);
-
-      setGifSrc(gifCanvas);
+  const getMeta = (url, callback) => {
+    const img = new window.Image();
+    img.src = url;
+    img.onload = function () {
+      callback(this.width, this.height);
     }
+  }
+
+  useEffect(() => {
+    if (props.src.includes(".gif")) {
+      getMeta(props.src, () => {
+        const gif = document.createElement("img");
+        gif.src = props.src;
+        const gifObj = new SuperGif({
+          gif: gif
+        });
+        gifObj.load();
+        setGifSrc(gifObj.get_canvas());
+      });
+    }
+    
     videoElement.play();
     const layer = props.layer.getStage();
 
@@ -80,7 +80,7 @@ const URLVideo = forwardRef((props, ref) => {
   }, [videoElement, props.layer]);
 
   const togglePlay = () => {
-    if (!props.temporary) {
+    if (!props.temporary && !props.src.includes(".gif")) {
       if (isPlaying) {
         videoElement.pause();
         setIsPlaying(false);
@@ -121,7 +121,7 @@ const URLVideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
-      {!props.temporary && (
+      {!props.temporary && !props.src.includes(".gif") && (
         <Text
           ref={playPause}
           fontSize={props.scaleX ?
