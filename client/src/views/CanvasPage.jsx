@@ -372,6 +372,7 @@ const CanvasPage = (props) => {
 
   const imageProps = (obj, layer) => {
     return {
+      //temporary: obj.temporary,
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
@@ -384,6 +385,7 @@ const CanvasPage = (props) => {
 
   const videoProps = (obj, layer) => {
     return {
+      temporary: obj.temporary,
       type: "video",
       src: obj.vidsrc,
       image: obj.vidsrc,

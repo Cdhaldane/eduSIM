@@ -10,6 +10,7 @@
     "dompurify": "^2.3.3",
     "express": "^4.17.1",
     "font-picker-react": "^3.5.2",
+    "gifler": "^0.1.0",
     "js-file-download": "^0.4.12",
     "konva": "^8.0.4",
     "moment": "^2.29.1",

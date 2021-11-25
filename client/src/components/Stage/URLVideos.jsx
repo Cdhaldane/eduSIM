@@ -1,12 +1,14 @@
 import Konva from "konva"
 import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import { Image, Text } from "react-konva";
+import gifler from "gifler";
 
 const URLVideo = forwardRef((props, ref) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(props.temporary);
   const [fillPatternImage, setFillPatternImage] = useState(null);
   const [playPauseScale, setPlayPauseScale] = useState(0);
   const playPause = useRef();
+  const [gifSrc, setGifSrc] = useState(null);
 
   if (props.fillPatternImage) {
     const bimage = new window.Image();
@@ -27,6 +29,8 @@ const URLVideo = forwardRef((props, ref) => {
   const videoElement = React.useMemo(() => {
     const element = document.createElement("video");
     element.src = props.src;
+    element.loop = true;
+    element.autoplay = true;
     return element;
   }, [props.src]);
 
@@ -45,22 +49,45 @@ const URLVideo = forwardRef((props, ref) => {
   }, [videoElement]);
 
   useEffect(() => {
+    console.log(props);
+    
+    if (props.src.includes(".gif")) {
+      const gifCanvas = document.createElement('canvas');
+
+      // Use external library to parse and draw gif animation
+      const onDrawFrame = (ctx, frame) => {
+        gifCanvas.width = frame.width;
+        gifCanvas.height = frame.height;
+        // Update canvas that we are using for Konva.Image
+        ctx.drawImage(frame.buffer, 0, 0);
+        // Redraw the layer
+        layer.draw();
+      }
+
+      gifler(props.src).frames(gifCanvas, onDrawFrame);
+
+      setGifSrc(gifCanvas);
+    }
     videoElement.play();
     const layer = props.layer.getStage();
 
     const anim = new Konva.Animation(() => { }, layer);
     anim.start();
 
-    return () => anim.stop();
+    return () => {
+      anim.stop();
+    };
   }, [videoElement, props.layer]);
 
   const togglePlay = () => {
-    if (isPlaying) {
-      videoElement.pause();
-      setIsPlaying(false);
-    } else {
-      videoElement.play();
-      setIsPlaying(true);
+    if (!props.temporary) {
+      if (isPlaying) {
+        videoElement.pause();
+        setIsPlaying(false);
+      } else {
+        videoElement.play();
+        setIsPlaying(true);
+      }
     }
   }
 
@@ -78,7 +105,7 @@ const URLVideo = forwardRef((props, ref) => {
         scaleX={props.scaleX}
         width={props.width}
         height={props.height}
-        image={videoElement}
+        image={gifSrc || videoElement}
         ref={ref}
         id={props.id}
         name="shape"
@@ -94,20 +121,22 @@ const URLVideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
-      <Text
-        ref={playPause}
-        fontSize={props.scaleX ?
-          Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
-          playPauseScale}
-        fontFamily={"Montserrat"}
-        text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
-        fill={"black"}
-        x={props.x}
-        y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
-        width={props.scaleX ? props.width * props.scaleX : props.width}
-        rotation={props.rotation}
-        opacity={0.5}
-      />
+      {!props.temporary && (
+        <Text
+          ref={playPause}
+          fontSize={props.scaleX ?
+            Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
+            playPauseScale}
+          fontFamily={"Montserrat"}
+          text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
+          fill={"black"}
+          x={props.x}
+          y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
+          width={props.scaleX ? props.width * props.scaleX : props.width}
+          rotation={props.rotation}
+          opacity={0.5}
+        />
+      )}
     </>
   );
 });

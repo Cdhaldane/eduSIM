@@ -105,7 +105,7 @@ const DropdownAddObjects = (props) => {
           props.handleDocument(name);
         });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -149,7 +149,7 @@ const DropdownAddObjects = (props) => {
       } else if (type === "audio") {
         setAudioUploaded(false);
       }
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -216,8 +216,6 @@ const DropdownAddObjects = (props) => {
       selectedShapeName: name
     });
 
-    console.log(objectName);
-
     props.close();
   }
 
@@ -273,7 +271,7 @@ const DropdownAddObjects = (props) => {
       {
         stroke: 'black',
         strokeWidth: DEFAULT_STROKE,
-        points: [0,70,100,1000]
+        points: [0, 70, 100, 1000]
       }
     );
   }
@@ -302,6 +300,27 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = () => {
+    // Photos for testing
+    // https://photojournal.jpl.nasa.gov/jpeg/PIA24579.jpg
+    // https://photojournal.jpl.nasa.gov/jpeg/PIA24472.jpg
+    // https://photojournal.jpl.nasa.gov/jpeg/PIA24380.jpg
+    // https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Abecedarium.png/1280px-Abecedarium.png
+    // https://dmzn2b8hkpq8b.cloudfront.net/images/products/515x515/S396079.jpg
+    // https://thumbor.forbes.com/thumbor/fit-in/416x416/filters%3Aformat%28jpg%29/https%3A%2F%2Fi.forbesimg.com%2Fmedia%2Flists%2Fcompanies%2Falphabet_416x416.jpg
+    console.log(props);
+    addObjectToLayer(
+      "videos",
+      {
+        temporary: true,
+        //vidsrc: "https://thumbs.gfycat.com/DearestWebbedGrassspider-mobile.mp4",
+        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
+        stroke: 'black',
+        strokeWidth: 0,
+        opacity: 1,
+        width: 1500,
+        height: 1500
+      }
+    );
     getMeta(
       props.state.imgsrc,
       (width, height) => {
@@ -496,13 +515,15 @@ const DropdownAddObjects = (props) => {
   }
 
   const videoURLGood = (url) => {
+    //console.log(file.type.toString());
     if ((
       url.includes("http://") ||
       url.includes("https://")) && (
         url.includes(".mp4") ||
         url.includes(".webm") ||
         url.includes(".ogv") ||
-        url.includes(".avi")
+        url.includes(".avi") ||
+        url.includes(".gif")
       )) {
       return true;
     } else {
