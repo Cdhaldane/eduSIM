@@ -76,6 +76,7 @@ const Level = (props) => {
   const saveOnClose = () => {
     props.clearCanvasData();
     props.saveGame();
+    props.removeJSGIFS();
   }
 
   return (

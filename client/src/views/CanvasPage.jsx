@@ -597,10 +597,10 @@ const CanvasPage = (props) => {
             {/* This Rect is for dragging the canvas */}
             <Rect
               id="ContainerRect"
-              x={-5 * window.innerWidth}
-              y={-5 * window.innerHeight}
-              height={window.innerHeight * 10}
-              width={window.innerWidth * 10}
+              x={-500 * window.innerWidth}
+              y={-500 * window.innerHeight}
+              height={window.innerHeight * 1000}
+              width={window.innerWidth * 1000}
             />
 
             {/* This Rect acts as the transform object for custom objects */}

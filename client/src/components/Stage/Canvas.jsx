@@ -334,10 +334,20 @@ class Graphics extends Component {
     }
   }
 
+  removeJSGIFS = () => {
+    // Remove all jsGif elements created by gifs on screen
+    const jsgifs = document.getElementsByClassName("jsgif");
+    while (jsgifs.length > 0) {
+      jsgifs[0].parentNode.removeChild(jsgifs[0]);
+    }
+  }
+
   saveInterval = null;
   drawInterval = null;
   componentDidMount = async () => {
     const MINUTE_MS = 1000 * 60;
+
+    this.removeJSGIFS();
 
     // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
@@ -2406,6 +2416,7 @@ class Graphics extends Component {
         <Level
           number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
+          removeJSGIFS={() => this.removeJSGIFS()}
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}

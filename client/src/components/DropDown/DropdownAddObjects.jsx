@@ -125,7 +125,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : ".jpg");
             setImageUploaded(true);
             setImageUploading(false);
             props.handleImage(name);
@@ -135,7 +135,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = `https://res.cloudinary.com/uottawaedusim/${isGIF ? "image" : "video"}/upload/${allData}${isGIF ? ".gif" : ".mp4"}`;
+            const name = `https://res.cloudinary.com/uottawaedusim/video/upload/${allData}.mp4}`;
             setVideoUploaded(true);
             setVideoUploading(false);
             props.handleVideo(name);
@@ -168,17 +168,17 @@ const DropdownAddObjects = (props) => {
       return;
     }
 
-    uploadFile(file, "image");
+    uploadFile(file, "image", file.type.includes("gif"));
   }
 
   const handleVideoFromComputer = () => {
     const file = document.getElementById("filePickerVideoEdit").files[0];
-    if (!(file.type.toString().includes("video") || file.type.toString().includes("gif"))) {
+    if (!file.type.toString().includes("video")) {
       alertContext.showAlert("Uploaded file is not a video.", "error");
       return;
     }
 
-    uploadFile(file, "video", file.type.toString().includes("gif"));
+    uploadFile(file, "video");
   }
 
   const handleAudioFromComputer = () => {
@@ -302,7 +302,7 @@ const DropdownAddObjects = (props) => {
   }
 
   const getMeta = (url, type, callback) => {
-    if (type === "img" || url.includes(".gif")) {
+    if (type === "img") {
       const img = new Image();
       img.src = url;
       img.onload = function () {
@@ -327,6 +327,7 @@ const DropdownAddObjects = (props) => {
     // https://thumbor.forbes.com/thumbor/fit-in/416x416/filters%3Aformat%28jpg%29/https%3A%2F%2Fi.forbesimg.com%2Fmedia%2Flists%2Fcompanies%2Falphabet_416x416.jpg
     // https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif
     // https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d0/Foucault_pendulum_1.webm/Foucault_pendulum_1.webm.480p.webm
+    // https://i.imgur.com/eUqLtZk.gif
     addObjectToLayer(
       "videos",
       {
@@ -335,10 +336,11 @@ const DropdownAddObjects = (props) => {
         stroke: 'black',
         strokeWidth: 0,
         opacity: 1,
-        width: 1500,
-        height: 1500
+        width: 1000,
+        height: 800
       }
     );
+
     getMeta(
       props.state.imgsrc,
       "img",
@@ -558,8 +560,7 @@ const DropdownAddObjects = (props) => {
         url.includes(".mp4") ||
         url.includes(".webm") ||
         url.includes(".ogv") ||
-        url.includes(".avi") ||
-        url.includes(".gif")
+        url.includes(".avi")
       )) {
       return true;
     } else {
@@ -711,12 +712,12 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fa fa-picture-o"></i>}
             onClick={() => setActiveMenu("image")}>
-            Image
+            Image / GIF
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-video"></i>}
             onClick={() => setActiveMenu("video")}>
-            Video / GIF
+            Video
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-volume-up"></i>}

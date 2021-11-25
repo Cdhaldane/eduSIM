@@ -7,7 +7,6 @@ const URLVideo = forwardRef((props, ref) => {
   const [fillPatternImage, setFillPatternImage] = useState(null);
   const [playPauseScale, setPlayPauseScale] = useState(0);
   const playPause = useRef();
-  const [gifSrc, setGifSrc] = useState(null);
 
   if (props.fillPatternImage) {
     const bimage = new window.Image();
@@ -47,27 +46,7 @@ const URLVideo = forwardRef((props, ref) => {
     };
   }, [videoElement]);
 
-  const getMeta = (url, callback) => {
-    const img = new window.Image();
-    img.src = url;
-    img.onload = function () {
-      callback(this.width, this.height);
-    }
-  }
-
   useEffect(() => {
-    if (props.src.includes(".gif")) {
-      getMeta(props.src, () => {
-        const gif = document.createElement("img");
-        gif.src = props.src;
-        const gifObj = new SuperGif({
-          gif: gif
-        });
-        gifObj.load();
-        setGifSrc(gifObj.get_canvas());
-      });
-    }
-    
     videoElement.play();
     const layer = props.layer.getStage();
 
@@ -105,7 +84,7 @@ const URLVideo = forwardRef((props, ref) => {
         scaleX={props.scaleX}
         width={props.width}
         height={props.height}
-        image={gifSrc || videoElement}
+        image={videoElement}
         ref={ref}
         id={props.id}
         name="shape"
@@ -121,7 +100,7 @@ const URLVideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
-      {!props.temporary && !props.src.includes(".gif") && (
+      {!props.temporary && (
         <Text
           ref={playPause}
           fontSize={props.scaleX ?
