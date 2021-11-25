@@ -6,6 +6,7 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
+import Alerts from "./submenus/Alerts";
 import Modal from "react-modal";
 import Performance from "./Performance";
 
@@ -203,7 +204,13 @@ const Sidebar = (props) => {
       icon: "fas fa-bell",
       id: "alert",
       label: "Alert",
-      visible: avisible
+      visible: avisible,
+      submenu: (
+        <Alerts 
+          editpage={!props.game}
+          {...props.alertProps}
+        />
+      )
     },
     {
       to: "/performance",

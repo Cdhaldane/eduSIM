@@ -179,6 +179,8 @@ const Game = (props) => {
     return newPlayers;
   }, [players, roles, actualLevel]);
 
+  const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
+
   return (
     !isLoading ? (
       <>
@@ -196,6 +198,9 @@ const Game = (props) => {
           submenuProps={{ messageBacklog }}
           game
           disabled={!roomStatus.running}
+          alertProps={{
+            alerts: tasks
+          }}
         />
         <Main>
           <CanvasGame
