@@ -493,7 +493,9 @@ class Graphics extends Component {
           const layer = this.state.personalAreaOpen ? "personal" :
             (this.state.overlayOpen ? "overlay" : "group");
           this.setState({
-            canvasLoading: true
+            canvasLoading: true,
+            selectedShapeName: "",
+            groupSelection: []
           });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
@@ -2439,19 +2441,57 @@ class Graphics extends Component {
     });
   }
 
-  handleCopyPage = async (index) => {
+  changeObjectPage = (initIndex, newIndex) => {
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const type = this.savedObjects[i];
+      const objs = this.state[type];
+      for (let j = 0; j < objs.length; j++) {
+        const obj = objs[j];
+        if (obj.level === initIndex + 1) {
+          const newObj = {
+            ...obj,
+            level: newIndex + 1
+          }
+
+          // Delete objects on this level
+          const newObjs = [...objs];
+          newObjs.splice(j, 1);
+          this.setState({
+            [type]: newObjs
+          }, () => {
+            // Relocate objects to new level
+            if (newIndex !== -1) {
+              this.setState({
+                [type]: [...this.state[type], newObj]
+              });
+            }
+          });
+        }
+      }
+    }
+  }
+
+  handleCopyPage = (index) => {
     // Copy all objects from chosen level to new level
     for (let i = 0; i < this.savedObjects.length; i++) {
-      const objs = this.state[this.savedObjects[i]];
+      const type = this.savedObjects[i];
+      const objs = this.state[type];
       for (let j = 0; j < objs.length; j++) {
         const obj = objs[j];
         if (obj.level === index + 1) {
+          const objectsState = this.state[type];
+          const objectsDeletedState = this.state[`${type}DeleteCount`];
+          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+          const id = type + numOfObj;
           const newObj = {
             ...obj,
-            level: this.state.pages.length
-          } 
+            id: id,
+            ref: id,
+            name: id,
+            level: this.state.pages.length + 1
+          }
           this.setState({
-            [this.savedObjects[i]]: [...objs, newObj]
+            [type]: [...objs, newObj]
           });
         }
       }
@@ -2464,6 +2504,16 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          refreshCanvas={() => {
+            // Refresh canvas
+            const layer = this.state.personalAreaOpen ? "personal" :
+              (this.state.overlayOpen ? "overlay" : "group");
+            this.setState({
+              canvasLoading: true
+            });
+            setTimeout(() => this.props.reCenter("edit", layer), 0);
+          }}
+          changeObjectPage={this.changeObjectPage}
           handleCopyPage={this.handleCopyPage}
           number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
@@ -2493,7 +2543,7 @@ class Graphics extends Component {
         />
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1].hasOverlay && (
+        {this.state.pages[this.state.level - 1] && this.state.pages[this.state.level - 1].hasOverlay && (
           <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
             <i className="icons fa fa-window-restore" />
           </div>

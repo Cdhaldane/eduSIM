@@ -103,6 +103,12 @@ const DropdownTimelineBar = (props) => {
                               setPages(newPages);
                               setModifyIndex(index - 1);
                               setModifyPageName(page.name);
+
+                              props.changeObjectPage(index - 1, MAX_PAGE_NUM + 1);
+                              props.changeObjectPage(index, index - 1);
+                              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
+
+                              props.refreshCanvas();
                             }, 0);
                           }
                         }}>
@@ -126,6 +132,12 @@ const DropdownTimelineBar = (props) => {
                               setPages(newPages);
                               setModifyIndex(index + 1);
                               setModifyPageName(page.name);
+
+                              props.changeObjectPage(index + 1, MAX_PAGE_NUM + 1);
+                              props.changeObjectPage(index, index + 1);
+                              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
+
+                              props.refreshCanvas();
                             }, 0);
                           }
                         }}>
@@ -158,10 +170,10 @@ const DropdownTimelineBar = (props) => {
                             // Copy the page and contents
                             setPages([...pages, {
                               name: pages[index].name + " Copy",
-                              hasOverlay: false
+                              hasOverlay: pages[index].hasOverlay
                             }]);
                             setNumOfPages(numOfPages + 1);
-                            await props.handleCopyPage(index);
+                            props.handleCopyPage(index);
                           }
                         }}
                       >
@@ -205,6 +217,11 @@ const DropdownTimelineBar = (props) => {
           newPages.splice(deletionIndex, 1);
           setPages(newPages);
           setNumOfPages(numOfPages - 1);
+          props.changeObjectPage(deletionIndex, -1);
+          for (let i = deletionIndex + 1; i < pages.length; i++) {
+            props.changeObjectPage(i, i - 1);
+          }
+          props.refreshCanvas();
         }}
         confirmMessage={"Yes - Delete Page"}
         message={`Are you sure you want to delete page ${pages[deletionIndex] ?
