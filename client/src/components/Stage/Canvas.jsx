@@ -201,6 +201,8 @@ class Graphics extends Component {
 
       gamepieceStatus: {},
 
+      lineTransformDragging: false,
+
       connectors: [],
       gameroles: [],
       errMsg: "",
@@ -338,10 +340,20 @@ class Graphics extends Component {
     }
   }
 
+  removeJSGIFS = () => {
+    // Remove all jsGif elements created by gifs on screen
+    const jsgifs = document.getElementsByClassName("jsgif");
+    while (jsgifs.length > 0) {
+      jsgifs[0].parentNode.removeChild(jsgifs[0]);
+    }
+  }
+
   saveInterval = null;
   drawInterval = null;
   componentDidMount = async () => {
     const MINUTE_MS = 1000 * 60;
+
+    this.removeJSGIFS();
 
     // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
@@ -414,6 +426,19 @@ class Graphics extends Component {
             }
           }
         }
+      }
+
+      // Delete temp image once image has loaded in
+      if (
+        prevState.images.length < this.state.images.length &&
+        this.state.videos[this.state.videos.length - 1].temporary
+      ) {
+        let newVideos = [...this.state.videos];
+        newVideos[this.state.videos.length - 1] = null
+        newVideos = newVideos.filter(n => n);
+        this.setState({
+          videos: newVideos
+        });
       }
 
       // Update the custom objects state in the parent component (if custom objs changed)
@@ -601,7 +626,7 @@ class Graphics extends Component {
   onObjectContextMenu = e => {
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
-      this.state.selectedShapeName !== "lines" &&
+      this.state.selectedShapeName !== "pencils" &&
       !this.state.drawMode
     ) {
       const event = e.evt ? e.evt : e;
@@ -738,12 +763,12 @@ class Graphics extends Component {
       });
       const tool = this.state.tool;
       this.setState({
-        lines: [...this.state.lines, {
+        pencils: [...this.state.pencils, {
           tool,
           points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
           level: this.state.level,
           color: this.state.color,
-          id: "lines",
+          id: "pencils",
           infolevel: personalArea,
           rolelevel: this.state.rolelevel,
           strokeWidth: this.state.drawStrokeWidth
@@ -782,6 +807,13 @@ class Graphics extends Component {
 
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
+
+    if (this.state.lineTransformDragging) {
+      this.setState({
+        lineTransformDragging: false
+      });
+      document.body.style.cursor = "auto";
+    }
 
     let layerX = event.layerX;
     let layerY = event.layerY;
@@ -1028,7 +1060,12 @@ class Graphics extends Component {
         }
       } else if (event.button === 2) {
         // RIGHT CLICK
-        if (this.isShape(shape) && shape.attrs.id !== "lines") {
+        if (personalArea && !this.state.rolelevel) {
+          this.props.showAlert("Cannot edit the personal area without a role selected. Please select a role to add objects.", "warning");
+          return;
+        }
+
+        if (this.isShape(shape) && shape.attrs.id !== "pencils") {
           if (clickShapeGroup) {
             // Check if group already selected to avoid duplicates
             let alreadySelected = false;
@@ -1193,7 +1230,7 @@ class Graphics extends Component {
 
       const stage = e.target.getStage();
       const point = stage.getPointerPosition();
-      let lastLine = this.state.lines[this.state.lines.length - 1];
+      let lastLine = this.state.pencils[this.state.pencils.length - 1];
       // Add point
       lastLine.points = lastLine.points.concat([
         (point.x + xOffset) / scale,
@@ -1201,9 +1238,9 @@ class Graphics extends Component {
       ]);
 
       // Replace last
-      this.state.lines.splice(this.state.lines.length - 1, 1, lastLine);
+      this.state.pencils.splice(this.state.pencils.length - 1, 1, lastLine);
       this.setState({
-        lines: this.state.lines.concat()
+        pencils: this.state.pencils.concat()
       });
     } else {
       if (!this.state.selection.visible && !this.state.layerDraggable) {
@@ -1215,12 +1252,29 @@ class Graphics extends Component {
       const pos = this.refs[stage].getPointerPosition();
       const shape = this.refs[stage].getIntersection(pos);
 
+      if (this.state.lineTransformDragging) {
+        const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
+        const newLine = [...this.state.lines].filter(line => line.id === this.state.selectedShapeName)[0];
+
+        const xIndex = this.state.lineTransformDragging === "top" ? 0 : 2;
+        const yIndex = this.state.lineTransformDragging === "top" ? 1 : 3;
+
+        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state.groupLayerScale);
+        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state.groupLayerScale);
+
+        this.setState({
+          lines: [...newLines, newLine]
+        });
+
+        return;
+      }
+
       if (shape && shape.attrs.link) {
         document.body.style.cursor = "pointer";
       } else if (shape) {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
-          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "lines") {
+          if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
@@ -2075,7 +2129,7 @@ class Graphics extends Component {
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
   getKonvaObj = (id, updateState, showTransformer) => {
-    if (id && id !== "lines") {
+    if (id && id !== "pencils") {
       if (this.refs[id].attrs) {
         return this.refs[id];
       } else {
@@ -2086,6 +2140,9 @@ class Graphics extends Component {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
+              //console.log(this.getObjType(id));
+              //console.log(this.state);
+              //console.log("BOOM");
               const customState = [...this.state[this.getObjType(id)]];
 
               const elem = this.refs[id];
@@ -2383,14 +2440,35 @@ class Graphics extends Component {
     });
   }
 
+  handleCopyPage = async (index) => {
+    // Copy all objects from chosen level to new level
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const objs = this.state[this.savedObjects[i]];
+      for (let j = 0; j < objs.length; j++) {
+        const obj = objs[j];
+        if (obj.level === index + 1) {
+          const newObj = {
+            ...obj,
+            level: this.state.pages.length
+          } 
+          this.setState({
+            [this.savedObjects[i]]: [...objs, newObj]
+          });
+        }
+      }
+    }
+  }
+
   render() {
     if (!this.state.savedStateLoaded) return null;
     return (
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          handleCopyPage={this.handleCopyPage}
           number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
+          removeJSGIFS={() => this.removeJSGIFS()}
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}
@@ -2651,16 +2729,17 @@ class Graphics extends Component {
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
             ? <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
-              <i className="fas fa-caret-square-up fa-3x" />
+              <i className="fas fa-angle-up fa-3x" />
             </button>
             : <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
-              <i className="fas fa-caret-square-down fa-3x" />
+              <i className="fas fa-angle-down fa-3x" />
             </button>
           }
 
           {/* The Role Picker */}
           <div id="rolesdrop">
             <DropdownRoles
+              personalAreaOpen={this.state.personalAreaOpen}
               openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
               roleLevel={this.handleRoleLevel}
               gameid={this.state.gameinstanceid}

@@ -37,6 +37,7 @@ const Pencil = (props) => {
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
+              handleCopyPage={props.handleCopyPage}
               close={handleClose} />
           )}
           {props.type === "nav" && (

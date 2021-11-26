@@ -3,7 +3,7 @@ import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import { Image, Text } from "react-konva";
 
 const URLVideo = forwardRef((props, ref) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(props.temporary);
   const [fillPatternImage, setFillPatternImage] = useState(null);
   const [playPauseScale, setPlayPauseScale] = useState(0);
   const playPause = useRef();
@@ -27,6 +27,8 @@ const URLVideo = forwardRef((props, ref) => {
   const videoElement = React.useMemo(() => {
     const element = document.createElement("video");
     element.src = props.src;
+    element.loop = true;
+    element.autoplay = true;
     return element;
   }, [props.src]);
 
@@ -51,16 +53,20 @@ const URLVideo = forwardRef((props, ref) => {
     const anim = new Konva.Animation(() => { }, layer);
     anim.start();
 
-    return () => anim.stop();
+    return () => {
+      anim.stop();
+    };
   }, [videoElement, props.layer]);
 
   const togglePlay = () => {
-    if (isPlaying) {
-      videoElement.pause();
-      setIsPlaying(false);
-    } else {
-      videoElement.play();
-      setIsPlaying(true);
+    if (!props.temporary && !props.src.includes(".gif")) {
+      if (isPlaying) {
+        videoElement.pause();
+        setIsPlaying(false);
+      } else {
+        videoElement.play();
+        setIsPlaying(true);
+      }
     }
   }
 
@@ -94,20 +100,22 @@ const URLVideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
-      <Text
-        ref={playPause}
-        fontSize={props.scaleX ?
-          Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
-          playPauseScale}
-        fontFamily={"Montserrat"}
-        text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
-        fill={"black"}
-        x={props.x}
-        y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
-        width={props.scaleX ? props.width * props.scaleX : props.width}
-        rotation={props.rotation}
-        opacity={0.5}
-      />
+      {!props.temporary && (
+        <Text
+          ref={playPause}
+          fontSize={props.scaleX ?
+            Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
+            playPauseScale}
+          fontFamily={"Montserrat"}
+          text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
+          fill={"black"}
+          x={props.x}
+          y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
+          width={props.scaleX ? props.width * props.scaleX : props.width}
+          rotation={props.rotation}
+          opacity={0.5}
+        />
+      )}
     </>
   );
 });

@@ -54,6 +54,10 @@ const CreateRole = (props) => {
       alertContext.showAlert("Too many people have already chosen this role. Please choose a different one.", "warning");
       return false;
     }
+    if (!role.name) {
+      alertContext.showAlert("Please select a role to continue.", "warning");
+      return false;
+    }
     props.handleSubmit({role: role?.name, name});
     return false;
   }

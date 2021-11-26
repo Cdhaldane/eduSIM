@@ -4,11 +4,11 @@
   text-align: center;
   position: fixed;
   left: 100px;
-  bottom: 90px;
+  bottom: 75px;
   transform: translate(0%, 100%);
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  background-color: rgba(110, 25, 25, 0);
+  /*box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);*/
   border-radius: 15px 15px 0px 0px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
@@ -17,13 +17,13 @@
 
 .info1 {
   width: calc(100% - 130px);
-  height: calc(100% - 70px);
+  height: calc(100% - 60px);
   text-align: center;
   position: fixed;
   left: 100px;
   bottom: 0px;
   transform: translate(0%, 0%);
-  padding: 20px;
+  padding: 10px;
   background-color: white;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
   border-radius: 15px 15px 0px 0px;
@@ -58,8 +58,16 @@
 
 .personalAreaToggle {
   color: var(--primary);
-  border: none;
-  background-color: transparent;
+  padding: 0px 8px 0px 8px;
+  margin-top: 5px;
+  border-radius: 40%;
+  border: 2px solid var(--primary);
+  box-shadow: var(--box-shadow);
+  background-color: white;
+}
+
+.personalAreaToggle>i {
+  font-size: 2.75em;
 }
 
 #pencili1 {

@@ -9,6 +9,34 @@ a {
   text-decoration: none;
 }
 
+.inputButtonDefault {
+  border-radius: 0.5em;
+  padding: 0.2em;
+  background-color: #e4e4e4;
+  border: 2px solid rgb(44, 44, 44);
+}
+
+.inputButtonDefault:hover {
+  filter: brightness(0.85) saturate(1.25) contrast(1.05);
+  cursor: pointer;
+}
+
+.inputButtonDefault:active {
+  filter: brightness(0.8);
+  transform: scale(0.99);
+}
+
+.inputTextDefault {
+  padding-left: 1px;
+  padding-top: 1px;
+  border-radius: 2px;
+}
+
+.inputTextDefault::placeholder {
+  color: inherit;
+  opacity: 0.7;
+}
+
 /* Icon Button */
 
 .icon-button {
@@ -50,6 +78,7 @@ a {
   z-index: 200000;
   background-color: var(--bg);
   border: var(--border);
+  border: 1px solid rgb(65, 65, 65);
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
@@ -82,7 +111,7 @@ a {
 
 .menu-item {
   text-align: left;
-  height: 55px;
+  height: 45px;
   display: flex;
   color: #636363;
   align-items: center;
@@ -92,11 +121,23 @@ a {
   cursor: pointer;
 }
 
-.dropdown-add-disabled > .menu-item > .icon-button {
+.loadingMediaAddMenuContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.loadingMediaAddMenuContainer>.spinner {
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  filter: grayscale(1) brightness(30);
+}
+
+.dropdown-add-disabled>.menu-item>.icon-button {
   background-color: #636363 !important;
 }
 
-.dropdown-add-disabled > .menu-item > .icon-button:hover {
+.dropdown-add-disabled>.menu-item>.icon-button:hover {
   cursor: not-allowed !important;
 }
 
@@ -109,6 +150,7 @@ a {
   cursor: unset;
   opacity: 0.5;
 }
+
 .menu-item[disabled] * {
   pointer-events: none;
 }
@@ -131,6 +173,7 @@ a {
 
 .role-deselect-icon {
   margin-left: auto;
+  margin-right: 6px;
   border-radius: 0 !important;
 }
 
@@ -415,6 +458,22 @@ a {
   font-family: "Montserrat", sans-serif;
   font-size: 1.0rem;
   color: #636363;
+}
+
+.fas.disabled {
+  color: grey;
+}
+
+.fas.disabled:hover {
+  cursor: not-allowed;
+}
+
+.icon-button.disabled {
+  background-color: grey !important;
+}
+
+.icon-button.disabled:hover {
+  cursor: not-allowed;
 }
 
 #roleNameAdd {
