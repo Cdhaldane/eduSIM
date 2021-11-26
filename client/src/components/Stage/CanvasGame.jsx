@@ -424,6 +424,7 @@ class Graphics extends Component {
 
             {/* ---- PERSONAL CANVAS ---- */}
             <div className={"info" + this.state.personalAreaOpen}>
+              <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>
               <div id="personalGameContainer" className="personalAreaStageContainer playModeCanvasContainer">
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
@@ -453,12 +454,12 @@ class Graphics extends Component {
                 ? <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 1 })}>
-                  <i className="fas fa-caret-square-up fa-3x" />
+                  <i className="fas fa-angle-up fa-3x" />
                 </button>
                 : <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 0 })}>
-                  <i className="fas fa-caret-square-down fa-3x" />
+                  <i className="fas fa-angle-down fa-3x" />
                 </button>
               }
             </div>

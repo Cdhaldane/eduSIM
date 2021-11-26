@@ -52,7 +52,8 @@ const CanvasPage = (props) => {
     "videos",
     "audios",
     "documents",
-    "lines", // Lines are the drawings
+    "lines",
+    "pencils" // The drawings
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -346,6 +347,35 @@ const CanvasPage = (props) => {
     }
   }
 
+  const lineObjProps = (obj, index, canvas, editMode) => {
+    return {
+      key: index,
+      draggable: true,
+      strokeEnabled: !canvas.state.canvasLoading,
+      id: obj.id,
+      name: "shape",
+      ref: obj.ref,
+      infolevel: obj.infolevel,
+      level: obj.level,
+      overlay: obj.overlay,
+      points: obj.points,
+      rolelevel: obj.rolelevel,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth ? Math.max(obj.strokeWidth, 10) : 10,
+      visible: obj.visible,
+      opacity: obj.opacity,
+      x: obj.x,
+      y: obj.y,
+      ...(editMode ?
+        {
+          onClick: () => canvas.onObjectClick(obj),
+          onDragMove: () => canvas.onObjectDragMove(obj),
+          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
+          onContextMenu: canvas.onObjectContextMenu
+        } : {})
+    }
+  }
+
   const rectProps = (obj) => {
     return {
       width: obj.width,
@@ -377,6 +407,7 @@ const CanvasPage = (props) => {
 
   const videoProps = (obj, layer) => {
     return {
+      temporary: obj.temporary,
       type: "video",
       src: obj.vidsrc,
       image: obj.vidsrc,
@@ -502,7 +533,10 @@ const CanvasPage = (props) => {
   const transformerProps = (type, canvas) => {
     return {
       selectedShapeName: canvas.state.selectedShapeName,
+      refs: canvas.refs,
       ref: type + "Transformer",
+      setState: canvas.setState,
+      state: canvas.state,
       boundBoxFunc: (oldBox, newBox) => {
         // Limit resize
         if (newBox.width < 5 || newBox.height < 5) {
@@ -546,6 +580,7 @@ const CanvasPage = (props) => {
   });
 
   const inputProps = (obj, canvas) => ({
+    style: obj.style,
     varType: obj.varType,
     varName: obj.varName,
     refresh: canvas.refresh,
@@ -587,10 +622,10 @@ const CanvasPage = (props) => {
             {/* This Rect is for dragging the canvas */}
             <Rect
               id="ContainerRect"
-              x={-5 * window.innerWidth}
-              y={-5 * window.innerHeight}
-              height={window.innerHeight * 10}
-              width={window.innerWidth * 10}
+              x={-500 * window.innerWidth}
+              y={-500 * window.innerHeight}
+              height={window.innerHeight * 1000}
+              width={window.innerWidth * 1000}
             />
 
             {/* This Rect acts as the transform object for custom objects */}
@@ -602,13 +637,11 @@ const CanvasPage = (props) => {
         )}
 
         {/* Render the object saved in state */}
-        {canvas.state.lines.map((obj, index) => {
+        {canvas.state.pencils.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Line {...lineProps(obj, index, canvas, editMode)} /> : null
         })}
         {canvas.state.rectangles.map((obj, index) => {
-          //console.log(obj);
-          //console.log(objectIsOnStage(obj, canvas) === stage);
           return objectIsOnStage(obj, canvas) === stage ?
             <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
         })}
@@ -652,6 +685,12 @@ const CanvasPage = (props) => {
         {canvas.state.texts.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} /> : null
+        })}
+        {canvas.state.lines.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Line
+              {...lineObjProps(obj, index, canvas, editMode)}
+            /> : null
         })}
         {canvas.state.polls.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
