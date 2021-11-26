@@ -37,6 +37,7 @@ const Table = (props) => {
 
   const { user } = useAuth0()
   const alertContext = useAlertContext();
+  const [excludedEmails, setExcludedEmails] = useState([]);
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
@@ -138,7 +139,6 @@ const Table = (props) => {
 
   // Add submit
   const handleAddFormSubmit = (event) => {
-    window.location.reload();
     event.preventDefault();
     let data = {
       gameinstanceid: props.gameid,
@@ -161,6 +161,7 @@ const Table = (props) => {
     }).catch(error => {
       console.log(error);
     });
+    return false;
   };
 
   const handleEditFormSubmit = (event) => {
@@ -234,6 +235,7 @@ const Table = (props) => {
     e.preventDefault();
     setSending(true);
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendInviteEmails', {
+      exclude: excludedEmails,
       simname: props.title,
       admin: user.name,
       simid: props.gameid
@@ -248,6 +250,22 @@ const Table = (props) => {
       }
       setSending(false);
     });
+  }
+
+  const handleCheckEmail = (id) => {
+    if (!excludedEmails.includes(id)) {
+      setExcludedEmails(old => [...old, id]);
+    } else {
+      setExcludedEmails(old => old.filter(val => val != id));
+    }
+  }
+
+  const handleCheckAll = () => {
+    if (excludedEmails.length !== 0) {
+      setExcludedEmails([]);
+    } else {
+      setExcludedEmails(contacts.map(({ id }) => id));
+    }
   }
 
   return (
@@ -284,6 +302,11 @@ const Table = (props) => {
           <table className="table-el">
             <thead>
               <tr>
+                {props.email && (
+                  <th className="table-checkrow">
+                    <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
+                  </th>
+                )}
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -300,12 +323,18 @@ const Table = (props) => {
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
                       rolelist={rolelist}
+                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                      checked={!excludedEmails.includes(contact.id)}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
                       handleEditClick={handleEditClick}
                       handleDeleteClick={() => handleDeleteClick(contact.id)}
+                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                      checked={!excludedEmails.includes(contact.id)}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   )}
                 </Fragment>
@@ -350,7 +379,13 @@ const Table = (props) => {
        </div>)
        : <>
         {props.email && (
-          <button className="modal-bottomright-button" onClick={handleEmail} disabled={sending}>Email</button>
+          <button 
+            className="modal-bottomright-button" 
+            onClick={handleEmail} 
+            disabled={sending || excludedEmails.length === contacts.length}
+          >
+            Email
+          </button>
         )}
        </>
       }

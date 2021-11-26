@@ -52,6 +52,12 @@ footer {
   background-color: inherit;
 }
 
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 @keyframes slideInFromLeft {
   0% {
     transform: translateX(-100vw);
@@ -181,7 +187,7 @@ a {
   color: white;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
-  margin: 20px;
+  padding: 20px;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -189,6 +195,7 @@ a {
   position: relative;
   height: 100%; 
   overflow: hidden;
+  overflow-y: auto;
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 hr {

@@ -182,6 +182,10 @@ class Graphics extends Component {
     })
   }
 
+  getPage = (index) => {
+    return this.state.pages[this.state.level - 1] || {};
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
@@ -191,7 +195,7 @@ class Graphics extends Component {
     if (
       !this.state.overlayOpen &&
       (prevState.level < this.state.level || !this.state.updateRanOnce) &&
-      this.state.pages[this.state.level - 1].hasOverlay
+      this.getPage(this.state.level - 1).hasOverlay
     ) {
       this.setState({
         overlayOpen: true
@@ -276,6 +280,10 @@ class Graphics extends Component {
 
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
+
+      this.setState({
+        pageNumber: objects.numberOfPages
+      })
 
       this.savedObjects.forEach((object) => {
         this.setState({
@@ -362,7 +370,7 @@ class Graphics extends Component {
         )}
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1].hasOverlay && (
+        {this.getPage(this.state.level - 1).hasOverlay && (
           <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
             <i className="icons fa fa-window-restore" />
           </div>
@@ -457,7 +465,7 @@ class Graphics extends Component {
             </div>
           </div>
         </div>
-        <EndScreen open={this.state.level > 6}>
+        <EndScreen open={this.state.level > this.state.pageNumber}>
           <p>Thank you for joining!</p>
           {this.props.freeAdvance && (
             <button onClick={() => this.handleLevel(1)}>Reset simulation</button>

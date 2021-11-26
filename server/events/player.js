@@ -33,13 +33,16 @@ export default async (server, client, event, args) => {
           message,
           group
         });
-        group.forEach(({id}) => {
-          server.to(id).emit("message", {
-            sender,
-            room,
-            message,
-            group
-          });
+        group.forEach(async ({dbid}) => {
+          let {id} = await getPlayerByDBID(dbid);
+          if (id) {
+            server.to(id).emit("message", {
+              sender,
+              room,
+              message,
+              group
+            });
+          }
         })
       } else {
         server.to(room).emit("message", {

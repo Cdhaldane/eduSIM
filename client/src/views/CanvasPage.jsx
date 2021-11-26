@@ -9,6 +9,7 @@ import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "../components/Stage/GamePieces/Connect4/Board";
 import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
+import JSRunner from "../components/Stage/GamePieces/JSRunner";
 import Input from "../components/Stage/GamePieces/Input";
 
 const EditPage = React.lazy(() => import("./EditPage"));
@@ -573,6 +574,7 @@ const CanvasPage = (props) => {
     containerWidth: obj.containerWidth,
     containerHeight: obj.containerHeight,
     varName: obj.varName,
+    varInterval: obj.varInterval || false,
     varEnable: obj.varEnable || false
   });
 
@@ -669,6 +671,15 @@ const CanvasPage = (props) => {
         {canvas.state.stars.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Star {...defaultObjProps(obj, index, canvas, editMode)} {...starProps(obj)} /> : null
+        })}
+        {canvas.state.texts.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage && !editMode ?
+            <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
+                defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+                {...canvas.getInteractiveProps(obj.id)}
+                {...defaultObjProps(obj, index, canvas, editMode)}
+                {...textProps(obj, canvas, editMode)}
+            /> : null
         })}
         {canvas.state.texts.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?

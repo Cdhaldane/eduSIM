@@ -47,10 +47,12 @@ const Collaborators = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding-left: 5px;
+  overflow-y: auto;
   flex: 1;
   & > div {
     display: flex;
     text-align: left;
+    min-height: 40px;
     align-items: center;
   }
   & i {
@@ -165,7 +167,7 @@ function InviteCollaboratorsModal(props) {
   return (
     <>
       <div className="areacsv">
-        <form ref={detailsArea} className="areacsvform areainvitecollabs">
+        <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
           <h1 className="modal-title">Invite Collaborators</h1>
           <p>To add a collaborator, enter their email address. They will be sent a personal invitation link to create an account and join the simulation.</p>
           <div>
@@ -191,13 +193,19 @@ function InviteCollaboratorsModal(props) {
             </EmailInput>
             <Collaborators>
               <h3>People with access to {props.title}:</h3>
-              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email}) => (
+              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email, verified}) => (
                 <div>
                   <div>
-                    <h4>{name}</h4>
-                    <p>{email}</p>
+                    {name ? (
+                      <>
+                      <h4>{name} {verified ? "(accepted)" : "(invited)"}</h4>
+                      <p>{email}</p>
+                      </>
+                    ) : (
+                      <h4>{email} {verified ? "(accepted)" : "(invited)"}</h4>
+                    )}
                   </div>
-                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>
+                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name, email})}></i>
                 </div>
               )) : <p>No one currently has access to {props.title}.</p>}
             </Collaborators>
@@ -217,7 +225,7 @@ function InviteCollaboratorsModal(props) {
         hide={hideConfirm}
         confirmFunction={handleRevokeUser}
         confirmMessage={"Yes"}
-        message={revokeUser && `Revoke access to ${props.title} for ${revokeUser.name}?`}
+        message={revokeUser && `Revoke access to ${props.title} for ${revokeUser.name || revokeUser.email}?`}
       />
     </>
   );

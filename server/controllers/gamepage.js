@@ -17,7 +17,8 @@ exports.getGameInstances = async (req, res) => {
     const [collabed] = await db.query(`
       select g.* from gameinstances g, collaborators c where 
       c.adminid='${id}' and 
-      g.gameinstanceid=c.gameinstanceid
+      g.gameinstanceid=c.gameinstanceid and
+      c.verified=true
     `);
     let Array = [];
     for (i = 0; i < gameinstance.length; i++) {
@@ -234,10 +235,9 @@ exports.getCollaborators = async (req, res) => {
 
   try {
     const admins = await db.query(`
-      select a.* from adminaccounts a, collaborators c where 
+      select a.*, c.verified from adminaccounts a, collaborators c where 
       a.adminid=c.adminid and 
-      c.gameinstanceid='${gameinstanceid}' and
-      c.verified=true
+      c.gameinstanceid='${gameinstanceid}'
     `);
     return res.json(admins[0]);
   } catch (err) {
