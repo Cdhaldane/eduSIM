@@ -6,6 +6,7 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
+import Alerts from "./submenus/Alerts";
 import Modal from "react-modal";
 import Performance from "./Performance";
 
@@ -106,7 +107,8 @@ const Sidebar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) {
+    if ((!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) &&
+      !e.target.className.includes('remove-whisper')) {
       setExpanded(false);
       setSubmenuVisible(false);
     }
@@ -202,7 +204,13 @@ const Sidebar = (props) => {
       icon: "fas fa-bell",
       id: "alert",
       label: "Alert",
-      visible: avisible
+      visible: avisible,
+      submenu: (
+        <Alerts 
+          editpage={!props.game}
+          {...props.alertProps}
+        />
+      )
     },
     {
       to: "/performance",

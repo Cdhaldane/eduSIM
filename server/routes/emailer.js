@@ -6,7 +6,7 @@ const AdminAccount = require("../models/AdminAccounts");
 const Collaborators = require("../models/Collaborators");
 
 router.post("/sendInviteEmails", async (req, res) => {
-  let { simid, admin, simname } = req.body
+  let { simid, admin, simname, exclude } = req.body
 
   let smtpTransport = nodemailer.createTransport({
     service: 'hotmail',
@@ -19,12 +19,14 @@ router.post("/sendInviteEmails", async (req, res) => {
     }
   });
 
-  const [contacts] = await db.query(`
+  let [contacts] = await db.query(`
     select p.fname, p.lname, p.gameplayerid, p.player_email, r.gameroom_url from gameplayers p, gamerooms r where 
     p.gameinstanceid='${simid}' and 
     r.gameinstanceid='${simid}' and
     r.gameroom_name=p.game_room
   `);
+
+  contacts = contacts.filter(({ gameplayerid }) => !exclude.includes(gameplayerid));
 
   for (const data of contacts) {
   

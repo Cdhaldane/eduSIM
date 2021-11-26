@@ -13,7 +13,7 @@ const Message = styled.div`
   padding: 10px;
   border-radius: 10px;
   word-break: break-word;
-  cursor: pointer;
+  ${p => (!p.sender || p.private) && 'cursor: pointer;'}
   font-size: .9em;
   & > p {
     margin-top: 5px;
@@ -84,7 +84,7 @@ const MessageGroup = styled.div`
 function Messages(props) {
   const [messageLog, setMessageLog] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const [sendGroup, setSendGroup] = useState(() => new Set());
+  const [sendGroup, setSendGroup] = useState({});
 
   useEffect(() => {
     if (props.socket) {
@@ -110,30 +110,35 @@ function Messages(props) {
     };
     props.socket.emit("message", { 
       message: messageInput,
-      group: Array.from(sendGroup)
+      group: Object.values(sendGroup)
     });
     setMessageInput("");
     return false;
   }
 
-  const addWhisper = (id, group) => {
+  const sessionId = localStorage.userInfo && JSON.parse(localStorage.userInfo).dbid;
+
+  const addWhisper = ({id, name, dbid}, group) => {
     if (group) {
       setSendGroup(old => {
-        const set = new Set(old).add(id);
+        let set = {...old};
+        if (id !== props.socket.id && dbid !== sessionId) {
+          set[id] = {id, name, dbid};
+        }
         group.forEach(mem => {
-          if (mem.id !== props.socket.id) set.add(mem);
+          if (mem.id !== props.socket.id && mem.dbid !== sessionId) {
+            set[mem.id] = mem;
+          }
         });
         return set;
       });
     } else {
-      if (id === props.socket.id) return;
-      setSendGroup(old => new Set(old).add(id));
+      if (id === props.socket.id || dbid === sessionId) return;
+      setSendGroup(old => ({...old, [id]: {id, name, dbid}}));
     }
   }
 
   const removeWhisper = () => setSendGroup(() => new Set());
-
-  const sessionId = localStorage.userInfo && JSON.parse(localStorage.userInfo).dbid;
 
   return (props.socket ? (
     <MessageContainer>
@@ -142,7 +147,7 @@ function Messages(props) {
           <Message 
             key={ind}
             sender={props.socket.id === id || dbid === sessionId} 
-            onClick={() => addWhisper({id, name}, group)}
+            onClick={() => addWhisper({id, name, dbid}, group)}
             private={group && group.length>0}
           >
             {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
@@ -152,12 +157,12 @@ function Messages(props) {
         ))}
       </div>
       <hr />
-      {Array.from(sendGroup).length>0 && (
+      {Object.keys(sendGroup).length>0 && (
         <MessageGroup>
           <button onClick={removeWhisper}>
-            <i className="fa fa-times-circle" aria-hidden="true"></i>
+            <i className="fa fa-times-circle remove-whisper" aria-hidden="true"></i>
           </button>
-          <p>Sending to: {Array.from(sendGroup).map(mem => mem.name).join(', ')}</p>
+          <p>Sending to: {Object.values(sendGroup).map(mem => mem.name).join(', ')}</p>
         </MessageGroup>
       )}
       <form onSubmit={sendMessage} action="#">
