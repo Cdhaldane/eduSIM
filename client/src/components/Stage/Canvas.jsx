@@ -258,7 +258,7 @@ class Graphics extends Component {
         objects.savedGroups = parsedSavedGroups;
 
         if (this.props.setTasks) {
-          this.props.setTasks(objects.tasks || []);
+          this.props.setTasks(objects.tasks || {});
         }
 
         // Put parsed saved data into state
@@ -1866,6 +1866,7 @@ class Graphics extends Component {
     this.setState({
       level: e
     }, this.handleLevelUpdate)
+    this.props.handleLevel(e);
   }
 
   handleImage = (e) => {

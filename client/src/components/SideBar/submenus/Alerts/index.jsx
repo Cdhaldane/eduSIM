@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditAlert from "./EditAlert";
 
@@ -8,13 +8,16 @@ const AlertsContainer = styled.div`
   flex-direction: column;
   height: inherit;
   padding: 20px;
+  overflow-y: auto;
 `;
 
 const Alert = styled.div`
   display: flex;
   align-items: center;
   margin: 5px 0;    
-  background-color: ${p => p.done ? 'rgb(101, 159, 69)' : 'rgb(185, 53, 53)'};
+  background-color: ${p => p.done ? 'rgb(101, 159, 69)' : (
+    p.optional ? 'rgb(185, 109, 53)' : 'rgb(185, 53, 53)'
+  )};
   color: white;
   padding: 5px;
   border-radius: 8px;
@@ -32,8 +35,11 @@ const Alert = styled.div`
   & > div > div {
     opacity: 0.9;
     background-color: white;
-    color: ${p => p.done ? 'rgb(45, 85, 23)' : 'rgb(138, 21, 21)'};
+    color: ${p => p.done ? 'rgb(45, 85, 23)' : (
+      p.optional ? 'rgb(138, 76, 21)' : 'rgb(138, 21, 21)'
+    )};
     font-size: .9em;
+    word-break: break-word;
     padding: 10px;
     border-radius: 5px;
   }
@@ -85,7 +91,7 @@ const EditButtons = styled.div`
   }
 `;
 
-function Alerts({ editpage = true, alerts=[], setAlerts }) {
+function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
 
@@ -145,6 +151,14 @@ function Alerts({ editpage = true, alerts=[], setAlerts }) {
     }
   }
 
+  const taskTrueCount = alerts.reduce((a,data) => 
+    !checkObjConditions(data.varName, data.varCondition, data.varCheck) && !data.optional ? a+1 : a
+  , 0);
+
+  useEffect(() => {
+    setTicker(taskTrueCount);
+  }, [taskTrueCount, refresh]);
+
   return (
     <AlertsContainer>
       <h2>Alerts</h2>
@@ -161,10 +175,12 @@ function Alerts({ editpage = true, alerts=[], setAlerts }) {
             />
           ) : (
             <>
-              <Alert done={done}>
-                {done ? <i className="fas fa-check-circle" /> : <i className="fas fa-times-circle" />}
+              <Alert done={done} optional={data.optional}>
+                {done ? <i className="fas fa-check-circle" /> : (
+                  data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
+                )}
                 <div>
-                  <p>{done ? "COMPLETE" : "NOT COMPLETED"}</p>
+                  <p>{done ? "COMPLETE" : ((data.optional ? "OPTIONAL, " : "REQUIRED, ") + "NOT COMPLETED")}</p>
                   <div>{done ? data.onLabel : data.offLabel}</div>
                 </div>
               </Alert>

@@ -152,10 +152,10 @@
   font-size: 1.75em;
 }
 
-.level-nav-back {
+.level-nav-button {
   transition: background-color .3s;
 }
-.level-nav-back[disabled] {
+.level-nav-button[disabled] {
   pointer-events: none;
   background-color: gray;
 }

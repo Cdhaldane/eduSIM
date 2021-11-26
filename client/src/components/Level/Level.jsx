@@ -220,13 +220,16 @@ const Level = (props) => {
           {props.freeAdvance && (
             <>
               <button
-                className="level-nav-back"
+                className="level-nav-button"
                 disabled={count == 1}
                 onClick={handleBack}>
                 Back
               </button>
               <button
-                onClick={handleCount}>
+                onClick={handleCount}
+                disabled={props.disableNext}
+                className="level-nav-button"
+              >
                 Next
               </button>
             </>
