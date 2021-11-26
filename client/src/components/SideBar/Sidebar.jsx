@@ -127,10 +127,6 @@ const Sidebar = (props) => {
   const onNavClick = (nav) => {
     if (links.find(({ id }) => id === nav).submenu && !props.disabled) {
       if (submenu != nav || !submenuVisible) {
-        setNavCountTickers(old => ({
-          ...old,
-          [nav]: 0
-        }));
         setSubmenu(nav);
         setSubmenuVisible(true);
         setExpanded(true);
@@ -168,12 +164,19 @@ const Sidebar = (props) => {
     }));
   }, [submenu]);
 
+  const handleSetTicker = useCallback((id, val) => {
+    setNavCountTickers(old => ({
+      ...old,
+      [id]: val
+    }));
+    if (id === "alert" && props.setDisableNext) {
+      props.setDisableNext(val > 0);
+    }
+  }, [submenu]);
+
   useEffect(() => {
-    if (Object.keys(navCountTickers).length>0 && submenuVisible) {
-      setNavCountTickers(old => Object.entries(old).reduce((prev, [key, val]) => ({
-        ...prev,
-        [key]: (submenu == key) ? 0 : val
-      }, {})));
+    if (submenuVisible && submenu == 'messaging') {
+      setNavCountTickers(old => ({...old, messaging: 0}));
     }
   }, [submenu, submenuVisible, navCountTickers]);
 
@@ -208,6 +211,8 @@ const Sidebar = (props) => {
       submenu: (
         <Alerts 
           editpage={!props.game}
+          refresh={props.refresh}
+          setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />
       )
