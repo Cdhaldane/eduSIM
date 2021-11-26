@@ -356,10 +356,31 @@ const CanvasPage = (props) => {
     }
   }
 
-  const lineObjProps = (obj) => {
+  const lineObjProps = (obj, index, canvas, editMode) => {
     return {
-      width: obj.width ? obj.width : 10,
-      height: obj.height ? obj.height : 500,
+      key: index,
+      draggable: true,
+      id: obj.id,
+      name: "shape",
+      ref: obj.ref,
+      infolevel: obj.infolevel,
+      level: obj.level,
+      overlay: obj.overlay,
+      points: obj.points,
+      rolelevel: obj.rolelevel,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth ? Math.max(obj.strokeWidth, 10) : 10,
+      visible: obj.visible,
+      opacity: obj.opacity,
+      x: obj.x,
+      y: obj.y,
+      ...(editMode ?
+        {
+          onClick: () => canvas.onObjectClick(obj),
+          onDragMove: () => canvas.onObjectDragMove(obj),
+          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
+          onContextMenu: canvas.onObjectContextMenu
+        } : {})
     }
   }
 
@@ -372,7 +393,6 @@ const CanvasPage = (props) => {
 
   const imageProps = (obj, layer) => {
     return {
-      //temporary: obj.temporary,
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
@@ -513,6 +533,8 @@ const CanvasPage = (props) => {
       selectedShapeName: canvas.state.selectedShapeName,
       refs: canvas.refs,
       ref: type + "Transformer",
+      setState: canvas.setState,
+      state: canvas.state,
       boundBoxFunc: (oldBox, newBox) => {
         // Limit resize
         if (newBox.width < 5 || newBox.height < 5) {
@@ -655,12 +677,7 @@ const CanvasPage = (props) => {
         {canvas.state.lines.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage ?
             <Line
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              //{...rectProps(obj)}
-              {...lineObjProps(obj)}
-              points={obj.points}
-              strokeWidth={50}
-              stroke={"black"}
+              {...lineObjProps(obj, index, canvas, editMode)}
             /> : null
         })}
         {canvas.state.polls.map((obj, index) => {

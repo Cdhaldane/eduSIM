@@ -229,16 +229,20 @@ function DropdownEditObject(props) {
             unmountOnExit>
             <div className="menuedit">
               <h1>{props.title}</h1>
-              <b>
-                Fill:
-                <TwitterPicker
-                  colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                  color={fillColor}
-                  triangle="hide"
-                  width={350}
-                  onChangeComplete={handleChangeF} />
-              </b>
-              <br />
+              {!props.selectedShapeName.includes("lines") && (
+                <>
+                  <b>
+                    Fill:
+                    <TwitterPicker
+                      colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
+                      color={fillColor}
+                      triangle="hide"
+                      width={350}
+                      onChangeComplete={handleChangeF} />
+                  </b>
+                  <br />
+                </>
+              )}
               <b>
                 Stroke:
                 <TwitterPicker

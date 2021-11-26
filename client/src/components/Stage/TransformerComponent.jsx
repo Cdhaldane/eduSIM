@@ -9,7 +9,6 @@ const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
     const shape = props.refs[props.selectedShapeName] ? props.refs[props.selectedShapeName].attrs : null;
-    //console.log(shape);
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
       case "":
         // This is a group selection
@@ -75,10 +74,18 @@ const TransformerComponent = forwardRef((props, ref) => {
                   radiusY={shape.strokeWidth}
                   x={shape.x + shape.points[0]}
                   y={shape.y + shape.points[1]}
+                  onMouseUp={() => {
+                    document.body.style.cursor = "auto";
+                  }}
                   onMouseMove={(e) => {
                     document.body.style.cursor = "move";
+                    if (e.evt.buttons === 1) {
+                      props.setState({
+                        lineTransformDragging: "top",
+                      });
+                    }
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={() => {
                     document.body.style.cursor = "auto";
                   }}
                 />
@@ -90,6 +97,20 @@ const TransformerComponent = forwardRef((props, ref) => {
                   radiusY={shape.strokeWidth}
                   x={shape.x + shape.points[2]}
                   y={shape.y + shape.points[3]}
+                  onMouseUp={() => {
+                    document.body.style.cursor = "auto";
+                  }}
+                  onMouseMove={(e) => {
+                    document.body.style.cursor = "move";
+                    if (e.evt.buttons === 1) {
+                      props.setState({
+                        lineTransformDragging: "bottom",
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    document.body.style.cursor = "auto";
+                  }}
                 />
               </>
             )}

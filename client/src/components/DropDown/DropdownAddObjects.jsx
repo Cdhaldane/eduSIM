@@ -279,7 +279,8 @@ const DropdownAddObjects = (props) => {
       {
         stroke: 'black',
         strokeWidth: DEFAULT_STROKE,
-        points: [0, 70, 100, 1000]
+        points: [0, 0, 1000, 0],
+        opacity: 1,
       }
     );
   }
@@ -318,16 +319,6 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = () => {
-    // Photos for testing
-    // https://photojournal.jpl.nasa.gov/jpeg/PIA24579.jpg
-    // https://photojournal.jpl.nasa.gov/jpeg/PIA24472.jpg
-    // https://photojournal.jpl.nasa.gov/jpeg/PIA24380.jpg
-    // https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Abecedarium.png/1280px-Abecedarium.png
-    // https://dmzn2b8hkpq8b.cloudfront.net/images/products/515x515/S396079.jpg
-    // https://thumbor.forbes.com/thumbor/fit-in/416x416/filters%3Aformat%28jpg%29/https%3A%2F%2Fi.forbesimg.com%2Fmedia%2Flists%2Fcompanies%2Falphabet_416x416.jpg
-    // https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif
-    // https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d0/Foucault_pendulum_1.webm/Foucault_pendulum_1.webm.480p.webm
-    // https://i.imgur.com/eUqLtZk.gif
     addObjectToLayer(
       "videos",
       {
