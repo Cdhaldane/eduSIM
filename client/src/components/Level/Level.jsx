@@ -210,6 +210,7 @@ const Level = (props) => {
               psize="3"
               type="info"
               pages={props.pages}
+              handleCopyPage={props.handleCopyPage}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}

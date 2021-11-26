@@ -460,6 +460,22 @@ a {
   color: #636363;
 }
 
+.fas.disabled {
+  color: grey;
+}
+
+.fas.disabled:hover {
+  cursor: not-allowed;
+}
+
+.icon-button.disabled {
+  background-color: grey !important;
+}
+
+.icon-button.disabled:hover {
+  cursor: not-allowed;
+}
+
 #roleNameAdd {
   width: 60%;
 }

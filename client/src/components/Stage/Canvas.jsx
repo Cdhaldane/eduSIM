@@ -2439,12 +2439,32 @@ class Graphics extends Component {
     });
   }
 
+  handleCopyPage = async (index) => {
+    // Copy all objects from chosen level to new level
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const objs = this.state[this.savedObjects[i]];
+      for (let j = 0; j < objs.length; j++) {
+        const obj = objs[j];
+        if (obj.level === index + 1) {
+          const newObj = {
+            ...obj,
+            level: this.state.pages.length
+          } 
+          this.setState({
+            [this.savedObjects[i]]: [...objs, newObj]
+          });
+        }
+      }
+    }
+  }
+
   render() {
     if (!this.state.savedStateLoaded) return null;
     return (
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          handleCopyPage={this.handleCopyPage}
           number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
           removeJSGIFS={() => this.removeJSGIFS()}

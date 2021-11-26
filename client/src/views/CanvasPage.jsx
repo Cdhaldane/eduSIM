@@ -347,20 +347,11 @@ const CanvasPage = (props) => {
     }
   }
 
-  const rectProps = (obj) => {
-    return {
-      width: obj.width,
-      height: obj.height,
-      fillPatternImage: obj.fillPatternImage,
-      fillPatternOffset: obj.fillPatternOffset,
-      image: obj.image
-    }
-  }
-
   const lineObjProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
       draggable: true,
+      strokeEnabled: !canvas.state.canvasLoading,
       id: obj.id,
       name: "shape",
       ref: obj.ref,
@@ -382,6 +373,16 @@ const CanvasPage = (props) => {
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
         } : {})
+    }
+  }
+
+  const rectProps = (obj) => {
+    return {
+      width: obj.width,
+      height: obj.height,
+      fillPatternImage: obj.fillPatternImage,
+      fillPatternOffset: obj.fillPatternOffset,
+      image: obj.image
     }
   }
 
