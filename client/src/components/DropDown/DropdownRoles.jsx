@@ -31,6 +31,10 @@ const DropdownRoles = (props) => {
 
   const menuElem = useRef();
 
+  useEffect(() => {
+    if (props.refreshPersonalCanvas) props.refreshPersonalCanvas();
+  }, [selectedRole]);
+
   const updateRolesData = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {

@@ -2788,6 +2788,14 @@ class Graphics extends Component {
           {/* The Role Picker */}
           <div id="rolesdrop">
             <DropdownRoles
+              refreshPersonalCanvas={() => {
+                this.setState({
+                  canvasLoading: true,
+                  selectedShapeName: "",
+                  groupSelection: []
+                });
+                setTimeout(() => this.props.reCenter("edit", "personal"), 0);
+              }}
               personalAreaOpen={this.state.personalAreaOpen}
               openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
               roleLevel={this.handleRoleLevel}

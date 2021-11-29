@@ -172,15 +172,16 @@ const CanvasPage = (props) => {
               });
             }
 
-            const leftPadding = contentW * scale * 0.05;
+            const leftPadding = contentW * scale * (100/window.innerWidth);
 
             // Center contents
             if (availableRatio > contentRatio) {
               y = 40;
-              x = mode === "play" ? (areaString === "group" ? sidebar.width : 0) + leftPadding : (availableW - (contentW * scale)) / 2;
+              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : 
+              (areaString === "group" ? sideMenuW : 0) + (availableW - (contentW * scale)) / 2;
             } else {
               y = (availableH - (contentH * scale)) / 2;
-              x = mode === "play" ? (areaString === "group" ? sidebar.width : 0) + leftPadding : leftPadding;       
+              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : leftPadding;       
             }
             canvas.setState({
               [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
