@@ -29,7 +29,7 @@ class Overlay extends Component {
     if (this.props.playMode && this.props.propsIn.canvasHeights.overlay) {
       stageHeight = this.props.propsIn.canvasHeights.overlay;
     } else if (document.getElementById("overlayGameContainer")) {
-      stageHeight = document.getElementById("overlayGameContainer").clientHeight*0.95;
+      stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
 
     return (

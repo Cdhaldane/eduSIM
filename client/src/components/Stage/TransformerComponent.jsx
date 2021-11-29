@@ -22,7 +22,6 @@ const TransformerComponent = forwardRef((props, ref) => {
     }
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
       case "":
-        console.log("NONE");
         // This is a group selection
         return (
           <Transformer

@@ -26,7 +26,7 @@ const StyledNav = styled.nav`
   overflow: hidden;
   &::before {
     content: "";
-    background-color: var(--primary);
+    /*background-color: var(--primary);*/
     position: absolute;
     width: 100%;
     height: 100%;

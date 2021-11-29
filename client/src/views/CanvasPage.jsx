@@ -132,7 +132,7 @@ const CanvasPage = (props) => {
         const doublePad = 2 * padding;
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
-        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
+        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - sideMenuW - doublePad;
         const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
         const availableRatio = availableW / availableH;
         const level = canvas.state.level;
@@ -155,36 +155,37 @@ const CanvasPage = (props) => {
           x = -minX * scale;
           y = -minY * scale;
           const scaleDown = 0.85;
-          scale = scale * (mode === "play" ? scaleDown : 1); // Add padding
           // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
-            [`${areaString}LayerY`]: y + (mode === "play" ? 0 : topMenuH),
+            [`${areaString}LayerY`]: y + topMenuH,
             [`${areaString}LayerScale`]: scale
           }, () => setTimeout(() => {
             canvas = getUpdatedCanvasState(mode);
 
             if (mode === "play") {
               // Adjust the canvas container height (scroll-y will automatically appear if needed)
-              const canvasH = Math.max((scale * contentH) + topMenuH * 3.5, window.innerHeight);
+              const canvasH = Math.max((contentH * scale) + (topMenuH * 2) + padding, window.innerHeight);
               setPlayModeCanvasHeights({
                 ...playModeCanvasHeights,
                 [areaString]: availableRatio * scaleDown > contentRatio ? canvasH : null
               });
             }
 
+            const leftPadding = contentW * scale * 0.05;
+
             // Center contents
             if (availableRatio > contentRatio) {
-              y = scale > 1 ? padding / scale : padding;
-              x = (availableW - (contentW * scale)) / 2;
+              y = 40;
+              x = mode === "play" ? (areaString === "group" ? sidebar.width : 0) + leftPadding : (availableW - (contentW * scale)) / 2;
             } else {
-              x = scale > 1 ? padding / scale : padding;
               y = (availableH - (contentH * scale)) / 2;
+              x = mode === "play" ? (areaString === "group" ? sidebar.width : 0) + leftPadding : leftPadding;       
             }
             canvas.setState({
               [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
               [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y,
-              canvasLoading: false,
+              canvasLoading: false
             });
           }, 0));
         } else {
@@ -676,10 +677,10 @@ const CanvasPage = (props) => {
         {canvas.state.texts.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage && !editMode ?
             <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
-                defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-                {...canvas.getInteractiveProps(obj.id)}
-                {...defaultObjProps(obj, index, canvas, editMode)}
-                {...textProps(obj, canvas, editMode)}
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...textProps(obj, canvas, editMode)}
             /> : null
         })}
         {canvas.state.texts.map((obj, index) => {
