@@ -425,6 +425,7 @@ class Graphics extends Component {
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}
+            countdown={this.props.countdown}
           />
           <div>
 
