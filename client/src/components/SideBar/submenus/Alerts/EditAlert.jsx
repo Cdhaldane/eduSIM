@@ -21,7 +21,7 @@ const Container = styled.form`
     padding: 4px;
     font-family: inherit;
   }
-  & > input::placeholder {
+  & input::placeholder {
     opacity: .5;
   }
   & > select {
@@ -29,6 +29,22 @@ const Container = styled.form`
     padding: 4px;
     border: 1px solid;
     margin-bottom: 5px;
+  }
+  & > row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  & > row > input {
+    min-width: 0;
+    flex: 1;
+    border-radius: 4px;
+    border: 1px solid;
+    padding: 4px;
+    font-family: inherit;
+  }
+  & > row > p {
+    margin: 0 5px;
   }
   & > div {
     display: flex;
@@ -112,11 +128,21 @@ function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
       >
         <option value="positive">contains a positive value</option>
         <option value="negative">contains a negative/null value</option>
-        <option value="equalto">is equal to</option>
+        <option value="isgreater">is greater than</option>
+        <option value="isless">is less than</option>
+        <option value="isequal">is equal to</option>
+        <option value="between">is between</option>
         <option value="onchange">changes</option>
       </select>
-      {formData.varCondition === "equalto" && (
+      {formData.varCondition?.startsWith('is') && (
         <input type="text" placeholder="Value to check" value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
+      )}
+      {formData.varCondition == 'between' && (
+        <row>
+          <input type="text" placeholder="Min" value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
+          <p>and</p> 
+          <input type="text" placeholder="Max" value={formData.varCheckAlt || ""} onChange={changeValue("varCheckAlt")} />
+        </row>
       )}
       <div>
         <input type="button" onClick={onCancel} value="Cancel" />
