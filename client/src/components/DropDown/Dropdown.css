@@ -69,6 +69,85 @@ a {
   margin-left: auto;
 }
 
+.page-settings-css-anim-enter {
+  position: absolute;
+  opacity: 0.5;
+  transform: translateX(-110%);
+}
+
+.page-settings-css-anim-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+
+.page-settings-css-anim-exit {
+  opacity: 1;
+  position: absolute;
+}
+
+.page-settings-css-anim-exit-active {
+  opacity: 0.5;
+  transform: translateX(-110%);
+  transition: all var(--speed) ease;
+}
+
+/**************************************************/
+
+.pages-css-anim-enter {
+  position: absolute;
+  opacity: 0.5;
+  transform: translateX(110%);
+}
+
+.pages-css-anim-enter-active {
+  opacity: 1;
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+
+.pages-css-anim-exit {
+  opacity: 1;
+  transform: translateX(0%);
+  position: absolute;
+}
+
+.pages-css-anim-exit-active {
+  opacity: 0.5;
+  transform: translateX(110%);
+  transition: all var(--speed) ease;
+}
+
+/**************************************************/
+
+#pageSettingsDropdown {
+  padding: 10px;
+  text-align: center;
+}
+
+#pageSettingsDropdown>div {
+  display: inline-block;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+#pageSettingsDropdown>div>.pageSettingsLabels {
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+#pageSettingsDropdown>div>.react-switch {
+  margin-left: 10px;
+  transform: translateY(7px);
+}
+
+.timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-up,
+.timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-down {
+  color: white;
+  font-size: 1.1em;
+  transform: translate(3px, -1px);
+}
+
 /* Dropdown Menu */
 
 .dropdown {
@@ -486,11 +565,11 @@ a {
 }
 
 .add-dropdown-item-input {
-  border-radius: 0.3em;
+  border-radius: 0.5em;
   border: solid 2px grey;
   font-size: 0.9em;
-  padding-left: 0.25em;
-  width: 80%;
+  padding-left: 0.5em;
+  width: 90%;
   height: 70%;
 }
 

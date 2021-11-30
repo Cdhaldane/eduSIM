@@ -110,12 +110,12 @@ class Graphics extends Component {
 
       // Page Controls
       pages: [
-        { name: "1", hasOverlay: false },
-        { name: "2", hasOverlay: false },
-        { name: "3", hasOverlay: false },
-        { name: "4", hasOverlay: false },
-        { name: "5", hasOverlay: false },
-        { name: "6", hasOverlay: false }
+        { name: "Page 1", hasOverlay: false, color: "#fff" },
+        { name: "Page 2", hasOverlay: false, color: "#fff" },
+        { name: "Page 3", hasOverlay: false, color: "#fff" },
+        { name: "Page 4", hasOverlay: false, color: "#fff" },
+        { name: "Page 5", hasOverlay: false, color: "#fff" },
+        { name: "Page 6", hasOverlay: false, color: "#fff" }
       ],
       numberOfPages: 6,
       level: 1, // Current page

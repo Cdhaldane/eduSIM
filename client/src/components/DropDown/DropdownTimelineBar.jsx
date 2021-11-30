@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ConfirmationModal from "../Modal/ConfirmationModal";
+import { ChromePicker } from 'react-color';
+import Switch from "react-switch";
+import { CSSTransition } from 'react-transition-group';
 
 import "./Dropdown.css";
 
 const DropdownTimelineBar = (props) => {
 
   const UNTITLED_PAGE = "Untitled Page";
-  const MAX_PAGE_NUM = 6;
+  const MAX_PAGE_NUM = 10;
 
   const [pages, setPages] = useState(props.pages);
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
@@ -16,6 +19,8 @@ const DropdownTimelineBar = (props) => {
   const [modifyPageName, setModifyPageName] = useState("");
   const [newPageName, setNewPageName] = useState("");
   const [deletionIndex, setDeletionIndex] = useState(-1);
+  const [currentSettingsIndex, setCurrentSettingsIndex] = useState(null);
+  const [menuHeight, setMenuHeight] = useState(0);
 
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -26,6 +31,7 @@ const DropdownTimelineBar = (props) => {
 
   const handleClickOutside = e => {
     if (dropdown.current &&
+      e.target.id !== "confirmModalConfirmButton" &&
       !dropdown.current.contains(e.target) &&
       !confirmationVisibleRef.current) {
       props.close();
@@ -33,6 +39,7 @@ const DropdownTimelineBar = (props) => {
   }
 
   useEffect(() => {
+    setMenuHeight(document.getElementById("existingPagesSection").clientHeight);
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
@@ -43,6 +50,7 @@ const DropdownTimelineBar = (props) => {
 
   useEffect(() => {
     props.handlePageTitle(pages);
+    updatePageListHeight();
   }, [pages]);
 
   const pageNameChanged = (name, index) => {
@@ -59,154 +67,265 @@ const DropdownTimelineBar = (props) => {
     }, 0);
   }
 
-  return (
-    <div className="dropdown menu-primary timelineDropdown" style={{ height: "auto" }} ref={dropdown}>
-      <div className="menu">
-        <h1>Edit Timeline Bar</h1>
+  const calcHeight = (el) => {
+    let height = el.offsetHeight;
+    if (el.className === "page-settings-css-anim-enter") {
+      height = 380;
+    }
+    setMenuHeight(height);
+  }
 
-        {/* Existing pages */}
-        <div>
-          {props.pages.map((page, index) => {
-            return (
-              <React.Fragment key={index}>
-                {modifyIndex === index ? (
-                  <div
-                    className="menu-item"
-                    key={index}
-                  >
-                    <span className="icon-button" onClick={() => pageNameChanged(modifyPageName, index)}>
-                      <i className="icons fas fa-check" />
-                    </span>
-                    <input
-                      id="roleNameAdd"
-                      className="add-dropdown-item-input"
-                      type="text"
-                      placeholder="New Page Name"
-                      onChange={(e) => setModifyPageName(e.target.value)}
-                      value={modifyPageName} />
-                    <div>
-                      <button style={{
-                        float: "left",
-                        width: "25px",
-                        height: "30px",
-                        display: "block",
-                        marginLeft: "0px"
-                      }}
-                        onClick={() => {
-                          if (index !== 0) {
-                            const newPages = [...pages];
-                            const prevPage = pages[index - 1];
-                            const thisPage = pages[index];
-                            newPages[index - 1] = thisPage;
-                            newPages[index] = prevPage;
-                            setTimeout(() => {
-                              setPages(newPages);
-                              setModifyIndex(index - 1);
-                              setModifyPageName(page.name);
+  const updatePageListHeight = () => {
+    setTimeout(() => {
+      if (document.getElementById("existingPagesSection")) {
+        setMenuHeight(document.getElementById("existingPagesSection").clientHeight);
+      }
+    }, 0);
+  }
 
-                              props.changeObjectPage(index - 1, MAX_PAGE_NUM + 1);
-                              props.changeObjectPage(index, index - 1);
-                              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
+  const editBtns = (page, index) => (
+    <div className="icons-right">
+      {/* EDIT PAGE TITLE */}
+      <span className="icon-button" onClick={() => handleModifyPage(index)}>
+        <i className="icons fa fa-pencil" />
+      </span>
 
-                              props.refreshCanvas();
-                            }, 0);
-                          }
-                        }}>
-                        <i className={`fas fa-caret-up ${index === 0 ? "disabled" : ""}`} />
-                      </button>
-                      <button style={{
-                        float: "right",
-                        width: "25px",
-                        height: "30px",
-                        display: "block",
-                        marginLeft: "5px"
-                      }}
-                        onClick={() => {
-                          if (index !== pages.length - 1) {
-                            const newPages = [...pages];
-                            const nextPage = pages[index + 1];
-                            const thisPage = pages[index];
-                            newPages[index + 1] = thisPage;
-                            newPages[index] = nextPage;
-                            setTimeout(() => {
-                              setPages(newPages);
-                              setModifyIndex(index + 1);
-                              setModifyPageName(page.name);
+      {/* PAGE SETTINGS */}
+      <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
+        <i className="icons fa fa-cog" />
+      </span>
 
-                              props.changeObjectPage(index + 1, MAX_PAGE_NUM + 1);
-                              props.changeObjectPage(index, index + 1);
-                              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
-
-                              props.refreshCanvas();
-                            }, 0);
-                          }
-                        }}>
-                        <i className={`fas fa-caret-down ${index === pages.length - 1 ? "disabled" : ""}`} />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="menu-item"
-                    onClick={(e) => null}
-                    key={index}
-                    disabled={false}
-                  >
-                    <span className="icon-button" onClick={() => {
-                      setDeletionIndex(index);
-                      setConfirmationVisible(true);
-                    }} >
-                      <i className="icons fa fa-trash" />
-                    </span>
-                    {`${page.name}`}
-                    <div className="icons-right">
-                      <span className="icon-button" onClick={() => handleModifyPage(index)}>
-                        <i className="icons fa fa-pencil" />
-                      </span>
-                      <span
-                        className={`icon-button ${pages.length >= MAX_PAGE_NUM ? "disabled" : ""}`}
-                        onClick={async () => {
-                          if (pages.length < MAX_PAGE_NUM) {
-                            // Copy the page and contents
-                            setPages([...pages, {
-                              name: pages[index].name + " Copy",
-                              hasOverlay: pages[index].hasOverlay
-                            }]);
-                            setNumOfPages(numOfPages + 1);
-                            props.handleCopyPage(index);
-                          }
-                        }}
-                      >
-                        <i className={`icons fa fa-copy`} />
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
-
-        {/* Add a new page input */}
-        <div className="menu-item" disabled={pages.length >= MAX_PAGE_NUM}>
-          <span className="icon-button" onClick={() => {
+      {/* COPY PAGE */}
+      <span
+        className={`icon-button ${pages.length >= MAX_PAGE_NUM ? "disabled" : ""}`}
+        onClick={async () => {
+          if (pages.length < MAX_PAGE_NUM) {
+            // Copy the page and contents
             setPages([...pages, {
-              name: newPageName ? newPageName : UNTITLED_PAGE,
-              hasOverlay: false
+              name: pages[index].name + " Copy",
+              hasOverlay: pages[index].hasOverlay
             }]);
-            setNewPageName("");
             setNumOfPages(numOfPages + 1);
-          }}>
-            <i className="icons fas fa-plus" />
-          </span>
-          <input
-            className="add-dropdown-item-input"
-            type="text"
-            placeholder="New Page Name"
-            value={newPageName}
-            onChange={(e) => setNewPageName(e.target.value)}
-          />
-        </div>
+            props.handleCopyPage(index);
+          }
+        }}
+      >
+        <i className={`icons fa fa-copy`} />
+      </span>
+
+      {/* MOVE PAGE UP */}
+      <span
+        className={`icon-button ${index === 0 ? "disabled" : ""}`}
+        style={{
+          float: "left",
+          width: "25px",
+          height: "30px",
+          display: "block",
+          marginLeft: "0px"
+        }}
+        onClick={() => {
+          if (index !== 0) {
+            const newPages = [...pages];
+            const prevPage = pages[index - 1];
+            const thisPage = pages[index];
+            newPages[index - 1] = thisPage;
+            newPages[index] = prevPage;
+            setTimeout(() => {
+              setPages(newPages);
+              setModifyPageName(page.name);
+
+              props.changeObjectPage(index - 1, MAX_PAGE_NUM + 1);
+              props.changeObjectPage(index, index - 1);
+              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
+
+              props.refreshCanvas();
+            }, 0);
+          }
+        }}>
+        <i className={`fas fa-angle-up`} />
+      </span>
+
+      {/* MOVE PAGE DOWN */}
+      <span
+        className={`icon-button ${index === pages.length - 1 ? "disabled" : ""}`}
+        style={{
+          float: "right",
+          width: "25px",
+          height: "30px",
+          display: "block",
+          marginLeft: "5px"
+        }}
+        onClick={() => {
+          if (index !== pages.length - 1) {
+            const newPages = [...pages];
+            const nextPage = pages[index + 1];
+            const thisPage = pages[index];
+            newPages[index + 1] = thisPage;
+            newPages[index] = nextPage;
+            setTimeout(() => {
+              setPages(newPages);
+              setModifyPageName(page.name);
+
+              props.changeObjectPage(index + 1, MAX_PAGE_NUM + 1);
+              props.changeObjectPage(index, index + 1);
+              props.changeObjectPage(MAX_PAGE_NUM + 1, index);
+
+              props.refreshCanvas();
+            }, 0);
+          }
+        }}>
+        <i className={`fas fa-angle-down`} />
+      </span>
+    </div>
+  );
+
+  return (
+    <div
+      className="dropdown menu-primary timelineDropdown"
+      style={{
+        height: "auto",
+        width: currentSettingsIndex === null ? "500px" : "300px"
+      }}
+      ref={dropdown}
+    >
+      <div
+        className="menu"
+        style={{
+          height: menuHeight + "px",
+          transition: "var(--speed) ease"
+        }}
+      >
+        {/* PAGE LIST */}
+        <CSSTransition
+          id={"existingPagesSection"}
+          in={currentSettingsIndex === null}
+          timeout={500}
+          classNames="pages-css-anim"
+          onEnter={calcHeight}
+          unmountOnExit>
+          <div style={{ width: "500px" }}>
+            <h1>Edit Pages</h1>
+            <div>
+              {props.pages.map((page, index) => {
+                return (
+                  <React.Fragment key={index}>
+                    {modifyIndex === index ? (
+                      <div
+                        className="menu-item"
+                        key={index}
+                      >
+                        <span className="icon-button" onClick={() => pageNameChanged(modifyPageName, index)}>
+                          <i className="icons fas fa-check" />
+                        </span>
+                        <input
+                          id="roleNameAdd"
+                          className="add-dropdown-item-input"
+                          type="text"
+                          placeholder="Page Name"
+                          onChange={(e) => setModifyPageName(e.target.value)}
+                          value={modifyPageName}
+                        />
+                        {editBtns(page, index)}
+                      </div>
+                    ) : (
+                      <div
+                        className="menu-item"
+                        onClick={(e) => null}
+                        key={index}
+                        disabled={false}
+                      >
+                        <span className="icon-button" onClick={() => {
+                          setDeletionIndex(index);
+                          setConfirmationVisible(true);
+                        }} >
+                          <i className="icons fa fa-trash" />
+                        </span>
+
+                        {`${page.name}`}
+                        {editBtns(page, index)}
+                      </div>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+
+            {/* ADD A NEW PAGE */}
+            <div className="menu-item" disabled={pages.length >= MAX_PAGE_NUM}>
+              <span className="icon-button" onClick={() => {
+                setPages([...pages, {
+                  name: newPageName ? newPageName : UNTITLED_PAGE,
+                  hasOverlay: false
+                }]);
+                setNewPageName("");
+                setNumOfPages(numOfPages + 1);
+              }}>
+                <i className="icons fas fa-plus" />
+              </span>
+              <input
+                className="add-dropdown-item-input"
+                type="text"
+                placeholder="New Page Name"
+                value={newPageName}
+                onChange={(e) => setNewPageName(e.target.value)}
+              />
+            </div>
+          </div>
+        </CSSTransition>
+
+        {/* Page Settings */}
+        <CSSTransition
+          in={currentSettingsIndex !== null}
+          timeout={500}
+          classNames="page-settings-css-anim"
+          onEnter={calcHeight}
+          unmountOnExit>
+          <div>
+            <>
+              <div className="menu-item">
+                <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(null), 0)}>
+                  <i className="icons fa fa-arrow-left" />
+                </span>
+                <h1
+                  style={{
+                    padding: "0px",
+                    width: "250px",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap"
+                  }}>
+                  Edit Page: {pages[currentSettingsIndex] ? pages[currentSettingsIndex].name : "Page Name"}
+                </h1>
+              </div>
+              <div id={"pageSettingsDropdown"}>
+                <div>
+                  <div className="pageSettingsLabels">Show Overlay:</div>
+                  <Switch
+                    onChange={(val) => {
+                      const newArr = pages.slice();
+                      newArr[currentSettingsIndex].hasOverlay = val;
+                      setPages(newArr);
+                    }}
+                    checked={pages[currentSettingsIndex] ? pages[currentSettingsIndex].hasOverlay : false}
+                    className="react-switch"
+                  />
+                </div>
+                <div>
+                  <div className="pageSettingsLabels">Background Color:</div>
+                  <ChromePicker
+                    color={pages[currentSettingsIndex] ? pages[currentSettingsIndex].color || "#ffffff" : "#ffffff"}
+                    disableAlpha={true}
+                    onChange={(color) => {
+                      const newArr = pages.slice();
+                      newArr[currentSettingsIndex].color = color.hex;
+                      setPages(newArr);
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          </div>
+        </CSSTransition>
       </div>
 
       <ConfirmationModal
