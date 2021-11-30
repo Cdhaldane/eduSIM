@@ -122,8 +122,9 @@ const Game = (props) => {
       });
       client.on("clientLeft", (id) => {
         setPlayers(l => {
-          delete l[id];
-          return l;
+          let n = {...l};
+          delete n[id];
+          return n;
         });
       });
       client.on("errorLog", (message) => {
@@ -182,6 +183,7 @@ const Game = (props) => {
           subtitle={room.gameroom_name}
           socket={socket}
           submenuProps={{ messageBacklog }}
+          players={parsedPlayers}
           game
           disabled={!roomStatus.running}
           alertProps={{
