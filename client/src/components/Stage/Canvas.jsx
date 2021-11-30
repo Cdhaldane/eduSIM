@@ -500,6 +500,8 @@ class Graphics extends Component {
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
       }
+
+      this.props.setPageColor(this.state.pages[this.state.level - 1].color);
     }
   }
 
@@ -2680,6 +2682,9 @@ class Graphics extends Component {
         {/* ---- PERSONAL CANVAS ---- */}
         <div
           id={"editPersonalContainer"}
+          style={{
+            backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].color : "transparent"
+          }}
           className={"info" + this.state.personalAreaOpen}
         >
           <div

@@ -1,3 +1,7 @@
+#editPersonalContainer {
+  transition: 0.3s cubic-bezier(0.4, 0, 1, 1);
+}
+
 .info0 {
   width: calc(100% - 130px);
   height: calc(100% - 70px);
@@ -8,10 +12,7 @@
   transform: translate(0%, 100%);
   padding: 10px;
   background-color: rgba(110, 25, 25, 0);
-  /*box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);*/
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
 }
 
@@ -27,9 +28,8 @@
   background-color: white;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
+  transition: none !important;
 }
 
 .info0 button {

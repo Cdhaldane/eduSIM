@@ -3,7 +3,8 @@
   top: 0px;
   left: 70px;
   height: 55px;
-  background: linear-gradient(0deg, rgba(229, 229, 229, 0) 0%, rgba(229, 229, 229) 15%);
+  background-color: transparent;
+  /*background: linear-gradient(0deg, rgba(229, 229, 229, 0) 0%, rgba(229, 229, 229) 15%);*/
   width: calc(100% - 70px);
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;

@@ -47,6 +47,9 @@ class Overlay extends Component {
                 }
               )}
               id="overlayGameContainer"
+              style={{
+                backgroundColor: this.props.state.pages[this.props.state.level - 1].color
+              }}
               className="playModeCanvasContainer"
               tabIndex="0"
             >
