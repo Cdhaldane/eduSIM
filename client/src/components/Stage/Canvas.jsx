@@ -1251,10 +1251,10 @@ class Graphics extends Component {
         return;
       }
 
-      const stage = personalArea ? "personalStage" :
-        (this.state.overlayOpen ? "overlayStage" : "groupStage");
-      const pos = this.refs[stage].getPointerPosition();
-      const shape = this.refs[stage].getIntersection(pos);
+      const stage = personalArea ? "personal" :
+        (this.state.overlayOpen ? "overlay" : "group");
+      const pos = this.refs[stage + "Stage"].getPointerPosition();
+      const shape = this.refs[stage + "Stage"].getIntersection(pos);
 
       if (this.state.lineTransformDragging) {
         const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
@@ -1263,8 +1263,8 @@ class Graphics extends Component {
         const xIndex = this.state.lineTransformDragging === "top" ? 0 : 2;
         const yIndex = this.state.lineTransformDragging === "top" ? 1 : 3;
 
-        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state.groupLayerScale);
-        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state.groupLayerScale);
+        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
+        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
 
         this.setState({
           lines: [...newLines, newLine]
@@ -2685,7 +2685,7 @@ class Graphics extends Component {
           style={{
             backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].color : "transparent"
           }}
-          className={"info" + this.state.personalAreaOpen}
+          className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
         >
           <div
             id="personalMainContainer"
@@ -2782,10 +2782,23 @@ class Graphics extends Component {
 
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
-            ? <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
+            ? <button
+              className="personalAreaToggle"
+              onClick={() => {
+                document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
+                this.handlePersonalAreaOpen(true);
+                setTimeout(() => {
+                  document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
+                }, 500);
+              }}>
               <i className="fas fa-angle-up fa-3x" />
             </button>
-            : <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
+            : <button
+              className="personalAreaToggle"
+              onClick={() => {
+                document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
+                this.handlePersonalAreaOpen(false);
+              }}>
               <i className="fas fa-angle-down fa-3x" />
             </button>
           }

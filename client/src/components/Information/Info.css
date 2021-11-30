@@ -1,5 +1,5 @@
-#editPersonalContainer {
-  transition: 0.3s cubic-bezier(0.4, 0, 1, 1);
+.personalAreaAnimOn {
+  transition: 0.3s cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 .info0 {
@@ -29,7 +29,7 @@
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
   border-radius: 15px 15px 0px 0px;
   z-index: 2;
-  transition: none !important;
+  transition: none;
 }
 
 .info0 button {
@@ -109,14 +109,17 @@
     width: calc(100% - 60px);
     left: 30px;
   }
+
   .info1 {
     height: calc(100% - 110px);
     width: calc(100% - 60px);
     left: 30px;
   }
+
   #pencili1 {
     left: 380px;
   }
+
   #pencili0 {
     left: 380px;
   }

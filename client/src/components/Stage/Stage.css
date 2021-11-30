@@ -132,6 +132,8 @@
   position: absolute;
   top: 15px;
   left: 15px;
+  border-radius: 0.25em;
+  text-shadow: -1px 1px 0 white;
 }
 
 #playModeRoleLabel > b {

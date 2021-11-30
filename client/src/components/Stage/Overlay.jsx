@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import {
   Stage,
-  Layer
+  Layer,
+  Ellipse
 } from "react-konva";
 
 class Overlay extends Component {
@@ -86,7 +87,29 @@ class Overlay extends Component {
                     }
                   )}
                 >
-                  {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit")}
+                  {/*<Ellipse
+                    fill={"red"}
+                    x={0}
+                    y={0}
+                    radius={{
+                      x: 100,
+                      y: 100
+                    }}
+                  />*/}
+                  {
+                    this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit") ||
+                    (
+                      <Ellipse
+                        fill={"red"}
+                        x={0}
+                        y={0}
+                        radius={{
+                          x: 100,
+                          y: 100
+                        }}
+                      />
+                    )
+                  }
                 </Layer>
               </Stage>
             </div>

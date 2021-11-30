@@ -15,7 +15,7 @@ import '../components/Stage/Stage.css';
 
 const Main = styled.main`
   grid-area: main;
-  background-color: #e5e5e5;
+  background-color: ${p => p.color}
 `;
 
 const PauseCover = styled.div`
@@ -68,6 +68,7 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [userId, setUserId] = useState();
+  const [pageColor, setPageColor] = useState("#FFF");
   const [canvasLoading, setCanvasLoading] = useState(false);
 
   const toggle = () => setShowNav(!showNav);
@@ -202,8 +203,9 @@ const Game = (props) => {
             alerts: tasks
           }}
         />
-        <Main>
+        <Main color={pageColor}>
           <CanvasGame
+            setPageColor={setPageColor}
             canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
@@ -234,7 +236,7 @@ const Game = (props) => {
           {!isNaN(roomStatus.settings?.advanceMode) && (
             <>
               <AutoUpdate
-                value={() => moment.duration(countdown()).hours()+":"+moment(countdown()).format("mm:ss")}
+                value={() => moment.duration(countdown()).hours() + ":" + moment(countdown()).format("mm:ss")}
                 intervalTime={20}
                 enabled
               />

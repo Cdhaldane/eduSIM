@@ -255,6 +255,8 @@ class Graphics extends Component {
         break;
       }
     }
+
+    this.props.setPageColor(this.state.pages[this.state.level - 1].color);
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
@@ -423,9 +425,18 @@ class Graphics extends Component {
           <div>
 
             {/* ---- PERSONAL CANVAS ---- */}
-            <div className={"info" + this.state.personalAreaOpen}>
+            <div
+              id="personalInfoContainer"
+              className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
+              style={{
+                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].color : "transparent"
+              }}
+            >
               <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>
-              <div id="personalGameContainer" className="personalAreaStageContainer playModeCanvasContainer">
+              <div
+                id="personalGameContainer"
+                className="personalAreaStageContainer playModeCanvasContainer"
+              >
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
                   height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :
