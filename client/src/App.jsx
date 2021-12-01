@@ -27,7 +27,8 @@ const customObjects = [
   "connect4s",
   "tics",
   "htmlFrames",
-  "inputs"
+  "inputs",
+  "timers"
 ];
 
 const App = (props) => {
