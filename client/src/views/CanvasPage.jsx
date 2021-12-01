@@ -76,6 +76,13 @@ const CanvasPage = (props) => {
     gamePlayPropsRef.current = props;
   }
 
+  const [loadedFonts, _setLoadedFonts] = useState([]);
+  const loadedFontsRef = useRef(loadedFonts);
+  const setLoadedFonts = (fonts) => {
+    _setLoadedFonts(fonts);
+    loadedFontsRef.current = fonts;
+  }
+
   const [playModeCanvasHeights, setPlayModeCanvasHeights] = useState({
     group: null,
     overlay: null,
@@ -464,6 +471,19 @@ const CanvasPage = (props) => {
   }
 
   const textProps = (obj, canvas, editMode) => {
+    // Load in the font if it hasn't been loaded yet
+    if (!loadedFontsRef.current.includes(obj.fontFamily)) {
+      WebFont.load({
+        google: {
+          families: [obj.fontFamily]
+        },
+        fontactive: (fontFamily, fvd) => {
+          if (!loadedFontsRef.current.includes(obj.fontFamily)) {     
+            setLoadedFonts([...loadedFontsRef.current, fontFamily])
+          }
+        }
+      });
+    }
     return {
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,

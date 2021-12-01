@@ -139,7 +139,7 @@
   left: -1px;
   top: -1px;
   background-color: var(--primary);
-  filter: brightness(2) saturate(0.25) brightness(1.5);
+  filter: saturate(0.5) brightness(3) saturate(0.7);
   z-index: 1;
 }
 
