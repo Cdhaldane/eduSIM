@@ -128,7 +128,7 @@ a {
 #pageSettingsDropdown>div {
   display: inline-block;
   text-align: left;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 #pageSettingsDropdown>div>.pageSettingsLabels {
@@ -146,6 +146,16 @@ a {
   color: white;
   font-size: 1.1em;
   transform: translate(3px, -1px);
+}
+
+.pageSettingsColorButtons > button {
+  width: 49% !important;
+  left: 0px !important;
+  color: black !important;
+  margin-left: 0 !important;
+  height: 35px !important;
+  font-size: 15px !important;
+  margin-bottom: 10px;
 }
 
 /* Dropdown Menu */

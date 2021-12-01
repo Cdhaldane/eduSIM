@@ -110,12 +110,12 @@ class Graphics extends Component {
 
       // Page Controls
       pages: [
-        { name: "Page 1", hasOverlay: false, color: "#fff" },
-        { name: "Page 2", hasOverlay: false, color: "#fff" },
-        { name: "Page 3", hasOverlay: false, color: "#fff" },
-        { name: "Page 4", hasOverlay: false, color: "#fff" },
-        { name: "Page 5", hasOverlay: false, color: "#fff" },
-        { name: "Page 6", hasOverlay: false, color: "#fff" }
+        { name: "Page 1", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
+        { name: "Page 2", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
+        { name: "Page 3", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
+        { name: "Page 4", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
+        { name: "Page 5", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
+        { name: "Page 6", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" }
       ],
       numberOfPages: 6,
       level: 1, // Current page
@@ -501,6 +501,7 @@ class Graphics extends Component {
         }
       }
 
+      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
       this.props.setPageColor(this.state.pages[this.state.level - 1].color);
     }
   }

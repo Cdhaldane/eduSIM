@@ -126,17 +126,39 @@
   transition: all .3s;
 }
 
+.level-bar-node:hover {
+  cursor: pointer;
+}
+
+.level-bar-node::after {
+  content: "";
+  width: 24px;
+  height: 24px;
+  border-radius: 10px;
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  background-color: var(--primary);
+  filter: brightness(2) saturate(0.25) brightness(1.5);
+  z-index: 1;
+}
+
 .level-bar-node {
   width: 30px;
   height: 30px;
   border-radius: 12px;
+  position: relative;
   border: 4px solid var(--primary);
-  background-color: #ddcace;
+  background-color: rgba(var(--primary), 0.8);
   transition: background-color .3s;
 }
 
-.level-bar-node-active {
-  background-color: white;
+.level-bar-node-active::after {
+  background-color: white !important;
+}
+
+.level-bar-node-active:hover {
+  cursor: auto;
 }
 
 .level-bar-line {
@@ -156,6 +178,7 @@
 .level-nav-back {
   transition: background-color .3s;
 }
+
 .level-nav-back[disabled] {
   pointer-events: none;
   background-color: gray;
@@ -166,27 +189,34 @@
     flex-direction: column;
     align-items: stretch;
   }
+
   .level-nav {
     margin: 0;
     transform: translateX(0px);
   }
+
   .level-close {
     position: absolute;
     right: 20px;
     top: 5px;
   }
+
   .level-bar {
     padding: 5px 20px;
   }
+
   .level-gamepage {
     padding-right: 20px;
   }
+
   .level-gamepage .level-nav {
     margin-top: 20px;
   }
+
   .level-gamepage .level-close {
     margin-top: 15px;
   }
+
   #levelContainer {
     left: 0px;
     width: 100%;

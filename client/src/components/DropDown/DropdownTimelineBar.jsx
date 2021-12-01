@@ -13,6 +13,7 @@ const DropdownTimelineBar = (props) => {
 
   const [pages, setPages] = useState(props.pages);
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
+  const [pageColorSettings, setPageColorSettings] = useState("foreground");
   const dropdown = useRef();
 
   const [modifyIndex, setModifyIndex] = useState(-1);
@@ -255,7 +256,9 @@ const DropdownTimelineBar = (props) => {
               <span className="icon-button" onClick={() => {
                 setPages([...pages, {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
-                  hasOverlay: false
+                  hasOverlay: false,
+                  color: "#FFF",
+                  primaryColor: "#8f001a"
                 }]);
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
@@ -311,13 +314,32 @@ const DropdownTimelineBar = (props) => {
                   />
                 </div>
                 <div>
-                  <div className="pageSettingsLabels">Background Color:</div>
+                  <div className={"pageSettingsColorButtons"}>
+                    <button
+                      className={`${pageColorSettings === "foreground" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => setPageColorSettings("foreground")}
+                    >
+                      Foreground
+                    </button>
+                    <button
+                      className={`${pageColorSettings === "background" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => setPageColorSettings("background")}
+                    >
+                      Background
+                    </button>
+                  </div>
                   <ChromePicker
-                    color={pages[currentSettingsIndex] ? pages[currentSettingsIndex].color || "#ffffff" : "#ffffff"}
+                    color={pages[currentSettingsIndex] ? 
+                      (pageColorSettings === "background" ? pages[currentSettingsIndex].color : pages[currentSettingsIndex].primaryColor)
+                      || "#ffffff" : "#ffffff"}
                     disableAlpha={true}
                     onChange={(color) => {
                       const newArr = pages.slice();
-                      newArr[currentSettingsIndex].color = color.hex;
+                      if (pageColorSettings === "background") {
+                        newArr[currentSettingsIndex].color = color.hex;
+                      } else {
+                        newArr[currentSettingsIndex].primaryColor = color.hex;
+                      }
                       setPages(newArr);
                     }}
                   />

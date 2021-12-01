@@ -54,6 +54,7 @@
   background-color: white;
   height: 100%;
   width: 100%;
+  border: 1px solid var(--primary);
   border-radius: 10px;
   box-shadow: var(--box-shadow);
 }

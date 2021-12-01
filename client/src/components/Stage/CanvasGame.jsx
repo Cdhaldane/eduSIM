@@ -255,7 +255,8 @@ class Graphics extends Component {
         break;
       }
     }
-
+    
+    document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
     this.props.setPageColor(this.state.pages[this.state.level - 1].color);
   }
 

@@ -74,6 +74,7 @@ const Level = (props) => {
   }
 
   const saveOnClose = () => {
+    document.querySelector(':root').style.setProperty('--primary', "#8f001a");
     props.clearCanvasData();
     props.saveGame();
     props.removeJSGIFS();

@@ -53,6 +53,7 @@ class Overlay extends Component {
               }}
               className="playModeCanvasContainer"
               tabIndex="0"
+              name="pasteContainer"
             >
               <Stage
                 ref={"overlayStage"}

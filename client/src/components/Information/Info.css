@@ -27,6 +27,7 @@
   padding: 10px;
   background-color: white;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--primary);
   border-radius: 15px 15px 0px 0px;
   z-index: 2;
   transition: none;

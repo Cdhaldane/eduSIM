@@ -178,7 +178,7 @@ const CanvasPage = (props) => {
             if (availableRatio > contentRatio) {
               y = 40;
               x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding :
-                (areaString === "group" ? sideMenuW : 0) + (availableW - (contentW * scale)) / 2;
+                sideMenuW + (availableW - (contentW * scale)) / 2;
             } else {
               y = (availableH - (contentH * scale)) / 2;
               x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : leftPadding;
