@@ -31,11 +31,15 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
-    if (e > count && props.disableNext) return;
-    if (e > count + 1) return;
-    if (!props.gamepage) return;
-    if (!props.freeAdvance) return;
-    props.level(e);
+    if (props.gamepage) {
+      if (e > count && props.disableNext) return;
+      if (e > count + 1) return;
+      if (!props.freeAdvance) return;
+      props.level(e);
+    } else {
+      props.level(e);
+      setCount(e);
+    }
   }
 
   useEffect(() => {
@@ -194,6 +198,7 @@ const Level = (props) => {
           )}
 
           <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{minWidth: (props.number)*66+'px'}}>
+            <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
             <div className={`level-bar-progress ${props.number == count-(props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
               width: `calc(${(100*(count-1)/(props.number-(props.gamepage ? 0 : 1)))}% - ${(24*(count-1)/(props.number-(props.gamepage ? 0 : 1)))}px)`
@@ -205,7 +210,7 @@ const Level = (props) => {
                   <div className={`
                     level-bar-dot 
                     ${count-1 >= num ? 'level-bar-dot-fill' : ''}
-                    ${count-1 > num && props.freeAdvance ? 'level-bar-dot-clickable' : ''}
+                    ${(count-1 > num && props.freeAdvance) || (count-1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
                   `} onClick={() => handleLevel(num+1)}>
                     {props.number > num ? (
