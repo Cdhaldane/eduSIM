@@ -80,8 +80,10 @@ class Graphics extends Component {
     defaultPagesTemp.fill({
       hasOverlay: false,
       overlayOpenOption: "pageEnter",
-      color: "#fff",
-      primaryColor: "#8f001a"
+      primaryColor: "#8f001a",
+      groupColor: "#FFF",
+      personalColor: "#FFF",
+      overlayColor: "#FFF"
     });
     const defaultPages = defaultPagesTemp.map((page, index) => { 
       return {
@@ -511,7 +513,7 @@ class Graphics extends Component {
       }
 
       document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
-      this.props.setPageColor(this.state.pages[this.state.level - 1].color);
+      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
     }
   }
 
@@ -2711,7 +2713,7 @@ class Graphics extends Component {
         <div
           id={"editPersonalContainer"}
           style={{
-            backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].color : "transparent"
+            backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
           }}
           className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
         >

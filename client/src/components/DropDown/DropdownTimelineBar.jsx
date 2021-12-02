@@ -71,7 +71,7 @@ const DropdownTimelineBar = (props) => {
   const calcHeight = (el) => {
     let height = el.offsetHeight;
     if (el.className === "page-settings-css-anim-enter") {
-      height = 380;
+      height = 450;
     }
     setMenuHeight(height);
   }
@@ -180,12 +180,28 @@ const DropdownTimelineBar = (props) => {
     </div>
   );
 
+  const getColor = () => {
+    if (pages[currentSettingsIndex]) {
+      if (pageColorSettings === "foreground") {
+        return pages[currentSettingsIndex].primaryColor || "#FFF";
+      } else if (pageColorSettings === "group") {
+        return pages[currentSettingsIndex].groupColor || "#FFF";
+      } else if (pageColorSettings === "personal") {
+        return pages[currentSettingsIndex].personalColor || "#FFF";
+      } else if (pageColorSettings === "overlay") {
+        return pages[currentSettingsIndex].overlayColor || "#FFF";
+      }
+    } else {
+      return "#FFF";
+    }
+  }
+
   return (
     <div
       className="dropdown menu-primary timelineDropdown"
       style={{
         height: "auto",
-        width: currentSettingsIndex === null ? "500px" : "300px"
+        width: currentSettingsIndex === null ? "500px" : "350px"
       }}
       ref={dropdown}
     >
@@ -258,8 +274,10 @@ const DropdownTimelineBar = (props) => {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
                   hasOverlay: false,
                   overlayOpenOption: "pageEnter",
-                  color: "#FFF",
-                  primaryColor: "#8f001a"
+                  primaryColor: "#8f001a",
+                  groupColor: "#FFF",
+                  personalColor: "#FFF",
+                  overlayColor: "#FFF"
                 }]);
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
@@ -316,30 +334,47 @@ const DropdownTimelineBar = (props) => {
                 </div>
                 <div>
                   <div className={"pageSettingsColorButtons"}>
+                    <div className="pageSettingsLabels">Page Colors:</div>
+                    <div>
+                      <button
+                        className={`${pageColorSettings === "foreground" ? "editInputOptionSelected" : ""}`}
+                        onClick={() => setPageColorSettings("foreground")}
+                      >
+                        Foreground
+                      </button>
+                    </div>
                     <button
-                      className={`${pageColorSettings === "foreground" ? "editInputOptionSelected" : ""}`}
-                      onClick={() => setPageColorSettings("foreground")}
+                      className={`${pageColorSettings === "group" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => setPageColorSettings("group")}
                     >
-                      Foreground
+                      Group
                     </button>
                     <button
-                      className={`${pageColorSettings === "background" ? "editInputOptionSelected" : ""}`}
-                      onClick={() => setPageColorSettings("background")}
+                      className={`${pageColorSettings === "personal" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => setPageColorSettings("personal")}
                     >
-                      Background
+                      Personal
+                    </button>
+                    <button
+                      className={`${pageColorSettings === "overlay" ? "editInputOptionSelected" : ""}`}
+                      onClick={() => setPageColorSettings("overlay")}
+                    >
+                      Overlay
                     </button>
                   </div>
                   <ChromePicker
-                    color={pages[currentSettingsIndex] ? 
-                      (pageColorSettings === "background" ? pages[currentSettingsIndex].color : pages[currentSettingsIndex].primaryColor)
-                      || "#ffffff" : "#ffffff"}
+                    color={getColor()}
                     disableAlpha={true}
                     onChange={(color) => {
                       const newArr = pages.slice();
-                      if (pageColorSettings === "background") {
-                        newArr[currentSettingsIndex].color = color.hex;
-                      } else {
+                      if (pageColorSettings === "foreground") {
                         newArr[currentSettingsIndex].primaryColor = color.hex;
+                      } else if (pageColorSettings === "group") {
+                        newArr[currentSettingsIndex].groupColor = color.hex;
+                      } else if (pageColorSettings === "personal") {
+                        newArr[currentSettingsIndex].personalColor = color.hex;
+                      } else if (pageColorSettings === "overlay") {
+                        newArr[currentSettingsIndex].overlayColor = color.hex;
                       }
                       setPages(newArr);
                     }}

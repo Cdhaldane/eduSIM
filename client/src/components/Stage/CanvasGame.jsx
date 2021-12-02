@@ -266,7 +266,7 @@ class Graphics extends Component {
 
     if (this.state.pages[this.state.level - 1]) {
       document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
-      this.props.setPageColor(this.state.pages[this.state.level - 1].color);
+      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
     }
   }
 
@@ -456,7 +456,7 @@ class Graphics extends Component {
               id="personalInfoContainer"
               className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
               style={{
-                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].color : "transparent"
+                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
               }}
             >
               <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>

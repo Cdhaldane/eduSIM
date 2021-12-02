@@ -193,14 +193,23 @@ a {
   transform: translate(3px, -1px);
 }
 
-.pageSettingsColorButtons > button {
-  width: 49% !important;
+.pageSettingsColorButtons button {
   left: 0px !important;
   color: black !important;
   margin-left: 0 !important;
   height: 35px !important;
   font-size: 15px !important;
-  margin-bottom: 10px;
+  border-radius: 0px !important;
+}
+
+.pageSettingsColorButtons > div > button {
+  width: 100% !important;
+  margin-top: 5px;
+}
+
+.pageSettingsColorButtons > button {
+  width: 33% !important;
+  margin-bottom: 5px;
 }
 
 /* Dropdown Menu */
