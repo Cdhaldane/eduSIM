@@ -257,6 +257,7 @@ const DropdownTimelineBar = (props) => {
                 setPages([...pages, {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
                   hasOverlay: false,
+                  overlayOpenOption: "pageEnter",
                   color: "#FFF",
                   primaryColor: "#8f001a"
                 }]);

@@ -141,6 +141,51 @@ a {
   transform: translateY(7px);
 }
 
+.overlayOptionsDropdown {
+  right: 70px;
+  top: 60px;
+  width: 400px !important;
+  height: auto !important;
+}
+
+.overlayOpenOptions {
+  padding: 0px 10px;
+}
+
+.overlayOpenOptions label {
+  font-size: 0.9em;
+  padding-left: 5px;
+}
+
+.overlayConditions {
+  margin: 10px 0px;
+  border-top: 1px dotted black;
+}
+
+.overlayConditions > input {
+  margin: 5px 0px;
+  width: 100%;
+  font-size: 0.9em;
+  padding-left: 0.25em;
+  font-family: "Montserrat";
+}
+
+.overlayConditionsDisabled {
+  opacity: 0.5;
+}
+
+.overlayConditionsDisabled input {
+  pointer-events: none;
+}
+
+.overlayConditionsDisabled select {
+  pointer-events: none;
+}
+
+.overlayConditionsDisabled:hover {
+  cursor: not-allowed;
+}
+
 .timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-up,
 .timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-down {
   color: white;
@@ -194,6 +239,14 @@ a {
 .menu h1 {
   padding: 10px;
   font-size: 1.5rem;
+  font-weight: 100;
+  color: #636363;
+}
+
+.menu h2 {
+  padding: 10px;
+  padding-top: 0px;
+  font-size: 1.2rem;
   font-weight: 100;
   color: #636363;
 }

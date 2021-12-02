@@ -11,6 +11,7 @@ import Overlay from "./Overlay";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import DropdownOverlay from "../Dropdown/DropdownOverlay";
 
 // Standard Konva Components
 import Konva from "konva";
@@ -75,6 +76,20 @@ class Graphics extends Component {
       }
     }
 
+    let defaultPagesTemp = new Array(6);
+    defaultPagesTemp.fill({
+      hasOverlay: false,
+      overlayOpenOption: "pageEnter",
+      color: "#fff",
+      primaryColor: "#8f001a"
+    });
+    const defaultPages = defaultPagesTemp.map((page, index) => { 
+      return {
+        ...page,
+        name: "Page " + (index + 1)
+      };
+    });
+
     this.state = {
       // Objects and Delete Counts
       ...objectState,
@@ -109,17 +124,11 @@ class Graphics extends Component {
       ],
 
       // Page Controls
-      pages: [
-        { name: "Page 1", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
-        { name: "Page 2", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
-        { name: "Page 3", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
-        { name: "Page 4", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
-        { name: "Page 5", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" },
-        { name: "Page 6", hasOverlay: false, color: "#fff", primaryColor: "#8f001a" }
-      ],
+      pages: defaultPages,
       numberOfPages: 6,
       level: 1, // Current page
       overlayOpen: false,
+      overlayOptionsOpen: false,
 
       // Context Menu
       selectedContextMenu: null,
@@ -2547,9 +2556,27 @@ class Graphics extends Component {
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
         {this.state.pages[this.state.level - 1] && this.state.pages[this.state.level - 1].hasOverlay && (
-          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
+          <div
+            className="overlayButton"
+            onContextMenu={(e) => {
+              e.preventDefault();
+              this.setState({
+                overlayOptionsOpen: !this.state.overlayOptionsOpen
+              });
+            }}
+            onClick={() => this.setOverlayOpen(true)}
+          >
             <i className="icons fa fa-window-restore" />
           </div>
+        )}
+
+        {this.state.overlayOptionsOpen && (
+          <DropdownOverlay
+            close={() => this.setState({ overlayOptionsOpen: false })}
+            changePages={this.handlePageTitle}
+            pages={this.state.pages}
+            level={this.state.level}
+          />
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}

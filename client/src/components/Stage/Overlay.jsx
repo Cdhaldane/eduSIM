@@ -88,29 +88,7 @@ class Overlay extends Component {
                     }
                   )}
                 >
-                  {/*<Ellipse
-                    fill={"red"}
-                    x={0}
-                    y={0}
-                    radius={{
-                      x: 100,
-                      y: 100
-                    }}
-                  />*/}
-                  {
-                    this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit") ||
-                    (
-                      <Ellipse
-                        fill={"red"}
-                        x={0}
-                        y={0}
-                        radius={{
-                          x: 100,
-                          y: 100
-                        }}
-                      />
-                    )
-                  }
+                  {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit")}
                 </Layer>
               </Stage>
             </div>
