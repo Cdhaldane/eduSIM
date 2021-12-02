@@ -85,8 +85,6 @@ const EditPage = (props) => {
     }
   }
 
-  console.log(tasks);
-
   return (
     <div className="editpage">
       <Container>

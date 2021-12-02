@@ -20,7 +20,8 @@ const ContextMenu = (props) => {
       ["connect4",  "Edit Connect4"],
       ["tic",       "Edit TicTacToe"],
       ["html",      "Edit HTML"],
-      ["input",    "Edit Input"]
+      ["input",    "Edit Input"],
+      ["timer",    "Edit Timer"]
     ].forEach(([key, text]) => {
       if (props.selectedShapeName.startsWith(key)) {
         set = true;

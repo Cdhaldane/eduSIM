@@ -588,6 +588,12 @@ const CanvasPage = (props) => {
     label: obj.label
   })
 
+  const timerProps = (obj, canvas) => ({
+    timeLimit: obj.timeLimit,
+    varName: obj.varName,
+    refresh: canvas.refresh
+  })
+
   const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
@@ -740,6 +746,7 @@ const CanvasPage = (props) => {
               {...defaultObjProps(obj, index, canvas, editMode)}
               {...canvas.getInteractiveProps(obj.id)}
               {...(editMode ? customObjProps(canvas) : {})}
+              {...timerProps(obj, canvas)}
             /> : null
         })}
 

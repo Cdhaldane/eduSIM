@@ -5,7 +5,7 @@ import moment from "moment";
 
 const Timer = forwardRef((props, ref) => {
 
-  const limit = 10;
+  const limit = props.timeLimit;
   
   const { 
     running = false,
@@ -36,8 +36,6 @@ const Timer = forwardRef((props, ref) => {
     });
   };
 
-  console.log(startTime, elapsedTime, running, props.status);
-
   const runningValue = () => {
     if (limit) {
       if (moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000*limit) {
@@ -58,9 +56,35 @@ const Timer = forwardRef((props, ref) => {
     return moment(elapsedTime).format('mm:ss.SS');
   }
 
+  const isDone = () => {
+    return (elapsedTime > 0 || running) && (elapsedTime > 1000*limit || moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000*limit);
+  }
+
+  const updateValue = (value) => {
+    if (props.varName) {
+      let vars = {};
+      if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+      sessionStorage.setItem('gameVars', JSON.stringify({
+        ...vars,
+        [props.varName]: value
+      }));
+      sessionStorage.setItem('lastSetVar', props.varName);
+      props.refresh();
+    }
+  }
+
   return (
     <CustomWrapper {...props} ref={ref}>
       <div>
+        {props.varName && (
+          <AutoUpdate
+            value={isDone}
+            intervalTime={100}
+            noDisplay
+            enabled
+            onChange={updateValue}
+          />
+        )}
         <p>
           {running ? (
             <AutoUpdate
