@@ -430,10 +430,12 @@ function DropdownEditObject(props) {
                 <>
                   <p>Time limit (seconds)</p>
                   <input type="number" onChange={e => handleTimeLimit(e.target.value, true)} value={objState?.timeLimit} placeholder="Time limit" />
-                  <p>Finished variable</p>
-                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder="Variable name" />
+                  <p>Finished flag variable</p>
+                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName || ""} placeholder="Variable name" />
                 </>
               )}
+              <p>Start timer flag variable</p>
+              <input type="text" onChange={e => handleVarEnable(e.target.value)} value={objState?.varEnable || ""} placeholder="Variable name" />
             </div>
           </CSSTransition>
         </div>

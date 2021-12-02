@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect } from "react";
 import AutoUpdate from "../../../AutoUpdate";
 import CustomWrapper from "../CustomWrapper";
 import moment from "moment";
@@ -69,9 +69,15 @@ const Timer = forwardRef((props, ref) => {
         [props.varName]: value
       }));
       sessionStorage.setItem('lastSetVar', props.varName);
-      props.refresh();
+      if (props.refresh) props.refresh();
     }
   }
+
+  useEffect(() => {
+    if (props.varEnable && sessionStorage.lastSetVar === props.varEnable && !running) {
+      toggleRun();
+    }
+  }, [sessionStorage.lastSetVar]);
 
   return (
     <CustomWrapper {...props} ref={ref}>

@@ -591,6 +591,7 @@ const CanvasPage = (props) => {
   const timerProps = (obj, canvas) => ({
     timeLimit: obj.timeLimit,
     varName: obj.varName,
+    varEnable: obj.varEnable,
     refresh: canvas.refresh
   })
 
