@@ -31,6 +31,13 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
+    if (e > count && 
+      props.page && 
+      props.page.hasOverlay && 
+      props.page.overlayOpenOption === "pageExit") {
+      props.handlePageCloseOverlay();
+      return;
+    }
     if (props.gamepage) {
       if (e > count && props.disableNext) return;
       if (e > count + 1) return;
@@ -76,6 +83,7 @@ const Level = (props) => {
   }
 
   const saveOnClose = () => {
+    document.querySelector(':root').style.setProperty('--primary', "#8f001a");
     props.clearCanvasData();
     props.saveGame();
     props.removeJSGIFS();
@@ -86,7 +94,7 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div style={{width: "180px"}}>
+            <div style={{ width: "180px" }}>
               <h1 id="editModeTitle">
                 Edit Mode
               </h1>
@@ -238,6 +246,8 @@ const Level = (props) => {
               psize="3"
               type="info"
               pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              changeObjectPage={props.changeObjectPage}
               handleCopyPage={props.handleCopyPage}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}

@@ -24,11 +24,12 @@ const GridNav = styled.div`
 const GridMain = styled.main`
   grid-area: main;
   margin-left: 70px;
-  background-color: #e5e5e5;
+  /*background-color: #e5e5e5;*/
+  ${p => `background-color: ${p.color};`}
   background-size: 40px 40px;
-  background-image:
+  /*background-image:
   linear-gradient(to right, grey 1px, transparent 1px),
-  linear-gradient(to bottom, grey 1px, transparent 1px);
+  linear-gradient(to bottom, grey 1px, transparent 1px);*/
   @media screen and (orientation: portrait) {
     margin-left: 0px;
   }
@@ -37,6 +38,7 @@ const GridMain = styled.main`
 const EditPage = (props) => {
 
   const [customObjs, setCustomObjs] = useState({});
+  const [pageColor, setPageColor] = useState("#FFF");
   const [performanceFunctions, setPerformanceFunctions] = useState({});
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
@@ -104,9 +106,10 @@ const EditPage = (props) => {
               }}
             />
           </GridNav>
-          <GridMain>
+          <GridMain color={pageColor}>
             {updater % 2 === 0 ? (
               <Canvas
+                setPageColor={setPageColor}
                 setCanvasLoading={setCanvasLoading}
                 loadObjects={props.loadObjects}
                 customDeletes={props.customDeletes}
@@ -133,7 +136,7 @@ const EditPage = (props) => {
       </Container>
       {canvasLoading && (
         <div className="gameLoadingOverlay">
-           <Loading />
+          <Loading />
         </div>
       )}
     </div>

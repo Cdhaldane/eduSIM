@@ -15,7 +15,7 @@ import '../components/Stage/Stage.css';
 
 const Main = styled.main`
   grid-area: main;
-  background-color: #e5e5e5;
+  background-color: ${p => p.color}
 `;
 
 const PauseCover = styled.div`
@@ -52,6 +52,7 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [userId, setUserId] = useState();
+  const [pageColor, setPageColor] = useState("#FFF");
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [invalidateSidebar, setInvalidateSidebar] = useState(0);
   const [disableNext, setDisableNext] = useState(false);
@@ -192,8 +193,9 @@ const Game = (props) => {
           refresh={invalidateSidebar}
           setDisableNext={setDisableNext}
         />
-        <Main>
+        <Main color={pageColor}>
           <CanvasGame
+            setPageColor={setPageColor}
             canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
