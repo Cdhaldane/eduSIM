@@ -70,6 +70,8 @@ const Game = (props) => {
   const [userId, setUserId] = useState();
   const [pageColor, setPageColor] = useState("#FFF");
   const [canvasLoading, setCanvasLoading] = useState(false);
+  const [invalidateSidebar, setInvalidateSidebar] = useState(0);
+  const [disableNext, setDisableNext] = useState(false);
 
   const toggle = () => setShowNav(!showNav);
 
@@ -200,8 +202,10 @@ const Game = (props) => {
           game
           disabled={!roomStatus.running}
           alertProps={{
-            alerts: tasks
+            alerts: tasks[actualLevel] || []
           }}
+          refresh={invalidateSidebar}
+          setDisableNext={setDisableNext}
         />
         <Main color={pageColor}>
           <CanvasGame
@@ -226,6 +230,8 @@ const Game = (props) => {
             initialUserInfo={queryUser}
             initialUserId={userid}
             alert={alertContext.showAlert}
+            refresh={() => setInvalidateSidebar(Math.random())}
+            disableNext={disableNext}
           />
           {!roomStatus.running && (<PauseCover>
             <i className="fa fa-pause-circle fa-2x"></i>

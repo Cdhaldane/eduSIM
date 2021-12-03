@@ -47,7 +47,8 @@ const EditPage = (props) => {
   const alertContext = useAlertContext();
   const dropdownContext = useDropdownContext();
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState({});
+  const [page, setPage] = useState(1);
 
   if (props.location.img) {
     localStorage.setItem('gameinstance', props.location.gameinstance);
@@ -64,6 +65,30 @@ const EditPage = (props) => {
     }
   }, [updater]);
 
+  const handlePage = (l) => {
+    setPage(l);
+  }
+
+  const handleSetTasks = (f) => {
+    if (typeof f === 'function') {
+      setTasks(old => {
+        let n = {...old};
+        n[page] = f(n[page] || []);
+        console.log(n);
+        return n;
+      });
+    } else {
+      setTasks(old => {
+        let n = {...old};
+        n[page] = f;
+        console.log(n);
+        return n;
+      });
+    }
+  }
+
+  console.log(tasks);
+
   return (
     <div className="editpage">
       <Container>
@@ -78,8 +103,8 @@ const EditPage = (props) => {
               img={props.location.img}
               title={props.location.title}
               alertProps={{
-                alerts: tasks,
-                setAlerts: setTasks
+                alerts: tasks[page] || [],
+                setAlerts: handleSetTasks
               }}
             />
           </GridNav>
@@ -103,8 +128,9 @@ const EditPage = (props) => {
                 showAlert={alertContext.showAlert}
                 adminid={localStorage.adminid}
                 gameinstance={localStorage.gameinstance}
-                tasks={tasks}
+                tasks={tasks || {}}
                 setTasks={setTasks}
+                handleLevel={handlePage}
               />
             ) : null}
           </GridMain>

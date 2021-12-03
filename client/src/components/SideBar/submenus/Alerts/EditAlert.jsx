@@ -28,10 +28,22 @@ const Container = styled.form`
     font-size: 1em;
     padding: 4px;
     border: 1px solid;
+    margin-bottom: 5px;
   }
   & > div {
     display: flex;
-    margin: 8px -3px 0 -3px;
+    margin: 0px -3px;
+    align-items: center;
+  }
+  & > div > label {
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+  & > div > input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    flex: inherit;
+    margin-bottom: 5px;
   }
   & > div > input {
     flex: 1;
@@ -50,6 +62,7 @@ const Container = styled.form`
 
 function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
   const [formData, setFormData] = useState(init);
+  const [lastHidden, setLastHidden] = useState(hidden);
 
   const addAlert = (e) => {
     e.preventDefault();
@@ -65,12 +78,27 @@ function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
     }));
   }
 
+  const changeOptional = () => {
+    setFormData(old => ({
+      ...old,
+      optional: !formData.optional
+    }));
+  }
+
+
   useEffect(() => {
-    setFormData(init);
+    if (lastHidden !== hidden) {
+      setFormData(init);
+      setLastHidden(hidden);
+    }
   }, [init, hidden]);
 
   return (
     <Container hidden={hidden}>
+      <div>
+        <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
+        <label>Required to advance</label>
+      </div>
       <label>Unfinished label</label>
       <input type="text" placeholder="Not yet completed" value={formData.offLabel || ""} onChange={changeValue("offLabel")} />
       <label>Finished label</label>
@@ -87,6 +115,9 @@ function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
         <option value="equalto">is equal to</option>
         <option value="onchange">changes</option>
       </select>
+      {formData.varCondition === "equalto" && (
+        <input type="text" placeholder="Value to check" value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
+      )}
       <div>
         <input type="button" onClick={onCancel} value="Cancel" />
         <input type="submit" onClick={addAlert} value={adding ? "Add" : "Edit"} />

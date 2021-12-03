@@ -186,6 +186,11 @@ class Graphics extends Component {
   getPage = (index) => {
     return this.state.pages[this.state.level - 1] || {};
   }
+  
+  refresh = () => {
+    this.forceUpdate();
+    this.props.refresh();
+  }
 
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
@@ -223,7 +228,7 @@ class Graphics extends Component {
         JSON.parse(localStorage.getItem('userInfo')).dbid : null;
 
       this.props.setGamePlayProps({
-        refresh: this.forceUpdate,
+        refresh: this.refresh,
         setState: this.setState,
         state: this.state,
         refs: this.refs,
@@ -448,6 +453,7 @@ class Graphics extends Component {
             gamepage
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
+            disableNext={this.props.disableNext}
           />
           <div>
 
