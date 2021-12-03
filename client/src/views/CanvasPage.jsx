@@ -478,7 +478,7 @@ const CanvasPage = (props) => {
           families: [obj.fontFamily]
         },
         fontactive: (fontFamily, fvd) => {
-          if (!loadedFontsRef.current.includes(obj.fontFamily)) {     
+          if (!loadedFontsRef.current.includes(obj.fontFamily)) {
             setLoadedFonts([...loadedFontsRef.current, fontFamily])
           }
         }
@@ -627,6 +627,114 @@ const CanvasPage = (props) => {
    * RENDER FUNCTION
    * This renders the objects with their props to the canvasses.
    *------------------------------------------------------------*/
+  const maxCanvasScaleFactor = 1000;
+  const canvasX = -(maxCanvasScaleFactor / 2) * window.innerWidth;
+  const canvasY = -(maxCanvasScaleFactor / 2) * window.innerHeight;
+  const canvasW = window.innerWidth * maxCanvasScaleFactor;
+  const canvasH = window.innerHeight * maxCanvasScaleFactor;
+
+  const renderGrid = (canvas, stage) => {
+    const layerX = canvas.state[`${stage}LayerX`];
+    const layerY = canvas.state[`${stage}LayerY`];
+    const layerScale = canvas.state[`${stage}LayerScale`];
+
+    const horizontalLinesNum = maxCanvasScaleFactor * 100;
+    const ratio = canvasW / canvasH;
+    const verticalLinesNum = Math.floor(horizontalLinesNum * ratio);
+    const expoZoom = layerScale.toExponential(0);
+    const small = parseInt(expoZoom.substring(0, 1));
+    const large = parseInt(expoZoom.substring(2, 4));
+    const zoomVal = -large + ((10 - small) / 10);
+    const mod = 2 * Math.floor(Math.pow(7, zoomVal));
+
+    // Calculate the start index for horizontal lines
+    let startingIndexH = 0;
+    let endingIndexH = 0;
+    const distanceBetweenLinesH = canvasH / horizontalLinesNum;
+    if (layerY < 0) {
+      // Below the x-axis
+      startingIndexH = Math.floor((-layerY / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+      endingIndexH = Math.ceil(((-layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+    } else {
+      // Above the x-axis
+      startingIndexH = Math.floor(((layerY - window.innerHeight) / layerScale) / distanceBetweenLinesH);
+      endingIndexH = Math.ceil(((layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH);
+    }
+    const numOfLinesBetweenH = endingIndexH - startingIndexH;
+    const linesArrH = [...Array(numOfLinesBetweenH)].map((num, i) => {
+      return i + startingIndexH;
+    });
+
+    // Calculate the start index for vertical lines
+    let startingIndexV = 0;
+    let endingIndexV = 0;
+    const distanceBetweenLinesV = canvasW / verticalLinesNum;
+    if (layerX < 0) {
+      // Right of y-axis
+      startingIndexV = Math.floor(((-layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV + (verticalLinesNum / 2));
+      endingIndexV = Math.ceil(((-layerX + window.innerWidth)) / layerScale / distanceBetweenLinesV + (verticalLinesNum / 2));
+    } else {
+      // Left of y-axis
+      startingIndexV = Math.floor(((layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV);
+      endingIndexV = Math.ceil(((layerX + window.innerWidth) / layerScale) / distanceBetweenLinesV);
+    }
+    const numOfLinesBetweenV = endingIndexV - startingIndexV;
+    const linesArrV = [...Array(numOfLinesBetweenV)].map((num, i) => {
+      return i + startingIndexV;
+    });
+
+    return (
+      <>
+        {linesArrH.map((i) => {
+          if (i % mod === 0) {
+            const sign = i < (horizontalLinesNum / 2) ? -1 : 1;
+            const y = sign * (i - (sign > 0 ? Math.ceil(horizontalLinesNum / 2) : 0)) * (canvasH / horizontalLinesNum);
+            if (
+              y > (-layerY / layerScale) &&
+              y < ((-layerY + window.innerHeight) / layerScale)
+            ) {
+              return (
+                <Line
+                  key={i}
+                  id={"gridLine"}
+                  points={[canvasX, y, canvasW / 2, y]}
+                  stroke={"black"}
+                  strokeWidth={y === 0 ? 2 : 1}
+                  strokeScaleEnabled={false}
+                  globalCompositeOperation={"source-over"}
+                  draggable={false}
+                />
+              );
+            }
+          }
+        })}
+        {linesArrV.map((i) => {
+          if (i % mod === 0) {
+            const sign = i < (verticalLinesNum / 2) ? -1 : 1;
+            const x = sign * (i - (sign > 0 ? Math.ceil(verticalLinesNum / 2) : 0)) * (canvasW / verticalLinesNum);
+            if (
+              x > (-layerX / layerScale) &&
+              x < ((-layerX + window.innerWidth) / layerScale)
+            ) {
+              return (
+                <Line
+                  key={i}
+                  id={"gridLine"}
+                  points={[x, canvasY, x, canvasH / 2]}
+                  stroke={"black"}
+                  strokeWidth={x === 0 ? 2 : 1}
+                  strokeScaleEnabled={false}
+                  globalCompositeOperation={"source-over"}
+                  draggable={false}
+                />
+              );
+            }
+          }
+        })}
+      </>
+    );
+  };
+
   const loadObjects = (stage, mode) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
@@ -644,11 +752,17 @@ const CanvasPage = (props) => {
             {/* This Rect is for dragging the canvas */}
             <Rect
               id="ContainerRect"
-              x={-500 * window.innerWidth}
-              y={-500 * window.innerHeight}
-              height={window.innerHeight * 1000}
-              width={window.innerWidth * 1000}
+              x={canvasX}
+              y={canvasY}
+              height={canvasH}
+              width={canvasW}
+              // For debugging
+              stroke={"red"}
+              strokeWidth={2}
+              strokeScaleEnabled={false}
             />
+
+            {renderGrid(canvas, stage)}
 
             {/* This Rect acts as the transform object for custom objects */}
             <Rect
@@ -789,8 +903,8 @@ const CanvasPage = (props) => {
           x={0}
           y={0}
           radius={{
-            x: 100,
-            y: 100
+            x: 10,
+            y: 10
           }}
         />*/}
       </>
