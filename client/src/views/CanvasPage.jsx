@@ -46,14 +46,15 @@ const CanvasPage = (props) => {
     "ellipses",
     "stars",
     "texts",
-    "arrows", // Arrows are used for transformations
     "triangles",
     "images",
     "videos",
     "audios",
     "documents",
     "lines",
-    "pencils" // The drawings
+    "pencils",  // The drawings
+    "arrows",   // Arrows are used for transformations
+    "guides",   // These are the lines used for snapping
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -529,13 +530,27 @@ const CanvasPage = (props) => {
     }
   }
 
+  const guideProps = (obj, index) => {
+    return {
+      visible: true,
+      key: index,
+      points: obj.points,
+      stroke: "red",
+      strokeWidth: 1,
+      strokeScaleEnabled: false,
+      globalCompositeOperation: 'source-over',
+      draggable: false,
+      dash: [10, 5]
+    }
+  }
+
   const arrowProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
       visible: obj.visible,
       ref: obj.ref,
       id: obj.id,
-      name: "shape",
+      name: "arrow",
       points: [
         obj.points[0],
         obj.points[1],
@@ -939,6 +954,9 @@ const CanvasPage = (props) => {
             obj.infolevel === (stage === "personal")
           ) ?
             <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+        })}
+        {canvas.state.guides.map((obj, index) => {
+          return <Line {...guideProps(obj, index, canvas, editMode)} />
         })}
 
         {/* This is the blue transformer rectangle that pops up when objects are selected */}

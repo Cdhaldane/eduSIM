@@ -85,7 +85,7 @@ class Graphics extends Component {
       personalColor: "#FFF",
       overlayColor: "#FFF"
     });
-    const defaultPages = defaultPagesTemp.map((page, index) => { 
+    const defaultPages = defaultPagesTemp.map((page, index) => {
       return {
         ...page,
         name: "Page " + (index + 1)
@@ -1323,6 +1323,10 @@ class Graphics extends Component {
   };
 
   handleDragEnd = (e, objectsName, ref) => {
+    this.setState({
+      guides: []
+    });
+
     let shape = null;
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
@@ -2066,7 +2070,7 @@ class Graphics extends Component {
         layerDraggable: true
       });
     } else if (event.altKey && event.keyCode === r) {
-      // Print state + ref info (for debugging)
+      // Print Info (FOR DEBUGGING)
       console.log("Refs:");
       console.log({ ...this.refs });
       console.log("State:");
@@ -2198,6 +2202,10 @@ class Graphics extends Component {
   }
 
   onObjectDragMove = (obj) => {
+    const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
+    const objRef = this.refs[obj.id];
+    //this.getLineGuideStops(stage, objRef);
+
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
         if (obj.name === arrow.from.attrs.name) {
@@ -2221,6 +2229,63 @@ class Graphics extends Component {
         }
       }
     }, this.forceUpdate);
+  }
+
+  // Snapping functionality based on:
+  // https://konvajs.org/docs/sandbox/Objects_Snapping.html
+
+  // Where can we snap our objects?
+  getLineGuideStops = (stage, skipShape) => {
+    // The guide lines
+    let vertical = [];
+    let horizontal = [];
+
+    const stageRef = this.refs[`${stage}Stage`];
+    const layerX = this.state[`${stage}LayerX`];
+    const layerY = this.state[`${stage}LayerY`];
+    const layerScale = this.state[`${stage}LayerScale`];
+
+    stageRef.find('.shape').forEach((guideItem) => {
+      if (guideItem === skipShape) {
+        return;
+      }
+
+      // Get snap points at edges and center of each object
+      const box = guideItem.getClientRect();
+
+      const x = (box.x - layerX) / layerScale;
+      const width = box.width / layerScale;
+
+      const y = (box.y - layerY) / layerScale;
+      const height = box.height / layerScale;
+
+      vertical.push([x, x + width, x + width / 2]);
+      horizontal.push([y, y + height, y + height / 2]);
+    });
+
+    vertical = vertical.flat();
+    horizontal = horizontal.flat();
+
+    const l = 100;
+    const guidesV = [];
+    for (let i = 0; i < vertical.length; i++) {
+      const x = vertical[i];
+      guidesV.push({ points: [x, -l, x, l] });
+    }
+    const guidesH = [];
+    for (let i = 0; i < horizontal.length; i++) {
+      const y = horizontal[i];
+      guidesH.push({ points: [-l, y, l, y] });
+    }
+
+    this.setState({
+      guides: [...guidesV, ...guidesH]
+    });
+
+    return {
+      vertical: vertical,
+      horizontal: horizontal,
+    };
   }
 
   onObjectClick = (obj) => {
