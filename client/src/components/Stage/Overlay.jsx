@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import {
   Stage,
-  Layer
+  Layer,
+  Ellipse
 } from "react-konva";
 
 class Overlay extends Component {
@@ -29,7 +30,7 @@ class Overlay extends Component {
     if (this.props.playMode && this.props.propsIn.canvasHeights.overlay) {
       stageHeight = this.props.propsIn.canvasHeights.overlay;
     } else if (document.getElementById("overlayGameContainer")) {
-      stageHeight = document.getElementById("overlayGameContainer").clientHeight*0.95;
+      stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
 
     return (
@@ -47,8 +48,12 @@ class Overlay extends Component {
                 }
               )}
               id="overlayGameContainer"
+              style={{
+                backgroundColor: this.props.state.pages[this.props.state.level - 1].overlayColor
+              }}
               className="playModeCanvasContainer"
               tabIndex="0"
+              name="pasteContainer"
             >
               <Stage
                 ref={"overlayStage"}

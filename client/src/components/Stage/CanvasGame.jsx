@@ -94,6 +94,7 @@ class Graphics extends Component {
       startModalOpen: true,
       personalAreaOpen: 0, // 0 is closed, 1 is open
       overlayOpen: false,
+      nextLevelOnOverlayClose: false,
 
       level: 1,
       pageNumber: 6,
@@ -196,11 +197,18 @@ class Graphics extends Component {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
 
-    // Show overlay if just entered page (going forwards, not backwards)
+    // Show overlay if conditions are met
+    const page = this.getPage(this.state.level - 1);
     if (
       !this.state.overlayOpen &&
-      (prevState.level < this.state.level || !this.state.updateRanOnce) &&
-      this.getPage(this.state.level - 1).hasOverlay
+      page.hasOverlay &&
+      (
+        // On Page Enter
+        (
+          page.overlayOpenOption === "pageEnter" &&
+          (prevState.level < this.state.level || !this.state.updateRanOnce)
+        )
+      )
     ) {
       this.setState({
         overlayOpen: true
@@ -259,6 +267,11 @@ class Graphics extends Component {
         this.props.setCustomObjs(customObjs);
         break;
       }
+    }
+
+    if (this.state.pages[this.state.level - 1]) {
+      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
+      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
     }
   }
 
@@ -385,7 +398,16 @@ class Graphics extends Component {
         {this.state.overlayOpen && (
           <Overlay
             playMode={true}
-            closeOverlay={() => this.setOverlayOpen(false)}
+            closeOverlay={() => {
+              this.setState({
+                overlayOpen: false,
+                nextLevelOnOverlayClose: false
+              });
+
+              if (this.state.nextLevelOnOverlayClose) {
+                this.handleLevel(this.state.level + 1);
+              }
+            }}
             state={this.state}
             propsIn={this.props}
             setRefs={(type, ref) => {
@@ -418,6 +440,13 @@ class Graphics extends Component {
 
         <div className="eheader">
           <Level
+            handlePageCloseOverlay={() => {
+              this.setState({
+                overlayOpen: true,
+                nextLevelOnOverlayClose: true
+              });
+            }}
+            page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}
             level={this.handleLevel}
@@ -429,9 +458,18 @@ class Graphics extends Component {
           <div>
 
             {/* ---- PERSONAL CANVAS ---- */}
-            <div className={"info" + this.state.personalAreaOpen}>
+            <div
+              id="personalInfoContainer"
+              className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
+              style={{
+                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
+              }}
+            >
               <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>
-              <div id="personalGameContainer" className="personalAreaStageContainer playModeCanvasContainer">
+              <div
+                id="personalGameContainer"
+                className="personalAreaStageContainer playModeCanvasContainer"
+              >
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
                   height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :

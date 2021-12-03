@@ -12,9 +12,8 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(269);
+  const [menuHeight, setMenuHeight] = useState(229);
   const dropdownRef = useRef(null);
-  const [colour, setColour] = useState("");
 
   const [imageUploaded, setImageUploaded] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
@@ -34,7 +33,7 @@ const DropdownAddObjects = (props) => {
   const alertContext = useAlertContext();
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 212;
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 230;
     const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
@@ -505,18 +504,6 @@ const DropdownAddObjects = (props) => {
     );
   }
 
-  const addOverlayWindow = () => {
-    // Activate the overlay window on the current page
-    const newPages = [...props.state.pages];
-    newPages[props.state.level - 1] = {
-      ...newPages[props.state.level - 1],
-      hasOverlay: !newPages[props.state.level - 1].hasOverlay
-    }
-    props.setState({
-      pages: newPages
-    });
-  }
-
   // Other
   const imageURLGood = (url) => {
     if ((
@@ -926,11 +913,6 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
-          <DropdownItem
-            onClick={addOverlayWindow}
-            leftIcon={<i className="icons fa fa-window-restore"
-              onClick={addOverlayWindow}></i>}>
-            Toggle Overlay</DropdownItem>
         </div>
       </CSSTransition>
 

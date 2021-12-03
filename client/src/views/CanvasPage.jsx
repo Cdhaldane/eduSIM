@@ -46,14 +46,15 @@ const CanvasPage = (props) => {
     "ellipses",
     "stars",
     "texts",
-    "arrows", // Arrows are used for transformations
     "triangles",
     "images",
     "videos",
     "audios",
     "documents",
     "lines",
-    "pencils" // The drawings
+    "pencils",  // The drawings
+    "arrows",   // Arrows are used for transformations
+    "guides",   // These are the lines used for snapping
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -74,6 +75,13 @@ const CanvasPage = (props) => {
   const setGamePlayProps = (props) => {
     _setGamePlayProps(props);
     gamePlayPropsRef.current = props;
+  }
+
+  const [loadedFonts, _setLoadedFonts] = useState([]);
+  const loadedFontsRef = useRef(loadedFonts);
+  const setLoadedFonts = (fonts) => {
+    _setLoadedFonts(fonts);
+    loadedFontsRef.current = fonts;
   }
 
   const [playModeCanvasHeights, setPlayModeCanvasHeights] = useState({
@@ -132,7 +140,7 @@ const CanvasPage = (props) => {
         const doublePad = 2 * padding;
         const screenW = window.innerWidth;
         const screenH = window.innerHeight;
-        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - doublePad;
+        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - sideMenuW - doublePad;
         const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
         const availableRatio = availableW / availableH;
         const level = canvas.state.level;
@@ -155,36 +163,38 @@ const CanvasPage = (props) => {
           x = -minX * scale;
           y = -minY * scale;
           const scaleDown = 0.85;
-          scale = scale * (mode === "play" ? scaleDown : 1); // Add padding
           // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
-            [`${areaString}LayerY`]: y + (mode === "play" ? 0 : topMenuH),
+            [`${areaString}LayerY`]: y + topMenuH,
             [`${areaString}LayerScale`]: scale
           }, () => setTimeout(() => {
             canvas = getUpdatedCanvasState(mode);
 
             if (mode === "play") {
               // Adjust the canvas container height (scroll-y will automatically appear if needed)
-              const canvasH = Math.max((scale * contentH) + topMenuH * 3.5, window.innerHeight);
+              const canvasH = Math.max((contentH * scale) + (topMenuH * 2) + padding, window.innerHeight);
               setPlayModeCanvasHeights({
                 ...playModeCanvasHeights,
                 [areaString]: availableRatio * scaleDown > contentRatio ? canvasH : null
               });
             }
 
+            const leftPadding = contentW * scale * (100 / window.innerWidth);
+
             // Center contents
             if (availableRatio > contentRatio) {
-              y = scale > 1 ? padding / scale : padding;
-              x = (availableW - (contentW * scale)) / 2;
+              y = 40;
+              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding :
+                sideMenuW + (availableW - (contentW * scale)) / 2;
             } else {
-              x = scale > 1 ? padding / scale : padding;
               y = (availableH - (contentH * scale)) / 2;
+              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : leftPadding;
             }
             canvas.setState({
               [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
               [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y,
-              canvasLoading: false,
+              canvasLoading: false
             });
           }, 0));
         } else {
@@ -462,6 +472,19 @@ const CanvasPage = (props) => {
   }
 
   const textProps = (obj, canvas, editMode) => {
+    // Load in the font if it hasn't been loaded yet
+    if (!loadedFontsRef.current.includes(obj.fontFamily)) {
+      WebFont.load({
+        google: {
+          families: [obj.fontFamily]
+        },
+        fontactive: (fontFamily, fvd) => {
+          if (!loadedFontsRef.current.includes(obj.fontFamily)) {
+            setLoadedFonts([...loadedFontsRef.current, fontFamily])
+          }
+        }
+      });
+    }
     return {
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,
@@ -507,13 +530,27 @@ const CanvasPage = (props) => {
     }
   }
 
+  const guideProps = (obj, index) => {
+    return {
+      visible: true,
+      key: index,
+      points: obj.points,
+      stroke: "red",
+      strokeWidth: 1,
+      strokeScaleEnabled: false,
+      globalCompositeOperation: 'source-over',
+      draggable: false,
+      dash: [10, 5]
+    }
+  }
+
   const arrowProps = (obj, index, canvas, editMode) => {
     return {
       key: index,
       visible: obj.visible,
       ref: obj.ref,
       id: obj.id,
-      name: "shape",
+      name: "arrow",
       points: [
         obj.points[0],
         obj.points[1],
@@ -601,10 +638,170 @@ const CanvasPage = (props) => {
     };
   }
 
+  // Copied from:
+  // https://css-tricks.com/converting-color-spaces-in-javascript/
+  const hexToHSLLightness = (H) => {
+    // Convert hex to RGB first
+    let r = 0, g = 0, b = 0;
+    if (H.length == 4) {
+      r = "0x" + H[1] + H[1];
+      g = "0x" + H[2] + H[2];
+      b = "0x" + H[3] + H[3];
+    } else if (H.length == 7) {
+      r = "0x" + H[1] + H[2];
+      g = "0x" + H[3] + H[4];
+      b = "0x" + H[5] + H[6];
+    }
+    // Then to HSL
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    let cmin = Math.min(r, g, b),
+      cmax = Math.max(r, g, b),
+      delta = cmax - cmin,
+      h = 0,
+      s = 0,
+      l = 0;
+
+    if (delta == 0)
+      h = 0;
+    else if (cmax == r)
+      h = ((g - b) / delta) % 6;
+    else if (cmax == g)
+      h = (b - r) / delta + 2;
+    else
+      h = (r - g) / delta + 4;
+
+    h = Math.round(h * 60);
+
+    if (h < 0)
+      h += 360;
+
+    l = (cmax + cmin) / 2;
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = +(s * 100).toFixed(1);
+    l = +(l * 100).toFixed(1);
+
+    //return "hsl(" + h + "," + s + "%," + l + "%)";
+    return l;
+  }
+
   /*-------------------------------------------------------------/
    * RENDER FUNCTION
    * This renders the objects with their props to the canvasses.
    *------------------------------------------------------------*/
+  const maxCanvasScaleFactor = 1000;
+  const canvasX = -(maxCanvasScaleFactor / 2) * window.innerWidth;
+  const canvasY = -(maxCanvasScaleFactor / 2) * window.innerHeight;
+  const canvasW = window.innerWidth * maxCanvasScaleFactor;
+  const canvasH = window.innerHeight * maxCanvasScaleFactor;
+
+  const renderGrid = (canvas, stage) => {
+    const layerX = canvas.state[`${stage}LayerX`];
+    const layerY = canvas.state[`${stage}LayerY`];
+    const layerScale = canvas.state[`${stage}LayerScale`];
+    const layerColor = canvas.state.pages[canvas.state.level - 1][`${stage}Color`];
+    const layerLightness = hexToHSLLightness(layerColor);
+
+    const horizontalLinesNum = maxCanvasScaleFactor * 100;
+    const ratio = canvasW / canvasH;
+    const verticalLinesNum = Math.floor(horizontalLinesNum * ratio);
+    const expoZoom = layerScale.toExponential(0);
+    const small = parseInt(expoZoom.substring(0, 1));
+    const large = parseInt(expoZoom.substring(2, 4));
+    const zoomVal = -large + ((10 - small) / 10);
+    const mod = 2 * Math.floor(Math.pow(7, zoomVal));
+
+    // Calculate the start index for horizontal lines
+    let startingIndexH = 0;
+    let endingIndexH = 0;
+    const distanceBetweenLinesH = canvasH / horizontalLinesNum;
+    if (layerY < 0) {
+      // Below the x-axis
+      startingIndexH = Math.floor((-layerY / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+      endingIndexH = Math.ceil(((-layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+    } else {
+      // Above the x-axis
+      startingIndexH = Math.floor(((layerY - window.innerHeight) / layerScale) / distanceBetweenLinesH);
+      endingIndexH = Math.ceil(((layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH);
+    }
+    const numOfLinesBetweenH = endingIndexH - startingIndexH;
+    const linesArrH = [...Array(numOfLinesBetweenH)].map((num, i) => {
+      return i + startingIndexH;
+    });
+
+    // Calculate the start index for vertical lines
+    let startingIndexV = 0;
+    let endingIndexV = 0;
+    const distanceBetweenLinesV = canvasW / verticalLinesNum;
+    if (layerX < 0) {
+      // Right of y-axis
+      startingIndexV = Math.floor(((-layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV + (verticalLinesNum / 2));
+      endingIndexV = Math.ceil(((-layerX + window.innerWidth)) / layerScale / distanceBetweenLinesV + (verticalLinesNum / 2));
+    } else {
+      // Left of y-axis
+      startingIndexV = Math.floor(((layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV);
+      endingIndexV = Math.ceil(((layerX + window.innerWidth) / layerScale) / distanceBetweenLinesV);
+    }
+    const numOfLinesBetweenV = endingIndexV - startingIndexV;
+    const linesArrV = [...Array(numOfLinesBetweenV)].map((num, i) => {
+      return i + startingIndexV;
+    });
+
+    return (
+      <>
+        {linesArrH.map((i) => {
+          if (i % mod === 0) {
+            const sign = i < (horizontalLinesNum / 2) ? -1 : 1;
+            const y = sign * (i - (sign > 0 ? Math.ceil(horizontalLinesNum / 2) : 0)) * (canvasH / horizontalLinesNum);
+            if (
+              y > (-layerY / layerScale) &&
+              y < ((-layerY + window.innerHeight) / layerScale)
+            ) {
+              return (
+                <Line
+                  key={i}
+                  id={"gridLine"}
+                  points={[canvasX, y, canvasW / 2, y]}
+                  stroke={layerLightness < 50 ? "white" : "black"}
+                  strokeWidth={y === 0 ? 2 : 1}
+                  strokeScaleEnabled={false}
+                  globalCompositeOperation={"source-over"}
+                  draggable={false}
+                  opacity={0.5}
+                />
+              );
+            }
+          }
+        })}
+        {linesArrV.map((i) => {
+          if (i % mod === 0) {
+            const sign = i < (verticalLinesNum / 2) ? -1 : 1;
+            const x = sign * (i - (sign > 0 ? Math.ceil(verticalLinesNum / 2) : 0)) * (canvasW / verticalLinesNum);
+            if (
+              x > (-layerX / layerScale) &&
+              x < ((-layerX + window.innerWidth) / layerScale)
+            ) {
+              return (
+                <Line
+                  key={i}
+                  id={"gridLine"}
+                  points={[x, canvasY, x, canvasH / 2]}
+                  stroke={layerLightness < 50 ? "white" : "black"}
+                  strokeWidth={x === 0 ? 2 : 1}
+                  strokeScaleEnabled={false}
+                  globalCompositeOperation={"source-over"}
+                  draggable={false}
+                  opacity={0.5}
+                />
+              );
+            }
+          }
+        })}
+      </>
+    );
+  };
+
   const loadObjects = (stage, mode) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
@@ -622,11 +819,17 @@ const CanvasPage = (props) => {
             {/* This Rect is for dragging the canvas */}
             <Rect
               id="ContainerRect"
-              x={-500 * window.innerWidth}
-              y={-500 * window.innerHeight}
-              height={window.innerHeight * 1000}
-              width={window.innerWidth * 1000}
+              x={canvasX}
+              y={canvasY}
+              height={canvasH}
+              width={canvasW}
+              // For debugging
+              stroke={"red"}
+              strokeWidth={2}
+              strokeScaleEnabled={false}
             />
+
+            {renderGrid(canvas, stage)}
 
             {/* This Rect acts as the transform object for custom objects */}
             <Rect
@@ -676,10 +879,10 @@ const CanvasPage = (props) => {
         {canvas.state.texts.map((obj, index) => {
           return objectIsOnStage(obj, canvas) === stage && !editMode ?
             <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
-                defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-                {...canvas.getInteractiveProps(obj.id)}
-                {...defaultObjProps(obj, index, canvas, editMode)}
-                {...textProps(obj, canvas, editMode)}
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...textProps(obj, canvas, editMode)}
             /> : null
         })}
         {canvas.state.texts.map((obj, index) => {
@@ -752,6 +955,9 @@ const CanvasPage = (props) => {
           ) ?
             <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
         })}
+        {canvas.state.guides.map((obj, index) => {
+          return <Line {...guideProps(obj, index, canvas, editMode)} />
+        })}
 
         {/* This is the blue transformer rectangle that pops up when objects are selected */}
         {editMode && (
@@ -767,8 +973,8 @@ const CanvasPage = (props) => {
           x={0}
           y={0}
           radius={{
-            x: 100,
-            y: 100
+            x: 10,
+            y: 10
           }}
         />*/}
       </>

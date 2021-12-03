@@ -1,3 +1,7 @@
+.personalAreaAnimOn {
+  transition: 0.3s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
 .info0 {
   width: calc(100% - 130px);
   height: calc(100% - 70px);
@@ -8,10 +12,7 @@
   transform: translate(0%, 100%);
   padding: 10px;
   background-color: rgba(110, 25, 25, 0);
-  /*box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);*/
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
 }
 
@@ -26,10 +27,10 @@
   padding: 10px;
   background-color: white;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--primary);
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
+  transition: none;
 }
 
 .info0 button {
@@ -109,14 +110,17 @@
     width: calc(100% - 60px);
     left: 30px;
   }
+
   .info1 {
     height: calc(100% - 110px);
     width: calc(100% - 60px);
     left: 30px;
   }
+
   #pencili1 {
     left: 380px;
   }
+
   #pencili0 {
     left: 380px;
   }

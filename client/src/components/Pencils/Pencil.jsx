@@ -34,6 +34,8 @@ const Pencil = (props) => {
           {props.type === "info" && (
             <DropdownTimelineBar
               pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              changeObjectPage={props.changeObjectPage}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}

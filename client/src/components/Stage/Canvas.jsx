@@ -11,6 +11,7 @@ import Overlay from "./Overlay";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import DropdownOverlay from "../Dropdown/DropdownOverlay";
 
 // Standard Konva Components
 import Konva from "konva";
@@ -75,6 +76,22 @@ class Graphics extends Component {
       }
     }
 
+    let defaultPagesTemp = new Array(6);
+    defaultPagesTemp.fill({
+      hasOverlay: false,
+      overlayOpenOption: "pageEnter",
+      primaryColor: "#8f001a",
+      groupColor: "#FFF",
+      personalColor: "#FFF",
+      overlayColor: "#FFF"
+    });
+    const defaultPages = defaultPagesTemp.map((page, index) => {
+      return {
+        ...page,
+        name: "Page " + (index + 1)
+      };
+    });
+
     this.state = {
       // Objects and Delete Counts
       ...objectState,
@@ -109,17 +126,11 @@ class Graphics extends Component {
       ],
 
       // Page Controls
-      pages: [
-        { name: "1", hasOverlay: false },
-        { name: "2", hasOverlay: false },
-        { name: "3", hasOverlay: false },
-        { name: "4", hasOverlay: false },
-        { name: "5", hasOverlay: false },
-        { name: "6", hasOverlay: false }
-      ],
+      pages: defaultPages,
       numberOfPages: 6,
       level: 1, // Current page
       overlayOpen: false,
+      overlayOptionsOpen: false,
 
       // Context Menu
       selectedContextMenu: null,
@@ -493,11 +504,16 @@ class Graphics extends Component {
           const layer = this.state.personalAreaOpen ? "personal" :
             (this.state.overlayOpen ? "overlay" : "group");
           this.setState({
-            canvasLoading: true
+            canvasLoading: true,
+            selectedShapeName: "",
+            groupSelection: []
           });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
       }
+
+      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
+      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
     }
   }
 
@@ -1247,10 +1263,10 @@ class Graphics extends Component {
         return;
       }
 
-      const stage = personalArea ? "personalStage" :
-        (this.state.overlayOpen ? "overlayStage" : "groupStage");
-      const pos = this.refs[stage].getPointerPosition();
-      const shape = this.refs[stage].getIntersection(pos);
+      const stage = personalArea ? "personal" :
+        (this.state.overlayOpen ? "overlay" : "group");
+      const pos = this.refs[stage + "Stage"].getPointerPosition();
+      const shape = this.refs[stage + "Stage"].getIntersection(pos);
 
       if (this.state.lineTransformDragging) {
         const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
@@ -1259,8 +1275,8 @@ class Graphics extends Component {
         const xIndex = this.state.lineTransformDragging === "top" ? 0 : 2;
         const yIndex = this.state.lineTransformDragging === "top" ? 1 : 3;
 
-        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state.groupLayerScale);
-        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state.groupLayerScale);
+        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
+        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
 
         this.setState({
           lines: [...newLines, newLine]
@@ -1307,6 +1323,10 @@ class Graphics extends Component {
   };
 
   handleDragEnd = (e, objectsName, ref) => {
+    this.setState({
+      guides: []
+    });
+
     let shape = null;
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
@@ -2051,7 +2071,7 @@ class Graphics extends Component {
         layerDraggable: true
       });
     } else if (event.altKey && event.keyCode === r) {
-      // Print state + ref info (for debugging)
+      // Print Info (FOR DEBUGGING)
       console.log("Refs:");
       console.log({ ...this.refs });
       console.log("State:");
@@ -2183,6 +2203,10 @@ class Graphics extends Component {
   }
 
   onObjectDragMove = (obj) => {
+    const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
+    const objRef = this.refs[obj.id];
+    //this.getLineGuideStops(stage, objRef);
+
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
         if (obj.name === arrow.from.attrs.name) {
@@ -2206,6 +2230,63 @@ class Graphics extends Component {
         }
       }
     }, this.forceUpdate);
+  }
+
+  // Snapping functionality based on:
+  // https://konvajs.org/docs/sandbox/Objects_Snapping.html
+
+  // Where can we snap our objects?
+  getLineGuideStops = (stage, skipShape) => {
+    // The guide lines
+    let vertical = [];
+    let horizontal = [];
+
+    const stageRef = this.refs[`${stage}Stage`];
+    const layerX = this.state[`${stage}LayerX`];
+    const layerY = this.state[`${stage}LayerY`];
+    const layerScale = this.state[`${stage}LayerScale`];
+
+    stageRef.find('.shape').forEach((guideItem) => {
+      if (guideItem === skipShape) {
+        return;
+      }
+
+      // Get snap points at edges and center of each object
+      const box = guideItem.getClientRect();
+
+      const x = (box.x - layerX) / layerScale;
+      const width = box.width / layerScale;
+
+      const y = (box.y - layerY) / layerScale;
+      const height = box.height / layerScale;
+
+      vertical.push([x, x + width, x + width / 2]);
+      horizontal.push([y, y + height, y + height / 2]);
+    });
+
+    vertical = vertical.flat();
+    horizontal = horizontal.flat();
+
+    const l = 100;
+    const guidesV = [];
+    for (let i = 0; i < vertical.length; i++) {
+      const x = vertical[i];
+      guidesV.push({ points: [x, -l, x, l] });
+    }
+    const guidesH = [];
+    for (let i = 0; i < horizontal.length; i++) {
+      const y = horizontal[i];
+      guidesH.push({ points: [-l, y, l, y] });
+    }
+
+    this.setState({
+      guides: [...guidesV, ...guidesH]
+    });
+
+    return {
+      vertical: vertical,
+      horizontal: horizontal,
+    };
   }
 
   onObjectClick = (obj) => {
@@ -2440,19 +2521,57 @@ class Graphics extends Component {
     });
   }
 
-  handleCopyPage = async (index) => {
+  changeObjectPage = (initIndex, newIndex) => {
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const type = this.savedObjects[i];
+      const objs = this.state[type];
+      for (let j = 0; j < objs.length; j++) {
+        const obj = objs[j];
+        if (obj.level === initIndex + 1) {
+          const newObj = {
+            ...obj,
+            level: newIndex + 1
+          }
+
+          // Delete objects on this level
+          const newObjs = [...objs];
+          newObjs.splice(j, 1);
+          this.setState({
+            [type]: newObjs
+          }, () => {
+            // Relocate objects to new level
+            if (newIndex !== -1) {
+              this.setState({
+                [type]: [...this.state[type], newObj]
+              });
+            }
+          });
+        }
+      }
+    }
+  }
+
+  handleCopyPage = (index) => {
     // Copy all objects from chosen level to new level
     for (let i = 0; i < this.savedObjects.length; i++) {
-      const objs = this.state[this.savedObjects[i]];
+      const type = this.savedObjects[i];
+      const objs = this.state[type];
       for (let j = 0; j < objs.length; j++) {
         const obj = objs[j];
         if (obj.level === index + 1) {
+          const objectsState = this.state[type];
+          const objectsDeletedState = this.state[`${type}DeleteCount`];
+          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+          const id = type + numOfObj;
           const newObj = {
             ...obj,
-            level: this.state.pages.length
-          } 
+            id: id,
+            ref: id,
+            name: id,
+            level: this.state.pages.length + 1
+          }
           this.setState({
-            [this.savedObjects[i]]: [...objs, newObj]
+            [type]: [...objs, newObj]
           });
         }
       }
@@ -2465,6 +2584,16 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          refreshCanvas={() => {
+            // Refresh canvas
+            const layer = this.state.personalAreaOpen ? "personal" :
+              (this.state.overlayOpen ? "overlay" : "group");
+            this.setState({
+              canvasLoading: true
+            });
+            setTimeout(() => this.props.reCenter("edit", layer), 0);
+          }}
+          changeObjectPage={this.changeObjectPage}
           handleCopyPage={this.handleCopyPage}
           number={this.state.numberOfPages}
           clearCanvasData={() => this.props.setGameEditProps(undefined)}
@@ -2494,10 +2623,28 @@ class Graphics extends Component {
         />
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1].hasOverlay && (
-          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
+        {this.state.pages[this.state.level - 1] && this.state.pages[this.state.level - 1].hasOverlay && (
+          <div
+            className="overlayButton"
+            onContextMenu={(e) => {
+              e.preventDefault();
+              this.setState({
+                overlayOptionsOpen: !this.state.overlayOptionsOpen
+              });
+            }}
+            onClick={() => this.setOverlayOpen(true)}
+          >
             <i className="icons fa fa-window-restore" />
           </div>
+        )}
+
+        {this.state.overlayOptionsOpen && (
+          <DropdownOverlay
+            close={() => this.setState({ overlayOptionsOpen: false })}
+            changePages={this.handlePageTitle}
+            pages={this.state.pages}
+            level={this.state.level}
+          />
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}
@@ -2631,7 +2778,10 @@ class Graphics extends Component {
         {/* ---- PERSONAL CANVAS ---- */}
         <div
           id={"editPersonalContainer"}
-          className={"info" + this.state.personalAreaOpen}
+          style={{
+            backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
+          }}
+          className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
         >
           <div
             id="personalMainContainer"
@@ -2728,10 +2878,23 @@ class Graphics extends Component {
 
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
-            ? <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(true)}>
+            ? <button
+              className="personalAreaToggle"
+              onClick={() => {
+                document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
+                this.handlePersonalAreaOpen(true);
+                setTimeout(() => {
+                  document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
+                }, 500);
+              }}>
               <i className="fas fa-angle-up fa-3x" />
             </button>
-            : <button className="personalAreaToggle" onClick={() => this.handlePersonalAreaOpen(false)}>
+            : <button
+              className="personalAreaToggle"
+              onClick={() => {
+                document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
+                this.handlePersonalAreaOpen(false);
+              }}>
               <i className="fas fa-angle-down fa-3x" />
             </button>
           }
@@ -2739,6 +2902,14 @@ class Graphics extends Component {
           {/* The Role Picker */}
           <div id="rolesdrop">
             <DropdownRoles
+              refreshPersonalCanvas={() => {
+                this.setState({
+                  canvasLoading: true,
+                  selectedShapeName: "",
+                  groupSelection: []
+                });
+                setTimeout(() => this.props.reCenter("edit", "personal"), 0);
+              }}
               personalAreaOpen={this.state.personalAreaOpen}
               openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
               roleLevel={this.handleRoleLevel}

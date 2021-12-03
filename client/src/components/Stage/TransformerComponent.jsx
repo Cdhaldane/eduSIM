@@ -9,6 +9,17 @@ const TransformerComponent = forwardRef((props, ref) => {
 
   const renderTransformer = () => {
     const shape = props.refs[props.selectedShapeName] ? props.refs[props.selectedShapeName].attrs : null;
+    if (!props.state.groupSelection.length && !props.selectedShapeName) {
+      return (
+        <Transformer
+          ref={ref}
+          name="transformer"
+          resizeEnabled={false}
+          rotateEnabled={false}
+          borderEnabled={false}
+        />
+      );
+    }
     switch (props.selectedShapeName.replace(/\d+$/, "")) {
       case "":
         // This is a group selection

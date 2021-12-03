@@ -54,6 +54,7 @@
   background-color: white;
   height: 100%;
   width: 100%;
+  border: 1px solid var(--primary);
   border-radius: 10px;
   box-shadow: var(--box-shadow);
 }
@@ -132,6 +133,8 @@
   position: absolute;
   top: 15px;
   left: 15px;
+  border-radius: 0.25em;
+  text-shadow: -1px 1px 0 white;
 }
 
 #playModeRoleLabel > b {

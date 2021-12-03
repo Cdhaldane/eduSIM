@@ -33,9 +33,13 @@ const Level = (props) => {
   }
 
   const handleCount = () => {
-    handleLevel(count + 1);
+    if (props.page.hasOverlay && props.page.overlayOpenOption === "pageExit") {
+      props.handlePageCloseOverlay();
+    } else {
+      handleLevel(count + 1);
+    }
   }
-  
+
   const handleBack = () => {
     if (count > 0) handleLevel(count - 1);
   }
@@ -74,6 +78,7 @@ const Level = (props) => {
   }
 
   const saveOnClose = () => {
+    document.querySelector(':root').style.setProperty('--primary', "#8f001a");
     props.clearCanvasData();
     props.saveGame();
     props.removeJSGIFS();
@@ -84,7 +89,7 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div style={{width: "180px"}}>
+            <div style={{ width: "180px" }}>
               <h1 id="editModeTitle">
                 Edit Mode
               </h1>
@@ -198,7 +203,15 @@ const Level = (props) => {
           <div className="level-bar">
             {times(props.number, (num) => ( // dynamically scaling level bar
               <div key={num} className="level-bar-section">
-                <div className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`} />
+                <div
+                  onClick={() => {
+                    if (!props.gamepage) {
+                      setCount(parseInt(num + 1));
+                      handleLevel(parseInt(num + 1));
+                    }
+                  }}
+                  className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`}
+                />
                 {num != props.number - 1 && (<div className="level-bar-line" />)}
               </div>
             ))}
@@ -210,6 +223,8 @@ const Level = (props) => {
               psize="3"
               type="info"
               pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              changeObjectPage={props.changeObjectPage}
               handleCopyPage={props.handleCopyPage}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
