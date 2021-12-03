@@ -50,7 +50,7 @@ const CreateRole = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (role && (role.num && rolesTaken[role.name] >= role.num)) {
+    if (role && (role.num && role.num !== -1 && rolesTaken[role.name] >= role.num)) {
       alertContext.showAlert("Too many people have already chosen this role. Please choose a different one.", "warning");
       return false;
     }

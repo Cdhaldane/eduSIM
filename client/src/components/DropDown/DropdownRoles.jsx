@@ -51,12 +51,12 @@ const DropdownRoles = (props) => {
         const defaultRole = {
           id: uuidv4(),
           roleName: "Default Role",
-          numOfSpots: 1,
+          numOfSpots: -1,
         };
         const defaultRoleAPI = {
           gameinstanceid: props.gameid,
           gamerole: "Default Role",
-          numspots: 1,
+          numspots: -1,
         };
         axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
           setRoles([defaultRole]);
@@ -204,7 +204,8 @@ const DropdownRoles = (props) => {
                 {index === 0 && (
                   <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} />
                 )}
-                {`${role.roleName} (${role.numOfSpots})`}
+                {role.roleName}
+                {role.numOfSpots !== -1 && ` (${role.numOfSpots})`}
                 <div className="icons-right">
                   <span className="icon-button" onClick={(e) => handleModifyRole(e, index)}>
                     <i className="icons fa fa-pencil" />
@@ -220,11 +221,14 @@ const DropdownRoles = (props) => {
               className="menu-item"
               onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
               key={index}
-              disabled={props.rolesTaken[role.roleName] && props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
+              disabled={role.numOfSpots !== -1 && 
+                props.rolesTaken[role.roleName] && 
+                props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
             >
-              {props.rolesTaken[role.roleName]
-                ? `${role.roleName} (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
-                : `${role.roleName} (${role.numOfSpots})`}
+              {role.roleName}
+              {role.numOfSpots !== -1 && (props.rolesTaken[role.roleName]
+                ? ` (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                : ` (${role.numOfSpots})`)}
             </div>
           )
         );

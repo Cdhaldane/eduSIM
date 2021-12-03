@@ -209,6 +209,13 @@ function DropdownEditObject(props) {
       containerHeight: val
     }));
   }
+  function handleProperty(val, prop) {
+    props.updateObjState({ [prop]: val });
+    setObjState(prev => ({
+      ...prev,
+      [prop]: val
+    }));
+  }
 
   function handleTimeLimit(num, correct=false) {
     let val = num;
@@ -422,6 +429,14 @@ function DropdownEditObject(props) {
             unmountOnExit>
             <div className="menuedit htmledit">
               <h1>{props.title}</h1>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.controls} onChange={() => handleProperty(!objState?.controls, 'controls')} />
+                <p>Enable controls</p>
+              </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!objState?.invisible} onChange={() => handleProperty(!objState?.invisible, 'invisible')} />
+                <p>Visible</p>
+              </div>
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.timeLimit} onChange={() => handleTimeLimit(!objState?.timeLimit ? 60 : null)} />
                 <p>Count down</p>

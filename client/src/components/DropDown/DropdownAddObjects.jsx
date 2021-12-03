@@ -489,7 +489,7 @@ const DropdownAddObjects = (props) => {
 
   const addTimer = () => {
     addObjectToLayer(
-      "timers", {}
+      "timers", { controls: true }
     );
   }
 

@@ -10,6 +10,7 @@ const TimerContainer = styled.div`
   border-radius: 10px;
   overflow: hidden;
   background-color: var(--primary);
+  ${p => p.invisible && "display: none;"}
   & > p {
     width: 100%;
     height: 70px;
@@ -125,7 +126,7 @@ const Timer = forwardRef((props, ref) => {
 
   return (
     <CustomWrapper {...props} ref={ref}>
-      <TimerContainer>
+      <TimerContainer invisible={props.invisible}>
         {props.varName && (
           <AutoUpdate
             value={isDone}
@@ -146,11 +147,13 @@ const Timer = forwardRef((props, ref) => {
             elapsedValue()
           )}
         </p>
-        <div>
-          <button onClick={toggleRun}>{running ? 'Pause' : 'Start'}</button>
-          <div />
-          <button onClick={onReset}>Reset</button>
-        </div>
+        {props.controls && (
+          <div>
+            <button onClick={toggleRun}>{running ? 'Pause' : 'Start'}</button>
+            <div />
+            <button onClick={onReset}>Reset</button>
+          </div>
+        )}
       </TimerContainer>
     </CustomWrapper>
   );
