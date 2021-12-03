@@ -1,7 +1,51 @@
 import React, { forwardRef, useEffect } from "react";
 import AutoUpdate from "../../../AutoUpdate";
 import CustomWrapper from "../CustomWrapper";
+import styled from 'styled-components';
 import moment from "moment";
+
+const TimerContainer = styled.div`
+  width: 200px;
+  background-color: gray;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--primary);
+  & > p {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    font-family: monospace;
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+  }
+  & > div {
+    display: flex;
+    height: 40%;
+  }
+  & > div > button {
+    flex: 1;
+    border-radius: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  & > div > button:hover {
+    background: rgba(255,255,255,0.08);
+  }
+  & > div > div {
+    width: 1px;
+    height: 40px;
+    align-self: center;
+    background-color: white;
+    opacity: 0.4;
+  }
+`;
 
 const Timer = forwardRef((props, ref) => {
 
@@ -39,7 +83,7 @@ const Timer = forwardRef((props, ref) => {
   const runningValue = () => {
     if (limit) {
       if (moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000*limit) {
-        return "haha done";
+        return (moment().diff(moment(startTime - elapsedTime)).valueOf()/500) % 2 < 1 ? '00:00.00' : '';
       }
       return moment(1000*limit - moment().diff(moment(startTime - elapsedTime))).format('mm:ss.SS');
     }
@@ -49,7 +93,7 @@ const Timer = forwardRef((props, ref) => {
   const elapsedValue = () => {
     if (limit) {
       if (elapsedTime > 1000*limit) {
-        return "haha done";
+        return "00:00.00";
       }
       return moment(1000*limit - elapsedTime).format('mm:ss.SS');
     }
@@ -81,7 +125,7 @@ const Timer = forwardRef((props, ref) => {
 
   return (
     <CustomWrapper {...props} ref={ref}>
-      <div>
+      <TimerContainer>
         {props.varName && (
           <AutoUpdate
             value={isDone}
@@ -99,12 +143,15 @@ const Timer = forwardRef((props, ref) => {
               enabled
             />
           ) : (
-            <div>{elapsedValue()}</div>
+            elapsedValue()
           )}
         </p>
-        <button onClick={toggleRun}>start/stop</button>
-        <button onClick={onReset}>reset</button>
-      </div>
+        <div>
+          <button onClick={toggleRun}>{running ? 'Pause' : 'Start'}</button>
+          <div />
+          <button onClick={onReset}>Reset</button>
+        </div>
+      </TimerContainer>
     </CustomWrapper>
   );
 });
