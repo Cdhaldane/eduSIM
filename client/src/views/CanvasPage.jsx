@@ -623,6 +623,54 @@ const CanvasPage = (props) => {
     };
   }
 
+  // Copied from:
+  // https://css-tricks.com/converting-color-spaces-in-javascript/
+  const hexToHSLLightness = (H) => {
+    // Convert hex to RGB first
+    let r = 0, g = 0, b = 0;
+    if (H.length == 4) {
+      r = "0x" + H[1] + H[1];
+      g = "0x" + H[2] + H[2];
+      b = "0x" + H[3] + H[3];
+    } else if (H.length == 7) {
+      r = "0x" + H[1] + H[2];
+      g = "0x" + H[3] + H[4];
+      b = "0x" + H[5] + H[6];
+    }
+    // Then to HSL
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    let cmin = Math.min(r, g, b),
+      cmax = Math.max(r, g, b),
+      delta = cmax - cmin,
+      h = 0,
+      s = 0,
+      l = 0;
+
+    if (delta == 0)
+      h = 0;
+    else if (cmax == r)
+      h = ((g - b) / delta) % 6;
+    else if (cmax == g)
+      h = (b - r) / delta + 2;
+    else
+      h = (r - g) / delta + 4;
+
+    h = Math.round(h * 60);
+
+    if (h < 0)
+      h += 360;
+
+    l = (cmax + cmin) / 2;
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = +(s * 100).toFixed(1);
+    l = +(l * 100).toFixed(1);
+
+    //return "hsl(" + h + "," + s + "%," + l + "%)";
+    return l;
+  }
+
   /*-------------------------------------------------------------/
    * RENDER FUNCTION
    * This renders the objects with their props to the canvasses.
@@ -637,6 +685,8 @@ const CanvasPage = (props) => {
     const layerX = canvas.state[`${stage}LayerX`];
     const layerY = canvas.state[`${stage}LayerY`];
     const layerScale = canvas.state[`${stage}LayerScale`];
+    const layerColor = canvas.state.pages[canvas.state.level - 1][`${stage}Color`];
+    const layerLightness = hexToHSLLightness(layerColor);
 
     const horizontalLinesNum = maxCanvasScaleFactor * 100;
     const ratio = canvasW / canvasH;
@@ -698,11 +748,12 @@ const CanvasPage = (props) => {
                   key={i}
                   id={"gridLine"}
                   points={[canvasX, y, canvasW / 2, y]}
-                  stroke={"black"}
+                  stroke={layerLightness < 50 ? "white" : "black"}
                   strokeWidth={y === 0 ? 2 : 1}
                   strokeScaleEnabled={false}
                   globalCompositeOperation={"source-over"}
                   draggable={false}
+                  opacity={0.5}
                 />
               );
             }
@@ -721,11 +772,12 @@ const CanvasPage = (props) => {
                   key={i}
                   id={"gridLine"}
                   points={[x, canvasY, x, canvasH / 2]}
-                  stroke={"black"}
+                  stroke={layerLightness < 50 ? "white" : "black"}
                   strokeWidth={x === 0 ? 2 : 1}
                   strokeScaleEnabled={false}
                   globalCompositeOperation={"source-over"}
                   draggable={false}
+                  opacity={0.5}
                 />
               );
             }
