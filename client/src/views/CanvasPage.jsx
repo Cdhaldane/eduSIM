@@ -53,8 +53,6 @@ const CanvasPage = (props) => {
     "documents",
     "lines",
     "pencils",  // The drawings
-    "arrows",   // Arrows are used for transformations
-    "guides",   // These are the lines used for snapping
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -350,7 +348,7 @@ const CanvasPage = (props) => {
           onClick: () => canvas.onObjectClick(obj),
           onTransformStart: canvas.onObjectTransformStart,
           onTransformEnd: () => canvas.onObjectTransformEnd(obj),
-          onDragMove: () => canvas.onObjectDragMove(obj),
+          onDragMove: (e) => canvas.onObjectDragMove(obj, e),
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
         } : {})
@@ -532,6 +530,7 @@ const CanvasPage = (props) => {
 
   const guideProps = (obj, index) => {
     return {
+      name: "guide",
       visible: true,
       key: index,
       points: obj.points,
@@ -540,7 +539,7 @@ const CanvasPage = (props) => {
       strokeScaleEnabled: false,
       globalCompositeOperation: 'source-over',
       draggable: false,
-      dash: [10, 5]
+      dash: [5, 5]
     }
   }
 
@@ -834,6 +833,7 @@ const CanvasPage = (props) => {
             {/* This Rect acts as the transform object for custom objects */}
             <Rect
               {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
+              name={"transformCustom"}
               draggable={false}
             />
           </>

@@ -97,6 +97,9 @@ class Graphics extends Component {
       ...objectState,
       ...objectDeleteState,
 
+      arrows: [],   // Arrows are used for transformations
+      guides: [],   // These are the lines used for snapping
+
       // Right click menus
       groupAreaContextMenuVisible: false,
       groupAreaContextMenuX: 0,
@@ -2202,10 +2205,79 @@ class Graphics extends Component {
     }
   }
 
-  onObjectDragMove = (obj) => {
-    const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
-    const objRef = this.refs[obj.id];
-    //this.getLineGuideStops(stage, objRef);
+  getNearestGuide = (obj, stage) => {
+    const stageRef = this.refs[`${stage}Stage`];
+    const layerX = this.state[`${stage}LayerX`];
+    const layerY = this.state[`${stage}LayerY`];
+    const layerScale = this.state[`${stage}LayerScale`];
+
+    const objBox = this.refs[obj.id].getClientRect();
+    const guides = stageRef.find('.guide');
+
+    let pos = {
+      x: null,
+      y: null,
+      type: null
+    };
+    for (let i = 0; i < guides.length; i++) {
+      const g = guides[i];
+      const gBox = g.getClientRect();
+      const padding = 5;
+
+      const collision = this.collide(objBox, gBox, padding);
+      const top = this.collide(objBox, gBox, padding, "top");
+      const bottom = this.collide(objBox, gBox, padding, "bottom");
+      const left = this.collide(objBox, gBox, padding, "left");
+      const right = this.collide(objBox, gBox, padding, "right");
+      let type = "";
+
+      if (g.attrs.points[0] === g.attrs.points[2]) {
+        // Vertical
+        if (collision) {
+          if (left) type = "left";
+          if (right) type = "right";
+          pos = {
+            ...pos,
+            x: (g.attrs.points[0] * layerScale) + layerX,
+            type: pos.type ? pos.type : type
+          }
+        }
+      } else {
+        // Horizontal
+        if (collision) {
+          if (top) type = "top";
+          if (bottom) type = "bottom";
+          pos = {
+            ...pos,
+            y: (g.attrs.points[1] * layerScale) + layerY,
+            type: pos.type ? pos.type : type
+          }
+        }
+      }
+    }
+    return pos;
+  }
+
+  onObjectDragMove = (obj, e) => {
+    if (e.evt.shiftKey) {
+      const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
+      const objRef = this.refs[obj.id];
+      this.getLineGuideStops(stage, objRef);
+  
+      const pos = objRef.absolutePosition();
+      const snaps = this.getNearestGuide(obj, stage);
+      const rect = objRef.getClientRect();
+      if (snaps.type) {
+        objRef.absolutePosition({
+          x: snaps.x ? snaps.x + (snaps.type === "right" ? -rect.width : 0) : pos.x,
+          y: snaps.y ? snaps.y + (snaps.type === "bottom" ? -rect.height : 0) : pos.y
+        });
+      }
+    } else {
+      this.setState({
+        guides: []
+      });
+    }
 
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
@@ -2235,6 +2307,34 @@ class Graphics extends Component {
   // Snapping functionality based on:
   // https://konvajs.org/docs/sandbox/Objects_Snapping.html
 
+  collide = (rect1, rect2, padding, part) => {
+    let rect1Top = rect1.y;
+    let rect1Bottom = rect1.y + rect1.height;
+    let rect1Left = rect1.x;
+    let rect1Right = rect1.x + rect1.width;
+    if (part === "top") {
+      rect1Bottom = rect1Bottom - (rect1.height / 2);
+    } else if (part === "bottom") {
+      rect1Top = rect1Top + (rect1.height / 2);
+    } else if (part === "left") {
+      rect1Right = rect1Right - (rect1.width / 2);
+    } else if (part === "right") {
+      rect1Left = rect1Left + (rect1.width / 2);
+    }
+
+    const rect2Top = rect2.y - padding;
+    const rect2Bottom = rect2.y + rect2.height + padding;
+    const rect2Left = rect2.x - padding;
+    const rect2Right = rect2.x + rect2.width + padding;
+
+    return !(
+      rect1Top > rect2Bottom ||
+      rect1Right < rect2Left ||
+      rect1Bottom < rect2Top ||
+      rect1Left > rect2Right
+    );
+  }
+
   // Where can we snap our objects?
   getLineGuideStops = (stage, skipShape) => {
     // The guide lines
@@ -2246,37 +2346,49 @@ class Graphics extends Component {
     const layerY = this.state[`${stage}LayerY`];
     const layerScale = this.state[`${stage}LayerScale`];
 
+    const compBox = skipShape.getClientRect();
     stageRef.find('.shape').forEach((guideItem) => {
       if (guideItem === skipShape) {
         return;
       }
 
-      // Get snap points at edges and center of each object
+      // Check if shape is close by
       const box = guideItem.getClientRect();
+      const padding = 50;
+      if (this.collide(compBox, box, padding)) {
+        const x = (box.x - layerX) / layerScale;
+        const width = box.width / layerScale;
 
-      const x = (box.x - layerX) / layerScale;
-      const width = box.width / layerScale;
+        const y = (box.y - layerY) / layerScale;
+        const height = box.height / layerScale;
 
-      const y = (box.y - layerY) / layerScale;
-      const height = box.height / layerScale;
-
-      vertical.push([x, x + width, x + width / 2]);
-      horizontal.push([y, y + height, y + height / 2]);
+        // Get snap points at edges and center of each object
+        vertical.push([x, x + width, x + width / 2]);
+        horizontal.push([y, y + height, y + height / 2]);
+      }
     });
 
     vertical = vertical.flat();
     horizontal = horizontal.flat();
 
-    const l = 100;
+    const l = Math.max(window.innerWidth, window.innerHeight) / layerScale;
     const guidesV = [];
     for (let i = 0; i < vertical.length; i++) {
       const x = vertical[i];
-      guidesV.push({ points: [x, -l, x, l] });
+      const r = (i % 3) - 2;
+      const y = horizontal[i - r];
+      guidesV.push({
+        points: [x, -l + y, x, l + y]
+      });
     }
     const guidesH = [];
     for (let i = 0; i < horizontal.length; i++) {
+      const r = (i % 3) - 2;
+      const x = vertical[i - r];
       const y = horizontal[i];
-      guidesH.push({ points: [-l, y, l, y] });
+      guidesH.push({
+        points: [-l + x, y, l + x, y]
+      });
     }
 
     this.setState({
