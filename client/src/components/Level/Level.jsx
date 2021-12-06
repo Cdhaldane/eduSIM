@@ -222,8 +222,8 @@ const Level = (props) => {
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
                   `} onClick={() => handleLevel(num+1)}>
                     {props.number > num ? (
-                      <i class={`fas fa-arrow-alt-circle-right ${count-1 > num ? 'arrow-left' : ''}`}></i>
-                    ) : <i class="fas fa-check-circle"></i>}
+                      <i className={`fas fa-arrow-alt-circle-right ${count-1 > num ? 'arrow-left' : ''}`}></i>
+                    ) : <i className="fas fa-check-circle"></i>}
                   </div>
                 </div>
               ))}

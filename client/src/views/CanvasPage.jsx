@@ -378,7 +378,7 @@ const CanvasPage = (props) => {
       ...(editMode ?
         {
           onClick: () => canvas.onObjectClick(obj),
-          onDragMove: () => canvas.onObjectDragMove(obj),
+          onDragMove: (e) => canvas.onObjectDragMove(obj, e),
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
         } : {})
@@ -534,8 +534,9 @@ const CanvasPage = (props) => {
       name: "guide",
       visible: true,
       key: index,
+      pos: obj.pos,
       points: obj.points,
-      stroke: "red",
+      stroke: obj.pos === "center" ? "blue" : "red",
       strokeWidth: 1,
       strokeScaleEnabled: false,
       globalCompositeOperation: 'source-over',
@@ -598,6 +599,7 @@ const CanvasPage = (props) => {
 
   const customObjProps = (canvas) => {
     return {
+      objectSnapping: canvas.objectSnapping,
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
       onMouseMove: (e) => canvas.handleMouseOver(e, false),
@@ -966,22 +968,21 @@ const CanvasPage = (props) => {
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null
         })}
-        {canvas.state.arrows.map((obj, index) => {
-          return (
-            !obj.from &&
-            !obj.to &&
-            obj.level === canvas.state.level &&
-            obj.infolevel === (stage === "personal")
-          ) ?
-            <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
-        })}
-        {canvas.state.guides.map((obj, index) => {
-          return <Line {...guideProps(obj, index, canvas, editMode)} />
-        })}
-
-        {/* This is the blue transformer rectangle that pops up when objects are selected */}
         {editMode && (
           <>
+            {canvas.state.arrows.map((obj, index) => {
+              return (
+                !obj.from &&
+                !obj.to &&
+                obj.level === canvas.state.level &&
+                obj.infolevel === (stage === "personal")
+              ) ?
+                <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+            })}
+            {canvas.state.guides.map((obj, index) => {
+              return <Line {...guideProps(obj, index, canvas, editMode)} />
+            })}
+            {/* This is the blue transformer rectangle that pops up when objects are selected */}
             <TransformerComponent {...transformerProps(stage, canvas)} />
             <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
           </>

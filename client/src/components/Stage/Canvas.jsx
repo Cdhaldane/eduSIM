@@ -124,7 +124,7 @@ class Graphics extends Component {
           id: "customRect",
           name: "customRect",
           ref: "customRect",
-          opacity: 0,
+          opacity: 0
         }
       ],
 
@@ -491,6 +491,7 @@ class Graphics extends Component {
           onDragEndArrow: this.onDragEndArrow,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
+          objectSnapping: this.objectSnapping,
           onMouseDown: this.onMouseDown,
           getKonvaObj: this.getKonvaObj,
           getObjType: this.getObjType,
@@ -2163,9 +2164,6 @@ class Graphics extends Component {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
-              //console.log(this.getObjType(id));
-              //console.log(this.state);
-              //console.log("BOOM");
               const customState = [...this.state[this.getObjType(id)]];
 
               const elem = this.refs[id];
@@ -2211,7 +2209,7 @@ class Graphics extends Component {
     const layerY = this.state[`${stage}LayerY`];
     const layerScale = this.state[`${stage}LayerScale`];
 
-    const objBox = this.refs[obj.id].getClientRect();
+    const objBox = obj.getClientRect();
     const guides = stageRef.find('.guide');
 
     let pos = {
@@ -2225,6 +2223,7 @@ class Graphics extends Component {
       const padding = 5;
 
       const collision = this.collide(objBox, gBox, padding);
+      if (!collision) continue;
       const top = this.collide(objBox, gBox, padding, "top");
       const bottom = this.collide(objBox, gBox, padding, "bottom");
       const left = this.collide(objBox, gBox, padding, "left");
@@ -2233,44 +2232,47 @@ class Graphics extends Component {
 
       if (g.attrs.points[0] === g.attrs.points[2]) {
         // Vertical
-        if (collision) {
-          if (left) type = "left";
-          if (right) type = "right";
-          pos = {
-            ...pos,
-            x: (g.attrs.points[0] * layerScale) + layerX,
-            type: pos.type ? pos.type : type
-          }
+        if (left) type = type + " left";
+        if (right) type = type + " right";
+        pos = {
+          ...pos,
+          x: (g.attrs.points[0] * layerScale) + layerX + (g.attrs.pos === "center" ?
+            (left ? -objBox.width / 2 : objBox.width / 2) : 0),
+          type: pos.type + type,
+          pos: g.attrs.pos
         }
       } else {
         // Horizontal
-        if (collision) {
-          if (top) type = "top";
-          if (bottom) type = "bottom";
-          pos = {
-            ...pos,
-            y: (g.attrs.points[1] * layerScale) + layerY,
-            type: pos.type ? pos.type : type
-          }
+        if (top) type = type + " top";
+        if (bottom) type = type + " bottom";
+        pos = {
+          ...pos,
+          y: (g.attrs.points[1] * layerScale) + layerY + (g.attrs.pos === "center" ?
+            (top ? -objBox.height / 2 : objBox.height / 2) : 0),
+          type: pos.type + type,
+          pos: g.attrs.pos
         }
       }
     }
     return pos;
   }
 
-  onObjectDragMove = (obj, e) => {
-    if (e.evt.shiftKey) {
+  objectSnapping = (obj, e) => {
+    if (e && e.evt.shiftKey) {
       const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
-      const objRef = this.refs[obj.id];
+      const objRef = obj.attrs ? obj : this.refs[obj.id];
       this.getLineGuideStops(stage, objRef);
-  
+
       const pos = objRef.absolutePosition();
-      const snaps = this.getNearestGuide(obj, stage);
+      const snaps = this.getNearestGuide(objRef, stage);
       const rect = objRef.getClientRect();
+      const ctrOrigin = obj.attrs ? false : ["ellipses", "triangles", "stars"].includes(this.getObjType(obj.id));
       if (snaps.type) {
         objRef.absolutePosition({
-          x: snaps.x ? snaps.x + (snaps.type === "right" ? -rect.width : 0) : pos.x,
-          y: snaps.y ? snaps.y + (snaps.type === "bottom" ? -rect.height : 0) : pos.y
+          x: snaps.x ? snaps.x + (snaps.type.includes("right") ? -rect.width : 0) +
+            (ctrOrigin ? rect.width / 2 : 0) : pos.x,
+          y: snaps.y ? snaps.y + (snaps.type.includes("bottom") ? -rect.height : 0) +
+            (ctrOrigin ? rect.height / 2 : 0) : pos.y
         });
       }
     } else {
@@ -2278,7 +2280,10 @@ class Graphics extends Component {
         guides: []
       });
     }
+  }
 
+  onObjectDragMove = (obj, e) => {
+    this.objectSnapping(obj, e);
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
         if (obj.name === arrow.from.attrs.name) {
@@ -2347,14 +2352,13 @@ class Graphics extends Component {
     const layerScale = this.state[`${stage}LayerScale`];
 
     const compBox = skipShape.getClientRect();
-    stageRef.find('.shape').forEach((guideItem) => {
-      if (guideItem === skipShape) {
-        return;
-      }
+    stageRef.find('.shape, .customObj').forEach((guideItem) => {
+      if (guideItem === skipShape) return;
 
       // Check if shape is close by
+      if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
       const box = guideItem.getClientRect();
-      const padding = 50;
+      const padding = 20;
       if (this.collide(compBox, box, padding)) {
         const x = (box.x - layerX) / layerScale;
         const width = box.width / layerScale;
@@ -2368,6 +2372,8 @@ class Graphics extends Component {
       }
     });
 
+    this.getKonvaObj(skipShape.attrs.id, true);
+
     vertical = vertical.flat();
     horizontal = horizontal.flat();
 
@@ -2378,7 +2384,8 @@ class Graphics extends Component {
       const r = (i % 3) - 2;
       const y = horizontal[i - r];
       guidesV.push({
-        points: [x, -l + y, x, l + y]
+        points: [x, -l + y, x, l + y],
+        pos: i % 3 === 2 ? "center" : "edge"
       });
     }
     const guidesH = [];
@@ -2387,7 +2394,8 @@ class Graphics extends Component {
       const x = vertical[i - r];
       const y = horizontal[i];
       guidesH.push({
-        points: [-l + x, y, l + x, y]
+        points: [-l + x, y, l + x, y],
+        pos: i % 3 === 2 ? "center" : "edge"
       });
     }
 
