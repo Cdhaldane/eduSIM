@@ -37,22 +37,6 @@ const PauseCover = styled.div`
   }
 `;
 
-const Time = styled.div`    
-  position: fixed;
-  text-align: center;
-  top: 40px;
-  left: 50%;
-  color: var(--primary);
-  font-size: 3em;
-  font-weight: bold;
-  width: 300px;
-  margin-left: -195px;
-  @media screen and (orientation: portrait) {
-    margin-left: -180px;
-    top: 60px;
-  }
-`;
-
 const Game = (props) => {
 
   const { roomid } = useParams();
@@ -139,8 +123,9 @@ const Game = (props) => {
       });
       client.on("clientLeft", (id) => {
         setPlayers(l => {
-          delete l[id];
-          return l;
+          let n = {...l};
+          delete n[id];
+          return n;
         });
       });
       client.on("errorLog", (message) => {
@@ -199,6 +184,7 @@ const Game = (props) => {
           subtitle={room.gameroom_name}
           socket={socket}
           submenuProps={{ messageBacklog }}
+          players={parsedPlayers}
           game
           disabled={!roomStatus.running}
           alertProps={{
@@ -232,30 +218,22 @@ const Game = (props) => {
             alert={alertContext.showAlert}
             refresh={() => setInvalidateSidebar(Math.random())}
             disableNext={disableNext}
+            countdown={roomStatus.settings && !isNaN(roomStatus.settings.advanceMode) && countdown}
           />
           {!roomStatus.running && (<PauseCover>
             <i className="fa fa-pause-circle fa-2x"></i>
             <p>Paused</p>
           </PauseCover>)}
         </Main>
-        <Time>
-          {!isNaN(roomStatus.settings?.advanceMode) && (
-            <>
-              <AutoUpdate
-                value={() => moment.duration(countdown()).hours() + ":" + moment(countdown()).format("mm:ss")}
-                intervalTime={20}
-                enabled
-              />
-              <AutoUpdate
-                value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode * 60000)) + 1}
-                intervalTime={20}
-                enabled
-                noDisplay
-                onChange={setLevel}
-              />
-            </>
-          )}
-        </Time>
+        {!isNaN(roomStatus.settings?.advanceMode) && (
+          <AutoUpdate
+            value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode * 60000)) + 1}
+            intervalTime={20}
+            enabled
+            noDisplay
+            onChange={setLevel}
+          />
+        )}
         {canvasLoading && (
           <div className="gameLoadingOverlay">
             <Loading />

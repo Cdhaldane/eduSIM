@@ -164,14 +164,27 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    
+    let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
+    let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
+
+    let val = vars[conditions.varName];
+    let varLen = isNaN() ? (val || "").length : val;
+
     switch (conditions.condition) {
-      case "equalto":
-        return vars[conditions.varName] == conditions.trueValue
+      case "isequal":
+        return val == trueValue;
+      case "isgreater":
+        return varLen > trueValue;
+      case "isless":
+        return varLen < trueValue;
+      case "between":
+        return varLen <= trueValueAlt && varLen >= trueValue;
       case "negative":
-        return !vars[conditions.varName];
+        return !val;
       case "onchange":
         return sessionStorage.lastSetVar === conditions.varName
-      default: return !!vars[conditions.varName];
+      default: return !!val;
     }
   }
 
@@ -454,6 +467,7 @@ class Graphics extends Component {
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}
+            countdown={this.props.countdown}
           />
           <div>
 

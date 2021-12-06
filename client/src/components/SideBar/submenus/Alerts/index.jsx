@@ -135,24 +135,37 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
     });
   };
 
-  const checkObjConditions = (varName, condition, check) => {
+  const checkObjConditions = (varName, condition, check, checkAlt) => {
     if (!varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+
+    let trueValue = isNaN(check) ? check : parseInt(check);
+    let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
+
+    let val = vars[varName];
+    let varLen = isNaN(val) ? (val || "").length : val;
+
     switch (condition) {
-      case "equalto":
-        return vars[varName] == check
+      case "isequal":
+        return val == trueValue;
+      case "isgreater":
+        return varLen > trueValue;
+      case "isless":
+        return varLen < trueValue;
+      case "between":
+        return varLen <= trueValueAlt && varLen >= trueValue;
       case "negative":
-        return !vars[varName];
+        return !val;
       case "onchange":
         return sessionStorage.lastSetVar === varName
-      default: return !!vars[varName];
+      default: return !!val;
     }
   }
 
   const taskTrueCount = alerts.reduce((a,data) => 
-    !checkObjConditions(data.varName, data.varCondition, data.varCheck) && !data.optional ? a+1 : a
+    !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a+1 : a
   , 0);
 
   useEffect(() => {
@@ -164,7 +177,7 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
       <h2>Alerts</h2>
       <hr />
       {alerts.map((data, index) => {
-        const done = checkObjConditions(data.varName, data.varCondition, data.varCheck);
+        const done = checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt);
         return (
         <React.Fragment key={index}>
           {editingIndex === index ? (

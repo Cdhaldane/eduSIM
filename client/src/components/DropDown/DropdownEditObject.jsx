@@ -209,6 +209,25 @@ function DropdownEditObject(props) {
       containerHeight: val
     }));
   }
+  function handleProperty(val, prop) {
+    props.updateObjState({ [prop]: val });
+    setObjState(prev => ({
+      ...prev,
+      [prop]: val
+    }));
+  }
+
+  function handleTimeLimit(num, correct=false) {
+    let val = num;
+    if (correct && (isNaN(num) || parseInt(num) < 1 || num.length == 0)) {
+      val = 1;
+    }
+    props.updateObjState({ timeLimit: val });
+    setObjState(prev => ({
+      ...prev,
+      timeLimit: val
+    }));
+  }
 
   const newTabInputSettings = (tab) => {
     setInputStrokeWidth(objState.style.borderWidth ?
@@ -390,6 +409,48 @@ function DropdownEditObject(props) {
                 shape={shape}
                 title={props.title}
               />
+            </div>
+          </CSSTransition>
+        </div>
+      );
+    } else if (props.title === "Edit Timer") {
+      return (
+        <div
+          className="dropdownedit"
+          ref={dropdownRef}
+          style={{
+            ...leftOrRight,
+            transform: `translateY(${topOffset}px)`
+          }}>
+          <CSSTransition
+            in={activeMenu === 'main'}
+            timeout={500}
+            classNames="edit-menu-primary"
+            unmountOnExit>
+            <div className="menuedit htmledit">
+              <h1>{props.title}</h1>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.controls} onChange={() => handleProperty(!objState?.controls, 'controls')} />
+                <p>Enable controls</p>
+              </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!objState?.invisible} onChange={() => handleProperty(!objState?.invisible, 'invisible')} />
+                <p>Visible</p>
+              </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.timeLimit} onChange={() => handleTimeLimit(!objState?.timeLimit ? 60 : null)} />
+                <p>Count down</p>
+              </div>
+              {!!objState?.timeLimit && (
+                <>
+                  <p>Time limit (seconds)</p>
+                  <input type="number" onChange={e => handleTimeLimit(e.target.value, true)} value={objState?.timeLimit} placeholder="Time limit" />
+                  <p>Finished flag variable</p>
+                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName || ""} placeholder="Variable name" />
+                </>
+              )}
+              <p>Start timer flag variable</p>
+              <input type="text" onChange={e => handleVarEnable(e.target.value)} value={objState?.varEnable || ""} placeholder="Variable name" />
             </div>
           </CSSTransition>
         </div>

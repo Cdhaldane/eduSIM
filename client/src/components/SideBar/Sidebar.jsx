@@ -7,6 +7,7 @@ import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
 import Alerts from "./submenus/Alerts";
+import Players from "./submenus/Players";
 import Modal from "react-modal";
 import Performance from "./Performance";
 
@@ -214,6 +215,17 @@ const Sidebar = (props) => {
           refresh={props.refresh}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
+        />
+      )
+    },
+    {
+      icon: "fas fa-users",
+      id: "userlist",
+      label: "Users",
+      visible: true,
+      submenu: (
+        <Players
+          players={props.players}
         />
       )
     },

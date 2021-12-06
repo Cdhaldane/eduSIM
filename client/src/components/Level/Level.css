@@ -68,7 +68,7 @@
 .level {
   position: absolute;
   top: 0;
-  padding: 0 20px;
+  padding: 0 10px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -102,28 +102,135 @@
   flex: 1;
   align-items: center;
   margin: auto;
+  justify-content: center;
   max-width: 1000px;
 }
 
-.level-gamepage {
-  padding-right: 90px;
-}
-
 .level-bar {
-  flex: 1;
-  padding: 10px 10px 10px 20px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.level-bar-section:not(:last-child) {
+  min-height: 22px;
+  background-color: white;
+  border-radius: 99px;
+  border: 4px solid white;
   display: flex;
   align-items: center;
-  flex: 1;
+  position: relative;
+  margin: 10px;
 }
 
-.level-bar-section {
-  transition: all .3s;
+.level-bar-edit {
+  width: 100%;
+}
+
+.level-bar > i {    
+  font-size: 36px;
+  color: var(--primary);
+  margin-left: -1px;
+  height: 0px;
+  margin-top: -36.5px;
+  transition: .4s margin-left;
+}
+.level-bar > i.level-bar-full {    
+  margin-left: -18px;
+}
+
+.level-bar-underlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 99px;
+  background-color: var(--primary);
+  opacity: 0.4;
+  filter: saturate(0.4);
+}
+
+.level-bar-progress-edge {
+  background-color: var(--primary);
+  width: 18px;
+  height: 22px;
+  border-radius: 11px 0px 0px 11px;
+}
+.level-bar-progress {
+  background-color: var(--primary);
+  height: 22px;
+  transition: .4s all;
+}
+.level-bar-progress.level-bar-full {
+  width: calc(100% - 18px) !important;
+  border-radius: 0 11px 11px 0;
+}
+
+.level-bar-segments {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  padding: 12px;
+  align-items: center;
+}
+.level-bar-segment:not(:last-child) {
+  flex: 1;
+}
+.level-bar-segment:last-child {
+  width: 0px;
+}
+.level-bar-segment > .dot {
+    width: 6px;
+  height: 6px;
+  display: block;
+  border: 2px solid white;
+  border-radius: 10px;
+  opacity: 0.9;
+}
+.level-bar-segment.fill > .dot {
+  background-color: white;
+}
+
+.level-bar-time {
+  color: black;
+  opacity: 0.7;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 1.25em;
+}
+
+.level-bar-dot-fill > i {
+  background-color: white !important;
+}
+.level-bar-dot-clickable {
+  cursor: pointer;
+  padding: 14px;
+}
+.level-bar-dot-glow {
+  background-color: rgba(255,255,255,0.2);
+}
+.level-bar-dot {
+  width: min-content;
+  transform: translate(-50%);
+  border-radius: 99px;
+  font-size: 6px;
+  transition: .3s all cubic-bezier(.08,.82,.17,1);
+}
+.level-bar-dot-clickable:hover {
+  width: min-content;
+  font-size: 30px;
+  padding: 8px;
+  transition: .2s all cubic-bezier(.28,1.05,.58,1.2);
+}
+.level-bar-dot > i {
+  color: transparent;
+  border-radius: 99px;
+  border: 2px solid white;
+  background-color: transparent;
+  transition: .3s all cubic-bezier(.08,.82,.17,1);
+}
+.level-bar-dot-clickable:hover > i {
+    color: var(--primary);
+  background-color: white;
+  border: 4px solid white;
+  transition: .2s all cubic-bezier(.28,1.05,.58,1.2);
+}
+.arrow-left {
+  transform: rotateZ(180deg);
 }
 
 .level-bar-node:hover {
@@ -200,17 +307,12 @@
     right: 20px;
     top: 5px;
   }
-
-  .level-bar {
-    padding: 5px 20px;
-  }
-
   .level-gamepage {
     padding-right: 20px;
   }
 
   .level-gamepage .level-nav {
-    margin-top: 20px;
+    margin-top: 10px;
   }
 
   .level-gamepage .level-close {
