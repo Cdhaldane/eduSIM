@@ -20,8 +20,14 @@ const HTMLFrame = forwardRef((props, ref) => {
   useEffect(() => {
     if (props.varEnable) {
       window.addEventListener('message', event => {
-        if (props.iframeSrc.startsWith(event.origin)) { 
-          sessionStorage.setItem("iframe_"+event.data?.name,event.data?.value); 
+        if (props.iframeSrc.startsWith(event.origin) && event.data?.name && event.data?.value) { 
+          let vars = {};
+          if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+          sessionStorage.setItem('gameVars', JSON.stringify({
+            ...vars,
+            [event.data.name]: event.data.value
+          }));
+          sessionStorage.setItem('lastSetVar', event.data.name);
         }
       });
     }
@@ -29,9 +35,11 @@ const HTMLFrame = forwardRef((props, ref) => {
     if (props.varName && props.varInterval) {
       interval = setInterval(() => {
         if (iframeRef.current) {
+          let gameVars = {};
+          if (!!sessionStorage.gameVars) gameVars = JSON.parse(sessionStorage.gameVars);
           let vars = props.varName.split(',').reduce((a,v) => ({
             ...a,
-            [v]: sessionStorage[`iframe_${v}`]
+            [v]: gameVars[v]
           }), {});
           iframeRef.current.contentWindow.postMessage(vars, "*");
         }
@@ -42,9 +50,11 @@ const HTMLFrame = forwardRef((props, ref) => {
   
   const onLoad = () => {
     if (iframeRef.current && props.varName) {
+      let gameVars = {};
+      if (!!sessionStorage.gameVars) gameVars = JSON.parse(sessionStorage.gameVars);
       let vars = props.varName.split(',').reduce((a,v) => ({
         ...a,
-        [v]: sessionStorage[`iframe_${v}`]
+        [v]: gameVars[v]
       }), {});
       iframeRef.current.contentWindow.postMessage(vars, "*");
     }
