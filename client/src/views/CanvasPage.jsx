@@ -10,6 +10,7 @@ import Connect4 from "../components/Stage/GamePieces/Connect4/Board";
 import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import JSRunner from "../components/Stage/GamePieces/JSRunner";
+import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
 
 const EditPage = React.lazy(() => import("./EditPage"));
@@ -624,6 +625,15 @@ const CanvasPage = (props) => {
     label: obj.label
   })
 
+  const timerProps = (obj, canvas, editMode) => ({
+    timeLimit: obj.timeLimit,
+    varName: obj.varName,
+    varEnable: obj.varEnable,
+    refresh: canvas.refresh,
+    invisible: obj.invisible && !editMode,
+    controls: obj.controls
+  })
+
   const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
@@ -933,6 +943,16 @@ const CanvasPage = (props) => {
               {...canvas.getInteractiveProps(obj.id)}
               {...htmlProps(obj)}
               {...(editMode ? customObjProps(canvas) : {})}
+            /> : null
+        })}
+        {canvas.state.timers.map((obj, index) => {
+          return objectIsOnStage(obj, canvas) === stage ?
+            <Timer
+              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+              {...defaultObjProps(obj, index, canvas, editMode)}
+              {...canvas.getInteractiveProps(obj.id)}
+              {...(editMode ? customObjProps(canvas) : {})}
+              {...timerProps(obj, canvas, editMode)}
             /> : null
         })}
 

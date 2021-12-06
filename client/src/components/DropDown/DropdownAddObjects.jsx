@@ -486,6 +486,12 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addTimer = () => {
+    addObjectToLayer(
+      "timers", { controls: true }
+    );
+  }
+
   const addConnect4 = () => {
     addObjectToLayer(
       "connect4s", {}
@@ -913,6 +919,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-code"
               onClick={addHTMLFrame}></i>}>
             HTML Frame</DropdownItem>
+          <DropdownItem
+            onClick={addTimer}
+            leftIcon={<i className="icons fa fa-stopwatch"
+              onClick={addTimer}></i>}>
+            Timer</DropdownItem>
         </div>
       </CSSTransition>
 

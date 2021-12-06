@@ -20,7 +20,8 @@ const ContextMenu = (props) => {
       ["connect4",  "Edit Connect4"],
       ["tic",       "Edit TicTacToe"],
       ["html",      "Edit HTML"],
-      ["input",    "Edit Input"]
+      ["input",    "Edit Input"],
+      ["timer",    "Edit Timer"]
     ].forEach(([key, text]) => {
       if (props.selectedShapeName.startsWith(key)) {
         set = true;
@@ -208,16 +209,36 @@ const ContextMenu = (props) => {
             >
               <option value="positive">contains a positive value</option>
               <option value="negative">contains a negative/null value</option>
-              <option value="equalto">is equal to</option>
+              <option value="isgreater">is greater than</option>
+              <option value="isless">is less than</option>
+              <option value="isequal">is equal to</option>
+              <option value="between">is between</option>
               <option value="onchange">changes</option>
             </select>
-            {conditions?.condition==="equalto" && (
+            {conditions?.condition?.startsWith('is') && (
               <input 
                 type="text" 
                 placeholder="Value to check against" 
                 value={conditions?.trueValue || ""} 
                 onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
               />
+            )}
+            {conditions?.condition == 'between' && (
+              <div className="conditionsbetween">
+                <input 
+                  type="text" 
+                  placeholder="Min" 
+                  value={conditions?.trueValue || ""} 
+                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+                />
+                <p>and</p>
+                <input 
+                  type="text" 
+                  placeholder="Max" 
+                  value={conditions?.trueValueAlt || ""} 
+                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)} 
+                />
+              </div>
             )}
           </div>
         </div>
