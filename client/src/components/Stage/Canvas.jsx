@@ -315,7 +315,7 @@ class Graphics extends Component {
                   const state = this.state[type][i];
                   this.setCustomGroupPos(state, "groupAreaLayer");
                   this.setCustomGroupPos(state, "personalAreaLayer");
-                  this.setCustomGroupPos(state, "overlayLayer");
+                  this.setCustomGroupPos(state, "overlayAreaLayer");
                 }
               }
             }
@@ -480,6 +480,7 @@ class Graphics extends Component {
           refs: this.refs,
 
           // These are functions used for manipulating objects that are directly used in object props
+          customRect: el => { this.refs.customRect = el },
           onObjectClick: this.onObjectClick,
           onObjectTransformStart: this.onObjectTransformStart,
           onObjectDragMove: this.onObjectDragMove,
@@ -1333,7 +1334,7 @@ class Graphics extends Component {
 
     let shape = null;
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-      (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+      (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
     if (this.customObjects.includes(objectsName)) {
       const customObjs = this.refs[layer].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
@@ -2158,7 +2159,7 @@ class Graphics extends Component {
         return this.refs[id];
       } else {
         const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-          (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+          (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
         const groups = this.refs[layer].find('Group');
         for (let i = 0; i < groups.length; i++) {
           if (groups[i].attrs.id === id) {
@@ -2259,7 +2260,8 @@ class Graphics extends Component {
 
   objectSnapping = (obj, e) => {
     if (e && e.evt.shiftKey) {
-      const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
+      const objStage = obj.attrs ? obj.attrs : obj;
+      const stage = objStage.overlay ? "overlay" : (objStage.infolevel ? "personal" : "group");
       const objRef = obj.attrs ? obj : this.refs[obj.id];
       this.getLineGuideStops(stage, objRef);
 
@@ -2352,13 +2354,15 @@ class Graphics extends Component {
     const layerScale = this.state[`${stage}LayerScale`];
 
     const compBox = skipShape.getClientRect();
+    let foundGuideItem = false;
     stageRef.find('.shape, .customObj').forEach((guideItem) => {
+      if (foundGuideItem) return;
       if (guideItem === skipShape) return;
 
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
       const box = guideItem.getClientRect();
-      const padding = 20;
+      const padding = 100;
       if (this.collide(compBox, box, padding)) {
         const x = (box.x - layerX) / layerScale;
         const width = box.width / layerScale;
@@ -2369,6 +2373,8 @@ class Graphics extends Component {
         // Get snap points at edges and center of each object
         vertical.push([x, x + width, x + width / 2]);
         horizontal.push([y, y + height, y + height / 2]);
+
+        foundGuideItem = true;
       }
     });
 
@@ -2507,7 +2513,7 @@ class Graphics extends Component {
       type = this.getObjType(object.attrs.id);
     } else {
       const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const customObjs = this.refs[layer].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
         const id = customObjs[i].attrs.id;

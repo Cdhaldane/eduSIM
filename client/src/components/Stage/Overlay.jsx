@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import {
   Stage,
-  Layer,
-  Ellipse
+  Layer
 } from "react-konva";
 
 class Overlay extends Component {

@@ -131,7 +131,9 @@ const KonvaHtml = ({
     offsetX: 0,
     offsetY: 0,
     skewX: 0,
-    skewY: 0
+    skewY: 0,
+    infolevel: defaultProps.infolevel,
+    overlay: defaultProps.overlay
   });
 };
 

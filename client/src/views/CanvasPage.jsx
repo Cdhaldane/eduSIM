@@ -712,6 +712,7 @@ const CanvasPage = (props) => {
     const layerY = canvas.state[`${stage}LayerY`];
     const layerScale = canvas.state[`${stage}LayerScale`];
     const layerColor = canvas.state.pages[canvas.state.level - 1][`${stage}Color`];
+    if (!layerColor) return;
     const layerLightness = hexToHSLLightness(layerColor);
 
     const horizontalLinesNum = maxCanvasScaleFactor * 100;
@@ -845,7 +846,7 @@ const CanvasPage = (props) => {
             {/* This Rect acts as the transform object for custom objects */}
             <Rect
               {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
-              name={"transformCustom"}
+              ref={canvas.customRect}
               draggable={false}
             />
           </>
