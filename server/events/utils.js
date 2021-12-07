@@ -1,5 +1,7 @@
 const GameRoom = require("../models/GameRooms");
 
+const TIMEOUT_MINUTES = 180;
+
 // room status map
 let rooms = new Map();
 
@@ -11,6 +13,8 @@ let playerIDs = new Map();
 let interactions = new Map();
 
 let chatlogs = new Map();
+
+let timeouts = new Map();
 
 // helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
@@ -126,4 +130,26 @@ export const updateChatlog = async (roomid, message) => {
 };
 export const getChatlog = async (roomid) => {
   return chatlogs.get(roomid) || [];
+};
+
+export const updateRoomTimeout = async (id, server) => {
+  if (timeouts.get(id)) {
+    clearInterval(timeouts.get(id));
+  }
+  timeouts.set(id, setTimeout(async () => {
+    const newStatus = await clearRoomStatus(id);
+    if (server) {
+      server.to(id).emit("errorLog", "Stopping room due to inactivity timeout.");
+      server.to(id).emit("roomStatusUpdate", {
+        room: id,
+        status: newStatus,
+        refresh: true
+      });
+    }
+  }, TIMEOUT_MINUTES*60000));
+};
+export const clearRoomTimeout = async (id) => {
+  if (timeouts.get(id)) {
+    clearInterval(timeouts.get(id));
+  }
 };

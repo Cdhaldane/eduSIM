@@ -5,6 +5,7 @@ import {
   getRoomStatus,
   updateRoomStatus,
   updateChatlog,
+  updateRoomTimeout,
   addInteraction
 } from './utils';
 import moment from "moment";
@@ -168,4 +169,6 @@ export default async (server, client, event, args) => {
       });
     }
   }
+
+  updateRoomTimeout(room, server);
 }
