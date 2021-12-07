@@ -227,7 +227,12 @@ const CanvasPage = (props) => {
       if (objects) {
         for (let j = 0; j < objects.length; j++) {
           const object = objects[j];
-          if (object.infolevel === isPersonalArea && object.overlay === overlay && object.level === level) {
+          if (
+            object.infolevel === isPersonalArea &&
+            object.overlay === overlay &&
+            object.overlayIndex === canvas.state.overlayOpenIndex &&
+            object.level === level
+          ) {
             const rect = getRect(object, sideMenuW, isPersonalArea, canvas, personalId);
             if (!rect) continue;
             if (minX === null || minX > rect.x) {
@@ -367,6 +372,7 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       level: obj.level,
       overlay: obj.overlay,
+      overlayIndex: obj.overlayIndex,
       points: obj.points,
       rolelevel: obj.rolelevel,
       stroke: obj.stroke,
@@ -587,7 +593,7 @@ const CanvasPage = (props) => {
 
   const objectIsOnStage = (obj, canvas) => {
     if (obj.level === canvas.state.level && obj.overlay) {
-      return "overlay";
+      return "overlay" + obj.overlayIndex;
     } else if (obj.level === canvas.state.level && obj.infolevel === false) {
       return "group";
     } else if (obj.level === canvas.state.level && obj.infolevel === true && obj.rolelevel === canvas.state.rolelevel) {
@@ -817,6 +823,7 @@ const CanvasPage = (props) => {
   const loadObjects = (stage, mode) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
+    const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !(canvas.state && canvas.refs)) {
       return (
         <>
@@ -854,43 +861,43 @@ const CanvasPage = (props) => {
 
         {/* Render the object saved in state */}
         {canvas.state.pencils.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Line {...lineProps(obj, index, canvas, editMode)} /> : null
         })}
         {canvas.state.rectangles.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
         })}
         {canvas.state.ellipses.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Ellipse {...defaultObjProps(obj, index, canvas, editMode)} {...ellipseProps(obj)} /> : null
         })}
         {canvas.state.images.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <URLImage {...defaultObjProps(obj, index, canvas, editMode)} {...imageProps(obj, canvas.refs.groupAreaLayer)} /> : null
         })}
         {canvas.state.videos.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...videoProps(obj, canvas.refs.groupAreaLayer)} /> : null
         })}
         {canvas.state.audios.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...audioProps(obj, canvas.refs.groupAreaLayer)} /> : null
         })}
         {canvas.state.documents.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...documentProps(obj, canvas)} /> : null
         })}
         {canvas.state.triangles.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <RegularPolygon {...defaultObjProps(obj, index, canvas, editMode)} {...triangleProps(obj)} /> : null
         })}
         {canvas.state.stars.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Star {...defaultObjProps(obj, index, canvas, editMode)} {...starProps(obj)} /> : null
         })}
         {canvas.state.texts.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage && !editMode ?
+          return objectIsOnStage(obj, canvas) === checkStage && !editMode ?
             <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...canvas.getInteractiveProps(obj.id)}
@@ -899,17 +906,17 @@ const CanvasPage = (props) => {
             /> : null
         })}
         {canvas.state.texts.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} /> : null
         })}
         {canvas.state.lines.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Line
               {...lineObjProps(obj, index, canvas, editMode)}
             /> : null
         })}
         {canvas.state.polls.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Poll
               defaultProps={{
                 ...defaultObjProps(obj, index, canvas, editMode),
@@ -921,7 +928,7 @@ const CanvasPage = (props) => {
             /> : null
         })}
         {canvas.state.connect4s.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Connect4
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
@@ -930,7 +937,7 @@ const CanvasPage = (props) => {
             /> : null
         })}
         {canvas.state.tics.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <TicTacToe
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
@@ -939,7 +946,7 @@ const CanvasPage = (props) => {
             /> : null
         })}
         {canvas.state.htmlFrames.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <HTMLFrame
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
@@ -949,7 +956,7 @@ const CanvasPage = (props) => {
             /> : null
         })}
         {canvas.state.timers.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Timer
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
@@ -960,7 +967,7 @@ const CanvasPage = (props) => {
         })}
 
         {canvas.state.inputs.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === stage ?
+          return objectIsOnStage(obj, canvas) === checkStage ?
             <Input
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}

@@ -118,6 +118,28 @@ a {
   transition: all var(--speed) ease;
 }
 
+.overlayDeleteRow, .overlayHideRow {
+  height: 35px;
+}
+
+.overlayDeleteRow>h2, .overlayHideRow>h2 {
+  display: inline-block;
+  vertical-align: text-top;
+}
+
+.overlayHideRow>h2 {
+  transform: translateY(-5px);
+}
+
+.overlayDeleteRow>.icons:hover {
+  cursor: pointer;
+}
+
+.overlayDeleteRow>.icons {
+  font-size: 1.1em;
+  color: var(--primary);
+}
+
 /**************************************************/
 
 #pageSettingsDropdown {
@@ -129,6 +151,7 @@ a {
   display: inline-block;
   text-align: left;
   margin-bottom: 5px;
+  width: 70%;
 }
 
 #pageSettingsDropdown>div>.pageSettingsLabels {
@@ -150,6 +173,8 @@ a {
 
 .overlayOpenOptions {
   padding: 0px 10px;
+  border-bottom: 1px dotted black;
+  margin-bottom: 10px;
 }
 
 .overlayOpenOptions label {
@@ -162,7 +187,7 @@ a {
   border-top: 1px dotted black;
 }
 
-.overlayConditions > input {
+.overlayConditions>input {
   margin: 5px 0px;
   width: 100%;
   font-size: 0.9em;
@@ -202,12 +227,12 @@ a {
   border-radius: 0px !important;
 }
 
-.pageSettingsColorButtons > div > button {
+.pageSettingsColorButtons>div>button {
   width: 100% !important;
   margin-top: 5px;
 }
 
-.pageSettingsColorButtons > button {
+.pageSettingsColorButtons>button {
   width: 33% !important;
   margin-bottom: 5px;
 }
@@ -252,12 +277,20 @@ a {
   color: #636363;
 }
 
-.menu h2 {
+.icon-button:hover {
+  cursor: pointer;
+}
+
+.overlaySettingsSub {
   padding: 10px;
   padding-top: 0px;
   font-size: 1.2rem;
   font-weight: 100;
   color: #636363;
+}
+
+#rolesdrops>.dropdown>.menu>div>.menu-item {
+  padding-left: 10px;
 }
 
 .menu-item {

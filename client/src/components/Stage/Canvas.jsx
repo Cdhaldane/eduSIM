@@ -78,12 +78,11 @@ class Graphics extends Component {
 
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
-      hasOverlay: false,
-      overlayOpenOption: "pageEnter",
       primaryColor: "#8f001a",
       groupColor: "#FFF",
       personalColor: "#FFF",
-      overlayColor: "#FFF"
+      overlayColor: "#FFF",
+      overlays: []
     });
     const defaultPages = defaultPagesTemp.map((page, index) => {
       return {
@@ -133,7 +132,8 @@ class Graphics extends Component {
       numberOfPages: 6,
       level: 1, // Current page
       overlayOpen: false,
-      overlayOptionsOpen: false,
+      overlayOptionsOpen: -1,
+      overlayOpenIndex: -1,
 
       // Context Menu
       selectedContextMenu: null,
@@ -2641,9 +2641,10 @@ class Graphics extends Component {
     }
   }
 
-  setOverlayOpen = (val) => {
+  setOverlayOpen = (val, index) => {
     this.setState({
-      overlayOpen: val
+      overlayOpen: val,
+      overlayOpenIndex: index
     });
   }
 
@@ -2749,25 +2750,36 @@ class Graphics extends Component {
         />
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1] && this.state.pages[this.state.level - 1].hasOverlay && (
-          <div
-            className="overlayButton"
-            onContextMenu={(e) => {
-              e.preventDefault();
-              this.setState({
-                overlayOptionsOpen: !this.state.overlayOptionsOpen
-              });
-            }}
-            onClick={() => this.setOverlayOpen(true)}
-          >
-            <i className="icons fa fa-window-restore" />
-          </div>
+        {this.state.pages[this.state.level - 1] && (
+          <>
+            {this.state.pages[this.state.level - 1].overlays.map((overlay, i) => {
+              return (
+                <div
+                  key={i}
+                  className="overlayButton"
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    this.setState({
+                      overlayOptionsOpen: i
+                    });
+                  }}
+                  style={{
+                    top: `${70 * (i + 1)}px`
+                  }}
+                  onClick={() => this.setOverlayOpen(true, overlay.id)}
+                >
+                  <i className="icons fa fa-window-restore" />
+                </div>
+              );
+            })}
+          </>
         )}
 
-        {this.state.overlayOptionsOpen && (
+        {this.state.overlayOptionsOpen !== -1 && (
           <DropdownOverlay
-            close={() => this.setState({ overlayOptionsOpen: false })}
+            close={() => this.setState({ overlayOptionsOpen: -1 })}
             changePages={this.handlePageTitle}
+            overlayIndex={this.state.overlayOptionsOpen}
             pages={this.state.pages}
             level={this.state.level}
           />
@@ -2802,7 +2814,7 @@ class Graphics extends Component {
               )}
             <Overlay
               playMode={false}
-              closeOverlay={() => this.setOverlayOpen(false)}
+              closeOverlay={() => this.setOverlayOpen(false, -1)}
               state={this.state}
               propsIn={this.props}
               onMouseDown={this.onMouseDown}
