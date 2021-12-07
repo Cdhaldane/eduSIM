@@ -1,0 +1,20 @@
+{
+  "translation": {
+    "home": {
+      "welcome": "Welcome!",
+      "isStudent": "Are you a student/participant?",
+      "isTeacher": "Are you a teacher/facilitator?",
+      "alreadyHaveRoomCode": "Already have a room code?",
+      "join": "Join!",
+      "roomCode": "Room code",
+      "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>"
+    },
+    "navbar": {
+      "title": "eduSIM - Educational Simulator Tool",
+      "about": "About",
+      "profile": "Profile",
+      "login": "Login",
+      "logout": "Logout"
+    }
+  }
+}
