@@ -522,6 +522,10 @@ function DropdownEditObject(props) {
                 <option value="text">Text</option>
                 <option value="button">Button</option>
               </select>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <p>Synchronize across clients</p>
+              </div>
               <p>Variable name to set:</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
               <p>Label:</p>

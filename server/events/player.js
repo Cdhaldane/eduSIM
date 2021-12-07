@@ -54,6 +54,7 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "playerUpdate": {
       const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
@@ -77,6 +78,7 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "interaction": {
       const { gamepieceId, parameters, sameState } = args;
       
@@ -111,6 +113,43 @@ export default async (server, client, event, args) => {
         parameters,
         player,
         changedState: !sameState
+      });
+
+      break;
+    };
+
+    case "varChange": {
+      const { name, value } = args;
+      
+      const { running, variables = {}, level } = await getRoomStatus(room);
+
+      if (!running) {
+        client.emit("errorLog", "Game is paused/stopped!");
+        return;
+      }
+
+      const newStatus = await updateRoomStatus(room, {
+        variables: {
+          ...variables,
+          [name]: value
+        }
+      });
+
+      server.to(room).emit("roomStatusUpdate", {
+        room,
+        status: newStatus,
+        lastSetVar: name
+      });
+
+      const player = await getPlayer(client.id);
+      if (!player.invited) player.dbid = undefined;
+
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        variable: name,
+        value,
+        player
       });
 
       break;

@@ -622,7 +622,8 @@ const CanvasPage = (props) => {
     varType: obj.varType,
     varName: obj.varName,
     refresh: canvas.refresh,
-    label: obj.label
+    label: obj.label,
+    sync: obj.sync
   })
 
   const timerProps = (obj, canvas, editMode) => ({
@@ -961,7 +962,7 @@ const CanvasPage = (props) => {
             <Input
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getInteractiveProps(obj.id)}
+              {...canvas.getVariableProps()}
               {...inputProps(obj, canvas)}
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null

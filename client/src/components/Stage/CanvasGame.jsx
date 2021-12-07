@@ -149,6 +149,7 @@ class Graphics extends Component {
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+            if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
             content = vars[key];
         }
         newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
@@ -164,12 +165,13 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
     
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
-    let val = vars[conditions.varName];
-    let varLen = isNaN() ? (val || "").length : val;
+    let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
+    let varLen = isNaN(val) ? (val || "").length : val;
 
     switch (conditions.condition) {
       case "isequal":
@@ -247,6 +249,7 @@ class Graphics extends Component {
         refs: this.refs,
         userId: userId,
         getInteractiveProps: this.getInteractiveProps,
+        getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
         sendInteraction: this.sendInteraction
@@ -347,6 +350,15 @@ class Graphics extends Component {
       })
     },
     status: this.props.gamepieceStatus[id] || {}
+  });
+
+  getVariableProps = () => ({
+    updateVariable: (name, value) => {
+      this.props.socket.emit("varChange", {
+        name, value
+      })
+    },
+    variables: this.props.variables
   });
 
   handleLevel = (e) => {

@@ -108,10 +108,13 @@ const Game = (props) => {
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
       });
-      client.on("roomStatusUpdate", ({ status, refresh }) => {
+      client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
           localStorage.removeItem("userInfo");
           window.location.reload();
+        }
+        if (lastSetVar) {
+          sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
       });
@@ -183,6 +186,7 @@ const Game = (props) => {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          variables={roomStatus.variables || {}}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
           game
@@ -212,6 +216,7 @@ const Game = (props) => {
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
+            variables={roomStatus.variables || {}}
             roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}
             initialUserId={userid}

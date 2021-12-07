@@ -91,7 +91,7 @@ const EditButtons = styled.div`
   }
 `;
 
-function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
+function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
 
@@ -140,6 +140,7 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    if (Object.keys(variables).length > 0) vars = { ...vars, ...variables };
 
     let trueValue = isNaN(check) ? check : parseInt(check);
     let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);

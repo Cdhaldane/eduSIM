@@ -491,7 +491,8 @@ class Graphics extends Component {
           onMouseDown: this.onMouseDown,
           getKonvaObj: this.getKonvaObj,
           getObjType: this.getObjType,
-          getInteractiveProps: this.getInteractiveProps
+          getInteractiveProps: this.getInteractiveProps,
+          getVariableProps: () => {}
         });
 
         // Recenter if the canvas has changed
