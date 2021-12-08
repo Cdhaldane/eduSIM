@@ -1,4 +1,5 @@
 const GameRoom = require("../models/GameRooms");
+import moment from "moment";
 
 const TIMEOUT_MINUTES = 180;
 
@@ -137,9 +138,13 @@ export const updateRoomTimeout = async (id, server) => {
     clearInterval(timeouts.get(id));
   }
   timeouts.set(id, setTimeout(async () => {
-    const newStatus = await clearRoomStatus(id);
+    const { startTime, timeElapsed } = await getRoomStatus(id);
+    const newStatus = await updateRoomStatus(id, {
+      running: false,
+      timeElapsed: moment().valueOf() - startTime + (timeElapsed || 0)
+    });
     if (server) {
-      server.to(id).emit("errorLog", "Stopping room due to inactivity timeout.");
+      server.to(id).emit("errorLog", "Pausing room due to inactivity timeout.");
       server.to(id).emit("roomStatusUpdate", {
         room: id,
         status: newStatus,
