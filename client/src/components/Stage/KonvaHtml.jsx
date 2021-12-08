@@ -27,7 +27,8 @@ const KonvaHtml = ({
   transformFunc,
   refName,
   defaultProps,
-  visible
+  visible,
+  objectSnapping
 }) => {
 
   const groupRef = useRef(null);
@@ -113,8 +114,12 @@ const KonvaHtml = ({
   return createElement(Group, {
     ref: groupRef,
     id: refName,
+    name: "customObj",
     draggable: true,
     onTransformEnd: defaultProps.onTransformEnd,
+    onDragMove: (e) => {
+      objectSnapping(groupRef.current, e);
+    },
     onDragEnd: defaultProps.onDragEnd,
     customProps: defaultProps.custom,
     x: defaultProps.x,
@@ -122,7 +127,13 @@ const KonvaHtml = ({
     visible: visible,
     rotation: defaultProps.rotation,
     scaleX: defaultProps.scaleX,
-    scaleY: defaultProps.scaleY
+    scaleY: defaultProps.scaleY,
+    offsetX: 0,
+    offsetY: 0,
+    skewX: 0,
+    skewY: 0,
+    infolevel: defaultProps.infolevel,
+    overlay: defaultProps.overlay
   });
 };
 

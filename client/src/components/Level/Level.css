@@ -57,6 +57,7 @@
 
 .level-close {
   margin-left: 40px;
+  margin-right: 5px;
   color: var(--primary);
 }
 

@@ -94,18 +94,12 @@ class Graphics extends Component {
       startModalOpen: true,
       personalAreaOpen: 0, // 0 is closed, 1 is open
       overlayOpen: false,
+      overlayOpenIndex: -1,
       nextLevelOnOverlayClose: false,
 
       level: 1,
       pageNumber: 6,
-      pages: [
-        { name: "1", hasOverlay: false },
-        { name: "2", hasOverlay: false },
-        { name: "3", hasOverlay: false },
-        { name: "4", hasOverlay: false },
-        { name: "5", hasOverlay: false },
-        { name: "6", hasOverlay: false }
-      ],
+      pages: [],
 
       gameroles: [],
       state: false,
@@ -164,7 +158,7 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
-    
+
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
@@ -199,7 +193,7 @@ class Graphics extends Component {
   getPage = (index) => {
     return this.state.pages[this.state.level - 1] || {};
   }
-  
+
   refresh = () => {
     this.forceUpdate();
     this.props.refresh();
@@ -210,20 +204,22 @@ class Graphics extends Component {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
 
-    // Show overlay if conditions are met
+    // Show overlay if it is the next page and a pageEnter overlay is available
     const page = this.getPage(this.state.level - 1);
+    let overlayPageEnter = null;
+    for (let i = 0; i < page.overlays.length; i++) {
+      if (page.overlays[i].overlayOpenOption === "pageEnter") {
+        overlayPageEnter = page.overlays[i];
+        break;
+      }
+    }
     if (
       !this.state.overlayOpen &&
-      page.hasOverlay &&
-      (
-        // On Page Enter
-        (
-          page.overlayOpenOption === "pageEnter" &&
-          (prevState.level < this.state.level || !this.state.updateRanOnce)
-        )
-      )
+      overlayPageEnter &&
+      (prevState.level < this.state.level || !this.state.updateRanOnce)
     ) {
       this.setState({
+        overlayOpenIndex: overlayPageEnter.id,
         overlayOpen: true
       });
     }
@@ -369,9 +365,10 @@ class Graphics extends Component {
     }
   }
 
-  setOverlayOpen = (val) => {
+  setOverlayOpen = (val, index) => {
     this.setState({
-      overlayOpen: val
+      overlayOpen: val,
+      overlayOpenIndex: index
     });
   }
 
@@ -400,11 +397,35 @@ class Graphics extends Component {
           </div>
         )}
 
-        {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.getPage(this.state.level - 1).hasOverlay && (
-          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
-            <i className="icons fa fa-window-restore" />
-          </div>
+        {/* The button to view the overlay */}
+        {this.getPage(this.state.level - 1).overlays && (
+          <>
+            {this.getPage(this.state.level - 1).overlays.map((overlay, i) => {
+              if (!overlay.hideBtn) {
+                let nonHiddenI = 0;
+                for (let j = 0; j < i; j++) {
+                  const o = this.getPage(this.state.level - 1).overlays[j];
+                  if (!o.hideBtn) {
+                    nonHiddenI++;
+                  }
+                }
+                return (
+                  <div
+                    key={i}
+                    className="overlayButton"
+                    onClick={() => this.setOverlayOpen(true, overlay.id)}
+                    style={{
+                      top: `${70 * (nonHiddenI + 1)}px`
+                    }}
+                  >
+                    <i className="icons fa fa-window-restore" />
+                  </div>
+                );
+              } else {
+                return;
+              }
+            })}
+          </>
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}
@@ -414,7 +435,8 @@ class Graphics extends Component {
             closeOverlay={() => {
               this.setState({
                 overlayOpen: false,
-                nextLevelOnOverlayClose: false
+                nextLevelOnOverlayClose: false,
+                overlayOpenIndex: -1
               });
 
               if (this.state.nextLevelOnOverlayClose) {
@@ -453,9 +475,10 @@ class Graphics extends Component {
 
         <div className="eheader">
           <Level
-            handlePageCloseOverlay={() => {
+            handlePageCloseOverlay={(index) => {
               this.setState({
                 overlayOpen: true,
+                overlayOpenIndex: index,
                 nextLevelOnOverlayClose: true
               });
             }}

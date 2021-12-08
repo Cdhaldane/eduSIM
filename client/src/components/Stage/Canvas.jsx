@@ -78,12 +78,11 @@ class Graphics extends Component {
 
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
-      hasOverlay: false,
-      overlayOpenOption: "pageEnter",
       primaryColor: "#8f001a",
       groupColor: "#FFF",
       personalColor: "#FFF",
-      overlayColor: "#FFF"
+      overlayColor: "#FFF",
+      overlays: []
     });
     const defaultPages = defaultPagesTemp.map((page, index) => {
       return {
@@ -96,6 +95,9 @@ class Graphics extends Component {
       // Objects and Delete Counts
       ...objectState,
       ...objectDeleteState,
+
+      arrows: [],   // Arrows are used for transformations
+      guides: [],   // These are the lines used for snapping
 
       // Right click menus
       groupAreaContextMenuVisible: false,
@@ -121,7 +123,7 @@ class Graphics extends Component {
           id: "customRect",
           name: "customRect",
           ref: "customRect",
-          opacity: 0,
+          opacity: 0
         }
       ],
 
@@ -130,7 +132,8 @@ class Graphics extends Component {
       numberOfPages: 6,
       level: 1, // Current page
       overlayOpen: false,
-      overlayOptionsOpen: false,
+      overlayOptionsOpen: -1,
+      overlayOpenIndex: -1,
 
       // Context Menu
       selectedContextMenu: null,
@@ -312,7 +315,7 @@ class Graphics extends Component {
                   const state = this.state[type][i];
                   this.setCustomGroupPos(state, "groupAreaLayer");
                   this.setCustomGroupPos(state, "personalAreaLayer");
-                  this.setCustomGroupPos(state, "overlayLayer");
+                  this.setCustomGroupPos(state, "overlayAreaLayer");
                 }
               }
             }
@@ -477,6 +480,7 @@ class Graphics extends Component {
           refs: this.refs,
 
           // These are functions used for manipulating objects that are directly used in object props
+          customRect: el => { this.refs.customRect = el },
           onObjectClick: this.onObjectClick,
           onObjectTransformStart: this.onObjectTransformStart,
           onObjectDragMove: this.onObjectDragMove,
@@ -488,6 +492,7 @@ class Graphics extends Component {
           onDragEndArrow: this.onDragEndArrow,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
+          objectSnapping: this.objectSnapping,
           onMouseDown: this.onMouseDown,
           getKonvaObj: this.getKonvaObj,
           getObjType: this.getObjType,
@@ -1329,7 +1334,7 @@ class Graphics extends Component {
 
     let shape = null;
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-      (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+      (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
     if (this.customObjects.includes(objectsName)) {
       const customObjs = this.refs[layer].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
@@ -2154,15 +2159,12 @@ class Graphics extends Component {
         return this.refs[id];
       } else {
         const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-          (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+          (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
         const groups = this.refs[layer].find('Group');
         for (let i = 0; i < groups.length; i++) {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
-              //console.log(this.getObjType(id));
-              //console.log(this.state);
-              //console.log("BOOM");
               const customState = [...this.state[this.getObjType(id)]];
 
               const elem = this.refs[id];
@@ -2202,11 +2204,88 @@ class Graphics extends Component {
     }
   }
 
-  onObjectDragMove = (obj) => {
-    const stage = obj.overlay ? "overlay" : (obj.infolevel ? "personal" : "group");
-    const objRef = this.refs[obj.id];
-    //this.getLineGuideStops(stage, objRef);
+  getNearestGuide = (obj, stage) => {
+    const stageRef = this.refs[`${stage}Stage`];
+    const layerX = this.state[`${stage}LayerX`];
+    const layerY = this.state[`${stage}LayerY`];
+    const layerScale = this.state[`${stage}LayerScale`];
 
+    const objBox = obj.getClientRect();
+    const guides = stageRef.find('.guide');
+
+    let pos = {
+      x: null,
+      y: null,
+      type: null
+    };
+    for (let i = 0; i < guides.length; i++) {
+      const g = guides[i];
+      const gBox = g.getClientRect();
+      const padding = 5;
+
+      const collision = this.collide(objBox, gBox, padding);
+      if (!collision) continue;
+      const top = this.collide(objBox, gBox, padding, "top");
+      const bottom = this.collide(objBox, gBox, padding, "bottom");
+      const left = this.collide(objBox, gBox, padding, "left");
+      const right = this.collide(objBox, gBox, padding, "right");
+      let type = "";
+
+      if (g.attrs.points[0] === g.attrs.points[2]) {
+        // Vertical
+        if (left) type = type + " left";
+        if (right) type = type + " right";
+        pos = {
+          ...pos,
+          x: (g.attrs.points[0] * layerScale) + layerX + (g.attrs.pos === "center" ?
+            (left ? -objBox.width / 2 : objBox.width / 2) : 0),
+          type: pos.type + type,
+          pos: g.attrs.pos
+        }
+      } else {
+        // Horizontal
+        if (top) type = type + " top";
+        if (bottom) type = type + " bottom";
+        pos = {
+          ...pos,
+          y: (g.attrs.points[1] * layerScale) + layerY + (g.attrs.pos === "center" ?
+            (top ? -objBox.height / 2 : objBox.height / 2) : 0),
+          type: pos.type + type,
+          pos: g.attrs.pos
+        }
+      }
+    }
+    return pos;
+  }
+
+  objectSnapping = (obj, e) => {
+    if (e && e.evt.shiftKey) {
+      const objStage = obj.attrs ? obj.attrs : obj;
+      const stage = objStage.overlay ? "overlay" : (objStage.infolevel ? "personal" : "group");
+      const objRef = obj.attrs ? obj : this.refs[obj.id];
+      this.getLineGuideStops(stage, objRef);
+
+      const pos = objRef.absolutePosition();
+      const snaps = this.getNearestGuide(objRef, stage);
+      const rect = objRef.getClientRect();
+      const ctrOrigin = obj.attrs ? false : ["ellipses", "triangles", "stars"].includes(this.getObjType(obj.id));
+      if (snaps.type) {
+        objRef.absolutePosition({
+          x: snaps.x ? snaps.x + (snaps.type.includes("right") ? -rect.width : 0) +
+            (ctrOrigin ? rect.width / 2 : 0) : pos.x,
+          y: snaps.y ? snaps.y + (snaps.type.includes("bottom") ? -rect.height : 0) +
+            (ctrOrigin ? rect.height / 2 : 0) : pos.y
+        });
+      }
+    } else {
+      this.setState({
+        guides: []
+      });
+    }
+  }
+
+  onObjectDragMove = (obj, e) => {
+    this.objectSnapping(obj, e);
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
         if (obj.name === arrow.from.attrs.name) {
@@ -2235,6 +2314,34 @@ class Graphics extends Component {
   // Snapping functionality based on:
   // https://konvajs.org/docs/sandbox/Objects_Snapping.html
 
+  collide = (rect1, rect2, padding, part) => {
+    let rect1Top = rect1.y;
+    let rect1Bottom = rect1.y + rect1.height;
+    let rect1Left = rect1.x;
+    let rect1Right = rect1.x + rect1.width;
+    if (part === "top") {
+      rect1Bottom = rect1Bottom - (rect1.height / 2);
+    } else if (part === "bottom") {
+      rect1Top = rect1Top + (rect1.height / 2);
+    } else if (part === "left") {
+      rect1Right = rect1Right - (rect1.width / 2);
+    } else if (part === "right") {
+      rect1Left = rect1Left + (rect1.width / 2);
+    }
+
+    const rect2Top = rect2.y - padding;
+    const rect2Bottom = rect2.y + rect2.height + padding;
+    const rect2Left = rect2.x - padding;
+    const rect2Right = rect2.x + rect2.width + padding;
+
+    return !(
+      rect1Top > rect2Bottom ||
+      rect1Right < rect2Left ||
+      rect1Bottom < rect2Top ||
+      rect1Left > rect2Right
+    );
+  }
+
   // Where can we snap our objects?
   getLineGuideStops = (stage, skipShape) => {
     // The guide lines
@@ -2246,37 +2353,56 @@ class Graphics extends Component {
     const layerY = this.state[`${stage}LayerY`];
     const layerScale = this.state[`${stage}LayerScale`];
 
-    stageRef.find('.shape').forEach((guideItem) => {
-      if (guideItem === skipShape) {
-        return;
-      }
+    const compBox = skipShape.getClientRect();
+    let foundGuideItem = false;
+    stageRef.find('.shape, .customObj').forEach((guideItem) => {
+      if (foundGuideItem) return;
+      if (guideItem === skipShape) return;
 
-      // Get snap points at edges and center of each object
+      // Check if shape is close by
+      if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
       const box = guideItem.getClientRect();
+      const padding = 100;
+      if (this.collide(compBox, box, padding)) {
+        const x = (box.x - layerX) / layerScale;
+        const width = box.width / layerScale;
 
-      const x = (box.x - layerX) / layerScale;
-      const width = box.width / layerScale;
+        const y = (box.y - layerY) / layerScale;
+        const height = box.height / layerScale;
 
-      const y = (box.y - layerY) / layerScale;
-      const height = box.height / layerScale;
+        // Get snap points at edges and center of each object
+        vertical.push([x, x + width, x + width / 2]);
+        horizontal.push([y, y + height, y + height / 2]);
 
-      vertical.push([x, x + width, x + width / 2]);
-      horizontal.push([y, y + height, y + height / 2]);
+        foundGuideItem = true;
+      }
     });
+
+    this.getKonvaObj(skipShape.attrs.id, true);
 
     vertical = vertical.flat();
     horizontal = horizontal.flat();
 
-    const l = 100;
+    const l = Math.max(window.innerWidth, window.innerHeight) / layerScale;
     const guidesV = [];
     for (let i = 0; i < vertical.length; i++) {
       const x = vertical[i];
-      guidesV.push({ points: [x, -l, x, l] });
+      const r = (i % 3) - 2;
+      const y = horizontal[i - r];
+      guidesV.push({
+        points: [x, -l + y, x, l + y],
+        pos: i % 3 === 2 ? "center" : "edge"
+      });
     }
     const guidesH = [];
     for (let i = 0; i < horizontal.length; i++) {
+      const r = (i % 3) - 2;
+      const x = vertical[i - r];
       const y = horizontal[i];
-      guidesH.push({ points: [-l, y, l, y] });
+      guidesH.push({
+        points: [-l + x, y, l + x, y],
+        pos: i % 3 === 2 ? "center" : "edge"
+      });
     }
 
     this.setState({
@@ -2387,7 +2513,7 @@ class Graphics extends Component {
       type = this.getObjType(object.attrs.id);
     } else {
       const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayLayer" : "groupAreaLayer");
+        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const customObjs = this.refs[layer].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
         const id = customObjs[i].attrs.id;
@@ -2466,6 +2592,7 @@ class Graphics extends Component {
   }
 
   updateText = (e) => {
+    const node = this.refs[this.state.currentTextRef];
     if (!e || e.keyCode === 13) {
       this.setState({
         textEditVisible: false,
@@ -2475,49 +2602,14 @@ class Graphics extends Component {
           display: "none"
         }
       });
-
-      // Get the current textNode we are editing, get the name from there
-      // Match name with elements in this.state.texts,
-      let node = this.refs[this.state.currentTextRef];
-      let name = node.attrs.id;
-
-      this.setState(
-        prevState => ({
-          selectedShapeName: name,
-          texts: prevState.texts.map(eachText =>
-            eachText.id === name
-              ? {
-                ...eachText,
-                text: this.state.text
-              }
-              : eachText
-          )
-        }),
-        () => {
-          this.setState(prevState => ({
-            texts: prevState.texts.map(eachText =>
-              eachText.name === name
-                ? {
-                  ...eachText,
-                  textWidth: node.textWidth,
-                  textHeight: node.textHeight
-                }
-                : eachText
-            )
-          }));
-        }
-      );
       node.show();
-      const stageType = this.state.overlayOpen ? "overlayStage" :
-        (this.personalAreaOpen ? "personalStage" : "groupStage");
-      this.refs[stageType].findOne(".transformer").show();
-      this.refs[stageType].draw();
     }
   }
 
-  setOverlayOpen = (val) => {
+  setOverlayOpen = (val, index) => {
     this.setState({
-      overlayOpen: val
+      overlayOpen: val,
+      overlayOpenIndex: index
     });
   }
 
@@ -2615,6 +2707,49 @@ class Graphics extends Component {
             this.setState({
               text: e.target.value,
               shouldTextUpdate: false
+            }, () => {
+              // Get the current textNode we are editing, get the name from there
+              // Match name with elements in this.state.texts,
+              const node = this.refs[this.state.currentTextRef];
+              const name = node.attrs.id;
+
+              this.setState(
+                prevState => ({
+                  selectedShapeName: name,
+                  texts: prevState.texts.map(eachText =>
+                    eachText.id === name
+                      ? {
+                        ...eachText,
+                        text: this.state.text
+                      }
+                      : eachText
+                  )
+                }),
+                () => {
+                  this.setState(prevState => ({
+                    texts: prevState.texts.map(eachText =>
+                      eachText.name === name
+                        ? {
+                          ...eachText,
+                          textWidth: node.textWidth,
+                          textHeight: node.textHeight
+                        }
+                        : eachText
+                    )
+                  }));
+                  this.setState({
+                    textareaInlineStyle: {
+                      ...this.state.textareaInlineStyle,
+                      height: `${node.textHeight * (node.textArr.length + 2)}px`
+                    }
+                  });
+
+                  const stageType = this.state.overlayOpen ? "overlayStage" :
+                    (this.personalAreaOpen ? "personalStage" : "groupStage");
+                  this.refs[stageType].findOne(".transformer").show();
+                  this.refs[stageType].draw();
+                }
+              );
             });
           }}
           onKeyDown={(e) => this.updateText(e)}
@@ -2623,25 +2758,36 @@ class Graphics extends Component {
         />
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1] && this.state.pages[this.state.level - 1].hasOverlay && (
-          <div
-            className="overlayButton"
-            onContextMenu={(e) => {
-              e.preventDefault();
-              this.setState({
-                overlayOptionsOpen: !this.state.overlayOptionsOpen
-              });
-            }}
-            onClick={() => this.setOverlayOpen(true)}
-          >
-            <i className="icons fa fa-window-restore" />
-          </div>
+        {this.state.pages[this.state.level - 1] && (
+          <>
+            {this.state.pages[this.state.level - 1].overlays.map((overlay, i) => {
+              return (
+                <div
+                  key={i}
+                  className="overlayButton"
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    this.setState({
+                      overlayOptionsOpen: i
+                    });
+                  }}
+                  style={{
+                    top: `${70 * (i + 1)}px`
+                  }}
+                  onClick={() => this.setOverlayOpen(true, overlay.id)}
+                >
+                  <i className="icons fa fa-window-restore" />
+                </div>
+              );
+            })}
+          </>
         )}
 
-        {this.state.overlayOptionsOpen && (
+        {this.state.overlayOptionsOpen !== -1 && (
           <DropdownOverlay
-            close={() => this.setState({ overlayOptionsOpen: false })}
+            close={() => this.setState({ overlayOptionsOpen: -1 })}
             changePages={this.handlePageTitle}
+            overlayIndex={this.state.overlayOptionsOpen}
             pages={this.state.pages}
             level={this.state.level}
           />
@@ -2676,7 +2822,7 @@ class Graphics extends Component {
               )}
             <Overlay
               playMode={false}
-              closeOverlay={() => this.setOverlayOpen(false)}
+              closeOverlay={() => this.setOverlayOpen(false, -1)}
               state={this.state}
               propsIn={this.props}
               onMouseDown={this.onMouseDown}
