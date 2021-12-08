@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import { useAlertContext } from "../Alerts/AlertContext";
+import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
@@ -15,6 +16,7 @@ function CreateArea(props) {
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
+  const { t } = useTranslation();
   const detailsArea = new useRef();
   const imageArea = new useRef();
 
@@ -35,15 +37,15 @@ function CreateArea(props) {
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
-      alertContext.showAlert("A name is required for the simulation.", "warning");
+      alertContext.showAlert("simNameRequired", "warning");
       return;
     }
     if (props.gamedata.some(game => game.gameinstance_name === title.trim())) {
-      alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
+      alertContext.showAlert("simAlreadyExists", "warning");
       return;
     }
     if ((imageSelected.size / 1000000) > 10) {
-      alertContext.showAlert("Image must be 10MB or less. Please pick a smaller image.", "warning");
+      alertContext.showAlert("imageTooLarge", "warning");
       return;
     }
 
@@ -144,9 +146,9 @@ function CreateArea(props) {
   return (
     <div className="area">
       <form ref={detailsArea} className="form-input">
-        <p className="gradient-border modal-title">Add New Simulation</p>
+        <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
         <div>
-          Choose a game
+          {t("modal.chooseGame")}
           <select id="games">
             <option value="Team Leadership">Team Leadership</option>
             <option value="Project Management">Project Management</option>
@@ -156,7 +158,7 @@ function CreateArea(props) {
         </div>
         {props.gamedata.length !== 0 && (
           <div className="gradient-border">
-            Duplicate a previous simulation
+            {t("modal.duplicatePreviousSimulation")}
             <label id="switch">
               <Switch
                 onChange={() => setChecked(!checked)}
@@ -168,14 +170,14 @@ function CreateArea(props) {
         )}
         {checked && (
           <div>
-            Select a previous simulation
+            {t("modal.selectPreviousSimulation")}
             <select id="prevgames" onChange={handleCopySim}>
               {createSelectItems()}
             </select>
           </div>
         )}
         <div className="gradient-border">
-          Enter a name
+          {t("modal.enterName")}
           <input
             tpye="text"
             id="namei"
@@ -186,7 +188,7 @@ function CreateArea(props) {
           />
         </div>
         <div className="gradient-border">
-          Choose an image
+          {t("modal.chooseImage")}
           <div className="form-imgpreview">
             <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
             {img ? (
@@ -197,7 +199,7 @@ function CreateArea(props) {
           </div>
         </div>
         <button type="button" className="modal-bottomright-button" onClick={uploadImage}>
-          Add
+          {t("modal.add")}
         </button>
       </form>
       {img && (
@@ -216,7 +218,7 @@ function CreateArea(props) {
           ))}
           <input type="file" name="img" id="file" onChange={onChange} />
           <label htmlFor="file" className="form-imgsubmit">
-            From file
+            {t("modal.imageFromFile")}
           </label>
         </form>
       )}

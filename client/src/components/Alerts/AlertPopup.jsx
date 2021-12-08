@@ -1,12 +1,14 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
 import { useAlertContext } from './AlertContext';
+import { useTranslation } from "react-i18next";
 
 import "./AlertPopup.css";
 
 const AlertPopup = () => {
 
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   const startTimer = () => {
     setTimeout(() => {
@@ -36,7 +38,7 @@ const AlertPopup = () => {
           <i className="fas fa-exclamation-triangle alert-popup-icon error" />
         )}
 
-        {alertContext.text}
+        {t("alert."+alertContext.text)}
       </div>
     </CSSTransition>
   );

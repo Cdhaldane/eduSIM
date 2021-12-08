@@ -7,7 +7,8 @@
       "alreadyHaveRoomCode": "Already have a room code?",
       "join": "Join!",
       "roomCode": "Room code",
-      "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>"
+      "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>",
+      "about": "About!"
     },
     "navbar": {
       "title": "eduSIM - Educational Simulator Tool",
@@ -15,6 +16,43 @@
       "profile": "Profile",
       "login": "Login",
       "logout": "Logout"
+    },
+    "admin": {
+      "mySimulations": "My simulations",
+      "addNewSimulation": "Add a new simulation +",
+      "deleteSimConfirmExplanation": "Are you sure you want to delete the {{name}} simulation? This action cannot be undone.",
+      "revokeSimConfirmExplanation": "Are you sure you want your access to the {{name}} simulation revoked? This action cannot be undone.",
+      "deleteSimConfirm": "Yes - Delete Simulation"
+    },
+    "modal": {
+      "addNewSimulation": "Add New Simulation",
+      "chooseGame": "Choose a game",
+      "duplicatePreviousSimulation": "Duplicate a previous simulation",
+      "selectPreviousSimulation": "Select a previous sim",
+      "enterName": "Enter a name",
+      "chooseImage": "Choose an image",
+      "imageFromFile": "From file",
+
+      "inviteCollaborators": "Invite Collaborators",
+      "inviteCollaboratorsExplanation": "To add a collaborator, enter their email address. They will be sent a personal invitation link to create an account and join the simulation.",
+      "peopleWithAccessToX": "People with access to {{name}}",
+      "nobodyHasAccessToX": "Nobody has access to {{name}}.",
+      "revokeAccessToXForY": "Revoke access to {{name}} for {{person}}?",
+      "confirmRevokeAccess": "Yes",
+      "suffixInvited": "(invited)",
+      "suffixAccepted": "(accepted",
+      "emailAddress": "Email address",
+      "addUser": "Add user +",
+      "add": "Add",
+      "send": "Send",
+      "cancel": "Cancel"
+    },
+    "alert": {
+      "inviteSuccessful": "Invitations have been successfully sent to given email addresses.",
+      "inviteError": "An error has occured while attempting to send email invitations. Please try again.",
+      "simNameRequired": "A name is required for the simulation.",
+      "simAlreadyExists": "A simulation with this name already exists. Please pick a new name.",
+      "imageTooLarge": "Image must be 10MB or less. Please pick a smaller image."
     }
   }
 }
