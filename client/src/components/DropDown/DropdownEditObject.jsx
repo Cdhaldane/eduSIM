@@ -496,6 +496,10 @@ function DropdownEditObject(props) {
                 <input type="checkbox" checked={objState?.varInterval} onChange={() => handleVarInterval(!objState?.varInterval)} />
                 <p>Send at intervals</p>
               </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <p>Synchronize across clients</p>
+              </div>
             </div>
           </CSSTransition>
         </div>

@@ -614,7 +614,8 @@ const CanvasPage = (props) => {
     containerHeight: obj.containerHeight,
     varName: obj.varName,
     varInterval: obj.varInterval || false,
-    varEnable: obj.varEnable || false
+    varEnable: obj.varEnable || false,
+    sync: obj.sync || false
   });
 
   const inputProps = (obj, canvas) => ({
@@ -941,7 +942,7 @@ const CanvasPage = (props) => {
             <HTMLFrame
               defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
               {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getInteractiveProps(obj.id)}
+              {...canvas.getVariableProps()}
               {...htmlProps(obj)}
               {...(editMode ? customObjProps(canvas) : {})}
             /> : null

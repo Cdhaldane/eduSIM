@@ -120,7 +120,7 @@ export default async (server, client, event, args) => {
     };
 
     case "varChange": {
-      const { name, value } = args;
+      const { name, value, increment = false } = args;
       
       const { running, variables = {}, level } = await getRoomStatus(room);
 
@@ -132,7 +132,7 @@ export default async (server, client, event, args) => {
       const newStatus = await updateRoomStatus(room, {
         variables: {
           ...variables,
-          [name]: value
+          [name]: increment ? ((variables[name] || 0) + value) : value
         }
       });
 
