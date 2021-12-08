@@ -9,6 +9,7 @@ import "./CreateArea.css";
 function CreateArea(props) {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
+  const [moreImages, setMoreImages] = useState(false);
   const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
@@ -114,12 +115,6 @@ function CreateArea(props) {
     setTitle(event.target.value);
   }
 
-  // Handles showing of img overlay
-  function handleImg(event) {
-    event.preventDefault();
-    setImg(!img)
-  }
-
   function createSelectItems() {
     let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
@@ -190,7 +185,7 @@ function CreateArea(props) {
         <div className="gradient-border">
           {t("modal.chooseImage")}
           <div className="form-imgpreview">
-            <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
+            <img id="plus" src="plus.png" alt="add" onClick={() => setMoreImages(!moreImages)} />
             {img ? (
               <img id="preview" alt="preview" src={img} />
             ) : (
@@ -202,7 +197,7 @@ function CreateArea(props) {
           {t("modal.add")}
         </button>
       </form>
-      {img && (
+      {moreImages && (
         <form ref={imageArea} className="form-imgs">
         {props.previewImages?.map((image, index) => (
             <Image
