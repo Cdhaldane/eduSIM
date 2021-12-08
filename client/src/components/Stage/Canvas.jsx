@@ -2179,6 +2179,7 @@ class Graphics extends Component {
               this.setState({
                 customRect: [{
                   ...this.state.customRect[0],
+                  currentId: id,
                   x: x - ((width * paddingPercent) / 2),
                   y: y - ((height * paddingPercent) / 2)
                 }],
@@ -2357,7 +2358,8 @@ class Graphics extends Component {
     let foundGuideItem = false;
     stageRef.find('.shape, .customObj').forEach((guideItem) => {
       if (foundGuideItem) return;
-      if (guideItem === skipShape) return;
+      if (guideItem === skipShape || 
+        (guideItem.attrs.currentId && guideItem.attrs.currentId === skipShape.attrs.id)) return;
 
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
@@ -2593,7 +2595,7 @@ class Graphics extends Component {
 
   updateText = (e) => {
     const node = this.refs[this.state.currentTextRef];
-    if (!e || e.keyCode === 13) {
+    if (!e) {
       this.setState({
         textEditVisible: false,
         shouldTextUpdate: true,

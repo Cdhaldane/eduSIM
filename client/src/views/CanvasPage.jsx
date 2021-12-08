@@ -25,6 +25,7 @@ import {
   RegularPolygon,
   Line,
   Arrow,
+  Layer
 } from "react-konva";
 
 const CanvasPage = (props) => {
@@ -630,7 +631,7 @@ const CanvasPage = (props) => {
     varName: obj.varName,
     refresh: canvas.refresh,
     label: obj.label
-  })
+  });
 
   const timerProps = (obj, canvas, editMode) => ({
     timeLimit: obj.timeLimit,
@@ -639,7 +640,19 @@ const CanvasPage = (props) => {
     refresh: canvas.refresh,
     invisible: obj.invisible && !editMode,
     controls: obj.controls
-  })
+  });
+
+  const layerProps = (canvas, stage) => ({
+    ref: `${stage}AreaLayer`,
+    scaleX: canvas.state.groupLayerScale,
+    scaleY: canvas.state.groupLayerScale,
+    x: canvas.state.groupLayerX,
+    y: canvas.state.groupLayerY,
+    height: window.innerHeight,
+    width: window.innerWidth,
+    draggable: canvas.state.layerDraggable,
+    onDragMove: (e) => canvas.dragLayer(e, false)
+  });
 
   const pollProps = (obj, canvas, editMode) => {
     return {
@@ -855,9 +868,13 @@ const CanvasPage = (props) => {
               {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
               ref={canvas.customRect}
               draggable={false}
+              currentId={canvas.state.customRect[0].currentId}
             />
           </>
         )}
+
+        {/*<Layer {...layerProps(canvas, stage)}>
+        </Layer>*/}
 
         {/* Render the object saved in state */}
         {canvas.state.pencils.map((obj, index) => {

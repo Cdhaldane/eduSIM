@@ -15,13 +15,13 @@ const ContextMenu = (props) => {
   const setContextMenuTitle = () => {
     let set = false;
     [
-      ["text",      "Edit Text"],
-      ["poll",      "Edit Poll"],
-      ["connect4",  "Edit Connect4"],
-      ["tic",       "Edit TicTacToe"],
-      ["html",      "Edit HTML"],
-      ["input",    "Edit Input"],
-      ["timer",    "Edit Timer"]
+      ["text", "Edit Text"],
+      ["poll", "Edit Poll"],
+      ["connect4", "Edit Connect4"],
+      ["tic", "Edit TicTacToe"],
+      ["html", "Edit HTML"],
+      ["input", "Edit Input"],
+      ["timer", "Edit Timer"]
     ].forEach(([key, text]) => {
       if (props.selectedShapeName.startsWith(key)) {
         set = true;
@@ -121,19 +121,21 @@ const ContextMenu = (props) => {
   }
 
   const debounceObjState = useCallback(
-		debounce(state => props.updateObjState(state), 100),
-		[], // will be created only once initially
-	);
+    debounce(state => props.updateObjState(state), 100),
+    [], // will be created only once initially
+  );
 
   const handleUpdateConditions = (key, value) => {
     setConditions(old => ({
       ...old,
       [key]: value ? value : undefined
     }))
-    debounceObjState({ conditions: {
-      ...conditions,
-      [key]: value ? value : undefined
-    }});
+    debounceObjState({
+      conditions: {
+        ...conditions,
+        [key]: value ? value : undefined
+      }
+    });
   }
 
   return (
@@ -163,6 +165,19 @@ const ContextMenu = (props) => {
         {props.unGroup && (
           <li onClick={handleUngrouping}>Ungroup Objects</li>
         )}
+        <div className="layerLbl">
+          Layer
+        </div>
+        <div className="layerBtns">
+          <li>
+            <i className="fas fa-arrow-up" />
+          </li>
+        </div>
+        <div className="layerBtns">
+          <li>
+            <i className="fas fa-arrow-down" />
+          </li>
+        </div>
       </ul>
 
       {drop && (
@@ -189,23 +204,23 @@ const ContextMenu = (props) => {
       )}
       {conditionsVisible && (
         <div className="drop">
-          <div 
+          <div
             className="dropdownedit conditionsedit"
             style={{
               ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
             }}
           >
             <p>Only display this if...</p>
-            <input 
-              type="text" 
-              placeholder="Variable name" 
-              value={conditions?.varName || ""} 
-              onChange={(e) => handleUpdateConditions("varName", e.target.value)} 
+            <input
+              type="text"
+              placeholder="Variable name"
+              value={conditions?.varName || ""}
+              onChange={(e) => handleUpdateConditions("varName", e.target.value)}
             />
-            <select 
+            <select
               name="inputtype"
-              value={conditions?.condition} 
-              onChange={(e) => handleUpdateConditions("condition", e.target.value)} 
+              value={conditions?.condition}
+              onChange={(e) => handleUpdateConditions("condition", e.target.value)}
             >
               <option value="positive">contains a positive value</option>
               <option value="negative">contains a negative/null value</option>
@@ -216,27 +231,27 @@ const ContextMenu = (props) => {
               <option value="onchange">changes</option>
             </select>
             {conditions?.condition?.startsWith('is') && (
-              <input 
-                type="text" 
-                placeholder="Value to check against" 
-                value={conditions?.trueValue || ""} 
-                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+              <input
+                type="text"
+                placeholder="Value to check against"
+                value={conditions?.trueValue || ""}
+                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
               />
             )}
             {conditions?.condition == 'between' && (
               <div className="conditionsbetween">
-                <input 
-                  type="text" 
-                  placeholder="Min" 
-                  value={conditions?.trueValue || ""} 
-                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+                <input
+                  type="text"
+                  placeholder="Min"
+                  value={conditions?.trueValue || ""}
+                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
                 />
                 <p>and</p>
-                <input 
-                  type="text" 
-                  placeholder="Max" 
-                  value={conditions?.trueValueAlt || ""} 
-                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)} 
+                <input
+                  type="text"
+                  placeholder="Max"
+                  value={conditions?.trueValueAlt || ""}
+                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
                 />
               </div>
             )}

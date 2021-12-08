@@ -15,6 +15,22 @@
   list-style-type: none;
 }
 
+.layerLbl {
+  padding: 0px 5px;
+  width: 50%;
+  display: inline-block;
+}
+
+.layerBtns {
+  width: 25%;
+  display: inline-block;
+}
+
+.layerBtns > li {
+  font-size: 0.7em;
+  text-align: center;
+}
+
 .cmenu li:hover {
   background-color: grey;
   cursor: pointer;
