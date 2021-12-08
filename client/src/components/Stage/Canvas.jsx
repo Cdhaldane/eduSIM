@@ -2592,6 +2592,7 @@ class Graphics extends Component {
   }
 
   updateText = (e) => {
+    const node = this.refs[this.state.currentTextRef];
     if (!e || e.keyCode === 13) {
       this.setState({
         textEditVisible: false,
@@ -2601,43 +2602,7 @@ class Graphics extends Component {
           display: "none"
         }
       });
-
-      // Get the current textNode we are editing, get the name from there
-      // Match name with elements in this.state.texts,
-      let node = this.refs[this.state.currentTextRef];
-      let name = node.attrs.id;
-
-      this.setState(
-        prevState => ({
-          selectedShapeName: name,
-          texts: prevState.texts.map(eachText =>
-            eachText.id === name
-              ? {
-                ...eachText,
-                text: this.state.text
-              }
-              : eachText
-          )
-        }),
-        () => {
-          this.setState(prevState => ({
-            texts: prevState.texts.map(eachText =>
-              eachText.name === name
-                ? {
-                  ...eachText,
-                  textWidth: node.textWidth,
-                  textHeight: node.textHeight
-                }
-                : eachText
-            )
-          }));
-        }
-      );
       node.show();
-      const stageType = this.state.overlayOpen ? "overlayStage" :
-        (this.personalAreaOpen ? "personalStage" : "groupStage");
-      this.refs[stageType].findOne(".transformer").show();
-      this.refs[stageType].draw();
     }
   }
 
@@ -2742,6 +2707,49 @@ class Graphics extends Component {
             this.setState({
               text: e.target.value,
               shouldTextUpdate: false
+            }, () => {
+              // Get the current textNode we are editing, get the name from there
+              // Match name with elements in this.state.texts,
+              const node = this.refs[this.state.currentTextRef];
+              const name = node.attrs.id;
+
+              this.setState(
+                prevState => ({
+                  selectedShapeName: name,
+                  texts: prevState.texts.map(eachText =>
+                    eachText.id === name
+                      ? {
+                        ...eachText,
+                        text: this.state.text
+                      }
+                      : eachText
+                  )
+                }),
+                () => {
+                  this.setState(prevState => ({
+                    texts: prevState.texts.map(eachText =>
+                      eachText.name === name
+                        ? {
+                          ...eachText,
+                          textWidth: node.textWidth,
+                          textHeight: node.textHeight
+                        }
+                        : eachText
+                    )
+                  }));
+                  this.setState({
+                    textareaInlineStyle: {
+                      ...this.state.textareaInlineStyle,
+                      height: `${node.textHeight * (node.textArr.length + 2)}px`
+                    }
+                  });
+
+                  const stageType = this.state.overlayOpen ? "overlayStage" :
+                    (this.personalAreaOpen ? "personalStage" : "groupStage");
+                  this.refs[stageType].findOne(".transformer").show();
+                  this.refs[stageType].draw();
+                }
+              );
             });
           }}
           onKeyDown={(e) => this.updateText(e)}
