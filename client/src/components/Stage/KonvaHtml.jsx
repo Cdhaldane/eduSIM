@@ -28,7 +28,8 @@ const KonvaHtml = ({
   refName,
   defaultProps,
   visible,
-  objectSnapping
+  objectSnapping,
+  editMode
 }) => {
 
   const groupRef = useRef(null);
@@ -74,9 +75,9 @@ const KonvaHtml = ({
     if (defaultProps.overlay) {
       stage = "overlayGameContainer";
     } else if (defaultProps.infolevel) {
-      stage = "editPersonalContainer";
+      stage = editMode ? "editPersonalContainer" : "personalGameContainer";
     } else {
-      stage = "editMainContainer";
+      stage = editMode ? "editMainContainer" : "groupGameContainer";
     }
     stage = document.getElementById(stage);
     if (!stage) return;
