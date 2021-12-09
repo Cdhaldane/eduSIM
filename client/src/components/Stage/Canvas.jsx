@@ -16,8 +16,7 @@ import DropdownOverlay from "../Dropdown/DropdownOverlay";
 // Standard Konva Components
 import Konva from "konva";
 import {
-  Stage,
-  Layer
+  Stage
 } from "react-konva";
 
 import "./Stage.css";
@@ -82,7 +81,9 @@ class Graphics extends Component {
       groupColor: "#FFF",
       personalColor: "#FFF",
       overlayColor: "#FFF",
-      overlays: []
+      overlays: [],
+      groupLayers: [],
+      personalLayers: []
     });
     const defaultPages = defaultPagesTemp.map((page, index) => {
       return {
@@ -1641,6 +1642,37 @@ class Graphics extends Component {
           }
           objects.push(newObject);
 
+          // Add to layers
+          const page = this.state.pages[this.state.level - 1];
+          let layers = [];
+          if (this.state.overlayOpen) {
+            const i = 0;
+            const overlay = page.overlays.filter((o, i) => {
+              if (o.id === this.state.overlayOpenIndex) {
+                i = i;
+                return true;
+              } else {
+                return false;
+              }
+            })[0];
+            layers = overlay.layers;
+            layers.push(newId);
+            page.overlays[i].layers = layers;
+          } else if (this.state.personalAreaOpen) {
+            layers = page.personalLayers;
+            layers.push(newId);
+            page.personalLayers = layers;
+          } else {
+            layers = page.groupLayers;
+            layers.push(newId);
+            page.groupLayers = layers;
+          }
+          const newPages = [...this.state.pages];
+          newPages[this.state.level - 1] = page;
+          this.setState({
+            pages: newPages
+          });
+
           // Check if in group and replace with new id if so
           for (let x = 0; x < groupCopiedIds.length; x++) {
             for (let y = 0; y < groupCopiedIds[x].length; y++) {
@@ -1677,6 +1709,39 @@ class Graphics extends Component {
     } else {
       toDelete = this.state.groupSelection.flat();
     }
+
+    console.log(toDelete);
+
+    // Remove from layers
+    const page = this.state.pages[this.state.level - 1];
+    let layers = [];
+    const checkLayer = (layer) => {
+      return !toDelete.some(del => (del.attrs ? del.attrs.id : del.dataset.name) === layer);
+    }
+    if (this.state.overlayOpen) {
+      const i = 0;
+      const overlay = page.overlays.filter((o, i) => {
+        if (o.id === this.state.overlayOpenIndex) {
+          i = i;
+          return true;
+        } else {
+          return false;
+        }
+      })[0];
+      layers = overlay.layers;
+      page.overlays[i].layers = layers.filter(checkLayer);
+    } else if (this.state.personalAreaOpen) {
+      layers = page.personalLayers;
+      page.personalLayers = layers.filter(checkLayer);
+    } else {
+      layers = page.groupLayers;
+      page.groupLayers = layers.filter(checkLayer);
+    }
+    const newPages = [...this.state.pages];
+    newPages[this.state.level - 1] = page;
+    this.setState({
+      pages: newPages
+    });
 
     // Get a list of the affected types
     let affectedTypes = [];

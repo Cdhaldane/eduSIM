@@ -925,6 +925,20 @@ const CanvasPage = (props) => {
       );
     }
 
+    const page = canvas.state.pages[canvas.state.level - 1];
+    let objectIds = [];
+    if (stage === "group") {
+      objectIds = page.groupLayers;
+    } else if (stage === "personal") {
+      objectIds = page.personalLayers;
+    } else {
+      if (canvas.state.overlayOpenIndex === -1) {
+        return;
+      }
+      const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
+      objectIds = overlay.layers;
+    }
+
     return (
       <>
         {editMode && (
@@ -937,10 +951,10 @@ const CanvasPage = (props) => {
                 y={canvasY}
                 height={canvasH}
                 width={canvasW}
-                // Canvas Drag Rect Outline - FOR DEBUGGING
-                /*stroke={"red"}
-                strokeWidth={2}
-                strokeScaleEnabled={false}*/
+              // Canvas Drag Rect Outline - FOR DEBUGGING
+              /*stroke={"red"}
+              strokeWidth={2}
+              strokeScaleEnabled={false}*/
               />
 
               {renderGrid(canvas, stage)}
@@ -957,18 +971,19 @@ const CanvasPage = (props) => {
         )}
 
         {/* Render the object saved in state */}
-        {savedObjects.map((objType, index) => {
-          const state = canvas.state[objType];
-          return (
+        {objectIds.map((id, index) => {
+          const type = id.replace(/\d+$/, "");
+          const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+          return obj ? (
             <React.Fragment key={index}>
-              {state.map((obj, index) => {
-                return objectIsOnStage(obj, canvas) === checkStage ?
+              {
+                objectIsOnStage(obj, canvas) === checkStage ?
                   <Layer {...layerProps(canvas, stage, obj.id)} key={index}>
-                    {renderObject(obj, index, canvas, editMode, objType)}
+                    {renderObject(obj, index, canvas, editMode, type)}
                   </Layer> : null
-              })}
+              }
             </React.Fragment>
-          );
+          ) : null;
         })}
 
         {/*

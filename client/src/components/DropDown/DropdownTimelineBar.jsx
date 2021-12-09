@@ -329,7 +329,8 @@ const DropdownTimelineBar = (props) => {
                       newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
                         id: uuidv4(),
                         overlayOpenOption: "doNotAutoOpen",
-                        hideBtn: false
+                        hideBtn: false,
+                        layers: []
                       }];
                       setPages(newArr);
                     }}
