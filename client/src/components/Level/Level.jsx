@@ -31,11 +31,19 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
-    if (e > count && 
-      props.page && 
-      props.page.hasOverlay && 
-      props.page.overlayOpenOption === "pageExit") {
-      props.handlePageCloseOverlay();
+    let closeOverlay = null;
+    if (props.page) {
+      for (let i = 0; i < props.page.overlays.length; i++) {
+        if (props.page.overlays[i].overlayOpenOption === "pageExit") {
+          closeOverlay = props.page.overlays[i];
+          break;
+        }
+      }
+    }
+    if (e > count &&
+      props.page &&
+      closeOverlay) {
+      props.handlePageCloseOverlay(closeOverlay.id);
       return;
     }
     if (props.gamepage) {
@@ -205,35 +213,35 @@ const Level = (props) => {
             </select>
           )}
 
-          <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{minWidth: (props.number)*66+'px'}}>
+          <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 66 + 'px' }}>
             <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
-            <div className={`level-bar-progress ${props.number == count-(props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
-              width: `calc(${(100*(count-1)/(props.number-(props.gamepage ? 0 : 1)))}% - ${(24*(count-1)/(props.number-(props.gamepage ? 0 : 1)))}px)`
+            <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
+              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(24 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
             }}></div>
-		        <i className={`fas fa-caret-right ${props.number == count-(props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
-		        <div className="level-bar-segments">
-              {times(props.number+(props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
+            <i className={`fas fa-caret-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
+            <div className="level-bar-segments">
+              {times(props.number + (props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
                 <div key={num} className="level-bar-segment">
                   <div className={`
                     level-bar-dot 
-                    ${count-1 >= num ? 'level-bar-dot-fill' : ''}
-                    ${(count-1 > num && props.freeAdvance) || (count-1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
+                    ${count - 1 >= num ? 'level-bar-dot-fill' : ''}
+                    ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
-                  `} onClick={() => handleLevel(num+1)}>
+                  `} onClick={() => handleLevel(num + 1)}>
                     {props.number > num ? (
-                      <i class={`fas fa-arrow-alt-circle-right ${count-1 > num ? 'arrow-left' : ''}`}></i>
-                    ) : <i class="fas fa-check-circle"></i>}
+                      <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
+                    ) : <i className="fas fa-check-circle"></i>}
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          
+
           {props.countdown && (
             <div className="level-bar-time">
               <AutoUpdate
-                value={() => moment.duration(props.countdown()).hours()+":"+moment(props.countdown()).format("mm:ss")}
+                value={() => moment.duration(props.countdown()).hours() + ":" + moment(props.countdown()).format("mm:ss")}
                 intervalTime={20}
                 enabled
               />

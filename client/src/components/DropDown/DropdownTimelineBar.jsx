@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { ChromePicker } from 'react-color';
-import Switch from "react-switch";
 import { CSSTransition } from 'react-transition-group';
+import { v4 as uuidv4 } from 'uuid';
 
 import "./Dropdown.css";
 
@@ -103,8 +103,8 @@ const DropdownTimelineBar = (props) => {
           if (pages.length < MAX_PAGE_NUM) {
             // Copy the page and contents
             setPages([...pages, {
+              ...pages[index],
               name: pages[index].name + " Copy",
-              hasOverlay: pages[index].hasOverlay
             }]);
             setNumOfPages(numOfPages + 1);
             props.handleCopyPage(index);
@@ -272,7 +272,7 @@ const DropdownTimelineBar = (props) => {
               <span className="icon-button" onClick={() => {
                 setPages([...pages, {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
-                  hasOverlay: false,
+                  overlays: [],
                   overlayOpenOption: "pageEnter",
                   primaryColor: "#8f001a",
                   groupColor: "#FFF",
@@ -321,16 +321,23 @@ const DropdownTimelineBar = (props) => {
               </div>
               <div id={"pageSettingsDropdown"}>
                 <div>
-                  <div className="pageSettingsLabels">Show Overlay:</div>
-                  <Switch
-                    onChange={(val) => {
+                  <div className="pageSettingsLabels">Add Overlay:</div>
+                  <div
+                    style={{ display: "inline-block" }}
+                    onClick={() => {
                       const newArr = pages.slice();
-                      newArr[currentSettingsIndex].hasOverlay = val;
+                      newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
+                        id: uuidv4(),
+                        overlayOpenOption: "doNotAutoOpen",
+                        hideBtn: false
+                      }];
                       setPages(newArr);
                     }}
-                    checked={pages[currentSettingsIndex] ? pages[currentSettingsIndex].hasOverlay : false}
-                    className="react-switch"
-                  />
+                  >
+                    <span className="icon-button">
+                      <i className="icons fa fa-plus" />
+                    </span>
+                  </div>
                 </div>
                 <div>
                   <div className={"pageSettingsColorButtons"}>
