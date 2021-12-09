@@ -71,7 +71,7 @@ const Table = (props) => {
         console.log(error);
       });
     } else {
-      setGroupOr("admin.role")
+      setGroupOr("common.role")
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayers/:game_room', {
         params: {
           game_room: props.gameroom,

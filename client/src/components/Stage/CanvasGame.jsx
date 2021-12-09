@@ -5,6 +5,7 @@ import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
 import moment from "moment";
 import Overlay from "./Overlay";
+import { withTranslation } from "react-i18next";
 
 import {
   Stage,
@@ -328,7 +329,7 @@ class Graphics extends Component {
 
     if (localStorage.userInfo) {
       const info = JSON.parse(localStorage.userInfo);
-      if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
+      if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
       this.handlePlayerInfo(info);
     }
 
@@ -491,7 +492,7 @@ class Graphics extends Component {
                 backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
               }}
             >
-              <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>
+              <div id="playModeRoleLabel"><b>{this.props.t("common.role")}: </b>{this.state.rolelevel}</div>
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"
@@ -536,13 +537,13 @@ class Graphics extends Component {
           </div>
         </div>
         <EndScreen open={this.state.level > this.state.pageNumber}>
-          <p>Thank you for joining!</p>
+          <p>{this.props.t("game.thanksForJoining")}</p>
           {this.props.freeAdvance && (
-            <button onClick={() => this.handleLevel(1)}>Reset simulation</button>
+            <button onClick={() => this.handleLevel(1)}>{this.props.t("game.resetSimulation")}</button>
           )}
         </EndScreen>
       </React.Fragment>
     );
   }
 }
-export default Graphics;
+export default withTranslation()(Graphics);

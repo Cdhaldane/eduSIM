@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import Loading from "../components/Loading/Loading";
+import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import "../components/Information/Info.css";
 import "../components/Tabs/Tabs.css";
@@ -56,6 +57,7 @@ const Game = (props) => {
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [invalidateSidebar, setInvalidateSidebar] = useState(0);
   const [disableNext, setDisableNext] = useState(false);
+  const { t } = useTranslation();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -227,7 +229,7 @@ const Game = (props) => {
           />
           {!roomStatus.running && (<PauseCover>
             <i className="fa fa-pause-circle fa-2x"></i>
-            <p>Paused</p>
+            <p>{t("game.paused")}</p>
           </PauseCover>)}
         </Main>
         {!isNaN(roomStatus.settings?.advanceMode) && (

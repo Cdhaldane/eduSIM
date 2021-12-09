@@ -86,7 +86,7 @@ export default async (server, client, event, args) => {
       const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
-        client.emit("errorLog", "Game is paused/stopped!");
+        // client.emit("errorLog", "Game is paused/stopped!");
         return;
       }
 
@@ -125,7 +125,7 @@ export default async (server, client, event, args) => {
       const { running, variables = {}, level } = await getRoomStatus(room);
 
       if (!running) {
-        client.emit("errorLog", "Game is paused/stopped!");
+        // client.emit("errorLog", "Game is paused/stopped!");
         return;
       }
 

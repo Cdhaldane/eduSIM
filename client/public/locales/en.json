@@ -22,7 +22,8 @@
       "cancel": "Cancel",
       "edit": "Edit",
       "delete": "Delete",
-      "save": "Save"
+      "save": "Save",
+      "role": "Role"
     },
     "admin": {
       "mySimulations": "My simulations",
@@ -77,12 +78,25 @@
       "lastName": "Last name",
       "emailAddress": "Email address",
       "group": "Group",
-      "role": "Role",
       "actions": "Actions",
       "selectARole": "Select a role",
 
       "confirmDeleteLog": "Are you sure you want to delete this game log?",
       "deleteLog": "Delete log"
+    },
+    "game": {
+      "paused": "Paused",
+      "welcomeToTheSimulation": "Welcome to the simulation!",
+      "inputName": "Select your name to continue.",
+      "joiningAsX": "You are joining as {{name}}.",
+      "noRoleTeacherAssigned": "None (teacher assigned)",
+      "selectRole": "Select Role",
+      "xInGame": "{{count}} in game",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "go": "Go",
+      "thanksForJoining": "Thank you for joining!",
+      "resetSimulation": "Reset Simulation"
     },
     "modal": {
       "addNewSimulation": "Add New Simulation",
@@ -131,7 +145,11 @@
       "emptyGroupName": "Group name cannot be empty.",
       "groupAlreadyExists": "A group with this name already exists. Please pick a new name.",
       "emailSuccessful": "Email invitations have been successfully sent to simulation participants.",
-      "emailError": "An error has occured while attempting to send email invitations. Please try again."
+      "emailError": "An error has occured while attempting to send email invitations. Please try again.",
+
+      "roleLimitExceeded": "Too many people have already chosen this role. Please choose a different one.",
+      "noRoleSelected": "Please select a role to continue.",
+      "loggedInAsX": "Logged back in as: {{name}}"
     }
   }
 }

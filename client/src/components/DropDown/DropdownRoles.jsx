@@ -4,12 +4,15 @@ import axios from "axios";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
 
-  const PLACEHOLDER_TEXT = props.disabled ? "None (teacher assigned)" : "Select Role";
+  const { t } = useTranslation();
+
+  const PLACEHOLDER_TEXT = props.disabled ? t("game.noRoleTeacherAssigned") : t("game.selectRole");
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [menuHeight, setMenuHeight] = useState(null);
@@ -231,7 +234,7 @@ const DropdownRoles = (props) => {
             >
               {role.roleName}
               {role.numOfSpots !== -1 && (props.rolesTaken[role.roleName]
-                ? ` (${role.numOfSpots}, ${props.rolesTaken[role.roleName]} ingame)`
+                ? ` (${role.numOfSpots}, ${t("game.xInGame", { count: props.rolesTaken[role.roleName] })})`
                 : ` (${role.numOfSpots})`)}
             </div>
           )
