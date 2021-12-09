@@ -17,12 +17,72 @@
       "login": "Login",
       "logout": "Logout"
     },
+    "common": {
+      "add": "Add",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save"
+    },
     "admin": {
       "mySimulations": "My simulations",
       "addNewSimulation": "Add a new simulation +",
       "deleteSimConfirmExplanation": "Are you sure you want to delete the {{name}} simulation? This action cannot be undone.",
       "revokeSimConfirmExplanation": "Are you sure you want your access to the {{name}} simulation revoked? This action cannot be undone.",
-      "deleteSimConfirm": "Yes - Delete Simulation"
+      "deleteSimConfirm": "Yes - Delete Simulation",
+      "addStudentCSV": "Add Student / Participant List +",
+
+      "allRooms": "All rooms",
+      "pageX": "Page {{page}}",
+      "pausedSuffix": "(paused)",
+      "stoppedSuffix": "(stopped)",
+      "allRunning": "(All running)",
+      "someRunning": "(Some running)",
+      "allPaused": "(All paused)",
+      "pauseSim": "Pause this simulation",
+      "pauseAllSims": "Pause all simulations",
+      "resetSim": "Reset this simulation",
+      "resetAllSims": "Reset all simulations",
+      "goBackSim": "Backtrack this simulation by one page",
+      "goBackAllSims": "Backtrack all simulations by one page",
+      "advanceSim": "Advance this simulation by one page",
+      "advanceAllSims": "Advance all simulations by one page",
+      "reset": "Reset",
+      "resetConfirm": "Are you sure you want to reset every simulation room? (A backup log will be saved.)",
+
+      "displayPreviousRuns": "Display previous runs",
+      "startedXLastedY": "Started on {{time}}, lasted {{duration}}",
+      "downloadCSV": "Download spreadsheet",
+      "downloadJSON": "Download JSON data",
+      "overview": "Overview",
+      "addGroup": "Add group +",
+      "settings": "Settings:",
+      "studentList": "Student/participant list:",
+      "chat": "Chat:",
+      "performanceReport": "Performance Report:",
+      "studentsInRoom": "Students/participants in room:",
+      "openEmailModal": "Email Student/Participant",
+      "joinRoom": "Join Room",
+      "deleteGroup": "Delete Group",
+      "simulationAdvancement": "Simulation advancement",
+      "roleAssignment": "Role assignment",
+      "teachers": "Teacher/facilitators",
+      "students": "Student/participants",
+      "timed": "Timed",
+      "suffixMinutes": "min",
+      "random": "Random",
+      "randomPerLevel": "Random (per level)",
+
+      "firstName": "First name",
+      "lastName": "Last name",
+      "emailAddress": "Email address",
+      "group": "Group",
+      "role": "Role",
+      "actions": "Actions",
+      "selectARole": "Select a role",
+
+      "confirmDeleteLog": "Are you sure you want to delete this game log?",
+      "deleteLog": "Delete log"
     },
     "modal": {
       "addNewSimulation": "Add New Simulation",
@@ -43,16 +103,35 @@
       "suffixAccepted": "(accepted",
       "emailAddress": "Email address",
       "addUser": "Add user +",
-      "add": "Add",
       "send": "Send",
-      "cancel": "Cancel"
+
+      "emailRoomCodeToStudents": "Email Room Codes to Students/Participants",
+      "email": "Email",
+
+      "addStudentCSV": "Add Student / Participant List",
+      "uploadCSV": "Upload a CSV file",
+      "noCSV": "No spreadsheet file detected",
+      "containsXEntries_one": "Contains {{count}} entry",
+      "containsXEntries_other": "Contains {{count}} entries",
+      "downloadCSVTemplate": "Download CSV template"
     },
     "alert": {
       "inviteSuccessful": "Invitations have been successfully sent to given email addresses.",
       "inviteError": "An error has occured while attempting to send email invitations. Please try again.",
       "simNameRequired": "A name is required for the simulation.",
       "simAlreadyExists": "A simulation with this name already exists. Please pick a new name.",
-      "imageTooLarge": "Image must be 10MB or less. Please pick a smaller image."
+      "imageTooLarge": "Image must be 10MB or less. Please pick a smaller image.",
+      "addedCSVPlayers_one": "Successfully added {{count}} player.",
+      "addedCSVPlayers_other": "Successfully added {{count}} players.",
+      "filledEmptyRoles_one": "Nonexistant role {{roles}} has been replaced with an empty slot.",
+      "filledEmptyRoles_other": "Nonexistant roles {{roles}} have been replaced with empty slots.",
+      "addedCSVPlayersEmptyRoles": "$t(alert.addedCSVPlayers, {\"count\": {{playercount}} }) $t(alert.filledEmptyRoles, {\"count\": {{rolecount}} })",
+      "genericError": "An error occurred.",
+      "validCSVError": "Please enter a valid CSV file.",
+      "emptyGroupName": "Group name cannot be empty.",
+      "groupAlreadyExists": "A group with this name already exists. Please pick a new name.",
+      "emailSuccessful": "Email invitations have been successfully sent to simulation participants.",
+      "emailError": "An error has occured while attempting to send email invitations. Please try again."
     }
   }
 }

@@ -40,7 +40,7 @@ const ConfirmationModal = (props) => {
           {props.confirmMessage}
         </button>
         <button id={"confirmModalCancelButton"} onClick={hide}>
-          {t("modal.cancel")}
+          {t("common.cancel")}
         </button>
       </div>
     </Modal>

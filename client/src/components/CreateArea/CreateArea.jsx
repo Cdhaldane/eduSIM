@@ -38,15 +38,15 @@ function CreateArea(props) {
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
-      alertContext.showAlert("simNameRequired", "warning");
+      alertContext.showAlert(t("alert.simNameRequired"), "warning");
       return;
     }
     if (props.gamedata.some(game => game.gameinstance_name === title.trim())) {
-      alertContext.showAlert("simAlreadyExists", "warning");
+      alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
       return;
     }
     if ((imageSelected.size / 1000000) > 10) {
-      alertContext.showAlert("imageTooLarge", "warning");
+      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
       return;
     }
 
@@ -194,7 +194,7 @@ function CreateArea(props) {
           </div>
         </div>
         <button type="button" className="modal-bottomright-button" onClick={uploadImage}>
-          {t("modal.add")}
+          {t("common.add")}
         </button>
       </form>
       {moreImages && (

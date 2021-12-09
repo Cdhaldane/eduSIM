@@ -122,13 +122,13 @@ function InviteCollaboratorsModal(props) {
       simid: props.gameid,
       simname: props.title
     }).then((res) => {
-      alertContext.showAlert("inviteSuccessful", "info");
+      alertContext.showAlert(t("alert.inviteSuccessful"), "info");
       props.close();
       setSending(false);
     }).catch((error) => {
       console.log(error);
       if (error) {
-        alertContext.showAlert("inviteError", "error");
+        alertContext.showAlert(t("alert.inviteError"), "error");
       }
       setSending(false);
     });

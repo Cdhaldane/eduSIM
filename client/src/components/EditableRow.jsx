@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const EditableRow = ({
   editFormData,
@@ -10,6 +11,7 @@ const EditableRow = ({
   onCheck,
   checked
 }) => {
+  const { t } = useTranslation();
   
   return (
     <tr className={online ? "user-online" : ""}>
@@ -55,9 +57,9 @@ const EditableRow = ({
       </td>
       <td>
         <div>
-          <button type="submit" >Save</button>
+          <button type="submit" >{t("common.save")}</button>
           <button type="button" onClick={handleCancelClick}>
-            Cancel
+          {t("common.cancel")}
           </button>
         </div>
       </td>
