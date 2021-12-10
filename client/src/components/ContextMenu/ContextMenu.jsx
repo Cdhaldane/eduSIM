@@ -169,12 +169,18 @@ const ContextMenu = (props) => {
           Layer
         </div>
         <div className="layerBtns">
-          <li onClick={() => props.layerUp(props.selectedShapeName)}>
+          <li
+            onClick={() => props.layerUp(props.selectedShapeName)}
+            className={`${props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : ""}`}
+          >
             <i className="fas fa-arrow-up" />
           </li>
         </div>
         <div className="layerBtns">
-          <li onClick={() => props.layerDown(props.selectedShapeName)}>
+          <li
+            onClick={() => props.layerDown(props.selectedShapeName)}
+            className={`${props.layers[0] === props.selectedShapeName ? "disabled" : ""}`}
+          >
             <i className="fas fa-arrow-down" />
           </li>
         </div>

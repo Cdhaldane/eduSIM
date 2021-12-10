@@ -862,7 +862,7 @@ class Graphics extends Component {
   }
 
   setLayers = (newLayers, id) => {
-    const page = {...this.state.pages[this.state.level - 1]};
+    const page = { ...this.state.pages[this.state.level - 1] };
     if (this.state.overlayOpen) {
       let i = 0;
       const overlay = page.overlays.filter((overlay, index) => {
@@ -2936,10 +2936,12 @@ class Graphics extends Component {
                         : eachText
                     )
                   }));
+                  const stage = this.state.overlayOpen ? "overlay" : (this.state.personalAreaOpen ? "personal" : "group");
+                  const scale = this.state[`${stage}LayerScale`];
                   this.setState({
                     textareaInlineStyle: {
                       ...this.state.textareaInlineStyle,
-                      height: `${node.textHeight * (node.textArr.length + 2)}px`
+                      height: node.textHeight * (node.textArr.length + 1) * scale
                     }
                   });
 
@@ -3171,6 +3173,7 @@ class Graphics extends Component {
                   setPollData={this.setPollData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
+                  layers={this.getLayers()}
                 />
               </Portal>
             )}
