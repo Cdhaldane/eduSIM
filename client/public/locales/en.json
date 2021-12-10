@@ -10,6 +10,7 @@
       "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>",
       "about": "About!"
     },
+
     "navbar": {
       "title": "eduSIM - Educational Simulator Tool",
       "about": "About",
@@ -17,14 +18,22 @@
       "login": "Login",
       "logout": "Logout"
     },
+
     "common": {
       "add": "Add",
       "cancel": "Cancel",
       "edit": "Edit",
+      "copy": "Copy",
+      "cut": "Cut",
+      "paste": "Paste",
       "delete": "Delete",
       "save": "Save",
-      "role": "Role"
+      "role": "Role",
+      "yes": "Yes",
+      "no": "No",
+      "and": "and"
     },
+
     "admin": {
       "mySimulations": "My simulations",
       "addNewSimulation": "Add a new simulation +",
@@ -84,6 +93,7 @@
       "confirmDeleteLog": "Are you sure you want to delete this game log?",
       "deleteLog": "Delete log"
     },
+
     "game": {
       "paused": "Paused",
       "welcomeToTheSimulation": "Welcome to the simulation!",
@@ -98,12 +108,14 @@
       "thanksForJoining": "Thank you for joining!",
       "resetSimulation": "Reset Simulation"
     },
+
     "sidebar": {
       "messaging": "Messaging",
       "alerts": "Alerts",
       "users": "Users",
       "performance": "Performance",
       "settings": "Settings",
+      "editNavigationBar": "Edit Navigation Bar",
 
       "xSays": "{{name}} says:",
       "youSaid": "You said:",
@@ -124,6 +136,161 @@
       "noTasks": "No tasks to complete!",
       "addNewTask": "ADD NEW TASK"
     },
+
+    "edit": {
+      "editMode": "Edit Mode",
+      "instructions": "Instructions",
+      "overview": "Overview",
+      "overviewExplanation": "Edit Mode allows you to create and edit simulations. Simulations have two main components: the group area (with the grid background), and the personal area (located at the bottom of the screen). To toggle opening/closing the personal area use the red arrow button at the top right of the personal area. The group area will be shared by all the users in a simulation while the personal area contents are determined by the user's role and are only visible to the user. To create/edit roles use the role picker located in the top left of the personal area.",
+      "shortcuts": "Shortcuts",
+      "shortcut": {
+        "addMenu":            "Add Menu",
+        "addMenuSC":          "Right click on canvas",
+        "objectMenu":         "Object Menu",
+        "objectMenuSC":       "Right click on object",
+        "moveAroundCanvas":   "Move around canvas",
+        "moveAroundCanvasSC": "Ctrl + Drag",
+        "recenterContents":   "Recenter contents",
+        "recenterContentsSC": "Shift + R",
+        "deleteObject":       "Delete selected object",
+        "deleteObjectSC":     "Delete",
+        "cutObject":          "Cut selected object",
+        "cutObjectSC":        "Ctrl + X",
+        "copyObject":         "Copy selected object",
+        "copyObjectSC":       "Ctrl + C",
+        "pasteObject":        "Paste selected object",
+        "pasteObjectSC":      "Ctrl + V",
+        "undo":               "Undo action",
+        "undoSC":             "Ctrl + Z",
+        "redo":               "Redo action",
+        "redoSC":             "Ctrl + Shift + Z"
+      },
+
+      "editOverlaySpace": "Edit Overlay Space",
+      "editPersonalSpace": "Edit Personal Space",
+      "editGroupSpace": "Edit Group Space",
+
+      "addShape": "Add Shape",
+      "shape": {
+        "text": "Text",
+        "square": "Square",
+        "circle": "Circle",
+        "triangle": "Triangle",
+        "star": "Star",
+        "line": "Line",
+        "drawMode": "Draw Mode"
+      },
+      "addMedia": "Add Media",
+      "media": {
+        "imageOrGif": "Image/GIF",
+        "addImage": "Add Image",
+        "imageURL": "Image URL",
+        "video": "Video",
+        "addVideo": "Add Video",
+        "videoURL": "Video URL",
+        "audio": "Audio",
+        "addAudio": "Add Audio",
+        "audioURL": "Audio URL",
+        "document": "Document",
+        "addDocument": "Add Document",
+        "fromFile": "From file"
+      },
+      "addInteractive": "Add Interactive",
+      "interactive": {
+        "tic": "Tic-Tac-Toe",
+        "ticEdit": "Edit Tic-Tac-Toe",
+        "connect4": "Connect 4",
+        "poll": "Poll",
+        "html": "HTML Frame",
+        "timer": "Timer"
+      },
+      "addInput": "Add Input",
+      "input": {
+        "button": "Button",
+        "textbox": "Textbox",
+        "checkbox": "Checkbox"
+      },
+
+      "textEdit": "Edit Text",
+      "shapeEdit": "Edit Shape",
+      "inputEdit": "Edit Input",
+      "connect4Edit": "Edit Connect 4",
+      "pollEdit": "Edit Poll",
+      "timerEdit": "Edit Timer",
+      "htmlEdit": "Edit HTML Frame",
+      "changeConditions": "Change Conditions",
+      "groupObjects": "Group Objects",
+      "ungroupObjects": "Ungroup Objects",
+
+      "colorFill": "Fill",
+      "colorStroke": "Stroke",
+      "strokeWidth": "Stroke width",
+      "opacity": "Opacity",
+      "textColor": "Text colour",
+      "textFont": "Text font",
+      "textSize": "Text size",
+      
+      "enableControls": "Enable Controls",
+      "visible": "Visible",
+      "timerCountDown": "Count down",
+      "timeLimitSeconds": "Time limit (seconds)",
+      "timerFinishedVariable": "Finished flag variable",
+      "timerStartVariable": "Start timer flag variable",
+      "width": "Width",
+      "height": "Height",
+      "htmlContent": "HTML Content",
+      "iframeURL": "iFrame URL",
+      "listenToMessages": "Listen to messages",
+      "sendAtIntervals": "Send at intervals",
+
+      "label": "Label",
+      "requiredToAdvance": "Required to advance",
+      "unfinishedLabel": "Unfinished label",
+      "finishedLabel": "Finished label",
+      "completedWhen": "Completed when...",
+      
+      "variableSync": "Synchronize across clients",
+      "inputType": "Input type",
+      "onlyDisplayThisIf": "Only display this if...",
+      "variableName": "Variable name",
+      "variableNameToSet": "Variable name to set",
+      "variablesToSendCommaSeparated": "Variables to send (separated by commas)",
+      "valueToCheckAgainst": "Value to check against",
+      "minimum": "Min",
+      "maximum": "Max",
+      "cond": {
+        "positive": "contains a positive value",
+        "negative": "contains a negative/null value",
+        "isgreater": "is greater than",
+        "isless": "is less than",
+        "isequal": "is equal to",
+        "between": "is between",
+        "onchange": "changes"
+      },
+
+      "newRoleName": "New role name",
+      "confirmDeleteRole": "Are you sure you want to delete the {{name}} role? This action cannot be undone.",
+      "deleteRole": "Yes - Delete role",
+
+      "untitled": "Untitled",
+      "noResponses": "No Responses",
+      "pollColonName": "Poll: {{name}}",
+      "pollXName": "Poll {{num}} - {{name}}",
+      "showOnlyUsersOwnAnswer": "Show only user's own answer",
+      "showMostCommonAnswer": "Show most common answer",
+      "showAllUserAnswers": "Show all user answers",
+      "dontShowQuestion": "Do not show this question",
+      "showGroupAnswer": "Show group answer",
+      "noInteractiveObjects": "There are currently no interactive objects.",
+      "interactiveObjectsExplanation": "If you add interactive objects to the group area or personal area, settings for their performance report will show up here.",
+      "performanceReportExplanation": "The performance report is used to show players feedback about what they have done during the simulation.",
+      "performanceReport": "Performance Report",
+      "noResponseYet": "No response yet",
+      "noDataToDisplay": "There is currently no data to display.",
+      "noDataExplanation": "Interact with parts of the simulation to see your progress here.",
+      "noDataExplanationAdmin": "Data will appear here once students have started to interact with the simulation."
+    },
+
     "modal": {
       "addNewSimulation": "Add New Simulation",
       "chooseGame": "Choose a game",
@@ -155,6 +322,7 @@
       "containsXEntries_other": "Contains {{count}} entries",
       "downloadCSVTemplate": "Download CSV template"
     },
+
     "alert": {
       "inviteSuccessful": "Invitations have been successfully sent to given email addresses.",
       "inviteError": "An error has occured while attempting to send email invitations. Please try again.",
@@ -172,10 +340,19 @@
       "groupAlreadyExists": "A group with this name already exists. Please pick a new name.",
       "emailSuccessful": "Email invitations have been successfully sent to simulation participants.",
       "emailError": "An error has occured while attempting to send email invitations. Please try again.",
+      "simAutosave": "Simulation autosaved.",
 
       "roleLimitExceeded": "Too many people have already chosen this role. Please choose a different one.",
       "noRoleSelected": "Please select a role to continue.",
-      "loggedInAsX": "Logged back in as: {{name}}"
+      "loggedInAsX": "Logged back in as: {{name}}",
+      "noRoleName": "Role name cannot be empty.",
+      "noRoleLimit": "Role quantity must be an integer.",
+      "roleAlreadyExists": "A role with this name already exists. Please pick a new name.",
+      "personalEditAttemptNoRole": "Cannot edit the personal area without a role selected. Please select a role to add objects.",
+
+      "fileNotImage": "Uploaded file is not an image.",
+      "fileNotVideo": "Uploaded file is not a video.",
+      "fileNotAudio": "Uploaded file is not an audio file."
     }
   }
 }

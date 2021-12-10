@@ -6,6 +6,7 @@ import Portal from "./Shapes/Portal";
 import Info from "../Information/InformationPopup";
 import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
+import { withTranslation } from "react-i18next";
 
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
@@ -372,7 +373,7 @@ class Graphics extends Component {
     // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
       this.handleSave();
-      this.props.showAlert("Simulation Autosaved", "info");
+      this.props.showAlert(this.props.t("alert.simAutosave"), "info");
     }, MINUTE_MS);
 
     // Redraw the canvas every 1 second
@@ -1083,7 +1084,7 @@ class Graphics extends Component {
       } else if (event.button === 2) {
         // RIGHT CLICK
         if (personalArea && !this.state.rolelevel) {
-          this.props.showAlert("Cannot edit the personal area without a role selected. Please select a role to add objects.", "warning");
+          this.props.showAlert(this.props.t("alert.personalEditAttemptNoRole"), "warning");
           return;
         }
 
@@ -2803,7 +2804,8 @@ class Graphics extends Component {
               && this.state.selectedContextMenu.type === "OverlayAddMenu" && (
                 <>
                   <DropdownAddObjects
-                    title={"Edit Overlay Space"}
+                    title={this.props.t("edit.editOverlaySpace")}
+                    type="overlay"
                     xPos={this.state.overlayAreaContextMenuX}
                     yPos={this.state.overlayAreaContextMenuY}
                     state={this.state}
@@ -2853,7 +2855,8 @@ class Graphics extends Component {
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (
               <DropdownAddObjects
-                title={"Edit Group Space"}
+                title={this.props.t("edit.editGroupSpace")}
+                type="group"
                 xPos={this.state.groupAreaContextMenuX}
                 yPos={this.state.groupAreaContextMenuY}
                 state={this.state}
@@ -2943,7 +2946,8 @@ class Graphics extends Component {
               && this.state.selectedContextMenu
               && this.state.selectedContextMenu.type === "PersonalAddMenu" && (
                 <DropdownAddObjects
-                  title={"Edit Personal Space"}
+                  title={this.props.t("edit.editPersonalSpace")}
+                  type="personal"
                   xPos={this.state.personalAreaContextMenuX}
                   yPos={this.state.personalAreaContextMenuY}
                   state={this.state}
@@ -3072,4 +3076,4 @@ class Graphics extends Component {
   }
 }
 
-export default Graphics;
+export default withTranslation()(Graphics);

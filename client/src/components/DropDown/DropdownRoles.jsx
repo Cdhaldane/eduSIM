@@ -181,7 +181,7 @@ const DropdownRoles = (props) => {
                   id="roleNameAdd"
                   className="add-dropdown-item-input"
                   type="text"
-                  placeholder="New Role Name"
+                  placeholder={t("edit.newRoleName")}
                   onChange={handleRoleNameChange}
                   value={roleName} />
                 <input
@@ -287,16 +287,16 @@ const DropdownRoles = (props) => {
   const handleAddRole = () => {
     // Check if name is empty or a duplicate
     if (roleName.trim() === "") {
-      alertContext.showAlert("Role name cannot be empty.", "warning");
+      alertContext.showAlert(t("alert.noRoleName"), "warning");
       return;
     }
     if (roles.some(role => role.roleName === roleName.trim())) {
-      alertContext.showAlert("A role with this name already exists. Please pick a new name.", "warning");
+      alertContext.showAlert(t("alert.roleAlreadyExists"), "warning");
       return;
     }
     // Check if number value is valid (is an integer)
     if (roleNum === null || !/^\d+$/.test(roleNum)) {
-      alertContext.showAlert("Role quantity must be an integer.", "warning");
+      alertContext.showAlert(t("alert.noRoleLimit"), "warning");
       return;
     }
 
@@ -359,7 +359,7 @@ const DropdownRoles = (props) => {
                 id="roleNameAdd"
                 className="add-dropdown-item-input"
                 type="text"
-                placeholder="New Role Name"
+                placeholder={t("edit.newRoleName")}
                 {...(modifyIndex === -1 && {
                   onChange: handleRoleNameChange,
                   value: roleName
@@ -383,8 +383,8 @@ const DropdownRoles = (props) => {
         visible={confirmationVisible}
         hide={() => setConfirmationModal(false)}
         confirmFunction={() => handleDeleteRole(deleteIndex)}
-        confirmMessage={"Yes - Delete Role"}
-        message={`Are you sure you want to delete the ${roles[deleteIndex] ? roles[deleteIndex].roleName : ""} role? This action cannot be undone.`}
+        confirmMessage={t("edit.deleteRole")}
+        message={t("edit.confirmDeleteRole", { name: roles[deleteIndex] ? roles[deleteIndex].roleName : "" })}
       />
     </div>
   );

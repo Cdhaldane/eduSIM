@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.form`
   display: flex;
@@ -79,6 +80,7 @@ const Container = styled.form`
 function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
   const [formData, setFormData] = useState(init);
   const [lastHidden, setLastHidden] = useState(hidden);
+  const { t } = useTranslation();
 
   const addAlert = (e) => {
     e.preventDefault();
@@ -113,40 +115,44 @@ function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
     <Container hidden={hidden}>
       <div>
         <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
-        <label>Required to advance</label>
+        <label>{t("edit.requiredToAdvance")}</label>
       </div>
-      <label>Unfinished label</label>
+      <label>{t("edit.unfinishedLabel")}</label>
       <input type="text" placeholder="Not yet completed" value={formData.offLabel || ""} onChange={changeValue("offLabel")} />
-      <label>Finished label</label>
+      <label>{t("edit.finishedLabel")}</label>
       <input type="text" placeholder="Completed" value={formData.onLabel || ""} onChange={changeValue("onLabel")} />
-      <label>Completed when...</label>
+      <label>{t("edit.completedWhen")}</label>
       <input type="text" placeholder="Variable name" value={formData.varName || ""} onChange={changeValue("varName")} />
       <select 
         name="inputtype"
         value={formData.varCondition}
         onChange={changeValue("varCondition")} 
       >
-        <option value="positive">contains a positive value</option>
-        <option value="negative">contains a negative/null value</option>
-        <option value="isgreater">is greater than</option>
-        <option value="isless">is less than</option>
-        <option value="isequal">is equal to</option>
-        <option value="between">is between</option>
-        <option value="onchange">changes</option>
+        {[
+          "positive",
+          "negative",
+          "isgreater",
+          "isless",
+          "isequal",
+          "between",
+          "onchange"
+        ].map(val => (
+          <option value={val} key={val}>{t(`edit.cond.${val}`)}</option>
+        ))}
       </select>
       {formData.varCondition?.startsWith('is') && (
-        <input type="text" placeholder="Value to check" value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
+        <input type="text" placeholder={t("edit.valueToCheckAgainst")}  value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
       )}
       {formData.varCondition == 'between' && (
         <row>
-          <input type="text" placeholder="Min" value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
+          <input type="text" placeholder={t("edit.minimum")} value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
           <p>and</p> 
-          <input type="text" placeholder="Max" value={formData.varCheckAlt || ""} onChange={changeValue("varCheckAlt")} />
+          <input type="text" placeholder={t("edit.maximum")} value={formData.varCheckAlt || ""} onChange={changeValue("varCheckAlt")} />
         </row>
       )}
       <div>
-        <input type="button" onClick={onCancel} value="Cancel" />
-        <input type="submit" onClick={addAlert} value={adding ? "Add" : "Edit"} />
+        <input type="button" onClick={onCancel} value={t("common.cancel")} />
+        <input type="submit" onClick={addAlert} value={adding ? t("common.add") : t("common.edit")} />
       </div>
     </Container>
   );
