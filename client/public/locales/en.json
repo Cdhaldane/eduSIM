@@ -98,6 +98,32 @@
       "thanksForJoining": "Thank you for joining!",
       "resetSimulation": "Reset Simulation"
     },
+    "sidebar": {
+      "messaging": "Messaging",
+      "alerts": "Alerts",
+      "users": "Users",
+      "performance": "Performance",
+      "settings": "Settings",
+
+      "xSays": "{{name}} says:",
+      "youSaid": "You said:",
+      "you": "You",
+      "typeYourMessageHere": "Type your message here",
+      "notConnectedToChat": "You aren't connected to any chat room!",
+
+      "highContrastMode": "High Contrast Mode",
+      "highContrastModeExplanation": "Applies a filter for higher contrasting colours.",
+      "reduceMotion": "Reduce Motion",
+      "reduceMotionExplanation": "Disable in-app transitions and animations.",
+      "modifyTextSize": "Modify Text Size",
+      "modifyTextSizeExplanation": "Adjust how large text appears in-app.",
+
+      "taskComplete": "COMPLETE",
+      "taskNotComplete_optional": "OPTIONAL, NOT COMPLETED",
+      "taskNotComplete_required": "REQUIRED, NOT COMPLETED",
+      "noTasks": "No tasks to complete!",
+      "addNewTask": "ADD NEW TASK"
+    },
     "modal": {
       "addNewSimulation": "Add New Simulation",
       "chooseGame": "Choose a game",
