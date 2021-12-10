@@ -72,23 +72,7 @@ class Overlay extends Component {
                   }
                 )}
               >
-                <Layer
-                  ref={"overlayAreaLayer"}
-                  scaleX={this.props.state.overlayLayerScale}
-                  scaleY={this.props.state.overlayLayerScale}
-                  x={this.props.state.overlayLayerX}
-                  y={this.props.state.overlayLayerY}
-                  height={window.innerHeight}
-                  width={window.innerWidth}
-                  draggable={this.props.playMode ? false : this.props.state.layerDraggable}
-                  {...(this.props.playMode ? {} :
-                    {
-                      onDragMove: (e) => this.props.onDragMove(e, false)
-                    }
-                  )}
-                >
-                  {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit")}
-                </Layer>
+                {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit")}
               </Stage>
             </div>
           </div>

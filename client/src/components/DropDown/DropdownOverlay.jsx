@@ -30,8 +30,10 @@ const DropdownOverlay = (props) => {
 
   useEffect(() => {
     const overlay = props.pages[props.level - 1].overlays[props.overlayIndex];
-    setSelectedOption(overlay.overlayOpenOption);
-    setHideBtn(overlay.hideBtn);
+    if (overlay) {
+      setSelectedOption(overlay.overlayOpenOption);
+      setHideBtn(overlay.hideBtn);
+    }
   }, [props]);
 
   const optionSelected = (e) => {
@@ -80,7 +82,8 @@ const DropdownOverlay = (props) => {
             <Switch
               onChange={hideToggled}
               checked={hideBtn}
-              disabled={props.pages[props.level - 1].overlays[props.overlayIndex].overlayOpenOption === "doNotAutoOpen"}
+              disabled={props.pages[props.level - 1].overlays[props.overlayIndex] ? 
+                props.pages[props.level - 1].overlays[props.overlayIndex].overlayOpenOption === "doNotAutoOpen" : false}
               height={25}
               width={50}
               className="react-switch"

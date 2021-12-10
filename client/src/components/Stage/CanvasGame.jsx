@@ -458,17 +458,7 @@ class Graphics extends Component {
             width={window.innerWidth}
             ref="graphicStage"
           >
-            <Layer
-              ref="groupAreaLayer"
-              scaleX={this.state.groupLayerScale}
-              scaleY={this.state.groupLayerScale}
-              x={this.state.groupLayerX}
-              y={this.state.groupLayerY}
-              height={window.innerHeight}
-              width={window.innerWidth}
-            >
-              {this.props.loadObjects("group", "play")}
-            </Layer>
+            {this.props.loadObjects("group", "play")}
           </Stage>
         </div>
 
@@ -516,19 +506,7 @@ class Graphics extends Component {
                     document.getElementById("personalGameContainer").clientWidth : 0}
                   ref="personalAreaStage"
                 >
-                  <Layer
-                    ref="personalAreaLayer"
-                    name="personal"
-                    scaleX={this.state.personalLayerScale}
-                    scaleY={this.state.personalLayerScale}
-                    x={this.state.personalLayerX}
-                    y={this.state.personalLayerY}
-                    height={window.innerHeight}
-                    width={window.innerWidth}
-                    draggable={false}
-                  >
-                    {this.props.loadObjects("personal", "play")}
-                  </Layer>
+                  {this.props.loadObjects("personal", "play")}
                 </Stage>
               </div>
               {(this.state.personalAreaOpen !== 1)
