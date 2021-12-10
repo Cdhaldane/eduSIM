@@ -330,9 +330,8 @@ const CanvasPage = (props) => {
    * The following functions return the props that 
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
-  const defaultObjProps = (obj, index, canvas, editMode) => {
+  const defaultObjProps = (obj, canvas, editMode) => {
     return {
-      key: index,
       visible: canvas.state.canvasLoading ? false :
         (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
       rotation: obj.rotation,
@@ -840,71 +839,71 @@ const CanvasPage = (props) => {
     const layer = canvas.refs[`groupAreaLayer.main`];
     switch (type) {
       case "rectangles":
-        return <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} />;
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} />;
       case "ellipses":
-        return <Ellipse {...defaultObjProps(obj, index, canvas, editMode)} {...ellipseProps(obj)} />;
+        return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} />;
       case "pencils":
         return <Line {...lineProps(obj, index, canvas, editMode)} />;
       case "images":
-        return layer ? <URLImage {...defaultObjProps(obj, index, canvas, editMode)} {...imageProps(obj, layer)} /> : null;
+        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} /> : null;
       case "videos":
-        return layer ? <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
+        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
       case "audios":
-        return layer ? <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...audioProps(obj, layer)} /> : null;
+        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...audioProps(obj, layer)} /> : null;
       case "documents":
-        return <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...documentProps(obj, canvas)} />;
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
-        return <RegularPolygon {...defaultObjProps(obj, index, canvas, editMode)} {...triangleProps(obj)} />;
+        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)} />;
       case "stars":
-        return <Star {...defaultObjProps(obj, index, canvas, editMode)} {...starProps(obj)} />;
+        return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} />;
       case "texts":
-        return <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} />;
+        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} />;
       case "lines":
-        return <Line {...lineObjProps(obj, index, canvas, editMode)} />;
+        return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "polls":
         return <Poll
           defaultProps={{
-            ...defaultObjProps(obj, index, canvas, editMode),
+            ...defaultObjProps(obj, canvas, editMode),
             ...pollProps(obj, canvas, editMode)
           }}
           {...canvas.getInteractiveProps(obj.id)}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;
       case "connect4s":
         return <Connect4
-          defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;
       case "tics":
         return <TicTacToe
-          defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;
       case "htmlFrames":
         return <HTMLFrame
-          defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...htmlProps(obj)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;
       case "timers":
         return <Timer
-          defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(canvas) : {})}
           {...timerProps(obj, canvas, editMode)}
         />;
       case "inputs":
         return <Input
-          defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-          {...defaultObjProps(obj, index, canvas, editMode)}
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...inputProps(obj, canvas)}
           {...(editMode ? customObjProps(canvas) : {})}
@@ -961,10 +960,12 @@ const CanvasPage = (props) => {
 
               {/* This Rect acts as the transform object for custom objects */}
               <Rect
-                {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
+                {...defaultObjProps(canvas.state.customRect[0], canvas, editMode)}
                 ref={canvas.customRect}
                 draggable={false}
                 currentId={canvas.state.customRect[0].currentId}
+                width={canvas.state.customRect[0].width}
+                height={canvas.state.customRect[0].height}
               />
             </Layer>
           </>
@@ -974,11 +975,35 @@ const CanvasPage = (props) => {
         {objectIds.map((id, index) => {
           const type = id.replace(/\d+$/, "");
           const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+
+          const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
+          const customObj = customChild ? customChild.parentElement : null;
+
+          let stageParentElem = "";
+          if (stage === "overlay") {
+            stageParentElem = "overlayGameContainer";
+          } else if (stage === "personal") {
+            stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
+          } else {
+            stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
+          }
+          const stageElem = document.getElementById(stageParentElem).querySelectorAll(".konvajs-content")[0];
+
+          if (customObj) {
+            const canvasElems = stageElem.querySelectorAll("canvas");
+            if (!editMode) {
+              for (let i = 0; i < canvasElems.length; i++) {
+                canvasElems[i].style.pointerEvents = "none";
+              }
+            }
+            const canvasElem = canvasElems[index + 1];
+            stageElem.insertBefore(customObj, canvasElem);
+          }
           return obj ? (
-            <React.Fragment key={index}>
+            <React.Fragment key={obj.id}>
               {
                 objectIsOnStage(obj, canvas) === checkStage ?
-                  <Layer {...layerProps(canvas, stage, obj.id)} key={index}>
+                  <Layer {...layerProps(canvas, stage, obj.id)}>
                     {renderObject(obj, index, canvas, editMode, type)}
                   </Layer> : null
               }
@@ -988,9 +1013,9 @@ const CanvasPage = (props) => {
 
         {/*
           <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
-            defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
+            defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
             {...canvas.getInteractiveProps(obj.id)}
-            {...defaultObjProps(obj, index, canvas, editMode)}
+            {...defaultObjProps(obj, canvas, editMode)}
             {...textProps(obj, canvas, editMode)}
           />
         */}

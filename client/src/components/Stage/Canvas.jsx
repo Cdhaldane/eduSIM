@@ -342,7 +342,7 @@ class Graphics extends Component {
     if (!this.refs[layer]) return;
     let groups = [];
     for (let ref in this.refs) {
-      if (ref.includes(layer)) {
+      if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
         const layerGroups = this.refs[ref].find('Group');
         groups.push(layerGroups);
       }
@@ -818,7 +818,7 @@ class Graphics extends Component {
       let shape = null;
       let pointerPos = null;
       for (let ref in this.refs) {
-        if (ref.includes(layer)) {
+        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
           const subLayer = this.refs[ref];
           pointerPos = subLayer.getStage().getPointerPosition();
           if (e.evt) {
@@ -847,6 +847,45 @@ class Graphics extends Component {
       });
     }
   };
+
+  // Get list of object ids that are layers on the current canvas
+  getLayers = () => {
+    const page = this.state.pages[this.state.level - 1];
+    if (this.state.overlayOpen) {
+      const overlay = page.overlays.filter(overlay => overlay.id === this.state.overlayOpenIndex)[0];
+      return overlay.layers;
+    } else if (this.state.personalAreaOpen) {
+      return page.personalLayers;
+    } else {
+      return page.groupLayers;
+    }
+  }
+
+  setLayers = (newLayers, id) => {
+    const page = {...this.state.pages[this.state.level - 1]};
+    if (this.state.overlayOpen) {
+      let i = 0;
+      const overlay = page.overlays.filter((overlay, index) => {
+        if (overlay.id === this.state.overlayOpenIndex) {
+          i = index;
+          return true;
+        } else {
+          return false;
+        }
+      })[0];
+      overlay.layers = newLayers;
+      page.overlays[i] = overlay;
+    } else if (this.state.personalAreaOpen) {
+      page.personalLayers = newLayers;
+    } else {
+      page.groupLayers = newLayers;
+    }
+    const newPages = [...this.state.pages];
+    newPages[this.state.level - 1] = page;
+    this.setState({
+      pages: newPages
+    });
+  }
 
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
@@ -901,7 +940,7 @@ class Graphics extends Component {
       let clickShapeGroup = null;
       let pointerPos = null;
       for (let ref in this.refs) {
-        if (ref.includes(layer)) {
+        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
           const subLayer = this.refs[ref];
           pointerPos = subLayer.getStage().getPointerPosition();
           if (pointerPos) {
@@ -926,7 +965,7 @@ class Graphics extends Component {
           // This only runs if there has been a rectangle selection (click and drag selection)
           const elements = [];
           for (let ref in this.refs) {
-            if (ref.includes(layer)) {
+            if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
               this.refs[ref].find(".shape").forEach((elementNode) => {
                 const elBox = elementNode.getClientRect();
                 if (Konva.Util.haveIntersection(selBox, elBox)) {
@@ -1199,29 +1238,6 @@ class Graphics extends Component {
           }
 
           const rel = this.refs[`${areaClicked}AreaLayer.main`].getRelativePointerPosition();
-
-
-          /*const layer = personalArea ? "personalAreaLayer" :
-            (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-          const selectionRect = this.state.overlayOpen ? "overlaySelectionRect" :
-            (personalArea ? "personalSelectionRect" : "groupSelectionRect");
-          let shape = null;
-          let clickShapeGroup = null;
-          let pointerPos = null;
-          for (let ref in this.refs) {
-            if (ref.includes(layer)) {
-              const subLayer = this.refs[ref];
-              pointerPos = subLayer.getStage().getPointerPosition();
-              if (pointerPos) {
-                shape = subLayer.getIntersection(pointerPos);
-                clickShapeGroup = this.getShapeGroup(shape);
-              }
-              if (shape) {
-                break;
-              }
-            }
-          }*/
-
           this.setState({
             selectedContextMenu: {
               type: type,
@@ -1400,7 +1416,7 @@ class Graphics extends Component {
     if (this.customObjects.includes(objectsName)) {
       let customObjs = [];
       for (let ref in this.refs) {
-        if (ref.includes(layer)) {
+        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
           const layerGroups = this.refs[ref].find('Group');
           customObjs.push(layerGroups);
         }
@@ -1709,8 +1725,6 @@ class Graphics extends Component {
     } else {
       toDelete = this.state.groupSelection.flat();
     }
-
-    console.log(toDelete);
 
     // Remove from layers
     const page = this.state.pages[this.state.level - 1];
@@ -2307,7 +2321,7 @@ class Graphics extends Component {
           (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
         let groups = [];
         for (let ref in this.refs) {
-          if (ref.includes(layer)) {
+          if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
             const layerGroups = this.refs[ref].find('Group');
             groups.push(layerGroups);
           }
@@ -2670,7 +2684,7 @@ class Graphics extends Component {
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       let customObjs = [];
       for (let ref in this.refs) {
-        if (ref.includes(layer)) {
+        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
           const layerGroups = this.refs[ref].find('Group');
           customObjs.push(layerGroups);
         }
@@ -2829,6 +2843,30 @@ class Graphics extends Component {
         }
       }
     }
+  }
+
+  layerUp = (id) => {
+    const newLayers = [...this.getLayers()];
+    const i = newLayers.indexOf(id);
+    if (i < newLayers.length - 1) {
+      const obj = newLayers[i];
+      const next = newLayers[i + 1];
+      newLayers[i + 1] = obj;
+      newLayers[i] = next;
+    }
+    this.setLayers(newLayers, id);
+  }
+
+  layerDown = (id) => {
+    const newLayers = [...this.getLayers()];
+    const i = newLayers.indexOf(id);
+    if (i > 0) {
+      const obj = newLayers[i];
+      const prev = newLayers[i - 1];
+      newLayers[i - 1] = obj;
+      newLayers[i] = prev;
+    }
+    this.setLayers(newLayers, id);
   }
 
   render() {
@@ -3131,6 +3169,8 @@ class Graphics extends Component {
                   paste={this.handlePaste}
                   delete={this.handleDelete}
                   setPollData={this.setPollData}
+                  layerUp={this.layerUp}
+                  layerDown={this.layerDown}
                 />
               </Portal>
             )}
