@@ -28,7 +28,8 @@ const KonvaHtml = ({
   refName,
   defaultProps,
   visible,
-  objectSnapping
+  objectSnapping,
+  editMode
 }) => {
 
   const groupRef = useRef(null);
@@ -66,12 +67,21 @@ const KonvaHtml = ({
   };
 
   useLayoutEffect(() => {
-    var _a;
     const group = groupRef.current;
     if (!group) {
       return;
     }
-    const parent = (_a = group.getStage()) === null || _a === void 0 ? void 0 : _a.container();
+    let stage = null;
+    if (defaultProps.overlay) {
+      stage = "overlayGameContainer";
+    } else if (defaultProps.infolevel) {
+      stage = editMode ? "editPersonalContainer" : "personalGameContainer";
+    } else {
+      stage = editMode ? "editMainContainer" : "groupGameContainer";
+    }
+    stage = document.getElementById(stage);
+    if (!stage) return;
+    const parent = stage.querySelectorAll(".konvajs-content")[0];
     if (!parent) {
       return;
     }

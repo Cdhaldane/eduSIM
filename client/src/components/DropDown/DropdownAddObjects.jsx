@@ -200,7 +200,7 @@ const DropdownAddObjects = (props) => {
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
     const objectsDeletedState = props.state[`${objectName}DeleteCount`];
-    const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+    const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
 
     const name = objectName + numOfObj;
     const objX = props.state.selectedContextMenu.position.relX;
@@ -221,9 +221,31 @@ const DropdownAddObjects = (props) => {
       ...objectParameters
     };
 
+    let newPages = [...props.state.pages];
+    const thisPage = newPages[props.state.level - 1];
+    if (props.layer.attrs.name === "group") {
+      thisPage.groupLayers.push(name);
+    } else if (props.layer.attrs.name === "personal") {
+      thisPage.personalLayers.push(name);
+    } else {
+      let oIndex = 0;
+      const overlay = thisPage.overlays.filter((overlay,index) => {
+        if (overlay.id === props.state.overlayOpenIndex) {
+          oIndex = index;
+          return true;
+        } else {  
+          return false;
+        }
+      })[0];
+      overlay.layers.push(name);
+      thisPage.overlays[oIndex] = overlay;
+    }
+    newPages[props.state.level - 1] = thisPage;
+
     props.setState({
       [objectName]: [...objectsState, object],
-      selectedShapeName: name
+      selectedShapeName: name,
+      pages: newPages
     });
 
     props.close();

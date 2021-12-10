@@ -25,6 +25,7 @@ import {
   RegularPolygon,
   Line,
   Arrow,
+  Layer
 } from "react-konva";
 
 const CanvasPage = (props) => {
@@ -40,9 +41,7 @@ const CanvasPage = (props) => {
   // Save State
   // These are the names of the objects in state that are saved to the database
   const customObjects = props.customObjects;
-  const savedObjects = [
-    // Rendered Objects Only (shapes, media, etc.)
-    ...customObjects,
+  const konvaObjects = [
     "rectangles",
     "ellipses",
     "stars",
@@ -53,7 +52,11 @@ const CanvasPage = (props) => {
     "audios",
     "documents",
     "lines",
-    "pencils",  // The drawings
+    "pencils" // The drawings
+  ];
+  const savedObjects = [
+    // Rendered Objects Only (shapes, media, etc.)
+    ...customObjects, ...konvaObjects
   ];
   const customDeletes = [
     ...customObjects.map(name => `${name}DeleteCount`)
@@ -327,9 +330,8 @@ const CanvasPage = (props) => {
    * The following functions return the props that 
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
-  const defaultObjProps = (obj, index, canvas, editMode) => {
+  const defaultObjProps = (obj, canvas, editMode) => {
     return {
-      key: index,
       visible: canvas.state.canvasLoading ? false :
         (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
       rotation: obj.rotation,
@@ -502,8 +504,8 @@ const CanvasPage = (props) => {
           onTransform: canvas.handleTextTransform,
           onDblClick: () => canvas.handleTextDblClick(
             canvas.refs[obj.ref],
-            obj.infolevel ? canvas.refs.personalAreaLayer :
-              (obj.overlay ? canvas.refs.overlayLayer : canvas.refs.groupAreaLayer)
+            obj.infolevel ? canvas.refs[`personalAreaLayer.main`] :
+              (obj.overlay ? canvas.refs[`overlayAreaLayer.main`] : canvas.refs[`groupAreaLayer.main`])
           ),
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
@@ -641,7 +643,20 @@ const CanvasPage = (props) => {
     refresh: canvas.refresh,
     invisible: obj.invisible && !editMode,
     controls: obj.controls
-  })
+  });
+
+  const layerProps = (canvas, stage, type) => ({
+    ref: `${stage}AreaLayer.${type}`,
+    name: stage,
+    scaleX: canvas.state[`${stage}LayerScale`],
+    scaleY: canvas.state[`${stage}LayerScale`],
+    x: canvas.state[`${stage}LayerX`],
+    y: canvas.state[`${stage}LayerY`],
+    height: window.innerHeight,
+    width: window.innerWidth,
+    draggable: canvas.state.layerDraggable,
+    onDragMove: (e) => canvas.dragLayer(e, false)
+  });
 
   const pollProps = (obj, canvas, editMode) => {
     return {
@@ -822,6 +837,84 @@ const CanvasPage = (props) => {
     );
   };
 
+  const renderObject = (obj, index, canvas, editMode, type) => {
+    const layer = canvas.refs[`groupAreaLayer.main`];
+    switch (type) {
+      case "rectangles":
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} />;
+      case "ellipses":
+        return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} />;
+      case "pencils":
+        return <Line {...lineProps(obj, index, canvas, editMode)} />;
+      case "images":
+        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} /> : null;
+      case "videos":
+        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
+      case "audios":
+        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...audioProps(obj, layer)} /> : null;
+      case "documents":
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
+      case "triangles":
+        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)} />;
+      case "stars":
+        return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} />;
+      case "texts":
+        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} />;
+      case "lines":
+        return <Line {...lineObjProps(obj, canvas, editMode)} />;
+      case "polls":
+        return <Poll
+          defaultProps={{
+            ...defaultObjProps(obj, canvas, editMode),
+            ...pollProps(obj, canvas, editMode)
+          }}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...(editMode ? customObjProps(canvas) : {})}
+        />;
+      case "connect4s":
+        return <Connect4
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...(editMode ? customObjProps(canvas) : {})}
+        />;
+      case "tics":
+        return <TicTacToe
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...(editMode ? customObjProps(canvas) : {})}
+        />;
+      case "htmlFrames":
+        return <HTMLFrame
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getVariableProps()}
+          {...htmlProps(obj)}
+          {...(editMode ? customObjProps(canvas) : {})}
+        />;
+      case "timers":
+        return <Timer
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...(editMode ? customObjProps(canvas) : {})}
+          {...timerProps(obj, canvas, editMode)}
+        />;
+      case "inputs":
+        return <Input
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getVariableProps()}
+          {...inputProps(obj, canvas)}
+          {...(editMode ? customObjProps(canvas) : {})}
+        />;
+      default:
+        return null;
+    }
+  }
+
   const loadObjects = (stage, mode) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
@@ -833,170 +926,123 @@ const CanvasPage = (props) => {
       );
     }
 
+    const page = canvas.state.pages[canvas.state.level - 1];
+    let objectIds = [];
+    if (stage === "group") {
+      objectIds = page.groupLayers;
+    } else if (stage === "personal") {
+      objectIds = page.personalLayers;
+    } else {
+      if (canvas.state.overlayOpenIndex === -1) {
+        return;
+      }
+      const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
+      objectIds = overlay.layers;
+    }
+
     return (
       <>
         {editMode && (
           <>
-            {/* This Rect is for dragging the canvas */}
-            <Rect
-              id="ContainerRect"
-              x={canvasX}
-              y={canvasY}
-              height={canvasH}
-              width={canvasW}
-              // For debugging
-              stroke={"red"}
+            <Layer {...layerProps(canvas, stage, "main")}>
+              {/* This Rect is for dragging the canvas */}
+              <Rect
+                id="ContainerRect"
+                x={canvasX}
+                y={canvasY}
+                height={canvasH}
+                width={canvasW}
+              // Canvas Drag Rect Outline - FOR DEBUGGING
+              /*stroke={"red"}
               strokeWidth={2}
-              strokeScaleEnabled={false}
-            />
+              strokeScaleEnabled={false}*/
+              />
 
-            {renderGrid(canvas, stage)}
+              {renderGrid(canvas, stage)}
 
-            {/* This Rect acts as the transform object for custom objects */}
-            <Rect
-              {...defaultObjProps(canvas.state.customRect[0], 0, canvas, editMode)}
-              ref={canvas.customRect}
-              draggable={false}
-            />
+              {/* This Rect acts as the transform object for custom objects */}
+              <Rect
+                {...defaultObjProps(canvas.state.customRect[0], canvas, editMode)}
+                ref={canvas.customRect}
+                draggable={false}
+                currentId={canvas.state.customRect[0].currentId}
+                width={canvas.state.customRect[0].width}
+                height={canvas.state.customRect[0].height}
+              />
+            </Layer>
           </>
         )}
 
         {/* Render the object saved in state */}
-        {canvas.state.pencils.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Line {...lineProps(obj, index, canvas, editMode)} /> : null
-        })}
-        {canvas.state.rectangles.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...rectProps(obj)} /> : null
-        })}
-        {canvas.state.ellipses.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Ellipse {...defaultObjProps(obj, index, canvas, editMode)} {...ellipseProps(obj)} /> : null
-        })}
-        {canvas.state.images.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <URLImage {...defaultObjProps(obj, index, canvas, editMode)} {...imageProps(obj, canvas.refs.groupAreaLayer)} /> : null
-        })}
-        {canvas.state.videos.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...videoProps(obj, canvas.refs.groupAreaLayer)} /> : null
-        })}
-        {canvas.state.audios.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <URLVideo {...defaultObjProps(obj, index, canvas, editMode)} {...audioProps(obj, canvas.refs.groupAreaLayer)} /> : null
-        })}
-        {canvas.state.documents.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Rect {...defaultObjProps(obj, index, canvas, editMode)} {...documentProps(obj, canvas)} /> : null
-        })}
-        {canvas.state.triangles.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <RegularPolygon {...defaultObjProps(obj, index, canvas, editMode)} {...triangleProps(obj)} /> : null
-        })}
-        {canvas.state.stars.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Star {...defaultObjProps(obj, index, canvas, editMode)} {...starProps(obj)} /> : null
-        })}
-        {canvas.state.texts.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage && !editMode ?
-            <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...canvas.getInteractiveProps(obj.id)}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...textProps(obj, canvas, editMode)}
-            /> : null
-        })}
-        {canvas.state.texts.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Text {...defaultObjProps(obj, index, canvas, editMode)} {...textProps(obj, canvas, editMode)} /> : null
-        })}
-        {canvas.state.lines.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Line
-              {...lineObjProps(obj, index, canvas, editMode)}
-            /> : null
-        })}
-        {canvas.state.polls.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Poll
-              defaultProps={{
-                ...defaultObjProps(obj, index, canvas, editMode),
-                ...pollProps(obj, canvas, editMode)
-              }}
-              {...canvas.getInteractiveProps(obj.id)}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...(editMode ? customObjProps(canvas) : {})}
-            /> : null
-        })}
-        {canvas.state.connect4s.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Connect4
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getInteractiveProps(obj.id)}
-              {...(editMode ? customObjProps(canvas) : {})}
-            /> : null
-        })}
-        {canvas.state.tics.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <TicTacToe
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getInteractiveProps(obj.id)}
-              {...(editMode ? customObjProps(canvas) : {})}
-            /> : null
-        })}
-        {canvas.state.htmlFrames.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <HTMLFrame
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getVariableProps()}
-              {...htmlProps(obj)}
-              {...(editMode ? customObjProps(canvas) : {})}
-            /> : null
-        })}
-        {canvas.state.timers.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Timer
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getInteractiveProps(obj.id)}
-              {...(editMode ? customObjProps(canvas) : {})}
-              {...timerProps(obj, canvas, editMode)}
-            /> : null
+        {objectIds.map((id, index) => {
+          const type = id.replace(/\d+$/, "");
+          const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+
+          const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
+          const customObj = customChild ? customChild.parentElement : null;
+
+          let stageParentElem = "";
+          if (stage === "overlay") {
+            stageParentElem = "overlayGameContainer";
+          } else if (stage === "personal") {
+            stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
+          } else {
+            stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
+          }
+          const stageElem = document.getElementById(stageParentElem).querySelectorAll(".konvajs-content")[0];
+
+          if (customObj) {
+            const canvasElems = stageElem.querySelectorAll("canvas");
+            if (!editMode) {
+              for (let i = 0; i < canvasElems.length; i++) {
+                canvasElems[i].style.pointerEvents = "none";
+              }
+            }
+            const canvasElem = canvasElems[index + 1];
+            stageElem.insertBefore(customObj, canvasElem);
+          }
+          return obj ? (
+            <React.Fragment key={obj.id}>
+              {
+                objectIsOnStage(obj, canvas) === checkStage ?
+                  <Layer {...layerProps(canvas, stage, obj.id)}>
+                    {renderObject(obj, index, canvas, editMode, type)}
+                  </Layer> : null
+              }
+            </React.Fragment>
+          ) : null;
         })}
 
-        {canvas.state.inputs.map((obj, index) => {
-          return objectIsOnStage(obj, canvas) === checkStage ?
-            <Input
-              defaultProps={{ ...defaultObjProps(obj, index, canvas, editMode) }}
-              {...defaultObjProps(obj, index, canvas, editMode)}
-              {...canvas.getVariableProps()}
-              {...inputProps(obj, canvas)}
-              {...(editMode ? customObjProps(canvas) : {})}
-            /> : null
-        })}
-        {editMode && (
-          <>
-            {canvas.state.arrows.map((obj, index) => {
-              return (
-                !obj.from &&
-                !obj.to &&
-                obj.level === canvas.state.level &&
-                obj.infolevel === (stage === "personal")
-              ) ?
-                <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
-            })}
-            {canvas.state.guides.map((obj, index) => {
-              return <Line {...guideProps(obj, index, canvas, editMode)} />
-            })}
-            {/* This is the blue transformer rectangle that pops up when objects are selected */}
-            <TransformerComponent {...transformerProps(stage, canvas)} />
-            <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
-          </>
-        )}
+        {/*
+          <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
+            defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+            {...canvas.getInteractiveProps(obj.id)}
+            {...defaultObjProps(obj, canvas, editMode)}
+            {...textProps(obj, canvas, editMode)}
+          />
+        */}
+
+        <Layer {...layerProps(canvas, stage, "other")}>
+          {editMode && (
+            <>
+              {canvas.state.arrows.map((obj, index) => {
+                return (
+                  !obj.from &&
+                  !obj.to &&
+                  obj.level === canvas.state.level &&
+                  obj.infolevel === (stage === "personal")
+                ) ?
+                  <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+              })}
+              {canvas.state.guides.map((obj, index) => {
+                return <Line {...guideProps(obj, index, canvas, editMode)} />
+              })}
+              {/* This is the blue transformer rectangle that pops up when objects are selected */}
+              <TransformerComponent {...transformerProps(stage, canvas)} />
+              <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
+            </>
+          )}
+        </Layer>
 
         {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
         {/*<Ellipse

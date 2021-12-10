@@ -123,19 +123,21 @@ const ContextMenu = (props) => {
   }
 
   const debounceObjState = useCallback(
-		debounce(state => props.updateObjState(state), 100),
-		[], // will be created only once initially
-	);
+    debounce(state => props.updateObjState(state), 100),
+    [], // will be created only once initially
+  );
 
   const handleUpdateConditions = (key, value) => {
     setConditions(old => ({
       ...old,
       [key]: value ? value : undefined
     }))
-    debounceObjState({ conditions: {
-      ...conditions,
-      [key]: value ? value : undefined
-    }});
+    debounceObjState({
+      conditions: {
+        ...conditions,
+        [key]: value ? value : undefined
+      }
+    });
   }
 
   return (
@@ -165,6 +167,25 @@ const ContextMenu = (props) => {
         {props.unGroup && (
           <li onClick={handleUngrouping}>{t("edit.ungroupObjects")}</li>
         )}
+        <div className="layerLbl">
+          Layer
+        </div>
+        <div className="layerBtns">
+          <li
+            onClick={() => props.layerUp(props.selectedShapeName)}
+            className={`${props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : ""}`}
+          >
+            <i className="fas fa-arrow-up" />
+          </li>
+        </div>
+        <div className="layerBtns">
+          <li
+            onClick={() => props.layerDown(props.selectedShapeName)}
+            className={`${props.layers[0] === props.selectedShapeName ? "disabled" : ""}`}
+          >
+            <i className="fas fa-arrow-down" />
+          </li>
+        </div>
       </ul>
 
       {drop && (
@@ -191,7 +212,7 @@ const ContextMenu = (props) => {
       )}
       {conditionsVisible && (
         <div className="drop">
-          <div 
+          <div
             className="dropdownedit conditionsedit"
             style={{
               ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
@@ -204,10 +225,10 @@ const ContextMenu = (props) => {
               value={conditions?.varName || ""} 
               onChange={(e) => handleUpdateConditions("varName", e.target.value)} 
             />
-            <select 
+            <select
               name="inputtype"
-              value={conditions?.condition} 
-              onChange={(e) => handleUpdateConditions("condition", e.target.value)} 
+              value={conditions?.condition}
+              onChange={(e) => handleUpdateConditions("condition", e.target.value)}
             >
               {[
                 "positive",
