@@ -126,7 +126,7 @@ const Performance = forwardRef((props, ref) => {
         ${props.adminMode ? "forceDivNormal noForm" : ""}`} ref={ref}>
           {props.setData && (
             <div className="performanceContainer">
-              <h2 className="performanceTitle">Performance Report Settings</h2>
+              <h2 className="performanceTitle">{t("edit.performanceReportSettings")}</h2>
               <div className="performanceTableContainer">
                 <table className="performanceTable">
                   <tbody>

@@ -168,7 +168,7 @@ const ContextMenu = (props) => {
           <li onClick={handleUngrouping}>{t("edit.ungroupObjects")}</li>
         )}
         <div className="layerLbl">
-          Layer
+          {t("edit.layer")}
         </div>
         <div className="layerBtns">
           <li

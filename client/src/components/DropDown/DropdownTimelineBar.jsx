@@ -3,6 +3,7 @@ import ConfirmationModal from "../Modal/ConfirmationModal";
 import { ChromePicker } from 'react-color';
 import { CSSTransition } from 'react-transition-group';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
@@ -15,6 +16,7 @@ const DropdownTimelineBar = (props) => {
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
   const [pageColorSettings, setPageColorSettings] = useState("foreground");
   const dropdown = useRef();
+  const { t } = useTranslation();
 
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [modifyPageName, setModifyPageName] = useState("");
@@ -221,7 +223,7 @@ const DropdownTimelineBar = (props) => {
           onEnter={calcHeight}
           unmountOnExit>
           <div style={{ width: "500px" }}>
-            <h1>Edit Pages</h1>
+            <h1>{t("edit.editPages")}</h1>
             <div>
               {props.pages.map((page, index) => {
                 return (
@@ -287,7 +289,7 @@ const DropdownTimelineBar = (props) => {
               <input
                 className="add-dropdown-item-input"
                 type="text"
-                placeholder="New Page Name"
+                placeholder={t("edit.newPagePlaceholder")}
                 value={newPageName}
                 onChange={(e) => setNewPageName(e.target.value)}
               />
@@ -316,12 +318,12 @@ const DropdownTimelineBar = (props) => {
                     overflow: "hidden",
                     whiteSpace: "nowrap"
                   }}>
-                  Edit Page: {pages[currentSettingsIndex] ? pages[currentSettingsIndex].name : "Page Name"}
+                  {t("edit.editPageX", { name: pages[currentSettingsIndex] ? pages[currentSettingsIndex].name : "Page Name" })}
                 </h1>
               </div>
               <div id={"pageSettingsDropdown"}>
                 <div>
-                  <div className="pageSettingsLabels">Add Overlay:</div>
+                  <div className="pageSettingsLabels">{t("edit.addOverlay")}</div>
                   <div
                     style={{ display: "inline-block" }}
                     onClick={() => {
@@ -342,32 +344,32 @@ const DropdownTimelineBar = (props) => {
                 </div>
                 <div>
                   <div className={"pageSettingsColorButtons"}>
-                    <div className="pageSettingsLabels">Page Colors:</div>
+                    <div className="pageSettingsLabels">{t("edit.pageColors")}</div>
                     <div>
                       <button
                         className={`${pageColorSettings === "foreground" ? "editInputOptionSelected" : ""}`}
                         onClick={() => setPageColorSettings("foreground")}
                       >
-                        Foreground
+                        {t("edit.foreground")}
                       </button>
                     </div>
                     <button
                       className={`${pageColorSettings === "group" ? "editInputOptionSelected" : ""}`}
                       onClick={() => setPageColorSettings("group")}
                     >
-                      Group
+                      {t("edit.group")}
                     </button>
                     <button
                       className={`${pageColorSettings === "personal" ? "editInputOptionSelected" : ""}`}
                       onClick={() => setPageColorSettings("personal")}
                     >
-                      Personal
+                      {t("edit.personal")}
                     </button>
                     <button
                       className={`${pageColorSettings === "overlay" ? "editInputOptionSelected" : ""}`}
                       onClick={() => setPageColorSettings("overlay")}
                     >
-                      Overlay
+                      {t("edit.overlay")}
                     </button>
                   </div>
                   <ChromePicker
@@ -408,9 +410,8 @@ const DropdownTimelineBar = (props) => {
           }
           props.refreshCanvas();
         }}
-        confirmMessage={"Yes - Delete Page"}
-        message={`Are you sure you want to delete page ${pages[deletionIndex] ?
-          pages[deletionIndex].name : ""}? This action cannot be undone.`}
+        confirmMessage={t("edit.deletePage")}
+        message={t("edit.confirmDeletePage", { name: pages[deletionIndex] ? pages[deletionIndex].name : "" })}
       />
     </div>
   );

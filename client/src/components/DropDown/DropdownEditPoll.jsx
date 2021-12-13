@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import { useTranslation } from "react-i18next";
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 import "./DropdownEditPoll.css";
 
 const DropdownEditPoll = (props) => {
+  const { t } = useTranslation();
 
   const [activeMenu, setActiveMenu] = useState('main');
   const [name, setName] = useState(props.shape.attrs.customProps.customName);
@@ -85,7 +87,7 @@ const DropdownEditPoll = (props) => {
               <input
                 className="pollEditQuestionInput"
                 type="text"
-                placeholder="Question here"
+                placeholder={t("edit.questionPlaceholder")}
                 value={q.title}
                 onChange={(e) => {
                   setQuestionParam("title", pIndex, index, e.target.value);
@@ -122,27 +124,14 @@ const DropdownEditPoll = (props) => {
 
                 setQuestionParam("correctAnswer", pIndex, index, null);
               }}>
-                <option value="text">
-                  Text
-                </option>
-                <option value="dropdown">
-                  Dropdown
-                </option>
-                <option value="radiogroup">
-                  Radio Group
-                </option>
-                <option value="checkbox">
-                  Checkboxes
-                </option>
-                <option value="boolean">
-                  Boolean
-                </option>
-                <option value="date">
-                  Date
-                </option>
-                <option value="color">
-                  Color
-                </option>
+                {[
+                  "text", "dropdown", "radiogroup",
+                  "checkbox", "boolean", "date", "color"
+                ].map(key => (
+                  <option value={key} key={key}>
+                    {t(`edit.pollq.${key}`)}
+                  </option>
+                ))}
               </select>
             </td>
             <td className="pollsEditorRequiredCheck">
@@ -285,7 +274,7 @@ const DropdownEditPoll = (props) => {
             <tr>
               <td>
                 <i className="fas fa-scroll editPollNewPageIcon" />
-                New Page
+                {t("edit.newPage")}
               </td>
               <td></td>
               <td></td>
@@ -384,7 +373,7 @@ const DropdownEditPoll = (props) => {
               <input
                 className="pollEditQuestionInput"
                 type="text"
-                placeholder="Option text here"
+                placeholder={t("edit.optionTextPlaceholder")}
                 value={o}
                 onChange={(e) => {
                   const newOptions = [...options];
@@ -436,16 +425,16 @@ const DropdownEditPoll = (props) => {
     if (getSelectedQType() === "boolean") {
       return (
         <>
-          <option value="none">Select an Answer</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
+          <option value="none">{t("edit.selectAnAnswer")}</option>
+          <option value="yes">{t("common.yes")}</option>
+          <option value="no">{t("common.no")}</option>
         </>
       );
     } else {
       const choices = pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices;
       return (
         <>
-          <option value="none">Select an Answer</option>
+          <option value="none">{t("edit.selectAnAnswer")}</option>
           {choices.map((c, i) => {
             return (
               <option key={i} value={c}>{c}</option>
@@ -499,10 +488,10 @@ const DropdownEditPoll = (props) => {
         onEnter={calcHeight}
       >
         <div>
-          <h1 style={{ paddingBottom: "0.5rem", display: "inline-block" }}>Poll Name:</h1>
+          <h1 style={{ paddingBottom: "0.5rem", display: "inline-block" }}>{t("edit.pollName")}</h1>
           <input
             type="text"
-            placeholder="Poll Name"
+            placeholder={t("edit.pollNamePlaceholder")}
             className="editPollNameBox"
             value={name}
             onChange={(e) => {
@@ -514,10 +503,10 @@ const DropdownEditPoll = (props) => {
             <thead className="editPollTableHead">
               <tr>
                 <th>
-                  Question
+                  {t("edit.question")}
                 </th>
                 <th>
-                  Type
+                  {t("edit.type")}
                 </th>
                 <th className="editPollStar">
                   *
@@ -537,7 +526,7 @@ const DropdownEditPoll = (props) => {
             className="editPollAddQuestionBtn"
           >
             <i className="fas fa-question-circle" />
-            Add Question
+            {t("edit.addQuestion")}
           </button>
 
           <button
@@ -546,7 +535,7 @@ const DropdownEditPoll = (props) => {
             style={{ marginLeft: "10px" }}
           >
             <i className="fas fa-scroll" />
-            Add New Page
+            {t("edit.addNewPage")}
           </button>
         </div>
       </CSSTransition>
@@ -571,10 +560,10 @@ const DropdownEditPoll = (props) => {
             display: "inline"
           }}
           >
-            Edit Question: "{
+            {t("edit.editQuestionX", { name:
               pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].title ||
               pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].name
-            }"
+            })}
           </h1>
           <table
             style={{
@@ -600,7 +589,7 @@ const DropdownEditPoll = (props) => {
                 className="editPollAddQuestionBtn"
               >
                 <i className="fas fa-list" />
-                Add Option
+                {t("edit.addOption")}
               </button>
               <hr />
             </>
@@ -611,12 +600,12 @@ const DropdownEditPoll = (props) => {
               textAlign: "center"
             }}
           >
-            Correct Answer (Leave blank if not applicable):
+            {t("edit.correctAnswerBlankAccepted")}
             {["text"].includes(getSelectedQType()) && (
               <input
                 className="editPollAnswerBox"
                 type="text"
-                placeholder="Answer Value Here"
+                placeholder={t("edit.answerValuePlaceholder")}
                 value={
                   pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
                     pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
