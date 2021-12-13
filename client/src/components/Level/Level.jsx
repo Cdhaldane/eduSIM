@@ -71,7 +71,7 @@ const Level = (props) => {
     let untitledNum = 1;
     for (let i = 0; i < pages.length; i++) {
       if (pages[i].name === "") {
-        pages[i].name = "Untitled " + untitledNum;
+        pages[i].name = t("edit.untitledX", { index: untitledNum });
         untitledNum++;
       }
     }
@@ -104,7 +104,7 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div style={{ width: "180px" }}>
+            <div className="editModeTitleContainer">
               <h1 id="editModeTitle">
                 {t("edit.editMode")}
               </h1>

@@ -144,7 +144,7 @@ export const updateRoomTimeout = async (id, server) => {
       timeElapsed: moment().valueOf() - startTime + (timeElapsed || 0)
     });
     if (server) {
-      server.to(id).emit("errorLog", "Pausing room due to inactivity timeout.");
+      server.to(id).emit("errorLog", { key: "alert.inactivityTimeoutPause" });
       server.to(id).emit("roomStatusUpdate", {
         room: id,
         status: newStatus,

@@ -91,8 +91,8 @@ function Join(props) {
           [data.room]: [...messages[data.room] || [], { sender: data.sender, message: data.message }]
         }));
       });
-      client.on("errorLog", (message) => {
-        alertContext.showAlert(message, "error");
+      client.on("errorLog", ({key, params={}}) => {
+        alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
       return () => client.disconnect();

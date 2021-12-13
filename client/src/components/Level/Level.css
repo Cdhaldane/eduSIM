@@ -11,6 +11,10 @@
   z-index: 5;
 }
 
+.editModeTitleContainer {
+  margin-right: 20px;
+}
+
 #editModeTitle {
   width: 150px;
   opacity: 0.7;

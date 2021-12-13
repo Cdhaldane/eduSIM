@@ -147,7 +147,7 @@ export default async (server, client, event, args) => {
         const { running, timeElapsed, settings } = await getRoomStatus(room);
 
         if (running || timeElapsed) {
-          client.emit("errorLog", "Warning: settings will not update while game is in progress. Please reset the game before making changes.");
+          client.emit("errorLog", { key: "alert.noUpdateGameInProgress" });
           return;
         }
 
@@ -164,7 +164,7 @@ export default async (server, client, event, args) => {
         for (const { dataValues: room } of rooms) {
           const { running, timeElapsed } = await getRoomStatus(room.gameroom_url);
           if (running || timeElapsed) {
-            client.emit("errorLog", `Warning: settings will not update while game "${room.gameroom_name}" is in progress. Please reset the game before making changes.`);
+            client.emit("errorLog", { key: "alert.noUpdateGameXInProgress", params: { game: room.gameroom_name } });
             good = false;
           }
         };

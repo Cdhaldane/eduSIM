@@ -59,7 +59,7 @@ export default async (server, client, event, args) => {
     case "playerUpdate": {
       const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
-        client.emit("errorLog", "You are attempting to join as a player that has already joined.");
+        client.emit("errorLog", { key: "alert.attemptJoinAsExistingPlayer" });
         return;
       }
       if (Object.keys(getPlayer(client.id)).length === 0) {

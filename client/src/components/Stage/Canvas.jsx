@@ -89,7 +89,7 @@ class Graphics extends Component {
     const defaultPages = defaultPagesTemp.map((page, index) => {
       return {
         ...page,
-        name: "Page " + (index + 1)
+        name: this.props.t("admin.pageX", { page: (index + 1) })
       };
     });
 

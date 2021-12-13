@@ -42,7 +42,7 @@ const DropdownEditPoll = (props) => {
       const qJson = questions.map((q, index) => {
         return {
           id: q.id,
-          name: `Page ${pIndex+1} Question ${index+1}`,
+          name: t("edit.pageXQuestionY", { p: pIndex+1, q: index+1 }),
           type: q.type,
           inputType: q.inputType,
           title: q.title,
@@ -108,8 +108,8 @@ const DropdownEditPoll = (props) => {
                   case "checkbox":
                     setQuestionParam("hasNone", pIndex, index, true);
                     setQuestionParam("choices", pIndex, index, [
-                      "Click the cog to edit choices...",
-                      "Click the cog to edit choices..."
+                      t("edit.clickCogToEditChoices"),
+                      t("edit.clickCogToEditChoices")
                     ]);
                     setQuestionParam("colCount", pIndex, index, 1);
                   default:

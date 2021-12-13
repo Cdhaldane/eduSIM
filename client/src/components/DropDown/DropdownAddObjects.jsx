@@ -478,7 +478,7 @@ const DropdownAddObjects = (props) => {
                   id: 0,
                   type: "text",
                   name: "0",
-                  title: "Sample Text Question:",
+                  title: t("edit.sampleTextQuestion"),
                   isRequired: true,
                   performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }, {
@@ -486,14 +486,14 @@ const DropdownAddObjects = (props) => {
                   type: "text",
                   name: "1",
                   inputType: "date",
-                  title: "Sample Date Question:",
+                  title: t("edit.sampleDateQuestion"),
                   isRequired: false,
                   performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
-                  title: "Sample Yes/No Question:",
+                  title: t("edit.sampleYesNoQuestion"),
                   isRequired: false,
                   performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }
@@ -531,7 +531,7 @@ const DropdownAddObjects = (props) => {
 
   const addInput = (varType) => {
     addObjectToLayer(
-      "inputs", { varType, label: "Label text" }
+      "inputs", { varType, label: t("edit.labelText") }
     );
   }
 

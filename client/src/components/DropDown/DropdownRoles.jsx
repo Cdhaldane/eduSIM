@@ -57,12 +57,12 @@ const DropdownRoles = (props) => {
       } else {
         const defaultRole = {
           id: uuidv4(),
-          roleName: "Default Role",
+          roleName: t("game.defaultRole"),
           numOfSpots: -1,
         };
         const defaultRoleAPI = {
           gameinstanceid: props.gameid,
-          gamerole: "Default Role",
+          gamerole: t("game.defaultRole"),
           numspots: -1,
         };
         axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
