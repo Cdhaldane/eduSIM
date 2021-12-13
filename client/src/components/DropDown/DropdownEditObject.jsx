@@ -6,6 +6,7 @@ import FontPicker from "font-picker-react";
 import debounce from 'lodash.debounce';
 import DOMPurify from 'dompurify';
 import { CompactPicker } from 'react-color';
+import { useTranslation } from "react-i18next";
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
@@ -26,6 +27,7 @@ function DropdownEditObject(props) {
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.getObjState());
+  const { t } = useTranslation();
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -238,7 +240,7 @@ function DropdownEditObject(props) {
   }
 
   if (!loading) {
-    if (props.title === "Edit Shape") {
+    if (props.title === "shape") {
       /* Edit a Shape Object */
       return (
         <div
@@ -254,11 +256,11 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{props.title}</h1>
+              <h1>{t("edit.shapeEdit")}</h1>
               {!props.selectedShapeName.includes("lines") && (
                 <>
                   <b>
-                    Fill:
+                    {t("edit.colorFill")}
                     <TwitterPicker
                       colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                       color={fillColor}
@@ -270,7 +272,7 @@ function DropdownEditObject(props) {
                 </>
               )}
               <b>
-                Stroke:
+                {t("edit.colorStroke")}
                 <TwitterPicker
                   colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                   color={strokeColor}
@@ -280,7 +282,7 @@ function DropdownEditObject(props) {
               </b>
               <br />
               <b>
-                Stroke width:
+                {t("edit.strokeWidth")}
                 <Slider
                   min={0}
                   max={100}
@@ -295,7 +297,7 @@ function DropdownEditObject(props) {
               </b>
               <br />
               <b>
-                Opacity:
+                {t("edit.opacity")}
                 <Slider
                   className="slider"
                   value={opacity}
@@ -324,7 +326,7 @@ function DropdownEditObject(props) {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "Edit Text") {
+    } else if (props.title === "text") {
       /* Edit a Text Object */
       return (
         <div
@@ -340,9 +342,9 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{props.title}</h1>
+              <h1>{t("edit.textEdit")}</h1>
               <b>
-                Text Color:
+              {t("edit.textColor")}
                 <TwitterPicker
                   colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                   color={fillColor}
@@ -351,7 +353,7 @@ function DropdownEditObject(props) {
                   onChangeComplete={handleChangeF} />
               </b>
               <br />
-              <b>Text Font:</b>
+              <b>{t("edit.textFont")}</b>
 
               <b id="fontpick">
                 {font && (
@@ -368,7 +370,7 @@ function DropdownEditObject(props) {
               <br />
               <b id="text">
                 <br />
-                Opacity:
+                {t("edit.opacity")}
                 <Slider
                   className="slider"
                   value={opacity}
@@ -383,13 +385,13 @@ function DropdownEditObject(props) {
               </b>
               <br />
               <br />
-              <b>Text Size:</b>
+              <b>{t("edit.textSize")}</b>
               <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
             </div>
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "Edit Poll") {
+    } else if (props.title === "poll") {
       return (
         <div
           className="dropdownedit"
@@ -407,13 +409,13 @@ function DropdownEditObject(props) {
               <DropdownEditPoll
                 setData={props.setPollData}
                 shape={shape}
-                title={props.title}
+                title={t("edit.pollEdit")}
               />
             </div>
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "Edit Timer") {
+    } else if (props.title === "timer") {
       return (
         <div
           className="dropdownedit"
@@ -428,34 +430,34 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit htmledit">
-              <h1>{props.title}</h1>
+              <h1>{t("edit.timerEdit")}</h1>
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.controls} onChange={() => handleProperty(!objState?.controls, 'controls')} />
-                <p>Enable controls</p>
+                <p>{t("edit.enableControls")}</p>
               </div>
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!objState?.invisible} onChange={() => handleProperty(!objState?.invisible, 'invisible')} />
-                <p>Visible</p>
+                <p>{t("edit.visible")}</p>
               </div>
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.timeLimit} onChange={() => handleTimeLimit(!objState?.timeLimit ? 60 : null)} />
-                <p>Count down</p>
+                <p>{t("edit.timerCountDown")}</p>
               </div>
               {!!objState?.timeLimit && (
                 <>
-                  <p>Time limit (seconds)</p>
+                  <p>{t("edit.timeLimitSeconds")}</p>
                   <input type="number" onChange={e => handleTimeLimit(e.target.value, true)} value={objState?.timeLimit} placeholder="Time limit" />
-                  <p>Finished flag variable</p>
+                  <p>{t("edit.timerFinishedVariable")}</p>
                   <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName || ""} placeholder="Variable name" />
                 </>
               )}
-              <p>Start timer flag variable</p>
+              <p>{t("edit.timerStartVariable")}</p>
               <input type="text" onChange={e => handleVarEnable(e.target.value)} value={objState?.varEnable || ""} placeholder="Variable name" />
             </div>
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "Edit HTML") {
+    } else if (props.title === "html") {
       return (
         <div
           className="dropdownedit"
@@ -470,37 +472,41 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit htmledit">
-              <h1>{props.title}</h1>
+              <h1>{t("edit.htmlEdit")}</h1>
               <div className="htmlwhinput">
                 <div>
-                  <p>Width</p>
+                  <p>{t("edit.width")}</p>
                   <input type="number" onChange={e => handleWidth(e.target.value)} value={objState?.containerWidth} placeholder="Auto" />
                 </div>
                 <div>
-                  <p>Height</p>
+                  <p>{t("edit.height")}</p>
                   <input type="number" onChange={e => handleHeight(e.target.value)} value={objState?.containerHeight} placeholder="Auto" />
                 </div>
               </div>
-              <p>HTML Content:</p>
+              <p>{t("edit.htmlContent")}</p>
               <textarea className="htmltextarea" onChange={e => handleHTML(e.target.value)} value={objState?.htmlValue} />
-              <p>iFrame URL:</p>
+              <p>{t("edit.iframeURL")}</p>
               <input type="text" onChange={e => handleIFrameURL(e.target.value)} value={objState?.iframeSrc} placeholder="URL" />
 
               <div className="htmliframeinput">
                 <input type="checkbox" checked={objState?.varEnable} onChange={() => handleVarEnable(!objState?.varEnable)} />
-                <p>Listen to messages</p>
+                <p>{t("edit.listenToMessages")}</p>
               </div>
-              <p>Variables to send (separated by commas):</p>
+              <p>{t("edit.variablesToSendCommaSeparated")}</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} />
               <div className="htmliframeinput">
                 <input type="checkbox" checked={objState?.varInterval} onChange={() => handleVarInterval(!objState?.varInterval)} />
-                <p>Send at intervals</p>
+                <p>{t("edit.sendAtIntervals")}</p>
+              </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <p>{t("edit.variableSync")}</p>
               </div>
             </div>
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "Edit Input") {
+    } else if (props.title === "input") {
       return (
         <div
           className="dropdownedit"
@@ -515,16 +521,20 @@ function DropdownEditObject(props) {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit htmledit">
-              <h1>{props.title}</h1>
-              <p>Input type:</p>
+              <h1>{t("edit.inputEdit")}</h1>
+              <p>{t("edit.inputType")}</p>
               <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
-                <option value="checkbox">Checkbox</option>
-                <option value="text">Text</option>
-                <option value="button">Button</option>
+                <option value="checkbox">{t("edit.input.checkbox")}</option>
+                <option value="text">{t("edit.input.textbox")}</option>
+                <option value="button">{t("edit.input.checkbox")}</option>
               </select>
-              <p>Variable name to set:</p>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <p>{t("edit.variableSync")}</p>
+              </div>
+              <p>{t("edit.variableNameToSet")}</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-              <p>Label:</p>
+              <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (
                 <>
@@ -533,19 +543,19 @@ function DropdownEditObject(props) {
                       className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
                       onClick={() => newTabInputSettings("fill")}
                     >
-                      Fill
+                      {t("edit.colorFill")}
                     </button>
                     <button
                       className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
                       onClick={() => newTabInputSettings("stroke")}
                     >
-                      Stroke
+                      {t("edit.colorStroke")}
                     </button>
                     <button
                       className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
                       onClick={() => newTabInputSettings("text")}
                     >
-                      Text
+                      {t("edit.shape.text")}
                     </button>
                   </div>
                   {inputCurrentOptions === "fill" && (
@@ -573,7 +583,7 @@ function DropdownEditObject(props) {
                           handleInputStyle("borderColor", color.hex);
                         }}
                       />
-                      <span>Stroke Width:</span>
+                      <span>{t("edit.strokeWidth")}</span>
                       <input
                         type="range"
                         min="1"

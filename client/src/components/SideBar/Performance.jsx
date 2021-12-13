@@ -1,10 +1,12 @@
 import React, { useState, forwardRef } from "react";
 import Switch from "react-switch";
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from "react-i18next";
 
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
+  const { t } = useTranslation();
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
     const val = e.target.value;
@@ -56,7 +58,7 @@ const Performance = forwardRef((props, ref) => {
     responseSet.delete(undefined);
     const responsesNoDupes = [...responseSet];
     if (!responsesNoDupes.length) {
-      answer = "No Responses";
+      answer = t("edit.noResponses");
     } else if (question.performanceOption === "allResponses" || props.adminMode) {
       // Convert all data to Pie Chart format
       const pieChartData = [];
@@ -87,9 +89,9 @@ const Performance = forwardRef((props, ref) => {
                     );
                   }
                   if (entry.name === true) {
-                    return "Yes";
+                    return t("common.yes");
                   } else if (entry.name === false) {
-                    return "No";
+                    return t("common.no");
                   } else {
                     return entry.name;
                   }
@@ -124,7 +126,7 @@ const Performance = forwardRef((props, ref) => {
         ${props.adminMode ? "forceDivNormal noForm" : ""}`} ref={ref}>
           {props.setData && (
             <div className="performanceContainer">
-              <h2 className="performanceTitle">Performance Report Settings</h2>
+              <h2 className="performanceTitle">{t("edit.performanceReportSettings")}</h2>
               <div className="performanceTableContainer">
                 <table className="performanceTable">
                   <tbody>
@@ -151,7 +153,7 @@ const Performance = forwardRef((props, ref) => {
                                     checked={poll.performanceEnabled}
                                   />
                                   <span>
-                                    {`Poll ${i + 1} - ${poll.customName ? poll.customName : "Untitled"}`}
+                                    {t("edit.pollXName", { num: i + 1, name: poll.customName ? poll.customName : t("edit.untitled") })}
                                   </span>
                                   {poll.performanceEnabled && (
                                     <>
@@ -178,7 +180,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="personalResponse"
                                                                 />
-                                                                Show Only User's Own Answer
+                                                                {t("edit.showOnlyUsersOwnAnswer")}
                                                               </label>
                                                             </td>
                                                             <td>
@@ -190,7 +192,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="commonResponse"
                                                                 />
-                                                                Show Most Common Answer
+                                                                {t("edit.showMostCommonAnswer")}
                                                               </label>
                                                             </td>
                                                           </tr>
@@ -204,7 +206,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="allResponses"
                                                                 />
-                                                                Show All User Answers
+                                                                {t("edit.showAllUserAnswers")}
                                                               </label>
                                                             </td>
                                                             <td>
@@ -216,7 +218,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="noShow"
                                                                 />
-                                                                Do Not Show This Question
+                                                                {t("edit.dontShowQuestion")}
                                                               </label>
                                                             </td>
                                                           </tr>
@@ -234,7 +236,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="groupResponse"
                                                                 />
-                                                                Show Group Answer
+                                                                {t("edit.showGroupAnswer")}
                                                               </label>
                                                             </td>
                                                             <td>
@@ -246,7 +248,7 @@ const Performance = forwardRef((props, ref) => {
                                                                   name={`poll${i}P${pageI}Q${qI}`}
                                                                   value="noShow"
                                                                 />
-                                                                Do Not Show This Question
+                                                                {t("edit.dontShowQuestion")}
                                                               </label>
                                                             </td>
                                                           </tr>
@@ -274,14 +276,12 @@ const Performance = forwardRef((props, ref) => {
                 </table>
                 {!Object.keys(props.customObjs).some(key => props.customObjs[key].length) && (
                   <div className="performanceNoObjects">
-                    <div><b>There are currently no interactive objects.</b></div>
+                    <div><b>{t("edit.noInteractiveObjects")}</b></div>
                     <p>
-                      If you add interactive objects to the group area or personal area, settings for their
-                      performance report will show up here.
+                      {t("edit.interactiveObjectsExplanation")}
                     </p>
                     <p>
-                      The performance report is used to show players feedback about
-                      what they have done during the simulation.
+                      {t("edit.performanceReportExplanation")}
                     </p>
                   </div>
                 )}
@@ -290,7 +290,7 @@ const Performance = forwardRef((props, ref) => {
           )}
           {!props.setData && (
             <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
-              <h2 style={{ display: props.adminMode ? "none" : "block" }}>Performance Report</h2>
+              <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
               <div>
                 {props.status && props.customObjs && (
                   <>
@@ -312,7 +312,7 @@ const Performance = forwardRef((props, ref) => {
                           questions = questions.flat();
                           return (
                             <React.Fragment key={pollI}>
-                              <div className="h2">{`Poll: ${poll.customName ? poll.customName : "Untitled"}`}</div>
+                              <div className="h2">{t("pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
                               {questions.map((question, questionI) => {
                                 let answer = "";
                                 if (props.adminMode) {
@@ -329,7 +329,7 @@ const Performance = forwardRef((props, ref) => {
                                     answer = pollAllDataAnswer(props.status[poll.id], question);
                                   }
                                 } else {
-                                  answer = "No Response Yet";
+                                  answer = null;
                                 }
                                 return (
                                   <React.Fragment key={questionI}>
@@ -337,12 +337,11 @@ const Performance = forwardRef((props, ref) => {
                                       <>
                                         <div className="newQ"><span>Q: </span>{question.title}</div>
                                         <div><span>A: </span>
-                                          {answer === "No Response Yet" && (
+                                          {answer === null ? (
                                             <i>
-                                              {answer}
+                                              {t("edit.noResponseYet")}
                                             </i>
-                                          )}
-                                          {answer !== "No Response Yet" && (
+                                          ) : (
                                             <>
                                               {answer}
                                             </>
@@ -366,20 +365,20 @@ const Performance = forwardRef((props, ref) => {
                     {props.adminMode && (
                       <>
                         <p><b>
-                          There is currently no data to display.
+                          {t("edit.noDataToDisplay")}
                         </b></p>
                         <p>
-                          Data will appear here once students have started to interact with the simulation.
+                          {t("edit.noDataExplanationAdmin")}
                         </p>
                       </>
                     )}
                     {!props.adminMode && (
                       <>
                         <p><b>
-                          There is currently no data to display.
+                          {t("edit.noDataToDisplay")}
                         </b></p>
                         <p>
-                          Interact with parts of the simulation to see your progress here.
+                          {t("edit.noDataExplanation")}
                         </p>
                       </>
                     )}

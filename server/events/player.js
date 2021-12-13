@@ -5,6 +5,7 @@ import {
   getRoomStatus,
   updateRoomStatus,
   updateChatlog,
+  updateRoomTimeout,
   addInteraction
 } from './utils';
 import moment from "moment";
@@ -54,6 +55,7 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "playerUpdate": {
       const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
@@ -77,13 +79,14 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "interaction": {
       const { gamepieceId, parameters, sameState } = args;
       
       const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
-        client.emit("errorLog", "Game is paused/stopped!");
+        // client.emit("errorLog", "Game is paused/stopped!");
         return;
       }
 
@@ -115,6 +118,43 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
+    case "varChange": {
+      const { name, value, increment = false } = args;
+      
+      const { running, variables = {}, level } = await getRoomStatus(room);
+
+      if (!running) {
+        // client.emit("errorLog", "Game is paused/stopped!");
+        return;
+      }
+
+      const newStatus = await updateRoomStatus(room, {
+        variables: {
+          ...variables,
+          [name]: increment ? ((variables[name] || 0) + value) : value
+        }
+      });
+
+      server.to(room).emit("roomStatusUpdate", {
+        room,
+        status: newStatus,
+        lastSetVar: name
+      });
+
+      const player = await getPlayer(client.id);
+      if (!player.invited) player.dbid = undefined;
+
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        variable: name,
+        value,
+        player
+      });
+
+      break;
+    };
     
     case "goToPage": {
       const { level } = args;
@@ -129,4 +169,6 @@ export default async (server, client, event, args) => {
       });
     }
   }
+
+  updateRoomTimeout(room, server);
 }

@@ -9,6 +9,7 @@ import { io } from "socket.io-client";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
 function Join(props) {
   const [showNote, setShowNote] = useState(false);
@@ -21,6 +22,7 @@ function Join(props) {
   const [numTabs, setNumTabs] = useState(0);
   const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   if (props.location.gameinstance !== undefined) {
     localStorage.setItem('gameid', props.location.gameinstance);
@@ -178,7 +180,7 @@ function Join(props) {
         <div className="joinboard-info">
           <h2 className="joinboard-title">{localStorage.title}</h2>
           <button onClick={() => setShowNote(!showNote)} className="addbutton">
-            Add Student/Participant List +
+            {t("admin.addStudentCSV")}
           </button>
         </div>
         <div className="joinboard-controls">
@@ -186,7 +188,7 @@ function Join(props) {
             <>
               <p>{currentRoom[0]}</p>
               <p>
-                {advanceMode === "teacher" && `Page ${currentRoomStatus.level || 1}, `}
+                {advanceMode === "teacher" && t("admin.pageX", { page: currentRoomStatus.level || 1 }) + ", "}
                 <AutoUpdate
                   value={(currentRoomStatus.running
                     ? timeFromNow
@@ -196,23 +198,23 @@ function Join(props) {
                   enabled
                 />
                 {(currentRoomStatus.running == true ? '' : (
-                  currentRoomStatus.running === false ? ' (paused)' : ' (stopped)'
+                  currentRoomStatus.running === false ? ` ${t("admin.pausedSuffix")}` : ` ${t("admin.stoppedSuffix")}`
                 ))}
               </p>
             </>
           ) : (
             <>
-              <p>All rooms</p>
+              <p>{t("admin.allRooms")}</p>
               <p>{displayPause ? (
-                allRunning ? "(All running)" : "(Some running)"
-              ) : "(All paused)"}</p>
+                allRunning ? t("admin.allRunning") : t("admin.someRunning")
+              ) : t("admin.allPaused")}</p>
             </>
           )}
           <div className="joinboard-buttons">
             <button
               className="joinboard-button"
               onClick={displayPause ? pauseSim : startSim}
-              title={currentRoom ? "Pause this simulation" : "Pause all simulations"}
+              title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
             >
               {displayPause ? (
                 <i className="fa fa-pause"></i>
@@ -223,7 +225,7 @@ function Join(props) {
             <button
               className="joinboard-button"
               onClick={() => setResetID(true)}
-              title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
+              title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
             >
               <i className="fa fa-retweet"></i>
             </button>
@@ -232,14 +234,14 @@ function Join(props) {
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handlePrevPage}
-                  title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
+                  title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
                 >
                   <i className="fa fa-angle-double-left"></i>
                 </button>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handleNextPage}
-                  title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
+                  title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
                 >
                   <i className="fa fa-angle-double-right"></i>
                 </button>
@@ -284,8 +286,8 @@ function Join(props) {
         visible={!!resetID}
         hide={() => setResetID(null)}
         confirmFunction={resetSim}
-        confirmMessage={"Reset"}
-        message={`Are you sure you want to reset every simulation room? (A backup log will be saved.)`}
+        confirmMessage={t("admin.reset")}
+        message={t("admin.resetConfirm")}
       />
     </div>
   );

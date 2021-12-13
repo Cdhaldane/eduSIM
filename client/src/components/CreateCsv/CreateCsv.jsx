@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { parse } from "papaparse"
 import "./CreateCsv.css";
 import { useAlertContext } from "../Alerts/AlertContext";
+import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
 function CreateCsv(props) {
@@ -9,6 +10,7 @@ function CreateCsv(props) {
   const [result, setResult] = useState('');
   const form = useRef();
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   const handleClickOutside = e => {
     if (form.current && !form.current.contains(e.target) && !e.target.className.includes('areacsv-remove')) {
@@ -35,16 +37,21 @@ function CreateCsv(props) {
     }).then(response => {
       console.log(response);
       if (response.data.replacedroles.length>0) {
-        alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.
-        Nonexistant roles "${response.data.replacedroles.join(', ')}" have been replaced with empty slots.`, "warning", 6000);
-      } else {
-        alertContext.showAlert(`Successfully added ${result.data.length} player${result.data.length==1 ? '' : 's'}.`, "info");
+        alertContext.showAlert(t("alert.addedCSVPlayersEmptyRoles", {
+          playercount: result.data.length,
+          roles: response.data.replacedroles.join(', '),
+          rolecount: response.data.replacedroles.length
+        }), "warning", 6000);
+      } else { 
+        alertContext.showAlert(t("alert.addedCSVPlayers", {
+          count: result.data.length
+        }), "info");
       }
       props.success();
       props.close();
     }).catch(err => {
       console.log(err);
-      alertContext.showAlert(err?.response?.data?.message || "An error occurred.", "error");
+      alertContext.showAlert(err?.response?.data?.message || t("alert.genericError"), "error");
     });
   }
 
@@ -57,7 +64,7 @@ function CreateCsv(props) {
           const text = await file.text();
           let results = parse(text, { header: true });
           if (results.errors.length>0) {
-            alertContext.showAlert("Please enter a valid CSV file.", "error");
+            alertContext.showAlert(t("alert.validCSVError"), "error");
             return;
           }
           setResult(results);
@@ -66,7 +73,7 @@ function CreateCsv(props) {
         }
       );
     } else {
-      alertContext.showAlert("Please enter a valid CSV file.", "error");
+      alertContext.showAlert(t("alert.validCSVError"), "error");
     }
   }
   
@@ -91,28 +98,28 @@ function CreateCsv(props) {
   return (
     <div className="areacsv">
       <form ref={form} className="areacsvform modal-csv">
-        <p className="modal-title"> Add Student / Participant List </p>
+        <p className="modal-title">{t("modal.addStudentCSV")}</p>
         <div className="areacsv-links">
           <input type="file" name="img" id="csv-file" onChange={onChange} value=""/>
-          <label for="csv-file" className="csv-link">Upload a CSV file</label>
-          <input type="button" id="csv-filedownload" onClick={download} value="Download CSV template" />
+          <label for="csv-file" className="csv-link">{t("modal.uploadCSV")}</label>
+          <input type="button" id="csv-filedownload" onClick={download} value={t("modal.downloadCSVTemplate")} />
         </div>
         {file ? (
           <div className="areacsv-filename">
             <i class="fas fa-file-csv fa-2x"></i>
             <div>
               {file?.name}
-              <p>Contains {result?.data?.length} entries</p>
+              <p>{t("modal.containsXEntries", { count: result?.data?.length })}</p>
             </div>
             <i onClick={removeFile} class="fas fa-times-circle areacsv-remove"></i>
           </div>
         ) : (
           <div className="areacsv-filename" disabled>
-            <p>No spreadsheet file detected</p>
+            <p>{t("modal.noCSV")}</p>
           </div>
         )}
         <button className="modal-bottomright-button" onClick={fileUploadHandler} disabled={!file}>
-          Add
+          {t("common.add")}
         </button>
       </form>
     </div>

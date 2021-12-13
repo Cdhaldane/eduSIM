@@ -1,8 +1,10 @@
 import React, { useRef, useEffect } from "react";
-import Table from "../Table/Table"
+import Table from "../Table/Table";
+import { useTranslation } from "react-i18next";
 
 function CreateEmail(props) {
   const detailsArea = new useRef();
+  const { t } = useTranslation();
 
   const handleClickOutside = e => {
     if (detailsArea.current &&
@@ -20,7 +22,7 @@ function CreateEmail(props) {
   return (
     <div className="areacsv">
       <form ref={detailsArea} className="areacsvform">
-        <p className="modal-title"> Email Room Codes to Students / Participants </p>
+        <p className="modal-title">{t("modal.emailRoomCodeToStudents")}</p>
         <Table
           email={true}
           addstudent={false}

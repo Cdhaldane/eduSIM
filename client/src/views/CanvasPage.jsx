@@ -623,7 +623,8 @@ const CanvasPage = (props) => {
     containerHeight: obj.containerHeight,
     varName: obj.varName,
     varInterval: obj.varInterval || false,
-    varEnable: obj.varEnable || false
+    varEnable: obj.varEnable || false,
+    sync: obj.sync || false
   });
 
   const inputProps = (obj, canvas) => ({
@@ -631,8 +632,9 @@ const CanvasPage = (props) => {
     varType: obj.varType,
     varName: obj.varName,
     refresh: canvas.refresh,
-    label: obj.label
-  });
+    label: obj.label,
+    sync: obj.sync
+  })
 
   const timerProps = (obj, canvas, editMode) => ({
     timeLimit: obj.timeLimit,
@@ -888,7 +890,7 @@ const CanvasPage = (props) => {
         return <HTMLFrame
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
-          {...canvas.getInteractiveProps(obj.id)}
+          {...canvas.getVariableProps()}
           {...htmlProps(obj)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;
@@ -904,7 +906,7 @@ const CanvasPage = (props) => {
         return <Input
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
-          {...canvas.getInteractiveProps(obj.id)}
+          {...canvas.getVariableProps()}
           {...inputProps(obj, canvas)}
           {...(editMode ? customObjProps(canvas) : {})}
         />;

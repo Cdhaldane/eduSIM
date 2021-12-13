@@ -5,6 +5,7 @@ import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
 import moment from "moment";
 import Overlay from "./Overlay";
+import { withTranslation } from "react-i18next";
 
 import {
   Stage,
@@ -143,6 +144,7 @@ class Graphics extends Component {
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+            if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
             content = vars[key];
         }
         newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
@@ -158,12 +160,13 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
-
+    if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
+    
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
-    let val = vars[conditions.varName];
-    let varLen = isNaN() ? (val || "").length : val;
+    let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
+    let varLen = isNaN(val) ? (val || "").length : val;
 
     switch (conditions.condition) {
       case "isequal":
@@ -243,6 +246,7 @@ class Graphics extends Component {
         refs: this.refs,
         userId: userId,
         getInteractiveProps: this.getInteractiveProps,
+        getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
         sendInteraction: this.sendInteraction
@@ -321,7 +325,7 @@ class Graphics extends Component {
 
     if (localStorage.userInfo) {
       const info = JSON.parse(localStorage.userInfo);
-      if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
+      if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
       this.handlePlayerInfo(info);
     }
 
@@ -343,6 +347,15 @@ class Graphics extends Component {
       })
     },
     status: this.props.gamepieceStatus[id] || {}
+  });
+
+  getVariableProps = () => ({
+    updateVariable: (name, value, increment) => {
+      this.props.socket.emit("varChange", {
+        name, value, increment
+      })
+    },
+    variables: this.props.variables
   });
 
   handleLevel = (e) => {
@@ -492,7 +505,7 @@ class Graphics extends Component {
                 backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
               }}
             >
-              <div id="playModeRoleLabel"><b>Role: </b>{this.state.rolelevel}</div>
+              <div id="playModeRoleLabel"><b>{this.props.t("common.role")}: </b>{this.state.rolelevel}</div>
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"
@@ -525,13 +538,13 @@ class Graphics extends Component {
           </div>
         </div>
         <EndScreen open={this.state.level > this.state.pageNumber}>
-          <p>Thank you for joining!</p>
+          <p>{this.props.t("game.thanksForJoining")}</p>
           {this.props.freeAdvance && (
-            <button onClick={() => this.handleLevel(1)}>Reset simulation</button>
+            <button onClick={() => this.handleLevel(1)}>{this.props.t("game.resetSimulation")}</button>
           )}
         </EndScreen>
       </React.Fragment>
     );
   }
 }
-export default Graphics;
+export default withTranslation()(Graphics);

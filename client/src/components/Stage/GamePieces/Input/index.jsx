@@ -16,8 +16,8 @@ const Input = forwardRef((props, ref) => {
   const varName = props.varName || props.id;
 
   const handleChangeValue = (value) => {
-    if (props.sync) {
-
+    if (props.sync && props.updateVariable) {
+      props.updateVariable(varName, value);
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -31,8 +31,8 @@ const Input = forwardRef((props, ref) => {
   }
 
   const getValue = () => {
-    if (props.sync) {
-
+    if (props.sync && props.variables) {
+      return props.variables[varName];
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);

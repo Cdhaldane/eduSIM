@@ -464,11 +464,12 @@
   margin-bottom: 10px;
   flex-direction: column;
   align-items: flex-end;
-  overflow: hidden;
+  overflow: unset;
 }
 .logs[hidden] {
   height: 30px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .logs-show {
   background-color: var(--primary);

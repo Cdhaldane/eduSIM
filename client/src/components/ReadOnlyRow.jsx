@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ReadOnlyRow = ({ 
   contact, 
@@ -8,6 +9,7 @@ const ReadOnlyRow = ({
   onCheck, 
   checked 
 }) => {
+  const { t } = useTranslation();
   return (
     <tr className={online ? "user-online" : ""}>
       {onCheck && (
@@ -25,10 +27,10 @@ const ReadOnlyRow = ({
             type="button"
             onClick={(event) => handleEditClick(event, contact)}
           >
-            Edit
+            {t("common.edit")}
           </button>
           <button type="button" onClick={() => handleDeleteClick(contact.id)}>
-            Delete
+            {t("common.delete")}
           </button>
         </div>
       </td>

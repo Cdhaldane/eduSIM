@@ -4,6 +4,7 @@ import AuthenticationButton from "../Auth0/AuthenticationButton";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import ButtonLink from "../Buttons/ButtonLink";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import "./Navbar.css";
 
@@ -12,6 +13,7 @@ function NavBar(props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
   const profileDropdown = useRef();
+  const { t } = useTranslation();
 
   function toggleContextMenu() {
     setMenuOpen(!menuOpen);
@@ -36,7 +38,7 @@ function NavBar(props) {
   return (
     <nav className="NavbarItems">
       <a href="/">
-        <h4 className="navbar-logo">eduSIM - Educational Simulator Tool</h4>
+        <h4 className="navbar-logo">{t('navbar.title')}</h4>
       </a>
       <div className="menu-icon" onClick={toggleContextMenu}>
         <i className={menuOpen ? "menu-close fas fa-times" : "menu-close fas fa-bars"}></i>
@@ -59,7 +61,7 @@ function NavBar(props) {
               buttonStyle="btn--primary--solid"
               buttonSize="button--medium"
             >
-              Profile{" "}
+              {t("navbar.profile")}
             </ButtonLink>
             <AuthenticationButton />
           </div>
@@ -81,7 +83,7 @@ function NavBar(props) {
               href={item.url}
               key={index}
             >
-              {item.title}
+              {t(item.title)}
             </ButtonLink>
           );
         })}

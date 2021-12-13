@@ -1,0 +1,12 @@
+{
+  "translation": {
+    "home": {
+      "welcome": "Bonjour???",
+      "isStudent": "Are vous a student/participant?",
+      "isTeacher": "Are vous a teacher/facilitator?",
+      "alreadyHaveRoomCode": "Alreadie have a room code?",
+      "join": "Joine!",
+      "getCodeOrCreateSim": "<1>Create a new simulation</1> if you dont then!!! idk!!"
+    }
+  }
+}

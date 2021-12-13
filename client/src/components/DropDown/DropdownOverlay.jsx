@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Switch from "react-switch";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
+import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
@@ -19,6 +20,7 @@ const DropdownOverlay = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
   const [hideBtn, setHideBtn] = useState();
+  const { t } = useTranslation();
 
   const handleClickOutside = e => {
     if (menuElem.current && !menuElem.current.contains(e.target)) {
@@ -44,7 +46,7 @@ const DropdownOverlay = (props) => {
       const overlays = pages[props.level - 1].overlays;
       for (let i = 0; i < overlays.length; i++) {
         if (i !== props.overlayIndex && overlays[i].overlayOpenOption === option) {
-          alertContext.showAlert(`This setting can only be applied to one overlay at a time and is currently already applied to overlay ${i + 1}.`, "warning");
+          alertContext.showAlert(t("alert.setOnlyOneOverlay", { name: i+1 }), "warning");
           return;
         }
       }
@@ -76,9 +78,9 @@ const DropdownOverlay = (props) => {
     <>
       <div className="dropdown overlayOptionsDropdown" ref={menuElem}>
         <div className="menu">
-          <h1>{`Overlay ${props.overlayIndex + 1} Settings`}</h1>
+          <h1>{t("edit.overlayXSettings", { name: props.overlayIndex + 1 })}</h1>
           <div className="overlayHideRow">
-            <h2 className="overlaySettingsSub">Hide Overlay Button:</h2>
+            <h2 className="overlaySettingsSub">{t("edit.hideOverlayButton")}</h2>
             <Switch
               onChange={hideToggled}
               checked={hideBtn}
@@ -89,7 +91,7 @@ const DropdownOverlay = (props) => {
               className="react-switch"
             />
           </div>
-          <h2 className="overlaySettingsSub">Automatically open the overlay when:</h2>
+          <h2 className="overlaySettingsSub">{t("edit.openOverlayWhen")}</h2>
           <div className={"overlayOpenOptions"}>
             <input
               id="overlayOpenOnEnter"
@@ -100,7 +102,7 @@ const DropdownOverlay = (props) => {
               checked={selectedOption === "pageEnter"}
             />
             <label htmlFor="overlayOpenOnEnter">
-              The page is entered
+              {t("edit.pageEntered")}
             </label><br />
 
             <input
@@ -112,7 +114,7 @@ const DropdownOverlay = (props) => {
               checked={selectedOption === "pageExit"}
             />
             <label htmlFor="overlayOpenOnExit">
-              The page is exited
+              {t("edit.pageExited")}
             </label><br />
 
             <input
@@ -124,7 +126,7 @@ const DropdownOverlay = (props) => {
               checked={selectedOption === "doNotAutoOpen"}
             />
             <label htmlFor="overlayOpenNotAuto">
-              Do not automatically open overlay
+              {t("edit.dontOpenOverlay")}
             </label><br />
 
             <input
@@ -136,14 +138,14 @@ const DropdownOverlay = (props) => {
               checked={selectedOption === "condition"}
             />
             <label htmlFor="overlayOpenOnCondition">
-              The following condition is met:
+              {t("edit.conditionIsMet")}
             </label>
 
             <div className={`overlayConditions ${selectedOption !== "condition" ? "overlayConditionsDisabled" : ""}`}>
               {/* The overlay conditions for opening */}
               <input
                 type="text"
-                placeholder="Variable name"
+                placeholder={t("edit.variableName")}
                 value={null}
                 onChange={null}
               />
@@ -152,15 +154,15 @@ const DropdownOverlay = (props) => {
                 value={conditions?.condition}
                 onChange={null}
               >
-                <option value="positive">contains a positive value</option>
-                <option value="negative">contains a negative/null value</option>
-                <option value="equalto">is equal to</option>
-                <option value="onchange">changes</option>
+                <option value="positive">{t("edit.cond.positive")}</option>
+                <option value="negative">{t("edit.cond.negative")}</option>
+                <option value="equalto">{t("edit.cond.isequal")}</option>
+                <option value="onchange">{t("edit.cond.onchange")}</option>
               </select>
               {conditions?.condition === "equalto" && (
                 <input
                   type="text"
-                  placeholder="Value to check against"
+                  placeholder={t("edit.valueToCheckAgainst")}
                   value={null}
                   onChange={null}
                 />
@@ -168,7 +170,7 @@ const DropdownOverlay = (props) => {
             </div>
           </div>
           <div className="overlayDeleteRow">
-            <h2 className="overlaySettingsSub">Delete Overlay:</h2>
+            <h2 className="overlaySettingsSub">{t("edit.deleteOverlay")}</h2>
             <i className="icons fa fa-trash-alt" onClick={() => {
               setConfirmationVisible(true);
             }} />
@@ -185,8 +187,8 @@ const DropdownOverlay = (props) => {
           page.overlays.splice(props.overlayIndex, 1);
           props.changePages(newPages);    
         }}
-        confirmMessage={"Yes - Delete Overlay"}
-        message={`Are you sure you want to delete overlay ${props.overlayIndex + 1} and all associated data? This action cannot be undone.`}
+        confirmMessage={t("edit.yesDeleteOverlay")}
+        message={t("edit.confirmDeleteOverlay", { name: props.overlayIndex + 1 })}
       />
     </>
   );
