@@ -176,6 +176,44 @@ const CanvasPage = (props) => {
             if (mode === "play") {
               // Adjust the canvas container height (scroll-y will automatically appear if needed)
               const canvasH = Math.max((contentH * scale) + (topMenuH * 2) + padding, window.innerHeight);
+
+              // Run this after a timeout so the DOM is fully loaded when checking lengths
+              setTimeout(() => {
+                // If group area scroll bar, move overlay buttons left
+                const overlayButtons = [].slice.call(document.getElementsByClassName("overlayButton"));
+                if (canvasH > window.innerHeight) {
+                  overlayButtons.map(btn => {
+                    btn.style.right = `20px`;
+                  });
+                } else {
+                  overlayButtons.map(btn => {
+                    btn.style.right = `5px`;
+                  });
+                }
+
+                // If personal area scroll bar, move personal toggle left
+                const personalToggle = document.getElementById("personalInfoContainer");
+                const personalArea = document.getElementById("personalGameContainer");
+                if (personalArea.clientHeight < personalArea.scrollHeight && canvas.state.personalAreaOpen) {
+                  personalToggle.style.paddingRight = "25px";
+                } else {
+                  personalToggle.style.paddingRight = "10px";
+                }
+
+                // If overlay area scroll bar, move overlay exit icon left
+                const overlayCloseBtn = document.getElementById("overlayCloseButton");
+                const overlayArea = document.getElementById("overlayGameContainer");
+                if (
+                  overlayArea && overlayCloseBtn &&
+                  overlayArea.clientHeight < overlayArea.scrollHeight &&
+                  canvas.state.overlayOpen
+                ) {
+                  overlayCloseBtn.style.right = "25px";
+                } else if (overlayCloseBtn) {
+                  overlayCloseBtn.style.right = "10px";
+                }
+              }, 0);
+
               setPlayModeCanvasHeights({
                 ...playModeCanvasHeights,
                 [areaString]: availableRatio * scaleDown > contentRatio ? canvasH : null

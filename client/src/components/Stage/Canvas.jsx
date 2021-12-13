@@ -819,7 +819,6 @@ class Graphics extends Component {
       let pointerPos = null;
       for (let ref in this.refs) {
         if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-          console.log(ref);
           const subLayer = this.refs[ref];
           pointerPos = subLayer.getStage().getPointerPosition();
           if (e.evt) {
