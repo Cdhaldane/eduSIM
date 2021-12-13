@@ -819,6 +819,7 @@ class Graphics extends Component {
       let pointerPos = null;
       for (let ref in this.refs) {
         if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
+          console.log(ref);
           const subLayer = this.refs[ref];
           pointerPos = subLayer.getStage().getPointerPosition();
           if (e.evt) {
@@ -1654,7 +1655,12 @@ class Graphics extends Component {
             ref: newId,
             name: newId,
             x: newX,
-            y: newY
+            y: newY,
+            overlay: this.state.overlayOpen,
+            overlayIndex: this.state.overlayOpenIndex ? this.state.overlayOpenIndex : -1,
+            infolevel: this.state.overlayOpen ? false : (this.state.personalAreaOpen ? true : false),
+            rolelevel: this.state.rolelevel,
+            level: this.state.level
           }
           objects.push(newObject);
 
