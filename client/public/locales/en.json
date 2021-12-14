@@ -258,6 +258,7 @@
       "yesDeleteOverlay": "Yes - Delete overlay",
 
       "draggable": "Draggable",
+      "setAsAnchorPoint": "Set as anchor point",
 
       "questionPlaceholder": "Question here",
       "pollName": "Poll Name:",

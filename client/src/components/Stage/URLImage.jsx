@@ -1,15 +1,10 @@
 import React, { useState, useEffect, forwardRef } from "react";
 import { Image } from "react-konva";
-import useSyncDrag from "./useSyncDrag";
 
 const URLImage = forwardRef((props, ref) => {
 
   const [image, setImage] = useState(null);
   const [gifSrc, setGifSrc] = useState(null);
-
-  const {
-    setDragging, displayPos
-  } = useSyncDrag(props);
 
   const getMeta = (url, callback) => {
     const img = new window.Image();
@@ -58,8 +53,8 @@ const URLImage = forwardRef((props, ref) => {
     <Image
       draggable={props.draggable}
       visible={props.visible}
-      x={displayPos[0]}
-      y={displayPos[1]}
+      x={props.x}
+      y={props.y}
       scaleY={props.scaleY}
       scaleX={props.scaleX}
       width={props.width}
@@ -74,11 +69,7 @@ const URLImage = forwardRef((props, ref) => {
       onTransform={props.onTransform}
       onTransformEnd={props.onTransformEnd}
       onDragMove={props.onDragMove}
-      onDragStart={() => setDragging(true)}
-      onDragEnd={(e) => {
-        setDragging(false);
-        if (props.onDragEnd) props.onDragEnd(e);
-      }}
+      onDragEnd={props.onDragEnd}
       onContextMenu={props.onContextMenu}
       rotation={props.rotation}
       stroke={props.stroke}

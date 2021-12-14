@@ -109,6 +109,8 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       canvasLoading: true,
       updateRanOnce: false,
+
+      dragTick: 0
     };
 
     setTimeout(() => {
@@ -185,6 +187,20 @@ class Graphics extends Component {
     }
   }
 
+  getDragProps = (id) => {
+    const obj = this.props.gamepieceStatus[id] || {};
+    if (obj.x && obj.y) {
+      return {
+        x: this.props.gamepieceStatus[id].x,
+        y: this.props.gamepieceStatus[id].y,
+        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? { 
+          opacity: 0.7,
+          draggable: false
+        } : {})
+      };
+    } else return {};
+  }
+
   sendInteraction = (gamepieceId, parameters) => {
     this.props.socket.emit("interaction", {
       gamepieceId,
@@ -249,17 +265,67 @@ class Graphics extends Component {
         getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
+        getDragProps: this.getDragProps,
         sendInteraction: this.sendInteraction,
         dragLayer: () => {},
-        onObjectDragMove: (obj, e) => {
-          console.log(obj, e);
-          this.props.socket.emit("interaction", {
-            gamepieceId: obj.id,
-            parameters: {
-              x: e.target.x(),
-              y: e.target.y()
-            }
+        handleDragEnd: (obj, e) => {
+          console.log("HI", obj, e, this.props.gamepieceStatus[obj.id])
+          this.setState({
+            dragTick: 0
           })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: null
+              }
+            });
+          }
+        },
+        onObjectDragMove: (obj, e) => {
+          [
+            ...this.state.images,
+            ...this.state.rectangles,
+            ...this.state.ellipses,
+            ...this.state.triangles,
+            ...this.state.stars,
+            ...this.state.texts
+          ].filter(img => (
+            img.rolelevel === obj.rolelevel &&
+            img.level === obj.level &&
+            img.overlay === obj.overlay && 
+            img.overlayIndex === obj.overlayIndex &&
+            img.id !== obj.id &&
+            img.anchor
+          )).forEach(({x, y, width=0, height=0, id}) => {
+            let realX = x, realY = y;
+            if (this.props.gamepieceStatus[id]) {
+              realX = this.props.gamepieceStatus[id].x;
+              realY = this.props.gamepieceStatus[id].y;
+            }
+            const xDist = Math.abs((e.target.x() + obj.width/2) - (realX + width/2))
+            const yDist = Math.abs((e.target.y() + obj.height/2) - (realY + height/2))
+            if (xDist < width/2 && yDist < height/2) {
+              e.target.x(realX + width/2 - obj.width/2);
+              e.target.y(realY + height/2 - obj.height/2);
+            }
+          });
+
+          this.setState({
+            dragTick: (this.state.dragTick+1) % 4
+          })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: userId
+              }
+            });
+          }
         }
       });
 

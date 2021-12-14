@@ -507,6 +507,7 @@ class Graphics extends Component {
           getObjType: this.getObjType,
           getInteractiveProps: this.getInteractiveProps,
           getVariableProps: () => {},
+          getDragProps: () => {},
           dragLayer: this.dragLayer
         });
 
