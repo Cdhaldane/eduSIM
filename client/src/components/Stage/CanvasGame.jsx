@@ -249,7 +249,18 @@ class Graphics extends Component {
         getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        sendInteraction: this.sendInteraction
+        sendInteraction: this.sendInteraction,
+        dragLayer: () => {},
+        onObjectDragMove: (obj, e) => {
+          console.log(obj, e);
+          this.props.socket.emit("interaction", {
+            gamepieceId: obj.id,
+            parameters: {
+              x: e.target.x(),
+              y: e.target.y()
+            }
+          })
+        }
       });
 
       this.props.setUserId(userId);

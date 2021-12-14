@@ -257,6 +257,8 @@
       "confirmDeleteOverlay": "Are you sure you want to delete overlay {{name}} and all associated data? This action cannot be undone.",
       "yesDeleteOverlay": "Yes - Delete overlay",
 
+      "draggable": "Draggable",
+
       "questionPlaceholder": "Question here",
       "pollName": "Poll Name:",
       "pollNamePlaceholder": "Poll Name",

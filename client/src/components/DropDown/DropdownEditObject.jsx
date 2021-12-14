@@ -311,6 +311,12 @@ function DropdownEditObject(props) {
                 />
               </b>
               <br />
+              {props.selectedShapeName.startsWith("image") && (
+                <div className="dropdowncheckbox">
+                  <input type="checkbox" checked={!!objState?.draggable} onChange={() => handleProperty(!objState?.draggable, 'draggable')} />
+                  <p>{t("edit.draggable")}</p>
+                </div>
+              )}
             </div>
           </CSSTransition>
           <CSSTransition

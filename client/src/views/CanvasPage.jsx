@@ -349,14 +349,14 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
       editMode: editMode,
+      onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
         {
           onClick: () => canvas.onObjectClick(obj),
           onTransformStart: canvas.onObjectTransformStart,
           onTransformEnd: () => canvas.onObjectTransformEnd(obj),
-          onDragMove: (e) => canvas.onObjectDragMove(obj, e),
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
         } : {})
@@ -838,7 +838,7 @@ const CanvasPage = (props) => {
   };
 
   const renderObject = (obj, index, canvas, editMode, type) => {
-    const layer = canvas.refs[`groupAreaLayer.main`];
+    const layer = canvas.refs[`groupAreaLayer.${obj.id}`];
     switch (type) {
       case "rectangles":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} />;
@@ -847,7 +847,7 @@ const CanvasPage = (props) => {
       case "pencils":
         return <Line {...lineProps(obj, index, canvas, editMode)} />;
       case "images":
-        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} /> : null;
+        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)}/> : null;
       case "videos":
         return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
       case "audios":
