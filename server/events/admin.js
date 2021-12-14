@@ -4,7 +4,9 @@ import {
   getRoomStatus, 
   clearRoomStatus,
   getChatlog,
-  getInteractions
+  getInteractions,
+  updateRoomTimeout,
+  clearRoomTimeout
 } from './utils';
 import moment from "moment";
 const GameActions = require("../models/GameActions");
@@ -27,6 +29,7 @@ export default async (server, client, event, args) => {
           room,
           status: newStatus
         });
+        updateRoomTimeout(room, server);
       } else {
         // otherwise, a gameinstance is defined; get rooms associated with it and start those
         const rooms = await getSimulationRooms(game);
@@ -40,6 +43,7 @@ export default async (server, client, event, args) => {
             room: room.gameroom_url,
             status: newStatus
           });
+          updateRoomTimeout(room.gameroom_url, server);
         });
       }
 
@@ -105,6 +109,7 @@ export default async (server, client, event, args) => {
           status: newStatus,
           refresh: true
         });
+        clearRoomTimeout(room);
       } else {
         const rooms = await getSimulationRooms(game);
         for (let i=0; i<rooms.length; i++) {
@@ -129,6 +134,7 @@ export default async (server, client, event, args) => {
             status: newStatus,
             refresh: true
           });
+          clearRoomTimeout(room.gameroom_url);
         });
       }
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditAlert from "./EditAlert";
+import { useTranslation } from "react-i18next";
 
 const AlertsContainer = styled.div`
   display: flex;
@@ -91,9 +92,10 @@ const EditButtons = styled.div`
   }
 `;
 
-function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
+function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
+  const { t } = useTranslation();
 
   const handleAddAlert = (data) => {
     setAlerts(old => [...old, data]);
@@ -140,6 +142,7 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    if (Object.keys(variables).length > 0) vars = { ...vars, ...variables };
 
     let trueValue = isNaN(check) ? check : parseInt(check);
     let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
@@ -174,7 +177,7 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
 
   return (
     <AlertsContainer>
-      <h2>Alerts</h2>
+      <h2>{t("sidebar.alerts")}</h2>
       <hr />
       {alerts.map((data, index) => {
         const done = checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt);
@@ -193,7 +196,7 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
                   data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
                 )}
                 <div>
-                  <p>{done ? "COMPLETE" : ((data.optional ? "OPTIONAL, " : "REQUIRED, ") + "NOT COMPLETED")}</p>
+                  <p>{done ? t("sidebar.taskComplete") : t("sidebar.taskNotComplete", { context: data.optional ? "optional" : "required" })}</p>
                   <div>{done ? data.onLabel : data.offLabel}</div>
                 </div>
               </Alert>
@@ -231,12 +234,12 @@ function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh }) {
             hidden={adding}
           >
             <i className="fas fa-plus-circle" />
-            ADD NEW ALERT
+            {t("sidebar.addNewTask")}
           </AddAlert>
         </>
       ) : alerts.length == 0 && (
         <div style={{opacity: 0.5}}>
-          No tasks to complete!
+          {t("sidebar.noTasks")}
         </div>
       )}
     </AlertsContainer>

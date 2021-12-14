@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import Loading from "../components/Loading/Loading";
+import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import "../components/Information/Info.css";
 import "../components/Tabs/Tabs.css";
@@ -56,6 +57,7 @@ const Game = (props) => {
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [invalidateSidebar, setInvalidateSidebar] = useState(0);
   const [disableNext, setDisableNext] = useState(false);
+  const { t } = useTranslation();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -108,10 +110,13 @@ const Game = (props) => {
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
       });
-      client.on("roomStatusUpdate", ({ status, refresh }) => {
+      client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
           localStorage.removeItem("userInfo");
           window.location.reload();
+        }
+        if (lastSetVar) {
+          sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
       });
@@ -183,6 +188,7 @@ const Game = (props) => {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          variables={roomStatus.variables || {}}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
           game
@@ -212,6 +218,7 @@ const Game = (props) => {
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
+            variables={roomStatus.variables || {}}
             roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}
             initialUserId={userid}
@@ -222,7 +229,7 @@ const Game = (props) => {
           />
           {!roomStatus.running && (<PauseCover>
             <i className="fa fa-pause-circle fa-2x"></i>
-            <p>Paused</p>
+            <p>{t("game.paused")}</p>
           </PauseCover>)}
         </Main>
         {!isNaN(roomStatus.settings?.advanceMode) && (

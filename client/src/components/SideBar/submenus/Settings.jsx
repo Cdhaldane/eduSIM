@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
+import { useTranslation } from "react-i18next";
 
 const SettingsContainer = styled.div`
   display: flex;
@@ -35,18 +36,19 @@ const SettingRow = styled.div`
 `;
 
 function Settings(props) {
+  const { t } = useTranslation();
 
   const { updateSetting, settings } = useContext(SettingsContext);
 
   return (
     <SettingsContainer>
-      <h2>Settings</h2>
+      <h2>{t("sidebar.settings")}</h2>
       <hr/>
       <SettingRow>
         <i className="fas fa-eye fa-2x"></i>
         <div>
-          <b>High Contrast Mode</b>
-          <p>Applies a filter for higher contrasting colours.</p>
+          <b>{t("sidebar.highContrastMode")}</b>
+          <p>{t("sidebar.highContrastModeExplanation")}</p>
         </div>
         <input 
           type="checkbox" 
@@ -57,8 +59,8 @@ function Settings(props) {
       <SettingRow>
         <i className="fas fa-feather fa-2x"></i>
         <div>
-          <b>Reduce Motion</b>
-          <p>Disable in-app transitions and animations.</p>
+          <b>{t("sidebar.reduceMotion")}</b>
+          <p>{t("sidebar.reduceMotionExplanation")}</p>
         </div>
         <input 
           type="checkbox" 
@@ -69,8 +71,8 @@ function Settings(props) {
       <SettingRow>
         <i className="fas fa-text-height fa-2x"></i>
         <div>
-          <b>Modify Text Size</b>
-          <p>Adjust how large text appears in-app.</p>
+          <b>{t("sidebar.modifyTextSize")}</b>
+          <p>{t("sidebar.modifyTextSizeExplanation")}</p>
         </div>
       </SettingRow>
       <Slider

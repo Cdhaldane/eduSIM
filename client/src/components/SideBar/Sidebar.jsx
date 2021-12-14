@@ -10,6 +10,7 @@ import Alerts from "./submenus/Alerts";
 import Players from "./submenus/Players";
 import Modal from "react-modal";
 import Performance from "./Performance";
+import { useTranslation } from "react-i18next";
 
 const StyledNav = styled.nav`
   background-color: var(--primary);
@@ -90,6 +91,7 @@ const Sidebar = (props) => {
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
   const performanceModal = new useRef();
   const performanceBtn = new useRef();
+  const { t } = useTranslation();
 
   const handleMvisible = (e) => {
     setMvisible(e);
@@ -192,7 +194,7 @@ const Sidebar = (props) => {
     },
     {
       icon: "fas fa-comment-dots",
-      label: "Messaging",
+      label: t("sidebar.messaging"),
       visible: mvisible,
       id: "messaging",
       submenu: (
@@ -207,12 +209,13 @@ const Sidebar = (props) => {
       to: "/alert",
       icon: "fas fa-bell",
       id: "alert",
-      label: "Alert",
+      label: t("sidebar.alerts"),
       visible: avisible,
       submenu: (
         <Alerts 
           editpage={!props.game}
           refresh={props.refresh}
+          variables={props.variables}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />
@@ -221,7 +224,7 @@ const Sidebar = (props) => {
     {
       icon: "fas fa-users",
       id: "userlist",
-      label: "Users",
+      label: t("sidebar.users"),
       visible: true,
       submenu: (
         <Players
@@ -233,13 +236,13 @@ const Sidebar = (props) => {
       to: "/performance",
       icon: "fas fa-chart-bar",
       id: "performance",
-      label: "Performance",
+      label: t("sidebar.performance"),
       visible: pevisible
     },
     {
       icon: "fas fa-cog",
       id: "settings",
-      label: "Settings",
+      label: t("sidebar.settings"),
       visible: svisible,
       submenu: (
         <Settings />

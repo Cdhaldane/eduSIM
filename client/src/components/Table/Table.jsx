@@ -5,6 +5,7 @@ import EditableRow from "../EditableRow"
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAlertContext } from '../Alerts/AlertContext';
 import { parse } from "papaparse";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import "./tailwind.css"
 
@@ -32,6 +33,7 @@ const Table = (props) => {
     email: "",
     group: "",
   });
+  const { t } = useTranslation();
 
   const [editContactId, setEditContactId] = useState(null);
 
@@ -42,7 +44,7 @@ const Table = (props) => {
 
   useEffect(() => {
     if (props.addstudent === false) {
-      setGroupOr("Group")
+      setGroupOr("admin.group")
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getAllPlayers/:gameinstanceid', {
         params: {
           id: props.gameid,
@@ -69,7 +71,7 @@ const Table = (props) => {
         console.log(error);
       });
     } else {
-      setGroupOr("Role")
+      setGroupOr("common.role")
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayers/:game_room', {
         params: {
           game_room: props.gameroom,
@@ -102,7 +104,7 @@ const Table = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      let items = [(<option key={-1} value="">Select a role</option>)];
+      let items = [(<option key={-1} value="">{t("admin.selectARole")}</option>)];
       for (let i = 0; i <= allData.length - 1; i++) {
         // Here I will be creating my options dynamically based on
         items.push(<option key={i} value={allData[i].gamerole}>{allData[i].gamerole}</option>);
@@ -240,13 +242,13 @@ const Table = (props) => {
       admin: user.name,
       simid: props.gameid
     }).then((res) => {
-      alertContext.showAlert("Email invitations have been successfully sent to simulation participants.", "info");
+      alertContext.showAlert(t("alert.emailSuccessful"), "info");
       props.onEmailSent();
       setSending(false);
     }).catch((error) => {
       console.log(error);
       if (error) {
-        alertContext.showAlert("An error has occured while attempting to send email invitations. Please try again.", "error");
+        alertContext.showAlert(t("alert.emailError"), "error");
       }
       setSending(false);
     });
@@ -307,11 +309,11 @@ const Table = (props) => {
                     <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
                   </th>
                 )}
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>{groupOr}</th>
-                <th>Actions</th>
+                <th>{t("admin.firstName")}</th>
+                <th>{t("admin.lastName")}</th>
+                <th>{t("admin.emailAddress")}</th>
+                <th>{t(groupOr)}</th>
+                <th>{t("admin.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -348,7 +350,7 @@ const Table = (props) => {
        {/*<h2>Add a student</h2>*/}
        <form onSubmit={handleAddFormSubmit} className="addstudent-form">
          <input
-           placeholder="First name"
+           placeholder={t("admin.firstName")}
            id="firstname"
            type="text"
            name="firstName"
@@ -356,7 +358,7 @@ const Table = (props) => {
            onChange={handleAddFormChange}
          />
          <input
-           placeholder="Last name"
+           placeholder={t("admin.lastName")}
            id="lastname"
            type="text"
            name="lastName"
@@ -364,7 +366,7 @@ const Table = (props) => {
            onChange={handleAddFormChange}
          />
          <input
-           placeholder="Email address"
+           placeholder={t("admin.emailAddress")}
            id="email"
            type="text"
            name="email"
@@ -374,7 +376,7 @@ const Table = (props) => {
        <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
            {rolelist}
          </select>
-       <button type="submit" id="addstudent">Add</button>
+       <button type="submit" id="addstudent">{t("common.add")}</button>
        </form>
        </div>)
        : <>
@@ -384,7 +386,7 @@ const Table = (props) => {
             onClick={handleEmail} 
             disabled={sending || excludedEmails.length === contacts.length}
           >
-            Email
+            {t("modal.email")}
           </button>
         )}
        </>

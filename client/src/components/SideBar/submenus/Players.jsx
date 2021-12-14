@@ -1,6 +1,7 @@
 
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
   display: flex;
@@ -40,12 +41,13 @@ const Player = styled.div`
 `;
 
 function Players({ players }) {
+  const { t } = useTranslation();
 
   const userDBID = JSON.parse(localStorage.userInfo || '{}')?.dbid;
 
   return (
     <Container>
-      <h2>Players</h2>
+      <h2>{t("sidebar.users")}</h2>
       <hr/>
       <div>
         {Object.values(players || {}).map(({dbid, name, role}) => (

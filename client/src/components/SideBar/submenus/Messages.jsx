@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-import styled from "styled-components"
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Message = styled.div`
   background:  ${(p) => (
@@ -85,6 +86,7 @@ function Messages(props) {
   const [messageLog, setMessageLog] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [sendGroup, setSendGroup] = useState({});
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (props.socket) {
@@ -150,8 +152,8 @@ function Messages(props) {
             onClick={() => addWhisper({id, name, dbid}, group)}
             private={group && group.length>0}
           >
-            {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? "You" : mem.name).join(', ')}</aside>)}
-            <b>{(props.socket.id !== id && dbid !== sessionId ? (`${name} says:`) : "You said:")}</b>
+            {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? t("sidebar.you") : mem.name).join(', ')}</aside>)}
+            <b>{(props.socket.id !== id && dbid !== sessionId ? t("sidebar.xSays", { name }) : t("sidebar.youSaid"))}</b>
             <p>{message}</p>
           </Message>
         ))}
@@ -166,14 +168,14 @@ function Messages(props) {
         </MessageGroup>
       )}
       <form onSubmit={sendMessage} action="#">
-        <MessageInput onChange={(e) => setMessageInput(e.target.value)} value={messageInput} placeholder="Type your message here" />
+        <MessageInput onChange={(e) => setMessageInput(e.target.value)} value={messageInput} placeholder={t("sidebar.typeYourMessageHere")} />
         <MessageSend type="submit" value="send">
           <i className="fa fa-send fa-2x" ></i>
         </MessageSend>
       </form>
     </MessageContainer>
   ) : (
-    <MessageWarning>You aren't connected to any chat room!</MessageWarning>
+    <MessageWarning>{t("sidebar.notConnectedToChat")}</MessageWarning>
   ));
 }
 

@@ -30,7 +30,9 @@
     "recharts": "^2.1.2",
     "socket.io-client": "^4.2.0",
     "styled-components": "^5.3.0",
-    "survey-react": "^1.8.72"
+    "survey-react": "^1.8.72",
+    "i18next": "^21.5.6",
+    "react-i18next": "^11.14.3"
   },
   "scripts": {
     "start": "webpack-dev-server --mode=development --open --hot --port 3000",

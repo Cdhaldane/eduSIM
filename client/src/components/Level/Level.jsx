@@ -5,11 +5,13 @@ import Pencil from "../Pencils/Pencil";
 import Modal from "react-modal";
 import AutoUpdate from "../AutoUpdate";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 import "./Level.css";
 
 const Level = (props) => {
 
+  const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const infoPopup = new useRef();
@@ -104,7 +106,7 @@ const Level = (props) => {
           <>
             <div style={{ width: "180px" }}>
               <h1 id="editModeTitle">
-                Edit Mode
+                {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
                 <i className="fa fa-info" />
@@ -122,7 +124,7 @@ const Level = (props) => {
               <div className="area">
                 <form className="form-input" ref={infoPopup} style={{ padding: "20px" }}>
                   <div className="levelInstructionsDiv">
-                    <h2>Instructions</h2>
+                    <h2>{t("edit.instructions")}</h2>
                     <table>
                       <tbody className="levelInstructionsTable">
                         <tr>
@@ -130,71 +132,34 @@ const Level = (props) => {
                             width: "50%",
                             paddingRight: "30px"
                           }}>
-                            <h3>Overview</h3>
+                            <h3>{t("edit.overview")}</h3>
                             <p style={{
                               textAlign: "left",
                               paddingTop: "7px"
                             }}>
-                              Edit Mode allows you to create and edit simulations.
-                              Simulations have two main components: the group area (with the grid background), and the personal area (located at the bottom of the screen).
-                              To toggle opening/closing the personal area use the red arrow button at the top right of the personal area.
-                              The group area will be shared by all the users in a simulation while the personal area contents are determined by the user's role and are only visible to the user.
-                              To create/edit roles use the role picker located in the top left of the personal area.
+                              {t("edit.overviewExplanation")}
                             </p>
                           </td>
                           <td style={{ width: "50%" }}>
-                            <h3>Shortcuts</h3>
+                            <h3>{t("edit.shortcuts")}</h3>
                             <ul>
-                              <li>
-                                Right click on canvas
-                                <i className="fa fa-angle-right" />
-                                Add Menu
-                              </li>
-                              <li>
-                                Right click on object
-                                <i className="fa fa-angle-right" />
-                                Object Menu
-                              </li>
-                              <li>
-                                Ctrl + Drag
-                                <i className="fa fa-angle-right" />
-                                Move around canvas
-                              </li>
-                              <li>
-                                Shift + R
-                                <i className="fa fa-angle-right" />
-                                Recenter Contents
-                              </li>
-                              <li>
-                                Delete
-                                <i className="fa fa-angle-right" />
-                                Delete selected object
-                              </li>
-                              <li>
-                                Ctrl + X
-                                <i className="fa fa-angle-right" />
-                                Cut selected object
-                              </li>
-                              <li>
-                                Ctrl + C
-                                <i className="fa fa-angle-right" />
-                                Copy selected object
-                              </li>
-                              <li>
-                                Ctrl + V
-                                <i className="fa fa-angle-right" />
-                                Paste selected object
-                              </li>
-                              <li>
-                                Ctrl + Z
-                                <i className="fa fa-angle-right" />
-                                Undo action
-                              </li>
-                              <li>
-                                Ctrl + Shift + Z
-                                <i className="fa fa-angle-right" />
-                                Redo action
-                              </li>
+                              {[
+                                "addMenu",
+                                "objectMenu",
+                                "moveAroundCanvas",
+                                "recenterContents",
+                                "deleteObject",
+                                "cutObject",
+                                "copyObject",
+                                "pasteObject",
+                                "undo", "redo"
+                              ].map((key, i) => (
+                                <li key={i}>
+                                  {t(`edit.shortcut.${key}SC`)}
+                                  <i className="fa fa-angle-right" />
+                                  {t(`edit.shortcut.${key}`)}
+                                </li>
+                              ))}
                             </ul>
                           </td>
                         </tr>
