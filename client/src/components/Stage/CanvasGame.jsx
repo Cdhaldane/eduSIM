@@ -218,6 +218,24 @@ class Graphics extends Component {
     this.props.refresh();
   }
 
+  // for drag calculations
+  realWidth = ({width, radiusX}) => {
+    if (!width && radiusX) {
+      return radiusX * 2;
+    } return width;
+  }
+  realHeight = ({height, radiusY}) => {
+    if (!height && radiusY) {
+      return radiusY * 2;
+    } return height;
+  }
+  originCenter = (value, name) => {
+    return (name.startsWith("ellipses") ||
+      name.startsWith("stars") ||
+      name.startsWith("triangles")) ? 0 : value;
+  }
+
+
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
@@ -299,17 +317,24 @@ class Graphics extends Component {
             img.overlayIndex === obj.overlayIndex &&
             img.id !== obj.id &&
             img.anchor
-          )).forEach(({x, y, width=0, height=0, id}) => {
-            let realX = x, realY = y;
+          )).forEach(({x, y, width, height, radiusX, radiusY, id}) => {
+            let sX = x, sY = y;
             if (this.props.gamepieceStatus[id]) {
-              realX = this.props.gamepieceStatus[id].x;
-              realY = this.props.gamepieceStatus[id].y;
+              sX = this.props.gamepieceStatus[id].x;
+              sY = this.props.gamepieceStatus[id].y;
             }
-            const xDist = Math.abs((e.target.x() + obj.width/2) - (realX + width/2))
-            const yDist = Math.abs((e.target.y() + obj.height/2) - (realY + height/2))
-            if (xDist < width/2 && yDist < height/2) {
-              e.target.x(realX + width/2 - obj.width/2);
-              e.target.y(realY + height/2 - obj.height/2);
+            let sW = this.realWidth({width, radiusX}), sH = this.realHeight({height, radiusY});
+            const xDist = Math.abs(
+              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) - 
+              (sX + this.originCenter(sW/2,id))
+            );
+            const yDist = Math.abs(
+              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) - 
+              (sY + this.originCenter(sH/2,id))
+            );
+            if (xDist < sW/2 && yDist < sH/2) {
+              e.target.x(sX + this.originCenter(sW/2,id) - this.originCenter(this.realWidth(obj)/2, obj.id));
+              e.target.y(sY + this.originCenter(sH/2,id) - this.originCenter(this.realHeight(obj)/2, obj.id));
             }
           });
 
