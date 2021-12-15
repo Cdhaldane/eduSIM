@@ -79,17 +79,11 @@
 .profilepic {
   width: 200px;
   height: 200px;
-  position: relative;
-  top: 50px;
-  left: 120px;
   border-radius: 30px;
 }
 
 .profilename {
   color: white;
-  position: absolute;
-  left: 450px;
-  top: 200px;
 }
 
 .fa-bars {

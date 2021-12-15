@@ -16,7 +16,11 @@
       "about": "About",
       "profile": "Profile",
       "login": "Login",
-      "logout": "Logout"
+      "logout": "Logout",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "copyright": "Copyright @ {{year}} eduSIM",
+      "contact": "Contact"
     },
 
     "common": {
