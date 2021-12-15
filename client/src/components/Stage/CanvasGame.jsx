@@ -8,8 +8,7 @@ import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 
 import {
-  Stage,
-  Layer
+  Stage
 } from "react-konva";
 
 const EndScreen = styled.div`
@@ -366,7 +365,7 @@ class Graphics extends Component {
           (this.state.overlayOpen ? "overlay" : "group");
         this.setState({
           canvasLoading: true
-        });
+        });   
         setTimeout(() => this.props.reCenter("play", layer), 300);
       }
     }

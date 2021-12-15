@@ -1657,7 +1657,12 @@ class Graphics extends Component {
             ref: newId,
             name: newId,
             x: newX,
-            y: newY
+            y: newY,
+            overlay: this.state.overlayOpen,
+            overlayIndex: this.state.overlayOpenIndex ? this.state.overlayOpenIndex : -1,
+            infolevel: this.state.overlayOpen ? false : (this.state.personalAreaOpen ? true : false),
+            rolelevel: this.state.rolelevel,
+            level: this.state.level
           }
           objects.push(newObject);
 

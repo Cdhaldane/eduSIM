@@ -36,7 +36,7 @@ class Overlay extends Component {
       <div className="overlayMain">
         <div>
           <div className="area overlayCanvas">
-            <i className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />
+            <i id="overlayCloseButton" className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />
             {/* The Konva Stage */}
             <div
               {...(this.props.playMode ? {} :
