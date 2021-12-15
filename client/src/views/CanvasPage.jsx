@@ -102,6 +102,8 @@ const CanvasPage = (props) => {
     }
   }
 
+  const [prevLayers, setPrevLayers] = useState([]);
+
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
    * The following functions are used to reposition the objects so they all fit on the canvas
@@ -121,7 +123,6 @@ const CanvasPage = (props) => {
       }
 
       const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
-      console.log(areaString);
       if (mode === "play" && document.getElementById(`${areaString}GameContainer`)) {
         document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
       }
@@ -197,7 +198,6 @@ const CanvasPage = (props) => {
                   groupArea &&
                   groupArea.clientHeight < groupArea.scrollHeight
                 ) {
-                  console.log("RAN");
                   overlayButtons.map(btn => {
                     btn.style.right = `20px`;
                   });
@@ -705,9 +705,10 @@ const CanvasPage = (props) => {
     controls: obj.controls
   });
 
-  const layerProps = (canvas, stage, type) => ({
-    ref: `${stage}AreaLayer.${type}`,
+  const layerProps = (canvas, stage, id) => ({
+    ref: `${stage}AreaLayer.${id}`,
     name: stage,
+    key: id,
     scaleX: canvas.state[`${stage}LayerScale`],
     scaleY: canvas.state[`${stage}LayerScale`],
     x: canvas.state[`${stage}LayerX`],
@@ -778,6 +779,17 @@ const CanvasPage = (props) => {
 
     //return "hsl(" + h + "," + s + "%," + l + "%)";
     return l;
+  }
+
+  const arraysEqual = (a, b) => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
   }
 
   /*-------------------------------------------------------------/
@@ -999,6 +1011,7 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
       objectIds = overlay.layers;
     }
+    const newLayers = !arraysEqual(prevLayers, objectIds);
 
     return (
       <>
@@ -1041,35 +1054,34 @@ const CanvasPage = (props) => {
           const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
           const customObj = customChild ? customChild.parentElement : null;
 
-          let stageParentElem = "";
-          if (stage === "overlay") {
-            stageParentElem = "overlayGameContainer";
-          } else if (stage === "personal") {
-            stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
-          } else {
-            stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
-          }
-          const stageElem = document.getElementById(stageParentElem).querySelectorAll(".konvajs-content")[0];
+          if (customObj && newLayers) {
+            setTimeout(() => {
+              let stageParentElem = "";
+              if (stage === "overlay") {
+                stageParentElem = "overlayGameContainer";
+              } else if (stage === "personal") {
+                stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
+              } else {
+                stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
+              }
+              const stageElem = document.getElementById(stageParentElem).querySelectorAll(".konvajs-content")[0];
 
-          if (customObj) {
-            const canvasElems = stageElem.querySelectorAll("canvas");
-            if (!editMode) {
-              for (let i = 0; i < canvasElems.length; i++) {
-                canvasElems[i].style.pointerEvents = "none";
+              const canvasElems = stageElem.querySelectorAll("canvas");
+              if (!editMode) {
+                for (let i = 0; i < canvasElems.length; i++) {
+                  canvasElems[i].style.pointerEvents = "none";
+                }
               }
-            }
-            const canvasElem = canvasElems[index + 1];
-            stageElem.insertBefore(customObj, canvasElem);
+              const canvasElem = canvasElems[index + 1];
+              stageElem.insertBefore(customObj, canvasElem);
+            }, 0);
+            setPrevLayers(objectIds);
           }
-          return obj ? (
-            <React.Fragment key={obj.id}>
-              {
-                objectIsOnStage(obj, canvas) === checkStage ?
-                  <Layer {...layerProps(canvas, stage, obj.id)}>
-                    {renderObject(obj, index, canvas, editMode, type)}
-                  </Layer> : null
-              }
-            </React.Fragment>
+
+          return obj && objectIsOnStage(obj, canvas) === checkStage ? (
+            <Layer {...layerProps(canvas, stage, obj.id)}>
+              {renderObject(obj, index, canvas, editMode, type)}
+            </Layer>
           ) : null;
         })}
 
