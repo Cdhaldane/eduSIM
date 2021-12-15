@@ -1,20 +1,35 @@
 const GameRoom = require("../models/GameRooms");
 import moment from "moment";
 
+// if nothing happens for 3 hours pause the sim
 const TIMEOUT_MINUTES = 180;
 
+// we store real-time simulation stuff in a js map
+// using the simulation ID as keys
+// in hindsight, might be better to use something like redis
+
 // room status map
+// contains timestamps, flags for when game is running/paused,
+// information about gamepieces
 let rooms = new Map();
 
 // client info (name, role, etc)
 let players = new Map();
+// we also keep data for player IDs so we can map a user's
+// Socket.IO id (which changes everytime a user reconnects) to their
+// database id (persists, used to identify players)
 let playerIDs = new Map();
 
 // simulation actions, would probably be too large/unnecessary to include in room status
+// DOES NOT STORE *CURRENT* STATUS
+// mostly just used for logging/stats
 let interactions = new Map();
 
+// message lists
 let chatlogs = new Map();
 
+// stores the setTimeout objects for simulation rooms
+// so we can destroy them if needed
 let timeouts = new Map();
 
 // helper functions
@@ -111,7 +126,7 @@ export const addInteraction = async (roomid, interaction) => {
   interactions.set(roomid, old);
   return true;
 };
-export const getInteractionBreakdown = async (roomid) => {
+export const getInteractionBreakdown = async (roomid) => { // not really used
   const list = interactions.get(roomid) || [];
   let counts = {};
   list.forEach(({level}) => {
