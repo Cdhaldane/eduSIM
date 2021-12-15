@@ -287,7 +287,6 @@ class Graphics extends Component {
         sendInteraction: this.sendInteraction,
         dragLayer: () => {},
         handleDragEnd: (obj, e) => {
-          console.log("HI", obj, e, this.props.gamepieceStatus[obj.id])
           this.setState({
             dragTick: 0
           })
