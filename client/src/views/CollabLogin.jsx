@@ -13,7 +13,7 @@ const Header = styled.p`
   font-size: 3em;
 `;
 
-function CollabLogin(props) {
+const CollabLogin = (props) => {
   const { loginWithRedirect, user } = useAuth0();
   const alertContext = useAlertContext();
   let history = useHistory();

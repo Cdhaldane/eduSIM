@@ -77,7 +77,7 @@ const Container = styled.form`
   border: 2px solid darkgray;
 `;
 
-function EditAlert({ onEdit, onCancel, init={}, adding, hidden }) {
+const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
   const [formData, setFormData] = useState(init);
   const [lastHidden, setLastHidden] = useState(hidden);
   const { t } = useTranslation();

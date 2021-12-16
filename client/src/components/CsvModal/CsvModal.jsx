@@ -26,7 +26,7 @@ const OVERLAY_STYLES = {
   zIndex: 1000
 }
 
-function CsvModal({ open, children, onClose }) {
+const CsvModal = ({ open, children, onClose }) => {
 
   const [csvfile, setCsvfile] = useState(undefined);
   const updateData = updateData.bind();

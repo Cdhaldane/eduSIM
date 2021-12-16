@@ -27,7 +27,7 @@ const OVERLAY_STYLES = {
   zIndex: 1000
 }
 
-export default function Modal({ open, children, onClose }) {
+export default Modal = ({ open, children, onClose }) => {
   const [contacts, setContacts] = useState(data);
   const [addFormData, setAddFormData] = useState({
     firstName: "",

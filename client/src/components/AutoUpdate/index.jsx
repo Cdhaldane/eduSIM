@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 // this is meant to listen to props that dont normally fire re-renders!
 // originally used for timers (that relied on doing math with timestamps)
 
-function AutoUpdate({
+const AutoUpdate = ({
   intervalTime, value, enabled, onChange, noDisplay
-}) {
+}) => {
   const [immediate, setImmediate] = useState(true);
   const [displayValue, setDisplayValue] = useState(value);
 

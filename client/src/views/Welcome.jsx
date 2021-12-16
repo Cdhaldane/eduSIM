@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import { useTranslation, Trans } from "react-i18next";
 
-function Welcome(props) {
+const Welcome = (props) => {
   const { t } = useTranslation();
   const { loginWithRedirect } = useAuth0();
 

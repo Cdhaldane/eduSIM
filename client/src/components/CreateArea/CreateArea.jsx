@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
-function CreateArea(props) {
+const CreateArea = (props) => {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
   const [moreImages, setMoreImages] = useState(false);
@@ -100,7 +100,7 @@ function CreateArea(props) {
   };
 
   // Handles selection of img from file
-  function onChange(event) {
+  const onChange = (event) => {
     setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]));
     setNote({
@@ -111,11 +111,11 @@ function CreateArea(props) {
   }
 
   // Handle input and adds title and img to notes array
-  function handleChange(event) {
+  const handleChange = (event) => {
     setTitle(event.target.value);
   }
 
-  function createSelectItems() {
+  const createSelectItems = () => {
     let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       // Here I will be creating my options dynamically based on
@@ -126,7 +126,7 @@ function CreateArea(props) {
     return items;
   }
 
-  function handleCopySim(event) {
+  const handleCopySim = (event) => {
     // Setting copy to 1 so when we add we can also update the params to copiedParams
     setCopy(1);
     setTitle(props.gamedata[event.target.value].gameinstance_name);

@@ -11,7 +11,7 @@ import AutoUpdate from "../components/AutoUpdate";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 
-function Join(props) {
+const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
   const [socket, setSocketInfo] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
@@ -40,7 +40,7 @@ function Join(props) {
     localStorage.setItem('img', props.location.img);
   }
 
-  function toggleModal() {
+  const toggleModal = () => {
     setShowNote(!showNote);
   }
 

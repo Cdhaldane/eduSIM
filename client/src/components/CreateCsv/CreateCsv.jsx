@@ -5,7 +5,7 @@ import { useAlertContext } from "../Alerts/AlertContext";
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
-function CreateCsv(props) {
+const CreateCsv = (props) => {
   const [file, setFile] = useState('');
   const [result, setResult] = useState('');
   const form = useRef();
@@ -55,7 +55,7 @@ function CreateCsv(props) {
     });
   }
 
-  function onChange(event) {
+  const onChange = (event) => {
     // Parsing only csv files
 
     if (event.target.files[0].type === 'text/csv' || event.target.files[0].type === 'application/vnd.ms-excel') {
@@ -77,7 +77,7 @@ function CreateCsv(props) {
     }
   }
   
-  async function download() {
+  const download = async () => {
     const blob = new Blob([
       "First_Name,Last_Name,Room,Email,Role\n"
     ], { type: 'text/csv' });
@@ -90,7 +90,7 @@ function CreateCsv(props) {
     form.current.removeChild(link);
   }
 
-  function removeFile() {
+  const removeFile = () => {
     setFile('');
     setResult('');
   }
@@ -106,12 +106,12 @@ function CreateCsv(props) {
         </div>
         {file ? (
           <div className="areacsv-filename">
-            <i class="fas fa-file-csv fa-2x"></i>
+            <i className="fas fa-file-csv fa-2x"></i>
             <div>
               {file?.name}
               <p>{t("modal.containsXEntries", { count: result?.data?.length })}</p>
             </div>
-            <i onClick={removeFile} class="fas fa-times-circle areacsv-remove"></i>
+            <i onClick={removeFile} className="fas fa-times-circle areacsv-remove"></i>
           </div>
         ) : (
           <div className="areacsv-filename" disabled>

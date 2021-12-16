@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 import "./Tabs.css";
 
-function Tabs(props) {
+const Tabs = (props) => {
   const [toggleState, setToggleState] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [newName, setNewName] = useState("");

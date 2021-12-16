@@ -8,14 +8,14 @@ import { useTranslation } from "react-i18next";
 
 import "./Navbar.css";
 
-function NavBar(props) {
+const NavBar = (props) => {
   const { isAuthenticated } = useAuth0();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
   const profileDropdown = useRef();
   const { t } = useTranslation();
 
-  function toggleContextMenu() {
+  const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
     if (!menuOpen === true) {
       document.addEventListener('click', handleClickOutside);

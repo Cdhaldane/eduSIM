@@ -40,7 +40,7 @@ const Player = styled.div`
   }
 `;
 
-function Players({ players }) {
+const Players = ({ players }) => {
   const { t } = useTranslation();
 
   const userDBID = JSON.parse(localStorage.userInfo || '{}')?.dbid;
