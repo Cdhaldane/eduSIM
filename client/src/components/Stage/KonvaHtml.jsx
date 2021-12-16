@@ -111,7 +111,6 @@ const KonvaHtml = ({
     }
   });
 
-
   useEffect(() => {
     const div = container.current;
     if (!div) {

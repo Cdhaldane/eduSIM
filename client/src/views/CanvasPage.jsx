@@ -110,6 +110,9 @@ const CanvasPage = (props) => {
    *------------------------------------------------------------------------------------------*/
   const reCenterObjects = (mode, layer) => {
     let canvas = getUpdatedCanvasState(mode);
+    if (!canvas) {
+      return;
+    }
 
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
@@ -871,7 +874,7 @@ const CanvasPage = (props) => {
                   id={"gridLine"}
                   points={[canvasX, y, canvasW / 2, y]}
                   stroke={layerLightness < 50 ? "white" : "black"}
-                  strokeWidth={y === 0 ? 2 : 1}
+                  strokeWidth={1}
                   strokeScaleEnabled={false}
                   globalCompositeOperation={"source-over"}
                   draggable={false}
@@ -895,7 +898,7 @@ const CanvasPage = (props) => {
                   id={"gridLine"}
                   points={[x, canvasY, x, canvasH / 2]}
                   stroke={layerLightness < 50 ? "white" : "black"}
-                  strokeWidth={x === 0 ? 2 : 1}
+                  strokeWidth={1}
                   strokeScaleEnabled={false}
                   globalCompositeOperation={"source-over"}
                   draggable={false}
@@ -1016,34 +1019,22 @@ const CanvasPage = (props) => {
     return (
       <>
         {editMode && (
-          <>
-            <Layer {...layerProps(canvas, stage, "main")}>
-              {/* This Rect is for dragging the canvas */}
-              <Rect
-                id="ContainerRect"
-                x={canvasX}
-                y={canvasY}
-                height={canvasH}
-                width={canvasW}
-              // Canvas Drag Rect Outline - FOR DEBUGGING
-              /*stroke={"red"}
-              strokeWidth={2}
-              strokeScaleEnabled={false}*/
-              />
+          <Layer {...layerProps(canvas, stage, "main")}>
+            {/* This Rect is for dragging the canvas */}
+            <Rect
+              id="ContainerRect"
+              x={canvasX}
+              y={canvasY}
+              height={canvasH}
+              width={canvasW}
+            // Canvas Drag Rect Outline - FOR DEBUGGING
+            /*stroke={"red"}
+            strokeWidth={2}
+            strokeScaleEnabled={false}*/
+            />
 
-              {renderGrid(canvas, stage)}
-
-              {/* This Rect acts as the transform object for custom objects */}
-              <Rect
-                {...defaultObjProps(canvas.state.customRect[0], canvas, editMode)}
-                ref={canvas.customRect}
-                draggable={false}
-                currentId={canvas.state.customRect[0].currentId}
-                width={canvas.state.customRect[0].width}
-                height={canvas.state.customRect[0].height}
-              />
-            </Layer>
-          </>
+            {renderGrid(canvas, stage)}
+          </Layer>
         )}
 
         {/* Render the object saved in state */}
@@ -1064,16 +1055,19 @@ const CanvasPage = (props) => {
               } else {
                 stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
               }
-              const stageElem = document.getElementById(stageParentElem).querySelectorAll(".konvajs-content")[0];
+              const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
+              const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
 
-              const canvasElems = stageElem.querySelectorAll("canvas");
-              if (!editMode) {
-                for (let i = 0; i < canvasElems.length; i++) {
-                  canvasElems[i].style.pointerEvents = "none";
+              if (stageElem) {
+                const canvasElems = stageElem.querySelectorAll("canvas");
+                if (!editMode) {
+                  for (let i = 0; i < canvasElems.length; i++) {
+                    canvasElems[i].style.pointerEvents = "none";
+                  }
                 }
+                const canvasElem = canvasElems[index + 1];
+                stageElem.insertBefore(customObj, canvasElem);
               }
-              const canvasElem = canvasElems[index + 1];
-              stageElem.insertBefore(customObj, canvasElem);
             }, 0);
             setPrevLayers(objectIds);
           }
@@ -1147,10 +1141,12 @@ const CanvasPage = (props) => {
         <GamePage
           canvasHeights={playModeCanvasHeights}
           customObjectsLabels={customObjects}
+
           loadObjects={loadObjects}
           reCenter={reCenterObjects}
           setGamePlayProps={setGamePlayProps}
           savedObjects={savedObjects}
+
           {...props}
         />
       )}
