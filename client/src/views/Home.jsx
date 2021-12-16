@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Note from "../components/Note/Note";
 import { useTranslation } from "react-i18next";
 
-
-function Home(props) {
+const Home = (props) => {
   const { t } = useTranslation();
   const { loginWithRedirect } = useAuth0();
 
