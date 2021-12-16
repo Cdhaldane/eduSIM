@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useRef, useContext } from "react";
 import { SettingsContext } from "../App";
 import Loading from "../components/Loading/Loading";
+import WebFont from "webfontloader";
 
 import TransformerComponent from "../components/Stage/TransformerComponent";
 import URLVideo from "../components/Stage/URLVideos";

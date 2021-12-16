@@ -21,7 +21,7 @@ function DropdownEditObject(props) {
   const [strokeColor, setStrokeColor] = useState("");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
-  const [font, setFont] = React.useState("");
+  const [font, setFont] = React.useState("Belgrano");
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   const [loading, setLoading] = useState(true);
@@ -238,6 +238,8 @@ function DropdownEditObject(props) {
       (tab === "stroke" ? objState.style.borderColor : objState.style.color));
     setInputCurrentOptions(tab);
   }
+
+  console.log(font);
 
   if (!loading) {
     if (props.title === "shape") {

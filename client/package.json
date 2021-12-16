@@ -12,6 +12,7 @@
     "font-picker-react": "^3.5.2",
     "gif-frames": "^1.0.1",
     "gifler": "^0.1.0",
+    "i18next": "^21.5.6",
     "js-file-download": "^0.4.12",
     "konva": "^8.0.4",
     "moment": "^2.29.1",
@@ -22,6 +23,7 @@
     "react-color": "^2.19.3",
     "react-dom": "16.8.6",
     "react-draggable": "^4.4.3",
+    "react-i18next": "^11.14.3",
     "react-konva": "^17.0.2-4",
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
@@ -31,8 +33,7 @@
     "socket.io-client": "^4.2.0",
     "styled-components": "^5.3.0",
     "survey-react": "^1.8.72",
-    "i18next": "^21.5.6",
-    "react-i18next": "^11.14.3"
+    "webfontloader": "^1.6.28"
   },
   "scripts": {
     "start": "webpack-dev-server --mode=development --open --hot --port 3000",
