@@ -913,8 +913,8 @@ const CanvasPage = (props) => {
     );
   };
 
-  const renderObject = (obj, index, canvas, editMode, type) => {
-    const layer = canvas.refs[`groupAreaLayer.main`];
+  const renderObject = (obj, index, canvas, editMode, type, stage) => {
+    const layer = canvas.refs[`${stage}AreaLayer.other`];
     switch (type) {
       case "rectangles":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} />;
@@ -1075,7 +1075,7 @@ const CanvasPage = (props) => {
 
           return obj && objectIsOnStage(obj, canvas) === checkStage ? (
             <Layer {...layerProps(canvas, stage, obj.id)}>
-              {renderObject(obj, index, canvas, editMode, type)}
+              {renderObject(obj, index, canvas, editMode, type, stage)}
             </Layer>
           ) : null;
         })}
