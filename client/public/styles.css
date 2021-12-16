@@ -123,12 +123,27 @@ a {
 .page-layout {
   display: flex;
   flex-direction: column;
-  padding: 40px 40px 0 40px;
-  height: 100%;
+  padding: 40px;
+  height: max-content;
+  min-height: 100%;
   width: 100%;
   max-width: 1000px;
   color: white;
   margin: auto;
+  font-size: 0.9em;
+}
+.page-layout a {
+  color: white;
+  text-decoration: underline;
+}
+.page-layout ul {
+  margin-left: 20px;
+}
+.page-layout > p {
+  margin: 6px 0;
+}
+.page-layout > h3 {
+  margin: 10px 0;
 }
 
 .homebody{
