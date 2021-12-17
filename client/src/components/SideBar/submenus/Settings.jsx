@@ -35,7 +35,7 @@ const SettingRow = styled.div`
   }
 `;
 
-function Settings(props) {
+const Settings = (props) => {
   const { t } = useTranslation();
 
   const { updateSetting, settings } = useContext(SettingsContext);

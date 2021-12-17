@@ -74,14 +74,12 @@ const EditPage = (props) => {
       setTasks(old => {
         let n = {...old};
         n[page] = f(n[page] || []);
-        console.log(n);
         return n;
       });
     } else {
       setTasks(old => {
         let n = {...old};
         n[page] = f;
-        console.log(n);
         return n;
       });
     }

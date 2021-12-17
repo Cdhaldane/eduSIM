@@ -83,7 +83,7 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  function calcHeight(el) {
+  const calcHeight = (el) => {
     const height = el.offsetHeight;
     const matrix = new DOMMatrix(window.getComputedStyle(dropdownRef.current).transform);
     const y = matrix.m42;
@@ -192,7 +192,7 @@ const DropdownAddObjects = (props) => {
     uploadFile(file, "audio");
   }
 
-  function handleFile(event) {
+  const handleFile = (event) => {
     setFile(event.target.files[0]);
   }
 
@@ -330,13 +330,13 @@ const DropdownAddObjects = (props) => {
     if (type === "img") {
       const img = new Image();
       img.src = url;
-      img.onload = function () {
+      img.onload = () => {
         callback(this.width, this.height);
       }
     } else {
       const video = document.createElement("video");
       video.src = url;
-      video.addEventListener('loadedmetadata', function (e) {
+      video.addEventListener('loadedmetadata', () => {
         callback(video.videoWidth, video.videoHeight);
       });
     }
@@ -612,7 +612,7 @@ const DropdownAddObjects = (props) => {
     setAudiosrc(url);
   }
 
-  function handleFilesubmit(e) {
+  const handleFilesubmit = (e) => {
     filesubmitNote(e);
   }
 

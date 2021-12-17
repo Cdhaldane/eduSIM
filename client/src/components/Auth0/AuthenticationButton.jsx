@@ -5,12 +5,12 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import "../Buttons/Buttons.css";
 
-function AuthenticationButton(props) {
+const AuthenticationButton = (props) => {
   const { isAuthenticated, loginWithRedirect, logout, } = useAuth0();
   const { user } = useAuth0();
   const { t } = useTranslation();
 
-  function handleClick() {
+  const handleClick = () => {
     loginWithRedirect({ redirectUri: window.location.origin, prompt: "select_account" });
     axios.get(process.env.REACT_APP_API_ORIGIN + '/adminaccounts/getAdminbyEmail/:email/:name', {
       params: {
@@ -25,7 +25,7 @@ function AuthenticationButton(props) {
     });
   }
 
-  function handleLogout() {
+  const handleLogout = () => {
     logout({
       returnTo: window.location.origin,
     });

@@ -92,7 +92,7 @@ const EditButtons = styled.div`
   }
 `;
 
-function Alerts({ editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) {
+const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) => {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const { t } = useTranslation();

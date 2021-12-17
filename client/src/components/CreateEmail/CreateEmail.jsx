@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import Table from "../Table/Table";
 import { useTranslation } from "react-i18next";
 
-function CreateEmail(props) {
+const CreateEmail = (props) => {
   const detailsArea = new useRef();
   const { t } = useTranslation();
 

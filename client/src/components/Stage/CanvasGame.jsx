@@ -571,7 +571,7 @@ class Graphics extends Component {
             width={window.innerWidth}
             ref="graphicStage"
           >
-            {this.props.loadObjects("group", "play")}
+            {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>
         </div>
 
@@ -619,7 +619,7 @@ class Graphics extends Component {
                     document.getElementById("personalGameContainer").clientWidth : 0}
                   ref="personalAreaStage"
                 >
-                  {this.props.loadObjects("personal", "play")}
+                  {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}
                 </Stage>
               </div>
               {(this.state.personalAreaOpen !== 1)

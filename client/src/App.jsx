@@ -7,6 +7,7 @@ import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
+import CookiesPopup from "./components/Alerts/CookiesPopup";
 import "./components/CreateCsv/CreateCsv.css";
 import "./components/CreateArea/CreateArea.css";
 
@@ -37,6 +38,7 @@ const customObjects = [
 const App = (props) => {
 
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
+  const [cookiesPopupVisible, setCookiesPopupVisible] = useState(true);
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -93,6 +95,13 @@ const App = (props) => {
               />}
             />
           </Switch>
+          {cookiesPopupVisible &&
+        document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
+          <CookiesPopup close={() => {
+            setCookiesPopupVisible(false);
+            document.cookie = "cookiesAccepted=true";
+          }} />
+        )}
         </Suspense>
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <FooterBar />

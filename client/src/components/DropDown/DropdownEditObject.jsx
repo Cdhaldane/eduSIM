@@ -14,14 +14,14 @@ import DropdownEditPoll from './DropdownEditPoll';
 
 const DEFAULT_FONT_SIZE = 50;
 
-function DropdownEditObject(props) {
+const DropdownEditObject = (props) => {
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("");
   const [strokeColor, setStrokeColor] = useState("");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
-  const [font, setFont] = React.useState("");
+  const [font, setFont] = React.useState("Belgrano");
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
   const [loading, setLoading] = useState(true);
@@ -86,7 +86,7 @@ function DropdownEditObject(props) {
     background: "red"
   };
 
-  function DropdownItem(props) {
+  const DropdownItem = (props) => {
     return (
       <div className="menu-itemedit" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
         <span className="icon-buttonedit">{props.leftIcon}</span>
@@ -96,27 +96,27 @@ function DropdownEditObject(props) {
     );
   }
 
-  function handleChangeF(e) {
+  const handleChangeF = (e) => {
     setFillColor(e);
     props.handleFillColor(e);
   }
 
-  function handleChangeS(e) {
+  const handleChangeS = (e) => {
     setStrokeColor(e);
     props.handleStrokeColor(e);
   }
 
-  function onSliderChange(e) {
+  const onSliderChange = (e) => {
     setStrokeWidth(e);
     props.handleWidth(e);
   }
 
-  function onSliderChangeO(e) {
+  const onSliderChangeO = (e) => {
     setOpacity(e);
     props.handleOpacity(e);
   }
 
-  function handleSize(e) {
+  const handleSize = (e) => {
     setFontSize(e.target.value);
     props.handleSize(e.target.value);
   }
@@ -126,14 +126,14 @@ function DropdownEditObject(props) {
     [], // will be created only once initially
   );
 
-  function handleVarLabel(val) {
+  const handleVarLabel = (val) => {
     debounceObjState({ label: val });
     setObjState(prev => ({
       ...prev,
       label: val
     }));
   }
-  function handleInputStyle(type, val) {
+  const handleInputStyle = (type, val) => {
     const style = {
       ...objState.style,
       [type]: val
@@ -154,42 +154,42 @@ function DropdownEditObject(props) {
     }
     );
   }
-  function handleVarName(val) {
+  const handleVarName = (val) => {
     debounceObjState({ varName: val });
     setObjState(prev => ({
       ...prev,
       varName: val
     }));
   }
-  function handleVarEnable(val) {
+  const handleVarEnable = (val) => {
     props.updateObjState({ varEnable: val });
     setObjState(prev => ({
       ...prev,
       varEnable: val
     }));
   }
-  function handleVarInterval(val) {
+  const handleVarInterval = (val) => {
     props.updateObjState({ varInterval: val });
     setObjState(prev => ({
       ...prev,
       varInterval: val
     }));
   }
-  function handleVarType(val) {
+  const handleVarType = (val) => {
     props.updateObjState({ varType: val });
     setObjState(prev => ({
       ...prev,
       varType: val
     }));
   }
-  function handleIFrameURL(val) {
+  const handleIFrameURL = (val) => {
     debounceObjState({ iframeSrc: val });
     setObjState(prev => ({
       ...prev,
       iframeSrc: val
     }));
   }
-  function handleHTML(val) {
+  const handleHTML = (val) => {
     let sanitized = DOMPurify.sanitize(val);
     debounceObjState({ htmlValue: sanitized });
     setObjState(prev => ({
@@ -197,21 +197,21 @@ function DropdownEditObject(props) {
       htmlValue: val
     }));
   }
-  function handleWidth(val) {
+  const handleWidth = (val) => {
     props.updateObjState({ containerWidth: val });
     setObjState(prev => ({
       ...prev,
       containerWidth: val
     }));
   }
-  function handleHeight(val) {
+  const handleHeight = (val) => {
     props.updateObjState({ containerHeight: val });
     setObjState(prev => ({
       ...prev,
       containerHeight: val
     }));
   }
-  function handleProperty(val, prop) {
+  const handleProperty = (val, prop) => {
     props.updateObjState({ [prop]: val });
     setObjState(prev => ({
       ...prev,
@@ -219,7 +219,7 @@ function DropdownEditObject(props) {
     }));
   }
 
-  function handleTimeLimit(num, correct=false) {
+  const handleTimeLimit = (num, correct=false) => {
     let val = num;
     if (correct && (isNaN(num) || parseInt(num) < 1 || num.length == 0)) {
       val = 1;

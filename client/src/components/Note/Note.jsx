@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Note.css";
 
-function Note(props) {
+const Note = (props) => {
   return (
     props.onClick ? (
       <button className={props.className} type="button" alt="sim background" onClick={props.onClick} >

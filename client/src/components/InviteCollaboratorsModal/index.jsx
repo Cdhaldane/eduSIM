@@ -66,7 +66,7 @@ const Collaborators = styled.div`
   }
 `;
 
-function InviteCollaboratorsModal(props) {
+const InviteCollaboratorsModal = (props) => {
   const detailsArea = new useRef();
   const [emails, setEmails] = useState([""]);
   const [sending, setSending] = useState(false);

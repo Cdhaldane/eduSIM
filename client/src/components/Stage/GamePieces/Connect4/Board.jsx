@@ -162,7 +162,7 @@ const ConnectFour = forwardRef((props, ref) => {
       return;
     }
 
-    function flashWinningCells(on) {
+    const flashWinningCells = (on) => {
       const { empty } = boardSettings.colors;
       const { winner } = win;
       for (let o of win.winningCells) {
@@ -196,7 +196,7 @@ const ConnectFour = forwardRef((props, ref) => {
   useEffect(() => {
     if (dropping || win) return;
 
-    function isWin() {
+    const isWin = () => {
       return (
         isForwardsDiagonalWin() ||
         isBackwardsDiagonalWin() ||

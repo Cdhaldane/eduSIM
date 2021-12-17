@@ -17,7 +17,9 @@ import DropdownOverlay from "../Dropdown/DropdownOverlay";
 // Standard Konva Components
 import Konva from "konva";
 import {
-  Stage
+  Stage,
+  Layer,
+  Rect
 } from "react-konva";
 
 import "./Stage.css";
@@ -119,13 +121,8 @@ class Graphics extends Component {
       // This manually gets updated to simulate a normal Konva transformer
       customRect: [
         {
-          visible: true,
           x: 0,
-          y: 0,
-          id: "customRect",
-          name: "customRect",
-          ref: "customRect",
-          opacity: 0
+          y: 0
         }
       ],
 
@@ -518,6 +515,7 @@ class Graphics extends Component {
           this.state.overlayOpen !== prevState.overlayOpen ||
           this.state.level !== prevState.level
         ) {
+          this.refs.customRectCanvas.add(this.refs.customRect);
           const layer = this.state.personalAreaOpen ? "personal" :
             (this.state.overlayOpen ? "overlay" : "group");
           this.setState({
@@ -2339,8 +2337,6 @@ class Graphics extends Component {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
             if (updateState) {
-              const customState = [...this.state[this.getObjType(id)]];
-
               const elem = this.refs[id];
               const style = window.getComputedStyle(elem);
               const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
@@ -2356,11 +2352,11 @@ class Graphics extends Component {
                   currentId: id,
                   x: x - ((width * paddingPercent) / 2),
                   y: y - ((height * paddingPercent) / 2)
-                }],
-                [this.getObjType(id)]: customState
+                }]
               });
 
               const sizeRect = this.refs.customRect;
+              sizeRect.attrs.currentId = id;
               sizeRect.attrs.width = width * (1 + paddingPercent);
               sizeRect.attrs.height = height * (1 + paddingPercent);
               group.add(sizeRect);
@@ -2790,6 +2786,7 @@ class Graphics extends Component {
   }
 
   setOverlayOpen = (val, index) => {
+    this.refs.customRectCanvas.add(this.refs.customRect);
     this.setState({
       overlayOpen: val,
       overlayOpenIndex: index
@@ -3001,6 +2998,36 @@ class Graphics extends Component {
             level={this.state.level}
           />
         )}
+
+        {/* ---- CUSTOM RECT CANVAS ---- */}
+        <Stage
+          id="customRectCanvas"
+          style={{ display: "none" }}
+          width={10}
+          height={10}
+        >
+          <Layer ref="customRectCanvas">
+            <Rect
+              id={"customRect"}
+              name={"customRect"}
+              ref={"customRect"}
+              draggable={false}
+              visible={true}
+              opacity={0}
+              currentId={this.state.customRect[0].currentId}
+              width={this.state.customRect[0].width}
+              height={this.state.customRect[0].height}
+              x={this.state.customRect[0].x}
+              y={this.state.customRect[0].y}
+              onClick={() => this.onObjectClick(this.state.customRect[0])}
+              onTransformStart={this.onObjectTransformStart}
+              onTransformEnd={() => this.onObjectTransformEnd(this.state.customRect[0])}
+              onDragMove={(e) => this.onObjectDragMove(this.state.customRect[0], e)}
+              onDragEnd={(e) => this.handleDragEnd(e, this.getObjType(this.state.customRect[0].id), this.state.customRect[0].ref)}
+              onContextMenu={this.onObjectContextMenu}
+            />
+          </Layer>
+        </Stage>
 
         {/* ---- OVERLAY CANVAS ---- */}
         {this.state.overlayOpen && (
@@ -3217,6 +3244,7 @@ class Graphics extends Component {
             ? <button
               className="personalAreaToggle"
               onClick={() => {
+                this.refs.customRectCanvas.add(this.refs.customRect);
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(true);
                 setTimeout(() => {
@@ -3228,6 +3256,7 @@ class Graphics extends Component {
             : <button
               className="personalAreaToggle"
               onClick={() => {
+                this.refs.customRectCanvas.add(this.refs.customRect);
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>

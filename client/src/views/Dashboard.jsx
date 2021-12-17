@@ -7,7 +7,7 @@ import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 
-function Dashboard(props) {
+const Dashboard = (props) => {
   const { user } = useAuth0();
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState([]);
@@ -53,13 +53,13 @@ function Dashboard(props) {
     getAllGamedata();
   }, [user]);
 
-  function addNote(newgamedata) {
+  const addNote = (newgamedata) => {
     getGamedata((prevgamedata) => {
       return [...prevgamedata, newgamedata];
     });
   }
 
-  function deleteNote(id) {
+  const deleteNote = (id) => {
     getGamedata((prevgamedata) => {
       return prevgamedata.filter((noteItem, index) => {
         return index !== id;
@@ -67,7 +67,7 @@ function Dashboard(props) {
     });
   }
 
-  function toggleModal() {
+  const toggleModal = () => {
     if (!uploadedImages) {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/image/getImagesFrom/' + localStorage.adminid).then((res) => {
         setUploadedImages(res.data.resources);

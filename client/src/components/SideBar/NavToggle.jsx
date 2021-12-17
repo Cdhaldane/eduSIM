@@ -33,7 +33,7 @@ const Button = styled.button`
     }
 `;
 
-function NavToggle(props) {
+const NavToggle = (props) => {
   return (
     <Button
       {...props}
