@@ -32,7 +32,7 @@ export default async (server, client) => {
     client.onAny((event, args) => adminEvents(server, client, event, args));
 
   } else {
-    // initial connection from player; return connection status and announce arrival to other players
+    // initial connection from player; return connection/game status and announce arrival to other players
     
     const roomid = client.handshake.query.room;
     client.join(roomid);

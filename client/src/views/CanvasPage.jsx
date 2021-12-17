@@ -413,17 +413,19 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : false,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
       editMode: editMode,
+      onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
         {
           onClick: () => canvas.onObjectClick(obj),
           onTransformStart: canvas.onObjectTransformStart,
           onTransformEnd: () => canvas.onObjectTransformEnd(obj),
-          onDragMove: (e) => canvas.onObjectDragMove(obj, e),
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
-        } : {})
+        } : {
+          onDragEnd: e => canvas.handleDragEnd(obj, e),
+        })
     }
   }
 
@@ -917,13 +919,13 @@ const CanvasPage = (props) => {
     const layer = canvas.refs[`${stage}AreaLayer.other`];
     switch (type) {
       case "rectangles":
-        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} />;
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "ellipses":
-        return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} />;
+        return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
         return <Line {...lineProps(obj, index, canvas, editMode)} />;
       case "images":
-        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} /> : null;
+        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} /> : null;
       case "videos":
         return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
       case "audios":
@@ -931,11 +933,11 @@ const CanvasPage = (props) => {
       case "documents":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
-        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)} />;
+        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)}/>;
       case "stars":
-        return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} />;
+        return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
-        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} />;
+        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
       case "lines":
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "polls":

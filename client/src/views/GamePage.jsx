@@ -133,8 +133,8 @@ const Game = (props) => {
           return n;
         });
       });
-      client.on("errorLog", (message) => {
-        alertContext.showAlert(message, "error");
+      client.on("errorLog", ({key, params={}}) => {
+        alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
       setLoading(false);

@@ -21,7 +21,11 @@
       "about": "About",
       "profile": "Profile",
       "login": "Login",
-      "logout": "Logout"
+      "logout": "Logout",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "copyright": "Copyright © {{year}} eduSIM",
+      "contact": "Contact"
     },
 
     "common": {
@@ -64,6 +68,8 @@
       "advanceAllSims": "Advance all simulations by one page",
       "reset": "Reset",
       "resetConfirm": "Are you sure you want to reset every simulation room? (A backup log will be saved.)",
+
+      "newGroupX": "New group {{index}}",
 
       "displayPreviousRuns": "Display previous runs",
       "startedXLastedY": "Started on {{time}}, lasted {{duration}}",
@@ -111,7 +117,8 @@
       "namePlaceholder": "Your name",
       "go": "Go",
       "thanksForJoining": "Thank you for joining!",
-      "resetSimulation": "Reset Simulation"
+      "resetSimulation": "Reset Simulation",
+      "defaultRole": "Default Role"
     },
 
     "sidebar": {
@@ -205,6 +212,7 @@
         "fromFile": "From file"
       },
       "addInteractive": "Add Interactive",
+      "addGames": "Add Minigame",
       "interactive": {
         "tic": "Tic-Tac-Toe",
         "ticEdit": "Edit Tic-Tac-Toe",
@@ -234,11 +242,19 @@
 
       "editPages": "Edit Pages",
       "editPageX": "Edit Page: {{name}}",
+      "pageXQuestionY": "Page {{p}} Question {{q}}",
+      "pageNamePlaceholder": "Page Name",
       "newPagePlaceholder": "New Page Name",
       "addOverlay": "Add Overlay",
       "pageColors": "Page Colours",
       "confirmDeletePage": "Are you sure you want to delete page {{name}}? This action cannot be undone.",
       "deletePage": "Yes - Delete page",
+
+      "sampleTextQuestion": "Sample Text Question",
+      "sampleDateQuestion": "Sample Date Question",
+      "sampleYesNoQuestion": "Sample Yes/No Question",
+      "clickCogToEditChoices": "Click the cog to edit choices...",
+      "labelText": "Label text",
 
       "overlayXSettings": "Overlay {{name}} Settings",
       "hideOverlayButton": "Hide Overlay Button",
@@ -250,6 +266,9 @@
       "deleteOverlay": "Delete Overlay",
       "confirmDeleteOverlay": "Are you sure you want to delete overlay {{name}} and all associated data? This action cannot be undone.",
       "yesDeleteOverlay": "Yes - Delete overlay",
+
+      "draggable": "Draggable",
+      "setAsAnchorPoint": "Set as anchor point",
 
       "questionPlaceholder": "Question here",
       "pollName": "Poll Name:",
@@ -327,6 +346,7 @@
 
       "performanceReportSettings": "Performance Report Settings",
       "untitled": "Untitled",
+      "untitledX": "Untitled {{index}}",
       "noResponses": "No Responses",
       "pollColonName": "Poll: {{name}}",
       "pollXName": "Poll {{num}} - {{name}}",
@@ -407,7 +427,12 @@
 
       "fileNotImage": "Uploaded file is not an image.",
       "fileNotVideo": "Uploaded file is not a video.",
-      "fileNotAudio": "Uploaded file is not an audio file."
+      "fileNotAudio": "Uploaded file is not an audio file.",
+
+      "attemptJoinAsExistingPlayer": "You are attempting to join as a player that has already joined.",
+      "noUpdateGameInProgress": "Warning: settings will not update while game is in progress. Please reset the game before making changes.",
+      "noUpdateGameXInProgress": "Warning: settings will not update while game {{game}} is in progress. Please reset the game before making changes.",
+      "inactivityTimeoutPause": "Pausing room due to inactivity timeout."
     }
   }
 }

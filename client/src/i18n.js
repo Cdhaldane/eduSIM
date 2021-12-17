@@ -15,6 +15,7 @@ i18n.use(initReactI18next).init({
 });
 
 // uncomment below to check for any missing translated text
-// i18n.t = () => 'get the banana';
+// const e = i18n.t;
+// i18n.t = (...args) => "❤️"+e(...args);
 
 export default i18n;

@@ -311,6 +311,14 @@ const DropdownEditObject = (props) => {
                 />
               </b>
               <br />
+              <div className="dropdowncheckbox">
+                <input type="checkbox" checked={!!objState?.draggable} onChange={() => handleProperty(!objState?.draggable, 'draggable')} />
+                <p>{t("edit.draggable")}</p>
+              </div>
+              <div className="dropdowncheckbox">
+                <input type="checkbox" checked={!!objState?.anchor} onChange={() => handleProperty(!objState?.anchor, 'anchor')} />
+                <p>{t("edit.setAsAnchorPoint")}</p>
+              </div>
             </div>
           </CSSTransition>
           <CSSTransition
