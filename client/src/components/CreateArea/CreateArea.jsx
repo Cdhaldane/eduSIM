@@ -25,7 +25,7 @@ const CreateArea = (props) => {
 
   const handleClickOutside = e => {
     if (detailsArea.current &&
-      !(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+      !(detailsArea.current.contains(e.target) || (imageArea.current && imageArea.current.contains(e.target)))) {
       props.close();
     }
   };
