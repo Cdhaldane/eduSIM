@@ -82,7 +82,7 @@ const MessageGroup = styled.div`
   }
 `;
 
-function Messages(props) {
+const Messages = (props) => {
   const [messageLog, setMessageLog] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const [sendGroup, setSendGroup] = useState({});

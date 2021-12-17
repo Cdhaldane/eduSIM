@@ -7,35 +7,35 @@ import "./Info.css";
 const Info = (props) => {
   const [open, setOpen] = useState(0);
 
-  function addCircle() {
+  const addCircle = () => {
     props.addCircle();
   }
 
-  function addRectangle() {
+  const addRectangle = () => {
     props.addRectangle();
   }
 
-  function addTriangle() {
+  const addTriangle = () => {
     props.addTriangle();
   }
 
-  function addStar() {
+  const addStar = () => {
     props.addStar();
   }
 
-  function drawLine() {
+  const drawLine = () => {
     props.drawLine();
   }
 
-  function drawText() {
+  const drawText = () => {
     props.drawText();
   }
 
-  function drawImage() {
+  const drawImage = () => {
     props.drawImage();
   }
 
-  function eraseLine() {
+  const eraseLine = () => {
     props.eraseLine();
   }
 

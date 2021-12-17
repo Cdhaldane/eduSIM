@@ -8,7 +8,12 @@
       "join": "Join!",
       "roomCode": "Room code",
       "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>",
-      "about": "About!"
+      "about": "About!",
+      "cookieNotice": "Notice.",
+      "cookieOverview": "eduSIM uses cookies. By continuing to browse the site you are agreeing to our use of cookies.",
+      "cookieOK": "OK",
+      "cookieLearnMore": "Learn More",
+      "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Also third party cookies are used for logging in with Google / Microsoft."
     },
 
     "navbar": {
