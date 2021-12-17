@@ -13,7 +13,7 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(229);
+  const [menuHeight, setMenuHeight] = useState(274);
   const dropdownRef = useRef(null);
 
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -647,7 +647,7 @@ const DropdownAddObjects = (props) => {
             {t("edit.addMedia")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
+            leftIcon={<i className="icons fas fa-hand-paper"></i>}
             onClick={() => setActiveMenu("pieces")}>
             {t("edit.addInteractive")}
           </DropdownItem>
@@ -655,6 +655,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fas fa-question-circle"></i>}
             onClick={() => setActiveMenu("inputs")}>
             {t("edit.addInput")}
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
+            onClick={() => setActiveMenu("games")}>
+            {t("edit.addGames")}
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -925,16 +930,6 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.addInteractive")}</h2>
           </DropdownItem>
           <DropdownItem
-            onClick={addTicTacToe}
-            leftIcon={<i className="icons fas fa-times"
-              onClick={addTicTacToe}></i>}>
-            {t("edit.interactive.tic")}</DropdownItem>
-          <DropdownItem
-            onClick={addConnect4}
-            leftIcon={<i className="icons fa fa-circle"
-              onClick={addConnect4}></i>}>
-            {t("edit.interactive.connect4")}</DropdownItem>
-          <DropdownItem
             onClick={addPoll}
             leftIcon={<i className="icons fa fa-poll"
               onClick={addPoll}></i>}>
@@ -949,6 +944,32 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-stopwatch"
               onClick={addTimer}></i>}>
             {t("edit.interactive.timer")}</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      
+      <CSSTransition
+        in={activeMenu === 'games'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>{t("edit.addGames")}</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={addTicTacToe}
+            leftIcon={<i className="icons fas fa-times"
+              onClick={addTicTacToe}></i>}>
+            {t("edit.interactive.tic")}</DropdownItem>
+          <DropdownItem
+            onClick={addConnect4}
+            leftIcon={<i className="icons fa fa-circle"
+              onClick={addConnect4}></i>}>
+            {t("edit.interactive.connect4")}</DropdownItem>
         </div>
       </CSSTransition>
 

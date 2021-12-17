@@ -207,6 +207,7 @@
         "fromFile": "From file"
       },
       "addInteractive": "Add Interactive",
+      "addGames": "Add Minigame",
       "interactive": {
         "tic": "Tic-Tac-Toe",
         "ticEdit": "Edit Tic-Tac-Toe",

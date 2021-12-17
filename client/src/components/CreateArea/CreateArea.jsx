@@ -146,8 +146,6 @@ function CreateArea(props) {
           {t("modal.chooseGame")}
           <select id="games">
             <option value="Team Leadership">Team Leadership</option>
-            <option value="Project Management">Project Management</option>
-            <option value="">...</option>
             <option value="blank">Create a blank simulation</option>
           </select>
         </div>
