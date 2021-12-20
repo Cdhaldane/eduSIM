@@ -13,7 +13,7 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(229);
+  const [menuHeight, setMenuHeight] = useState(272);
   const dropdownRef = useRef(null);
 
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -35,7 +35,7 @@ const DropdownAddObjects = (props) => {
   const { t } = useTranslation();
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 230;
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 272;
     const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
@@ -229,11 +229,11 @@ const DropdownAddObjects = (props) => {
       thisPage.personalLayers.push(name);
     } else {
       let oIndex = 0;
-      const overlay = thisPage.overlays.filter((overlay,index) => {
+      const overlay = thisPage.overlays.filter((overlay, index) => {
         if (overlay.id === props.state.overlayOpenIndex) {
           oIndex = index;
           return true;
-        } else {  
+        } else {
           return false;
         }
       })[0];
@@ -656,6 +656,11 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("inputs")}>
             {t("edit.addInput")}
           </DropdownItem>
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-gamepad"></i>}
+            onClick={() => setActiveMenu("games")}>
+            {t("edit.addGame")}
+          </DropdownItem>
         </div>
       </CSSTransition>
 
@@ -925,16 +930,6 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.addInteractive")}</h2>
           </DropdownItem>
           <DropdownItem
-            onClick={addTicTacToe}
-            leftIcon={<i className="icons fas fa-times"
-              onClick={addTicTacToe}></i>}>
-            {t("edit.interactive.tic")}</DropdownItem>
-          <DropdownItem
-            onClick={addConnect4}
-            leftIcon={<i className="icons fa fa-circle"
-              onClick={addConnect4}></i>}>
-            {t("edit.interactive.connect4")}</DropdownItem>
-          <DropdownItem
             onClick={addPoll}
             leftIcon={<i className="icons fa fa-poll"
               onClick={addPoll}></i>}>
@@ -979,6 +974,33 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-check-square"
               onClick={() => addInput("checkbox")}></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'games'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>{t("edit.addGame")}</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={addTicTacToe}
+            leftIcon={<i className="icons fas fa-times"
+              onClick={addTicTacToe}></i>}>
+            {t("edit.game.tic")}
+          </DropdownItem>
+          <DropdownItem
+            onClick={addConnect4}
+            leftIcon={<i className="icons fa fa-circle"
+              onClick={addConnect4}></i>}>
+            {t("edit.game.connect4")}
+          </DropdownItem>
         </div>
       </CSSTransition>
     </div>

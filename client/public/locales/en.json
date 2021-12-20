@@ -206,9 +206,6 @@
       },
       "addInteractive": "Add Interactive",
       "interactive": {
-        "tic": "Tic-Tac-Toe",
-        "ticEdit": "Edit Tic-Tac-Toe",
-        "connect4": "Connect 4",
         "poll": "Poll",
         "html": "HTML Frame",
         "timer": "Timer"
@@ -219,11 +216,17 @@
         "textbox": "Textbox",
         "checkbox": "Checkbox"
       },
+      "addGame": "Add Game",
+      "game": {
+        "tic": "Tic-Tac-Toe",    
+        "connect4": "Connect 4"
+      },
 
       "textEdit": "Edit Text",
       "shapeEdit": "Edit Shape",
       "inputEdit": "Edit Input",
       "connect4Edit": "Edit Connect 4",
+      "ticEdit": "Edit Tic-Tac-Toe",
       "pollEdit": "Edit Poll",
       "timerEdit": "Edit Timer",
       "htmlEdit": "Edit HTML Frame",

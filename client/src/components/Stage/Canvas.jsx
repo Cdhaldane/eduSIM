@@ -1764,10 +1764,9 @@ class Graphics extends Component {
 
     // Get a list of the affected types
     let affectedTypes = [];
-    let customObjDeleted = false;
     for (let i = 0; i < toDelete.length; i++) {
       if (!toDelete[i].attrs) {
-        customObjDeleted = true;
+        this.refs.customRectCanvas.add(this.refs.customRect);
       }
       affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
     }
@@ -1794,7 +1793,7 @@ class Graphics extends Component {
         [type]: objs,
         [deletedCountName]: deletedCount
       }, () => {
-        this.handleSave(customObjDeleted);
+        this.handleSave();
       });
     }
 
