@@ -243,12 +243,14 @@ class Graphics extends Component {
     // Show overlay if it is the next page and a pageEnter overlay is available
     const page = this.getPage(this.state.level - 1);
     let overlayPageEnter = null;
+    if (page?.overlays) {
     for (let i = 0; i < page.overlays.length; i++) {
-      if (page.overlays[i].overlayOpenOption === "pageEnter") {
-        overlayPageEnter = page.overlays[i];
-        break;
+        if (page.overlays[i].overlayOpenOption === "pageEnter") {
+          overlayPageEnter = page.overlays[i];
+          break;
+        }
       }
-    }
+    } 
     if (
       !this.state.overlayOpen &&
       overlayPageEnter &&

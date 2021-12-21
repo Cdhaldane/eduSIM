@@ -1005,6 +1005,9 @@ const CanvasPage = (props) => {
     }
 
     const page = canvas.state.pages[canvas.state.level - 1];
+
+    if (!page) return null;
+
     let objectIds = [];
     if (stage === "group") {
       objectIds = page.groupLayers;

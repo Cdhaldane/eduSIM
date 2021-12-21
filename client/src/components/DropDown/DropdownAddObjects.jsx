@@ -331,7 +331,7 @@ const DropdownAddObjects = (props) => {
       const img = new Image();
       img.src = url;
       img.onload = () => {
-        callback(this.width, this.height);
+        callback(img.width, img.height);
       }
     } else {
       const video = document.createElement("video");
