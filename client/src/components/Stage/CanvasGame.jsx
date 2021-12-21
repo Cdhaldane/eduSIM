@@ -117,7 +117,7 @@ class Graphics extends Component {
         this.props.setCanvasLoading(this.state.canvasLoading);
         this.props.reCenter("play");
       });
-    }, 1000);
+    }, 0);
   }
 
   formatTextMacros = (text) => {

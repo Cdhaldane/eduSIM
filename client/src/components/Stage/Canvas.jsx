@@ -181,6 +181,7 @@ class Graphics extends Component {
       overlayLayerY: 0,
       overlayLayerScale: 1,
       layerDraggable: false,
+      movingCanvas: false,
 
       // Fill and Stroke
       colorf: "black",
@@ -524,6 +525,19 @@ class Graphics extends Component {
           });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
+      }
+
+      const changeList = Object.keys(this.state).filter(key => this.state[key] !== prevState[key]);
+      if (changeList.some(change => {
+        return change.includes("LayerX") || change.includes("LayerY") || change.includes("LayerScale")
+      }) && !this.state.movingCanvas) {
+        this.setState({
+          movingCanvas: true
+        });
+      } else if (this.state.movingCanvas) {
+        this.setState({
+          movingCanvas: false
+        });
       }
 
       document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
@@ -3139,7 +3153,7 @@ class Graphics extends Component {
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen && (
               <>
-                {this.props.loadObjects("group", "edit")}
+                {this.props.loadObjects("group", "edit", this.state.movingCanvas)}
               </>
             )}
           </Stage>
@@ -3231,7 +3245,7 @@ class Graphics extends Component {
             >
               {this.state.personalAreaOpen === 1 && !this.state.overlayOpen && (
                 <>
-                  {this.props.loadObjects("personal", "edit")}
+                  {this.props.loadObjects("personal", "edit", this.state.movingCanvas)}
                 </>
               )}
             </Stage>
