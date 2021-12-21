@@ -32,11 +32,19 @@ const DropdownTimelineBar = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
 
+  const [colorWarningVisible, setColorWarningVisible] = useState(false);
+  const colorWarningVisibleRef = useRef(colorWarningVisible);
+  const setColorWarningModal = (data) => {
+    setColorWarningVisible(data);
+    setTimeout(() => { colorWarningVisibleRef.current = data }, 250);
+  }
+
   const handleClickOutside = e => {
     if (dropdown.current &&
       e.target.id !== "confirmModalConfirmButton" &&
       !dropdown.current.contains(e.target) &&
-      !confirmationVisibleRef.current) {
+      !confirmationVisibleRef.current &&
+      !colorWarningVisibleRef.current) {
       props.close();
     }
   }
@@ -255,7 +263,7 @@ const DropdownTimelineBar = (props) => {
                       >
                         <span className="icon-button" onClick={() => {
                           setDeletionIndex(index);
-                          setConfirmationVisible(true);
+                          setConfirmationModal(true);
                         }} >
                           <i className="icons fa fa-trash" />
                         </span>
@@ -376,17 +384,21 @@ const DropdownTimelineBar = (props) => {
                     color={getColor()}
                     disableAlpha={true}
                     onChange={(color) => {
-                      const newArr = pages.slice();
-                      if (pageColorSettings === "foreground") {
-                        newArr[currentSettingsIndex].primaryColor = color.hex;
-                      } else if (pageColorSettings === "group") {
-                        newArr[currentSettingsIndex].groupColor = color.hex;
-                      } else if (pageColorSettings === "personal") {
-                        newArr[currentSettingsIndex].personalColor = color.hex;
-                      } else if (pageColorSettings === "overlay") {
-                        newArr[currentSettingsIndex].overlayColor = color.hex;
+                      if (document.cookie.split(";").filter(cookie => cookie.includes("pageColorChangerActivated")).length === 0) {
+                        setColorWarningModal(true);
+                      } else {
+                        const newArr = pages.slice();
+                        if (pageColorSettings === "foreground") {
+                          newArr[currentSettingsIndex].primaryColor = color.hex;
+                        } else if (pageColorSettings === "group") {
+                          newArr[currentSettingsIndex].groupColor = color.hex;
+                        } else if (pageColorSettings === "personal") {
+                          newArr[currentSettingsIndex].personalColor = color.hex;
+                        } else if (pageColorSettings === "overlay") {
+                          newArr[currentSettingsIndex].overlayColor = color.hex;
+                        }
+                        setPages(newArr);
                       }
-                      setPages(newArr);
                     }}
                   />
                 </div>
@@ -412,6 +424,16 @@ const DropdownTimelineBar = (props) => {
         }}
         confirmMessage={t("edit.deletePage")}
         message={t("edit.confirmDeletePage", { name: pages[deletionIndex] ? pages[deletionIndex].name : "" })}
+      />
+
+      <ConfirmationModal
+        visible={colorWarningVisible}
+        hide={() => setColorWarningModal(false)}
+        confirmFunction={() => {
+          document.cookie = "pageColorChangerActivated=true";
+        }}
+        confirmMessage={t("edit.pageColorChangeConfirm")}
+        message={t("edit.pageColorChangeWarning")}
       />
     </div>
   );

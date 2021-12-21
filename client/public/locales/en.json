@@ -243,6 +243,9 @@
       "confirmDeletePage": "Are you sure you want to delete page {{name}}? This action cannot be undone.",
       "deletePage": "Yes - Delete page",
 
+      "pageColorChangeWarning": "Warning: Changing page colors may affect website accessibility. Ensure you are using a high enough contrast for text to be easily readable. Click confirm if you wish to activate this feature.",
+      "pageColorChangeConfirm": "Confirm, and don't show again",
+
       "overlayXSettings": "Overlay {{name}} Settings",
       "hideOverlayButton": "Hide Overlay Button",
       "openOverlayWhen": "Automatically open the overlay when",
