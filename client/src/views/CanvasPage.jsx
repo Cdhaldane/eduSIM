@@ -1036,6 +1036,17 @@ const CanvasPage = (props) => {
             />
 
             {renderGrid(canvas, stage, moving)}
+
+            {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
+            {/*<Ellipse
+              fill={"red"}
+              x={0}
+              y={0}
+              radius={{
+                x: 10,
+                y: 10
+              }}
+            />*/}
           </Layer>
         )}
 
@@ -1111,17 +1122,6 @@ const CanvasPage = (props) => {
             </>
           )}
         </Layer>
-
-        {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-        {/*<Ellipse
-          fill={"red"}
-          x={0}
-          y={0}
-          radius={{
-            x: 10,
-            y: 10
-          }}
-        />*/}
       </>
     );
   }

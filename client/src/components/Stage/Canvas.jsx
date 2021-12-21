@@ -1481,13 +1481,26 @@ class Graphics extends Component {
       const oldScale = layer.scaleX();
       const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
+      const s = layer.getStage();
+      const pointer = s.getPointerPosition();
+      const mousePos = {
+        x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
+        y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
+      }
+      const newPos = {
+        x: pointer.x - mousePos.x * newScale,
+        y: pointer.y - mousePos.y * newScale,
+      };
+
       layer.scale({
         x: newScale,
         y: newScale
       });
       const layerScale = `${stage}LayerScale`;
       this.setState({
-        [layerScale]: newScale
+        [layerScale]: newScale,
+        [`${stage}LayerX`]: newPos.x,
+        [`${stage}LayerY`]: newPos.y,
       });
     }
   }
