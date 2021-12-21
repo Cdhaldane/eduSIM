@@ -1022,7 +1022,7 @@ const CanvasPage = (props) => {
     }
     const newLayers = !arraysEqual(prevLayers, objectIds);
 
-    return (
+    const returnValue = (
       <>
         {editMode && (
           <Layer {...layerProps(canvas, stage, "main")}>
@@ -1128,6 +1128,10 @@ const CanvasPage = (props) => {
         />*/}
       </>
     );
+
+    if ((!objectIds || objectIds.length == 0) && prevLayers.length>0) setPrevLayers([]);
+
+    return returnValue;
   }
 
   return (
