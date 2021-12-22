@@ -1129,7 +1129,11 @@ const CanvasPage = (props) => {
       </>
     );
 
-    if ((!objectIds || objectIds.length == 0) && prevLayers.length>0) setPrevLayers([]);
+    if (objectIds.filter(id => 
+        customObjects.some(obj => 
+          id.startsWith(obj)
+        )
+      ).length == 0 && newLayers) setPrevLayers(objectIds);
 
     return returnValue;
   }
