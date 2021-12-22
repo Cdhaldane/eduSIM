@@ -75,6 +75,7 @@ const Table = (props) => {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayers/:game_room', {
         params: {
           game_room: props.gameroom,
+          gameinstanceid: props.gameid
         }
       }).then((res) => {
         let data = []

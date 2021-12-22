@@ -248,10 +248,12 @@ exports.getPlayer = async (req, res) => {
 // Get players for a particular tab or room
 exports.getPlayers = async (req, res) => {
   const game_room = req.query.game_room;
+  const gameinstanceid = req.query.gameinstanceid;
   try {
     let gameplayer = await GamePlayer.findAll({
       where: {
-        game_room: game_room
+        game_room,
+        gameinstanceid
       },
     });
     return res.send(gameplayer);
