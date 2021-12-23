@@ -90,7 +90,8 @@ const Table = (props) => {
           cart.firstName = (res.data[i].fname);
           cart.lastName = (res.data[i].lname);
           cart.email = (res.data[i].player_email);
-          cart.group = (res.data[i].gamerole);
+          cart.group = (res.data[i].game_room);
+          cart.gamerole = (res.data[i].gamerole);
           cart.id = (res.data[i].gameplayerid);
           data.push(cart);
         }
@@ -175,7 +176,8 @@ const Table = (props) => {
       firstName: editFormData.firstName,
       lastName: editFormData.lastName,
       email: editFormData.email,
-      group: editFormData.group,
+      gamerole: editFormData.gamerole,
+      group: editFormData.group
     };
 
     const newContacts = [...contacts];
@@ -192,6 +194,7 @@ const Table = (props) => {
       lname: newContacts[index].lastName,
       player_email: newContacts[index].email,
       gamerole: newContacts[index].gamerole,
+      game_room: newContacts[index].group
     }
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updatePlayer', data).then((res) => {
       console.log(res);
@@ -326,6 +329,8 @@ const Table = (props) => {
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
                       rolelist={rolelist}
+                      groupList={props.groups || []}
+                      useGroup={groupOr === "admin.group"}
                       onCheck={props.email && (() => handleCheckEmail(contact.id))}
                       checked={!excludedEmails.includes(contact.id)}
                       online={props.players && props.players.some((id) => id === contact.id)}
@@ -336,6 +341,8 @@ const Table = (props) => {
                       handleEditClick={handleEditClick}
                       handleDeleteClick={() => handleDeleteClick(contact.id)}
                       onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                      groupList={props.groups || []}
+                      useGroup={groupOr === "admin.group"}
                       checked={!excludedEmails.includes(contact.id)}
                       online={props.players && props.players.some((id) => id === contact.id)}
                     />
