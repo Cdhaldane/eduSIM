@@ -105,11 +105,11 @@ const Tabs = (props) => {
     e.preventDefault();
     let index = tabs.length + 1;
     tabs.forEach(tab => {
-      if (tab[0] === `New group ${index}`) index++
+      if (tab[0].endsWith(index)) index++
     });
     let data = {
       gameinstanceid: props.gameid,
-      gameroom_name: `New group ${index}`
+      gameroom_name: t("admin.newGroupX", { index })
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {

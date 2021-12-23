@@ -248,7 +248,7 @@ const DropdownTimelineBar = (props) => {
                           id="roleNameAdd"
                           className="add-dropdown-item-input"
                           type="text"
-                          placeholder="Page Name"
+                          placeholder={t("edit.pageNamePlaceholder")}
                           onChange={(e) => setModifyPageName(e.target.value)}
                           value={modifyPageName}
                         />
@@ -326,7 +326,7 @@ const DropdownTimelineBar = (props) => {
                     overflow: "hidden",
                     whiteSpace: "nowrap"
                   }}>
-                  {t("edit.editPageX", { name: pages[currentSettingsIndex] ? pages[currentSettingsIndex].name : "Page Name" })}
+                  {t("edit.editPageX", { name: pages[currentSettingsIndex] ? pages[currentSettingsIndex].name : t("edit.pageNamePlaceholder") })}
                 </h1>
               </div>
               <div id={"pageSettingsDropdown"}>

@@ -54,6 +54,17 @@ ul {
   padding-right: 20px;
 }
 
+.dropdowncheckbox {
+  display: flex;
+  align-items: center;
+}
+
+.dropdowncheckbox > input {
+  width: 24px;
+  height: 24px;
+  margin-right: 6px !important;
+}
+
 .menuedit {
   width: 100%;
   font-size: 1.3rem;

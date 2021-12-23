@@ -17,6 +17,7 @@ export default async (server, client, event, args) => {
 
   switch (event) {
     case "gameStart": {
+      // admin pressed the start button
       const { room } = args || {};
 
       if (room) {
@@ -50,6 +51,8 @@ export default async (server, client, event, args) => {
       break;
     };
     case "gamePause": {
+      // admin pressed the pause button
+      // this is pretty similar to gameStart
       const { room } = args || {};
 
       if (room) {
@@ -83,6 +86,9 @@ export default async (server, client, event, args) => {
       break;
     };
     case "gameReset": {
+      // admin pressed the reset button
+      // wipe all memory contents for the simulation
+      // but before that, compile all data into a json and log it to the db
       const { room } = args || {};
 
       if (room) {
@@ -141,13 +147,17 @@ export default async (server, client, event, args) => {
       break;
     };
     case "updateGameSettings": {
+      // admin updated simulation settings
+      // eg. advancement mode, role assignment
+      // broadcast status change to all players in rooms
+      // if the room is running though, just dont do that lol!
       const { room, settings: newSettings } = args || {};
 
       if (room) {
         const { running, timeElapsed, settings } = await getRoomStatus(room);
 
         if (running || timeElapsed) {
-          client.emit("errorLog", "Warning: settings will not update while game is in progress. Please reset the game before making changes.");
+          client.emit("errorLog", { key: "alert.noUpdateGameInProgress" });
           return;
         }
 
@@ -164,7 +174,7 @@ export default async (server, client, event, args) => {
         for (const { dataValues: room } of rooms) {
           const { running, timeElapsed } = await getRoomStatus(room.gameroom_url);
           if (running || timeElapsed) {
-            client.emit("errorLog", `Warning: settings will not update while game "${room.gameroom_name}" is in progress. Please reset the game before making changes.`);
+            client.emit("errorLog", { key: "alert.noUpdateGameXInProgress", params: { game: room.gameroom_name } });
             good = false;
           }
         };
@@ -185,11 +195,14 @@ export default async (server, client, event, args) => {
       break;
     };
     case "joinRoom": {
+      // yea
       client.join(args);
 
       break;
     }
     case "goToNextPage": {
+      // admin pressed next page (teacher advancement only)
+      // broadcast new status with page index updated
       const { room } = args || {};
 
       if (room) {
@@ -224,6 +237,8 @@ export default async (server, client, event, args) => {
     }
     
     case "goToPrevPage": {
+      // admin pressed previous page (teacher advancement only)
+      // similar to goToNextPage
       const { room } = args || {};
 
       if (room) {

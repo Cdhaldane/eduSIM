@@ -108,6 +108,8 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       canvasLoading: true,
       updateRanOnce: false,
+
+      dragTick: 0
     };
 
     setTimeout(() => {
@@ -184,6 +186,20 @@ class Graphics extends Component {
     }
   }
 
+  getDragProps = (id) => {
+    const obj = this.props.gamepieceStatus[id] || {};
+    if (obj.x && obj.y) {
+      return {
+        x: this.props.gamepieceStatus[id].x,
+        y: this.props.gamepieceStatus[id].y,
+        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? { 
+          opacity: 0.7,
+          draggable: false
+        } : {})
+      };
+    } else return {};
+  }
+
   sendInteraction = (gamepieceId, parameters) => {
     this.props.socket.emit("interaction", {
       gamepieceId,
@@ -200,6 +216,24 @@ class Graphics extends Component {
     this.forceUpdate();
     this.props.refresh();
   }
+
+  // for drag calculations
+  realWidth = ({width, radiusX}) => {
+    if (!width && radiusX) {
+      return radiusX * 2;
+    } return width;
+  }
+  realHeight = ({height, radiusY}) => {
+    if (!height && radiusY) {
+      return radiusY * 2;
+    } return height;
+  }
+  originCenter = (value, name) => {
+    return (name.startsWith("ellipses") ||
+      name.startsWith("stars") ||
+      name.startsWith("triangles")) ? 0 : value;
+  }
+
 
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
@@ -248,7 +282,74 @@ class Graphics extends Component {
         getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        sendInteraction: this.sendInteraction
+        getDragProps: this.getDragProps,
+        sendInteraction: this.sendInteraction,
+        dragLayer: () => {},
+        handleDragEnd: (obj, e) => {
+          this.setState({
+            dragTick: 0
+          })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: null
+              }
+            });
+          }
+        },
+        onObjectDragMove: (obj, e) => {
+          [
+            ...this.state.images,
+            ...this.state.rectangles,
+            ...this.state.ellipses,
+            ...this.state.triangles,
+            ...this.state.stars,
+            ...this.state.texts
+          ].filter(img => (
+            img.rolelevel === obj.rolelevel &&
+            img.level === obj.level &&
+            img.overlay === obj.overlay && 
+            img.overlayIndex === obj.overlayIndex &&
+            img.id !== obj.id &&
+            img.anchor
+          )).forEach(({x, y, width, height, radiusX, radiusY, id}) => {
+            let sX = x, sY = y;
+            if (this.props.gamepieceStatus[id]) {
+              sX = this.props.gamepieceStatus[id].x;
+              sY = this.props.gamepieceStatus[id].y;
+            }
+            let sW = this.realWidth({width, radiusX}), sH = this.realHeight({height, radiusY});
+            const xDist = Math.abs(
+              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) - 
+              (sX + this.originCenter(sW/2,id))
+            );
+            const yDist = Math.abs(
+              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) - 
+              (sY + this.originCenter(sH/2,id))
+            );
+            if (xDist < sW/2 && yDist < sH/2) {
+              e.target.x(sX + this.originCenter(sW/2,id) - this.originCenter(this.realWidth(obj)/2, obj.id));
+              e.target.y(sY + this.originCenter(sH/2,id) - this.originCenter(this.realHeight(obj)/2, obj.id));
+            }
+          });
+
+          this.setState({
+            dragTick: (this.state.dragTick+1) % 4
+          })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: userId
+              }
+            });
+          }
+        }
       });
 
       this.props.setUserId(userId);
