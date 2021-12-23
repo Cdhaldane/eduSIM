@@ -114,6 +114,16 @@ a {
   display: flex;
   align-items: center;
 }
+.welcome-join > input[type="submit"] {
+  padding: 0.8em;
+  border-radius: 99px;
+  border: none;
+  background-color: var(--primary);
+  color: white;
+  font-family: inherit;
+  font-size: 0.6em;
+  cursor: pointer;
+}
 
 .welcome input::placeholder {
   color: grey;
