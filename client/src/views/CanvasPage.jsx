@@ -29,6 +29,20 @@ import {
   Layer
 } from "react-konva";
 
+const konvaObjects = [
+  "rectangles",
+  "ellipses",
+  "stars",
+  "texts",
+  "triangles",
+  "images",
+  "videos",
+  "audios",
+  "documents",
+  "lines",
+  "pencils" // The drawings
+];
+
 const CanvasPage = (props) => {
 
   const { settings: localSettings } = useContext(SettingsContext);
@@ -42,19 +56,6 @@ const CanvasPage = (props) => {
   // Save State
   // These are the names of the objects in state that are saved to the database
   const customObjects = props.customObjects;
-  const konvaObjects = [
-    "rectangles",
-    "ellipses",
-    "stars",
-    "texts",
-    "triangles",
-    "images",
-    "videos",
-    "audios",
-    "documents",
-    "lines",
-    "pencils" // The drawings
-  ];
   const savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
     ...customObjects, ...konvaObjects
@@ -430,9 +431,8 @@ const CanvasPage = (props) => {
     }
   }
 
-  const lineObjProps = (obj, index, canvas, editMode) => {
+  const lineObjProps = (obj, canvas, editMode) => {
     return {
-      key: index,
       draggable: true,
       strokeEnabled: !canvas.state.canvasLoading,
       id: obj.id,
@@ -584,12 +584,12 @@ const CanvasPage = (props) => {
     }
   }
 
-  const lineProps = (obj, index, canvas, editMode) => {
+  const pencilProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      key: index,
       visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,
-      key: index,
       points: obj.points,
       stroke: obj.color,
       strokeWidth: obj.strokeWidth,
@@ -924,7 +924,7 @@ const CanvasPage = (props) => {
       case "ellipses":
         return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
-        return <Line {...lineProps(obj, index, canvas, editMode)} />;
+        return <Line {...pencilProps(obj, index, canvas, editMode)} />;
       case "images":
         return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} /> : null;
       case "videos":
@@ -934,7 +934,7 @@ const CanvasPage = (props) => {
       case "documents":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
-        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)}/>;
+        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)} />;
       case "stars":
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
@@ -998,7 +998,7 @@ const CanvasPage = (props) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
-    if (!canvas || !(canvas.state && canvas.refs)) {
+    if (!canvas || !canvas.state || !canvas.refs) {
       return (
         <>
         </>
@@ -1018,7 +1018,9 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
       objectIds = overlay.layers;
     }
-    const newLayers = !arraysEqual(prevLayers, objectIds);
+    objectIds = [objectIds.filter(id => id.includes("pencils")), ...objectIds.filter(id => !id.includes("pencils"))];
+    const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
+    const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
     return (
       <>
@@ -1054,44 +1056,57 @@ const CanvasPage = (props) => {
 
         {/* Render the object saved in state */}
         {objectIds.map((id, index) => {
-          const type = id.replace(/\d+$/, "");
-          const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+          if (index !== 0) {
+            const type = id.replace(/\d+$/, "");
+            const obj = canvas.state[type].filter(obj => obj.id === id)[0];
 
-          const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
-          const customObj = customChild ? customChild.parentElement : null;
+            const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
+            const customObj = customChild ? customChild.parentElement : null;
 
-          if (customObj && newLayers) {
-            setTimeout(() => {
-              let stageParentElem = "";
-              if (stage === "overlay") {
-                stageParentElem = "overlayGameContainer";
-              } else if (stage === "personal") {
-                stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
-              } else {
-                stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
-              }
-              const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
-              const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
-
-              if (stageElem) {
-                const canvasElems = stageElem.querySelectorAll("canvas");
-                if (!editMode) {
-                  for (let i = 0; i < canvasElems.length; i++) {
-                    canvasElems[i].style.pointerEvents = "none";
-                  }
+            if (customObj && newLayers) {
+              setTimeout(() => {
+                let stageParentElem = "";
+                if (stage === "overlay") {
+                  stageParentElem = "overlayGameContainer";
+                } else if (stage === "personal") {
+                  stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
+                } else {
+                  stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
                 }
-                const canvasElem = canvasElems[index + 1];
-                stageElem.insertBefore(customObj, canvasElem);
-              }
-            }, 0);
-            setPrevLayers(objectIds);
-          }
+                const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
+                const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
 
-          return obj && objectIsOnStage(obj, canvas) === checkStage ? (
-            <Layer {...layerProps(canvas, stage, obj.id)}>
-              {renderObject(obj, index, canvas, editMode, type, stage)}
-            </Layer>
-          ) : null;
+                if (stageElem) {
+                  const canvasElems = stageElem.querySelectorAll("canvas");
+                  if (!editMode) {
+                    for (let i = 0; i < canvasElems.length; i++) {
+                      canvasElems[i].style.pointerEvents = "none";
+                    }
+                  }
+                  const canvasElem = canvasElems[index + 1];
+                  stageElem.insertBefore(customObj, canvasElem);
+                }
+              }, 0);
+              setPrevLayers(objectIdsNoPencils);
+            }
+
+            return obj && objectIsOnStage(obj, canvas) === checkStage ? (
+              <Layer {...layerProps(canvas, stage, obj.id)}>
+                {renderObject(obj, index, canvas, editMode, type, stage)}
+              </Layer>
+            ) : null;
+          } else {
+            const objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
+            return (
+              <Layer {...layerProps(canvas, stage, "pencils")}>
+                {objs.map((obj, index) => (
+                  <React.Fragment key={index}>
+                    {renderObject(obj, index, canvas, editMode, "pencils", stage)}
+                  </React.Fragment>
+                ))}
+              </Layer>
+            );
+          }
         })}
 
         {/*

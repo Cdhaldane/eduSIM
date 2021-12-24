@@ -964,12 +964,12 @@ const DropdownAddObjects = (props) => {
             onClick={addTicTacToe}
             leftIcon={<i className="icons fas fa-times"
               onClick={addTicTacToe}></i>}>
-            {t("edit.interactive.tic")}</DropdownItem>
+            {t("edit.game.tic")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
             leftIcon={<i className="icons fa fa-circle"
               onClick={addConnect4}></i>}>
-            {t("edit.interactive.connect4")}</DropdownItem>
+            {t("edit.game.connect4")}</DropdownItem>
         </div>
       </CSSTransition>
 

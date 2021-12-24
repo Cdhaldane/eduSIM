@@ -4,6 +4,7 @@ import { ChromePicker } from 'react-color';
 import { CSSTransition } from 'react-transition-group';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
@@ -11,6 +12,7 @@ const DropdownTimelineBar = (props) => {
 
   const UNTITLED_PAGE = "Untitled Page";
   const MAX_PAGE_NUM = 10;
+  const MAX_OVERLAY_NUM = 6;
 
   const [pages, setPages] = useState(props.pages);
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
@@ -24,6 +26,8 @@ const DropdownTimelineBar = (props) => {
   const [deletionIndex, setDeletionIndex] = useState(-1);
   const [currentSettingsIndex, setCurrentSettingsIndex] = useState(null);
   const [menuHeight, setMenuHeight] = useState(0);
+
+  const alertContext = useAlertContext();
 
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -336,16 +340,23 @@ const DropdownTimelineBar = (props) => {
                     style={{ display: "inline-block" }}
                     onClick={() => {
                       const newArr = pages.slice();
-                      newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
-                        id: uuidv4(),
-                        overlayOpenOption: "doNotAutoOpen",
-                        hideBtn: false,
-                        layers: []
-                      }];
-                      setPages(newArr);
+                      if (newArr[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM) {
+                        alertContext.showAlert(t("alert.maxOverlays"), "warning");
+                      } else {
+                        newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
+                          id: uuidv4(),
+                          overlayOpenOption: "doNotAutoOpen",
+                          hideBtn: false,
+                          layers: []
+                        }];
+                        setPages(newArr);
+                      }
                     }}
                   >
-                    <span className="icon-button">
+                    <span className="icon-button" style={{
+                      backgroundColor: pages[currentSettingsIndex] ?
+                        (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--primary)") : "var(--primary)"
+                    }}>
                       <i className="icons fa fa-plus" />
                     </span>
                   </div>
