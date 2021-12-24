@@ -5,6 +5,7 @@ import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const Header = styled.p`
   text-align: center;
@@ -17,6 +18,7 @@ const CollabLogin = (props) => {
   const { loginWithRedirect, user } = useAuth0();
   const alertContext = useAlertContext();
   let history = useHistory();
+  const { t } = useTranslation();
 
   const query = (new URLSearchParams(useLocation().search));
 
@@ -24,7 +26,7 @@ const CollabLogin = (props) => {
     if (query.get("email") || localStorage.inviteEmail) {
       if (user) {
         if (user.email !== (query.get("email") || localStorage.inviteEmail)) {
-          alertContext.showAlert("Please log in with the original email address you received the invite with.", "error");
+          alertContext.showAlert(t("alert.useOriginalEmail"), "error");
           history.push('/');
         } else {
           const s = query.get("sim") || localStorage.inviteSim;
@@ -33,10 +35,10 @@ const CollabLogin = (props) => {
             name: user.name,
             gameinstanceid: s
           }).then((res) => {
-            alertContext.showAlert("You have been granted access to a new simulation!", "info");
+            alertContext.showAlert(t("alert.simAccessGranted"), "info");
             history.push('/dashboard');
           }).catch((error) => {
-            alertContext.showAlert("An error occured. The URL may be malformed, or the invite was invalid.", "error");
+            alertContext.showAlert(t("alert.inviteInvalid"), "error");
             history.push('/');
           });
         }

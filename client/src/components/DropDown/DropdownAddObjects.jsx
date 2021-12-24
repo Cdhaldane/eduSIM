@@ -126,7 +126,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : ".jpg");
+            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : "."+(res.data.format || "jpg"));
             setImageUploaded(true);
             setImageUploading(false);
             props.handleImage(name);
@@ -331,7 +331,7 @@ const DropdownAddObjects = (props) => {
       const img = new Image();
       img.src = url;
       img.onload = () => {
-        callback(this.width, this.height);
+        callback(img.width, img.height);
       }
     } else {
       const video = document.createElement("video");

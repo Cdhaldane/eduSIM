@@ -1006,6 +1006,9 @@ const CanvasPage = (props) => {
     }
 
     const page = canvas.state.pages[canvas.state.level - 1];
+
+    if (!page) return null;
+
     let objectIds = [];
     if (stage === "group") {
       objectIds = page.groupLayers;
@@ -1022,7 +1025,7 @@ const CanvasPage = (props) => {
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
-    return (
+    const returnValue = (
       <>
         {editMode && (
           <Layer {...layerProps(canvas, stage, "main")}>
@@ -1141,6 +1144,14 @@ const CanvasPage = (props) => {
         </Layer>
       </>
     );
+
+    if (objectIdsNoPencils.filter(id => 
+        id.length > 0 && customObjects.some(obj => 
+          id.startsWith(obj)
+        )
+      ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
+
+    return returnValue;
   }
 
   return (

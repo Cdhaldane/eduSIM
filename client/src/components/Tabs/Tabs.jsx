@@ -474,12 +474,13 @@ const Tabs = (props) => {
                   addstudent={true}
                   gameid={props.gameid}
                   title={props.title}
+                  groups={tabs}
                   close={() => setIsOpen(false)}
                 />
               </Modal>
             </div>
             <h3>{t("admin.studentList")}</h3>
-            <Table addstudent={false} gameid={props.gameid} title={props.title} />
+            <Table addstudent={false} gameid={props.gameid} title={props.title} groups={tabs} />
           </div>
           {tabs.map((tab, i) => (
             <div

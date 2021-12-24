@@ -30,6 +30,7 @@ const CreateEmail = (props) => {
           gameid={props.gameid}
           title={props.title}
           onEmailSent={props.close}
+          groups={props.groups}
         />
       </form>
     </div>
