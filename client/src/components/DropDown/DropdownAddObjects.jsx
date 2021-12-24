@@ -35,7 +35,7 @@ const DropdownAddObjects = (props) => {
   const { t } = useTranslation();
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 230;
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 272;
     const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
@@ -229,11 +229,11 @@ const DropdownAddObjects = (props) => {
       thisPage.personalLayers.push(name);
     } else {
       let oIndex = 0;
-      const overlay = thisPage.overlays.filter((overlay,index) => {
+      const overlay = thisPage.overlays.filter((overlay, index) => {
         if (overlay.id === props.state.overlayOpenIndex) {
           oIndex = index;
           return true;
-        } else {  
+        } else {
           return false;
         }
       })[0];
@@ -964,12 +964,12 @@ const DropdownAddObjects = (props) => {
             onClick={addTicTacToe}
             leftIcon={<i className="icons fas fa-times"
               onClick={addTicTacToe}></i>}>
-            {t("edit.interactive.tic")}</DropdownItem>
+            {t("edit.game.tic")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
             leftIcon={<i className="icons fa fa-circle"
               onClick={addConnect4}></i>}>
-            {t("edit.interactive.connect4")}</DropdownItem>
+            {t("edit.game.connect4")}</DropdownItem>
         </div>
       </CSSTransition>
 
@@ -1000,6 +1000,33 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons fa fa-check-square"
               onClick={() => addInput("checkbox")}></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'games'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>{t("edit.addGame")}</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={addTicTacToe}
+            leftIcon={<i className="icons fas fa-times"
+              onClick={addTicTacToe}></i>}>
+            {t("edit.game.tic")}
+          </DropdownItem>
+          <DropdownItem
+            onClick={addConnect4}
+            leftIcon={<i className="icons fa fa-circle"
+              onClick={addConnect4}></i>}>
+            {t("edit.game.connect4")}
+          </DropdownItem>
         </div>
       </CSSTransition>
     </div>
