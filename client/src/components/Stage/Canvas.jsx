@@ -181,6 +181,7 @@ class Graphics extends Component {
       overlayLayerY: 0,
       overlayLayerScale: 1,
       layerDraggable: false,
+      movingCanvas: false,
 
       // Fill and Stroke
       colorf: "black",
@@ -322,6 +323,7 @@ class Graphics extends Component {
         });
       } else {
         this.setState({
+          canvasLoading: false,
           savedStateLoaded: true
         });
       }
@@ -503,8 +505,8 @@ class Graphics extends Component {
           getKonvaObj: this.getKonvaObj,
           getObjType: this.getObjType,
           getInteractiveProps: this.getInteractiveProps,
-          getVariableProps: () => {},
-          getDragProps: () => {},
+          getVariableProps: () => { },
+          getDragProps: () => { },
           dragLayer: this.dragLayer
         });
 
@@ -525,6 +527,19 @@ class Graphics extends Component {
           });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
+      }
+
+      const changeList = Object.keys(this.state).filter(key => this.state[key] !== prevState[key]);
+      if (changeList.some(change => {
+        return change.includes("LayerX") || change.includes("LayerY") || change.includes("LayerScale")
+      }) && !this.state.movingCanvas) {
+        this.setState({
+          movingCanvas: true
+        });
+      } else if (this.state.movingCanvas) {
+        this.setState({
+          movingCanvas: false
+        });
       }
 
       document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
@@ -793,18 +808,20 @@ class Graphics extends Component {
         isDrawing: true
       });
       const tool = this.state.tool;
+      const newPencil = {
+        tool,
+        points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
+        level: this.state.level,
+        color: this.state.color,
+        id: `pencils${this.state.pencils.length}`,
+        infolevel: personalArea,
+        rolelevel: this.state.rolelevel,
+        strokeWidth: this.state.drawStrokeWidth
+      };
       this.setState({
-        pencils: [...this.state.pencils, {
-          tool,
-          points: [(pos.x + xOffset) / scale, (pos.y + yOffset) / scale],
-          level: this.state.level,
-          color: this.state.color,
-          id: "pencils",
-          infolevel: personalArea,
-          rolelevel: this.state.rolelevel,
-          strokeWidth: this.state.drawStrokeWidth
-        }]
+        pencils: [...this.state.pencils, newPencil]
       });
+      this.setLayers([...this.getLayers(), newPencil.id]);
     } else {
       if (e.evt) {
         const isElement = e.target.findAncestor(".elements-container");
@@ -862,7 +879,7 @@ class Graphics extends Component {
     }
   }
 
-  setLayers = (newLayers, id) => {
+  setLayers = (newLayers) => {
     const page = { ...this.state.pages[this.state.level - 1] };
     if (this.state.overlayOpen) {
       let i = 0;
@@ -929,7 +946,11 @@ class Graphics extends Component {
         isDrawing: false
       });
     } else {
-      if (!this.state.selection.visible && !event.changedTouches) {
+      if (
+        !this.state.selection.visible &&
+        !event.changedTouches &&
+        !this.props.customObjects.includes(this.getObjType(this.state.selectedShapeName))
+      ) {
         return;
       }
 
@@ -940,21 +961,44 @@ class Graphics extends Component {
       let shape = null;
       let clickShapeGroup = null;
       let pointerPos = null;
-      for (let ref in this.refs) {
-        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-          const subLayer = this.refs[ref];
-          pointerPos = subLayer.getStage().getPointerPosition();
-          if (pointerPos) {
-            shape = subLayer.getIntersection(pointerPos);
-            if (shape && shape.attrs.id === "ContainerRect") {
-              shape = null;
-            } else {
-              clickShapeGroup = this.getShapeGroup(shape);
+      const currentLayers = [...this.getLayers()].reverse();
+      const customObjs = Array.from(document.getElementsByClassName("customObj"));
+      for (let i = 0; i < currentLayers.length; i++) {
+        const subLayer = this.refs[layer + "." + currentLayers[i]];
+        pointerPos = subLayer?.getStage().getPointerPosition();
+        if (pointerPos) {
+          const isCustom = this.props.customObjects.includes(this.getObjType(currentLayers[i]));
+          if (isCustom && event.target.parentElement.className === "konvajs-content") {
+            let obj = customObjs.filter(elem => elem.dataset.name === currentLayers[i]);
+            if (obj.length) {
+              obj = obj[0];
+              const customObj = this.getKonvaObj(currentLayers[i]);
+              const rect = obj.getBoundingClientRect();
+              if (
+                (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
+                (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
+                (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
+                (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
+                customObj
+              ) {
+                // Clicked on a custom object
+                this.setState({
+                  selectedShapeName: currentLayers[i],
+                  groupSelection: []
+                }, this.handleObjectSelection);
+                return;
+              }
             }
           }
-          if (shape) {
-            break;
+          shape = subLayer.getIntersection(pointerPos);
+          if (shape && shape.attrs.id === "ContainerRect") {
+            shape = null;
+          } else {
+            clickShapeGroup = this.getShapeGroup(shape);
           }
+        }
+        if (shape) {
+          break;
         }
       }
 
@@ -1451,14 +1495,7 @@ class Graphics extends Component {
   }
 
   handleWheel = (e, personalArea) => {
-    let objectsExist = false;
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      if (this.state[this.savedObjects[i]].length > 0) {
-        objectsExist = true;
-        break;
-      }
-    }
-    if (objectsExist) {
+    if (this.getLayers().length) {
       e.evt.preventDefault();
 
       const scaleBy = 1.2;
@@ -1468,13 +1505,26 @@ class Graphics extends Component {
       const oldScale = layer.scaleX();
       const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
+      const s = layer.getStage();
+      const pointer = s.getPointerPosition();
+      const mousePos = {
+        x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
+        y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
+      }
+      const newPos = {
+        x: pointer.x - mousePos.x * newScale,
+        y: pointer.y - mousePos.y * newScale,
+      };
+
       layer.scale({
         x: newScale,
         y: newScale
       });
       const layerScale = `${stage}LayerScale`;
       this.setState({
-        [layerScale]: newScale
+        [layerScale]: newScale,
+        [`${stage}LayerX`]: newPos.x,
+        [`${stage}LayerY`]: newPos.y,
       });
     }
   }
@@ -1733,42 +1783,16 @@ class Graphics extends Component {
     }
 
     // Remove from layers
-    const page = this.state.pages[this.state.level - 1];
-    let layers = [];
-    const checkLayer = (layer) => {
-      return !toDelete.some(del => (del.attrs ? del.attrs.id : del.dataset.name) === layer);
-    }
-    if (this.state.overlayOpen) {
-      const i = 0;
-      const overlay = page.overlays.filter((o, i) => {
-        if (o.id === this.state.overlayOpenIndex) {
-          i = i;
-          return true;
-        } else {
-          return false;
-        }
-      })[0];
-      layers = overlay.layers;
-      page.overlays[i].layers = layers.filter(checkLayer);
-    } else if (this.state.personalAreaOpen) {
-      layers = page.personalLayers;
-      page.personalLayers = layers.filter(checkLayer);
-    } else {
-      layers = page.groupLayers;
-      page.groupLayers = layers.filter(checkLayer);
-    }
-    const newPages = [...this.state.pages];
-    newPages[this.state.level - 1] = page;
-    this.setState({
-      pages: newPages
-    });
+    const layers = [...this.getLayers()];
+    const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
+    const newLayers = layers.filter(layer => !delIds.includes(layer));
+    this.setLayers(newLayers);
 
     // Get a list of the affected types
     let affectedTypes = [];
-    let customObjDeleted = false;
     for (let i = 0; i < toDelete.length; i++) {
       if (!toDelete[i].attrs) {
-        customObjDeleted = true;
+        this.refs.customRectCanvas.add(this.refs.customRect);
       }
       affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
     }
@@ -1795,7 +1819,7 @@ class Graphics extends Component {
         [type]: objs,
         [deletedCountName]: deletedCount
       }, () => {
-        this.handleSave(customObjDeleted);
+        this.handleSave();
       });
     }
 
@@ -2859,7 +2883,7 @@ class Graphics extends Component {
       newLayers[i + 1] = obj;
       newLayers[i] = next;
     }
-    this.setLayers(newLayers, id);
+    this.setLayers(newLayers);
   }
 
   layerDown = (id) => {
@@ -2871,7 +2895,7 @@ class Graphics extends Component {
       newLayers[i - 1] = obj;
       newLayers[i] = prev;
     }
-    this.setLayers(newLayers, id);
+    this.setLayers(newLayers);
   }
 
   render() {
@@ -3141,7 +3165,7 @@ class Graphics extends Component {
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen && (
               <>
-                {this.props.loadObjects("group", "edit")}
+                {this.props.loadObjects("group", "edit", this.state.movingCanvas)}
               </>
             )}
           </Stage>
@@ -3233,7 +3257,7 @@ class Graphics extends Component {
             >
               {this.state.personalAreaOpen === 1 && !this.state.overlayOpen && (
                 <>
-                  {this.props.loadObjects("personal", "edit")}
+                  {this.props.loadObjects("personal", "edit", this.state.movingCanvas)}
                 </>
               )}
             </Stage>

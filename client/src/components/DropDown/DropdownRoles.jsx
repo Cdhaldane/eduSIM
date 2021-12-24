@@ -35,7 +35,7 @@ const DropdownRoles = (props) => {
   const menuElem = useRef();
 
   useEffect(() => {
-    if (props.refreshPersonalCanvas) props.refreshPersonalCanvas();
+    if (props.refreshPersonalCanvas && props.personalAreaOpen) props.refreshPersonalCanvas();
   }, [selectedRole]);
 
   const updateRolesData = () => {

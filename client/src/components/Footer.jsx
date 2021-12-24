@@ -33,9 +33,9 @@ function Footer() {
     <Container>
       <p>
         <Link to="/terms">{t("navbar.termsOfService")}</Link>
-        <i class="fas fa-circle"></i>
+        <i className="fas fa-circle"></i>
         <Link to="/privacy">{t("navbar.privacyPolicy")}</Link>
-        <i class="fas fa-circle"></i>
+        <i className="fas fa-circle"></i>
         <a href="mailto:edusimuottawa@outlook.ca">{t("navbar.contact")}</a>
       </p>
       {t("navbar.copyright", { year: currentYear })}

@@ -4,6 +4,7 @@ import { ChromePicker } from 'react-color';
 import { CSSTransition } from 'react-transition-group';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
@@ -11,6 +12,7 @@ const DropdownTimelineBar = (props) => {
 
   const UNTITLED_PAGE = "Untitled Page";
   const MAX_PAGE_NUM = 10;
+  const MAX_OVERLAY_NUM = 6;
 
   const [pages, setPages] = useState(props.pages);
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
@@ -25,6 +27,8 @@ const DropdownTimelineBar = (props) => {
   const [currentSettingsIndex, setCurrentSettingsIndex] = useState(null);
   const [menuHeight, setMenuHeight] = useState(0);
 
+  const alertContext = useAlertContext();
+
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -32,11 +36,19 @@ const DropdownTimelineBar = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
 
+  const [colorWarningVisible, setColorWarningVisible] = useState(false);
+  const colorWarningVisibleRef = useRef(colorWarningVisible);
+  const setColorWarningModal = (data) => {
+    setColorWarningVisible(data);
+    setTimeout(() => { colorWarningVisibleRef.current = data }, 250);
+  }
+
   const handleClickOutside = e => {
     if (dropdown.current &&
       e.target.id !== "confirmModalConfirmButton" &&
       !dropdown.current.contains(e.target) &&
-      !confirmationVisibleRef.current) {
+      !confirmationVisibleRef.current &&
+      !colorWarningVisibleRef.current) {
       props.close();
     }
   }
@@ -255,7 +267,7 @@ const DropdownTimelineBar = (props) => {
                       >
                         <span className="icon-button" onClick={() => {
                           setDeletionIndex(index);
-                          setConfirmationVisible(true);
+                          setConfirmationModal(true);
                         }} >
                           <i className="icons fa fa-trash" />
                         </span>
@@ -328,16 +340,23 @@ const DropdownTimelineBar = (props) => {
                     style={{ display: "inline-block" }}
                     onClick={() => {
                       const newArr = pages.slice();
-                      newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
-                        id: uuidv4(),
-                        overlayOpenOption: "doNotAutoOpen",
-                        hideBtn: false,
-                        layers: []
-                      }];
-                      setPages(newArr);
+                      if (newArr[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM) {
+                        alertContext.showAlert(t("alert.maxOverlays"), "warning");
+                      } else {
+                        newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
+                          id: uuidv4(),
+                          overlayOpenOption: "doNotAutoOpen",
+                          hideBtn: false,
+                          layers: []
+                        }];
+                        setPages(newArr);
+                      }
                     }}
                   >
-                    <span className="icon-button">
+                    <span className="icon-button" style={{
+                      backgroundColor: pages[currentSettingsIndex] ?
+                        (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--primary)") : "var(--primary)"
+                    }}>
                       <i className="icons fa fa-plus" />
                     </span>
                   </div>
@@ -376,17 +395,21 @@ const DropdownTimelineBar = (props) => {
                     color={getColor()}
                     disableAlpha={true}
                     onChange={(color) => {
-                      const newArr = pages.slice();
-                      if (pageColorSettings === "foreground") {
-                        newArr[currentSettingsIndex].primaryColor = color.hex;
-                      } else if (pageColorSettings === "group") {
-                        newArr[currentSettingsIndex].groupColor = color.hex;
-                      } else if (pageColorSettings === "personal") {
-                        newArr[currentSettingsIndex].personalColor = color.hex;
-                      } else if (pageColorSettings === "overlay") {
-                        newArr[currentSettingsIndex].overlayColor = color.hex;
+                      if (document.cookie.split(";").filter(cookie => cookie.includes("pageColorChangerActivated")).length === 0) {
+                        setColorWarningModal(true);
+                      } else {
+                        const newArr = pages.slice();
+                        if (pageColorSettings === "foreground") {
+                          newArr[currentSettingsIndex].primaryColor = color.hex;
+                        } else if (pageColorSettings === "group") {
+                          newArr[currentSettingsIndex].groupColor = color.hex;
+                        } else if (pageColorSettings === "personal") {
+                          newArr[currentSettingsIndex].personalColor = color.hex;
+                        } else if (pageColorSettings === "overlay") {
+                          newArr[currentSettingsIndex].overlayColor = color.hex;
+                        }
+                        setPages(newArr);
                       }
-                      setPages(newArr);
                     }}
                   />
                 </div>
@@ -412,6 +435,16 @@ const DropdownTimelineBar = (props) => {
         }}
         confirmMessage={t("edit.deletePage")}
         message={t("edit.confirmDeletePage", { name: pages[deletionIndex] ? pages[deletionIndex].name : "" })}
+      />
+
+      <ConfirmationModal
+        visible={colorWarningVisible}
+        hide={() => setColorWarningModal(false)}
+        confirmFunction={() => {
+          document.cookie = "pageColorChangerActivated=true";
+        }}
+        confirmMessage={t("edit.pageColorChangeConfirm")}
+        message={t("edit.pageColorChangeWarning")}
       />
     </div>
   );

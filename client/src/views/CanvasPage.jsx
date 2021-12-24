@@ -29,6 +29,20 @@ import {
   Layer
 } from "react-konva";
 
+const konvaObjects = [
+  "rectangles",
+  "ellipses",
+  "stars",
+  "texts",
+  "triangles",
+  "images",
+  "videos",
+  "audios",
+  "documents",
+  "lines",
+  "pencils" // The drawings
+];
+
 const CanvasPage = (props) => {
 
   const { settings: localSettings } = useContext(SettingsContext);
@@ -42,19 +56,6 @@ const CanvasPage = (props) => {
   // Save State
   // These are the names of the objects in state that are saved to the database
   const customObjects = props.customObjects;
-  const konvaObjects = [
-    "rectangles",
-    "ellipses",
-    "stars",
-    "texts",
-    "triangles",
-    "images",
-    "videos",
-    "audios",
-    "documents",
-    "lines",
-    "pencils" // The drawings
-  ];
   const savedObjects = [
     // Rendered Objects Only (shapes, media, etc.)
     ...customObjects, ...konvaObjects
@@ -104,6 +105,7 @@ const CanvasPage = (props) => {
   }
 
   const [prevLayers, setPrevLayers] = useState([]);
+  const [gridState, setGridState] = useState([]);
 
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
@@ -429,9 +431,8 @@ const CanvasPage = (props) => {
     }
   }
 
-  const lineObjProps = (obj, index, canvas, editMode) => {
+  const lineObjProps = (obj, canvas, editMode) => {
     return {
-      key: index,
       draggable: true,
       strokeEnabled: !canvas.state.canvasLoading,
       id: obj.id,
@@ -583,12 +584,12 @@ const CanvasPage = (props) => {
     }
   }
 
-  const lineProps = (obj, index, canvas, editMode) => {
+  const pencilProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      key: index,
       visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,
-      key: index,
       points: obj.points,
       stroke: obj.color,
       strokeWidth: obj.strokeWidth,
@@ -808,109 +809,109 @@ const CanvasPage = (props) => {
   const canvasW = window.innerWidth * maxCanvasScaleFactor;
   const canvasH = window.innerHeight * maxCanvasScaleFactor;
 
-  const renderGrid = (canvas, stage) => {
-    const layerX = canvas.state[`${stage}LayerX`];
-    const layerY = canvas.state[`${stage}LayerY`];
-    const layerScale = canvas.state[`${stage}LayerScale`];
+  const renderGrid = (canvas, stage, moving) => {
     const layerColor = canvas.state.pages[canvas.state.level - 1][`${stage}Color`];
     if (!layerColor) return;
     const layerLightness = hexToHSLLightness(layerColor);
+    let gridProps = [];
+    if (moving || gridState.length === 0) {
+      const layerX = canvas.state[`${stage}LayerX`];
+      const layerY = canvas.state[`${stage}LayerY`];
+      const layerScale = canvas.state[`${stage}LayerScale`];
+      const horizontalLinesNum = maxCanvasScaleFactor * 100;
+      const ratio = canvasW / canvasH;
+      const verticalLinesNum = Math.floor(horizontalLinesNum * ratio);
+      const expoZoom = layerScale.toExponential(0);
+      const small = parseInt(expoZoom.substring(0, 1));
+      const large = parseInt(expoZoom.substring(2, 4));
+      const zoomVal = -large + ((10 - small) / 10);
+      const mod = 2 * Math.floor(Math.pow(7, zoomVal));
 
-    const horizontalLinesNum = maxCanvasScaleFactor * 100;
-    const ratio = canvasW / canvasH;
-    const verticalLinesNum = Math.floor(horizontalLinesNum * ratio);
-    const expoZoom = layerScale.toExponential(0);
-    const small = parseInt(expoZoom.substring(0, 1));
-    const large = parseInt(expoZoom.substring(2, 4));
-    const zoomVal = -large + ((10 - small) / 10);
-    const mod = 2 * Math.floor(Math.pow(7, zoomVal));
+      // Calculate the start index for horizontal lines
+      let startingIndexH = 0;
+      let endingIndexH = 0;
+      const distanceBetweenLinesH = canvasH / horizontalLinesNum;
+      if (layerY < 0) {
+        // Below the x-axis
+        startingIndexH = Math.floor((-layerY / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+        endingIndexH = Math.ceil(((-layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+      } else {
+        // Above the x-axis
+        startingIndexH = Math.floor(((layerY - window.innerHeight) / layerScale) / distanceBetweenLinesH);
+        endingIndexH = Math.ceil(((layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH);
+      }
+      const numOfLinesBetweenH = endingIndexH - startingIndexH;
+      const linesArrH = [...Array(numOfLinesBetweenH)].map((num, i) => {
+        return i + startingIndexH;
+      });
 
-    // Calculate the start index for horizontal lines
-    let startingIndexH = 0;
-    let endingIndexH = 0;
-    const distanceBetweenLinesH = canvasH / horizontalLinesNum;
-    if (layerY < 0) {
-      // Below the x-axis
-      startingIndexH = Math.floor((-layerY / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
-      endingIndexH = Math.ceil(((-layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
+      // Calculate the start index for vertical lines
+      let startingIndexV = 0;
+      let endingIndexV = 0;
+      const distanceBetweenLinesV = canvasW / verticalLinesNum;
+      if (layerX < 0) {
+        // Right of y-axis
+        startingIndexV = Math.floor(((-layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV + (verticalLinesNum / 2));
+        endingIndexV = Math.ceil(((-layerX + window.innerWidth)) / layerScale / distanceBetweenLinesV + (verticalLinesNum / 2));
+      } else {
+        // Left of y-axis
+        startingIndexV = Math.floor(((layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV);
+        endingIndexV = Math.ceil(((layerX + window.innerWidth) / layerScale) / distanceBetweenLinesV);
+      }
+      const numOfLinesBetweenV = endingIndexV - startingIndexV;
+      const linesArrV = [...Array(numOfLinesBetweenV)].map((num, i) => {
+        return i + startingIndexV;
+      });
+
+      linesArrH.map((i) => {
+        if (i % mod === 0) {
+          const sign = i < (horizontalLinesNum / 2) ? -1 : 1;
+          const y = sign * (i - (sign > 0 ? Math.ceil(horizontalLinesNum / 2) : 0)) * (canvasH / horizontalLinesNum);
+          if (
+            y > (-layerY / layerScale) &&
+            y < ((-layerY + window.innerHeight) / layerScale)
+          ) {
+            gridProps.push({
+              points: [canvasX, y, canvasW / 2, y]
+            });
+          }
+        }
+      });
+      linesArrV.map((i) => {
+        if (i % mod === 0) {
+          const sign = i < (verticalLinesNum / 2) ? -1 : 1;
+          const x = sign * (i - (sign > 0 ? Math.ceil(verticalLinesNum / 2) : 0)) * (canvasW / verticalLinesNum);
+          if (
+            x > (-layerX / layerScale) &&
+            x < ((-layerX + window.innerWidth) / layerScale)
+          ) {
+            gridProps.push({
+              points: [x, canvasY, x, canvasH / 2]
+            });
+          }
+        }
+      });
+
+      setGridState(gridProps);
     } else {
-      // Above the x-axis
-      startingIndexH = Math.floor(((layerY - window.innerHeight) / layerScale) / distanceBetweenLinesH);
-      endingIndexH = Math.ceil(((layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH);
+      gridProps = gridState;
     }
-    const numOfLinesBetweenH = endingIndexH - startingIndexH;
-    const linesArrH = [...Array(numOfLinesBetweenH)].map((num, i) => {
-      return i + startingIndexH;
-    });
-
-    // Calculate the start index for vertical lines
-    let startingIndexV = 0;
-    let endingIndexV = 0;
-    const distanceBetweenLinesV = canvasW / verticalLinesNum;
-    if (layerX < 0) {
-      // Right of y-axis
-      startingIndexV = Math.floor(((-layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV + (verticalLinesNum / 2));
-      endingIndexV = Math.ceil(((-layerX + window.innerWidth)) / layerScale / distanceBetweenLinesV + (verticalLinesNum / 2));
-    } else {
-      // Left of y-axis
-      startingIndexV = Math.floor(((layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV);
-      endingIndexV = Math.ceil(((layerX + window.innerWidth) / layerScale) / distanceBetweenLinesV);
-    }
-    const numOfLinesBetweenV = endingIndexV - startingIndexV;
-    const linesArrV = [...Array(numOfLinesBetweenV)].map((num, i) => {
-      return i + startingIndexV;
-    });
 
     return (
       <>
-        {linesArrH.map((i) => {
-          if (i % mod === 0) {
-            const sign = i < (horizontalLinesNum / 2) ? -1 : 1;
-            const y = sign * (i - (sign > 0 ? Math.ceil(horizontalLinesNum / 2) : 0)) * (canvasH / horizontalLinesNum);
-            if (
-              y > (-layerY / layerScale) &&
-              y < ((-layerY + window.innerHeight) / layerScale)
-            ) {
-              return (
-                <Line
-                  key={i}
-                  id={"gridLine"}
-                  points={[canvasX, y, canvasW / 2, y]}
-                  stroke={layerLightness < 50 ? "white" : "black"}
-                  strokeWidth={1}
-                  strokeScaleEnabled={false}
-                  globalCompositeOperation={"source-over"}
-                  draggable={false}
-                  opacity={0.5}
-                />
-              );
-            }
-          }
-        })}
-        {linesArrV.map((i) => {
-          if (i % mod === 0) {
-            const sign = i < (verticalLinesNum / 2) ? -1 : 1;
-            const x = sign * (i - (sign > 0 ? Math.ceil(verticalLinesNum / 2) : 0)) * (canvasW / verticalLinesNum);
-            if (
-              x > (-layerX / layerScale) &&
-              x < ((-layerX + window.innerWidth) / layerScale)
-            ) {
-              return (
-                <Line
-                  key={i}
-                  id={"gridLine"}
-                  points={[x, canvasY, x, canvasH / 2]}
-                  stroke={layerLightness < 50 ? "white" : "black"}
-                  strokeWidth={1}
-                  strokeScaleEnabled={false}
-                  globalCompositeOperation={"source-over"}
-                  draggable={false}
-                  opacity={0.5}
-                />
-              );
-            }
-          }
-        })}
+        {gridProps.map((props, i) => (
+          <Line
+            key={i}
+            id={"gridLine"}
+            stroke={layerLightness < 50 ? "white" : "black"}
+            strokeWidth={1}
+            strokeScaleEnabled={false}
+            globalCompositeOperation={"source-over"}
+            draggable={false}
+            opacity={0.5}
+            {...props}
+          />
+        ))}
       </>
     );
   };
@@ -923,7 +924,7 @@ const CanvasPage = (props) => {
       case "ellipses":
         return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
-        return <Line {...lineProps(obj, index, canvas, editMode)} />;
+        return <Line {...pencilProps(obj, index, canvas, editMode)} />;
       case "images":
         return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} /> : null;
       case "videos":
@@ -933,7 +934,7 @@ const CanvasPage = (props) => {
       case "documents":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
-        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)}/>;
+        return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)} />;
       case "stars":
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
@@ -993,11 +994,11 @@ const CanvasPage = (props) => {
     }
   }
 
-  const loadObjects = (stage, mode) => {
+  const loadObjects = (stage, mode, moving) => {
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
-    if (!canvas || !(canvas.state && canvas.refs)) {
+    if (!canvas || !canvas.state || !canvas.refs) {
       return (
         <>
         </>
@@ -1017,7 +1018,9 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
       objectIds = overlay.layers;
     }
-    const newLayers = !arraysEqual(prevLayers, objectIds);
+    objectIds = [objectIds.filter(id => id.includes("pencils")), ...objectIds.filter(id => !id.includes("pencils"))];
+    const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
+    const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
     return (
       <>
@@ -1036,50 +1039,74 @@ const CanvasPage = (props) => {
             strokeScaleEnabled={false}*/
             />
 
-            {renderGrid(canvas, stage)}
+            {renderGrid(canvas, stage, moving)}
+
+            {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
+            {/*<Ellipse
+              fill={"red"}
+              x={0}
+              y={0}
+              radius={{
+                x: 10,
+                y: 10
+              }}
+            />*/}
           </Layer>
         )}
 
         {/* Render the object saved in state */}
         {objectIds.map((id, index) => {
-          const type = id.replace(/\d+$/, "");
-          const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+          if (index !== 0) {
+            const type = id.replace(/\d+$/, "");
+            const obj = canvas.state[type].filter(obj => obj.id === id)[0];
 
-          const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
-          const customObj = customChild ? customChild.parentElement : null;
+            const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
+            const customObj = customChild ? customChild.parentElement : null;
 
-          if (customObj && newLayers) {
-            setTimeout(() => {
-              let stageParentElem = "";
-              if (stage === "overlay") {
-                stageParentElem = "overlayGameContainer";
-              } else if (stage === "personal") {
-                stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
-              } else {
-                stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
-              }
-              const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
-              const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
-
-              if (stageElem) {
-                const canvasElems = stageElem.querySelectorAll("canvas");
-                if (!editMode) {
-                  for (let i = 0; i < canvasElems.length; i++) {
-                    canvasElems[i].style.pointerEvents = "none";
-                  }
+            if (customObj && newLayers) {
+              setTimeout(() => {
+                let stageParentElem = "";
+                if (stage === "overlay") {
+                  stageParentElem = "overlayGameContainer";
+                } else if (stage === "personal") {
+                  stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
+                } else {
+                  stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
                 }
-                const canvasElem = canvasElems[index + 1];
-                stageElem.insertBefore(customObj, canvasElem);
-              }
-            }, 0);
-            setPrevLayers(objectIds);
-          }
+                const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
+                const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
 
-          return obj && objectIsOnStage(obj, canvas) === checkStage ? (
-            <Layer {...layerProps(canvas, stage, obj.id)}>
-              {renderObject(obj, index, canvas, editMode, type, stage)}
-            </Layer>
-          ) : null;
+                if (stageElem) {
+                  const canvasElems = stageElem.querySelectorAll("canvas");
+                  if (!editMode) {
+                    for (let i = 0; i < canvasElems.length; i++) {
+                      canvasElems[i].style.pointerEvents = "none";
+                    }
+                  }
+                  const canvasElem = canvasElems[index + 1];
+                  stageElem.insertBefore(customObj, canvasElem);
+                }
+              }, 0);
+              setPrevLayers(objectIdsNoPencils);
+            }
+
+            return obj && objectIsOnStage(obj, canvas) === checkStage ? (
+              <Layer {...layerProps(canvas, stage, obj.id)}>
+                {renderObject(obj, index, canvas, editMode, type, stage)}
+              </Layer>
+            ) : null;
+          } else {
+            const objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
+            return (
+              <Layer {...layerProps(canvas, stage, "pencils")}>
+                {objs.map((obj, index) => (
+                  <React.Fragment key={index}>
+                    {renderObject(obj, index, canvas, editMode, "pencils", stage)}
+                  </React.Fragment>
+                ))}
+              </Layer>
+            );
+          }
         })}
 
         {/*
@@ -1112,17 +1139,6 @@ const CanvasPage = (props) => {
             </>
           )}
         </Layer>
-
-        {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-        {/*<Ellipse
-          fill={"red"}
-          x={0}
-          y={0}
-          radius={{
-            x: 10,
-            y: 10
-          }}
-        />*/}
       </>
     );
   }
