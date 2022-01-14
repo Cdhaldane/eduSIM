@@ -340,14 +340,7 @@ class Graphics extends Component {
 
   setCustomGroupPos = (state, layer) => {
     if (!this.refs[layer]) return;
-    let groups = [];
-    for (let ref in this.refs) {
-      if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-        const layerGroups = this.refs[ref].find('Group');
-        groups.push(layerGroups);
-      }
-    }
-    groups = groups.flat();
+    const groups = this.refs[`${layer}.objects`].find('Group');
     let group = null;
     for (let i = 0; i < groups.length; i++) {
       if (groups[i].attrs.id === state.id) {
@@ -606,11 +599,13 @@ class Graphics extends Component {
   };
 
   handleCopyRole = async (gameroleid) => {
+    this.props.setGameEditProps(undefined)
     await this.handleSave();
     return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
       gameroleid
     }).then((res) => {
-      let objects = JSON.parse(res.data.gameinstance.game_parameters);
+      const objects = JSON.parse(res.data.gameinstance.game_parameters);
+      const newIds = res.data.newIds;
 
       // Parse the saved groups
       let parsedSavedGroups = [];
@@ -624,9 +619,13 @@ class Graphics extends Component {
       objects.savedGroups = parsedSavedGroups;
 
       // Put parsed saved data into state
-      this.savedState.forEach((object) => {
+      this.savedState.forEach((object, idx, array) => {
         this.setState({
           [object]: objects[object]
+        }, () => {
+          if (idx === array.length - 1) {
+            this.setLayers([...this.getLayers(), ...newIds]);
+          }
         });
       });
 
@@ -834,20 +833,12 @@ class Graphics extends Component {
       const layer = personalArea ? "personalAreaLayer" :
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       let shape = null;
-      let pointerPos = null;
-      for (let ref in this.refs) {
-        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-          const subLayer = this.refs[ref];
-          pointerPos = subLayer.getStage().getPointerPosition();
-          if (e.evt) {
-            shape = subLayer.getIntersection(pointerPos);
-            if (shape && shape.attrs.id === "ContainerRect") {
-              shape = null;
-            }
-          }
-          if (shape) {
-            break;
-          }
+      const objsLayer = this.refs[`${layer}.objects`];
+      const pointerPos = objsLayer?.getStage().getPointerPosition();
+      if (pointerPos && e.evt) {
+        shape = objsLayer.getIntersection(pointerPos);
+        if (shape && shape.attrs.id === "ContainerRect") {
+          shape = null;
         }
       }
 
@@ -862,6 +853,7 @@ class Graphics extends Component {
         }
       }, () => {
         this.updateSelectionRect(personalArea);
+        this.handleObjectSelection();
       });
     }
   };
@@ -960,45 +952,30 @@ class Graphics extends Component {
         (personalArea ? "personalSelectionRect" : "groupSelectionRect");
       let shape = null;
       let clickShapeGroup = null;
-      let pointerPos = null;
-      const currentLayers = [...this.getLayers()].reverse();
+      // Select custom object if clicked
       const customObjs = Array.from(document.getElementsByClassName("customObj"));
-      for (let i = 0; i < currentLayers.length; i++) {
-        const subLayer = this.refs[layer + "." + currentLayers[i]];
-        pointerPos = subLayer?.getStage().getPointerPosition();
-        if (pointerPos) {
-          const isCustom = this.props.customObjects.includes(this.getObjType(currentLayers[i]));
-          if (isCustom && event.target.parentElement.className === "konvajs-content") {
-            let obj = customObjs.filter(elem => elem.dataset.name === currentLayers[i]);
-            if (obj.length) {
-              obj = obj[0];
-              const customObj = this.getKonvaObj(currentLayers[i]);
-              const rect = obj.getBoundingClientRect();
-              if (
-                (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
-                (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
-                (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
-                (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
-                customObj
-              ) {
-                // Clicked on a custom object
-                this.setState({
-                  selectedShapeName: currentLayers[i],
-                  groupSelection: []
-                }, this.handleObjectSelection);
-                return;
-              }
-            }
-          }
-          shape = subLayer.getIntersection(pointerPos);
-          if (shape && shape.attrs.id === "ContainerRect") {
-            shape = null;
-          } else {
-            clickShapeGroup = this.getShapeGroup(shape);
-          }
+      for (let i = 0; i < customObjs.length; i++) {
+        const bounds = customObjs[i].getBoundingClientRect();
+        if (
+          event.clientX > bounds.left && event.clientX < bounds.right &&
+          event.clientY > bounds.top && event.clientY < bounds.bottom
+        ) {
+          this.setState({
+            selectedShapeName: customObjs[i].dataset.name,
+            groupSelection: []
+          }, this.handleObjectSelection);
+          return;
         }
-        if (shape) {
-          break;
+      }
+      // Get Konva shape if clicked
+      const objsLayer = this.refs[`${layer}.objects`];
+      const pointerPos = objsLayer?.getStage().getPointerPosition();
+      if (pointerPos) {
+        shape = objsLayer.getIntersection(pointerPos);
+        if (shape && shape.attrs.id === "ContainerRect") {
+          shape = null;
+        } else {
+          clickShapeGroup = this.getShapeGroup(shape);
         }
       }
 
@@ -1009,16 +986,12 @@ class Graphics extends Component {
         if (selBox.width > 1 && selBox.height > 1) {
           // This only runs if there has been a rectangle selection (click and drag selection)
           const elements = [];
-          for (let ref in this.refs) {
-            if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-              this.refs[ref].find(".shape").forEach((elementNode) => {
-                const elBox = elementNode.getClientRect();
-                if (Konva.Util.haveIntersection(selBox, elBox)) {
-                  elements.push(elementNode);
-                }
-              });
+          objsLayer.find(".shape").forEach((elementNode) => {
+            const elBox = elementNode.getClientRect();
+            if (Konva.Util.haveIntersection(selBox, elBox)) {
+              elements.push(elementNode);
             }
-          }
+          });
 
           // Handle if nothing, one thing, or a group has been selected
           if (elements.length === 0) {
@@ -1106,7 +1079,6 @@ class Graphics extends Component {
               if (this.state.selectedShapeName !== shape.id() || this.state.groupSelection.length) {
                 if (!alreadySelectedCurrent) {
                   // ADD SELECTION
-
                   const newSelection = [...this.state.groupSelection];
                   if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
                     // A shape is already selected in selectedShapeName but not in groupSelection 
@@ -1282,7 +1254,7 @@ class Graphics extends Component {
             sidebarPx = 100;
           }
 
-          const rel = this.refs[`${areaClicked}AreaLayer.main`].getRelativePointerPosition();
+          const rel = this.refs[`${areaClicked}AreaLayer.objects`].getRelativePointerPosition();
           this.setState({
             selectedContextMenu: {
               type: type,
@@ -1459,14 +1431,7 @@ class Graphics extends Component {
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
     if (this.customObjects.includes(objectsName)) {
-      let customObjs = [];
-      for (let ref in this.refs) {
-        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-          const layerGroups = this.refs[ref].find('Group');
-          customObjs.push(layerGroups);
-        }
-      }
-      customObjs = customObjs.flat();
+      const customObjs = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
         const id = customObjs[i].attrs.id;
         if (id === ref) {
@@ -1500,7 +1465,7 @@ class Graphics extends Component {
 
       const scaleBy = 1.2;
       const stage = this.state.overlayOpen ? "overlay" : (personalArea ? "personal" : "group");
-      const layer = this.refs[`${stage}AreaLayer.main`];
+      const layer = this.refs[`${stage}AreaLayer.objects`];
 
       const oldScale = layer.scaleX();
       const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
@@ -1511,18 +1476,22 @@ class Graphics extends Component {
         x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
         y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
       }
+      const maxZoom = 250;
       const newPos = {
-        x: pointer.x - mousePos.x * newScale,
-        y: pointer.y - mousePos.y * newScale,
+        x: pointer.x - mousePos.x * Math.min(newScale, maxZoom),
+        y: pointer.y - mousePos.y * Math.min(newScale, maxZoom),
       };
 
       layer.scale({
-        x: newScale,
-        y: newScale
+        x: Math.min(newScale, maxZoom),
+        y: Math.min(newScale, maxZoom)
       });
       const layerScale = `${stage}LayerScale`;
+      if (newScale > maxZoom) {
+        this.props.showAlert(this.props.t("alert.maxZoomReached"), "info");
+      }
       this.setState({
-        [layerScale]: newScale,
+        [layerScale]: Math.min(newScale, maxZoom),
         [`${stage}LayerX`]: newPos.x,
         [`${stage}LayerY`]: newPos.y,
       });
@@ -2117,21 +2086,22 @@ class Graphics extends Component {
 
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (text, layer) => {
+    console.log(layer);
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-      if (sidebarPx > 0 && layer === this.refs[`personalAreaLayer.main`]) {
+      if (sidebarPx > 0 && layer === this.refs[`personalAreaLayer.objects`]) {
         sidebarPx = 100;
-      } else if (sidebarPx > 0 && layer === this.refs[`overlayAreaLayer.main`]) {
+      } else if (sidebarPx > 0 && layer === this.refs[`overlayAreaLayer.objects`]) {
         sidebarPx = 100;
       }
       let topPx = 0;
-      if (layer === this.refs[`personalAreaLayer.main`]) {
+      if (layer === this.refs[`personalAreaLayer.objects`]) {
         topPx = 50;
-      } else if (layer === this.refs[`overlayAreaLayer.main`]) {
+      } else if (layer === this.refs[`overlayAreaLayer.objects`]) {
         topPx = 30;
       }
-      const scaleVal = layer === this.refs[`personalAreaLayer.main`] ?
+      const scaleVal = layer === this.refs[`personalAreaLayer.objects`] ?
         this.state.personalLayerScale :
         (this.state.overlayOpen ? this.state.overlayLayerScale : this.state.groupLayerScale);
 
@@ -2349,14 +2319,7 @@ class Graphics extends Component {
       } else {
         const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
           (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-        let groups = [];
-        for (let ref in this.refs) {
-          if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-            const layerGroups = this.refs[ref].find('Group');
-            groups.push(layerGroups);
-          }
-        }
-        groups = groups.flat();
+        const groups = this.refs[`${layer}.objects`].find('Group');
         for (let i = 0; i < groups.length; i++) {
           if (groups[i].attrs.id === id) {
             const group = groups[i];
@@ -2710,14 +2673,7 @@ class Graphics extends Component {
     } else {
       const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-      let customObjs = [];
-      for (let ref in this.refs) {
-        if (ref.includes(layer) && this.getLayers().some(layer => ref.includes(layer))) {
-          const layerGroups = this.refs[ref].find('Group');
-          customObjs.push(layerGroups);
-        }
-      }
-      customObjs = customObjs.flat();
+      const customObjs = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
         const id = customObjs[i].attrs.id;
         if (id === obj.id) {
@@ -3067,7 +3023,7 @@ class Graphics extends Component {
                     xPos={this.state.overlayAreaContextMenuX}
                     yPos={this.state.overlayAreaContextMenuY}
                     state={this.state}
-                    layer={this.refs['overlayAreaLayer.main']}
+                    layer={this.refs['overlayAreaLayer.objects']}
                     objectLabels={this.savedObjects}
                     deleteLabels={this.deletionCounts}
                     setState={(obj) => this.setState(obj)}
@@ -3118,7 +3074,7 @@ class Graphics extends Component {
                 xPos={this.state.groupAreaContextMenuX}
                 yPos={this.state.groupAreaContextMenuY}
                 state={this.state}
-                layer={this.refs[`groupAreaLayer.main`]}
+                layer={this.refs[`groupAreaLayer.objects`]}
                 objectLabels={this.savedObjects}
                 deleteLabels={this.deletionCounts}
                 setState={(obj) => this.setState(obj)}
@@ -3197,7 +3153,7 @@ class Graphics extends Component {
                   xPos={this.state.personalAreaContextMenuX}
                   yPos={this.state.personalAreaContextMenuY}
                   state={this.state}
-                  layer={this.refs['personalAreaLayer.main']}
+                  layer={this.refs['personalAreaLayer.objects']}
                   objectLabels={this.savedObjects}
                   deleteLabels={this.deletionCounts}
                   setState={(obj) => this.setState(obj)}

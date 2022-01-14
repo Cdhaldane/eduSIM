@@ -388,6 +388,7 @@
       "emailSuccessful": "Email invitations have been successfully sent to simulation participants.",
       "emailError": "An error has occured while attempting to send email invitations. Please try again.",
       "simAutosave": "Simulation autosaved.",
+      "maxZoomReached": "You are at the max zoom.",
       "setOnlyOneOverlay": "This setting can only be applied to one overlay at a time and is currently already applied to overlay {{name}}.",
       "roleLimitExceeded": "Too many people have already chosen this role. Please choose a different one.",
       "noRoleSelected": "Please select a role to continue.",

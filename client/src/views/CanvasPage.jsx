@@ -105,7 +105,6 @@ const CanvasPage = (props) => {
   }
 
   const [prevLayers, setPrevLayers] = useState([]);
-  const [gridState, setGridState] = useState([]);
 
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
@@ -398,6 +397,7 @@ const CanvasPage = (props) => {
    *----------------------------------------------------*/
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
+      key: obj.id,
       visible: canvas.state.canvasLoading ? false :
         (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
       rotation: obj.rotation,
@@ -571,8 +571,8 @@ const CanvasPage = (props) => {
           onTransform: canvas.handleTextTransform,
           onDblClick: () => canvas.handleTextDblClick(
             canvas.refs[obj.ref],
-            obj.infolevel ? canvas.refs[`personalAreaLayer.main`] :
-              (obj.overlay ? canvas.refs[`overlayAreaLayer.main`] : canvas.refs[`groupAreaLayer.main`])
+            obj.infolevel ? canvas.refs[`personalAreaLayer.objects`] :
+              (obj.overlay ? canvas.refs[`overlayAreaLayer.objects`] : canvas.refs[`groupAreaLayer.objects`])
           ),
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
@@ -809,115 +809,8 @@ const CanvasPage = (props) => {
   const canvasW = window.innerWidth * maxCanvasScaleFactor;
   const canvasH = window.innerHeight * maxCanvasScaleFactor;
 
-  const renderGrid = (canvas, stage, moving) => {
-    const layerColor = canvas.state.pages[canvas.state.level - 1][`${stage}Color`];
-    if (!layerColor) return;
-    const layerLightness = hexToHSLLightness(layerColor);
-    let gridProps = [];
-    if (moving || gridState.length === 0) {
-      const layerX = canvas.state[`${stage}LayerX`];
-      const layerY = canvas.state[`${stage}LayerY`];
-      const layerScale = canvas.state[`${stage}LayerScale`];
-      const horizontalLinesNum = maxCanvasScaleFactor * 100;
-      const ratio = canvasW / canvasH;
-      const verticalLinesNum = Math.floor(horizontalLinesNum * ratio);
-      const expoZoom = layerScale.toExponential(0);
-      const small = parseInt(expoZoom.substring(0, 1));
-      const large = parseInt(expoZoom.substring(2, 4));
-      const zoomVal = -large + ((10 - small) / 10);
-      const mod = 2 * Math.floor(Math.pow(7, zoomVal));
-
-      // Calculate the start index for horizontal lines
-      let startingIndexH = 0;
-      let endingIndexH = 0;
-      const distanceBetweenLinesH = canvasH / horizontalLinesNum;
-      if (layerY < 0) {
-        // Below the x-axis
-        startingIndexH = Math.floor((-layerY / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
-        endingIndexH = Math.ceil(((-layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH + (horizontalLinesNum / 2));
-      } else {
-        // Above the x-axis
-        startingIndexH = Math.floor(((layerY - window.innerHeight) / layerScale) / distanceBetweenLinesH);
-        endingIndexH = Math.ceil(((layerY + window.innerHeight) / layerScale) / distanceBetweenLinesH);
-      }
-      const numOfLinesBetweenH = endingIndexH - startingIndexH;
-      const linesArrH = [...Array(numOfLinesBetweenH)].map((num, i) => {
-        return i + startingIndexH;
-      });
-
-      // Calculate the start index for vertical lines
-      let startingIndexV = 0;
-      let endingIndexV = 0;
-      const distanceBetweenLinesV = canvasW / verticalLinesNum;
-      if (layerX < 0) {
-        // Right of y-axis
-        startingIndexV = Math.floor(((-layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV + (verticalLinesNum / 2));
-        endingIndexV = Math.ceil(((-layerX + window.innerWidth)) / layerScale / distanceBetweenLinesV + (verticalLinesNum / 2));
-      } else {
-        // Left of y-axis
-        startingIndexV = Math.floor(((layerX - window.innerWidth) / layerScale) / distanceBetweenLinesV);
-        endingIndexV = Math.ceil(((layerX + window.innerWidth) / layerScale) / distanceBetweenLinesV);
-      }
-      const numOfLinesBetweenV = endingIndexV - startingIndexV;
-      const linesArrV = [...Array(numOfLinesBetweenV)].map((num, i) => {
-        return i + startingIndexV;
-      });
-
-      linesArrH.map((i) => {
-        if (i % mod === 0) {
-          const sign = i < (horizontalLinesNum / 2) ? -1 : 1;
-          const y = sign * (i - (sign > 0 ? Math.ceil(horizontalLinesNum / 2) : 0)) * (canvasH / horizontalLinesNum);
-          if (
-            y > (-layerY / layerScale) &&
-            y < ((-layerY + window.innerHeight) / layerScale)
-          ) {
-            gridProps.push({
-              points: [canvasX, y, canvasW / 2, y]
-            });
-          }
-        }
-      });
-      linesArrV.map((i) => {
-        if (i % mod === 0) {
-          const sign = i < (verticalLinesNum / 2) ? -1 : 1;
-          const x = sign * (i - (sign > 0 ? Math.ceil(verticalLinesNum / 2) : 0)) * (canvasW / verticalLinesNum);
-          if (
-            x > (-layerX / layerScale) &&
-            x < ((-layerX + window.innerWidth) / layerScale)
-          ) {
-            gridProps.push({
-              points: [x, canvasY, x, canvasH / 2]
-            });
-          }
-        }
-      });
-
-      setGridState(gridProps);
-    } else {
-      gridProps = gridState;
-    }
-
-    return (
-      <>
-        {gridProps.map((props, i) => (
-          <Line
-            key={i}
-            id={"gridLine"}
-            stroke={layerLightness < 50 ? "white" : "black"}
-            strokeWidth={1}
-            strokeScaleEnabled={false}
-            globalCompositeOperation={"source-over"}
-            draggable={false}
-            opacity={0.5}
-            {...props}
-          />
-        ))}
-      </>
-    );
-  };
-
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
-    const layer = canvas.refs[`${stage}AreaLayer.other`];
+    const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} {...canvas.getDragProps(obj.id)} />;
@@ -1025,27 +918,26 @@ const CanvasPage = (props) => {
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
-    const returnValue = (
-      <>
+    return (
+      <Layer {...layerProps(canvas, stage, "objects")}>
+        {/* This Rect is for dragging the canvas */}
         {editMode && (
-          <Layer {...layerProps(canvas, stage, "main")}>
-            {/* This Rect is for dragging the canvas */}
-            <Rect
-              id="ContainerRect"
-              x={canvasX}
-              y={canvasY}
-              height={canvasH}
-              width={canvasW}
-            // Canvas Drag Rect Outline - FOR DEBUGGING
-            /*stroke={"red"}
-            strokeWidth={2}
-            strokeScaleEnabled={false}*/
-            />
+          <Rect
+            id="ContainerRect"
+            x={canvasX}
+            y={canvasY}
+            height={canvasH}
+            width={canvasW}
+          // Canvas Drag Rect Outline - FOR DEBUGGING
+          //stroke={"red"}
+          //strokeWidth={2}
+          //strokeScaleEnabled={false}
+          />
+        )}
 
-            {renderGrid(canvas, stage, moving)}
-
-            {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-            {/*<Ellipse
+        {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
+        {/*editMode && (
+          <Ellipse
               fill={"red"}
               x={0}
               y={0}
@@ -1053,11 +945,10 @@ const CanvasPage = (props) => {
                 x: 10,
                 y: 10
               }}
-            />*/}
-          </Layer>
-        )}
+            />
+          )*/}
 
-        {/* Render the object saved in state */}
+        {/* Render the objects in the layer */}
         {objectIds.map((id, index) => {
           if (index !== 0) {
             const type = id.replace(/\d+$/, "");
@@ -1094,55 +985,45 @@ const CanvasPage = (props) => {
             }
 
             return obj && objectIsOnStage(obj, canvas) === checkStage ? (
-              <Layer {...layerProps(canvas, stage, obj.id)}>
-                {renderObject(obj, index, canvas, editMode, type, stage)}
-              </Layer>
+              renderObject(obj, index, canvas, editMode, type, stage)
             ) : null;
           } else {
-            const objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
+            let objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
+            objs = objs.filter((e) => {
+              return e !== undefined;
+            });
             return (
-              <Layer {...layerProps(canvas, stage, "pencils")}>
+              <React.Fragment key={"drawings"}>
                 {objs.map((obj, index) => (
                   <React.Fragment key={index}>
                     {renderObject(obj, index, canvas, editMode, "pencils", stage)}
                   </React.Fragment>
                 ))}
-              </Layer>
+              </React.Fragment>
             );
           }
         })}
 
-        {/*
-          <JSRunner // WARNING: see JSRunner.jsx for extra info. this is dangerous code
-            defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
-            {...canvas.getInteractiveProps(obj.id)}
-            {...defaultObjProps(obj, canvas, editMode)}
-            {...textProps(obj, canvas, editMode)}
-          />
-        */}
-
-        <Layer {...layerProps(canvas, stage, "other")}>
-          {editMode && (
-            <>
-              {canvas.state.arrows.map((obj, index) => {
-                return (
-                  !obj.from &&
-                  !obj.to &&
-                  obj.level === canvas.state.level &&
-                  obj.infolevel === (stage === "personal")
-                ) ?
-                  <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
-              })}
-              {canvas.state.guides.map((obj, index) => {
-                return <Line {...guideProps(obj, index, canvas, editMode)} />
-              })}
-              {/* This is the blue transformer rectangle that pops up when objects are selected */}
-              <TransformerComponent {...transformerProps(stage, canvas)} />
-              <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
-            </>
-          )}
-        </Layer>
-      </>
+        {editMode && (
+          <>
+            {canvas.state.arrows.map((obj, index) => {
+              return (
+                !obj.from &&
+                !obj.to &&
+                obj.level === canvas.state.level &&
+                obj.infolevel === (stage === "personal")
+              ) ?
+                <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+            })}
+            {canvas.state.guides.map((obj, index) => {
+              return <Line {...guideProps(obj, index, canvas, editMode)} />
+            })}
+            {/* This is the blue transformer rectangle that pops up when objects are selected */}
+            <TransformerComponent {...transformerProps(stage, canvas)} />
+            <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
+          </>
+        )}
+      </Layer>
     );
 
     if (objectIdsNoPencils.filter(id => 
