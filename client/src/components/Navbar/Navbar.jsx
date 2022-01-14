@@ -38,7 +38,9 @@ const NavBar = (props) => {
   return (
     <nav className="NavbarItems">
       <a href="/">
-        <h4 className="navbar-logo">{t('navbar.title')}</h4>
+        <img src="03_eduSIM_horizontal.png" className="navbar-logo"></img>
+        <div class="vl"></div>
+        <h1 className="title">Educational Simulator Tool</h1>
       </a>
       <div className="menu-icon" onClick={toggleContextMenu}>
         <i className={menuOpen ? "menu-close fas fa-times" : "menu-close fas fa-bars"}></i>
@@ -50,12 +52,6 @@ const NavBar = (props) => {
             className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
-            <Link to="/dashboard" className="nav-home-mobile">
-              <i
-                className="fa fa-home"
-                aria-hidden="true"
-              ></i>
-            </Link>
             <ButtonLink
               href="/profile"
               buttonStyle="btn--primary--solid"
@@ -67,26 +63,16 @@ const NavBar = (props) => {
           </div>
         )}
 
-        <Link to="/dashboard" className="nav-home">
-          <i
-            className="fa fa-home"
-            aria-hidden="true"
-          ></i>
-        </Link>
 
-        {MenuItems.map((item, index) => {
-          return (
             <ButtonLink
-              buttonStyle="btn--primary--solid"
+              className="nav-links"
+              href="/about"
+              buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
-              className={item.cName}
-              href={item.url}
-              key={index}
             >
-              {t(item.title)}
+              <i class="fas fa-info-circle"></i>
+              {t("navbar.about")}
             </ButtonLink>
-          );
-        })}
 
         {isAuthenticated ? (
           <img

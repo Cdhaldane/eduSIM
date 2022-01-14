@@ -166,7 +166,7 @@ const Join = (props) => {
   const playerDBIDS = useMemo(() => Object.values(players).map(({dbid}) => dbid), [players]);
 
   return (
-    <div className="dashboard">
+    <div className="join">
       <div className="page-margin joinboard-header">
         <Image
           className="joinboard-image"

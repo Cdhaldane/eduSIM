@@ -2,8 +2,9 @@
   "translation": {
     "home": {
       "welcome": "Welcome!",
-      "isStudent": "Are you a student/participant?",
-      "isTeacher": "Are you a teacher/facilitator?",
+      "isStudent": "Student/Participant?",
+      "isTeacher": "Teacher/Facilitator?",
+      "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dui mi, bibendum eu erat id, ultricies semper metus.",
       "alreadyHaveRoomCode": "Already have a room code?",
       "join": "Join!",
       "roomCode": "Room code",
@@ -42,8 +43,8 @@
     },
     "admin": {
       "mySimulations": "My simulations",
-      "addNewSimulation": "Add a new simulation +",
       "deleteSimConfirmExplanation": "Are you sure you want to delete the {{name}} simulation? This action cannot be undone.",
+      "addNewSimulation": "‏‏‎ ‎+‎‎‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎Add a new simulation ",
       "revokeSimConfirmExplanation": "Are you sure you want your access to the {{name}} simulation revoked? This action cannot be undone.",
       "deleteSimConfirm": "Yes - Delete Simulation",
       "addStudentCSV": "Add Student / Participant List +",
@@ -407,7 +408,7 @@
       "useOriginalEmail": "Please log in with the original email address you received the invite with.",
       "simAccessGranted": "You have been granted access to a new simulation!",
       "inviteInvalid": "An error occured. The URL may be malformed, or the invite was invalid.",
-      "maxOverlays": "There can only be a maximum of 6 overlays per page. No overlay added." 
+      "maxOverlays": "There can only be a maximum of 6 overlays per page. No overlay added."
     }
   }
 }

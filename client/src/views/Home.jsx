@@ -9,21 +9,26 @@ const Home = (props) => {
 
   return (
     <div className="welcome-container">
-      <h1 className="welcome">{t("home.welcome")}</h1>
+
       <div className="welcome-nav">
+        <h1 className="welcome">We boost growth for your startup business</h1>
         <Note
           title={t("home.isStudent")}
+          text={t("home.welcomeText")}
           url="/welcome"
-          img="student.png"
+          img="01_Illustrations Student.png"
           className="welcome-navbutton"
         />
         <Note
           title={t("home.isTeacher")}
+          text={t("home.welcomeText")}
           onClick={() => loginWithRedirect({ redirectUri: window.location.origin + "/dashboard", prompt: "select_account" })}
-          img="teacher.png"
+          img="02_Illustrations Teacher.png"
           className="welcome-navbutton"
         />
       </div>
+      <h2 className="welcome-desc">Educational Simulated Interaction Models (eduSIMs) are designed and clinically tested simulations for future teachers and school leaders.</h2>
+      <img className="lightbulb-img" src="lightbulb.png"></img>
     </div>
   );
 }

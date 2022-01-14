@@ -2,18 +2,20 @@
   background: #fff;
   z-index: 0;
   border-radius: 7px;
-  box-shadow: 0 2px 5px #ccc;
+  box-shadow: 0 2px 10px #ccc;
   padding: 10px;
   float: left;
   position: relative;
   margin: 0 10px 10px 0;
+  width: 1550px;
+  height: 120px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  color: var(--dark);
 }
 
 .notesim h1 {
   text-align: center;
-  color: rgba(0, 0, 0, 0.8);
   font-size: 1.5rem;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -21,34 +23,48 @@
 
 .notesim-thumbnail {
   z-index: -1;
-  height: 150px;
+  height: auto;
   width: 180px;
 }
 
 .notesim-name {
   position: absolute;
-  width: inherit;
-  height: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-shadow: 0 0 5px white;
+  left: 200px;
+  top: 40%;
+  text-align: left;
+  color: var(--dark);
+
 }
 
 .notesim-thumbnail img {
-  opacity: 40%;
-  width: inherit;
-  height: inherit;
+  width: 10%;
+  height: 100px;
   border-radius: 10px;
   object-fit: cover;
   position: absolute;
+  border: 1px solid var(--primary);
 }
 
 .notesim-icons {
+  position: absolute;
+  top: 0px;
+  left: 500px;
   display: flex;
   justify-content: center;
-  padding-top: 10px;
   font-size: .9em;
+  color: var(--dark);
+}
+
+.notesim-icons i {
+  margin: 50px;
+}
+.notesim-icons h1 {
+  color: var(--dark);
+  font-family:  "Montserrat", sans-serif;
+  position: relative;
+  left: 40px;
+  top: -25px;
+  font-weight: normal;
 }
 
 .notesim-icon {

@@ -14,7 +14,7 @@ const Welcome = (props) => {
 
   const joinGame = async (e) => {
     e.preventDefault();
-    
+
     const { data: roomData } = await axios.get(
       process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
       params: {
@@ -32,28 +32,48 @@ const Welcome = (props) => {
   };
 
   return (
-    <div className="welcome-container">
-      <h1 className="welcome welcome-noanim">{t("home.welcome")}</h1>
-      <p>{t("home.alreadyHaveRoomCode")}</p>
-      <form onSubmit={joinGame} className="welcome-join">
-        <input type="text" className="textbox" placeholder={t("home.roomCode")} value={code} onChange={(e) => setCode(e.target.value)} />
-        <input type="submit" value={t("home.join")} />
-      </form>
-      <p>
+    <div className="welcome-container-welcome">
+      <div className="welcome-text">
+      <h1>{t("home.alreadyHaveRoomCode")}</h1>
         <Trans i18nKey="home.getCodeOrCreateSim">
-          If not, get one from your teacher/facilitator, or 
-          <button 
-            id="link" 
-            onClick={() => loginWithRedirect({ 
-              redirectUri: window.location.origin + "/dashboard", 
-              prompt: "select_account" 
-            })}> 
-            create your own simulation.
-          </button>
-        </Trans>
-      </p>
+            If not, get one from your teacher/facilitator, or
+            <button
+              id="link"
+              onClick={() => loginWithRedirect({
+                redirectUri: window.location.origin + "/dashboard",
+                prompt: "select_account"
+              })}>
+              create your own simulation.
+            </button>
+          </Trans>
+          <form onSubmit={joinGame} className="welcome-join">
+            <input type="text" className="textbox" placeholder={t("home.roomCode")} value={code} onChange={(e) => setCode(e.target.value)} />
+            <input type="submit" value={t("home.join")} />
+          </form>
+            </div>
+          <div className="welcome-img">
+            <img src="03_Illustrations LogoIn.png"></img>
+          </div>
     </div>
   );
 }
 
 export default Welcome;
+
+// <form onSubmit={joinGame} className="welcome-join">
+//   <input type="text" className="textbox" placeholder={t("home.roomCode")} value={code} onChange={(e) => setCode(e.target.value)} />
+//   <input type="submit" value={t("home.join")} />
+// </form>
+// <p>
+//   <Trans i18nKey="home.getCodeOrCreateSim">
+//     If not, get one from your teacher/facilitator, or
+//     <button
+//       id="link"
+//       onClick={() => loginWithRedirect({
+//         redirectUri: window.location.origin + "/dashboard",
+//         prompt: "select_account"
+//       })}>
+//       create your own simulation.
+//     </button>
+//   </Trans>
+// </p>

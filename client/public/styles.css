@@ -4,6 +4,7 @@
   --danger: #eb3f27;
   --success: #75fa83;
   --white: #fdfdfd;
+  --almostwhite: #fbfbfb;
   --dark: #181717;
   --bg: white;
   --bg-accent: white;
@@ -29,7 +30,7 @@ html.notransition * {
   animation: none !important;
 }
 body {
-  background-color: #636363;
+  background-color: var(--white);
   margin: 0;
   padding: 0;
   font-family: "Montserrat", sans-serif;
@@ -44,6 +45,7 @@ body {
   height: 100%;
   overflow-y: auto;
 }
+
 
 #root {
   height: 100vh;
@@ -87,18 +89,39 @@ a {
 .grabCursor:hover {
   cursor: grab;
 }
-
+.lightbulb-img{
+  margin-left: -1300px;
+  margin-top: 0px;
+}
 .welcome {
   color: white;
   font-family: "Montserrat", sans-serif;
-  margin-top: 50px;
-  font-size: 3em;
+  margin-top: -250px;
+  margin-left: -180px;
+  width: 32%;
+  font-weight: bold;
+  font-size: 2.5em;
   animation: 1s ease-out 0s 1 slideInFromLeft;
+  text-align: left;
+}
+.welcome-desc{
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  margin-top: -280px;
+  margin-left: -1170px;
+  width: 570px;
+  font-size: 1.0em;
+  font-weight: normal;
+  animation: 1s ease-out 0s 1 slideInFromLeft;
+  text-align: left;
 }
 .welcome-noanim {
   animation: unset;
 }
 .welcome-container {
+
+  justify-content: center;
+
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -106,7 +129,41 @@ a {
   color: white;
   font-size: 1.5em;
   height: 100%;
+  background-color: var(--primary);
 }
+
+.welcome-container-welcome {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5em;
+  height: 100%;
+  color: var(--primary);
+  background-color: var(--almostwhite);
+}
+.welcome-container-welcome form{
+  margin-top: 60px;
+}
+
+.welcome-text{
+  text-align: left;
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  width: 20%;
+}
+.welcome-text h1{
+  margin-top: 50px;
+  margin-bottom: 20px;
+  font-weight: bolder;
+  font-size: 3rem;
+}
+.welcome-img {
+  position: absolute;
+  left: 700px;
+}
+
 .welcome-container > * {
   margin-bottom: 10px;
 }
@@ -114,9 +171,11 @@ a {
   display: flex;
   align-items: center;
 }
+
 .welcome-join > input[type="submit"] {
   padding: 0.8em;
-  border-radius: 99px;
+  border-radius: 10px;
+  width: 200px;
   border: none;
   background-color: var(--primary);
   color: white;
@@ -128,6 +187,8 @@ a {
 .welcome input::placeholder {
   color: grey;
   opacity: 0.8;
+  border: none;
+
 }
 
 .page-layout {
@@ -164,8 +225,44 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 100px;
 }
+.w-button{
+  background-color: var(--primary);
+  border-radius: 30px;
+  border-style: none;
+  box-sizing: border-box;
+  color: var(--white);
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 100;
+  height: 40px;
+  width: 200px;
+  line-height: 20px;
+  list-style: none;
+  margin: 10px;
+  outline: none;
+  padding: 10px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: color 100ms;
+  vertical-align: baseline;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.w-button:hover,
+.w-button:focus {
+  padding: 8px 20px;
+  transition: all 0.3s ease-out;
+  transition: 250ms;
+  transform: translateY(-1px);
+}
+
 
 .welcome-navbutton {
   align-items: center;
@@ -173,19 +270,25 @@ a {
   flex-wrap: wrap;
   background: #fff;
   border: none;
-  border-radius: 15px;
+  border-radius: 30px;
   box-shadow: 0 2px 5px #ccc;
   padding: 30px;
   margin: 20px 50px;
-  max-width: 350px;
+  max-width: 375px;
   text-align: center;
-  cursor: pointer;
   flex: 1;
 }
 
 .welcome-navbutton h1 {
   font-family: "Montserrat", sans-serif;
-  font-size: 24px;
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: #181818;
+}
+.welcome-navbutton h2 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 20px;
+  font-weight: lighter;
   margin-bottom: 20px;
   color: #181818;
 }
@@ -198,22 +301,23 @@ a {
   object-fit: contain;
 }
 
+
 .textbox {
-  border-radius: 2em;
+  border-radius: 10px;
   border: none;
-  margin: 1em;
+  margin-right: 20px;
   padding: 0.8em;
   color: #181818;
   font-size: 0.7em;
   font-family: inherit;
   padding-left: 1.5em;
   outline: none;
-  box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%),
-    inset 0px 4px 6px -5px hsl(0, 0%, 2%);
+  box-shadow: 0 2px 10px #ccc;
+
 }
 
 .dashboard {
-  color: white;
+  color: var(--almostwhite);
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   padding: 20px;
@@ -224,6 +328,7 @@ a {
   position: relative;
   min-height: 100%;
   height: max-content;
+  margin-bottom: 100px;
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 hr {
@@ -241,11 +346,23 @@ hr {
   margin-bottom: 10px;
 }
 .page-margin {
+  margin-top: 50px;
+  margin-bottom: 0px;
   width: 85%;
+
+}
+.page-margin button{
+  padding: 10px;
+
+  padding-right: 30px;
+}
+.page-margin h2 {
+  color: var(--primary);
+  font-size: 2.3rem;
+  margin-bottom: 10px;
 }
 
 .dashsim {
-  height: 100%;
   display: flex;
   flex-wrap: wrap;
   margin-top: 20px;
@@ -285,6 +402,23 @@ hr {
   box-shadow: 0 5px 10px grey;
 }
 
+.join {
+  color: var(--almostwhite);
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  min-height: 100%;
+  height: max-content;
+  margin-bottom: 100px;
+
+  /* animation: 1s ease-out 0s 1 slideInFromLeft; */
+}
+
 .joinboard-header {
   display: flex;
   align-items: flex-end;
@@ -302,6 +436,7 @@ hr {
   border-radius: 10px;
   object-fit: cover;
   opacity: 100%;
+  border: 1px solid var(--primary);
 }
 .joinboard-title {
   font-size: 1.5rem;
@@ -463,7 +598,7 @@ hr {
   top: 0px;
 }
 #link {
-  color: white;
+  color: var(--primary);
   font-size: inherit;
   text-decoration: underline;
   border: none;
@@ -522,11 +657,6 @@ hr {
     padding: 1em;
   }
 
-  .page-margin {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
   .dashsim {
     justify-content: center;
   }

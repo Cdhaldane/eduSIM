@@ -10,7 +10,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  margin-top: -5px;
+  margin-top: -56px;
   font-size: 0.9em;
   & p {
     display: flex;

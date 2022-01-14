@@ -336,12 +336,15 @@ const Tabs = (props) => {
       )}
       <div className="page-margin tabs">
         <ul className="selected-tab">
+
           <li
+             className="tab-overview"
             onClick={() => toggleTab(0)}
             className={toggleState === 0 ? "selected" : ""}
           >
             <span className="tab-text">{t("admin.overview")}</span>
           </li>
+
           {tabs.map((tab, i) => (
             <li
               key={i}
@@ -500,7 +503,7 @@ const Tabs = (props) => {
                     <h2>{tab[0]}</h2>
                     <i className="fas fa-pencil-alt content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
-                    }} />
+                    }} ><h1>Edit</h1></i>
                   </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
@@ -526,7 +529,7 @@ const Tabs = (props) => {
                   </div>
                 </div>
                 <div className="group-column">
-                  <h3>{t("admin.performanceReport")}</h3>
+                  <h3 >{t("admin.performanceReport")}</h3>
                   <Performance
                     adminMode={true}
                     status={props.roomStatus[Object.keys(props.roomStatus)[0]]
@@ -535,7 +538,7 @@ const Tabs = (props) => {
                   />
                 </div>
               </div>
-              <h3>{t("admin.studentsInRoom")}</h3>
+              <h3 className="temp">{t("admin.studentsInRoom")}</h3>
               <div className="group-table">
                 <Table
                   addstudent={true}
