@@ -534,7 +534,7 @@ const DropdownEditObject = (props) => {
               <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
                 <option value="checkbox">{t("edit.input.checkbox")}</option>
                 <option value="text">{t("edit.input.textbox")}</option>
-                <option value="button">{t("edit.input.checkbox")}</option>
+                <option value="button">{t("edit.input.button")}</option>
               </select>
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />

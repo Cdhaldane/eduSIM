@@ -93,6 +93,7 @@
       "group": "Group",
       "actions": "Actions",
       "selectARole": "Select a role",
+      "selectAGroup": "Select a group",
       "confirmDeleteLog": "Are you sure you want to delete this game log?",
       "deleteLog": "Delete log"
     },
@@ -403,6 +404,10 @@
       "noUpdateGameInProgress": "Warning: settings will not update while game is in progress. Please reset the game before making changes.",
       "noUpdateGameXInProgress": "Warning: settings will not update while game {{game}} is in progress. Please reset the game before making changes.",
       "inactivityTimeoutPause": "Pausing room due to inactivity timeout.",
+      "roomDoesntExist": "Could not find a room with that code. Double-check that you entered it correctly!",
+      "useOriginalEmail": "Please log in with the original email address you received the invite with.",
+      "simAccessGranted": "You have been granted access to a new simulation!",
+      "inviteInvalid": "An error occured. The URL may be malformed, or the invite was invalid.",
       "maxOverlays": "There can only be a maximum of 6 overlays per page. No overlay added." 
     }
   }

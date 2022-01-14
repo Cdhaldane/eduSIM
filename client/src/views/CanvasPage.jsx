@@ -899,6 +899,9 @@ const CanvasPage = (props) => {
     }
 
     const page = canvas.state.pages[canvas.state.level - 1];
+
+    if (!page) return null;
+
     let objectIds = [];
     if (stage === "group") {
       objectIds = page.groupLayers;
@@ -1022,6 +1025,14 @@ const CanvasPage = (props) => {
         )}
       </Layer>
     );
+
+    if (objectIdsNoPencils.filter(id => 
+        id.length > 0 && customObjects.some(obj => 
+          id.startsWith(obj)
+        )
+      ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
+
+    return returnValue;
   }
 
   return (

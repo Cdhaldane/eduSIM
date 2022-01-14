@@ -7,7 +7,9 @@ const ReadOnlyRow = ({
   handleDeleteClick, 
   online, 
   onCheck, 
-  checked 
+  checked,
+  useGroup,
+  groupList
 }) => {
   const { t } = useTranslation();
   return (
@@ -20,7 +22,9 @@ const ReadOnlyRow = ({
       <td>{contact.firstName} {online && <span>(ingame)</span>}</td>
       <td>{contact.lastName}</td>
       <td>{contact.email}</td>
-      <td>{contact.group}</td>
+      {useGroup 
+      ? <td>{groupList.some(([val]) => val === contact.group) ? contact.group : "N/A"}</td>
+      : <td>{contact.gamerole}</td>}
       <td>
         <div>
           <button
