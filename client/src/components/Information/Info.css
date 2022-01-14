@@ -32,6 +32,10 @@
   border-radius: 15px 15px 0px 0px;
   z-index: 2;
   transition: none;
+  background-image:
+    repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);
+  background-size: 8vh 8vh;
 }
 
 .info0 button {
