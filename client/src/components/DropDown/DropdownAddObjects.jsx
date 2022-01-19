@@ -201,6 +201,7 @@ const DropdownAddObjects = (props) => {
     const objectsState = props.state[objectName];
     const objectsDeletedState = props.state[`${objectName}DeleteCount`];
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
+    const isCustom = props.customObjects.includes(objectName);
 
     const name = objectName + numOfObj;
     const objX = props.state.selectedContextMenu.position.relX;
@@ -218,13 +219,17 @@ const DropdownAddObjects = (props) => {
       id: name,
       name: name,
       ref: name,
-      ...objectParameters
+      ...objectParameters,
+      ...(isCustom ?
+        {
+          onTop: true
+        } : {})
     };
 
     let newPages = [...props.state.pages];
     const thisPage = newPages[props.state.level - 1];
     if (props.layer.attrs.name === "group") {
-      thisPage.groupLayers.push(name);
+      isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
     } else if (props.layer.attrs.name === "personal") {
       thisPage.personalLayers.push(name);
     } else {

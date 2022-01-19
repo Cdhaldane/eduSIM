@@ -100,6 +100,8 @@ class Graphics extends Component {
       ...objectState,
       ...objectDeleteState,
 
+      customRenderRequested: false,
+
       arrows: [],   // Arrows are used for transformations
       guides: [],   // These are the lines used for snapping
 
@@ -2831,27 +2833,61 @@ class Graphics extends Component {
   }
 
   layerUp = (id) => {
-    const newLayers = [...this.getLayers()];
-    const i = newLayers.indexOf(id);
-    if (i < newLayers.length - 1) {
-      const obj = newLayers[i];
-      const next = newLayers[i + 1];
-      newLayers[i + 1] = obj;
-      newLayers[i] = next;
+    const isCustom = this.customObjects.includes(this.getObjType(id));
+    if (isCustom) {
+      this.setState(prevState => ({
+        [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              onTop: true
+            }
+            : obj
+        )
+      }));
+      this.setState({
+        customRenderRequested: true
+      });
+    } else {
+      const newLayers = [...this.getLayers()];
+      const i = newLayers.indexOf(id);
+      if (i < newLayers.length - 1) {
+        const obj = newLayers[i];
+        const next = newLayers[i + 1];
+        newLayers[i + 1] = obj;
+        newLayers[i] = next;
+      }
+      this.setLayers(newLayers);
     }
-    this.setLayers(newLayers);
   }
 
   layerDown = (id) => {
-    const newLayers = [...this.getLayers()];
-    const i = newLayers.indexOf(id);
-    if (i > 0) {
-      const obj = newLayers[i];
-      const prev = newLayers[i - 1];
-      newLayers[i - 1] = obj;
-      newLayers[i] = prev;
+    const isCustom = this.customObjects.includes(this.getObjType(id));
+    if (isCustom) {
+      this.setState(prevState => ({
+        [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              onTop: false
+            }
+            : obj
+        )
+      }));
+      this.setState({
+        customRenderRequested: true
+      });
+    } else {
+      const newLayers = [...this.getLayers()];
+      const i = newLayers.indexOf(id);
+      if (i > 0) {
+        const obj = newLayers[i];
+        const prev = newLayers[i - 1];
+        newLayers[i - 1] = obj;
+        newLayers[i] = prev;
+      }
+      this.setLayers(newLayers);
     }
-    this.setLayers(newLayers);
   }
 
   render() {
@@ -3034,6 +3070,7 @@ class Graphics extends Component {
                     handleDocument={this.handleDocument}
                     choosecolor={this.chooseColor}
                     close={() => this.setState({ overlayAreaContextMenuVisible: false })}
+                    customObjects={this.customObjects}
                   />
                 </>
               )}
@@ -3084,6 +3121,7 @@ class Graphics extends Component {
                 handleAudio={this.handleAudio}
                 handleDocument={this.handleDocument}
                 choosecolor={this.chooseColor}
+                customObjects={this.customObjects}
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
               />
             )}
@@ -3163,6 +3201,7 @@ class Graphics extends Component {
                   handleAudio={this.handleAudio}
                   handleDocument={this.handleDocument}
                   choosecolor={this.chooseColor}
+                  customObjects={this.customObjects}
                   close={() => this.setState({ personalAreaContextMenuVisible: false })}
                 />
               )}
@@ -3192,6 +3231,16 @@ class Graphics extends Component {
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
                   layers={this.getLayers()}
+                  customCount={() => {
+                    const layers = this.getLayers();
+                    let count = 0;
+                    for (let i = 0; i < layers.length; i++) {
+                      if (this.customObjects.includes(this.getObjType(layers[i]))) {
+                        count++;
+                      }
+                    }
+                    return count;
+                  }}
                 />
               </Portal>
             )}
