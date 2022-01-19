@@ -1,25 +1,51 @@
 .NavbarItems {
-  box-shadow: rgb(0, 0, 0, 0.15) 0px 3px 3px 0px;
-  background-color: var(--primary);
-  height: 80px;
+  background-color: var(--white);
+  width: 100%;
+  min-height: 80px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.3vw;
 }
 
 .navbar-logo {
   color: white;
-  justify-self: start;
-  margin-left: 20px;
+  vertical-align:middle;
+  margin-left: 5vw;
+  margin-top: 20px;
   cursor: pointer;
+  height:3vw;
+
+}
+.vl {
+  border-left: 2px solid var(--primary);
+  display: inline;
+  vertical-align: middle;
+  margin-left: 3vw;
+  position: relative;
+  top: 5px;
+  font-size: 60px;
+}
+.logo-container {
+  margin-top: 20px;
+  height: 100%;
+  display: inline;
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+}
+.title{
+  color: var(--dark);
+  display: inline;
+  vertical-align: -30%;
+  align-self: center;
+  margin-left: 3vw;
+
 }
 
 .img {
   margin-left: 0.5rem;
   font-size: 2rem;
   height: 30px;
-  vertical-align: middle;
 }
 
 .nav-menu {
@@ -27,13 +53,14 @@
   justify-content: flex-end;
   align-items: center;
   display: flex;
-  margin-right: 2rem;
+  margin-right: 5vw;
 }
 
 .nav-links {
-  color: white;
+  color: var(--primary);
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 20px;
+  margin-left: 200px;
   font-size: 2vw;
 }
 
@@ -51,6 +78,7 @@
   margin-left: 10px;
   position: relative;
   cursor: pointer;
+  border: 1px solid var(--primary);
 }
 
 .nav-pic:hover {
@@ -78,17 +106,11 @@
 .profilepic {
   width: 200px;
   height: 200px;
-  position: relative;
-  top: 50px;
-  left: 120px;
   border-radius: 30px;
 }
 
 .profilename {
   color: white;
-  position: absolute;
-  left: 450px;
-  top: 200px;
 }
 
 .fa-bars {
@@ -187,10 +209,7 @@
     width: 100%;
     display: table;
   }
-  .nav-links:hover {
-    background-color: grey;
-    border-radius: 2;
-  }
+
   .nav-pics {
     text-align: center;
     padding: 2rem;
@@ -199,12 +218,13 @@
   }
   .menu-icon {
     display: inline-flex;
+    margin-top: 25px;
     margin-right: 20px;
     font-size: 1.8rem;
     cursor: pointer;
   }
   .menu-close {
-    color: white;
+    color: var(--primary);
     font-size: 2rem;
   }
   .nav-links-mobile {
@@ -222,7 +242,7 @@
     font-size: 2rem;
   }
   .nav-links-mobile:hover {
-    background: white;
+    background: var(--primary);
     color: black;
     transition: 250ms;
   }
@@ -239,4 +259,9 @@
   .nav-home {
     display: none;
   }
+}
+
+.fa-info-circle{
+  color: var(--primary);
+  margin-right: 10px;
 }

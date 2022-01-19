@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 import Modal from "react-modal";
 import "../Modal/Modal.css";
 
@@ -6,6 +7,7 @@ const TIMEOUT_MS = 250;
 
 const ConfirmationModal = (props) => {
 
+  const { t } = useTranslation();
   const [msg, setMsg] = useState(null);
 
   const hide = () => {
@@ -38,7 +40,7 @@ const ConfirmationModal = (props) => {
           {props.confirmMessage}
         </button>
         <button id={"confirmModalCancelButton"} onClick={hide}>
-          Cancel
+          {t("common.cancel")}
         </button>
       </div>
     </Modal>

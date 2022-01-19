@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import Backdrop from "../../ui/Backdrop";
 import NavLinksGroup from "./NavLinksGroup";
@@ -6,11 +6,15 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
+import Alerts from "./submenus/Alerts";
+import Players from "./submenus/Players";
 import Modal from "react-modal";
 import Performance from "./Performance";
+import { useTranslation } from "react-i18next";
 
 const StyledNav = styled.nav`
-  background-color: var(--primary);
+  background-color: var(--white);
+  box-shadow: var(--box-shadow);
   width: ${(p) => (p.compact ? "70px" : "256px")};
   height: 100vh;
   position: absolute;
@@ -25,7 +29,7 @@ const StyledNav = styled.nav`
   overflow: hidden;
   &::before {
     content: "";
-    background-color: var(--primary);
+    /*background-color: var(--primary);*/
     position: absolute;
     width: 100%;
     height: 100%;
@@ -57,7 +61,7 @@ const Submenu = styled.div`
     height: inherit;
   }
   @media screen and (orientation: portrait) {
-    transition-property: 
+    transition-property:
       ${(p) => p.open ? "width" : "width, transform"} !important;
     transition-timing-function: ${(p) => p.open ? "cubic-bezier(0, 0, 0.2, 1)" : "cubic-bezier(0, 0, 0.31, 1)"} !important;
     width: ${(p) => (p.open ? "350px" : "256px")};
@@ -77,6 +81,7 @@ const Sidebar = (props) => {
   const [expanded, setExpanded] = useState(false);
   const [submenu, setSubmenu] = useState(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
+  const [navCountTickers, setNavCountTickers] = useState({});
 
   const [mvisible, setMvisible] = useState("false");
   const [avisible, setAvisible] = useState("false");
@@ -87,6 +92,7 @@ const Sidebar = (props) => {
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
   const performanceModal = new useRef();
   const performanceBtn = new useRef();
+  const { t } = useTranslation();
 
   const handleMvisible = (e) => {
     setMvisible(e);
@@ -105,7 +111,8 @@ const Sidebar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) {
+    if ((!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) &&
+      !e.target.className.toString().includes('remove-whisper')) {
       setExpanded(false);
       setSubmenuVisible(false);
     }
@@ -154,6 +161,29 @@ const Sidebar = (props) => {
     }
   }
 
+  const handleIncrementTicker = useCallback((id) => {
+    setNavCountTickers(old => ({
+      ...old,
+      [id]: (old[id] || 0)+1
+    }));
+  }, [submenu]);
+
+  const handleSetTicker = useCallback((id, val) => {
+    setNavCountTickers(old => ({
+      ...old,
+      [id]: val
+    }));
+    if (id === "alert" && props.setDisableNext) {
+      props.setDisableNext(val > 0);
+    }
+  }, [submenu]);
+
+  useEffect(() => {
+    if (submenuVisible && submenu == 'messaging') {
+      setNavCountTickers(old => ({...old, messaging: 0}));
+    }
+  }, [submenu, submenuVisible, navCountTickers]);
+
   const links = [
     {
       img: props.img,
@@ -165,31 +195,55 @@ const Sidebar = (props) => {
     },
     {
       icon: "fas fa-comment-dots",
-      label: "Messaging",
+      label: t("sidebar.messaging"),
       visible: mvisible,
       id: "messaging",
       submenu: (
-        <Messages socket={props.socket} messageBacklog={props.submenuProps?.messageBacklog} />
+        <Messages
+          incrementTicker={() => handleIncrementTicker("messaging")}
+          socket={props.socket}
+          messageBacklog={props.submenuProps?.messageBacklog}
+        />
       )
     },
     {
       to: "/alert",
       icon: "fas fa-bell",
       id: "alert",
-      label: "Alert",
-      visible: avisible
+      label: t("sidebar.alerts"),
+      visible: avisible,
+      submenu: (
+        <Alerts
+          editpage={!props.game}
+          refresh={props.refresh}
+          variables={props.variables}
+          setTicker={(val) => handleSetTicker("alert", val)}
+          {...props.alertProps}
+        />
+      )
+    },
+    {
+      icon: "fas fa-users",
+      id: "userlist",
+      label: t("sidebar.users"),
+      visible: true,
+      submenu: (
+        <Players
+          players={props.players}
+        />
+      )
     },
     {
       to: "/performance",
       icon: "fas fa-chart-bar",
       id: "performance",
-      label: "Performance",
+      label: t("sidebar.performance"),
       visible: pevisible
     },
     {
       icon: "fas fa-cog",
       id: "settings",
-      label: "Settings",
+      label: t("sidebar.settings"),
       visible: svisible,
       submenu: (
         <Settings />
@@ -216,6 +270,7 @@ const Sidebar = (props) => {
             action={onNavClick}
             disabled={props.disabled}
             ref={performanceBtn}
+            counts={navCountTickers}
           />
 
           <NavToggle
@@ -224,6 +279,17 @@ const Sidebar = (props) => {
             setExpanded={toggleCompact}
             disabled={props.disabled}
           />
+        {expanded ? (
+          <div>
+              <img src="06_eduSIM_vertical.jpg"  className="game-logo-big"/>
+          </div>
+
+        ) : (
+          <div>
+              <img src="06_eduSIM_vertical.jpg" className="game-logo" />
+          </div>
+        )}
+
 
           {!props.game && (
             <Disabled disabled={props.disabled}>

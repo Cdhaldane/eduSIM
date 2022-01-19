@@ -9,17 +9,20 @@ import { io } from "socket.io-client";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
-function Join(props) {
+const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
   const [socket, setSocketInfo] = useState(null);
   const [currentRoom, setCurrentRoom] = useState(null);
+  const [players, setPlayers] = useState({});
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
   const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   if (props.location.gameinstance !== undefined) {
     localStorage.setItem('gameid', props.location.gameinstance);
@@ -37,7 +40,7 @@ function Join(props) {
     localStorage.setItem('img', props.location.img);
   }
 
-  function toggleModal() {
+  const toggleModal = () => {
     setShowNote(!showNote);
   }
 
@@ -62,6 +65,25 @@ function Join(props) {
             [data.room]: data.chatlog
           }));
         }
+        if (data.players) {
+          setPlayers((players) => ({
+            ...players,
+            ...data.players
+          }));
+        }
+      });
+      client.on("clientJoined", (player) => {
+        setPlayers((players) => ({
+          ...players,
+          [player.id]: player
+        }));
+      });
+      client.on("clientLeft", (id) => {
+        setPlayers((players) => {
+          let n = {...players};
+          delete n[id];
+          return n;
+        });
       });
       client.on("message", (data) => {
         setRoomMessages((messages) => ({
@@ -69,8 +91,8 @@ function Join(props) {
           [data.room]: [...messages[data.room] || [], { sender: data.sender, message: data.message }]
         }));
       });
-      client.on("errorLog", (message) => {
-        alertContext.showAlert(message, "error");
+      client.on("errorLog", ({key, params={}}) => {
+        alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
       return () => client.disconnect();
@@ -112,9 +134,10 @@ function Join(props) {
   };
 
   const timeFromNow = () => {
-    return currentRoomStatus?.startTime && moment(
-      moment(moment()).diff(currentRoomStatus.startTime - (currentRoomStatus.timeElapsed || 0))
-    ).format("mm:ss");
+    if (currentRoomStatus?.startTime) {
+      const diff = currentRoomStatus.startTime - (currentRoomStatus.timeElapsed || 0);
+      return moment().diff(diff, 'hours') + ":" + moment(moment().diff(diff)).format("mm:ss")
+    } return false;
   };
 
   const handleNextPage = (room) => {
@@ -140,8 +163,11 @@ function Join(props) {
     numTabs <= Object.values(roomStatus).length &&
     !Object.values(roomStatus).some(s => !s.running);
 
+  const playerDBIDS = useMemo(() => Object.values(players).map(({dbid}) => dbid), [players]);
+
   return (
-    <div className="dashboard">
+    <div className="join-wrapper">
+    <div className="join">
       <div className="page-margin joinboard-header">
         <Image
           className="joinboard-image"
@@ -155,7 +181,7 @@ function Join(props) {
         <div className="joinboard-info">
           <h2 className="joinboard-title">{localStorage.title}</h2>
           <button onClick={() => setShowNote(!showNote)} className="addbutton">
-            Add Student/Participant List +
+            {t("admin.addStudentCSV")}
           </button>
         </div>
         <div className="joinboard-controls">
@@ -163,33 +189,33 @@ function Join(props) {
             <>
               <p>{currentRoom[0]}</p>
               <p>
-                {advanceMode === "teacher" && `Page ${currentRoomStatus.level || 1}, `}
+                {advanceMode === "teacher" && t("admin.pageX", { page: currentRoomStatus.level || 1 }) + ", "}
                 <AutoUpdate
                   value={(currentRoomStatus.running
                     ? timeFromNow
-                    : () => moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
+                    : () => moment.duration(currentRoomStatus.timeElapsed || 0).hours() + ":" + moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
                   )}
                   intervalTime={20}
                   enabled
                 />
                 {(currentRoomStatus.running == true ? '' : (
-                  currentRoomStatus.running === false ? ' (paused)' : ' (stopped)'
+                  currentRoomStatus.running === false ? ` ${t("admin.pausedSuffix")}` : ` ${t("admin.stoppedSuffix")}`
                 ))}
               </p>
             </>
           ) : (
             <>
-              <p>All rooms</p>
+              <p>{t("admin.allRooms")}</p>
               <p>{displayPause ? (
-                allRunning ? "(All running)" : "(Some running)"
-              ) : "(All paused)"}</p>
+                allRunning ? t("admin.allRunning") : t("admin.someRunning")
+              ) : t("admin.allPaused")}</p>
             </>
           )}
           <div className="joinboard-buttons">
             <button
               className="joinboard-button"
               onClick={displayPause ? pauseSim : startSim}
-              title={currentRoom ? "Pause this simulation" : "Pause all simulations"}
+              title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
             >
               {displayPause ? (
                 <i className="fa fa-pause"></i>
@@ -200,7 +226,7 @@ function Join(props) {
             <button
               className="joinboard-button"
               onClick={() => setResetID(true)}
-              title={currentRoom ? "Reset this simulation" : "Reset all simulations"}
+              title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
             >
               <i className="fa fa-retweet"></i>
             </button>
@@ -209,14 +235,14 @@ function Join(props) {
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handlePrevPage}
-                  title={currentRoom ? "Backtrack this simulation by one page" : "Backtrack all simulations by one page"}
+                  title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
                 >
                   <i className="fa fa-angle-double-left"></i>
                 </button>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handleNextPage}
-                  title={currentRoom ? "Advance this simulation by one page" : "Advance all simulations by one page"}
+                  title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
                 >
                   <i className="fa fa-angle-double-right"></i>
                 </button>
@@ -253,6 +279,7 @@ function Join(props) {
         socket={socket}
         roomStatus={roomStatus}
         refreshRooms={refreshRooms}
+        players={playerDBIDS}
         updateNumTabs={l => setNumTabs(l)}
       />
 
@@ -260,9 +287,10 @@ function Join(props) {
         visible={!!resetID}
         hide={() => setResetID(null)}
         confirmFunction={resetSim}
-        confirmMessage={"Reset"}
-        message={`Are you sure you want to reset every simulation room? (A backup log will be saved.)`}
+        confirmMessage={t("admin.reset")}
+        message={t("admin.resetConfirm")}
       />
+    </div>
     </div>
   );
 }

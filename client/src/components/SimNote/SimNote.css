@@ -1,61 +1,89 @@
 .notesim {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
   background: #fff;
   z-index: 0;
   border-radius: 7px;
-  box-shadow: 0 2px 5px #ccc;
+  box-shadow: 0 2px 10px #ccc;
   padding: 10px;
-  float: left;
-  position: relative;
   margin: 0 10px 10px 0;
+  width: 83vw;
+  height: 120px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
+  color: var(--dark);
 }
 
 .notesim h1 {
   text-align: center;
-  color: rgba(0, 0, 0, 0.8);
-  font-size: 1.5rem;
+  font-size: 1.2vw;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .notesim-thumbnail {
-  z-index: -1;
-  height: 150px;
-  width: 180px;
-}
-
-.notesim-name {
-  position: absolute;
-  width: inherit;
-  height: inherit;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-shadow: 0 0 5px white;
+  align-self: baseline;
 }
-
+.notesim-thumbnail h1 {
+  position: relative;
+  top: 40px;
+  display: inline;
+  left: 150px;
+  text-align: left;
+  color: var(--dark);
+}
 .notesim-thumbnail img {
-  opacity: 40%;
-  width: inherit;
-  height: inherit;
+  width: 120px;
+  height: 100px;
   border-radius: 10px;
   object-fit: cover;
   position: absolute;
+  border: 1px solid var(--primary);
+}
+.notesim-icons {
+  position: sticky;
+  margin-left: 250px;
+  bottom: 0px;
+  font-size: .9em;
+  color: var(--dark);
 }
 
-.notesim-icons {
-  display: flex;
-  justify-content: center;
-  padding-top: 10px;
-  font-size: .9em;
+.notesim-icons i {
+  font-size: 2vw;
+  margin-top: 0.5vw;
+  margin-left: 3.5vw;
+}
+.notesim-icons h1 {
+  color: var(--dark);
+  font-family:  "Montserrat", sans-serif;
+  display: inline;
+  margin-left: 10px;
+  font-weight: normal;
 }
 
 .notesim-icon {
   color: var(--primary);
-  margin: 0 5px;
 }
 
 .notesim-icon:hover {
   cursor: pointer;
+}
+
+@media screen and (max-width: 1592px){
+  .notesim-icons i {
+    font-size: 2vw;
+    margin-top: 1.0vw;
+    margin-left: 3.5vw;
+  }
+}
+
+@media screen and (max-width: 992px){
+  .notesim-icons i {
+    font-size: 2vw;
+    margin-top: 2.0vw;
+    margin-left: 3.5vw;
+  }
 }

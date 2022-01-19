@@ -5,10 +5,10 @@ import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
 import moment from "moment";
 import Overlay from "./Overlay";
+import { withTranslation } from "react-i18next";
 
 import {
-  Stage,
-  Layer
+  Stage
 } from "react-konva";
 
 const EndScreen = styled.div`
@@ -94,17 +94,12 @@ class Graphics extends Component {
       startModalOpen: true,
       personalAreaOpen: 0, // 0 is closed, 1 is open
       overlayOpen: false,
+      overlayOpenIndex: -1,
+      nextLevelOnOverlayClose: false,
 
       level: 1,
       pageNumber: 6,
-      pages: [
-        { name: "1", hasOverlay: false },
-        { name: "2", hasOverlay: false },
-        { name: "3", hasOverlay: false },
-        { name: "4", hasOverlay: false },
-        { name: "5", hasOverlay: false },
-        { name: "6", hasOverlay: false }
-      ],
+      pages: [],
 
       gameroles: [],
       state: false,
@@ -113,6 +108,8 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       canvasLoading: true,
       updateRanOnce: false,
+
+      dragTick: 0
     };
 
     setTimeout(() => {
@@ -122,7 +119,7 @@ class Graphics extends Component {
         this.props.setCanvasLoading(this.state.canvasLoading);
         this.props.reCenter("play");
       });
-    }, 500);
+    }, 0);
   }
 
   formatTextMacros = (text) => {
@@ -148,6 +145,7 @@ class Graphics extends Component {
           default:
             let vars = {};
             if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+            if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
             content = vars[key];
         }
         newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
@@ -163,15 +161,43 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
+    
+    let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
+    let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
+
+    let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
+    let varLen = isNaN(val) ? (val || "").length : val;
+
     switch (conditions.condition) {
-      case "equalto":
-        return vars[conditions.varName] == conditions.trueValue
+      case "isequal":
+        return val == trueValue;
+      case "isgreater":
+        return varLen > trueValue;
+      case "isless":
+        return varLen < trueValue;
+      case "between":
+        return varLen <= trueValueAlt && varLen >= trueValue;
       case "negative":
-        return !vars[conditions.varName];
+        return !val;
       case "onchange":
         return sessionStorage.lastSetVar === conditions.varName
-      default: return !!vars[conditions.varName];
+      default: return !!val;
     }
+  }
+
+  getDragProps = (id) => {
+    const obj = this.props.gamepieceStatus[id] || {};
+    if (obj.x && obj.y) {
+      return {
+        x: this.props.gamepieceStatus[id].x,
+        y: this.props.gamepieceStatus[id].y,
+        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? { 
+          opacity: 0.7,
+          draggable: false
+        } : {})
+      };
+    } else return {};
   }
 
   sendInteraction = (gamepieceId, parameters) => {
@@ -182,18 +208,56 @@ class Graphics extends Component {
     })
   }
 
+  getPage = (index) => {
+    return this.state.pages[this.state.level - 1] || {};
+  }
+
+  refresh = () => {
+    this.forceUpdate();
+    this.props.refresh();
+  }
+
+  // for drag calculations
+  realWidth = ({width, radiusX}) => {
+    if (!width && radiusX) {
+      return radiusX * 2;
+    } return width;
+  }
+  realHeight = ({height, radiusY}) => {
+    if (!height && radiusY) {
+      return radiusY * 2;
+    } return height;
+  }
+  originCenter = (value, name) => {
+    return (name.startsWith("ellipses") ||
+      name.startsWith("stars") ||
+      name.startsWith("triangles")) ? 0 : value;
+  }
+
+
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
 
-    // Show overlay if just entered page (going forwards, not backwards)
+    // Show overlay if it is the next page and a pageEnter overlay is available
+    const page = this.getPage(this.state.level - 1);
+    let overlayPageEnter = null;
+    if (page?.overlays) {
+    for (let i = 0; i < page.overlays.length; i++) {
+        if (page.overlays[i].overlayOpenOption === "pageEnter") {
+          overlayPageEnter = page.overlays[i];
+          break;
+        }
+      }
+    } 
     if (
       !this.state.overlayOpen &&
-      (prevState.level < this.state.level || !this.state.updateRanOnce) &&
-      this.state.pages[this.state.level - 1].hasOverlay
+      overlayPageEnter &&
+      (prevState.level < this.state.level || !this.state.updateRanOnce)
     ) {
       this.setState({
+        overlayOpenIndex: overlayPageEnter.id,
         overlayOpen: true
       });
     }
@@ -211,15 +275,83 @@ class Graphics extends Component {
         JSON.parse(localStorage.getItem('userInfo')).dbid : null;
 
       this.props.setGamePlayProps({
-        refresh: this.forceUpdate,
+        refresh: this.refresh,
         setState: this.setState,
         state: this.state,
         refs: this.refs,
         userId: userId,
         getInteractiveProps: this.getInteractiveProps,
+        getVariableProps: this.getVariableProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
-        sendInteraction: this.sendInteraction
+        getDragProps: this.getDragProps,
+        sendInteraction: this.sendInteraction,
+        dragLayer: () => {},
+        handleDragEnd: (obj, e) => {
+          this.setState({
+            dragTick: 0
+          })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: null
+              }
+            });
+          }
+        },
+        onObjectDragMove: (obj, e) => {
+          [
+            ...this.state.images,
+            ...this.state.rectangles,
+            ...this.state.ellipses,
+            ...this.state.triangles,
+            ...this.state.stars,
+            ...this.state.texts
+          ].filter(img => (
+            img.rolelevel === obj.rolelevel &&
+            img.level === obj.level &&
+            img.overlay === obj.overlay && 
+            img.overlayIndex === obj.overlayIndex &&
+            img.id !== obj.id &&
+            img.anchor
+          )).forEach(({x, y, width, height, radiusX, radiusY, id}) => {
+            let sX = x, sY = y;
+            if (this.props.gamepieceStatus[id]) {
+              sX = this.props.gamepieceStatus[id].x;
+              sY = this.props.gamepieceStatus[id].y;
+            }
+            let sW = this.realWidth({width, radiusX}), sH = this.realHeight({height, radiusY});
+            const xDist = Math.abs(
+              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) - 
+              (sX + this.originCenter(sW/2,id))
+            );
+            const yDist = Math.abs(
+              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) - 
+              (sY + this.originCenter(sH/2,id))
+            );
+            if (xDist < sW/2 && yDist < sH/2) {
+              e.target.x(sX + this.originCenter(sW/2,id) - this.originCenter(this.realWidth(obj)/2, obj.id));
+              e.target.y(sY + this.originCenter(sH/2,id) - this.originCenter(this.realHeight(obj)/2, obj.id));
+            }
+          });
+
+          this.setState({
+            dragTick: (this.state.dragTick+1) % 4
+          })
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: userId
+              }
+            });
+          }
+        }
       });
 
       this.props.setUserId(userId);
@@ -235,7 +367,7 @@ class Graphics extends Component {
           (this.state.overlayOpen ? "overlay" : "group");
         this.setState({
           canvasLoading: true
-        });
+        });   
         setTimeout(() => this.props.reCenter("play", layer), 300);
       }
     }
@@ -250,6 +382,11 @@ class Graphics extends Component {
         this.props.setCustomObjs(customObjs);
         break;
       }
+    }
+
+    if (this.state.pages[this.state.level - 1]) {
+      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
+      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
     }
   }
 
@@ -277,6 +414,10 @@ class Graphics extends Component {
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
 
+      this.setState({
+        pageNumber: objects.numberOfPages
+      })
+
       this.savedObjects.forEach((object) => {
         this.setState({
           [object]: objects[object] || []
@@ -286,7 +427,7 @@ class Graphics extends Component {
 
     if (localStorage.userInfo) {
       const info = JSON.parse(localStorage.userInfo);
-      if (this.props.alert) this.props.alert("Logged back in as: " + info.name, "info");
+      if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
       this.handlePlayerInfo(info);
     }
 
@@ -310,6 +451,15 @@ class Graphics extends Component {
     status: this.props.gamepieceStatus[id] || {}
   });
 
+  getVariableProps = () => ({
+    updateVariable: (name, value, increment) => {
+      this.props.socket.emit("varChange", {
+        name, value, increment
+      })
+    },
+    variables: this.props.variables
+  });
+
   handleLevel = (e) => {
     this.props.socket.emit("goToPage", {
       level: e
@@ -330,9 +480,10 @@ class Graphics extends Component {
     }
   }
 
-  setOverlayOpen = (val) => {
+  setOverlayOpen = (val, index) => {
     this.setState({
-      overlayOpen: val
+      overlayOpen: val,
+      overlayOpenIndex: index
     });
   }
 
@@ -361,18 +512,52 @@ class Graphics extends Component {
           </div>
         )}
 
-        {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
-        {this.state.pages[this.state.level - 1].hasOverlay && (
-          <div className="overlayButton" onClick={() => this.setOverlayOpen(true)}>
-            <i className="icons fa fa-window-restore" />
-          </div>
+        {/* The button to view the overlay */}
+        {this.getPage(this.state.level - 1).overlays && (
+          <>
+            {this.getPage(this.state.level - 1).overlays.map((overlay, i) => {
+              if (!overlay.hideBtn) {
+                let nonHiddenI = 0;
+                for (let j = 0; j < i; j++) {
+                  const o = this.getPage(this.state.level - 1).overlays[j];
+                  if (!o.hideBtn) {
+                    nonHiddenI++;
+                  }
+                }
+                return (
+                  <div
+                    key={i}
+                    className="overlayButton"
+                    onClick={() => this.setOverlayOpen(true, overlay.id)}
+                    style={{
+                      top: `${70 * (nonHiddenI + 1)}px`
+                    }}
+                  >
+                    <i className="icons fa fa-window-restore" />
+                  </div>
+                );
+              } else {
+                return;
+              }
+            })}
+          </>
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}
         {this.state.overlayOpen && (
           <Overlay
             playMode={true}
-            closeOverlay={() => this.setOverlayOpen(false)}
+            closeOverlay={() => {
+              this.setState({
+                overlayOpen: false,
+                nextLevelOnOverlayClose: false,
+                overlayOpenIndex: -1
+              });
+
+              if (this.state.nextLevelOnOverlayClose) {
+                this.handleLevel(this.state.level + 1);
+              }
+            }}
             state={this.state}
             propsIn={this.props}
             setRefs={(type, ref) => {
@@ -382,87 +567,86 @@ class Graphics extends Component {
         )}
 
         {/* ---- GROUP CANVAS ---- */}
-        <div id="playModeCanvasContainer">
+        <div id="groupGameContainer" className="playModeCanvasContainer">
           <Stage
-            height={this.props.canvasHeights.group}
+            height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
           >
-            <Layer
-              ref="groupAreaLayer"
-              scaleX={this.state.groupLayerScale}
-              scaleY={this.state.groupLayerScale}
-              x={this.state.groupLayerX}
-              y={this.state.groupLayerY}
-              height={window.innerHeight}
-              width={window.innerWidth}
-            >
-              {this.props.loadObjects("group", "play")}
-            </Layer>
+            {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>
         </div>
 
 
         <div className="eheader">
           <Level
+            handlePageCloseOverlay={(index) => {
+              this.setState({
+                overlayOpen: true,
+                overlayOpenIndex: index,
+                nextLevelOnOverlayClose: true
+              });
+            }}
+            page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}
             level={this.handleLevel}
             gamepage
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
+            disableNext={this.props.disableNext}
+            countdown={this.props.countdown}
           />
           <div>
 
             {/* ---- PERSONAL CANVAS ---- */}
-            <div className={"info" + this.state.personalAreaOpen}>
-              <div className="personalAreaStageContainer" id="personalGameContainer">
+            <div
+              id="personalInfoContainer"
+              className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
+              style={{
+                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
+              }}
+            >
+              <div id="playModeRoleLabel"><b>{this.props.t("common.role")}: </b>{this.state.rolelevel}</div>
+              <div
+                id="personalGameContainer"
+                className="personalAreaStageContainer playModeCanvasContainer"
+              >
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
-                  height={document.getElementById("personalGameContainer") ?
-                    document.getElementById("personalGameContainer").clientHeight : 0}
+                  height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :
+                    (document.getElementById("personalGameContainer") ?
+                      document.getElementById("personalGameContainer").clientHeight * 0.95 : 0)}
                   width={document.getElementById("personalGameContainer") ?
                     document.getElementById("personalGameContainer").clientWidth : 0}
                   ref="personalAreaStage"
                 >
-                  <Layer
-                    ref="personalAreaLayer"
-                    name="personal"
-                    scaleX={this.state.personalLayerScale}
-                    scaleY={this.state.personalLayerScale}
-                    x={this.state.personalLayerX}
-                    y={this.state.personalLayerY}
-                    height={window.innerHeight}
-                    width={window.innerWidth}
-                    draggable={false}
-                  >
-                    {this.props.loadObjects("personal", "play")}
-                  </Layer>
+                  {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}
                 </Stage>
               </div>
               {(this.state.personalAreaOpen !== 1)
                 ? <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 1 })}>
-                  <i className="fas fa-caret-square-up fa-3x" />
+                  <i className="fas fa-angle-up fa-3x" />
                 </button>
                 : <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 0 })}>
-                  <i className="fas fa-caret-square-down fa-3x" />
+                  <i className="fas fa-angle-down fa-3x" />
                 </button>
               }
             </div>
           </div>
         </div>
-        <EndScreen open={this.state.level > 6}>
-          <p>Thank you for joining!</p>
+        <EndScreen open={this.state.level > this.state.pageNumber}>
+          <p>{this.props.t("game.thanksForJoining")}</p>
           {this.props.freeAdvance && (
-            <button onClick={() => this.handleLevel(1)}>Reset simulation</button>
+            <button onClick={() => this.handleLevel(1)}>{this.props.t("game.resetSimulation")}</button>
           )}
         </EndScreen>
       </React.Fragment>
     );
   }
 }
-export default Graphics;
+export default withTranslation()(Graphics);

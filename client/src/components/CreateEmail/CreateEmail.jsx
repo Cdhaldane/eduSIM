@@ -1,12 +1,28 @@
-import React from "react";
-import Table from "../Table/Table"
+import React, { useRef, useEffect } from "react";
+import Table from "../Table/Table";
+import { useTranslation } from "react-i18next";
 
-function CreateEmail(props) {
+const CreateEmail = (props) => {
+  const detailsArea = new useRef();
+  const { t } = useTranslation();
+
+  const handleClickOutside = e => {
+    if (detailsArea.current &&
+      !detailsArea.current.contains(e.target) &&
+      e.target.tagName != "BUTTON") {
+      props.close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <div className="areacsv">
-      <form className="areacsvform">
-        <p className="modal-title"> Email Room Codes to Students / Participants </p>
+      <form ref={detailsArea} className="areacsvform">
+        <p className="modal-title">{t("modal.emailRoomCodeToStudents")}</p>
         <Table
           email={true}
           addstudent={false}
@@ -14,6 +30,7 @@ function CreateEmail(props) {
           gameid={props.gameid}
           title={props.title}
           onEmailSent={props.close}
+          groups={props.groups}
         />
       </form>
     </div>

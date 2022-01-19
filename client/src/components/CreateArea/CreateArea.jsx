@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import { useAlertContext } from "../Alerts/AlertContext";
+import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
-function CreateArea(props) {
+const CreateArea = (props) => {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
+  const [moreImages, setMoreImages] = useState(false);
   const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
@@ -15,6 +17,7 @@ function CreateArea(props) {
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
+  const { t } = useTranslation();
   const detailsArea = new useRef();
   const imageArea = new useRef();
 
@@ -22,7 +25,7 @@ function CreateArea(props) {
 
   const handleClickOutside = e => {
     if (detailsArea.current &&
-      !(detailsArea.current.contains(e.target) || imageArea.current.contains(e.target))) {
+      !(detailsArea.current.contains(e.target) || (imageArea.current && imageArea.current.contains(e.target)))) {
       props.close();
     }
   };
@@ -35,15 +38,15 @@ function CreateArea(props) {
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
-      alertContext.showAlert("A name is required for the simulation.", "warning");
+      alertContext.showAlert(t("alert.simNameRequired"), "warning");
       return;
     }
     if (props.gamedata.some(game => game.gameinstance_name === title.trim())) {
-      alertContext.showAlert("A simulation with this name already exists. Please pick a new name.", "warning");
+      alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
       return;
     }
     if ((imageSelected.size / 1000000) > 10) {
-      alertContext.showAlert("Image must be 10MB or less. Please pick a smaller image.", "warning");
+      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
       return;
     }
 
@@ -97,7 +100,7 @@ function CreateArea(props) {
   };
 
   // Handles selection of img from file
-  function onChange(event) {
+  const onChange = (event) => {
     setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]));
     setNote({
@@ -108,17 +111,11 @@ function CreateArea(props) {
   }
 
   // Handle input and adds title and img to notes array
-  function handleChange(event) {
+  const handleChange = (event) => {
     setTitle(event.target.value);
   }
 
-  // Handles showing of img overlay
-  function handleImg(event) {
-    event.preventDefault();
-    setImg(!img)
-  }
-
-  function createSelectItems() {
+  const createSelectItems = () => {
     let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       // Here I will be creating my options dynamically based on
@@ -129,7 +126,7 @@ function CreateArea(props) {
     return items;
   }
 
-  function handleCopySim(event) {
+  const handleCopySim = (event) => {
     // Setting copy to 1 so when we add we can also update the params to copiedParams
     setCopy(1);
     setTitle(props.gamedata[event.target.value].gameinstance_name);
@@ -144,19 +141,17 @@ function CreateArea(props) {
   return (
     <div className="area">
       <form ref={detailsArea} className="form-input">
-        <p className="gradient-border modal-title">Add New Simulation</p>
+        <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
         <div>
-          Choose a game
+          {t("modal.chooseGame")}
           <select id="games">
             <option value="Team Leadership">Team Leadership</option>
-            <option value="Project Management">Project Management</option>
-            <option value="">...</option>
             <option value="blank">Create a blank simulation</option>
           </select>
         </div>
         {props.gamedata.length !== 0 && (
           <div className="gradient-border">
-            Duplicate a previous simulation
+            {t("modal.duplicatePreviousSimulation")}
             <label id="switch">
               <Switch
                 onChange={() => setChecked(!checked)}
@@ -168,14 +163,14 @@ function CreateArea(props) {
         )}
         {checked && (
           <div>
-            Select a previous simulation
+            {t("modal.selectPreviousSimulation")}
             <select id="prevgames" onChange={handleCopySim}>
               {createSelectItems()}
             </select>
           </div>
         )}
         <div className="gradient-border">
-          Enter a name
+          {t("modal.enterName")}
           <input
             tpye="text"
             id="namei"
@@ -186,9 +181,9 @@ function CreateArea(props) {
           />
         </div>
         <div className="gradient-border">
-          Choose an image
+          {t("modal.chooseImage")}
           <div className="form-imgpreview">
-            <img id="plus" src="plus.png" alt="add" onClick={handleImg} />
+            <img id="plus" src="plus.png" alt="add" onClick={() => setMoreImages(!moreImages)} />
             {img ? (
               <img id="preview" alt="preview" src={img} />
             ) : (
@@ -197,10 +192,10 @@ function CreateArea(props) {
           </div>
         </div>
         <button type="button" className="modal-bottomright-button" onClick={uploadImage}>
-          Add
+          {t("common.add")}
         </button>
       </form>
-      {img && (
+      {moreImages && (
         <form ref={imageArea} className="form-imgs">
         {props.previewImages?.map((image, index) => (
             <Image
@@ -216,7 +211,7 @@ function CreateArea(props) {
           ))}
           <input type="file" name="img" id="file" onChange={onChange} />
           <label htmlFor="file" className="form-imgsubmit">
-            From file
+            {t("modal.imageFromFile")}
           </label>
         </form>
       )}

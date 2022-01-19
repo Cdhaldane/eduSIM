@@ -10,18 +10,30 @@ const StyledLink = styled.a`
   padding: 0 24px;
   font-size: 1.5rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--primary);
   box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
   text-decoration: none;
   ${(p) => !p.disabled && "cursor: pointer;"}
   ${(p) => p.disabled && "opacity: 0.5;"}
   i {
+    margin-top: 0px;
     min-height: 22px;
     min-width: 22px;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .countIndicator {
+    position: absolute;
+    background-color: rgb(34 125 204);
+    color: var(--primary);
+    font-size: .7em;
+    padding: 2px 6px;
+    border-radius: 12px;
+    top: 16p;
+    margin-top: 20px;
+    margin-left: 12px;
   }
   span {
     padding-left: 14px;
@@ -40,7 +52,8 @@ const StyledLink = styled.a`
   ${(p) => !p.disabled && `
     &:hover {
       text-decoration: none;
-      background-color: rgba(255 255 255 / 5%);
+      background-color: var(--primary);
+      color: var(--white);
     }
   `}
   &.active {
@@ -80,11 +93,12 @@ const NavLink = forwardRef((props, ref) => {
           {props.iconClassName !== null ? (
             <>
               <i className={props.iconClassName} ></i>
+              {props.count>0 && <div className="countIndicator">{props.count}</div>}
               <span className="label">{props.label}</span>
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img + ".jpg"} alt="backdrop" />
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/images/" + props.img + ".jpg"} alt="backdrop" />
               <div>
                 <span className="label">{props.label}</span>
                 <p className="sublabel">{props.sublabel}</p>

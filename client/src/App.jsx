@@ -2,15 +2,20 @@ import React, { Suspense, createContext, useState, useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
+import FooterBar from "./components/Footer";
 import { withAuth0 } from "@auth0/auth0-react";
 import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
+import CookiesPopup from "./components/Alerts/CookiesPopup";
 import "./components/CreateCsv/CreateCsv.css";
+import "./components/CreateArea/CreateArea.css";
 
 const Welcome = React.lazy(() => import("./views/Welcome"));
 const Home = React.lazy(() => import("./views/Home"));
 const About = React.lazy(() => import("./views/About"));
+const Terms = React.lazy(() => import("./views/Terms"));
+const Policy = React.lazy(() => import("./views/Policy"));
 const Profile = React.lazy(() => import("./views/Profile"));
 const CollabLogin = React.lazy(() => import("./views/CollabLogin"));
 const Dashboard = React.lazy(() => import("./views/Dashboard"));
@@ -26,12 +31,14 @@ const customObjects = [
   "connect4s",
   "tics",
   "htmlFrames",
-  "inputs"
+  "inputs",
+  "timers"
 ];
 
 const App = (props) => {
 
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
+  const [cookiesPopupVisible, setCookiesPopupVisible] = useState(true);
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -57,12 +64,14 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
+    <div className="full-page-wrapper">
     <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
         <AlertPopup />
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <Navbar />
         )}
+        <div className="main-content">
         <Suspense fallback={<Loading />}>
           <Switch>
             <Route exact path="/" >
@@ -73,6 +82,8 @@ const App = (props) => {
             )}
             <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
             <Route exact path="/about" render={(props) => <About {...props} />} />
+            <Route exact path="/terms" render={(props) => <Terms {...props} />} />
+            <Route exact path="/privacy" render={(props) => <Policy {...props} />} />
             <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
             <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
             <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
@@ -85,9 +96,22 @@ const App = (props) => {
               />}
             />
           </Switch>
+          {cookiesPopupVisible &&
+        document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
+          <CookiesPopup close={() => {
+            setCookiesPopupVisible(false);
+            document.cookie = "cookiesAccepted=true";
+          }} />
+        )}
+        
         </Suspense>
+        </div>
+        {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+          <FooterBar />
+        )}
       </AlertContextProvider>
     </SettingsContext.Provider>
+    </div>
   );
 }
 

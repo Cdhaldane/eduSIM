@@ -17,23 +17,65 @@ const HTMLFrame = forwardRef((props, ref) => {
 
   const iframeRef = useRef();
 
-  useEffect(() => {
-    if (props.varEnable) {
-      window.addEventListener('message', event => {
-        if (props.iframeSrc.startsWith(event.origin)) { 
-          sessionStorage.setItem("iframe_"+event.data?.name,event.data?.value); 
-        }
-      });
-    }
-  }, []);
-
-  const onLoad = () => {
-    if (iframeRef.current && props.varName) {
+  const post = () => {
+    if (props.sync && props.variables) {
       let vars = props.varName.split(',').reduce((a,v) => ({
         ...a,
-        [v]: sessionStorage[`iframe_${v}`]
+        [v]: props.variables[v]
       }), {});
       iframeRef.current.contentWindow.postMessage(vars, "*");
+      return;
+    }
+    let gameVars = {};
+    if (!!sessionStorage.gameVars) gameVars = JSON.parse(sessionStorage.gameVars);
+    let vars = props.varName.split(',').reduce((a,v) => ({
+      ...a,
+      [v]: gameVars[v]
+    }), {});
+    iframeRef.current.contentWindow.postMessage(vars, "*");
+  }
+
+  const set = (name, value, increment) => {
+    if (props.sync && props.variables && props.updateVariable) {
+      props.updateVariable(name, value, increment);
+      sessionStorage.setItem('lastSetVar', name);
+      return;
+    };
+    let vars = {};
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    sessionStorage.setItem('gameVars', JSON.stringify({
+      ...vars,
+      [name]: increment ? (vars[name] || 0) + value : value
+    }));
+    sessionStorage.setItem('lastSetVar', name);
+  }
+
+  useEffect(() => {
+    const listener = event => {
+      if (props.iframeSrc.startsWith(event.origin) && event.data?.name && event.data?.value) { 
+        set(event.data.name, event.data.value, event.data.increment || false);
+      }
+    };
+    if (props.varEnable) {
+      window.addEventListener('message', listener);
+    }
+    let interval;
+    if (props.varName && props.varInterval) {
+      interval = setInterval(() => {
+        if (iframeRef.current) {
+          post();
+        }
+      }, 3000);
+    }
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('message', listener);
+    }
+  }, []); 
+  
+  const onLoad = () => {
+    if (iframeRef.current && props.varName) {
+      post();
     }
   }
 

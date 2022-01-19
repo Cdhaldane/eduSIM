@@ -17,13 +17,14 @@ exports.createGamePlayers = async (req, res) => {
   try {
     const lookuproom = [];
     const gameinstanceid = req.query.id;
+    let replacedroles = [];
 
     for (let i = 0; i < req.body.data.length; i++) {
       const fname = req.body.data[i].First_Name;
       const lname = req.body.data[i].Last_Name;
       const game_room = req.body.data[i].Room.toLowerCase();
       const player_email = req.body.data[i].Email;
-      const gamerole = req.body.data[i].Role;
+      let gamerole = req.body.data[i].Role;
 
       if (gamerole) {
         const gameroles = await GameRole.findOne({
@@ -34,6 +35,7 @@ exports.createGamePlayers = async (req, res) => {
         });
 
         if (!gameroles) {
+          replacedroles.push(gamerole);
           gamerole = "";
         }
       }
@@ -59,7 +61,7 @@ exports.createGamePlayers = async (req, res) => {
         } else {
           const gameroom_name = game_room
           const gameroomid = uuid.v4();
-          const gameroom_url = req.headers.origin + "/gamepage?" + gameroomid + "&" + gameroom_name + "&" + fname;
+          const gameroom_url = cryptoRandomString(10);
           let newGameRoom = await GameRoom.create({
             gameroomid,
             gameinstanceid,
@@ -70,7 +72,7 @@ exports.createGamePlayers = async (req, res) => {
       }
     }
 
-    return res.send({ success: true });
+    return res.send({ success: true, replacedroles });
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,
@@ -246,10 +248,12 @@ exports.getPlayer = async (req, res) => {
 // Get players for a particular tab or room
 exports.getPlayers = async (req, res) => {
   const game_room = req.query.game_room;
+  const gameinstanceid = req.query.gameinstanceid;
   try {
     let gameplayer = await GamePlayer.findAll({
       where: {
-        game_room: game_room
+        game_room,
+        gameinstanceid
       },
     });
     return res.send(gameplayer);
@@ -424,47 +428,13 @@ exports.deleteRoom = async (req, res) => {
 };
 
 exports.updatePlayer = async (req, res) => {
-  const { gameplayerid, fname, lname, player_email, gamerole } = req.body;
+  const { gameplayerid, fname, lname, player_email, gamerole, game_room } = req.body;
 
-  exports.updatePlayer = async (req, res) => {
-    const { gameplayerid, fname, lname, player_email, gamerole } = req.body;
-
-    const gameplayers = await GamePlayer.findOne({
-      where: {
-        gameplayerid: gameplayerid,
-      },
-    });
-
-    if (!gameplayers) {
-      return res.status(400).send({
-        message: `No game instance found with the id ${id}`,
-      });
-    }
-
-    try {
-      if (fname) {
-        gameplayers.fname = fname;
-      }
-      if (lname) {
-        gameplayers.lname = lname;
-      }
-      if (player_email) {
-        gameplayers.player_email = player_email;
-      }
-      if (gamerole) {
-        gameplayers.gamerole = gamerole;
-      }
-
-      gameplayers.save();
-      return res.send({
-        message: `Game Player has been updated!`,
-      });
-    } catch (err) {
-      return res.status(500).send({
-        message: `Error: ${err.message}`,
-      });
-    }
-  };
+  const gameplayers = await GamePlayer.findOne({
+    where: {
+      gameplayerid: gameplayerid,
+    },
+  });
 
   if (!gameplayers) {
     return res.status(400).send({
@@ -487,6 +457,10 @@ exports.updatePlayer = async (req, res) => {
 
     if (gamerole) {
       gameplayers.gamerole = gamerole;
+    }
+    
+    if (game_room) {
+      gameplayers.game_room = game_room;
     }
 
     gameplayers.save();

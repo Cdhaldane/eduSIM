@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { ChromePicker } from 'react-color';
 import axios from "axios";
 import DropdownItem from "./DropdownItem";
 import { useAlertContext } from "../Alerts/AlertContext";
+import Loading from "../Loading/Loading";
+import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
@@ -12,12 +13,15 @@ const DEFAULT_STROKE = 2;
 const DropdownAddObjects = (props) => {
 
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(269);
+  const [menuHeight, setMenuHeight] = useState(274);
   const dropdownRef = useRef(null);
-  const [colour, setColour] = useState("");
+
   const [imageUploaded, setImageUploaded] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
   const [audioUploaded, setAudioUploaded] = useState(false);
+
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
   const [validAudioURL, setValidAudioURL] = useState(false);
@@ -28,9 +32,10 @@ const DropdownAddObjects = (props) => {
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
 
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 212;
+    const dropHeight = dropdownRef.current ? dropdownRef.current.clientHeight : 272;
     const dropWidth = dropdownRef.current ? dropdownRef.current.clientWidth : 298;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
@@ -78,7 +83,7 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  function calcHeight(el) {
+  const calcHeight = (el) => {
     const height = el.offsetHeight;
     const matrix = new DOMMatrix(window.getComputedStyle(dropdownRef.current).transform);
     const y = matrix.m42;
@@ -105,11 +110,11 @@ const DropdownAddObjects = (props) => {
           props.handleDocument(name);
         });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
-  const uploadFile = async (file, type) => {
+  const uploadFile = async (file, type, isGIF) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("folder", type + "s");
@@ -117,19 +122,23 @@ const DropdownAddObjects = (props) => {
 
     try {
       if (type === "image") {
+        setImageUploading(true);
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".jpg";
+            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : "."+(res.data.format || "jpg"));
             setImageUploaded(true);
+            setImageUploading(false);
             props.handleImage(name);
           });
       } else if (type === "video") {
+        setVideoUploading(true);
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp4";
+            const name = `https://res.cloudinary.com/uottawaedusim/video/upload/${allData}.mp4}`;
             setVideoUploaded(true);
+            setVideoUploading(false);
             props.handleVideo(name);
           });
       } else if (type === "audio") {
@@ -149,24 +158,24 @@ const DropdownAddObjects = (props) => {
       } else if (type === "audio") {
         setAudioUploaded(false);
       }
-      console.log(error);
+      console.error(error);
     }
   }
 
   const handleImgFromComputer = () => {
     const file = document.getElementById("filePickerImageEdit").files[0];
     if (!file.type.toString().includes("image")) {
-      alertContext.showAlert("Uploaded file is not an image.", "error");
+      alertContext.showAlert(t("alert.fileNotImage"), "error");
       return;
     }
 
-    uploadFile(file, "image");
+    uploadFile(file, "image", file.type.includes("gif"));
   }
 
   const handleVideoFromComputer = () => {
     const file = document.getElementById("filePickerVideoEdit").files[0];
     if (!file.type.toString().includes("video")) {
-      alertContext.showAlert("Uploaded file is not a video.", "error");
+      alertContext.showAlert(t("alert.fileNotVideo"), "error");
       return;
     }
 
@@ -176,23 +185,23 @@ const DropdownAddObjects = (props) => {
   const handleAudioFromComputer = () => {
     const file = document.getElementById("filePickerAudioEdit").files[0];
     if (!file.type.toString().includes("audio")) {
-      alertContext.showAlert("Uploaded file is not an audio file.", "error");
+      alertContext.showAlert(t("alert.fileNotAudio"), "error");
       return;
     }
 
     uploadFile(file, "audio");
   }
 
-  function handleFile(event) {
+  const handleFile = (event) => {
     setFile(event.target.files[0]);
   }
 
   // Adding Objects
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
-    const deleteName = props.deleteLabels[props.objectLabels.indexOf(objectName)];
-    const objectsDeletedState = props.state[deleteName];
-    const numOfObj = objectsState.length + objectsDeletedState.length + 1;
+    const objectsDeletedState = props.state[`${objectName}DeleteCount`];
+    const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
+
     const name = objectName + numOfObj;
     const objX = props.state.selectedContextMenu.position.relX;
     const objY = props.state.selectedContextMenu.position.relY;
@@ -200,7 +209,8 @@ const DropdownAddObjects = (props) => {
     const object = {
       rolelevel: props.state.rolelevel,
       infolevel: props.layer.attrs.name === "personal",
-      overlay: props.title === "Edit Overlay Space",
+      overlay: props.type === "overlay",
+      overlayIndex: props.type === "overlay" ? props.state.overlayOpenIndex : -1,
       level: props.state.level,
       visible: true,
       x: objX,
@@ -211,9 +221,31 @@ const DropdownAddObjects = (props) => {
       ...objectParameters
     };
 
+    let newPages = [...props.state.pages];
+    const thisPage = newPages[props.state.level - 1];
+    if (props.layer.attrs.name === "group") {
+      thisPage.groupLayers.push(name);
+    } else if (props.layer.attrs.name === "personal") {
+      thisPage.personalLayers.push(name);
+    } else {
+      let oIndex = 0;
+      const overlay = thisPage.overlays.filter((overlay, index) => {
+        if (overlay.id === props.state.overlayOpenIndex) {
+          oIndex = index;
+          return true;
+        } else {
+          return false;
+        }
+      })[0];
+      overlay.layers.push(name);
+      thisPage.overlays[oIndex] = overlay;
+    }
+    newPages[props.state.level - 1] = thisPage;
+
     props.setState({
       [objectName]: [...objectsState, object],
-      selectedShapeName: name
+      selectedShapeName: name,
+      pages: newPages
     });
 
     props.close();
@@ -265,6 +297,18 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addLine = () => {
+    addObjectToLayer(
+      "lines",
+      {
+        stroke: 'black',
+        strokeWidth: DEFAULT_STROKE,
+        points: [0, 0, 1000, 0],
+        opacity: 1,
+      }
+    );
+  }
+
   const addTriangle = () => {
     addObjectToLayer(
       "triangles",
@@ -282,16 +326,51 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const getMeta = (url, type, callback) => {
+    if (type === "img") {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        callback(img.width, img.height);
+      }
+    } else {
+      const video = document.createElement("video");
+      video.src = url;
+      video.addEventListener('loadedmetadata', () => {
+        callback(video.videoWidth, video.videoHeight);
+      });
+    }
+  }
+
   const addImage = () => {
     addObjectToLayer(
-      "images",
+      "videos",
       {
-        imgsrc: props.state.imgsrc,
+        temporary: true,
+        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
         stroke: 'black',
         strokeWidth: 0,
         opacity: 1,
-        width: 200,
-        height: 200
+        width: 1000,
+        height: 800
+      }
+    );
+
+    getMeta(
+      props.state.imgsrc,
+      "img",
+      (width, height) => {
+        addObjectToLayer(
+          "images",
+          {
+            imgsrc: props.state.imgsrc,
+            stroke: 'black',
+            strokeWidth: 0,
+            opacity: 1,
+            width: width,
+            height: height
+          }
+        );
       }
     );
   }
@@ -300,12 +379,30 @@ const DropdownAddObjects = (props) => {
     addObjectToLayer(
       "videos",
       {
-        width: 400,
-        height: 400,
-        vidsrc: props.state.vidsrc,
+        temporary: true,
+        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
         stroke: 'black',
         strokeWidth: 0,
-        opacity: 1
+        opacity: 1,
+        width: 1500,
+        height: 1500
+      }
+    );
+    getMeta(
+      props.state.vidsrc,
+      "video",
+      (width, height) => {
+        addObjectToLayer(
+          "videos",
+          {
+            width: width,
+            height: height,
+            vidsrc: props.state.vidsrc,
+            stroke: 'black',
+            strokeWidth: 0,
+            opacity: 1
+          }
+        );
       }
     );
   }
@@ -381,24 +478,24 @@ const DropdownAddObjects = (props) => {
                   id: 0,
                   type: "text",
                   name: "0",
-                  title: "Sample Text Question:",
+                  title: t("edit.sampleTextQuestion"),
                   isRequired: true,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                  performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 1,
                   type: "text",
                   name: "1",
                   inputType: "date",
-                  title: "Sample Date Question:",
+                  title: t("edit.sampleDateQuestion"),
                   isRequired: false,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                  performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }, {
                   id: 2,
                   type: "boolean",
                   name: "2",
-                  title: "Sample Yes/No Question:",
+                  title: t("edit.sampleYesNoQuestion"),
                   isRequired: false,
-                  performanceOption: props.title === "Edit Group Space" ? "groupResponse" : "personalResponse"
+                  performanceOption: props.type === "group" ? "groupResponse" : "personalResponse"
                 }
               ]
             }
@@ -411,6 +508,12 @@ const DropdownAddObjects = (props) => {
   const addHTMLFrame = () => {
     addObjectToLayer(
       "htmlFrames", {}
+    );
+  }
+
+  const addTimer = () => {
+    addObjectToLayer(
+      "timers", { controls: true }
     );
   }
 
@@ -428,20 +531,8 @@ const DropdownAddObjects = (props) => {
 
   const addInput = (varType) => {
     addObjectToLayer(
-      "inputs", { varType, label: "Label text" }
+      "inputs", { varType, label: t("edit.labelText") }
     );
-  }
-
-  const addOverlayWindow = () => {
-    // Activate the overlay window on the current page
-    const newPages = [...props.state.pages];
-    newPages[props.state.level - 1] = {
-      ...newPages[props.state.level - 1],
-      hasOverlay: !newPages[props.state.level - 1].hasOverlay
-    }
-    props.setState({
-      pages: newPages
-    });
   }
 
   // Other
@@ -521,7 +612,7 @@ const DropdownAddObjects = (props) => {
     setAudiosrc(url);
   }
 
-  function handleFilesubmit(e) {
+  const handleFilesubmit = (e) => {
     filesubmitNote(e);
   }
 
@@ -548,22 +639,27 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-shapes"></i>}
             onClick={() => setActiveMenu("shapes")}>
-            Add Shapes
+            {t("edit.addShape")}
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-camera"></i>}
             onClick={() => setActiveMenu("media")}>
-            Add Media
+            {t("edit.addMedia")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
+            leftIcon={<i className="icons fas fa-hand-paper"></i>}
             onClick={() => setActiveMenu("pieces")}>
-            Add Interactive
+            {t("edit.addInteractive")}
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-question-circle"></i>}
             onClick={() => setActiveMenu("inputs")}>
-            Add Input
+            {t("edit.addInput")}
+          </DropdownItem>
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
+            onClick={() => setActiveMenu("games")}>
+            {t("edit.addGames")}
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -578,19 +674,30 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>Add Shapes</h2>
+            <h2>{t("edit.addShape")}</h2>
           </DropdownItem>
 
           <DropdownItem
             onClick={addText}
             leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
-            Text
+            {t("edit.shape.text")}
           </DropdownItem>
 
-          <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>Square</DropdownItem>
-          <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>Circle</DropdownItem>
-          <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>Triangle</DropdownItem>
-          <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>Star</DropdownItem>
+          <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>
+          <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>{t("edit.shape.circle")}</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>{t("edit.shape.triangle")}</DropdownItem>
+          <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>{t("edit.shape.star")}</DropdownItem>
+
+          <DropdownItem
+            onClick={addLine}
+            leftIcon={<i className="icons" onClick={addLine} style={{
+              fontWeight: 800
+            }}>
+              /
+            </i>}
+          >
+            {t("edit.shape.line")}
+          </DropdownItem>
 
           <DropdownItem
             leftIcon={<i className="icons fas fa-marker" />}
@@ -598,7 +705,7 @@ const DropdownAddObjects = (props) => {
               props.setDrawMode(true);
               props.close();
             }}>
-            Draw Mode
+            {t("edit.shape.drawMode")}
           </DropdownItem>
 
         </div>
@@ -614,27 +721,27 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>Add Media</h2>
+            <h2>{t("edit.addMedia")}</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fa fa-picture-o"></i>}
             onClick={() => setActiveMenu("image")}>
-            Image
+            {t("edit.media.imageOrGif")}
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-video"></i>}
             onClick={() => setActiveMenu("video")}>
-            Video
+            {t("edit.media.video")}
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-volume-up"></i>}
             onClick={() => setActiveMenu("audio")}>
-            Audio
+            {t("edit.media.audio")}
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-file"></i>}
             onClick={() => setActiveMenu("docs")}>
-            Document
+            {t("edit.media.document")}
           </DropdownItem>
         </div>
       </CSSTransition>
@@ -648,15 +755,23 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>Add Image</h2>
+            <h2>{t("edit.media.addImage")}</h2>
           </DropdownItem>
           <div className={`${imageUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
-                if (imageUploaded) {
-                  addImage(e);
-                }
-              }}></i>}>
+              leftIcon={
+                !imageUploading ? (
+                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                    if (imageUploaded) {
+                      addImage(e);
+                    }
+                  }} />
+                ) : (
+                  <div className="loadingMediaAddMenuContainer">
+                    <Loading />
+                  </div>
+                )
+              }>
               <input
                 type="file"
                 name="img"
@@ -674,7 +789,7 @@ const DropdownAddObjects = (props) => {
                   addImage(e);
                 }
               }}></i>}>
-              <input className="add-dropdown-item-input" type="text" placeholder="Image URL" onChange={handleImage} value={imgsrc} />
+              <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.imageURL")} onChange={handleImage} value={imgsrc} />
             </DropdownItem>
           </div>
         </div>
@@ -689,16 +804,24 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>Add Video</h2>
+            <h2>{t("edit.media.addVideo")}</h2>
           </DropdownItem>
 
           <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
-                if (videoUploaded) {
-                  addVideo(e);
-                }
-              }}></i>}>
+              leftIcon={
+                !videoUploading ? (
+                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                    if (videoUploaded) {
+                      addVideo(e);
+                    }
+                  }} />
+                ) : (
+                  <div className="loadingMediaAddMenuContainer">
+                    <Loading />
+                  </div>
+                )
+              }>
               <input
                 type="file"
                 name="img"
@@ -716,7 +839,7 @@ const DropdownAddObjects = (props) => {
                   addVideo(e);
                 }
               }}></i>}>
-              <input className="add-dropdown-item-input" type="text" placeholder="Video URL" onChange={handleVideo} value={vidsrc} />
+              <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.videoURL")} onChange={handleVideo} value={vidsrc} />
             </DropdownItem>
           </div>
         </div>
@@ -731,7 +854,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>Add Audio</h2>
+            <h2>{t("edit.media.addAudio")}</h2>
           </DropdownItem>
 
           <div className={`${audioUploaded ? "" : "dropdown-add-disabled"}`}>
@@ -758,7 +881,7 @@ const DropdownAddObjects = (props) => {
                   addAudio(e);
                 }
               }}></i>}>
-              <input className="add-dropdown-item-input" type="text" placeholder="Audio URL" onChange={handleAudio} value={audiosrc} />
+              <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.audioURL")} onChange={handleAudio} value={audiosrc} />
             </DropdownItem>
           </div>
         </div>
@@ -774,7 +897,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
-            <h2>Add Document</h2>
+            <h2>{t("edit.media.addDocument")}</h2>
           </DropdownItem>
           <DropdownItem
             leftIcon={<i className="icons fas fa-plus" onClick={handleFilesubmit}></i>}>
@@ -785,12 +908,12 @@ const DropdownAddObjects = (props) => {
             id="file"
             onChange={handleFile}
           />
-          <label id="fileI" htmlFor="file">From file</label>
+          <label id="fileI" htmlFor="file">{t("edit.media.fromFile")}</label>
 
           <DropdownItem
             onClick={addDocument}
             leftIcon={<i className="icons fas fa-plus"
-              onClick={addDocument}></i>}>Add</DropdownItem>
+              onClick={addDocument}></i>}>{t("common.add")}</DropdownItem>
         </div>
       </CSSTransition>
 
@@ -804,33 +927,49 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>Add Interactive</h2>
+            <h2>{t("edit.addInteractive")}</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={addPoll}
+            leftIcon={<i className="icons fa fa-poll"
+              onClick={addPoll}></i>}>
+            {t("edit.interactive.poll")}</DropdownItem>
+          <DropdownItem
+            onClick={addHTMLFrame}
+            leftIcon={<i className="icons fa fa-code"
+              onClick={addHTMLFrame}></i>}>
+            {t("edit.interactive.html")}</DropdownItem>
+          <DropdownItem
+            onClick={addTimer}
+            leftIcon={<i className="icons fa fa-stopwatch"
+              onClick={addTimer}></i>}>
+            {t("edit.interactive.timer")}</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      
+      <CSSTransition
+        in={activeMenu === 'games'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>{t("edit.addGames")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addTicTacToe}
             leftIcon={<i className="icons fas fa-times"
               onClick={addTicTacToe}></i>}>
-            Tic-Tac-Toe</DropdownItem>
+            {t("edit.game.tic")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
             leftIcon={<i className="icons fa fa-circle"
               onClick={addConnect4}></i>}>
-            Connect-Four</DropdownItem>
-          <DropdownItem
-            onClick={addPoll}
-            leftIcon={<i className="icons fa fa-poll"
-              onClick={addPoll}></i>}>
-            Poll</DropdownItem>
-          <DropdownItem
-            onClick={addHTMLFrame}
-            leftIcon={<i className="icons fa fa-code"
-              onClick={addHTMLFrame}></i>}>
-            HTML Frame</DropdownItem>
-          <DropdownItem
-            onClick={addOverlayWindow}
-            leftIcon={<i className="icons fa fa-window-restore"
-              onClick={addOverlayWindow}></i>}>
-            Toggle Overlay</DropdownItem>
+            {t("edit.game.connect4")}</DropdownItem>
         </div>
       </CSSTransition>
 
@@ -844,23 +983,50 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
-            <h2>Add Input</h2>
+            <h2>{t("edit.addInput")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={() => addInput("button")}
             leftIcon={<i className="icons fas fa-mouse-pointer"
               onClick={() => addInput("button")}></i>}>
-            Button</DropdownItem>
+            {t("edit.input.button")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("text")}
             leftIcon={<i className="icons fa fa-quote-right"
               onClick={() => addInput("text")}></i>}>
-            Textbox</DropdownItem>
+            {t("edit.input.textbox")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("checkbox")}
             leftIcon={<i className="icons fa fa-check-square"
               onClick={() => addInput("checkbox")}></i>}>
-            Checkbox</DropdownItem>
+            {t("edit.input.checkbox")}</DropdownItem>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'games'}
+        timeout={500}
+        classNames="menu-secondary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            onClick={() => setActiveMenu("main")}>
+            <h2>{t("edit.addGame")}</h2>
+          </DropdownItem>
+          <DropdownItem
+            onClick={addTicTacToe}
+            leftIcon={<i className="icons fas fa-times"
+              onClick={addTicTacToe}></i>}>
+            {t("edit.game.tic")}
+          </DropdownItem>
+          <DropdownItem
+            onClick={addConnect4}
+            leftIcon={<i className="icons fa fa-circle"
+              onClick={addConnect4}></i>}>
+            {t("edit.game.connect4")}
+          </DropdownItem>
         </div>
       </CSSTransition>
     </div>

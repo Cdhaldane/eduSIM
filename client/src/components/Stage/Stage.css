@@ -15,6 +15,10 @@
 #editMainContainer {
   width: 100%;
   height: 100%;
+  background-image:
+    repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);
+  background-size: 8vh 8vh;
 }
 
 .overlayButton {
@@ -22,7 +26,7 @@
   height: 50px;
   position: absolute;
   top: 70px;
-  right: 10px;
+  right: 5px;
   z-index: 2;
 }
 
@@ -50,15 +54,20 @@
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
 }
 
-#overlayCanvasContainer {
+#overlayGameContainer {
   background-color: white;
   height: 100%;
   width: 100%;
+  border: 1px solid var(--primary);
   border-radius: 10px;
   box-shadow: var(--box-shadow);
+  background-image:
+    repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);
+  background-size: 8vh 8vh;
 }
 
-#overlayCanvasContainer>div {
+#overlayGameContainer>div {
   overflow: hidden;
 }
 
@@ -82,7 +91,7 @@
   margin: var(--margin);
   left: 50%;
   top: 50%;
-  transform: translate( calc(-50% - var(--margin)), calc(-50% - var(--margin)));
+  transform: translate(calc(-50% - var(--margin)), calc(-50% - var(--margin)));
   position: absolute;
 }
 
@@ -100,9 +109,14 @@
   .overlayMain {
     width: 100vw;
   }
+
   .overlayButton {
     top: 120px;
   }
+}
+
+.jsgif {
+  display: none;
 }
 
 .gameLoadingOverlay>.spinner {
@@ -111,11 +125,28 @@
   width: 100%;
 }
 
-#playModeCanvasContainer {
+.playModeCanvasContainer {
+  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-#playModeCanvasContainer > div {
-  height: 100vh;
+.info0>.playModeCanvasContainer {
+  overflow-y: hidden;
+}
+
+#playModeRoleLabel {
+  font-size: 1.8em;
+  color: rgb(85, 85, 85);
+  float: left;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  border-radius: 0.25em;
+  text-shadow: -1px 1px 0 white;
+}
+
+#playModeRoleLabel>b {
+  font-size: 1.05em;
+  color: var(--primary);
 }

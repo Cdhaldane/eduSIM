@@ -1,15 +1,27 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const EditableRow = ({
   editFormData,
   handleEditFormChange,
   handleCancelClick,
   handleUpdate,
-  rolelist
+  online,
+  rolelist,
+  onCheck,
+  checked,
+  useGroup,
+  groupList
 }) => {
+  const { t } = useTranslation();
   
   return (
-    <tr>
+    <tr className={online ? "user-online" : ""}>
+      {onCheck && (
+        <td className="table-checkrow">
+          <input type="checkbox" onClick={onCheck} checked={checked} />
+        </td>
+      )}
       <td>
         <input
           type="text"
@@ -41,15 +53,24 @@ const EditableRow = ({
         ></input>
       </td>
       <td>
-        <select name="group" type="text" required="required" id="roledropdown" onChange={handleEditFormChange}>
-          {rolelist}
-        </select>
+        {useGroup ? (
+          <select name="group" type="text" required="required" id="roledropdown" onChange={handleEditFormChange}>
+            <option key={-1} value="">{t("admin.selectAGroup")}</option>)];
+            {groupList.map(val => (
+              <option key={val[1]} value={val[0]}>{val[0]}</option>
+            ))}
+          </select>
+        ) : (
+          <select name="gamerole" type="text" required="required" id="roledropdown" onChange={handleEditFormChange}>
+            {rolelist}
+          </select>
+        )}
       </td>
       <td>
         <div>
-          <button type="submit" >Save</button>
+          <button type="submit" >{t("common.save")}</button>
           <button type="button" onClick={handleCancelClick}>
-            Cancel
+          {t("common.cancel")}
           </button>
         </div>
       </td>

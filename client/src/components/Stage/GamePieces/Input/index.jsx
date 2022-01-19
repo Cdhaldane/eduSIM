@@ -16,8 +16,8 @@ const Input = forwardRef((props, ref) => {
   const varName = props.varName || props.id;
 
   const handleChangeValue = (value) => {
-    if (props.sync) {
-
+    if (props.sync && props.updateVariable) {
+      props.updateVariable(varName, value);
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -31,8 +31,8 @@ const Input = forwardRef((props, ref) => {
   }
 
   const getValue = () => {
-    if (props.sync) {
-
+    if (props.sync && props.variables) {
+      return props.variables[varName];
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -43,26 +43,35 @@ const Input = forwardRef((props, ref) => {
   return (
     <CustomWrapper {...props} ref={ref}>
       <Wrapper {...settings}>
-      {({
-        button: (
-          <button onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
-        ),
-        text: (
-          <input 
-            type="text"
-            placeholder={props.label}
-            value={getValue()}
-            onChange={(e) => handleChangeValue(e.target.value)} 
-          />
-        ),
-        checkbox: (
-          <input 
-            type="checkbox" 
-            checked={!!getValue()} 
-            onChange={(e) => handleChangeValue((!!getValue() ? false : true))} 
-          />
-        )
-      })[props.varType]}
+        {({
+          button: (
+            <button
+              className="inputButtonDefault"
+              style={{
+                ...props.style
+              }}
+              onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
+          ),
+          text: (
+            <input
+              type="text"
+              className="inputTextDefault"
+              style={{
+                ...props.style
+              }}
+              placeholder={props.label}
+              value={getValue()}
+              onChange={(e) => handleChangeValue(e.target.value)}
+            />
+          ),
+          checkbox: (
+            <input
+              type="checkbox"
+              checked={!!getValue()}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+            />
+          )
+        })[props.varType]}
       </Wrapper>
     </CustomWrapper>
   );

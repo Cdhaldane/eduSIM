@@ -23,7 +23,7 @@ const Grid = styled.div`
     } 
 `;
 
-function Header({ toggle }) {
+const Header = ({ toggle }) => {
   return (
     <Grid>
       <div onClick={toggle}>

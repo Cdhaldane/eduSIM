@@ -5,6 +5,7 @@ import {
   getRoomStatus,
   updateRoomStatus,
   updateChatlog,
+  updateRoomTimeout,
   addInteraction
 } from './utils';
 import moment from "moment";
@@ -14,6 +15,8 @@ export default async (server, client, event, args) => {
   
   switch (event) {
     case "message": {
+      // received a message from a simulation player
+      // update chatlog and send message to everyone involved (sim or group)
       const { message, group } = args;
 
       const sender = await getPlayer(client.id);
@@ -33,13 +36,16 @@ export default async (server, client, event, args) => {
           message,
           group
         });
-        group.forEach(({id}) => {
-          server.to(id).emit("message", {
-            sender,
-            room,
-            message,
-            group
-          });
+        group.forEach(async ({dbid}) => {
+          let {id} = await getPlayerByDBID(dbid);
+          if (id) {
+            server.to(id).emit("message", {
+              sender,
+              room,
+              message,
+              group
+            });
+          }
         })
       } else {
         server.to(room).emit("message", {
@@ -51,10 +57,13 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "playerUpdate": {
+      // player chose a name and role
+      // but we treat this as a player just joined for everyone else
       const { name, role, dbid, invited } = args;
       if (await getPlayerByDBID(dbid)) {
-        client.emit("errorLog", "You are attempting to join as a player that has already joined.");
+        client.emit("errorLog", { key: "alert.attemptJoinAsExistingPlayer" });
         return;
       }
       if (Object.keys(getPlayer(client.id)).length === 0) {
@@ -74,13 +83,17 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "interaction": {
+      // player just did something with a gamepiece
+      // add this to list of game interactions and update room status if needed
+      // if "sameState" is off, dont update the game state and just log it
       const { gamepieceId, parameters, sameState } = args;
       
       const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
-        client.emit("errorLog", "Game is paused/stopped!");
+        // client.emit("errorLog", "Game is paused/stopped!");
         return;
       }
 
@@ -112,8 +125,50 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
+    case "varChange": {
+      // something caused an in-game variable to change
+      // eg. someone inputted something into a textbox gamepiece
+      // treat it similarly to a regular interaction
+      const { name, value, increment = false } = args;
+      
+      const { running, variables = {}, level } = await getRoomStatus(room);
+
+      if (!running) {
+        // client.emit("errorLog", "Game is paused/stopped!");
+        return;
+      }
+
+      const newStatus = await updateRoomStatus(room, {
+        variables: {
+          ...variables,
+          [name]: increment ? ((variables[name] || 0) + value) : value
+        }
+      });
+
+      server.to(room).emit("roomStatusUpdate", {
+        room,
+        status: newStatus,
+        lastSetVar: name
+      });
+
+      const player = await getPlayer(client.id);
+      if (!player.invited) player.dbid = undefined;
+
+      await addInteraction(room, {
+        timestamp: moment().valueOf(),
+        level,
+        variable: name,
+        value,
+        player
+      });
+
+      break;
+    };
     
     case "goToPage": {
+      // player advanced a page in the simulation
+      // update room state with new page index
       const { level } = args;
 
       const newStatus = await updateRoomStatus(room, {
@@ -126,4 +181,6 @@ export default async (server, client, event, args) => {
       });
     }
   }
+
+  updateRoomTimeout(room, server);
 }

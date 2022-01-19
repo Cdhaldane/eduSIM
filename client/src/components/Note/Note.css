@@ -5,6 +5,7 @@
   float: left;
   font-family: "Montserrat", sans-serif;
   text-align: center;
+  min-width: 5vw;
 }
 
 .note h1 {

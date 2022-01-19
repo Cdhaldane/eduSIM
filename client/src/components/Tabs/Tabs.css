@@ -4,95 +4,65 @@
   text-align: center;
   list-style: none;
   font-size: 24px;
+  margin-bottom: -2px;
   padding: 0;
   line-height: 20px;
   overflow: hidden;
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   padding: 0 50px;
 }
 
 .selected-tab li {
-  border: 2px solid #636363;
+  position: absolute;
+  left: -50px;
+  border: 2px solid var(--primary);
   padding: 6px;
   background-color: #FFF;
-  margin-right: 10px;
+  margin-right: -1px;
   display: inline-block;
   position: relative;
   z-index: 0;
-  color: #636363;
+  color: var(--primary);
+  font-weight: normal;
   max-width: 20%;
   min-width: 0;
   flex: 1;
-  font-size: .6em;
+  font-size: 0.6em;
 }
 
-.selected-tab button {    
+.selected-tab button {
   color: var(--text-color);
   font-family: inherit;
   background: white;
-  border: none;
+  border: 2px solid var(--primary);
   height: min-content;
   padding: 8px 12px;
   border-radius: 100px;
-  margin-left: 24px;
-  margin-top: 6px;
+  margin-left: -40px;
+  margin-top: 0px;
   cursor: pointer;
 }
+
 .selected-tab button:hover {
-  background-color: #636363 !important;
+  background-color: var(--primary) !important;
   color: white;
 }
 
 .selected-tab li.selected {
-  background: #FFF;
+  border: 2px solid var(--primary);
+  border-bottom: none;
   z-index: 2;
-  border-bottom-color: #FFF;
-}
-
-.selected-tab li:before, .selected-tab li:after {
-  display: block;
-  content: " ";
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 32px;
-  background-color: #FFF;
-}
-
-.selected-tab li:before {
-  left: -24px;
-  transform: skew(-25deg, 0deg);
-  border-left: 3px solid #636363;
-}
-
-.selected-tab li:after {
-  right: -24px;
-  transform: skew(25deg, 0deg);
-  border-right: 3px solid #636363;
-}
-
-.selected-tab li:before {
-  border-radius: 8px 0 0 0;
-}
-
-.selected-tab li:after {
-  border-radius: 0 8px 0 0;
-}
-
-.selected-tab li.selected:before, .selected-tab li.selected:after {
-  background: #FFF;
-  border-bottom: 3px solid #ffffff;
 }
 
 .selected-tab li:hover,
 .selected-tab li:hover:before,
 .selected-tab li:hover:after {
-  background-color: #636363 !important;
   color: white;
+  background-color: var(--primary);
   cursor: pointer;
-  border-bottom-color: #636363 !important;
+
 }
 .tabs{
   margin: 0 auto;
@@ -110,49 +80,7 @@
   display: inline;
 }
 
-.tabs .tab-label {
-  font-size: 18px;
-  vertical-align: bottom;
-  font-family: 'Lobster', cursive;
-  border: 3px solid #636363;
-  padding: 15px 22px 8px;
-  background-color: #FFF;
-  margin-right: -9px;
-  display: inline-block;
-  position: relative;
-  z-index: 0;
-  color: #636363;
-}
 
-.tabs .tab-label:before, .tabs .tab-label:after {
-  display: block;
-  content: " ";
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 33px;
-  background-color: #FFF;
-}
-
-.tabs .tab-label:before {
-  left: -17px;
-  transform: skew(-25deg, 0deg);
-  border-left: 3px solid #636363;
-}
-
-.tabs .tab-label:after {
-  right: -17px;
-  transform: skew(25deg, 0deg);
-  border-right: 3px solid #636363;
-}
-
-.tabs .tab-label:before {
-  border-radius: 8px 0 0 0;
-}
-
-.tabs .tab-label:after {
-  border-radius: 0 8px 0 0;
-}
 
 .selected-tab li.selected:before, .selected-tab li.selected:after {
   background: #FFF;
@@ -224,17 +152,23 @@
 .content-tabs {
   flex-grow: 1;
   font-size: 1.3rem;
-  height: calc(100vh - 350px);
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--primary);
+  border-top: 2px solid var(--primary);
+  border-left: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
+
 }
+
 
 .content {
   background: white;
-  color: black;
+  color: var(--text-color);
   padding: 20px;
   width: 100%;
   height: 100%;
   max-height: inherit;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   display: none;
   border-radius: 10px;
   text-align: left;
@@ -242,8 +176,7 @@
 
 .content h3 {
   position: relative;
-  color: black;
-  font-size: 1em;
+  color: var(--primary);
 }
 .content > h3 {
   margin-top: 10px;
@@ -259,30 +192,51 @@
   justify-content: space-between;
   align-items: flex-start;
 }
+
 .content-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
-.content-settings {
+
+.content-header > div {
   display: flex;
+}
+.content-settings {
+  display: inline;
   flex-direction: column;
+  width: 100%;
+}
+.content-settings h3 {
+  color: var(--primary);
 }
 .content-timeinput {
+  display: inline;
+  width: 6vw;
   margin: 0 5px;
+  border-radius: 10px;
+  padding-left: 10px;
 }
 .content-radiobuttons {
+  display: inline;
   margin: 2px 20px;
   flex: 1;
 }
-.content-editname {    
+
+.content-editname {
   align-self: center;
-  color: white;
-  background-color: var(--primary);
+  color: var(--primary);
   padding: 8px;
   border-radius: 100px;
   margin-left: 10px;
   cursor: pointer;
+}
+.content-editname h1 {
+  color: var(--text-color);
+  font-family:  "Montserrat", sans-serif;
+  font-size: 1.6vw;
+  display: inline;
+  margin-left: 10px;
 }
 .content-inputname {
   font-size: 1.3em;
@@ -290,19 +244,23 @@
   padding: 4px;
 }
 .content-roomlink {
-  align-self: center;
+  align-self:auto;
   margin-left: auto;
   margin-right: 20px;
   font-family:  "Montserrat", sans-serif;
   padding: 10px 20px;
-  font-size: 1em;
+  font-size: 1vw;
   color: white;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 10px;
+  border-radius: 100px;
+}
+.content-roomlink:hover {
+  cursor: pointer;
+  box-shadow: 0 5px 10px grey;
 }
 
 .active-content {
@@ -324,6 +282,28 @@
   font-size: .7em;
   margin: 10px 20px;
 }
+.simadv-inline{
+  margin-left: 3.8vw;
+}
+input[type='radio']:after {
+      width: 15px;
+      height: 15px;
+      border-radius: 15px;
+      top: -2px;
+      left: -4px;
+      position: relative;
+      background-color: var(--bg);
+      content: '';
+      display: inline-block;
+      visibility: visible;
+      border: 2px solid var(--text-color);
+  }
+
+  input[type='radio']:checked:after {
+      background-color: var(--primary);
+      border: 2px solid var(--primary);
+  }
+
 
 .tab-text {
   width: calc(100% - 16px);
@@ -331,21 +311,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
 }
 
 .studentbuttonemail {
-  z-index: 1000;
-  left: 100px;
   padding: 10px 20px;
   font-family:  "Montserrat", sans-serif;
-  font-size: 1em;
+  font-size: 1vw;
   color: white;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
-  vertical-align: middle;
-  border-radius: 10px;
+  vertical-align: text-top;
+  position: relative;
+  top: -30px;
+  border-radius: 100px;
+  display: inline;
+  float: right;
 }
 
 .studentbuttonemail:hover {
@@ -355,15 +338,14 @@
 
 .deletegroup {
   font-family:  "Montserrat", sans-serif;
-  padding: 10px 20px;
-  font-size: 1em;
+  font-size: 1vw;
   color: white;
   background-color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 10px;
+  border-radius: 100px;
+  padding: 10px;
 }
 
 .deletegroup:hover {
@@ -374,12 +356,12 @@
 .addgroup {
   font-family:  "Montserrat", sans-serif;
   padding: 10px 20px;
-  font-size: 1em;
+  font-size: 1vw;
   color: white;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
-  border-radius: 10px;
+  border-radius: 100px;
   align-self: flex-end;
 }
 
@@ -390,7 +372,16 @@
 
 .groupcontainer {
   display: flex;
-  border-bottom: 1px dotted black;
+  border: 1px solid black;
+  border-radius: 10px;
+  opacity: 50%;
+}
+.groupcontainer h3{
+  position: relative;
+  top: 0px;
+  left: 10px;
+  width: auto;
+  color: var(--text-color);
 }
 .group-column {
   flex: 1;
@@ -460,11 +451,12 @@
   margin-bottom: 10px;
   flex-direction: column;
   align-items: flex-end;
-  overflow: hidden;
+  overflow: unset;
 }
 .logs[hidden] {
   height: 30px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .logs-show {
   background-color: var(--primary);
@@ -510,11 +502,15 @@
   border: none;
   height: 36px;
   width: 36px;
-  font-size: 1.3em;
+  font-size: 1.3vw;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+.temp{
+  color: var(--primary);
+  font-size: 2.0rem;
 }
 
 #roomh3 {
@@ -524,28 +520,5 @@
 }
 
 @media screen and (orientation: portrait) {
-  .content-row {
-    flex-direction: column-reverse;
-    align-items: stretch;
-  }
-  .content-settings {
-    margin-top: 20px;
-  }
-  .simadv {
-    margin: 10px 0;
-  }
-  .content-radiobuttons {
-    margin: 0 0 0 20px;
-  }
-  .groupcontainer {
-    flex-direction: column;
-  }
-  .content-header {
-    flex-direction: column;
-    align-items: center;
-  }
-  .content-roomlink {
-    align-self: center;
-    margin: 10px 0;
-  }
+
 }

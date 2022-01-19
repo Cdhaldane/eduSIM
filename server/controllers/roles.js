@@ -1,6 +1,7 @@
 const GameRole = require("../models/GameRoles");
 const GameInstance = require("../models/GameInstances");
 const db = require('../databaseConnection');
+import { v4 as uuidv4 } from 'uuid';
 
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
@@ -67,6 +68,7 @@ exports.deleteRole = async (req, res) => {
 
 exports.copyRole = async (req, res) => {
   const gameroleid = req.body.gameroleid;
+  console.log("TESTING:", gameroleid);
   
   const {
     gamerole,
@@ -78,6 +80,8 @@ exports.copyRole = async (req, res) => {
     },
   });
 
+  console.log(gamerole);
+
   if (!gamerole) {
     return res.status(400).send({
       message: `No game role found with the id ${id}`,
@@ -88,7 +92,7 @@ exports.copyRole = async (req, res) => {
     let newGameRole = await GameRole.create({
       gameinstanceid,
       gamerole: gamerole+" (Copy)",
-      numspots
+      numspots: numspots === -1 ? 1 : numspots
     });
     const instance = await GameInstance.findOne({
       where: {
@@ -96,12 +100,23 @@ exports.copyRole = async (req, res) => {
       },
     });
     const params = JSON.parse(instance.game_parameters);
+    const newIds = [];
     for (const key in params) {
       if (Array.isArray(params[key])) {
         let newParam = [];
+        let i = 1;
         for (let item of params[key]) {
           if (typeof item === "object" && item.rolelevel === gamerole) {
-            let newItem = {...item, rolelevel: gamerole+" (Copy)"};
+            const newId = key + (params[key].length + params[`${key}DeleteCount`] + i);
+            i++;
+            newIds.push(newId);
+            const newItem = {
+              ...item, 
+              id: newId,
+              name: newId,
+              ref: newId,
+              rolelevel: gamerole+" (Copy)"
+            };
             newParam.push(newItem);
           }
           newParam.push(item);
@@ -113,7 +128,8 @@ exports.copyRole = async (req, res) => {
     instance.save();
     return res.send({
       gamerole: newGameRole,
-      gameinstance: instance
+      gameinstance: instance,
+      newIds: newIds
     });
   } catch (err) {
     return res.status(500).send({

@@ -15,6 +15,27 @@
   list-style-type: none;
 }
 
+.layerLbl {
+  padding: 0px 5px;
+  width: 50%;
+  display: inline-block;
+}
+
+.layerBtns {
+  width: 25%;
+  display: inline-block;
+}
+
+.layerBtns > li {
+  font-size: 0.7em;
+  text-align: center;
+}
+
+.layerBtns > li.disabled {
+  color: grey;
+  pointer-events: none;
+}
+
 .cmenu li:hover {
   background-color: grey;
   cursor: pointer;
@@ -32,6 +53,7 @@
 .conditionsedit select {
   font-size: .7em;
   padding: 4px 0;
+  margin-top: 3px;
   border-width: 1px;
   border-radius: 2px;
 }
@@ -44,7 +66,15 @@
   padding: 4px;
   font-size: .7em;
   width: 100%;
+  margin-top: 3px;
 }
 .conditionsedit input::placeholder {
   opacity: 0.5;
+}
+.conditionsbetween {
+  display: flex;
+  align-items: center;
+}
+.conditionsbetween > p {
+  margin: 0 10px;
 }

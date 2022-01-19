@@ -3,11 +3,15 @@ import { times } from "lodash";
 import { Link } from "react-router-dom";
 import Pencil from "../Pencils/Pencil";
 import Modal from "react-modal";
+import AutoUpdate from "../AutoUpdate";
+import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 import "./Level.css";
 
 const Level = (props) => {
 
+  const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const infoPopup = new useRef();
@@ -29,15 +33,30 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
-    props.level(e);
-  }
-
-  const handleCount = () => {
-    handleLevel(count + 1);
-  }
-  
-  const handleBack = () => {
-    if (count > 0) handleLevel(count - 1);
+    let closeOverlay = null;
+    if (props.page) {
+      for (let i = 0; i < props.page.overlays.length; i++) {
+        if (props.page.overlays[i].overlayOpenOption === "pageExit") {
+          closeOverlay = props.page.overlays[i];
+          break;
+        }
+      }
+    }
+    if (e > count &&
+      props.page &&
+      closeOverlay) {
+      props.handlePageCloseOverlay(closeOverlay.id);
+      return;
+    }
+    if (props.gamepage) {
+      if (e > count && props.disableNext) return;
+      if (e > count + 1) return;
+      if (!props.freeAdvance) return;
+      props.level(e);
+    } else {
+      props.level(e);
+      setCount(e);
+    }
   }
 
   useEffect(() => {
@@ -52,7 +71,7 @@ const Level = (props) => {
     let untitledNum = 1;
     for (let i = 0; i < pages.length; i++) {
       if (pages[i].name === "") {
-        pages[i].name = "Untitled " + untitledNum;
+        pages[i].name = t("edit.untitledX", { index: untitledNum });
         untitledNum++;
       }
     }
@@ -74,8 +93,10 @@ const Level = (props) => {
   }
 
   const saveOnClose = () => {
+    document.querySelector(':root').style.setProperty('--primary', "#8f001a");
     props.clearCanvasData();
     props.saveGame();
+    props.removeJSGIFS();
   }
 
   return (
@@ -83,15 +104,14 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div style={{width: "180px"}}>
+            <div className="editModeTitleContainer">
               <h1 id="editModeTitle">
-                Edit Mode
+                {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
                 <i className="fa fa-info" />
               </button>
             </div>
-
             <Modal
               isOpen={showInfoPopup}
               onRequestClose={() => setShowInfoPopup(false)}
@@ -103,7 +123,7 @@ const Level = (props) => {
               <div className="area">
                 <form className="form-input" ref={infoPopup} style={{ padding: "20px" }}>
                   <div className="levelInstructionsDiv">
-                    <h2>Instructions</h2>
+                    <h2>{t("edit.instructions")}</h2>
                     <table>
                       <tbody className="levelInstructionsTable">
                         <tr>
@@ -111,71 +131,34 @@ const Level = (props) => {
                             width: "50%",
                             paddingRight: "30px"
                           }}>
-                            <h3>Overview</h3>
+                            <h3>{t("edit.overview")}</h3>
                             <p style={{
                               textAlign: "left",
                               paddingTop: "7px"
                             }}>
-                              Edit Mode allows you to create and edit simulations.
-                              Simulations have two main components: the group area (with the grid background), and the personal area (located at the bottom of the screen).
-                              To toggle opening/closing the personal area use the red arrow button at the top right of the personal area.
-                              The group area will be shared by all the users in a simulation while the personal area contents are determined by the user's role and are only visible to the user.
-                              To create/edit roles use the role picker located in the top left of the personal area.
+                              {t("edit.overviewExplanation")}
                             </p>
                           </td>
                           <td style={{ width: "50%" }}>
-                            <h3>Shortcuts</h3>
+                            <h3>{t("edit.shortcuts")}</h3>
                             <ul>
-                              <li>
-                                Right click on canvas
-                                <i className="fa fa-angle-right" />
-                                Add Menu
-                              </li>
-                              <li>
-                                Right click on object
-                                <i className="fa fa-angle-right" />
-                                Object Menu
-                              </li>
-                              <li>
-                                Ctrl + Drag
-                                <i className="fa fa-angle-right" />
-                                Move around canvas
-                              </li>
-                              <li>
-                                Shift + R
-                                <i className="fa fa-angle-right" />
-                                Recenter Contents
-                              </li>
-                              <li>
-                                Delete
-                                <i className="fa fa-angle-right" />
-                                Delete selected object
-                              </li>
-                              <li>
-                                Ctrl + X
-                                <i className="fa fa-angle-right" />
-                                Cut selected object
-                              </li>
-                              <li>
-                                Ctrl + C
-                                <i className="fa fa-angle-right" />
-                                Copy selected object
-                              </li>
-                              <li>
-                                Ctrl + V
-                                <i className="fa fa-angle-right" />
-                                Paste selected object
-                              </li>
-                              <li>
-                                Ctrl + Z
-                                <i className="fa fa-angle-right" />
-                                Undo action
-                              </li>
-                              <li>
-                                Ctrl + Shift + Z
-                                <i className="fa fa-angle-right" />
-                                Redo action
-                              </li>
+                              {[
+                                "addMenu",
+                                "objectMenu",
+                                "moveAroundCanvas",
+                                "recenterContents",
+                                "deleteObject",
+                                "cutObject",
+                                "copyObject",
+                                "pasteObject",
+                                "undo", "redo"
+                              ].map((key, i) => (
+                                <li key={i}>
+                                  {t(`edit.shortcut.${key}SC`)}
+                                  <i className="fa fa-angle-right" />
+                                  {t(`edit.shortcut.${key}`)}
+                                </li>
+                              ))}
                             </ul>
                           </td>
                         </tr>
@@ -188,52 +171,70 @@ const Level = (props) => {
           </>
         )}
         <div className="level-nav">
-          {!props.gamepage && (
-            <select className="level-select" onChange={handleChange} value={count}>
-              {createSelectItems()}
-            </select>
-          )}
 
-          <div className="level-bar">
-            {times(props.number, (num) => ( // dynamically scaling level bar
-              <div key={num} className="level-bar-section">
-                <div className={`level-bar-node ${num + 1 == count ? "level-bar-node-active" : ""}`} />
-                {num != props.number - 1 && (<div className="level-bar-line" />)}
-              </div>
-            ))}
+
+
+
+
+
+          <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 66 + 'px' }}>
+            <div className="level-bar-underlay"></div>
+            <div className="level-bar-progress-edge"></div>
+            <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
+              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(24 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
+            }}></div>
+            <i className={`fas fa-caret-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
+            <div className="level-bar-segments">
+              {times(props.number + (props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
+                <div key={num} className="level-bar-segment">
+                  <div className={`
+                    level-bar-dot
+                    ${count - 1 >= num ? 'level-bar-dot-fill' : ''}
+                    ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
+                    ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
+                  `} onClick={() => handleLevel(num + 1)}>
+                    {props.number > num ? (
+                      <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
+                    ) : <i className="fas fa-check-circle"></i>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
+          {props.countdown && (
+            <div className="level-bar-time">
+              <AutoUpdate
+                value={() => moment.duration(props.countdown()).hours() + ":" + moment(props.countdown()).format("mm:ss")}
+                intervalTime={20}
+                enabled
+              />
+            </div>
+          )}
+
           {props.handlePageNum && (
+            <div className="pencil-container">
             <Pencil
               id="Timeline"
               psize="3"
               type="info"
               pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              changeObjectPage={props.changeObjectPage}
+              handleCopyPage={props.handleCopyPage}
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
             />
-          )}
-
-          {props.freeAdvance && (
-            <>
-              <button
-                className="level-nav-back"
-                disabled={count == 1}
-                onClick={handleBack}>
-                Back
-              </button>
-              <button
-                onClick={handleCount}>
-                Next
-              </button>
-            </>
+          <h1>Edit</h1>
+          </div>
           )}
         </div>
 
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
             <i className="fas fa-times fa-3x"></i>
+            <h1>Close</h1>
           </Link>
         )}
       </div>
@@ -242,3 +243,10 @@ const Level = (props) => {
 }
 
 export default Level;
+
+
+// {!props.gamepage && (
+//   <select className="level-select" onChange={handleChange} value={count}>
+//     {createSelectItems()}
+//   </select>
+// )}

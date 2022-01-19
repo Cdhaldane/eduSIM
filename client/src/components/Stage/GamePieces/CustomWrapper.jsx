@@ -85,6 +85,8 @@ const CustomWrapper = forwardRef((props, ref) => {
       refName={ref._stringRef}
       defaultProps={props.defaultProps}
       visible={props.visible}
+      objectSnapping={props.objectSnapping}
+      editMode={props.editMode}
     >
       <div
         onClick={() => props.updateKonva ? props.updateKonva(ref._stringRef, true) : null}

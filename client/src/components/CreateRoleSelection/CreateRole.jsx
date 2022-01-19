@@ -1,7 +1,8 @@
-import React, { useEffect, useEffects, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import styled from "styled-components";
 import { useAlertContext } from '../Alerts/AlertContext';
+import { useTranslation } from "react-i18next";
 
 const NameInput = styled.input`
   grid-area: main;
@@ -34,6 +35,7 @@ const CreateRole = (props) => {
   const [role, setRole] = useState(null);
   const [name, setName] = useState("");
   const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   const rolesTaken = Object.values(props.players).reduce((roles, {role}) => {
     const roleCount = roles[role] || 0;
@@ -50,8 +52,12 @@ const CreateRole = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (role && (role.num && rolesTaken[role.name] >= role.num)) {
-      alertContext.showAlert("Too many people have already chosen this role. Please choose a different one.", "warning");
+    if (role && (role.num && role.num !== -1 && rolesTaken[role.name] >= role.num)) {
+      alertContext.showAlert(t("alert.roleLimitExceeded"), "warning");
+      return false;
+    }
+    if (!role.name) {
+      alertContext.showAlert(t("alert.noRoleSelected"), "warning");
       return false;
     }
     props.handleSubmit({role: role?.name, name});
@@ -68,11 +74,11 @@ const CreateRole = (props) => {
     <div className="areacsv" >
       <div className="areacsvform modal-role-select">
         <div className="modal-role-header">
-          <h2>Welcome to the simulation!</h2>
-          <p>{userExists ? `You are joining as ${props.initialUserInfo.fname} ${props.initialUserInfo.lname}.` : "Select your name to continue."}</p>
+          <h2>{t("game.welcomeToTheSimulation")}</h2>
+          <p>{userExists ? t("game.joiningAsX", { name: `${props.initialUserInfo.fname} ${props.initialUserInfo.lname}` }) : t("game.inputName")}</p>
         </div>
         <div id="rolesdrops">
-          <span>Role</span>
+          <span>{t("common.role")}</span>
           <DropdownRoles
             gameid={props.gameid}
             roleLevel={handleSetRole}
@@ -84,16 +90,16 @@ const CreateRole = (props) => {
           />
         </div>
         <form onSubmit={handleSubmit} action="#">
-          <span>Name</span>
+          <span>{t("game.name")}</span>
           <NameInput 
             type="text" 
-            placeholder="Your name" 
+            placeholder={t("game.namePlaceholder")}
             value={name ? name : ""} 
             onChange={(e) => setName(e.target.value)} 
             required
             maxLength="25"
           />
-          <Submit type="submit">Go</Submit>
+          <Submit type="submit">{t("game.go")}</Submit>
         </form>
       </div>
     </div>

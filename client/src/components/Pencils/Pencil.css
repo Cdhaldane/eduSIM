@@ -1,7 +1,7 @@
 #pencilTimeline {
   color: var(--primary);
-  font-size: 2.25em;
-  padding: 0px 10px;
+  font-size: 1.70em;
+  padding: 0px 6px;
 }
 
 #pencilTimeline:hover {
@@ -26,9 +26,10 @@
 #pencil4 {
   z-index: 2000;
   position: fixed;
+
   left: 20px;
-  top: 20px;
-  color: #dcafb7;
+  top: 880px;
+  color: var(--primary);
   transition: all 0.1s cubic-bezier(0.4, 0, 1, 1), left 0.3s cubic-bezier(0, 0, 0.2, 1) !important;
 }
 

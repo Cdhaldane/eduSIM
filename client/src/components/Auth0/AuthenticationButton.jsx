@@ -2,13 +2,15 @@ import React from "react";
 import Button from "../Buttons/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import "../Buttons/Buttons.css";
 
-function AuthenticationButton(props) {
+const AuthenticationButton = (props) => {
   const { isAuthenticated, loginWithRedirect, logout, } = useAuth0();
   const { user } = useAuth0();
+  const { t } = useTranslation();
 
-  function handleClick() {
+  const handleClick = () => {
     loginWithRedirect({ redirectUri: window.location.origin, prompt: "select_account" });
     axios.get(process.env.REACT_APP_API_ORIGIN + '/adminaccounts/getAdminbyEmail/:email/:name', {
       params: {
@@ -23,7 +25,7 @@ function AuthenticationButton(props) {
     });
   }
 
-  function handleLogout() {
+  const handleLogout = () => {
     logout({
       returnTo: window.location.origin,
     });
@@ -37,7 +39,7 @@ function AuthenticationButton(props) {
       buttonStyle="btn--primary--solid"
       buttonSize="button--medium"
     >
-      Logout
+      {t("navbar.logout")}
     </Button>
   ) : (
     <Button
@@ -46,7 +48,7 @@ function AuthenticationButton(props) {
       buttonStyle="btn--primary--solid"
       buttonSize="button--medium"
     >
-      Login
+      {t("navbar.login")}
     </Button>
   );
 }

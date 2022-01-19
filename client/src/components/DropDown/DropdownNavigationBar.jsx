@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import Switch from "react-switch";
 import DropdownItem from "./DropdownItem";
+import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
 const DropdownNavigationBar = (props) => {
+  const { t } = useTranslation();
 
   const [menuHeight, setMenuHeight] = useState(null);
   const [messagesChecked, setMessagesChecked] = useState(true);
@@ -61,11 +63,11 @@ const DropdownNavigationBar = (props) => {
         unmountOnExit
         onEnter={calcHeight}>
         <div className="menu">
-          <h1>Edit Navigation Bar</h1>
+          <h1>{t("sidebar.editNavigationBar")}</h1>
           <DropdownItem
             leftIcon={<i className="icons fas fa-comment-dots"></i>}
             onClick={handleMessage}>
-            Messaging
+            {t("sidebar.messaging")}
             <Switch
               onChange={handleMessage}
               checked={messagesChecked}
@@ -75,7 +77,7 @@ const DropdownNavigationBar = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-bell"></i>}
             onClick={handleAlerts}>
-            Alerts
+            {t("sidebar.alerts")}
             <Switch
               onChange={handleAlerts}
               checked={alertsChecked}
@@ -85,7 +87,7 @@ const DropdownNavigationBar = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-chart-bar"></i>}
             onClick={handlePerformance}>
-            Performance
+            {t("sidebar.performance")}
             <Switch
               onChange={handlePerformance}
               checked={performanceChecked}
@@ -95,7 +97,7 @@ const DropdownNavigationBar = (props) => {
           <DropdownItem
             leftIcon={<i className="icons fas fa-cog"></i>}
             onClick={handleSettings}>
-            Settings
+            {t("sidebar.settings")}
             <Switch
               onChange={handleSettings}
               checked={settingsChecked}

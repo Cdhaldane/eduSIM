@@ -5,7 +5,7 @@ const Button = styled.button`
     background-color: transparent;
     border: none;
     min-height: 42px;
-    color: rgba(255,255,255, .7);
+    color: var(--primary);
     ${(p) => !p.disabled && "cursor: pointer;"}
     ${(p) => p.disabled && "opacity: 0.5;"}
     padding: 0 32px;
@@ -33,7 +33,7 @@ const Button = styled.button`
     }
 `;
 
-function NavToggle(props) {
+const NavToggle = (props) => {
   return (
     <Button
       {...props}

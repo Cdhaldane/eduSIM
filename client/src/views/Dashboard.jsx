@@ -5,13 +5,15 @@ import CreateArea from "../components/CreateArea/CreateArea";
 import Modal from "react-modal";
 import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
-function Dashboard(props) {
+const Dashboard = (props) => {
   const { user } = useAuth0();
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState([]);
   const [uploadedImages, setUploadedImages] = useState(null);
   const [deletionId, setDeletionId] = useState(null);
+  const { t } = useTranslation();
 
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const setConfirmationModal = (data, index) => {
@@ -51,13 +53,13 @@ function Dashboard(props) {
     getAllGamedata();
   }, [user]);
 
-  function addNote(newgamedata) {
+  const addNote = (newgamedata) => {
     getGamedata((prevgamedata) => {
       return [...prevgamedata, newgamedata];
     });
   }
 
-  function deleteNote(id) {
+  const deleteNote = (id) => {
     getGamedata((prevgamedata) => {
       return prevgamedata.filter((noteItem, index) => {
         return index !== id;
@@ -65,7 +67,7 @@ function Dashboard(props) {
     });
   }
 
-  function toggleModal() {
+  const toggleModal = () => {
     if (!uploadedImages) {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/image/getImagesFrom/' + localStorage.adminid).then((res) => {
         setUploadedImages(res.data.resources);
@@ -77,9 +79,9 @@ function Dashboard(props) {
   const getConfirmMessage = () => {
     if (gamedata[deletionId]) {
       if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
-        return `Are you sure you want to delete the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation? This action cannot be undone.`;
+        return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
       } else {
-        return `Are you sure you want your access to the ${gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : ""} simulation revoked? This action cannot be undone.`;
+        return t("admin.revokeSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
       }
     }
   }
@@ -110,18 +112,16 @@ function Dashboard(props) {
   }
 
   return (
+    <div className="dashboard-wrapper">
     <div className="dashboard">
-
       <div className="page-margin">
         <button className="addbutton" onClick={toggleModal}>
-          Add a new simulation +
+          {t("admin.addNewSimulation")}
         </button>
       </div>
 
-      <hr />
-
       <div className="page-margin">
-        <h2>My simulations</h2>
+        <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim">
           {gamedata.map((noteItem, index) => {
             return (
@@ -150,12 +150,12 @@ function Dashboard(props) {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <CreateArea 
-          onAdd={addNote} 
-          onDelete={() => setShowNote(!showNote)} 
-          gamedata={gamedata} 
-          isOpen={showNote} 
-          close={toggleModal} 
+        <CreateArea
+          onAdd={addNote}
+          onDelete={() => setShowNote(!showNote)}
+          gamedata={gamedata}
+          isOpen={showNote}
+          close={toggleModal}
           previewImages={uploadedImages}
         />
       </Modal>
@@ -164,9 +164,10 @@ function Dashboard(props) {
         visible={confirmationVisible}
         hide={() => setConfirmationModal(false)}
         confirmFunction={confirmAction}
-        confirmMessage={"Yes - Delete Simulation"}
+        confirmMessage={t("admin.deleteSimConfirm")}
         message={getConfirmMessage()}
       />
+    </div>
     </div>
   );
 }

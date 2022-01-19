@@ -19,18 +19,20 @@ export default async (server, client) => {
     rooms.forEach(async ({ dataValues: room }) => {
       const status = await getRoomStatus(room.gameroom_url);
       const chatlog = await getChatlog(room.gameroom_url);
+      const players = await getPlayersInRoom(room.gameroom_url, server);
       client.join(room.gameroom_url);
       client.emit("roomStatusUpdate", {
         room: room.gameroom_url,
         status,
-        chatlog
+        chatlog,
+        players
       });
     });
 
     client.onAny((event, args) => adminEvents(server, client, event, args));
 
   } else {
-    // initial connection from player; return connection status and announce arrival to other players
+    // initial connection from player; return connection/game status and announce arrival to other players
     
     const roomid = client.handshake.query.room;
     client.join(roomid);

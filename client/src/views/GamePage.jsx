@@ -8,11 +8,15 @@ import styled from "styled-components";
 import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import Loading from "../components/Loading/Loading";
+import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../components/Alerts/AlertContext";
+import "../components/Information/Info.css";
+import "../components/Tabs/Tabs.css";
+import '../components/Stage/Stage.css';
 
 const Main = styled.main`
   grid-area: main;
-  background-color: #e5e5e5;
+  background-color: ${p => p.color}
 `;
 
 const PauseCover = styled.div`
@@ -34,22 +38,6 @@ const PauseCover = styled.div`
   }
 `;
 
-const Time = styled.div`    
-  position: fixed;
-  text-align: center;
-  top: 40px;
-  left: 50%;
-  color: var(--primary);
-  font-size: 3em;
-  font-weight: bold;
-  width: 300px;
-  margin-left: -195px;
-  @media screen and (orientation: portrait) {
-    margin-left: -180px;
-    top: 60px;
-  }
-`;
-
 const Game = (props) => {
 
   const { roomid } = useParams();
@@ -65,7 +53,11 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [userId, setUserId] = useState();
+  const [pageColor, setPageColor] = useState("#FFF");
   const [canvasLoading, setCanvasLoading] = useState(false);
+  const [invalidateSidebar, setInvalidateSidebar] = useState(0);
+  const [disableNext, setDisableNext] = useState(false);
+  const { t } = useTranslation();
 
   const toggle = () => setShowNav(!showNav);
 
@@ -118,10 +110,13 @@ const Game = (props) => {
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
       });
-      client.on("roomStatusUpdate", ({ status, refresh }) => {
+      client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
           localStorage.removeItem("userInfo");
           window.location.reload();
+        }
+        if (lastSetVar) {
+          sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
       });
@@ -133,12 +128,13 @@ const Game = (props) => {
       });
       client.on("clientLeft", (id) => {
         setPlayers(l => {
-          delete l[id];
-          return l;
+          let n = {...l};
+          delete n[id];
+          return n;
         });
       });
-      client.on("errorLog", (message) => {
-        alertContext.showAlert(message, "error");
+      client.on("errorLog", ({key, params={}}) => {
+        alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
       setLoading(false);
@@ -176,6 +172,8 @@ const Game = (props) => {
     return newPlayers;
   }, [players, roles, actualLevel]);
 
+  const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
+
   return (
     !isLoading ? (
       <>
@@ -190,12 +188,20 @@ const Game = (props) => {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          variables={roomStatus.variables || {}}
           submenuProps={{ messageBacklog }}
+          players={parsedPlayers}
           game
           disabled={!roomStatus.running}
+          alertProps={{
+            alerts: tasks[actualLevel] || []
+          }}
+          refresh={invalidateSidebar}
+          setDisableNext={setDisableNext}
         />
-        <Main>
+        <Main color={pageColor}>
           <CanvasGame
+            setPageColor={setPageColor}
             canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}
             loadObjects={props.loadObjects}
@@ -212,34 +218,29 @@ const Game = (props) => {
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
+            variables={roomStatus.variables || {}}
             roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}
             initialUserId={userid}
             alert={alertContext.showAlert}
+            refresh={() => setInvalidateSidebar(Math.random())}
+            disableNext={disableNext}
+            countdown={roomStatus.settings && !isNaN(roomStatus.settings.advanceMode) && countdown}
           />
           {!roomStatus.running && (<PauseCover>
             <i className="fa fa-pause-circle fa-2x"></i>
-            <p>Paused</p>
+            <p>{t("game.paused")}</p>
           </PauseCover>)}
         </Main>
-        <Time>
-          {!isNaN(roomStatus.settings?.advanceMode) && (
-            <>
-              <AutoUpdate
-                value={() => moment(countdown()).format("mm:ss")}
-                intervalTime={20}
-                enabled
-              />
-              <AutoUpdate
-                value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode * 60000)) + 1}
-                intervalTime={20}
-                enabled
-                noDisplay
-                onChange={setLevel}
-              />
-            </>
-          )}
-        </Time>
+        {!isNaN(roomStatus.settings?.advanceMode) && (
+          <AutoUpdate
+            value={() => Math.floor(timeFromNow() / (roomStatus.settings.advanceMode * 60000)) + 1}
+            intervalTime={20}
+            enabled
+            noDisplay
+            onChange={setLevel}
+          />
+        )}
         {canvasLoading && (
           <div className="gameLoadingOverlay">
             <Loading />

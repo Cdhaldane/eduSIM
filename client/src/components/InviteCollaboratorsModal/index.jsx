@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useAlertContext } from '../Alerts/AlertContext';
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import moment from "moment";
+import { useTranslation } from "react-i18next";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 
 const EmailInput = styled.div`
@@ -47,10 +47,12 @@ const Collaborators = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding-left: 5px;
+  overflow-y: auto;
   flex: 1;
   & > div {
     display: flex;
     text-align: left;
+    min-height: 40px;
     align-items: center;
   }
   & i {
@@ -64,7 +66,7 @@ const Collaborators = styled.div`
   }
 `;
 
-function InviteCollaboratorsModal(props) {
+const InviteCollaboratorsModal = (props) => {
   const detailsArea = new useRef();
   const [emails, setEmails] = useState([""]);
   const [sending, setSending] = useState(false);
@@ -73,6 +75,7 @@ function InviteCollaboratorsModal(props) {
   const { user } = useAuth0();
   const [revokeUser, setRevokeUser] = useState(null);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const { t } = useTranslation();
   
   useEffect(() => {
     (async () => {
@@ -119,13 +122,13 @@ function InviteCollaboratorsModal(props) {
       simid: props.gameid,
       simname: props.title
     }).then((res) => {
-      alertContext.showAlert("Invitations have been successfully sent to given email addresses.", "info");
+      alertContext.showAlert(t("alert.inviteSuccessful"), "info");
       props.close();
       setSending(false);
     }).catch((error) => {
       console.log(error);
       if (error) {
-        alertContext.showAlert("An error has occured while attempting to send email invitations. Please try again.", "error");
+        alertContext.showAlert(t("alert.inviteError"), "error");
       }
       setSending(false);
     });
@@ -165,16 +168,16 @@ function InviteCollaboratorsModal(props) {
   return (
     <>
       <div className="areacsv">
-        <form ref={detailsArea} className="areacsvform areainvitecollabs">
-          <h1 className="modal-title">Invite Collaborators</h1>
-          <p>To add a collaborator, enter their email address. They will be sent a personal invitation link to create an account and join the simulation.</p>
+        <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
+          <h1 className="modal-title">{t("modal.inviteCollaborators")}</h1>
+          <p>{t("modal.inviteCollaboratorsExplanation")}</p>
           <div>
             <EmailInput>
               {emails.map((val, ind) => (
                 <div>
                   <input 
                     type="text" 
-                    placeholder="Email address" 
+                    placeholder={t("modal.emailAddress")}
                     value={val} 
                     onChange={(e) => handleUpdateEmail(e.target.value, ind)} 
                   />
@@ -186,20 +189,26 @@ function InviteCollaboratorsModal(props) {
                 </div>
               ))}
               <button className="adduser" type="button" onClick={handleAddUser}>
-                Add user +
+                {t("modal.addUser")}
               </button>
             </EmailInput>
             <Collaborators>
-              <h3>People with access to {props.title}:</h3>
-              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email}) => (
+              <h3>{t("modal.peopleWithAccessToX", { name: props.title })}</h3>
+              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email, verified}) => (
                 <div>
                   <div>
-                    <h4>{name}</h4>
-                    <p>{email}</p>
+                    {name ? (
+                      <>
+                      <h4>{name} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
+                      <p>{email}</p>
+                      </>
+                    ) : (
+                      <h4>{email} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
+                    )}
                   </div>
-                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name})}></i>
+                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name, email})}></i>
                 </div>
-              )) : <p>No one currently has access to {props.title}.</p>}
+              )) : <p>{t("modal.nobodyHasAccessToX", { name: props.title })}</p>}
             </Collaborators>
           </div>
           <button 
@@ -208,7 +217,7 @@ function InviteCollaboratorsModal(props) {
             onClick={handleSendEmails}
             disabled={sending}
           >
-            Send
+            {t("modal.send")}
           </button>
         </form>
       </div>
@@ -216,8 +225,8 @@ function InviteCollaboratorsModal(props) {
         visible={!!revokeUser}
         hide={hideConfirm}
         confirmFunction={handleRevokeUser}
-        confirmMessage={"Yes"}
-        message={revokeUser && `Revoke access to ${props.title} for ${revokeUser.name}?`}
+        confirmMessage={t("modal.confirmRevokeAccess")}
+        message={revokeUser && t("modal.revokeAccessToXForY", { name: props.title, person: revokeUser.name || revokeUser.email})}
       />
     </>
   );

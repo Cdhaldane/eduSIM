@@ -3,18 +3,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Note.css";
 
-function Note(props) {
+const Note = (props) => {
   return (
     props.onClick ? (
-      <button className={props.className} type="button" alt="sim background" onClick={props.onClick} >
+      <div className={props.className} alt="sim background"  >
+        <img src={props.img} alt="note background"/>
         <h1>{props.title}</h1>
-        <img src={props.img} alt="note background"/>  
-      </button>
+        <h2>{props.text}</h2>
+        <button onClick={props.onClick} type="button" className="w-button">Learn More</button>
+      </div>
     ) : (
-      <Link to={props.url} className={props.className} >
+      <div  className={props.className} >
+        <img src={props.img} alt="note background"/>
         <h1>{props.title}</h1>
-        <img src={props.img} alt="note background"/>  
-      </Link>
+        <h2>{props.text}</h2>
+        <Link to={props.url} className="w-button" type="button">Learn More</Link>
+      </div>
     )
   );
 }

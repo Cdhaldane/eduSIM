@@ -11,8 +11,8 @@ let server = supertest.agent("http://localhost:5050");
 /**
  * Testing get all user endpoint
  */
-describe('GET /getAdminSimulations', function () {
-    it('respond with json containing a list of all game instances created by an admin', function (done) {
+describe('GET /getAdminSimulations', () => {
+    it('respond with json containing a list of all game instances created by an admin', (done) => {
         const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7";
         server
             .get('/gameinstances/' + adminid)
@@ -22,8 +22,8 @@ describe('GET /getAdminSimulations', function () {
     });
 });
 
-describe('GET /getGameSimulationById', function () {
-    it('respond with json containing a specific game instance', function (done) {
+describe('GET /getGameSimulationById', () => {
+    it('respond with json containing a specific game instance', (done) => {
         const adminid = "7835228b-fb40-41f7-80cc-ce3ecfb5b3e7";
         const gameid = "c8a39fd1-a5de-42c8-8558-20687813ea62";
         server
@@ -34,8 +34,8 @@ describe('GET /getGameSimulationById', function () {
     });
 });
 
-describe('POST /NewGameSimulation', function () {
-    it('respond with newly created game instance', function (done) {
+describe('POST /NewGameSimulation', () => {
+    it('respond with newly created game instance', (done) => {
         server
             .post('/gameinstances/createGameInstance')
             .send({
@@ -56,8 +56,8 @@ describe('POST /NewGameSimulation', function () {
     });
 });
 
-describe('PUT /UpdateGameSimulation', function () {
-    it('respond with updated game instance', function (done) {
+describe('PUT /UpdateGameSimulation', () => {
+    it('respond with updated game instance', (done) => {
         const id = "c8a39fd1-a5de-42c8-8558-20687813ea62";
         server
             .put('/gameinstances/update/' + id)
@@ -73,8 +73,8 @@ describe('PUT /UpdateGameSimulation', function () {
     });
 });
 
-describe('DELETE /DeleteGameSimulation', function () {
-    it('respond with success message', function (done) {
+describe('DELETE /DeleteGameSimulation', () => {
+    it('respond with success message', (done) => {
         const id = "cc717876-3e8b-4292-970a-82007136b11b";
         server
             .delete('/gameinstances/delete/' + id)

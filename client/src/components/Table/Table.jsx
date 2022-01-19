@@ -5,6 +5,7 @@ import EditableRow from "../EditableRow"
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAlertContext } from '../Alerts/AlertContext';
 import { parse } from "papaparse";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import "./tailwind.css"
 
@@ -32,16 +33,18 @@ const Table = (props) => {
     email: "",
     group: "",
   });
+  const { t } = useTranslation();
 
   const [editContactId, setEditContactId] = useState(null);
 
   const { user } = useAuth0()
   const alertContext = useAlertContext();
+  const [excludedEmails, setExcludedEmails] = useState([]);
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (props.addstudent === false) {
-      setGroupOr("Group")
+      setGroupOr("admin.group")
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getAllPlayers/:gameinstanceid', {
         params: {
           id: props.gameid,
@@ -68,10 +71,11 @@ const Table = (props) => {
         console.log(error);
       });
     } else {
-      setGroupOr("Role")
+      setGroupOr("common.role")
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayers/:game_room', {
         params: {
           game_room: props.gameroom,
+          gameinstanceid: props.gameid
         }
       }).then((res) => {
         let data = []
@@ -86,7 +90,8 @@ const Table = (props) => {
           cart.firstName = (res.data[i].fname);
           cart.lastName = (res.data[i].lname);
           cart.email = (res.data[i].player_email);
-          cart.group = (res.data[i].gamerole);
+          cart.group = (res.data[i].game_room);
+          cart.gamerole = (res.data[i].gamerole);
           cart.id = (res.data[i].gameplayerid);
           data.push(cart);
         }
@@ -101,7 +106,7 @@ const Table = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      let items = [(<option key={-1} value="">Select a role</option>)];
+      let items = [(<option key={-1} value="">{t("admin.selectARole")}</option>)];
       for (let i = 0; i <= allData.length - 1; i++) {
         // Here I will be creating my options dynamically based on
         items.push(<option key={i} value={allData[i].gamerole}>{allData[i].gamerole}</option>);
@@ -138,7 +143,6 @@ const Table = (props) => {
 
   // Add submit
   const handleAddFormSubmit = (event) => {
-    window.location.reload();
     event.preventDefault();
     let data = {
       gameinstanceid: props.gameid,
@@ -161,6 +165,7 @@ const Table = (props) => {
     }).catch(error => {
       console.log(error);
     });
+    return false;
   };
 
   const handleEditFormSubmit = (event) => {
@@ -171,7 +176,8 @@ const Table = (props) => {
       firstName: editFormData.firstName,
       lastName: editFormData.lastName,
       email: editFormData.email,
-      group: editFormData.group,
+      gamerole: editFormData.gamerole,
+      group: editFormData.group
     };
 
     const newContacts = [...contacts];
@@ -188,6 +194,7 @@ const Table = (props) => {
       lname: newContacts[index].lastName,
       player_email: newContacts[index].email,
       gamerole: newContacts[index].gamerole,
+      game_room: newContacts[index].group
     }
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updatePlayer', data).then((res) => {
       console.log(res);
@@ -234,20 +241,37 @@ const Table = (props) => {
     e.preventDefault();
     setSending(true);
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendInviteEmails', {
+      exclude: excludedEmails,
       simname: props.title,
       admin: user.name,
       simid: props.gameid
     }).then((res) => {
-      alertContext.showAlert("Email invitations have been successfully sent to simulation participants.", "info");
+      alertContext.showAlert(t("alert.emailSuccessful"), "info");
       props.onEmailSent();
       setSending(false);
     }).catch((error) => {
       console.log(error);
       if (error) {
-        alertContext.showAlert("An error has occured while attempting to send email invitations. Please try again.", "error");
+        alertContext.showAlert(t("alert.emailError"), "error");
       }
       setSending(false);
     });
+  }
+
+  const handleCheckEmail = (id) => {
+    if (!excludedEmails.includes(id)) {
+      setExcludedEmails(old => [...old, id]);
+    } else {
+      setExcludedEmails(old => old.filter(val => val != id));
+    }
+  }
+
+  const handleCheckAll = () => {
+    if (excludedEmails.length !== 0) {
+      setExcludedEmails([]);
+    } else {
+      setExcludedEmails(contacts.map(({ id }) => id));
+    }
   }
 
   return (
@@ -284,11 +308,16 @@ const Table = (props) => {
           <table className="table-el">
             <thead>
               <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>{groupOr}</th>
-                <th>Actions</th>
+                {props.email && (
+                  <th className="table-checkrow">
+                    <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
+                  </th>
+                )}
+                <th>{t("admin.firstName")}</th>
+                <th>{t("admin.lastName")}</th>
+                <th>{t("admin.emailAddress")}</th>
+                <th>{t(groupOr)}</th>
+                <th>{t("admin.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -300,12 +329,22 @@ const Table = (props) => {
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
                       rolelist={rolelist}
+                      groupList={props.groups || []}
+                      useGroup={groupOr === "admin.group"}
+                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                      checked={!excludedEmails.includes(contact.id)}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
                       handleEditClick={handleEditClick}
                       handleDeleteClick={() => handleDeleteClick(contact.id)}
+                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                      groupList={props.groups || []}
+                      useGroup={groupOr === "admin.group"}
+                      checked={!excludedEmails.includes(contact.id)}
+                      online={props.players && props.players.some((id) => id === contact.id)}
                     />
                   )}
                 </Fragment>
@@ -319,38 +358,47 @@ const Table = (props) => {
        {/*<h2>Add a student</h2>*/}
        <form onSubmit={handleAddFormSubmit} className="addstudent-form">
          <input
-           placeholder="First name"
+           placeholder={t("admin.firstName")}
            id="firstname"
            type="text"
            name="firstName"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
          <input
-           placeholder="Last name"
+           placeholder={t("admin.lastName")}
            id="lastname"
            type="text"
            name="lastName"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
          <input
-           placeholder="Email address"
+           placeholder={t("admin.emailAddress")}
            id="email"
            type="text"
            name="email"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
        <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
            {rolelist}
          </select>
-       <button type="submit" id="addstudent">Add</button>
+       <button type="submit" id="addstudent">{t("common.add")}</button>
        </form>
        </div>)
        : <>
         {props.email && (
-          <button className="modal-bottomright-button" onClick={handleEmail} disabled={sending}>Email</button>
+          <button
+            className="modal-bottomright-button"
+            onClick={handleEmail}
+            disabled={sending || excludedEmails.length === contacts.length}
+          >
+            {t("modal.email")}
+          </button>
         )}
        </>
       }

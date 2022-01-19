@@ -1,35 +1,41 @@
+.personalAreaAnimOn {
+  transition: 0.3s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
 .info0 {
   width: calc(100% - 130px);
   height: calc(100% - 70px);
   text-align: center;
   position: fixed;
   left: 100px;
-  bottom: 90px;
+  bottom: 75px;
   transform: translate(0%, 100%);
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  background-color: rgba(110, 25, 25, 0);
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
+  pointer-events: none;
 }
 
 .info1 {
   width: calc(100% - 130px);
-  height: calc(100% - 70px);
+  height: calc(100% - 60px);
   text-align: center;
   position: fixed;
   left: 100px;
   bottom: 0px;
   transform: translate(0%, 0%);
-  padding: 20px;
+  padding: 10px;
   background-color: white;
   box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--primary);
   border-radius: 15px 15px 0px 0px;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   z-index: 2;
+  transition: none;
+  background-image:
+    repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);
+  background-size: 8vh 8vh;
 }
 
 .info0 button {
@@ -58,8 +64,21 @@
 
 .personalAreaToggle {
   color: var(--primary);
-  border: none;
-  background-color: transparent;
+  padding: 0px 8px 0px 8px;
+  margin-top: 5px;
+  border-radius: 40%;
+  border: 2px solid var(--primary);
+  box-shadow: var(--box-shadow);
+  background-color: white;
+  pointer-events: all;
+}
+
+.personalAreaToggle>i {
+  font-size: 2.75em;
+}
+
+#rolesdrop {
+  pointer-events: all;
 }
 
 #pencili1 {
@@ -101,14 +120,17 @@
     width: calc(100% - 60px);
     left: 30px;
   }
+
   .info1 {
     height: calc(100% - 110px);
     width: calc(100% - 60px);
     left: 30px;
   }
+
   #pencili1 {
     left: 380px;
   }
+
   #pencili0 {
     left: 380px;
   }

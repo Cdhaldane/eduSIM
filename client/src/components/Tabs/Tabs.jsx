@@ -7,10 +7,11 @@ import { useAlertContext } from "../Alerts/AlertContext";
 import moment from "moment";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Performance from "../SideBar/Performance";
+import { useTranslation } from "react-i18next";
 
 import "./Tabs.css";
 
-function Tabs(props) {
+const Tabs = (props) => {
   const [toggleState, setToggleState] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -22,6 +23,7 @@ function Tabs(props) {
   const [removeLog, setRemoveLog] = useState(null);
   const [customObjs, setCustomObjs] = useState();
   const [editingName, setEditingName] = useState(false);
+  const { t } = useTranslation();
 
   const alertContext = useAlertContext();
 
@@ -103,11 +105,11 @@ function Tabs(props) {
     e.preventDefault();
     let index = tabs.length + 1;
     tabs.forEach(tab => {
-      if (tab[0] === `New group ${index}`) index++
+      if (tab[0].endsWith(index)) index++
     });
     let data = {
       gameinstanceid: props.gameid,
-      gameroom_name: `New group ${index}`
+      gameroom_name: t("admin.newGroupX", { index })
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
@@ -121,11 +123,11 @@ function Tabs(props) {
 
   const handleGroupName = (e) => {
     if (newName.trim() === "") {
-      alertContext.showAlert("Group name cannot be empty.", "warning");
+      alertContext.showAlert(t("alert.emptyGroupName"), "warning");
       return;
     }
     if (tabs.some((tab, ind) => tab[0] === newName.trim() && toggleState-1 !== ind)) {
-      alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
+      alertContext.showAlert(t("alert.groupAlreadyExists"), "warning");
       return;
     }
     let data = {
@@ -305,20 +307,22 @@ function Tabs(props) {
       {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
         <div className="logs page-margin" hidden={!viewLogs}>
           <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
-            <h4>Display previous runs {viewLogs ? '-' : '+'}</h4>
+            <h4>{t("admin.displayPreviousRuns")} {viewLogs ? '-' : '+'}</h4>
           </div>
           {logs[tabs[toggleState - 1][1]].map(data => (
             <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
               <div className="logrow-info">
                 <i className="fas fa-scroll"></i>
                 <p>
-                  Started on {moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa")},
-                  lasted {getGameLength(data)}
+                  {t("admin.startedXLastedY", {
+                    time: moment(data.gamedata.roomStatus.startTime).format("MMMM Do, h:mm:ssa"),
+                    duration: getGameLength(data)
+                  })}
                 </p>
               </div>
               <div className="logrow-buttons">
-                <button onClick={() => downloadCSV(data)} title="Download spreadsheet"><i className="fas fa-file-csv"></i></button>
-                <button onClick={() => downloadJSON(data)} title="Download JSON data"><i className="fas fa-file-code"></i></button>
+                <button onClick={() => downloadCSV(data)} title={t("admin.downloadCSV")}><i className="fas fa-file-csv"></i></button>
+                <button onClick={() => downloadJSON(data)} title={t("admin.downloadJSON")}><i className="fas fa-file-code"></i></button>
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
@@ -332,12 +336,15 @@ function Tabs(props) {
       )}
       <div className="page-margin tabs">
         <ul className="selected-tab">
+
           <li
+             className="tab-overview"
             onClick={() => toggleTab(0)}
             className={toggleState === 0 ? "selected" : ""}
           >
-            <span className="tab-text">Overview</span>
+            <span className="tab-text">{t("admin.overview")}</span>
           </li>
+
           {tabs.map((tab, i) => (
             <li
               key={i}
@@ -351,7 +358,7 @@ function Tabs(props) {
             onClick={handleNewGroup}
             className={toggleState === tabs.length + 1 ? "selected" : ""}
           >
-            <span className="tab-add-group">Add group +</span>
+            <span className="tab-add-group">{t("admin.addGroup")}</span>
           </button>
         </ul>
         <div className="content-tabs">
@@ -360,9 +367,15 @@ function Tabs(props) {
           >
             <div className="content-row">
               <div className="content-settings">
-                <h3>Settings:</h3>
+                <h3>{t("admin.settings")}</h3>
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="studentbuttonemail"
+                  >
+                    {t("admin.openEmailModal")}
+                  </button>
                 <div className="simadv">
-                  <h3>Simulation advancement</h3>
+                  <h3>{t("admin.simulationAdvancement")}</h3>
                   <div className="content-radiobuttons">
                     <div>
                       <input
@@ -372,7 +385,7 @@ function Tabs(props) {
                         onChange={handleSetAdvancement}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Teacher/Facilitator
+                      {t("admin.teachers")}
                     </div>
                     <div>
                       <input
@@ -382,7 +395,7 @@ function Tabs(props) {
                         onChange={handleSetAdvancement}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Student/Participants
+                      {t("admin.students")}
                     </div>
                     <div>
                       <input
@@ -392,7 +405,7 @@ function Tabs(props) {
                         onChange={handleSetAdvancement}
                         disabled={tabs.length === 0}
                       />{" "}
-                      <span>Timed =</span>
+                      <span>{t("admin.timed")} = </span>
                       <input
                         onChange={handleTime}
                         value={time}
@@ -401,12 +414,12 @@ function Tabs(props) {
                         className="content-timeinput"
                         disabled={tabs.length === 0 || displayAdvance() !== "timed"}
                       />
-                      <span>min</span>
+                      <span>{t("admin.suffixMinutes")}</span>
                     </div>
                   </div>
                 </div>
                 <div className="simadv">
-                  <h3>Role assignment</h3>
+                  <h3 className="simadv-inline">{t("admin.roleAssignment")}</h3>
                   <div className="content-radiobuttons">
                     <div>
                       <input
@@ -416,7 +429,7 @@ function Tabs(props) {
                         onChange={handleSetRole}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Teacher/Facilitator
+                      {t("admin.teachers")}
                     </div>
                     <div>
                       <input
@@ -426,7 +439,7 @@ function Tabs(props) {
                         onChange={handleSetRole}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Student/Participants
+                      {t("admin.students")}
                     </div>
                     <div>
                       <input
@@ -436,7 +449,7 @@ function Tabs(props) {
                         onChange={handleSetRole}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Random
+                      {t("admin.random")}
                     </div>
                     <div>
                       <input
@@ -446,17 +459,12 @@ function Tabs(props) {
                         onChange={handleSetRole}
                         disabled={tabs.length === 0}
                       />{" "}
-                      Random (per level)
+                      {t("admin.randomPerLevel")}
                     </div>
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="studentbuttonemail"
-              >
-                Email Student/Participant
-              </button>
+
               <Modal
                 isOpen={isOpen}
                 onRequestClose={toggleModal}
@@ -470,12 +478,13 @@ function Tabs(props) {
                   addstudent={true}
                   gameid={props.gameid}
                   title={props.title}
+                  groups={tabs}
                   close={() => setIsOpen(false)}
                 />
               </Modal>
             </div>
-            <h3>Student/participant list:</h3>
-            <Table addstudent={false} gameid={props.gameid} title={props.title} />
+            <h3>{t("admin.studentList")}</h3>
+            <Table addstudent={false} gameid={props.gameid} title={props.title} groups={tabs} />
           </div>
           {tabs.map((tab, i) => (
             <div
@@ -486,32 +495,32 @@ function Tabs(props) {
             >
               <div className="content-header">
                 {editingName ? (
-                  <>
+                  <div>
                     <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
                     <i className="fas fa-check content-editname" onClick={handleGroupName} />
-                  </>
+                  </div>
                 ) : (
-                  <>
+                  <div>
                     <h2>{tab[0]}</h2>
                     <i className="fas fa-pencil-alt content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
-                    }} />
-                  </>
+                    }} ><h1>Edit</h1></i>
+                  </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
-                  Join Room
+                {t("admin.joinRoom")}
                 </a>
                 <button
                   onClick={() => handleDeleteGroup(tab)}
                   className="deletegroup"
                 >
-                  Delete Group
+                  {t("admin.deleteGroup")}
                 </button>
               </div>
               <hr />
               <div className="groupcontainer">
                 <div className="group-column">
-                  <h3>Chat: </h3>
+                  <h3>{t("admin.chat")}</h3>
                   <div className="group-chatlog">
                     <div>
                       {props.chatMessages.map(({ sender, message }) => (
@@ -521,7 +530,7 @@ function Tabs(props) {
                   </div>
                 </div>
                 <div className="group-column">
-                  <h3>Performance Report:</h3>
+                  <h3 >{t("admin.performanceReport")}</h3>
                   <Performance
                     adminMode={true}
                     status={props.roomStatus[Object.keys(props.roomStatus)[0]]
@@ -530,13 +539,14 @@ function Tabs(props) {
                   />
                 </div>
               </div>
-              <h3>Students / participants in room:</h3>
+              <h3 className="temp">{t("admin.studentsInRoom")}</h3>
               <div className="group-table">
                 <Table
                   addstudent={true}
                   gameroom={tab}
                   gameid={props.gameid}
                   title={props.title}
+                  players={props.players}
                 />
               </div>
             </div>
@@ -546,8 +556,8 @@ function Tabs(props) {
           visible={!!removeLog}
           hide={() => setRemoveLog(null)}
           confirmFunction={handleRemoveLog}
-          confirmMessage={"Delete"}
-          message={`Are you sure you want to delete this game log?`}
+          confirmMessage={t("admin.deleteLog")}
+          message={t("admin.confirmDeleteLog")}
         />
       </div>
     </>
