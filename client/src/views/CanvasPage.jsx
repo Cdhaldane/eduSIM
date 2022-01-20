@@ -433,6 +433,7 @@ const CanvasPage = (props) => {
 
   const lineObjProps = (obj, canvas, editMode) => {
     return {
+      key: obj.id,
       draggable: true,
       strokeEnabled: !canvas.state.canvasLoading,
       id: obj.id,
@@ -587,6 +588,8 @@ const CanvasPage = (props) => {
   const pencilProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      name: obj.name,
+      ref: obj.ref,
       key: index,
       visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,

@@ -542,9 +542,13 @@ class Graphics extends Component {
     }
   }
 
-  handlePageTitle = (newPageTitles) => {
+  handlePageTitle = (newPageTitles, pageCopied) => {
     this.setState({
       pages: newPageTitles
+    }, () => {
+      if (pageCopied !== -1) {
+        this.handleCopyPage(pageCopied);
+      }
     });
   }
 
@@ -2088,7 +2092,6 @@ class Graphics extends Component {
 
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (text, layer) => {
-    console.log(layer);
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -2807,6 +2810,16 @@ class Graphics extends Component {
 
   handleCopyPage = (index) => {
     // Copy all objects from chosen level to new level
+    const groupLayers = [];
+    const personalLayers = [];
+    const overlayLayers = [];
+    let toBeSaved = {};
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      toBeSaved = {
+        ...toBeSaved,
+        [this.savedObjects[i]]: []
+      }
+    }
     for (let i = 0; i < this.savedObjects.length; i++) {
       const type = this.savedObjects[i];
       const objs = this.state[type];
@@ -2815,21 +2828,65 @@ class Graphics extends Component {
         if (obj.level === index + 1) {
           const objectsState = this.state[type];
           const objectsDeletedState = this.state[`${type}DeleteCount`];
-          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + toBeSaved[type].length + 1;
           const id = type + numOfObj;
+          if (obj?.overlayIndex && obj.overlayIndex !== -1) {
+            const inListIndex = overlayLayers.findIndex((layer => layer.id === obj.overlayIndex));
+            if (inListIndex !== -1) {
+              const newLayers = {
+                id: overlayLayers[inListIndex].id,
+                layers: [
+                  ...overlayLayers[inListIndex].layers,
+                  id
+                ]
+              }
+              overlayLayers[inListIndex] = newLayers;
+            } else {
+              overlayLayers.push({
+                id: obj.overlayIndex,
+                layers: [id]
+              });
+            }
+          } else if (obj.infolevel) {
+            personalLayers.push(id);
+          } else {
+            groupLayers.push(id);
+          }
           const newObj = {
             ...obj,
             id: id,
             ref: id,
             name: id,
-            level: this.state.pages.length + 1
+            level: this.state.pages.length
           }
-          this.setState({
-            [type]: [...objs, newObj]
-          });
+          toBeSaved[type].push(newObj);
         }
       }
     }
+    console.log(toBeSaved);
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const type = this.savedObjects[i];
+      this.setState({
+        [type]: [...this.state[type], ...toBeSaved[type]]
+      });
+    }
+    const newPages = [...this.state.pages];
+    const newPage = {...this.state.pages[this.state.pages.length - 1]};
+    newPage.groupLayers = groupLayers;
+    newPage.personalLayers = personalLayers;
+    const overlays = [...newPage.overlays];
+    for (let i = 0; i < overlayLayers.length; i++) {
+      const overlayLayer = overlayLayers[i];
+      const overlayIndex = overlays.map(overlay => overlay.id).indexOf(overlayLayer.id);
+      const overlay = {...overlays[overlayIndex]};
+      overlay.layers = overlayLayer.layers; 
+      overlays[overlayIndex] = overlay;
+    }
+    newPage.overlays = overlays;
+    newPages[this.state.pages.length - 1] = newPage;
+    this.setState({
+      pages: newPages
+    });
   }
 
   layerUp = (id) => {
