@@ -1,7 +1,6 @@
 const GameRole = require("../models/GameRoles");
 const GameInstance = require("../models/GameInstances");
 const db = require('../databaseConnection');
-import { v4 as uuidv4 } from 'uuid';
 
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
@@ -68,7 +67,6 @@ exports.deleteRole = async (req, res) => {
 
 exports.copyRole = async (req, res) => {
   const gameroleid = req.body.gameroleid;
-  console.log("TESTING:", gameroleid);
   
   const {
     gamerole,
@@ -79,8 +77,6 @@ exports.copyRole = async (req, res) => {
       gameroleid,
     },
   });
-
-  console.log(gamerole);
 
   if (!gamerole) {
     return res.status(400).send({

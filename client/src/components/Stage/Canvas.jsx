@@ -605,7 +605,7 @@ class Graphics extends Component {
   };
 
   handleCopyRole = async (gameroleid) => {
-    this.props.setGameEditProps(undefined)
+    this.props.setGameEditProps(undefined);
     await this.handleSave();
     return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
       gameroleid

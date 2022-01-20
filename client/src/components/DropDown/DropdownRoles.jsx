@@ -3,7 +3,6 @@ import { CSSTransition } from 'react-transition-group';
 import axios from "axios";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
-import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
@@ -55,18 +54,17 @@ const DropdownRoles = (props) => {
       if (rolesData.length) {
         setRoles(rolesData);
       } else {
-        const defaultRole = {
-          id: uuidv4(),
-          roleName: t("game.defaultRole"),
-          numOfSpots: -1,
-        };
         const defaultRoleAPI = {
           gameinstanceid: props.gameid,
           gamerole: t("game.defaultRole"),
           numspots: -1,
         };
         axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
-          setRoles([defaultRole]);
+          setRoles([{
+            id: res.data.gameroleid,
+            roleName: t("game.defaultRole"),
+            numOfSpots: -1,
+          }]);
         }).catch(error => {
           console.error(error);
         });
