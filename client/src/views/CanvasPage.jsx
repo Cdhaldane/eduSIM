@@ -395,6 +395,16 @@ const CanvasPage = (props) => {
    * The following functions return the props that 
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
+  const isSelected = (id, canvas) => {
+    if (canvas.state.selectedShapeName === id) {
+      return true;
+    } else if (canvas.state.groupSelection.flat().some(obj => obj?.attrs?.id === id)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
       key: obj.id,
@@ -415,7 +425,7 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) && isSelected(obj.id, canvas) : obj.draggable,
       editMode: editMode,
       onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
@@ -746,7 +756,7 @@ const CanvasPage = (props) => {
 
   const insertNodeAfter = (newNode, existingNode) => {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-}
+  }
 
   const arraysEqual = (a, b) => {
     if (a === b) return true;
@@ -918,7 +928,7 @@ const CanvasPage = (props) => {
             const customObj = customChild ? customChild.parentElement : null;
 
             if (customObj && (newLayers || canvas.state.customRenderRequested)) {
-              if (canvas.state.customRenderRequested) canvas.setState({customRenderRequested: false});
+              if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
               setTimeout(() => {
                 let stageParentElem = "";
                 if (stage === "overlay") {
@@ -933,7 +943,7 @@ const CanvasPage = (props) => {
 
                 if (stageElem) {
                   const canvasElem = stageElem.querySelectorAll("canvas")[0];
-                  
+
                   if (obj.onTop) {
                     insertNodeAfter(customObj, canvasElem);
                   } else {
@@ -986,11 +996,11 @@ const CanvasPage = (props) => {
       </Layer>
     );
 
-    if (objectIdsNoPencils.filter(id => 
-        id.length > 0 && customObjects.some(obj => 
-          id.startsWith(obj)
-        )
-      ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
+    if (objectIdsNoPencils.filter(id =>
+      id.length > 0 && customObjects.some(obj =>
+        id.startsWith(obj)
+      )
+    ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
 
     return returnValue;
   }

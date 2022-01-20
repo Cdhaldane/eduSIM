@@ -847,7 +847,7 @@ class Graphics extends Component {
           shape = null;
         }
       }
-
+ 
       this.setState({
         selection: {
           isDraggingShape: this.isShape(shape),
@@ -859,7 +859,13 @@ class Graphics extends Component {
         }
       }, () => {
         this.updateSelectionRect(personalArea);
-        this.handleObjectSelection();
+        if (event.buttons === 1 && !event.shiftKey) {
+          const shapeGroup = this.getShapeGroup(shape);
+          this.setState({
+            selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "", 
+            groupSelection: shapeGroup ? [shapeGroup] : []
+          },  this.handleObjectSelection);
+        }
       });
     }
   };
@@ -2042,6 +2048,7 @@ class Graphics extends Component {
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+          //console.log(this.state.savedGroups[i][j].attrs.id);
           if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
             return this.state.savedGroups[i];
           }
