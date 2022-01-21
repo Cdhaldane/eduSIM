@@ -395,6 +395,16 @@ const CanvasPage = (props) => {
    * The following functions return the props that 
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
+  const isSelected = (id, canvas) => {
+    if (canvas.state.selectedShapeName === id) {
+      return true;
+    } else if (canvas.state.groupSelection.flat().some(obj => obj?.attrs?.id === id)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
       key: obj.id,
@@ -415,7 +425,7 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) && isSelected(obj.id, canvas) : obj.draggable,
       editMode: editMode,
       onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
@@ -433,6 +443,7 @@ const CanvasPage = (props) => {
 
   const lineObjProps = (obj, canvas, editMode) => {
     return {
+      key: obj.id,
       draggable: true,
       strokeEnabled: !canvas.state.canvasLoading,
       id: obj.id,
@@ -587,6 +598,8 @@ const CanvasPage = (props) => {
   const pencilProps = (obj, index, canvas, editMode) => {
     return {
       id: obj.id,
+      name: obj.name,
+      ref: obj.ref,
       key: index,
       visible: canvas.state.canvasLoading ? false : true,
       level: obj.level,
@@ -672,8 +685,9 @@ const CanvasPage = (props) => {
     }
   }
 
-  const customObjProps = (canvas) => {
+  const customObjProps = (obj, canvas) => {
     return {
+      onTop: obj.onTop,
       objectSnapping: canvas.objectSnapping,
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
@@ -740,52 +754,8 @@ const CanvasPage = (props) => {
     };
   }
 
-  // Copied from:
-  // https://css-tricks.com/converting-color-spaces-in-javascript/
-  const hexToHSLLightness = (H) => {
-    // Convert hex to RGB first
-    let r = 0, g = 0, b = 0;
-    if (H.length == 4) {
-      r = "0x" + H[1] + H[1];
-      g = "0x" + H[2] + H[2];
-      b = "0x" + H[3] + H[3];
-    } else if (H.length == 7) {
-      r = "0x" + H[1] + H[2];
-      g = "0x" + H[3] + H[4];
-      b = "0x" + H[5] + H[6];
-    }
-    // Then to HSL
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    let cmin = Math.min(r, g, b),
-      cmax = Math.max(r, g, b),
-      delta = cmax - cmin,
-      h = 0,
-      s = 0,
-      l = 0;
-
-    if (delta == 0)
-      h = 0;
-    else if (cmax == r)
-      h = ((g - b) / delta) % 6;
-    else if (cmax == g)
-      h = (b - r) / delta + 2;
-    else
-      h = (r - g) / delta + 4;
-
-    h = Math.round(h * 60);
-
-    if (h < 0)
-      h += 360;
-
-    l = (cmax + cmin) / 2;
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-    s = +(s * 100).toFixed(1);
-    l = +(l * 100).toFixed(1);
-
-    //return "hsl(" + h + "," + s + "%," + l + "%)";
-    return l;
+  const insertNodeAfter = (newNode, existingNode) => {
+    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
   }
 
   const arraysEqual = (a, b) => {
@@ -842,21 +812,21 @@ const CanvasPage = (props) => {
           }}
           {...canvas.getInteractiveProps(obj.id)}
           {...defaultObjProps(obj, canvas, editMode)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "connect4s":
         return <Connect4
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "tics":
         return <TicTacToe
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "htmlFrames":
         return <HTMLFrame
@@ -864,14 +834,14 @@ const CanvasPage = (props) => {
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getVariableProps()}
           {...htmlProps(obj)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "timers":
         return <Timer
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
           {...timerProps(obj, canvas, editMode)}
         />;
       case "inputs":
@@ -880,7 +850,7 @@ const CanvasPage = (props) => {
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getVariableProps()}
           {...inputProps(obj, canvas)}
-          {...(editMode ? customObjProps(canvas) : {})}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       default:
         return null;
@@ -957,7 +927,8 @@ const CanvasPage = (props) => {
             const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
             const customObj = customChild ? customChild.parentElement : null;
 
-            if (customObj && newLayers) {
+            if (customObj && (newLayers || canvas.state.customRenderRequested)) {
+              if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
               setTimeout(() => {
                 let stageParentElem = "";
                 if (stage === "overlay") {
@@ -971,14 +942,13 @@ const CanvasPage = (props) => {
                 const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
 
                 if (stageElem) {
-                  const canvasElems = stageElem.querySelectorAll("canvas");
-                  if (!editMode) {
-                    for (let i = 0; i < canvasElems.length; i++) {
-                      canvasElems[i].style.pointerEvents = "none";
-                    }
+                  const canvasElem = stageElem.querySelectorAll("canvas")[0];
+
+                  if (obj.onTop) {
+                    insertNodeAfter(customObj, canvasElem);
+                  } else {
+                    stageElem.insertBefore(customObj, canvasElem);
                   }
-                  const canvasElem = canvasElems[index + 1];
-                  stageElem.insertBefore(customObj, canvasElem);
                 }
               }, 0);
               setPrevLayers(objectIdsNoPencils);
@@ -1026,11 +996,11 @@ const CanvasPage = (props) => {
       </Layer>
     );
 
-    if (objectIdsNoPencils.filter(id => 
-        id.length > 0 && customObjects.some(obj => 
-          id.startsWith(obj)
-        )
-      ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
+    if (objectIdsNoPencils.filter(id =>
+      id.length > 0 && customObjects.some(obj =>
+        id.startsWith(obj)
+      )
+    ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
 
     return returnValue;
   }

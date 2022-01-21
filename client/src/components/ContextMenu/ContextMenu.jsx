@@ -17,13 +17,13 @@ const ContextMenu = (props) => {
   const setContextMenuTitle = () => {
     let set = false;
     [
-      "text",     
-      "poll",     
-      "connect4", 
-      "tic",   
-      "html",     
-      "input",    
-      "timer",    
+      "text",
+      "poll",
+      "connect4",
+      "tic",
+      "html",
+      "input",
+      "timer",
     ].forEach((key) => {
       if (props.selectedShapeName.startsWith(key)) {
         set = true;
@@ -173,7 +173,9 @@ const ContextMenu = (props) => {
         <div className="layerBtns">
           <li
             onClick={() => props.layerUp(props.selectedShapeName)}
-            className={`${props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : ""}`}
+            className={`${props.getObjState()?.onTop !== undefined ?
+              (props.getObjState().onTop ? "disabled" : "") :
+              (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}`}
           >
             <i className="fas fa-arrow-up" />
           </li>
@@ -181,7 +183,9 @@ const ContextMenu = (props) => {
         <div className="layerBtns">
           <li
             onClick={() => props.layerDown(props.selectedShapeName)}
-            className={`${props.layers[0] === props.selectedShapeName ? "disabled" : ""}`}
+            className={`${props.getObjState()?.onTop !== undefined ? 
+            (!props.getObjState().onTop ? "disabled" : "") : 
+            (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
           >
             <i className="fas fa-arrow-down" />
           </li>
@@ -219,11 +223,11 @@ const ContextMenu = (props) => {
             }}
           >
             <p>{t("edit.onlyDisplayThisIf")}</p>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder={t("edit.variableName")}
-              value={conditions?.varName || ""} 
-              onChange={(e) => handleUpdateConditions("varName", e.target.value)} 
+              value={conditions?.varName || ""}
+              onChange={(e) => handleUpdateConditions("varName", e.target.value)}
             />
             <select
               name="inputtype"
@@ -243,27 +247,27 @@ const ContextMenu = (props) => {
               ))}
             </select>
             {conditions?.condition?.startsWith('is') && (
-              <input 
-                type="text" 
-                placeholder={t("edit.valueToCheckAgainst")} 
-                value={conditions?.trueValue || ""} 
-                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+              <input
+                type="text"
+                placeholder={t("edit.valueToCheckAgainst")}
+                value={conditions?.trueValue || ""}
+                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
               />
             )}
             {conditions?.condition == 'between' && (
               <div className="conditionsbetween">
-                <input 
-                  type="text" 
-                  placeholder={t("edit.minimum")} 
-                  value={conditions?.trueValue || ""} 
-                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)} 
+                <input
+                  type="text"
+                  placeholder={t("edit.minimum")}
+                  value={conditions?.trueValue || ""}
+                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
                 />
                 <p>{t("common.and")}</p>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder={t("edit.maximum")}
-                  value={conditions?.trueValueAlt || ""} 
-                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)} 
+                  value={conditions?.trueValueAlt || ""}
+                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
                 />
               </div>
             )}

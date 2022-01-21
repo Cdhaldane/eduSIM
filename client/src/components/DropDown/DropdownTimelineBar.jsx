@@ -19,6 +19,7 @@ const DropdownTimelineBar = (props) => {
   const [pageColorSettings, setPageColorSettings] = useState("foreground");
   const dropdown = useRef();
   const { t } = useTranslation();
+  const [copy, setCopy] = useState(-1);
 
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [modifyPageName, setModifyPageName] = useState("");
@@ -64,7 +65,8 @@ const DropdownTimelineBar = (props) => {
   }, [numOfPages]);
 
   useEffect(() => {
-    props.handlePageTitle(pages);
+    props.handlePageTitle(pages, copy);
+    setCopy(-1);
     updatePageListHeight();
   }, [pages]);
 
@@ -116,12 +118,13 @@ const DropdownTimelineBar = (props) => {
         onClick={async () => {
           if (pages.length < MAX_PAGE_NUM) {
             // Copy the page and contents
+            setCopy(index);
             setPages([...pages, {
               ...pages[index],
               name: pages[index].name + " Copy",
             }]);
             setNumOfPages(numOfPages + 1);
-            props.handleCopyPage(index);
+            //props.handleCopyPage(index);
           }
         }}
       >

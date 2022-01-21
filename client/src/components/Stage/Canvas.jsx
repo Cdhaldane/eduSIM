@@ -100,6 +100,8 @@ class Graphics extends Component {
       ...objectState,
       ...objectDeleteState,
 
+      customRenderRequested: false,
+
       arrows: [],   // Arrows are used for transformations
       guides: [],   // These are the lines used for snapping
 
@@ -540,9 +542,13 @@ class Graphics extends Component {
     }
   }
 
-  handlePageTitle = (newPageTitles) => {
+  handlePageTitle = (newPageTitles, pageCopied) => {
     this.setState({
       pages: newPageTitles
+    }, () => {
+      if (pageCopied !== -1) {
+        this.handleCopyPage(pageCopied);
+      }
     });
   }
 
@@ -599,7 +605,7 @@ class Graphics extends Component {
   };
 
   handleCopyRole = async (gameroleid) => {
-    this.props.setGameEditProps(undefined)
+    this.props.setGameEditProps(undefined);
     await this.handleSave();
     return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
       gameroleid
@@ -841,7 +847,7 @@ class Graphics extends Component {
           shape = null;
         }
       }
-
+ 
       this.setState({
         selection: {
           isDraggingShape: this.isShape(shape),
@@ -853,7 +859,13 @@ class Graphics extends Component {
         }
       }, () => {
         this.updateSelectionRect(personalArea);
-        this.handleObjectSelection();
+        if (event.buttons === 1 && !event.shiftKey) {
+          const shapeGroup = this.getShapeGroup(shape);
+          this.setState({
+            selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "", 
+            groupSelection: shapeGroup ? [shapeGroup] : []
+          },  this.handleObjectSelection);
+        }
       });
     }
   };
@@ -2036,6 +2048,7 @@ class Graphics extends Component {
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+          //console.log(this.state.savedGroups[i][j].attrs.id);
           if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
             return this.state.savedGroups[i];
           }
@@ -2086,7 +2099,6 @@ class Graphics extends Component {
 
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (text, layer) => {
-    console.log(layer);
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -2805,6 +2817,16 @@ class Graphics extends Component {
 
   handleCopyPage = (index) => {
     // Copy all objects from chosen level to new level
+    const groupLayers = [];
+    const personalLayers = [];
+    const overlayLayers = [];
+    let toBeSaved = {};
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      toBeSaved = {
+        ...toBeSaved,
+        [this.savedObjects[i]]: []
+      }
+    }
     for (let i = 0; i < this.savedObjects.length; i++) {
       const type = this.savedObjects[i];
       const objs = this.state[type];
@@ -2813,45 +2835,123 @@ class Graphics extends Component {
         if (obj.level === index + 1) {
           const objectsState = this.state[type];
           const objectsDeletedState = this.state[`${type}DeleteCount`];
-          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + 1;
+          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + toBeSaved[type].length + 1;
           const id = type + numOfObj;
+          if (obj?.overlayIndex && obj.overlayIndex !== -1) {
+            const inListIndex = overlayLayers.findIndex((layer => layer.id === obj.overlayIndex));
+            if (inListIndex !== -1) {
+              const newLayers = {
+                id: overlayLayers[inListIndex].id,
+                layers: [
+                  ...overlayLayers[inListIndex].layers,
+                  id
+                ]
+              }
+              overlayLayers[inListIndex] = newLayers;
+            } else {
+              overlayLayers.push({
+                id: obj.overlayIndex,
+                layers: [id]
+              });
+            }
+          } else if (obj.infolevel) {
+            personalLayers.push(id);
+          } else {
+            groupLayers.push(id);
+          }
           const newObj = {
             ...obj,
             id: id,
             ref: id,
             name: id,
-            level: this.state.pages.length + 1
+            level: this.state.pages.length
           }
-          this.setState({
-            [type]: [...objs, newObj]
-          });
+          toBeSaved[type].push(newObj);
         }
       }
     }
+    console.log(toBeSaved);
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      const type = this.savedObjects[i];
+      this.setState({
+        [type]: [...this.state[type], ...toBeSaved[type]]
+      });
+    }
+    const newPages = [...this.state.pages];
+    const newPage = {...this.state.pages[this.state.pages.length - 1]};
+    newPage.groupLayers = groupLayers;
+    newPage.personalLayers = personalLayers;
+    const overlays = [...newPage.overlays];
+    for (let i = 0; i < overlayLayers.length; i++) {
+      const overlayLayer = overlayLayers[i];
+      const overlayIndex = overlays.map(overlay => overlay.id).indexOf(overlayLayer.id);
+      const overlay = {...overlays[overlayIndex]};
+      overlay.layers = overlayLayer.layers; 
+      overlays[overlayIndex] = overlay;
+    }
+    newPage.overlays = overlays;
+    newPages[this.state.pages.length - 1] = newPage;
+    this.setState({
+      pages: newPages
+    });
   }
 
   layerUp = (id) => {
-    const newLayers = [...this.getLayers()];
-    const i = newLayers.indexOf(id);
-    if (i < newLayers.length - 1) {
-      const obj = newLayers[i];
-      const next = newLayers[i + 1];
-      newLayers[i + 1] = obj;
-      newLayers[i] = next;
+    const isCustom = this.customObjects.includes(this.getObjType(id));
+    if (isCustom) {
+      this.setState(prevState => ({
+        [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              onTop: true
+            }
+            : obj
+        )
+      }));
+      this.setState({
+        customRenderRequested: true
+      });
+    } else {
+      const newLayers = [...this.getLayers()];
+      const i = newLayers.indexOf(id);
+      if (i < newLayers.length - 1) {
+        const obj = newLayers[i];
+        const next = newLayers[i + 1];
+        newLayers[i + 1] = obj;
+        newLayers[i] = next;
+      }
+      this.setLayers(newLayers);
     }
-    this.setLayers(newLayers);
   }
 
   layerDown = (id) => {
-    const newLayers = [...this.getLayers()];
-    const i = newLayers.indexOf(id);
-    if (i > 0) {
-      const obj = newLayers[i];
-      const prev = newLayers[i - 1];
-      newLayers[i - 1] = obj;
-      newLayers[i] = prev;
+    const isCustom = this.customObjects.includes(this.getObjType(id));
+    if (isCustom) {
+      this.setState(prevState => ({
+        [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              onTop: false
+            }
+            : obj
+        )
+      }));
+      this.setState({
+        customRenderRequested: true
+      });
+    } else {
+      const newLayers = [...this.getLayers()];
+      const i = newLayers.indexOf(id);
+      if (i > 0) {
+        const obj = newLayers[i];
+        const prev = newLayers[i - 1];
+        newLayers[i - 1] = obj;
+        newLayers[i] = prev;
+      }
+      this.setLayers(newLayers);
     }
-    this.setLayers(newLayers);
   }
 
   render() {
@@ -3034,6 +3134,7 @@ class Graphics extends Component {
                     handleDocument={this.handleDocument}
                     choosecolor={this.chooseColor}
                     close={() => this.setState({ overlayAreaContextMenuVisible: false })}
+                    customObjects={this.customObjects}
                   />
                 </>
               )}
@@ -3084,6 +3185,7 @@ class Graphics extends Component {
                 handleAudio={this.handleAudio}
                 handleDocument={this.handleDocument}
                 choosecolor={this.chooseColor}
+                customObjects={this.customObjects}
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
               />
             )}
@@ -3163,6 +3265,7 @@ class Graphics extends Component {
                   handleAudio={this.handleAudio}
                   handleDocument={this.handleDocument}
                   choosecolor={this.chooseColor}
+                  customObjects={this.customObjects}
                   close={() => this.setState({ personalAreaContextMenuVisible: false })}
                 />
               )}
@@ -3192,6 +3295,16 @@ class Graphics extends Component {
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
                   layers={this.getLayers()}
+                  customCount={() => {
+                    const layers = this.getLayers();
+                    let count = 0;
+                    for (let i = 0; i < layers.length; i++) {
+                      if (this.customObjects.includes(this.getObjType(layers[i]))) {
+                        count++;
+                      }
+                    }
+                    return count;
+                  }}
                 />
               </Portal>
             )}

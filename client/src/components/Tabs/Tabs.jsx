@@ -519,8 +519,8 @@ const Tabs = (props) => {
                   <h3>{t("admin.chat")}</h3>
                   <div className="group-chatlog">
                     <div>
-                      {props.chatMessages.map(({ sender, message }) => (
-                        <p><b>{sender.name}: </b>{message}</p>
+                      {props.chatMessages.map(({ sender, message }, index) => (
+                        <p key={index}><b>{sender.name}: </b>{message}</p>
                       ))}
                     </div>
                   </div>
