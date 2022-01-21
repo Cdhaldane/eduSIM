@@ -226,15 +226,15 @@ const Level = (props) => {
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
             />
-          <h1>Edit</h1>
+          <h1>{t("admin.simedit")}</h1>
           </div>
           )}
         </div>
 
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
-            <i className="fas fa-times fa-3x"></i>
-            <h1>Close</h1>
+            <i className="lni lni-exit"></i>
+          <h1>{t("edit.exit")}</h1>
           </Link>
         )}
       </div>

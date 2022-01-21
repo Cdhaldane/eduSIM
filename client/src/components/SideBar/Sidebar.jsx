@@ -186,15 +186,15 @@ const Sidebar = (props) => {
 
   const links = [
     {
-      img: props.img,
-      label: props.title,
+      img: localStorage.img,
+      label: localStorage.title,
       sublabel: props.subtitle,
       id: "title",
       visible: true,
       icon: null
     },
     {
-      icon: "fas fa-comment-dots",
+      icon: "lni lni-bubble",
       label: t("sidebar.messaging"),
       visible: mvisible,
       id: "messaging",
@@ -208,7 +208,7 @@ const Sidebar = (props) => {
     },
     {
       to: "/alert",
-      icon: "fas fa-bell",
+      icon: "lni lni-alarm",
       id: "alert",
       label: t("sidebar.alerts"),
       visible: avisible,
@@ -223,7 +223,7 @@ const Sidebar = (props) => {
       )
     },
     {
-      icon: "fas fa-users",
+      icon: "lni lni-users",
       id: "userlist",
       label: t("sidebar.users"),
       visible: true,
@@ -235,13 +235,13 @@ const Sidebar = (props) => {
     },
     {
       to: "/performance",
-      icon: "fas fa-chart-bar",
+      icon: "lni lni-bar-chart",
       id: "performance",
       label: t("sidebar.performance"),
       visible: pevisible
     },
     {
-      icon: "fas fa-cog",
+      icon: "lni lni-cog",
       id: "settings",
       label: t("sidebar.settings"),
       visible: svisible,

@@ -98,7 +98,12 @@
       "selectARole": "Select a role",
       "selectAGroup": "Select a group",
       "confirmDeleteLog": "Are you sure you want to delete this game log?",
-      "deleteLog": "Delete log"
+      "deleteLog": "Delete log",
+      "simedit": "Edit",
+      "siminvite": "Invite Collaborators",
+      "simrun": "Run",
+      "simdelete": "Delete"
+
     },
     "game": {
       "paused": "Paused",
@@ -217,6 +222,7 @@
         "tic": "Tic-Tac-Toe",
         "connect4": "Connect 4"
       },
+      "exit": "Exit",
       "textEdit": "Edit Text",
       "shapeEdit": "Edit Shape",
       "inputEdit": "Edit Input",

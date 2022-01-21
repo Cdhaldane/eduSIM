@@ -22,7 +22,7 @@
   vertical-align: middle;
   margin-left: 3vw;
   position: relative;
-  top: 5px;
+  top: 2px;
   font-size: 60px;
 }
 .logo-container {
@@ -39,7 +39,6 @@
   vertical-align: -30%;
   align-self: center;
   margin-left: 3vw;
-
 }
 
 .img {
@@ -258,6 +257,13 @@
   }
   .nav-home {
     display: none;
+  }
+  .title{
+    vertical-align: -100%;
+  }
+  .vl {
+    border-left: 1px solid var(--primary);
+    font-size: 60px;
   }
 }
 

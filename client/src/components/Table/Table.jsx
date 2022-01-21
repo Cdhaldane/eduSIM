@@ -113,7 +113,9 @@ const Table = (props) => {
         // What props are currently passed to the parent component
       }
       setRolelist(items);
-    })
+    }).catch(error => {
+      console.log(error);
+    });
   }, [props]);
 
   // Add change

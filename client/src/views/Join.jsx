@@ -164,7 +164,7 @@ const Join = (props) => {
     !Object.values(roomStatus).some(s => !s.running);
 
   const playerDBIDS = useMemo(() => Object.values(players).map(({dbid}) => dbid), [players]);
-
+  console.log(localStorage.img)
   return (
     <div className="join-wrapper">
     <div className="join">

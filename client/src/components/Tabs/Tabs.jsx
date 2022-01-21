@@ -502,7 +502,7 @@ const Tabs = (props) => {
                 ) : (
                   <div>
                     <h2>{tab[0]}</h2>
-                    <i className="fas fa-pencil-alt content-editname" onClick={() => {
+                    <i className="lni lni-pencil content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
                     }} ><h1>Edit</h1></i>
                   </div>

@@ -1,8 +1,6 @@
 .notesim {
   display: flex;
-  text-align: center;
-  flex-direction: column;
-  align-items: center;
+
   background: #fff;
   z-index: 0;
   border-radius: 7px;
@@ -18,23 +16,24 @@
 
 .notesim h1 {
   text-align: center;
-  font-size: 1.2vw;
+  font-size: 1.2rem;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .notesim-thumbnail {
-  display: flex;
-  align-self: baseline;
+  width: 400px;
 }
 .notesim-thumbnail h1 {
   position: relative;
   top: 40px;
-  display: inline;
   left: 150px;
   text-align: left;
   color: var(--dark);
 }
+.notesim-thumbnail h1:hover {
+}
+
 .notesim-thumbnail img {
   width: 120px;
   height: 100px;
@@ -44,24 +43,34 @@
   border: 1px solid var(--primary);
 }
 .notesim-icons {
-  position: sticky;
-  margin-left: 250px;
-  bottom: 0px;
-  font-size: .9em;
-  color: var(--dark);
+  width: 70%;
+  text-align: center;
+  align-items: center;
+  align-self: center;
 }
 
 .notesim-icons i {
   font-size: 2vw;
-  margin-top: 0.5vw;
+  margin-top: 0.0vw;
   margin-left: 3.5vw;
+  color: var(--primary);
+
 }
 .notesim-icons h1 {
   color: var(--dark);
   font-family:  "Montserrat", sans-serif;
   display: inline;
+  vertical-align: 30%;
   margin-left: 10px;
   font-weight: normal;
+}
+#garbage{
+  font-size: 2vw;
+  cursor: pointer;
+}
+#add-user{
+  font-size: 2.2vw;
+  cursor: pointer;
 }
 
 .notesim-icon {
@@ -72,18 +81,57 @@
   cursor: pointer;
 }
 
-@media screen and (max-width: 1592px){
-  .notesim-icons i {
-    font-size: 2vw;
-    margin-top: 1.0vw;
-    margin-left: 3.5vw;
+@media screen and (max-width: 1556px){
+  .notesim-icons {
+    margin-left: 100px;
+    bottom: 0px;
+    font-size: .9em;
+    color: var(--dark);
+    text-align: center;
+  }
+  .notesim-icons h1{
+    margin-left: 10px;
   }
 }
 
-@media screen and (max-width: 992px){
-  .notesim-icons i {
-    font-size: 2vw;
-    margin-top: 2.0vw;
-    margin-left: 3.5vw;
+@media screen and (max-width: 796px){
+
+  .notesim-icons {
+    margin-left: 60px;
   }
+  .notesim-thumbnail h1 {
+
+  }
+  .notesim-icons i {
+    margin-top: -1.0vw;
+    margin-left: 2.5vw;
+  }
+  .notesim h1 {
+    left: 130px;
+    font-size: 1.0rem;
+  }
+  .notesim-icons h1{
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+}
+@media screen and (max-width: 556px){
+  .notesim-icons {
+    margin-left: 60px;
+
+  }
+  .notesim-icons i {
+    margin-top: 2.0vw;
+    margin-left: 0vw;
+  }
+  .notesim-icons h1{
+    margin-left: 3px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .notesim h1 {
+    font-size: 0.7rem;
+    left: 130px;
+  }
+
 }

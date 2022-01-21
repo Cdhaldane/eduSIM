@@ -8,7 +8,7 @@ const Button = styled.button`
     color: var(--primary);
     ${(p) => !p.disabled && "cursor: pointer;"}
     ${(p) => p.disabled && "opacity: 0.5;"}
-    padding: 0 32px;
+    padding: 0 30px;
     box-shadow: 0 -1px 0 0 rgba(255 255 255 / 10%);
     text-align: right;
     i {
@@ -20,16 +20,23 @@ const Button = styled.button`
       position: fixed;
       left: ${p => p.compact ? '0px' : (p.submenu ? '350px' : '256px')};
       top: calc(50% - 50px);
-      color: white;
+      color: var(--primary);
       font-size: 1.5em;
-      background-color: var(--primary);
+      padding: 0 10px;
+      background-color: var(--white);
+      border: 1px solid var(--primary);
+      border-left: none;
       border-radius: 0 999px 999px 0;
+      z-index: -1;
       display: flex;
       align-items: center;
-      height: 100px;
-      width: 60px;
-      justify-content: flex-end;
+      height: 70px;
+      width: 50px;
+      justify-content: center;
       ${(p) => p.disabled && "opacity: 0;"}
+      i{
+
+      }
     }
 `;
 

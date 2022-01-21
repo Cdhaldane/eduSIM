@@ -5,6 +5,7 @@ import { Image } from "cloudinary-react";
 import Modal from "react-modal";
 import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const SimNote = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,9 +31,9 @@ const SimNote = (props) => {
         {props.superadmin ? (
           <>
           <i
-            className="fas fa-clipboard-list fa-2x notesim-icon"
+            className="lni lni-calendar notesim-icon"
             aria-hidden="true"
-            onClick={() => props.setConfirmationModal(true, props.id)}
+
           ><h1>{currDate}</h1></i>
 
             <Link
@@ -44,18 +45,18 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"><h1>Edit</h1></i>
+              <i id="pencil" className="lni lni-pencil" aria-hidden="true"><h1>Edit</h1></i>
             </Link>
-            <i className="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}><h1>Invite Collaborators</h1></i>
+            <i id="add-user" className="lni lni-users" onClick={() => setModalOpen(true)}><h1>Invite Collaborators</h1></i>
               <i
                 id="garbage"
-                className="far fa-trash-alt fa-2x notesim-icon"
+                className="lni lni-trash-can"
                 aria-hidden="true"
                 onClick={() => props.setConfirmationModal(true, props.id)}
               ><h1>Delete</h1></i>
           </>
         ) : (
-          <i className="fas fa-user-slash fa-2x notesim-icon" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"><h1>Run</h1></i>
+          <i className="lni lni-users" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"><h1>Run</h1></i>
         )}
         <Link
           to={{
@@ -68,7 +69,7 @@ const SimNote = (props) => {
         >
           <i
             id="play"
-            className="fas fa-play-circle fa-2x notesim-icon"
+            className="lni lni-chevron-right-circle"
             onClick={() => localStorage.setItem("gameid", props.gameid)}
           ><h1>Run</h1></i>
         </Link>

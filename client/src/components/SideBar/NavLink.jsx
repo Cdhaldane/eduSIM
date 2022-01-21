@@ -35,6 +35,9 @@ const StyledLink = styled.a`
     margin-top: 20px;
     margin-left: 12px;
   }
+  .special{
+    padding-left: 40px;
+  }
   span {
     padding-left: 14px;
     line-height: 19px;
@@ -49,6 +52,15 @@ const StyledLink = styled.a`
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
+  img{
+    position: absolute;
+    margin-right: 0px;
+    left: 15px;
+    height: 40px;
+    width: 40px;
+    border-radius: 10px;
+    font-size: 1.5rem;
+  }
   ${(p) => !p.disabled && `
     &:hover {
       text-decoration: none;
@@ -58,18 +70,6 @@ const StyledLink = styled.a`
   `}
   &.active {
 
-  }
-  img{
-    position: relative;
-    margin-right: -15px;
-    left: -10px;
-    height: 40px;
-    width: 40px;
-    border-radius: 10px;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   @media screen and (orientation: portrait) {
       span, p {
@@ -98,9 +98,9 @@ const NavLink = forwardRef((props, ref) => {
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/images/" + props.img + ".jpg"} alt="backdrop" />
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.img + ".jpg"} alt="backdrop" />
               <div>
-                <span className="label">{props.label}</span>
+                <span className="special">{props.label}</span>
                 <p className="sublabel">{props.sublabel}</p>
               </div>
             </>

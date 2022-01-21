@@ -54,6 +54,7 @@ img {
 .main-content {
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-bottom: 3.5rem;
 }
 
@@ -116,12 +117,12 @@ a {
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  height: 100%;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  flex-basis: 50%;
   flex: 1 1 auto;
 }
 .left {
@@ -130,17 +131,18 @@ a {
 
 .right {
   width: 60%;
+
 }
 
 .welcome-nav {
   margin-top: 6vw;
   margin-left: 12vw;;
-
 }
 .welcome-nav img {
   max-width: 100%;
   height: auto;
   margin-top: 1vw;
+  margin-right: 3vw;
 }
 .welcome-nav h1{
   color: white;
@@ -156,7 +158,7 @@ a {
   font-family: "Montserrat", sans-serif;
   margin-top: 20px;
   width: 30vw;
-  font-size: 1.3vw;
+  font-size: 1.38vw;
   font-weight: normal;
   width: 85%;
   text-align: left;
@@ -164,7 +166,8 @@ a {
 
 .welcome-notes {
   margin-top: 5vw;
-  margin-left: 0px;
+  text-align: left;
+  height: 100%;
 }
 .welcome-img{
   margin-right: 8vw;
@@ -174,8 +177,11 @@ a {
   animation: unset;
 }
 .welcome-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   height: 100%;
-  width: auto;
   background-color: var(--primary);
 }
 
@@ -270,22 +276,24 @@ a {
 
 .w-button{
   background-color: var(--primary);
-  border-radius: 30px;
+  border-radius: 100px;
   border-style: none;
   box-sizing: border-box;
   color: var(--white);
   cursor: pointer;
   display: inline-block;
+  white-space: nowrap;
   font-size: 1vw;
-  font-weight: 100;
+  font-family: "Montserrat";
+  padding-top: 30px;
+  font-weight: normal;
   height: 2vw;
   width: 10vw;
   line-height: 1vw;
   list-style: none;
   margin: 1vw;
   outline: none;
-  padding: 10px 16px;
-  position: relative;
+  padding: 15px 20px 30px 20px;
   text-align: center;
   text-decoration: none;
   transition: color 100ms;
@@ -295,12 +303,11 @@ a {
   touch-action: manipulation;
 }
 
+
+
 .w-button:hover,
 .w-button:focus {
-  padding: 8px 20px;
-  transition: all 0.3s ease-out;
-  transition: 250ms;
-  transform: translateY(-1px);
+  box-shadow: 0 5px 10px grey;
 }
 
 
@@ -401,7 +408,7 @@ hr {
 }
 .page-margin h2 {
   color: var(--primary);
-  font-size: 2.3vw;
+  font-size: 2.3rem;
   margin-bottom: 10px;
 }
 
@@ -427,11 +434,12 @@ hr {
   margin-right: 10px;
 }
 
+
 .addbutton {
-  padding: 5px 10px;
+  padding: 10px 50px;
   align-self: flex-start;
   font-family:  "Montserrat", sans-serif;
-  font-size: 1.3vw;
+  font-size: 1.3rem;
   color: white;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -508,16 +516,16 @@ hr {
   margin-top: 5px;
 }
 .joinboard-button {
-  color: white;
+  color: var(--primary);
+  border: 1px solid var(--primary);
   font-size: 1.5rem;
   position: relative;
-  border: none;
   border-radius: 50%;
   width: 50px;
   height: 50px;
   margin: 0 5px;
   cursor: pointer;
-  background-color: var(--primary);
+  background-color: var(--white);
 }
 
 .bimg {
@@ -571,15 +579,15 @@ hr {
 .game-logo{
   position: absolute;
   top: 10px;
-  left: 10px;
-  width: 50px;
+  left: 15px;
+  width: 40px;
   height: 50px;
 }
 .game-logo-big{
   position: absolute;
   top: 20px;
-  left: 45px;
-  width: 160px;
+  left: 55px;
+  width: 140px;
   height: 160px;
 }
 
@@ -695,7 +703,14 @@ hr {
   border: 2px solid black;
 }
 
+
 @media screen and (orientation: portrait) {
+  .addbutton{
+    font-size: 1.0rem;
+  }
+  .page-margin h2{
+    font-size: 1.0rem;
+  }
   .playbtn{
     left: 132px;
     width: 50px;
@@ -720,12 +735,106 @@ hr {
   .dashsim {
     justify-content: center;
   }
-
-  .welcome-nav {
-    flex-direction: column;
+  .column{
+    height: 60%;
+    position: relative;
+  }
+  .row {
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 40%;
+  }
+  .left {
+    position: relative;
+    width: 100%;
+    height: 100%;
   }
 
+  .right {
+    width: 100%;
+    height: 100%;
+  }
+  .welcome-nav {
+    vertical-align: bottom;
+    position: absolute;
+    bottom: 10px;
+  }
+  .welcome-text{
+    text-align: center;
+    align-self: center;
+    align-content: center;
+    align-items: center;
+    margin-left: 0px;
+    font-size: 6vw;
+  }
+  .welcome-img{
+    margin: 0px;
+    margin-top: 0vw;
+  }
+  .welcome-text h1{
+    width: 100%;
+    font-weight: bold;
+    font-size: 10vw;
+    margin-bottom: 1.5vw
+  }
+  .welcome-join {
+    display: flex;
+    align-items: center;
+    margin-top: -200px;
+  }
 
+  .welcome-navbutton {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    z-index: 0;
+    box-shadow: 0 2px 10px #ccc;
+    margin: 0vw 5vw 5vw 0;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    padding: 10px;
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+  .welcome-navbutton h1 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 3.5vw;
+    margin-bottom: 1vw;
+    color: var(--dark);
+  }
+  .welcome-navbutton h2 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 2vw;
+    font-weight: lighter;
+    margin-bottom: 1vw;
+    color: var(--dark);
+  }
+  .welcome-navbutton img {
+    height: 15vw;
+    width: auto;
+  }
+  .welcome-nav img {
+    margin-top: -20vw;
+    opacity: 0;
+  }
+  .welcome-nav h1{
+  font-size: 5.0vw;
+  }
+  .welcome-nav h2{
+    font-size: 3vw;
+  }
+  .welcome-notes {
+    margin-left: 5vw;
+    position: absolute;
+    top: 0px;
+  }
+  .mobile-view{
 
-
+  }
+  .w-button{
+    font-size: 2vw;
+    height: 4vw;
+    width: 30vw;
+  }
 }

@@ -25,10 +25,10 @@
 
 #pencil4 {
   z-index: 2000;
-  position: fixed;
-
+  position: absolute;
+  font-size: 1.8rem;
   left: 20px;
-  top: 880px;
+  bottom: 20px;
   color: var(--primary);
   transition: all 0.1s cubic-bezier(0.4, 0, 1, 1), left 0.3s cubic-bezier(0, 0, 0.2, 1) !important;
 }

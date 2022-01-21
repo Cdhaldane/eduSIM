@@ -4,7 +4,7 @@
   text-align: center;
   list-style: none;
   font-size: 24px;
-  margin-bottom: -2px;
+  margin-bottom: -1px;
   padding: 0;
   line-height: 20px;
   overflow: hidden;
@@ -17,26 +17,30 @@
 .selected-tab li {
   position: absolute;
   left: -50px;
-  border: 2px solid var(--primary);
+  border-bottom: 1px solid var(--primary);
   padding: 6px;
   background-color: #FFF;
   margin-right: -1px;
   display: inline-block;
   position: relative;
   z-index: 0;
-  color: var(--primary);
+  color: var(--text-color);
+  background-color: #e5e5e5;
   font-weight: normal;
   max-width: 20%;
   min-width: 0;
   flex: 1;
   font-size: 0.6em;
+  font-weight: 900;
+  opacity: 60%;
 }
 
 .selected-tab button {
   color: var(--text-color);
+  background-color: #e5e5e5;
   font-family: inherit;
-  background: white;
-  border: 2px solid var(--primary);
+  border: none;
+  box-shadow: var(--box-shadow);
   height: min-content;
   padding: 8px 12px;
   border-radius: 100px;
@@ -51,16 +55,19 @@
 }
 
 .selected-tab li.selected {
-  border: 2px solid var(--primary);
+  color: var(--primary);
+  background-color: var(--white);
+  border: 1px solid var(--primary);
   border-bottom: none;
   z-index: 2;
+  opacity: 100%;
 }
 
 .selected-tab li:hover,
 .selected-tab li:hover:before,
 .selected-tab li:hover:after {
-  color: white;
-  background-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--white);
   cursor: pointer;
 
 }
@@ -153,10 +160,10 @@
   flex-grow: 1;
   font-size: 1.3rem;
   margin-bottom: 40px;
-  border-bottom: 2px solid var(--primary);
-  border-top: 2px solid var(--primary);
-  border-left: 2px solid var(--primary);
-  border-right: 2px solid var(--primary);
+  border-bottom: 1px solid var(--primary);
+  border-top: 1px solid var(--primary);
+  border-left: 1px solid var(--primary);
+  border-right: 1px solid var(--primary);
 
 }
 
@@ -230,12 +237,15 @@
   border-radius: 100px;
   margin-left: 10px;
   cursor: pointer;
+  font-size: 1.5vw;
 }
 .content-editname h1 {
   color: var(--text-color);
   font-family:  "Montserrat", sans-serif;
-  font-size: 1.6vw;
+  font-size: 1.2vw;
+  font-weight: normal;
   display: inline;
+  vertical-align: middle;
   margin-left: 10px;
 }
 .content-inputname {
@@ -248,7 +258,7 @@
   margin-left: auto;
   margin-right: 20px;
   font-family:  "Montserrat", sans-serif;
-  padding: 10px 20px;
+  padding: 10px 30px;
   font-size: 1vw;
   color: white;
   background-color: var(--primary);
@@ -345,7 +355,10 @@ input[type='radio']:after {
   text-align: center;
   vertical-align: middle;
   border-radius: 100px;
-  padding: 10px;
+  padding: 10px 20px;
+  color: white;
+  background-color: var(--primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .deletegroup:hover {

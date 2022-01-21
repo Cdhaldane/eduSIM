@@ -19,8 +19,9 @@ const Grid = styled.div`
         @media (max-width: 960px){
             display:inline;
             font-size: 25px;
+            width: 100px;
         }
-    } 
+    }
 `;
 
 const Header = ({ toggle }) => {

@@ -26,7 +26,7 @@ const Pencil = (props) => {
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
-        className={"fa fa-pencil fa-" + props.psize + "x" + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
+        className={"lni lni-pencil" + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
         onClick={handleDrop}
       />
       {drop && (
