@@ -327,7 +327,7 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-secondary"
             unmountOnExit>
             <div className="menuedit">
-              <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" className="fas fa-arrow-left"></i>}>
+              <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" className="lni lni-arrow-left"></i>}>
                 <h2>COLOUR!</h2>
               </DropdownItem>
             </div>

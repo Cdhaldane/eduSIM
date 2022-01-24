@@ -206,7 +206,7 @@ const DropdownRoles = (props) => {
                     setConfirmationModal(true);
                     setDeleteIndex(index);
                   }} >
-                    <i className="icons fa fa-trash" />
+                    <i className="icons lni lni-trash-can" />
                   </span>
                 )}
                 {index === 0 && (
@@ -216,7 +216,7 @@ const DropdownRoles = (props) => {
                 {role.numOfSpots !== -1 && ` (${role.numOfSpots})`}
                 <div className="icons-right">
                   <span className="icon-button" onClick={(e) => handleModifyRole(e, index)}>
-                    <i className="icons fa fa-pencil" />
+                    <i className="icons lni lni-pencil" />
                   </span>
                   <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
                     <i className="icons fa fa-copy" />
@@ -327,7 +327,7 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="roles"
-            icon={<i className="icons fab fa-critical-role"></i>}>
+            icon={<i className="icons lni lni-crown"></i>}>
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
@@ -347,14 +347,14 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i className="icons fas fa-arrow-left"></i>}>
+            icon={<i className="icons lni lni-arrow-left"></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           {AvailableRoles}
           {props.editMode && (
             <div className="menu-item" disabled={modifyIndex >= 0}>
               <span className="icon-button" onClick={handleAddRole}>
-                <i className="icons fas fa-plus" />
+                <i className="icons lni lni-plus" />
               </span>
               <input
                 id="roleNameAdd"

@@ -171,7 +171,7 @@ const DropdownOverlay = (props) => {
           </div>
           <div className="overlayDeleteRow">
             <h2 className="overlaySettingsSub">{t("edit.deleteOverlay")}</h2>
-            <i className="icons fa fa-trash-alt" onClick={() => {
+            <i className="icons lni lni-trash-can" onClick={() => {
               setConfirmationVisible(true);
             }} />
           </div>

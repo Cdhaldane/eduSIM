@@ -218,9 +218,9 @@ const Join = (props) => {
               title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
             >
               {displayPause ? (
-                <i className="fa fa-pause"></i>
+                <i className="lni lni-pause"></i>
               ) : (
-                <i className="fa fa-play"></i>
+                <i className="lni lni-play"></i>
               )}
             </button>
             <button
@@ -228,7 +228,7 @@ const Join = (props) => {
               onClick={() => setResetID(true)}
               title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
             >
-              <i className="fa fa-retweet"></i>
+              <i className="lni lni-reload"></i>
             </button>
             {advanceMode === "teacher" && (
               <>
@@ -237,14 +237,14 @@ const Join = (props) => {
                   onClick={handlePrevPage}
                   title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
                 >
-                  <i className="fa fa-angle-double-left"></i>
+                  <i className="lni lni-angle-double-right"></i>
                 </button>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handleNextPage}
                   title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
                 >
-                  <i className="fa fa-angle-double-right"></i>
+                  <i className="lni lni-angle-double-left"></i>
                 </button>
               </>
             )}

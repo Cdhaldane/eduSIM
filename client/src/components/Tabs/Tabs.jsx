@@ -326,7 +326,7 @@ const Tabs = (props) => {
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
-                })}><i className="fas fa-trash-alt"></i></button>
+                })}><i className="lni lni-trash-can"></i></button>
               </div>
             </div>
           ))}

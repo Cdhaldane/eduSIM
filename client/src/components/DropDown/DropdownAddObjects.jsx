@@ -637,27 +637,27 @@ const DropdownAddObjects = (props) => {
         <div className="menu" style={{ textAlign: "left" }}>
           <h1>{props.title}</h1>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-shapes"></i>}
+            leftIcon={<i className="icons lni lni-star"></i>}
             onClick={() => setActiveMenu("shapes")}>
             {t("edit.addShape")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-camera"></i>}
+            leftIcon={<i className="icons lni lni-image"></i>}
             onClick={() => setActiveMenu("media")}>
             {t("edit.addMedia")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-hand-paper"></i>}
+            leftIcon={<i className="icons lni lni-hand"></i>}
             onClick={() => setActiveMenu("pieces")}>
             {t("edit.addInteractive")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-question-circle"></i>}
+            leftIcon={<i className="icons lni lni-help"></i>}
             onClick={() => setActiveMenu("inputs")}>
             {t("edit.addInput")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-puzzle-piece"></i>}
+            leftIcon={<i className="icons lni lni-game"></i>}
             onClick={() => setActiveMenu("games")}>
             {t("edit.addGames")}
           </DropdownItem>
@@ -672,21 +672,21 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addShape")}</h2>
           </DropdownItem>
 
           <DropdownItem
             onClick={addText}
-            leftIcon={<i className="icons fas fa-comment-alt" onClick={addText}></i>}>
+            leftIcon={<i className="icons lni lni-comments-alt" onClick={addText}></i>}>
             {t("edit.shape.text")}
           </DropdownItem>
 
-          <DropdownItem onClick={addRectangle} leftIcon={<i className="icons fa fa-square" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>
-          <DropdownItem onClick={addCircle} leftIcon={<i className="icons fa fa-circle" onClick={addCircle}></i>}>{t("edit.shape.circle")}</DropdownItem>
-          <DropdownItem onClick={addTriangle} leftIcon={<i style={{ fontSize: "2.0rem", transform: "scaleY(1.5) translateY(-0.05em)" }} className="icons fa fa-caret-up fa-2x" onClick={addTriangle}></i>}>{t("edit.shape.triangle")}</DropdownItem>
-          <DropdownItem onClick={addStar} leftIcon={<i className="icons fa fa-star" onClick={addStar}></i>}>{t("edit.shape.star")}</DropdownItem>
+          <DropdownItem onClick={addRectangle} leftIcon={<i className="icons lni lni-stop" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>
+          <DropdownItem onClick={addCircle} leftIcon={<i className="icons lni lni-circle-plus" onClick={addCircle}></i>}>{t("edit.shape.circle")}</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i className="icons lni lni-play" onClick={addTriangle}></i>}>{t("edit.shape.triangle")}</DropdownItem>
+          <DropdownItem onClick={addStar} leftIcon={<i className="icons lni lni-star" onClick={addStar}></i>}>{t("edit.shape.star")}</DropdownItem>
 
           <DropdownItem
             onClick={addLine}
@@ -700,7 +700,7 @@ const DropdownAddObjects = (props) => {
           </DropdownItem>
 
           <DropdownItem
-            leftIcon={<i className="icons fas fa-marker" />}
+            leftIcon={<i className="icons lni lni-brush" />}
             onClick={() => {
               props.setDrawMode(true);
               props.close();
@@ -719,27 +719,27 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addMedia")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fa fa-picture-o"></i>}
+            leftIcon={<i className="icons lni lni-image"></i>}
             onClick={() => setActiveMenu("image")}>
             {t("edit.media.imageOrGif")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-video"></i>}
+            leftIcon={<i className="icons lni lni-video"></i>}
             onClick={() => setActiveMenu("video")}>
             {t("edit.media.video")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-volume-up"></i>}
+            leftIcon={<i className="icons lni lni-volume-high"></i>}
             onClick={() => setActiveMenu("audio")}>
             {t("edit.media.audio")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-file"></i>}
+            leftIcon={<i className="icons lni lni-add-files"></i>}
             onClick={() => setActiveMenu("docs")}>
             {t("edit.media.document")}
           </DropdownItem>
@@ -753,7 +753,7 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addImage")}</h2>
           </DropdownItem>
@@ -761,7 +761,7 @@ const DropdownAddObjects = (props) => {
             <DropdownItem
               leftIcon={
                 !imageUploading ? (
-                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                  <i className={`icons lni lni-plus`} onClick={(e) => {
                     if (imageUploaded) {
                       addImage(e);
                     }
@@ -784,7 +784,7 @@ const DropdownAddObjects = (props) => {
 
           <div className={`${validImgURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+              leftIcon={<i className="icons lni lni-plus" onClick={(e) => {
                 if (validImgURL) {
                   addImage(e);
                 }
@@ -802,7 +802,7 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addVideo")}</h2>
           </DropdownItem>
@@ -811,7 +811,7 @@ const DropdownAddObjects = (props) => {
             <DropdownItem
               leftIcon={
                 !videoUploading ? (
-                  <i className={`icons fas fa-plus`} onClick={(e) => {
+                  <i className={`icons lni lni-plus`} onClick={(e) => {
                     if (videoUploaded) {
                       addVideo(e);
                     }
@@ -834,7 +834,7 @@ const DropdownAddObjects = (props) => {
 
           <div className={`${validVideoURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+              leftIcon={<i className="icons lni lni-plus" onClick={(e) => {
                 if (validVideoURL) {
                   addVideo(e);
                 }
@@ -852,14 +852,14 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addAudio")}</h2>
           </DropdownItem>
 
           <div className={`${audioUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className={`icons fas fa-plus`} onClick={(e) => {
+              leftIcon={<i className={`icons lni lni-plus`} onClick={(e) => {
                 if (audioUploaded) {
                   addAudio(e);
                 }
@@ -876,7 +876,7 @@ const DropdownAddObjects = (props) => {
 
           <div className={`${validAudioURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i className="icons fas fa-plus" onClick={(e) => {
+              leftIcon={<i className="icons lni lni-plus" onClick={(e) => {
                 if (validAudioURL) {
                   addAudio(e);
                 }
@@ -895,12 +895,12 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addDocument")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-plus" onClick={handleFilesubmit}></i>}>
+            leftIcon={<i className="icons lni lni-plus" onClick={handleFilesubmit}></i>}>
           </DropdownItem>
           <input
             type="file"
@@ -912,7 +912,7 @@ const DropdownAddObjects = (props) => {
 
           <DropdownItem
             onClick={addDocument}
-            leftIcon={<i className="icons fas fa-plus"
+            leftIcon={<i className="icons lni lni-plus"
               onClick={addDocument}></i>}>{t("common.add")}</DropdownItem>
         </div>
       </CSSTransition>
@@ -925,29 +925,29 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addInteractive")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addPoll}
-            leftIcon={<i className="icons fa fa-poll"
+            leftIcon={<i className="icons lni lni-graph"
               onClick={addPoll}></i>}>
             {t("edit.interactive.poll")}</DropdownItem>
           <DropdownItem
             onClick={addHTMLFrame}
-            leftIcon={<i className="icons fa fa-code"
+            leftIcon={<i className="icons lni lni-code"
               onClick={addHTMLFrame}></i>}>
             {t("edit.interactive.html")}</DropdownItem>
           <DropdownItem
             onClick={addTimer}
-            leftIcon={<i className="icons fa fa-stopwatch"
+            leftIcon={<i className="icons lni lni-timer"
               onClick={addTimer}></i>}>
             {t("edit.interactive.timer")}</DropdownItem>
         </div>
       </CSSTransition>
 
-      
+
       <CSSTransition
         in={activeMenu === 'games'}
         timeout={500}
@@ -956,18 +956,18 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addGames")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addTicTacToe}
-            leftIcon={<i className="icons fas fa-times"
+            leftIcon={<i className="icons lni lni-close"
               onClick={addTicTacToe}></i>}>
             {t("edit.game.tic")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
-            leftIcon={<i className="icons fa fa-circle"
+            leftIcon={<i className="icons lni lni-database"
               onClick={addConnect4}></i>}>
             {t("edit.game.connect4")}</DropdownItem>
         </div>
@@ -981,54 +981,29 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
+            leftIcon={<i className="icons lni lni-arrow-left"></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addInput")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={() => addInput("button")}
-            leftIcon={<i className="icons fas fa-mouse-pointer"
+            leftIcon={<i className="icons lni lni-pointer-top"
               onClick={() => addInput("button")}></i>}>
             {t("edit.input.button")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("text")}
-            leftIcon={<i className="icons fa fa-quote-right"
+            leftIcon={<i className="icons lni lni-comments"
               onClick={() => addInput("text")}></i>}>
             {t("edit.input.textbox")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("checkbox")}
-            leftIcon={<i className="icons fa fa-check-square"
+            leftIcon={<i className="icons lni lni-check-box"
               onClick={() => addInput("checkbox")}></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
         </div>
       </CSSTransition>
 
-      <CSSTransition
-        in={activeMenu === 'games'}
-        timeout={500}
-        classNames="menu-secondary"
-        unmountOnExit
-        onEnter={calcHeight}>
-        <div className="menu">
-          <DropdownItem
-            leftIcon={<i className="icons fas fa-arrow-left"></i>}
-            onClick={() => setActiveMenu("main")}>
-            <h2>{t("edit.addGame")}</h2>
-          </DropdownItem>
-          <DropdownItem
-            onClick={addTicTacToe}
-            leftIcon={<i className="icons fas fa-times"
-              onClick={addTicTacToe}></i>}>
-            {t("edit.game.tic")}
-          </DropdownItem>
-          <DropdownItem
-            onClick={addConnect4}
-            leftIcon={<i className="icons fa fa-circle"
-              onClick={addConnect4}></i>}>
-            {t("edit.game.connect4")}
-          </DropdownItem>
-        </div>
-      </CSSTransition>
+    
     </div>
   );
 }

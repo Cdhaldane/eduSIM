@@ -169,7 +169,7 @@ class Graphics extends Component {
       color: "black",
       drawStrokeWidth: 5,
 
-      // Variables for calculating responsive sizing 
+      // Variables for calculating responsive sizing
       // (for different screen sizes)
       groupLayerX: 0,
       groupLayerY: 0,
@@ -1081,7 +1081,7 @@ class Graphics extends Component {
                   // ADD SELECTION
                   const newSelection = [...this.state.groupSelection];
                   if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
-                    // A shape is already selected in selectedShapeName but not in groupSelection 
+                    // A shape is already selected in selectedShapeName but not in groupSelection
                     // Add it to groupSelection
                     newSelection.push(this.refs[this.state.selectedShapeName]);
                   }
@@ -2308,7 +2308,7 @@ class Graphics extends Component {
     setTimeout(() => this.handleObjectSelection(), 20)
   }
 
-  // For Konva Objects: 
+  // For Konva Objects:
   // returns Konva object
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
@@ -3222,7 +3222,7 @@ class Graphics extends Component {
           {/* The Personal Area Open / Close Caret */}
           {(this.state.personalAreaOpen !== 1)
             ? <button
-              className="personalAreaToggle"
+              className="personalAreaToggle off"
               onClick={() => {
                 this.refs.customRectCanvas.add(this.refs.customRect);
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
@@ -3231,7 +3231,7 @@ class Graphics extends Component {
                   document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
                 }, 500);
               }}>
-              <i className="fas fa-angle-up fa-3x" />
+              <i class="lni lni-chevron-up"></i>
             </button>
             : <button
               className="personalAreaToggle"
@@ -3240,7 +3240,7 @@ class Graphics extends Component {
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>
-              <i className="fas fa-angle-down fa-3x" />
+              <i class="lni lni-chevron-down"></i>
             </button>
           }
 
