@@ -46,13 +46,7 @@ img {
   width: auto\9; /* ie8 */
 }
 
-<<<<<<< HEAD
-.main-content {
-  height: 100%;
-  overflow-y: auto;
-}
 
-=======
 .full-page-wrapper{
   position: relative;
   min-height: 100vh;
@@ -66,7 +60,6 @@ img {
 }
 
 
->>>>>>> responsive_ui
 #root {
   height: 100vh;
   display: flex;
@@ -205,16 +198,14 @@ a {
   flex-direction: column;
   align-items: center;
   font-size: 1.5em;
-<<<<<<< HEAD
-  height: 100%;
-=======
+
   height: auto;
   color: var(--primary);
   background-color: var(--almostwhite);
 }
 .welcome-container-welcome form{
   margin-top: 4vw;
->>>>>>> responsive_ui
+
 }
 
 .welcome-text{
@@ -432,14 +423,11 @@ a {
   flex-direction: column;
   align-items: center;
   position: relative;
-<<<<<<< HEAD
-  min-height: 100%;
-  height: max-content;
-=======
+
   min-height: auto;
   height: max-content;
   margin-bottom: 100px;
->>>>>>> responsive_ui
+
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 hr {
