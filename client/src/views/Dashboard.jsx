@@ -112,15 +112,13 @@ const Dashboard = (props) => {
   }
 
   return (
+    <div className="dashboard-wrapper">
     <div className="dashboard">
-
       <div className="page-margin">
         <button className="addbutton" onClick={toggleModal}>
           {t("admin.addNewSimulation")}
         </button>
       </div>
-
-      <hr />
 
       <div className="page-margin">
         <h2>{t("admin.mySimulations")}</h2>
@@ -152,12 +150,12 @@ const Dashboard = (props) => {
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <CreateArea 
-          onAdd={addNote} 
-          onDelete={() => setShowNote(!showNote)} 
-          gamedata={gamedata} 
-          isOpen={showNote} 
-          close={toggleModal} 
+        <CreateArea
+          onAdd={addNote}
+          onDelete={() => setShowNote(!showNote)}
+          gamedata={gamedata}
+          isOpen={showNote}
+          close={toggleModal}
           previewImages={uploadedImages}
         />
       </Modal>
@@ -169,6 +167,7 @@ const Dashboard = (props) => {
         confirmMessage={t("admin.deleteSimConfirm")}
         message={getConfirmMessage()}
       />
+    </div>
     </div>
   );
 }

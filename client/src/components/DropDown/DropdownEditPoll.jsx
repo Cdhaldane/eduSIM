@@ -220,7 +220,7 @@ const DropdownEditPoll = (props) => {
               }}
             >
               <i
-                className={`fas fa-caret-down 
+                className={`fas fa-caret-down
                 ${pIndex === (pages.length - 1) && index === (p.questions.length - 1) ? "disabled" : ""}`}
               />
             </td>
@@ -236,7 +236,7 @@ const DropdownEditPoll = (props) => {
                 }
               }}
             >
-              <i className={`fas fa-cog ${(q.inputType || q.type) === "color" ? "disabled" : ""}`} />
+              <i className={`lni lni-cog${(q.inputType || q.type) === "color" ? "disabled" : ""}`} />
             </td>
             <td
               className={`editPollEditBtns`}
@@ -260,7 +260,7 @@ const DropdownEditPoll = (props) => {
                 }
               }}>
               <i
-                className={`fas fa-trash-alt ${pages.map((p) => {
+                className={`lni lni-trash-can ${pages.map((p) => {
                   return p.questions;
                 }).flat().length === 1 ? "disabled" : ""}`}
               />
@@ -335,7 +335,7 @@ const DropdownEditPoll = (props) => {
               <td
                 className="editPollEditBtns"
               >
-                <i className={`fas fa-cog disabled`} />
+                <i className={`lni lni-cogdisabled`} />
               </td>
               <td
                 className={"editPollEditBtns"}
@@ -352,7 +352,7 @@ const DropdownEditPoll = (props) => {
                   setTimeout(() => setPages(newPages), 0);
                 }}>
                 <i
-                  className={`fas fa-trash-alt`}
+                  className={`lni lni-trash-can`}
                 />
               </td>
             </tr>
@@ -393,7 +393,7 @@ const DropdownEditPoll = (props) => {
                 }
               }}>
               <i
-                className={`fas fa-trash-alt ${options.length === 1 ? "disabled" : ""}`}
+                className={`lni lni-trash-can ${options.length === 1 ? "disabled" : ""}`}
               />
             </td>
           </tr>

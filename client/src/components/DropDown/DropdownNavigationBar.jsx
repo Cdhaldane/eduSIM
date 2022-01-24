@@ -65,7 +65,7 @@ const DropdownNavigationBar = (props) => {
         <div className="menu">
           <h1>{t("sidebar.editNavigationBar")}</h1>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-comment-dots"></i>}
+            leftIcon={<i className="icons lni lni-comments-reply"></i>}
             onClick={handleMessage}>
             {t("sidebar.messaging")}
             <Switch
@@ -75,7 +75,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-bell"></i>}
+            leftIcon={<i className="icons lni lni-alarm"></i>}
             onClick={handleAlerts}>
             {t("sidebar.alerts")}
             <Switch
@@ -85,7 +85,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-chart-bar"></i>}
+            leftIcon={<i className="icons lni lni-stats-up"></i>}
             onClick={handlePerformance}>
             {t("sidebar.performance")}
             <Switch
@@ -95,7 +95,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons fas fa-cog"></i>}
+            leftIcon={<i className="icons lni lni-cog"></i>}
             onClick={handleSettings}>
             {t("sidebar.settings")}
             <Switch

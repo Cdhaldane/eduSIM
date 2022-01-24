@@ -3,11 +3,16 @@ import { CSSTransition } from 'react-transition-group';
 import axios from "axios";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
+
+
 import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
+
+
+
 
   const { t } = useTranslation();
 
@@ -54,6 +59,13 @@ const DropdownRoles = (props) => {
       if (rolesData.length) {
         setRoles(rolesData);
       } else {
+
+        const defaultRole = {
+          id: uuidv4(),
+          roleName: t("game.defaultRole"),
+          numOfSpots: -1,
+        };
+
         const defaultRoleAPI = {
           gameinstanceid: props.gameid,
           gamerole: t("game.defaultRole"),
@@ -65,6 +77,8 @@ const DropdownRoles = (props) => {
             roleName: t("game.defaultRole"),
             numOfSpots: -1,
           }]);
+
+          setRoles([defaultRole]);
         }).catch(error => {
           console.error(error);
         });
@@ -203,7 +217,9 @@ const DropdownRoles = (props) => {
                     setConfirmationModal(true);
                     setDeleteIndex(index);
                   }} >
-                    <i className="icons fa fa-trash" />
+
+                    <i className="icons lni lni-trash-can" />
+
                   </span>
                 )}
                 {index === 0 && (
@@ -213,7 +229,9 @@ const DropdownRoles = (props) => {
                 {role.numOfSpots !== -1 && ` (${role.numOfSpots})`}
                 <div className="icons-right">
                   <span className="icon-button" onClick={(e) => handleModifyRole(e, index)}>
-                    <i className="icons fa fa-pencil" />
+
+                    <i className="icons lni lni-pencil" />
+
                   </span>
                   <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
                     <i className="icons fa fa-copy" />
@@ -223,18 +241,18 @@ const DropdownRoles = (props) => {
             )
           ) : (
             <div
-              className="menu-item"
-              onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
-              key={index}
-              disabled={role.numOfSpots !== -1 && 
-                props.rolesTaken[role.roleName] && 
-                props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
-            >
-              {role.roleName}
-              {role.numOfSpots !== -1 && (props.rolesTaken[role.roleName]
-                ? ` (${role.numOfSpots}, ${t("game.xInGame", { count: props.rolesTaken[role.roleName] })})`
-                : ` (${role.numOfSpots})`)}
-            </div>
+            className="menu-item"
+            onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
+            key={index}
+            disabled={role.numOfSpots !== -1 &&
+              props.rolesTaken[role.roleName] &&
+              props.rolesTaken[role.roleName] >= role.numOfSpots || role.numOfSpots == 0}
+          >
+            {role.roleName}
+            {role.numOfSpots !== -1 && (props.rolesTaken[role.roleName]
+              ? ` (${role.numOfSpots}, ${t("game.xInGame", { count: props.rolesTaken[role.roleName] })})`
+              : ` (${role.numOfSpots})`)}
+          </div>
           )
         );
       })}
@@ -324,7 +342,7 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="roles"
-            icon={<i className="icons fab fa-critical-role"></i>}>
+            icon={<i className="icons lni lni-crown"></i>}>
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
@@ -344,14 +362,14 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i className="icons fas fa-arrow-left"></i>}>
+            icon={<i className="icons lni lni-arrow-left"></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           {AvailableRoles}
           {props.editMode && (
             <div className="menu-item" disabled={modifyIndex >= 0}>
               <span className="icon-button" onClick={handleAddRole}>
-                <i className="icons fas fa-plus" />
+                <i className="icons lni lni-plus" />
               </span>
               <input
                 id="roleNameAdd"

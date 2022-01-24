@@ -9,7 +9,7 @@
   font-size: 1.5rem;
   position: relative;
   z-index: 2;
-  border-radius: 10%;
+  border-radius: 10px;
   border: none;
 }
 
@@ -52,9 +52,9 @@
   background: #fff;
   width: 60%;
   max-width: 900px;
-  box-shadow: 0 2px 5px #ccc;
   text-align: center;
-  border: solid 4px var(--primary);
+  border-radius: 10px;
+  border: solid 2px var(--primary);
 }
 
 .form-input {
@@ -315,7 +315,7 @@ select#imgoptions option[value="img3"] {
   .area {
     font-size: 1.2rem;
   }
-  
+
   .form-input > div {
     flex-direction: column;
   }

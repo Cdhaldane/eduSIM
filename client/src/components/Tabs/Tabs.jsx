@@ -326,7 +326,7 @@ const Tabs = (props) => {
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
-                })}><i className="fas fa-trash-alt"></i></button>
+                })}><i className="lni lni-trash-can"></i></button>
               </div>
             </div>
           ))}
@@ -336,12 +336,15 @@ const Tabs = (props) => {
       )}
       <div className="page-margin tabs">
         <ul className="selected-tab">
+
           <li
+             className="tab-overview"
             onClick={() => toggleTab(0)}
             className={toggleState === 0 ? "selected" : ""}
           >
             <span className="tab-text">{t("admin.overview")}</span>
           </li>
+
           {tabs.map((tab, i) => (
             <li
               key={i}
@@ -365,6 +368,12 @@ const Tabs = (props) => {
             <div className="content-row">
               <div className="content-settings">
                 <h3>{t("admin.settings")}</h3>
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="studentbuttonemail"
+                  >
+                    {t("admin.openEmailModal")}
+                  </button>
                 <div className="simadv">
                   <h3>{t("admin.simulationAdvancement")}</h3>
                   <div className="content-radiobuttons">
@@ -410,7 +419,7 @@ const Tabs = (props) => {
                   </div>
                 </div>
                 <div className="simadv">
-                  <h3>{t("admin.roleAssignment")}</h3>
+                  <h3 className="simadv-inline">{t("admin.roleAssignment")}</h3>
                   <div className="content-radiobuttons">
                     <div>
                       <input
@@ -455,12 +464,7 @@ const Tabs = (props) => {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="studentbuttonemail"
-              >
-                {t("admin.openEmailModal")}
-              </button>
+
               <Modal
                 isOpen={isOpen}
                 onRequestClose={toggleModal}
@@ -498,9 +502,9 @@ const Tabs = (props) => {
                 ) : (
                   <div>
                     <h2>{tab[0]}</h2>
-                    <i className="fas fa-pencil-alt content-editname" onClick={() => {
+                    <i className="lni lni-pencil content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
-                    }} />
+                    }} ><h1>Edit</h1></i>
                   </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
@@ -526,7 +530,7 @@ const Tabs = (props) => {
                   </div>
                 </div>
                 <div className="group-column">
-                  <h3>{t("admin.performanceReport")}</h3>
+                  <h3 >{t("admin.performanceReport")}</h3>
                   <Performance
                     adminMode={true}
                     status={props.roomStatus[Object.keys(props.roomStatus)[0]]
@@ -535,7 +539,7 @@ const Tabs = (props) => {
                   />
                 </div>
               </div>
-              <h3>{t("admin.studentsInRoom")}</h3>
+              <h3 className="temp">{t("admin.studentsInRoom")}</h3>
               <div className="group-table">
                 <Table
                   addstudent={true}

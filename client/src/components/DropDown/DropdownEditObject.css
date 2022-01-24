@@ -6,28 +6,14 @@ ul {
 
 /* Icon Button */
 
-.icon-button {
-  --button-size: calc(var(--nav-size) * 0.5);
-  width: var(--button-size);
-  height: var(--button-size);
-  background-color: var(--primary);
-  border-radius: 50%;
-  padding: 5px;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: filter 300ms;
+
+
+.htmledit > span {
+  font-size: 0.8em;
 }
 
-.icon-button:hover {
-  filter: brightness(1.2);
-}
-
-.icon-button svg {
-  fill: var(--text-color);
-  width: 20px;
-  height: 20px;
+.htmledit > p {
+  margin-top: 5px;
 }
 
 .htmledit > span {

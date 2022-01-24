@@ -13,7 +13,9 @@ a {
   border-radius: 0.5em;
   padding: 0.2em;
   background-color: #e4e4e4;
-  border: 2px solid rgb(44, 44, 44);
+
+  border: 1px solid rgb(44, 44, 44);
+
 }
 
 .inputButtonDefault:hover {
@@ -44,8 +46,9 @@ a {
   width: var(--button-size);
   height: var(--button-size);
   min-width: var(--button-size);
-  background-color: var(--primary);
+  background-color: var(--white);
   border-radius: 50%;
+  border: 1px solid var(--primary);
   padding: 5px;
   margin: 5px;
   display: flex;
@@ -244,9 +247,10 @@ a {
   width: 300px;
   height: 200px;
   z-index: 200000;
-  background-color: var(--bg);
-  border: var(--border);
-  border: 1px solid rgb(65, 65, 65);
+
+  background-color: var(--white);
+  border: 1px solid var(--primary);
+
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
@@ -308,6 +312,7 @@ a {
 .loadingMediaAddMenuContainer {
   width: 100%;
   height: 100%;
+
 }
 
 .loadingMediaAddMenuContainer>.spinner {
@@ -318,8 +323,9 @@ a {
 }
 
 .dropdown-add-disabled>.menu-item>.icon-button {
-  background-color: #636363 !important;
+
 }
+
 
 .dropdown-add-disabled>.menu-item>.icon-button:hover {
   cursor: not-allowed !important;
@@ -410,7 +416,7 @@ a {
 }
 
 .icons {
-  color: white;
+  color: var(--primary);
   font-size: 1.1rem;
 }
 
@@ -453,7 +459,7 @@ a {
 }
 
 .dropdown button::selection {
-  background-color: var(--primary);
+  background-color: var(--white);
   color: white;
 }
 
@@ -653,7 +659,9 @@ a {
 }
 
 .icon-button.disabled {
-  background-color: grey !important;
+
+
+
 }
 
 .icon-button.disabled:hover {
@@ -671,7 +679,9 @@ a {
 
 .add-dropdown-item-input {
   border-radius: 0.5em;
-  border: solid 2px grey;
+
+  border: solid 1px grey;
+
   font-size: 0.9em;
   padding-left: 0.5em;
   width: 90%;
@@ -689,7 +699,7 @@ a {
   top: 60px;
   left: 50px;
   border-radius: 0.3em;
-  border: solid 2px grey;
+  border: solid 1px grey;
   padding: 0.8em;
   font-size: 0.7em;
   padding-left: 1.5em;
@@ -701,12 +711,16 @@ a {
   color: #636363;
 }
 
+.settings-icons{
+  font-size: 2.7rem;
+}
+
 #imginputvname {
   position: absolute;
   top: 116px;
   left: 50px;
   border-radius: 0.3em;
-  border: solid 2px grey;
+  border: solid 1px grey;
   padding: 0.8em;
   font-size: 0.7em;
   padding-left: 1.5em;

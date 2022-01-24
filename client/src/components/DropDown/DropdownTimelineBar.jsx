@@ -19,7 +19,10 @@ const DropdownTimelineBar = (props) => {
   const [pageColorSettings, setPageColorSettings] = useState("foreground");
   const dropdown = useRef();
   const { t } = useTranslation();
+
   const [copy, setCopy] = useState(-1);
+
+
 
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [modifyPageName, setModifyPageName] = useState("");
@@ -104,12 +107,17 @@ const DropdownTimelineBar = (props) => {
     <div className="icons-right">
       {/* EDIT PAGE TITLE */}
       <span className="icon-button" onClick={() => handleModifyPage(index)}>
-        <i className="icons fa fa-pencil" />
+
+        <i className="icons lni lni-pencil" />
+
       </span>
 
       {/* PAGE SETTINGS */}
       <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
-        <i className="icons fa fa-cog" />
+
+
+        <i className="icons lni lni-cog" />
+
       </span>
 
       {/* COPY PAGE */}
@@ -118,17 +126,17 @@ const DropdownTimelineBar = (props) => {
         onClick={async () => {
           if (pages.length < MAX_PAGE_NUM) {
             // Copy the page and contents
+
             setCopy(index);
-            setPages([...pages, {
-              ...pages[index],
-              name: pages[index].name + " Copy",
-            }]);
-            setNumOfPages(numOfPages + 1);
-            //props.handleCopyPage(index);
+
+
+
+            props.handleCopyPage(index);
           }
         }}
       >
-        <i className={`icons fa fa-copy`} />
+        <i className={`icons lni lni-files`} />
+
       </span>
 
       {/* MOVE PAGE UP */}
@@ -160,7 +168,9 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i className={`fas fa-angle-up`} />
+
+        <i className={`icons lni lni-chevron-up`} />
+
       </span>
 
       {/* MOVE PAGE DOWN */}
@@ -192,7 +202,9 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i className={`fas fa-angle-down`} />
+
+        <i className={`icons lni lni-chevron-down`} />
+
       </span>
     </div>
   );
@@ -272,7 +284,9 @@ const DropdownTimelineBar = (props) => {
                           setDeletionIndex(index);
                           setConfirmationModal(true);
                         }} >
-                          <i className="icons fa fa-trash" />
+
+                          <i className="icons lni lni-trash-can" />
+
                         </span>
 
                         {`${page.name}`}
@@ -299,7 +313,9 @@ const DropdownTimelineBar = (props) => {
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
               }}>
-                <i className="icons fas fa-plus" />
+
+                <i className="icons lni lni-plus" />
+
               </span>
               <input
                 className="add-dropdown-item-input"
@@ -360,7 +376,9 @@ const DropdownTimelineBar = (props) => {
                       backgroundColor: pages[currentSettingsIndex] ?
                         (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--primary)") : "var(--primary)"
                     }}>
-                      <i className="icons fa fa-plus" />
+
+                      <i className="icons lni lni-plus" />
+
                     </span>
                   </div>
                 </div>

@@ -171,7 +171,7 @@ class Graphics extends Component {
       color: "black",
       drawStrokeWidth: 5,
 
-      // Variables for calculating responsive sizing 
+      // Variables for calculating responsive sizing
       // (for different screen sizes)
       groupLayerX: 0,
       groupLayerY: 0,
@@ -847,7 +847,7 @@ class Graphics extends Component {
           shape = null;
         }
       }
- 
+
       this.setState({
         selection: {
           isDraggingShape: this.isShape(shape),
@@ -862,7 +862,7 @@ class Graphics extends Component {
         if (event.buttons === 1 && !event.shiftKey) {
           const shapeGroup = this.getShapeGroup(shape);
           this.setState({
-            selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "", 
+            selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "",
             groupSelection: shapeGroup ? [shapeGroup] : []
           },  this.handleObjectSelection);
         }
@@ -1093,7 +1093,7 @@ class Graphics extends Component {
                   // ADD SELECTION
                   const newSelection = [...this.state.groupSelection];
                   if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
-                    // A shape is already selected in selectedShapeName but not in groupSelection 
+                    // A shape is already selected in selectedShapeName but not in groupSelection
                     // Add it to groupSelection
                     newSelection.push(this.refs[this.state.selectedShapeName]);
                   }
@@ -2099,6 +2099,7 @@ class Graphics extends Component {
 
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (text, layer) => {
+    console.log(layer);
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -2320,7 +2321,7 @@ class Graphics extends Component {
     setTimeout(() => this.handleObjectSelection(), 20)
   }
 
-  // For Konva Objects: 
+  // For Konva Objects:
   // returns Konva object
   // For Custom Objects:
   // returns the Konva Group associated with the KonvaHtml of the object
@@ -2886,7 +2887,7 @@ class Graphics extends Component {
       const overlayLayer = overlayLayers[i];
       const overlayIndex = overlays.map(overlay => overlay.id).indexOf(overlayLayer.id);
       const overlay = {...overlays[overlayIndex]};
-      overlay.layers = overlayLayer.layers; 
+      overlay.layers = overlayLayer.layers;
       overlays[overlayIndex] = overlay;
     }
     newPage.overlays = overlays;
@@ -3344,7 +3345,7 @@ class Graphics extends Component {
                   document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
                 }, 500);
               }}>
-              <i className="fas fa-angle-up fa-3x" />
+              <i className="lni lni-chevron-up" />
             </button>
             : <button
               className="personalAreaToggle"
@@ -3353,7 +3354,11 @@ class Graphics extends Component {
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>
-              <i className="fas fa-angle-down fa-3x" />
+
+
+
+              <i class="lni lni-chevron-down"></i>
+
             </button>
           }
 

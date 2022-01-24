@@ -64,6 +64,7 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
+    <div className="full-page-wrapper">
     <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
         <AlertPopup />
@@ -102,13 +103,15 @@ const App = (props) => {
             document.cookie = "cookiesAccepted=true";
           }} />
         )}
+
         </Suspense>
+        </div>
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <FooterBar />
         )}
-        </div>
       </AlertContextProvider>
     </SettingsContext.Provider>
+    </div>
   );
 }
 

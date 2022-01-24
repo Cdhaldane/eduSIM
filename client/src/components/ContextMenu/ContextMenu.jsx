@@ -183,8 +183,8 @@ const ContextMenu = (props) => {
         <div className="layerBtns">
           <li
             onClick={() => props.layerDown(props.selectedShapeName)}
-            className={`${props.getObjState()?.onTop !== undefined ? 
-            (!props.getObjState().onTop ? "disabled" : "") : 
+            className={`${props.getObjState()?.onTop !== undefined ?
+            (!props.getObjState().onTop ? "disabled" : "") :
             (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
           >
             <i className="fas fa-arrow-down" />

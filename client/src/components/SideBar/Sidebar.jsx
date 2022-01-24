@@ -13,7 +13,8 @@ import Performance from "./Performance";
 import { useTranslation } from "react-i18next";
 
 const StyledNav = styled.nav`
-  background-color: var(--primary);
+  background-color: var(--white);
+  box-shadow: var(--box-shadow);
   width: ${(p) => (p.compact ? "70px" : "256px")};
   height: 100vh;
   position: absolute;
@@ -60,7 +61,7 @@ const Submenu = styled.div`
     height: inherit;
   }
   @media screen and (orientation: portrait) {
-    transition-property: 
+    transition-property:
       ${(p) => p.open ? "width" : "width, transform"} !important;
     transition-timing-function: ${(p) => p.open ? "cubic-bezier(0, 0, 0.2, 1)" : "cubic-bezier(0, 0, 0.31, 1)"} !important;
     width: ${(p) => (p.open ? "350px" : "256px")};
@@ -185,34 +186,34 @@ const Sidebar = (props) => {
 
   const links = [
     {
-      img: props.img,
-      label: props.title,
+      img: localStorage.img,
+      label: localStorage.title,
       sublabel: props.subtitle,
       id: "title",
       visible: true,
       icon: null
     },
     {
-      icon: "fas fa-comment-dots",
+      icon: "lni lni-bubble",
       label: t("sidebar.messaging"),
       visible: mvisible,
       id: "messaging",
       submenu: (
-        <Messages 
+        <Messages
           incrementTicker={() => handleIncrementTicker("messaging")}
-          socket={props.socket} 
+          socket={props.socket}
           messageBacklog={props.submenuProps?.messageBacklog}
         />
       )
     },
     {
       to: "/alert",
-      icon: "fas fa-bell",
+      icon: "lni lni-alarm",
       id: "alert",
       label: t("sidebar.alerts"),
       visible: avisible,
       submenu: (
-        <Alerts 
+        <Alerts
           editpage={!props.game}
           refresh={props.refresh}
           variables={props.variables}
@@ -222,7 +223,7 @@ const Sidebar = (props) => {
       )
     },
     {
-      icon: "fas fa-users",
+      icon: "lni lni-users",
       id: "userlist",
       label: t("sidebar.users"),
       visible: true,
@@ -234,13 +235,13 @@ const Sidebar = (props) => {
     },
     {
       to: "/performance",
-      icon: "fas fa-chart-bar",
+      icon: "lni lni-bar-chart",
       id: "performance",
       label: t("sidebar.performance"),
       visible: pevisible
     },
     {
-      icon: "fas fa-cog",
+      icon: "lni lni-cog",
       id: "settings",
       label: t("sidebar.settings"),
       visible: svisible,
@@ -278,6 +279,17 @@ const Sidebar = (props) => {
             setExpanded={toggleCompact}
             disabled={props.disabled}
           />
+        {expanded ? (
+          <div>
+              <img src="06_eduSIM_vertical.jpg"  className="game-logo-big"/>
+          </div>
+
+        ) : (
+          <div>
+              <img src="06_eduSIM_vertical.jpg" className="game-logo" />
+          </div>
+        )}
+
 
           {!props.game && (
             <Disabled disabled={props.disabled}>

@@ -340,7 +340,7 @@ const CanvasPage = (props) => {
       let yMax = null;
       let xMin = null;
       let yMin = null;
-      // Points array has form [x1, y1, x2, y2, ...] 
+      // Points array has form [x1, y1, x2, y2, ...]
       // Every even index is start of new coord so skip by 2 each iteration
       const strokeW = parseInt(obj.strokeWidth);
       for (let k = 0; k < obj.points.length; k += 2) {
@@ -392,7 +392,7 @@ const CanvasPage = (props) => {
 
   /*-----------------------------------------------------/
    * OBJECT PROPS
-   * The following functions return the props that 
+   * The following functions return the props that
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
   const isSelected = (id, canvas) => {

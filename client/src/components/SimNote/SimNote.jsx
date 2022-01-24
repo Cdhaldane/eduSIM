@@ -4,9 +4,16 @@ import "./SimNote.css";
 import { Image } from "cloudinary-react";
 import Modal from "react-modal";
 import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
+import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const SimNote = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
+
+  var today = new Date(),
+  date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+
+  const [currDate] = useState(date);
 
   return (
     <div className="notesim">
@@ -18,19 +25,17 @@ const SimNote = (props) => {
           }
           alt="backdrop"
         />
-        <div className="notesim-name">
           <h1>{props.title}</h1>
-        </div>
       </div>
       <div className="notesim-icons">
         {props.superadmin ? (
           <>
-            <i
-              id="garbage"
-              className="fa fa-trash fa-2x notesim-icon"
-              aria-hidden="true"
-              onClick={() => props.setConfirmationModal(true, props.id)}
-            ></i>
+          <i
+            className="lni lni-calendar notesim-icon"
+            aria-hidden="true"
+
+          ><h1>{currDate}</h1></i>
+
             <Link
               to={{
                 pathname: "/editpage",
@@ -40,12 +45,18 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <i id="pencil" className="fa fa-pencil fa-2x notesim-icon" aria-hidden="true"></i>
+              <i id="pencil" className="lni lni-pencil" aria-hidden="true"><h1>Edit</h1></i>
             </Link>
-            <i className="fas fa-user-plus fa-2x notesim-icon" onClick={() => setModalOpen(true)}></i>
+            <i id="add-user" className="lni lni-users" onClick={() => setModalOpen(true)}><h1>Invite Collaborators</h1></i>
+              <i
+                id="garbage"
+                className="lni lni-trash-can"
+                aria-hidden="true"
+                onClick={() => props.setConfirmationModal(true, props.id)}
+              ><h1>Delete</h1></i>
           </>
         ) : (
-          <i className="fas fa-user-slash fa-2x notesim-icon" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"></i>
+          <i className="lni lni-users" onClick={() => props.setConfirmationModal(true, props.id)} tooltip="test"><h1>Run</h1></i>
         )}
         <Link
           to={{
@@ -58,9 +69,9 @@ const SimNote = (props) => {
         >
           <i
             id="play"
-            className="fas fa-play-circle fa-2x notesim-icon"
+            className="lni lni-chevron-right-circle"
             onClick={() => localStorage.setItem("gameid", props.gameid)}
-          ></i>
+          ><h1>Run</h1></i>
         </Link>
       </div>
       <Modal
@@ -71,7 +82,7 @@ const SimNote = (props) => {
         closeTimeoutMS={500}
         ariaHideApp={false}
       >
-        <InviteCollaboratorsModal 
+        <InviteCollaboratorsModal
           close={() => setModalOpen(false)}
           gameid={props.gameid}
           title={props.title}

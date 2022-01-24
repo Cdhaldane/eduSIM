@@ -20,7 +20,7 @@ const Grid = styled.div`
             display:inline;
             font-size: 25px;
         }
-    } 
+    }
 `;
 
 const Header = ({ toggle }) => {

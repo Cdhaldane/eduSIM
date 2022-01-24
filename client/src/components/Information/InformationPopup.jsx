@@ -43,11 +43,10 @@ const Info = (props) => {
     <div>
       <div className={"info" + open}>
         {(open !== 1)
-          ? <button onClick={() => setOpen(1)}><i className="fas fa-caret-square-up fa-3x"></i></button>
-          : <button onClick={() => setOpen(0)}><i className="fas fa-caret-square-down fa-3x"></i></button>
+      
         }
         <p id="rolesdrop">
-          <DropdownRoles />
+         <DropdownRoles />
         </p>
         <b>
           {props.stuff}

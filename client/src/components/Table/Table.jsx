@@ -113,7 +113,9 @@ const Table = (props) => {
         // What props are currently passed to the parent component
       }
       setRolelist(items);
-    })
+    }).catch(error => {
+      console.log(error);
+    });
   }, [props]);
 
   // Add change
@@ -364,6 +366,7 @@ const Table = (props) => {
            name="firstName"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
          <input
            placeholder={t("admin.lastName")}
@@ -372,6 +375,7 @@ const Table = (props) => {
            name="lastName"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
          <input
            placeholder={t("admin.emailAddress")}
@@ -380,6 +384,7 @@ const Table = (props) => {
            name="email"
            required="required"
            onChange={handleAddFormChange}
+           className="input-box"
          />
        <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
            {rolelist}
@@ -389,9 +394,9 @@ const Table = (props) => {
        </div>)
        : <>
         {props.email && (
-          <button 
-            className="modal-bottomright-button" 
-            onClick={handleEmail} 
+          <button
+            className="modal-bottomright-button"
+            onClick={handleEmail}
             disabled={sending || excludedEmails.length === contacts.length}
           >
             {t("modal.email")}

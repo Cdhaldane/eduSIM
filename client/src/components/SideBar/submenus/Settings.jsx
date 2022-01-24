@@ -45,31 +45,31 @@ const Settings = (props) => {
       <h2>{t("sidebar.settings")}</h2>
       <hr/>
       <SettingRow>
-        <i className="fas fa-eye fa-2x"></i>
+        <i className="settings-icons lni lni-eye"></i>
         <div>
           <b>{t("sidebar.highContrastMode")}</b>
           <p>{t("sidebar.highContrastModeExplanation")}</p>
         </div>
-        <input 
-          type="checkbox" 
-          checked={settings.contrast || false} 
-          onChange={() => updateSetting('contrast', !settings.contrast)} 
+        <input
+          type="checkbox"
+          checked={settings.contrast || false}
+          onChange={() => updateSetting('contrast', !settings.contrast)}
         />
       </SettingRow>
       <SettingRow>
-        <i className="fas fa-feather fa-2x"></i>
+        <i className="settings-icons lni lni-helicopter"></i>
         <div>
           <b>{t("sidebar.reduceMotion")}</b>
           <p>{t("sidebar.reduceMotionExplanation")}</p>
         </div>
-        <input 
-          type="checkbox" 
-          checked={settings.notransition || false} 
+        <input
+          type="checkbox"
+          checked={settings.notransition || false}
           onChange={() => updateSetting('notransition', !settings.notransition)}
         />
       </SettingRow>
       <SettingRow>
-        <i className="fas fa-text-height fa-2x"></i>
+        <i className="settings-icons lni lni-text-format"></i>
         <div>
           <b>{t("sidebar.modifyTextSize")}</b>
           <p>{t("sidebar.modifyTextSizeExplanation")}</p>
@@ -77,7 +77,7 @@ const Settings = (props) => {
       </SettingRow>
       <Slider
         className="slider"
-        value={settings.textsize || 1} 
+        value={settings.textsize || 1}
         onChange={(val) => updateSetting('textsize', val)}
         min={1}
         max={1.4}

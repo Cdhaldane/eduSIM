@@ -51,7 +51,7 @@ const DropdownOverlay = (props) => {
         }
       }
     }
-    
+
     setSelectedOption(option);
     pages[props.level - 1].overlays[props.overlayIndex].overlayOpenOption = option;
     props.changePages(pages);
@@ -84,7 +84,7 @@ const DropdownOverlay = (props) => {
             <Switch
               onChange={hideToggled}
               checked={hideBtn}
-              disabled={props.pages[props.level - 1].overlays[props.overlayIndex] ? 
+              disabled={props.pages[props.level - 1].overlays[props.overlayIndex] ?
                 props.pages[props.level - 1].overlays[props.overlayIndex].overlayOpenOption === "doNotAutoOpen" : false}
               height={25}
               width={50}
@@ -171,7 +171,9 @@ const DropdownOverlay = (props) => {
           </div>
           <div className="overlayDeleteRow">
             <h2 className="overlaySettingsSub">{t("edit.deleteOverlay")}</h2>
-            <i className="icons fa fa-trash-alt" onClick={() => {
+
+            <i className="icons lni lni-trash-can" onClick={() => {
+
               setConfirmationVisible(true);
             }} />
           </div>
@@ -185,7 +187,7 @@ const DropdownOverlay = (props) => {
           const newPages = [...props.pages];
           const page = newPages[props.level - 1];
           page.overlays.splice(props.overlayIndex, 1);
-          props.changePages(newPages);    
+          props.changePages(newPages);
         }}
         confirmMessage={t("edit.yesDeleteOverlay")}
         message={t("edit.confirmDeleteOverlay", { name: props.overlayIndex + 1 })}

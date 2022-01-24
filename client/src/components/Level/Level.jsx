@@ -112,7 +112,6 @@ const Level = (props) => {
                 <i className="fa fa-info" />
               </button>
             </div>
-
             <Modal
               isOpen={showInfoPopup}
               onRequestClose={() => setShowInfoPopup(false)}
@@ -172,11 +171,11 @@ const Level = (props) => {
           </>
         )}
         <div className="level-nav">
-          {!props.gamepage && (
-            <select className="level-select" onChange={handleChange} value={count}>
-              {createSelectItems()}
-            </select>
-          )}
+
+
+
+
+
 
           <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 66 + 'px' }}>
             <div className="level-bar-underlay"></div>
@@ -189,7 +188,7 @@ const Level = (props) => {
               {times(props.number + (props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
                 <div key={num} className="level-bar-segment">
                   <div className={`
-                    level-bar-dot 
+                    level-bar-dot
                     ${count - 1 >= num ? 'level-bar-dot-fill' : ''}
                     ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
@@ -214,6 +213,7 @@ const Level = (props) => {
           )}
 
           {props.handlePageNum && (
+            <div className="pencil-container">
             <Pencil
               id="Timeline"
               psize="3"
@@ -226,12 +226,15 @@ const Level = (props) => {
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
             />
+          <h1>{t("admin.simedit")}</h1>
+          </div>
           )}
         </div>
 
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
-            <i className="fas fa-times fa-3x"></i>
+            <i className="lni lni-exit"></i>
+          <h1>{t("edit.exit")}</h1>
           </Link>
         )}
       </div>
@@ -240,3 +243,10 @@ const Level = (props) => {
 }
 
 export default Level;
+
+
+// {!props.gamepage && (
+//   <select className="level-select" onChange={handleChange} value={count}>
+//     {createSelectItems()}
+//   </select>
+// )}
