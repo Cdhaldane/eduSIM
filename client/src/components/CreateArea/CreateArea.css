@@ -106,10 +106,17 @@
   border-color: var(--color);
 }
 .red {
+
   border: 2px outset rgb(136, 136, 136);
   --color: #ff9898;
   background-color: var(--color);
   border-color: var(--color);
+}
+.primary{
+
+  border: 2px outset rgb(136, 136, 136);
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 #add {

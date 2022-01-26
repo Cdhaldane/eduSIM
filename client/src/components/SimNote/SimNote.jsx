@@ -25,7 +25,8 @@ const SimNote = (props) => {
       }
     }).then((res) => {
         setJson(JSON.stringify(res));
-        let str = res.data.createdAt.slice(0, -14);
+        console.log(res)
+        let str = res.data.updatedAt.slice(0, -14);
         setDate(str)
         setSimName(res.data.gameinstance_name)
       }).catch(error => {

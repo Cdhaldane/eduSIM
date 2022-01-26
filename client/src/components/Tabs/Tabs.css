@@ -37,15 +37,17 @@
 
 .selected-tab button {
   color: var(--text-color);
-  background: white;
-  border: 1px solid var(--primary);
+  background-color: #e5e5e5;
+  border: none;
   font-family: inherit;
+  font-weight: bold;
   height: min-content;
   padding: 8px 12px;
   border-radius: 100px;
   margin-left: -40px;
   margin-top: 0px;
   cursor: pointer;
+  opacity: 60%;
 }
 
 .selected-tab button:hover {
