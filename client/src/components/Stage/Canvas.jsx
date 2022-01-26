@@ -748,29 +748,6 @@ class Graphics extends Component {
       });
     }
 
-    if (event.target.parentElement.className === "konvajs-content") {
-      const customObjs = document.getElementsByClassName("customObj");
-      for (let i = 0; i < customObjs.length; i++) {
-        const id = customObjs[i].dataset.name;
-        const customObj = this.getKonvaObj(id);
-        const rect = customObjs[i].getBoundingClientRect();
-        if (
-          (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
-          (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
-          (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
-          (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
-          customObj
-        ) {
-          // Clicked on a custom object
-          this.setState({
-            selectedShapeName: id,
-            groupSelection: []
-          }, this.handleObjectSelection);
-          return;
-        }
-      }
-    }
-
     if (!event.ctrlKey) {
       this.setState({
         layerDraggable: false
@@ -848,9 +825,39 @@ class Graphics extends Component {
         }
       }
 
+      if (event.target.parentElement.className === "konvajs-content") {
+        const customObjs = Array.from(document.getElementsByClassName("customObj"));
+        customObjs.reverse();
+        for (let i = 0; i < customObjs.length; i++) {
+          const id = customObjs[i].dataset.name;
+          const customObj = this.getKonvaObj(id);
+          const rect = customObjs[i].getBoundingClientRect();
+          const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
+          if (
+            !(shape && !onTop) &&
+            (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
+            (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
+            (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
+            (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
+            customObj
+          ) {
+            // Clicked on a custom object
+            this.setState({
+              selectedShapeName: id,
+              groupSelection: [],
+              selection: {
+                ...this.state.selection,
+                isDraggingShape: "customObj"
+              }
+            }, this.handleObjectSelection);
+            return;
+          }
+        }
+      }
+
       this.setState({
         selection: {
-          isDraggingShape: this.isShape(shape),
+          isDraggingShape: this.isShape(shape) ? shape.id() : null,
           visible: true,
           x1: (pos.x + xOffset) / scale,
           y1: (pos.y + yOffset) / scale,
@@ -864,7 +871,7 @@ class Graphics extends Component {
           this.setState({
             selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "",
             groupSelection: shapeGroup ? [shapeGroup] : []
-          },  this.handleObjectSelection);
+          }, this.handleObjectSelection);
         }
       });
     }
@@ -964,30 +971,53 @@ class Graphics extends Component {
         (personalArea ? "personalSelectionRect" : "groupSelectionRect");
       let shape = null;
       let clickShapeGroup = null;
+
+      // Get Konva shape if clicked
+      const objsLayer = this.refs[`${layer}.objects`];
+      const pointerPos = objsLayer?.getStage().getPointerPosition();
+      if (pointerPos) {
+        const layerObjs = objsLayer.children;
+        for (let i = 0; i < layerObjs.length; i++) {
+          const obj = layerObjs[i];
+          const rect = obj.getClientRect();
+          if (
+            obj.attrs.name !== "customObj" &&
+            obj.attrs.id && obj.attrs.id !== "ContainerRect" &&
+            rect.width && rect.height
+          ) {
+            if (
+              pointerPos.x > rect.x && pointerPos.x < rect.x + rect.width &&
+              pointerPos.y > rect.y && pointerPos.y < rect.y + rect.height
+            ) {
+              shape = obj;
+              clickShapeGroup = this.getShapeGroup(shape);
+            }
+          }
+        }
+      }
+
       // Select custom object if clicked
       const customObjs = Array.from(document.getElementsByClassName("customObj"));
+      customObjs.reverse();
       for (let i = 0; i < customObjs.length; i++) {
         const bounds = customObjs[i].getBoundingClientRect();
+        const id = customObjs[i].dataset.name;
+        const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
         if (
+          (!this.state.selection.isDraggingShape || this.state.selection.isDraggingShape === "customObj") &&
+          !(shape && !onTop) &&
           event.clientX > bounds.left && event.clientX < bounds.right &&
           event.clientY > bounds.top && event.clientY < bounds.bottom
         ) {
           this.setState({
             selectedShapeName: customObjs[i].dataset.name,
-            groupSelection: []
+            groupSelection: [],
+            selection: {
+              ...this.state.selection,
+              isDraggingShape: "customObj"
+            }
           }, this.handleObjectSelection);
           return;
-        }
-      }
-      // Get Konva shape if clicked
-      const objsLayer = this.refs[`${layer}.objects`];
-      const pointerPos = objsLayer?.getStage().getPointerPosition();
-      if (pointerPos) {
-        shape = objsLayer.getIntersection(pointerPos);
-        if (shape && shape.attrs.id === "ContainerRect") {
-          shape = null;
-        } else {
-          clickShapeGroup = this.getShapeGroup(shape);
         }
       }
 
@@ -2879,14 +2909,14 @@ class Graphics extends Component {
       });
     }
     const newPages = [...this.state.pages];
-    const newPage = {...this.state.pages[this.state.pages.length - 1]};
+    const newPage = { ...this.state.pages[this.state.pages.length - 1] };
     newPage.groupLayers = groupLayers;
     newPage.personalLayers = personalLayers;
     const overlays = [...newPage.overlays];
     for (let i = 0; i < overlayLayers.length; i++) {
       const overlayLayer = overlayLayers[i];
       const overlayIndex = overlays.map(overlay => overlay.id).indexOf(overlayLayer.id);
-      const overlay = {...overlays[overlayIndex]};
+      const overlay = { ...overlays[overlayIndex] };
       overlay.layers = overlayLayer.layers;
       overlays[overlayIndex] = overlay;
     }
