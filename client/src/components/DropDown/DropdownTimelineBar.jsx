@@ -249,6 +249,7 @@ const DropdownTimelineBar = (props) => {
           classNames="pages-css-anim"
           onEnter={calcHeight}
           unmountOnExit>
+          
           <div style={{ width: "500px" }}>
             <h1>{t("edit.editPages")}</h1>
             <div>
@@ -261,7 +262,7 @@ const DropdownTimelineBar = (props) => {
                         key={index}
                       >
                         <span className="icon-button" onClick={() => pageNameChanged(modifyPageName, index)}>
-                          <i className="icons fas fa-check" />
+                          <i className="icons lni lni-checkmark" />
                         </span>
                         <input
                           id="roleNameAdd"

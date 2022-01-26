@@ -115,7 +115,7 @@ const Dashboard = (props) => {
     <div className="dashboard-wrapper">
     <div className="dashboard">
       <div className="page-margin">
-        <button className="addbutton" onClick={toggleModal}>
+        <button className="w-button auto" onClick={toggleModal}>
           {t("admin.addNewSimulation")}
         </button>
       </div>
@@ -143,6 +143,7 @@ const Dashboard = (props) => {
 
       <Modal
         isOpen={showNote}
+        hide={() => setShowNote(false)}
         onRequestClose={toggleModal}
         contentLabel="My dialog"
         className="createmodalarea"

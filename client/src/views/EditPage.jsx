@@ -63,6 +63,7 @@ const EditPage = (props) => {
     if (updater % 2 !== 0) {
       setUpdater(updater + 1);
     }
+    document.body.style.zoom = "100%";
   }, [updater]);
 
   const handlePage = (l) => {

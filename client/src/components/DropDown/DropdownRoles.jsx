@@ -187,7 +187,7 @@ const DropdownRoles = (props) => {
                 key={index}
               >
                 <span className="icon-button" onClick={handleSubmitModification}>
-                  <i className="icons fas fa-check" />
+                  <i className="icons lni lni-checkmark" />
                 </span>
                 <input
                   id="roleNameAdd"
@@ -234,7 +234,7 @@ const DropdownRoles = (props) => {
 
                   </span>
                   <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
-                    <i className="icons fa fa-copy" />
+                    <i className="icons lni lni-files" />
                   </span>
                 </div>
               </div>
@@ -346,7 +346,7 @@ const DropdownRoles = (props) => {
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
             {selectedRole && !props.disabled && (
               <button className="role-deselect-icon" onClick={handleDeselectRole}>
-                <i className="fa fa-times-circle"></i>
+                <i className="lni lni-close-circle"></i>
               </button>
             )}
           </DropdownItem>

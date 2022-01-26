@@ -104,7 +104,7 @@ const Level = (props) => {
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div className="editModeTitleContainer">
+            <div className="editModeTitleContainer" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
               <h1 id="editModeTitle">
                 {t("edit.editMode")}
               </h1>
@@ -195,7 +195,7 @@ const Level = (props) => {
                   `} onClick={() => handleLevel(num + 1)}>
                     {props.number > num ? (
                       <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
-                    ) : <i className="fas fa-check-circle"></i>}
+                    ) : <i className="lni lni-checkmark-circle"></i>}
                   </div>
                 </div>
               ))}
@@ -213,7 +213,7 @@ const Level = (props) => {
           )}
 
           {props.handlePageNum && (
-            <div className="pencil-container">
+            <div class="pencil-container">
             <Pencil
               id="Timeline"
               psize="3"
@@ -226,8 +226,7 @@ const Level = (props) => {
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
             />
-          <h1>{t("admin.simedit")}</h1>
-          </div>
+            </div>
           )}
         </div>
 

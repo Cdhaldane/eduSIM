@@ -37,10 +37,9 @@
 
 .selected-tab button {
   color: var(--text-color);
-  background-color: #e5e5e5;
+  background: white;
+  border: 1px solid var(--primary);
   font-family: inherit;
-  border: none;
-  box-shadow: var(--box-shadow);
   height: min-content;
   padding: 8px 12px;
   border-radius: 100px;
@@ -216,6 +215,7 @@
 }
 .content-settings h3 {
   color: var(--primary);
+  font-weight: bold;
 }
 .content-timeinput {
   display: inline;
@@ -293,7 +293,7 @@
   margin: 10px 20px;
 }
 .simadv-inline{
-  margin-left: 3.8vw;
+  margin-left: 73px;
 }
 input[type='radio']:after {
       width: 15px;

@@ -9,6 +9,7 @@ import "./CreateArea.css";
 const CreateArea = (props) => {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("Demo.jpg");
+  const [files, setFiles] = useState("");
   const [moreImages, setMoreImages] = useState(false);
   const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
@@ -20,6 +21,7 @@ const CreateArea = (props) => {
   const { t } = useTranslation();
   const detailsArea = new useRef();
   const imageArea = new useRef();
+  const fileInputRef= new useRef();
 
   const alertContext = useAlertContext();
 
@@ -92,12 +94,33 @@ const CreateArea = (props) => {
         });
         props.onAdd(note);
       }
-
       window.location.reload();
     } catch (error) {
       console.log(error);
     }
   };
+
+  const uploadSim = (e) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(e.target.files[0], "UTF-8");
+    fileReader.onload = e => {
+      console.log(JSON.parse(e.target.result).data);
+      setFiles(JSON.parse(e.target.result));
+      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',(JSON.parse(e.target.result).data)).catch(error => {
+        console.log(error);
+      });
+      setNote({
+        title: JSON.parse(e.target.result).data.gameinstance_name,
+        img: JSON.parse(e.target.result).data.gameinstance_photo_path
+      })
+      window.location.reload()
+    };
+
+
+  }
+  const handleSimUpload = (e) => {
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',JSON.parse(e));
+  }
 
   // Handles selection of img from file
   const onChange = (event) => {
@@ -178,12 +201,16 @@ const CreateArea = (props) => {
             onChange={handleChange}
             value={title}
             placeholder=""
+            maxLength="13"
           />
         </div>
         <div className="gradient-border">
-          {t("modal.chooseImage")}
+          <div>
+            {t("modal.chooseImage")}
+            <i id="plus" class="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
+          </div>
           <div className="form-imgpreview">
-            <img id="plus" src="plus.png" alt="add" onClick={() => setMoreImages(!moreImages)} />
+
             {img ? (
               <img id="preview" alt="preview" src={img} />
             ) : (
@@ -191,9 +218,21 @@ const CreateArea = (props) => {
             )}
           </div>
         </div>
-        <button type="button" className="modal-bottomright-button" onClick={uploadImage}>
+        <p class="button-container">
+        <input type="file" onChange={uploadSim} />
+
+        <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
+          {t("common.upload")}
+        </button>
+        <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
+        <button type="button" className="green" onClick={uploadImage}>
           {t("common.add")}
         </button>
+        <button type="button" className="red" onClick={props.onDelete}>
+          {t("common.cancel")}
+        </button>
+
+      </p>
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
@@ -211,7 +250,9 @@ const CreateArea = (props) => {
           ))}
           <input type="file" name="img" id="file" onChange={onChange} />
           <label htmlFor="file" className="form-imgsubmit">
+            <button type="button" className="modal-button green form-imgsubmit">
             {t("modal.imageFromFile")}
+            </button>
           </label>
         </form>
       )}

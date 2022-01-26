@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import DropdownTimelineBar from "../Dropdown/DropdownTimelineBar";
 import DropdownNavigationBar from "../Dropdown/DropdownNavigationBar";
+import { useTranslation } from "react-i18next";
 
 import "./Pencil.css";
 
 const Pencil = (props) => {
+  const { t } = useTranslation();
   const [drop, setDrop] = useState(false);
 
   const handleClose = () => {
@@ -23,12 +25,19 @@ const Pencil = (props) => {
 
   return (
     <div>
+      <div className={"pencil" + props.type} onClick={handleDrop}>
       <i
         id={"pencil" + props.id}
         aria-hidden="true"
         className={"lni lni-pencil" + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
         onClick={handleDrop}
       />
+    {props.type == "info" && (
+      <div>
+        <h1>{t("admin.simedit")}</h1>
+      </div>
+    )}
+      </div>
       {drop && (
         <div className={"drop" + props.id + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}>
           {props.type === "info" && (

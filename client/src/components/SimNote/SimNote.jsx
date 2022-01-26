@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./SimNote.css";
 import { Image } from "cloudinary-react";
@@ -6,14 +6,47 @@ import Modal from "react-modal";
 import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import axios from 'axios';
 
 const SimNote = (props) => {
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
+  const [json, setJson] = useState("");
+  const [currDate, setDate] = useState("");
+  const [simName, setSimName] = useState("");
 
-  var today = new Date(),
-  date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 
-  const [currDate] = useState(date);
+  useEffect(() => {
+    const getJson = async () => {
+    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
+      params: {
+        adminid: props.adminid,
+        gameid: props.gameid
+      }
+    }).then((res) => {
+        setJson(JSON.stringify(res));
+        let str = res.data.createdAt.slice(0, -14);
+        setDate(str)
+        setSimName(res.data.gameinstance_name)
+      }).catch(error => {
+        console.log(error);
+      })
+    }
+    getJson();
+  }, []);
+
+  const downloadFile = async () => {
+  const {myData} = {json};
+  const fileName = simName;
+  const blob = new Blob([json],{type:'application/json'});
+  const href = await URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = fileName + ".json";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
   return (
     <div className="notesim">
@@ -35,6 +68,11 @@ const SimNote = (props) => {
             aria-hidden="true"
 
           ><h1>{currDate}</h1></i>
+          <i
+            className="lni lni-download notesim-icon"
+            aria-hidden="true"
+            onClick={() => downloadFile()}
+          ><h1>{t("admin.download")}</h1></i>
 
             <Link
               to={{

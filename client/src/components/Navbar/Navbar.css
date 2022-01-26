@@ -1,29 +1,31 @@
 .NavbarItems {
   background-color: var(--white);
   width: 100%;
-  min-height: 80px;
+  height: auto;
   display: flex;
   justify-content: space-between;
-  font-size: 1.3vw;
+  font-size: 1.2vw;
+  z-index: 1000;
 }
 
 .navbar-logo {
   color: white;
   vertical-align:middle;
   margin-left: 5vw;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 2px;
   cursor: pointer;
   height:3vw;
-
 }
 .vl {
   border-left: 2px solid var(--primary);
   display: inline;
   vertical-align: middle;
   margin-left: 3vw;
-  position: relative;
-  top: 2px;
-  font-size: 60px;
+  font-size: 2.5vw;
+  margin-top: 10px;
+  margin-bottom: 10px
 }
 .logo-container {
   margin-top: 20px;
@@ -36,9 +38,11 @@
 .title{
   color: var(--dark);
   display: inline;
-  vertical-align: -30%;
+  vertical-align: -20%;
   align-self: center;
   margin-left: 3vw;
+  margin-top: 10px;
+  margin-bottom: 10px
 }
 
 .img {
@@ -58,8 +62,8 @@
 .nav-links {
   color: var(--primary);
   text-decoration: none;
-  padding: 20px;
-  margin-left: 200px;
+  padding: 0px;
+  margin-left: 20px;
   font-size: 2vw;
 }
 
@@ -142,10 +146,11 @@
     padding: 15px 20px;
     z-index: 1;
     text-align: center;
+    align-items: center;
     font-size: 1rem;
     position: absolute;
     right: 10px;
-    top: 90px;
+    top: 75px;
     border-radius: 3px;
     color: #181818;
     background: white;
@@ -217,7 +222,7 @@
   }
   .menu-icon {
     display: inline-flex;
-    margin-top: 25px;
+    margin-top: 10px;
     margin-right: 20px;
     font-size: 1.8rem;
     cursor: pointer;
@@ -258,13 +263,7 @@
   .nav-home {
     display: none;
   }
-  .title{
-    vertical-align: -100%;
-  }
-  .vl {
-    border-left: 1px solid var(--primary);
-    font-size: 60px;
-  }
+
 }
 
 .fa-info-circle{

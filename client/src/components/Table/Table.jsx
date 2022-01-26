@@ -394,13 +394,18 @@ const Table = (props) => {
        </div>)
        : <>
         {props.email && (
+          <div class="button-container">
           <button
-            className="modal-bottomright-button"
+            className="modal-button green"
             onClick={handleEmail}
             disabled={sending || excludedEmails.length === contacts.length}
           >
             {t("modal.email")}
           </button>
+          <button class="modal-button red" onClick={props.close}>
+            {t("common.cancel")}
+          </button>
+          </div>
         )}
        </>
       }
