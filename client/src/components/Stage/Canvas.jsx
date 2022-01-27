@@ -267,7 +267,8 @@ class Graphics extends Component {
         for (let i = 0; i < objects.savedGroups.length; i++) {
           let savedGroup = [];
           for (let j = 0; j < objects.savedGroups[i].length; j++) {
-            savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
+            const savedGroupData = JSON.parse(objects.savedGroups[i][j]);
+            savedGroup.push(savedGroupData);
           }
           parsedSavedGroups.push(savedGroup);
         }
@@ -280,13 +281,10 @@ class Graphics extends Component {
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
           this.setState({
-            [object]: objects[object] || []
+            [object]: objects[object] || [],
+            savedStateLoaded: true
           }, () => {
             if (index === arr.length - 1) {
-              // This is the last loop so all saved data has been loaded
-              this.setState({
-                savedStateLoaded: true
-              });
               // Get full objects for saved groups
               let fullObjSavedGroups = [];
               for (let i = 0; i < this.state.savedGroups.length; i++) {
@@ -3411,7 +3409,7 @@ class Graphics extends Component {
 
 
 
-              <i class="lni lni-chevron-down"></i>
+              <i className="lni lni-chevron-down"></i>
 
             </button>
           }

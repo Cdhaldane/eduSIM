@@ -9,16 +9,16 @@ const Home = (props) => {
 
   return (
   <div className="welcome-container">
-    <div class='row'>
-      <div class='column left'>
-        <div class='welcome-nav'>
+    <div className='row'>
+      <div className='column left'>
+        <div className='welcome-nav'>
           <h1>{t("home.title")}</h1>
           <h2>{t("home.sub-title")}</h2>
           <img src="lightbulb.png"></img>
         </div>
       </div>
-      <div class='column right'>
-         <div class='welcome-notes'>
+      <div className='column right'>
+         <div className='welcome-notes'>
           <Note
             title={t("home.isStudent")}
             text={t("home.welcomeText")}
