@@ -40,7 +40,7 @@ const NavBar = (props) => {
       <a href="/">
         <div className="logo-container">
           <img src="03_eduSIM_horizontal.png" className="navbar-logo"></img>
-          <div class="vl"></div>
+          <div className="vl"></div>
           <h1 className="title">{t("navbar.title")}</h1>
         </div>
       </a>
@@ -70,7 +70,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <i class="fas fa-info-circle"></i>
+              <i className="fas fa-info-circle"></i>
               {t("navbar.about")}
             </ButtonLink>
 

@@ -451,7 +451,7 @@ class Graphics extends Component {
         this.state.videos[this.state.videos.length - 1].temporary
       ) {
         let newVideos = [...this.state.videos];
-        newVideos[this.state.videos.length - 1] = null
+        newVideos[this.state.videos.length - 1] = null;
         newVideos = newVideos.filter(n => n);
         this.setState({
           videos: newVideos
@@ -767,8 +767,10 @@ class Graphics extends Component {
       }
 
       pos = {
-        x: (event.clientX ? event.clientX : event.targetTouches[0].clientX) - sidebarPx,
-        y: (event.clientY ? event.clientY : event.targetTouches[0].clientY)
+        x: (event.clientX ? event.clientX :
+          (event.targetTouches ? event.targetTouches[0].clientX : this.state.mouseX)) - sidebarPx,
+        y: (event.clientY ? event.clientY :
+          (event.targetTouches ? event.targetTouches[0].clientY : this.state.mouseY))
       }
     }
 
@@ -817,9 +819,8 @@ class Graphics extends Component {
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       let shape = null;
       const objsLayer = this.refs[`${layer}.objects`];
-      const pointerPos = objsLayer?.getStage().getPointerPosition();
-      if (pointerPos && e.evt) {
-        shape = objsLayer.getIntersection(pointerPos);
+      if (pos && e.evt) {
+        shape = objsLayer.getIntersection(pos);
         if (shape && shape.attrs.id === "ContainerRect") {
           shape = null;
         }
@@ -1350,11 +1351,34 @@ class Graphics extends Component {
     }
   }
 
+  simulateMouseEvent = (el, event) => {
+    if (window.MouseEvent && typeof window.MouseEvent === 'function') {
+      event = new MouseEvent(event);
+    } else {
+      event = document.createEvent('MouseEvent');
+      event.initMouseEvent(event);
+    }
+
+    el.dispatchEvent(event);
+  }
+
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
+
+    /*let stageParentElem = "";
+    if (this.state.overlayOpen) {
+      stageParentElem = "overlayGameContainer";
+    } else if (this.state.personalAreaOpen) {
+      stageParentElem = "editPersonalContainer";
+    } else {
+      stageParentElem = "editMainContainer";
+    }
+    const stageElem = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content")[0];
+    this.simulateMouseEvent(stageElem, 'mousedown');*/
+
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
     } else if (type === "" && this.state.groupSelection.length) {
