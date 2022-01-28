@@ -3,17 +3,11 @@ import { CSSTransition } from 'react-transition-group';
 import axios from "axios";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
-
-
 import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
 const DropdownRoles = (props) => {
-
-
-
-
   const { t } = useTranslation();
 
   const PLACEHOLDER_TEXT = props.disabled ? t("game.noRoleTeacherAssigned") : t("game.selectRole");
@@ -59,13 +53,6 @@ const DropdownRoles = (props) => {
       if (rolesData.length) {
         setRoles(rolesData);
       } else {
-
-        const defaultRole = {
-          id: uuidv4(),
-          roleName: t("game.defaultRole"),
-          numOfSpots: -1,
-        };
-
         const defaultRoleAPI = {
           gameinstanceid: props.gameid,
           gamerole: t("game.defaultRole"),
@@ -77,8 +64,6 @@ const DropdownRoles = (props) => {
             roleName: t("game.defaultRole"),
             numOfSpots: -1,
           }]);
-
-          setRoles([defaultRole]);
         }).catch(error => {
           console.error(error);
         });
