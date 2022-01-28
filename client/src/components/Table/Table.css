@@ -19,16 +19,19 @@
   font-size: 1vw;
 }
 .app-container th:not(.table-checkrow), .app-container td:not(.table-checkrow) {
-  padding: 8px;
+  padding: 2px;
+  padding-left: 0px;
   width: 10%;
 }
 
 .app-container th {
-
+  border-bottom: 1px solid var(--text-color);
+  opacity: 0.5;
 }
 
 .app-container td {
-  background-color: #b0b0b0;
+  background-color: white;
+
 }
 
 .app-container .user-online > td {
@@ -54,7 +57,7 @@
 }
 .app-container form td:last-child > div > button {
   flex: 1;
-  margin: 0 2px;
+  margin: 10 2px;
   font-family: inherit;
 }
 
@@ -64,6 +67,11 @@
 
 .app-container input[type="text"] {
   width: 100%;
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid var(--text-color);
+  color: var(--dark);
+  opacity: 0.7;
 }
 
 .addstudent{
@@ -74,13 +82,9 @@
 
 .input-box{
   border-radius: 10px;
+  width: 80% !important;
   border: 1px solid var(--text-color);
-  margin-right: 20px;
   color: var(--dark);
-  font-size: 0.7em;
-  font-family: inherit;
-  padding-left: 2.5em;
-  outline: none;
   opacity: 0.7;
 }
 
@@ -89,23 +93,31 @@
 }
 
 .addstudent-form {
-  display: flex;
-  border-radius: 100px;
+
 }
 .addstudent-form > * {
-  flex: 1;
+  position: relative;
   margin: 2px;
-  margin-right: 3vw;
+  margin-right: 0vw;
   padding: 2px;
   font-family: inherit;
+  height: 90% !important;
+}
+.email{
+  width: 110% !important;
 }
 
+.add-student-b{
+  width: 80% !important;
+  padding: 4px;
+  margin-right: 10px;
+}
 #addstudent {
   position: relative;
-  width: 100px;
+  width: 80%;
   height: 40px;
   font-family:  "Montserrat", sans-serif;
-  font-size: 1.2vw;
+  font-size: 1.1vw;
   color: white;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -133,39 +145,50 @@
 
 #roledropdown {
   position: relative;
+  width: 80%;
   top: 0px;
+  padding: 5px;
   left: 0px;
   border-radius: 10px;
   border: 1px solid var(--text-color);
-  height: 40px;
+  height: 85%;
   opacity: 0.6;
 }
+
+#roledropdownadd {
+  position: relative;
+  width: 80%;
+  top: 0px;
+  padding: 0px;
+  left: 0px;
+  border-radius: 10px;
+  border: 1px solid var(--text-color);
+  height: 60%;
+  opacity: 0.6;
+}
+
 
 .table-el {
   height: 100%;
   color: var(--text-color);
+}
+.table-el tr {
+  padding: 100px;
   border-bottom: 1.1px solid var(--text-color);
 }
 .table-checkrow {
   background-color: transparent !important;
   padding: 0px;
-  width: 1%;
+  width: 1% !important;
   min-width: 30px;
 }
 .table-checkrow > input {
-  width: 100%;
+  padding: 100px;
+  width: 80%;
   height: 20px;
+  color: var(--text-color);
 }
-.table-checkrow {
-  background-color: transparent !important;
-  padding: 0px;
-  width: 1%;
-  min-width: 30px;
-}
-.table-checkrow > input {
-  width: 100%;
-  height: 20px;
-}
+
 
 @media screen and (max-width: 960px){
   .app-container {
