@@ -27,7 +27,7 @@ const EndScreen = styled.div`
   transition: opacity .4s;
   ${(p) => !p.open && `
     opacity: 0;
-    pointer-events: none; 
+    pointer-events: none;
   `}
   & > p {
     font-size: 3em;
@@ -162,7 +162,7 @@ class Graphics extends Component {
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
     if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
-    
+
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
@@ -192,7 +192,7 @@ class Graphics extends Component {
       return {
         x: this.props.gamepieceStatus[id].x,
         y: this.props.gamepieceStatus[id].y,
-        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? { 
+        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? {
           opacity: 0.7,
           draggable: false
         } : {})
@@ -250,7 +250,7 @@ class Graphics extends Component {
           break;
         }
       }
-    } 
+    }
     if (
       !this.state.overlayOpen &&
       overlayPageEnter &&
@@ -313,7 +313,7 @@ class Graphics extends Component {
           ].filter(img => (
             img.rolelevel === obj.rolelevel &&
             img.level === obj.level &&
-            img.overlay === obj.overlay && 
+            img.overlay === obj.overlay &&
             img.overlayIndex === obj.overlayIndex &&
             img.id !== obj.id &&
             img.anchor
@@ -325,11 +325,11 @@ class Graphics extends Component {
             }
             let sW = this.realWidth({width, radiusX}), sH = this.realHeight({height, radiusY});
             const xDist = Math.abs(
-              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) - 
+              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) -
               (sX + this.originCenter(sW/2,id))
             );
             const yDist = Math.abs(
-              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) - 
+              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) -
               (sY + this.originCenter(sH/2,id))
             );
             if (xDist < sW/2 && yDist < sH/2) {
@@ -367,7 +367,7 @@ class Graphics extends Component {
           (this.state.overlayOpen ? "overlay" : "group");
         this.setState({
           canvasLoading: true
-        });   
+        });
         setTimeout(() => this.props.reCenter("play", layer), 300);
       }
     }
@@ -490,27 +490,7 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.selectrole && (
-          <div>
-            <Modal
-              isOpen={!this.props.players[this.props.socket.id]}
-              contentLabel="My dialog"
-              className="createmodaltab"
-              overlayClassName="myoverlaytab"
-              closeTimeoutMS={250}
-              ariaHideApp={false}
-            >
-              <CreateRole
-                gameid={this.state.gameinstanceid}
-                handleSubmit={this.handlePlayerInfo}
-                gameroles={this.state.gameroles}
-                players={this.props.players}
-                initialUserInfo={this.props.initialUserInfo}
-                roleSelection={this.props.roleSelection}
-              />
-            </Modal>
-          </div>
-        )}
+      
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (

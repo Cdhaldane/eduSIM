@@ -70,7 +70,7 @@ const DrawModal = (props) => {
       <div className="drawModalContainer" ref={ref}>
         <div className="drawModalDragBar">
           <button className="drawModalExitButton" onClick={() => props.setDrawMode(false)}>
-            <i className="fa fa-times" />
+            <i className="lni lni-close" />
           </button>
         </div>
         <ChromePicker

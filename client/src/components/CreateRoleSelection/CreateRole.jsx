@@ -10,25 +10,28 @@ const NameInput = styled.input`
   font-family: 'Montserrat', sans-serif;
   background: none;
   border: 1px rgba(0,0,0,0.6) solid;
-  font-size: 1.3em;
-  border-radius: 10px;
-  padding: 10px;  
+  font-size: 1.2em;
+  border-radius: 30px;
+  padding: 10px;
   margin-right: 10px;
   flex: 1;
+  height:auto;
   min-width: 0;
   max-width: 300px;
 `;
 
 const Submit = styled.button`
-  font-family: inherit;
-  padding: 5px 10px;
-  color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
-  cursor: pointer;
-  background-color: var(--primary);
-  border: none;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
+  margin: 10px;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  border: 2px outset rgb(136, 136, 136);
+  --color: rgb(161, 255, 148);
+  background-color: var(--color);
+  border-color: var(--color);
 `;
 
 const CreateRole = (props) => {
@@ -78,7 +81,7 @@ const CreateRole = (props) => {
           <p>{userExists ? t("game.joiningAsX", { name: `${props.initialUserInfo.fname} ${props.initialUserInfo.lname}` }) : t("game.inputName")}</p>
         </div>
         <div id="rolesdrops">
-          <span>{t("common.role")}</span>
+          <span class="role-title">{t("common.role")}</span>
           <DropdownRoles
             gameid={props.gameid}
             roleLevel={handleSetRole}
@@ -91,11 +94,11 @@ const CreateRole = (props) => {
         </div>
         <form onSubmit={handleSubmit} action="#">
           <span>{t("game.name")}</span>
-          <NameInput 
-            type="text" 
+          <NameInput
+            type="text"
             placeholder={t("game.namePlaceholder")}
-            value={name ? name : ""} 
-            onChange={(e) => setName(e.target.value)} 
+            value={name ? name : ""}
+            onChange={(e) => setName(e.target.value)}
             required
             maxLength="25"
           />

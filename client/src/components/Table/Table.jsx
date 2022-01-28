@@ -277,7 +277,7 @@ const Table = (props) => {
   }
 
   return (
-    <div className={`app-container ${props?.className}`}>
+    <div className={"app-container ${props?.className}"}>
       <div>
         <div
           className={`p-6 my-2 mx-auto max-w-md border-2 ${highlighted ? "border-green-600 bg-green-100" : "border-gray-600"
@@ -384,23 +384,28 @@ const Table = (props) => {
            name="email"
            required="required"
            onChange={handleAddFormChange}
-           className="input-box"
+           className="input-box email"
          />
-       <select name="group" type="text" required="required" id="roledropdown" onChange={handleAddFormChange}>
+       <select name="group" type="none" required="required" id="roledropdown" onChange={handleAddFormChange}>
            {rolelist}
          </select>
-       <button type="submit" id="addstudent">{t("common.add")}</button>
+       <button type="submit" className="modal-button green add-student-b">{t("common.add")}</button>
        </form>
        </div>)
        : <>
         {props.email && (
+          <div class="button-container">
           <button
-            className="modal-bottomright-button"
+            className="modal-button green "
             onClick={handleEmail}
             disabled={sending || excludedEmails.length === contacts.length}
           >
             {t("modal.email")}
           </button>
+          <button class="modal-button red" onClick={props.close}>
+            {t("common.cancel")}
+          </button>
+          </div>
         )}
        </>
       }

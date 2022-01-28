@@ -162,7 +162,7 @@ const Messages = (props) => {
       {Object.keys(sendGroup).length>0 && (
         <MessageGroup>
           <button onClick={removeWhisper}>
-            <i className="fa fa-times-circle remove-whisper" aria-hidden="true"></i>
+            <i className="lni lni-close-circle remove-whisper" aria-hidden="true"></i>
           </button>
           <p>Sending to: {Object.values(sendGroup).map(mem => mem.name).join(', ')}</p>
         </MessageGroup>

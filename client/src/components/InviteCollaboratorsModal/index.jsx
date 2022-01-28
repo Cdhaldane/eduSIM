@@ -19,26 +19,35 @@ const EmailInput = styled.div`
   }
   & input {
     font-family: inherit;
-    font-size: 1.2em;
+    font-size: 1.0em;
     padding: 5px;
+    border-radius: 30px;
+    border: 1px solid var(--text-color);
   }
   & .adduser {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    font-family: inherit;
-    font-size: 1.2em;
+    --color: rgb(161, 255, 148);
+    border: 2px outset rgb(136, 136, 136);
+    background-color: var(--color);
+    border-color: var(--color);
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.2rem;
+    margin: 0px;
+    padding: 5px;
     border-radius: 5px;
-    cursor: pointer;
+    display: inline-block;
   }
   & .removeuser {
-    color: var(--primary);
+    --color: #ff9898;
+    color: var(--dark);
+    border: 2px outset rgb(136, 136, 136);
+    border-radius:100px;
+    background-color: var(--color);
+    border-color: var(--color);
     margin-left: 5px;
-    font-size: 1.5em;
+    font-size: 1.0em;
+    padding: 6px;
     cursor: pointer;
-    background: none;
-    border: none;
+
   }
 `;
 
@@ -76,7 +85,7 @@ const InviteCollaboratorsModal = (props) => {
   const [revokeUser, setRevokeUser] = useState(null);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const { t } = useTranslation();
-  
+
   useEffect(() => {
     (async () => {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getCollaborators/' + props.gameid, {}).then((res) => {
@@ -87,7 +96,7 @@ const InviteCollaboratorsModal = (props) => {
       });
     })();
   }, [user]);
-  
+
   const handleClickOutside = e => {
     if (detailsArea.current &&
       !confirmationVisible &&
@@ -170,20 +179,20 @@ const InviteCollaboratorsModal = (props) => {
       <div className="areacsv">
         <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
           <h1 className="modal-title">{t("modal.inviteCollaborators")}</h1>
-          <p>{t("modal.inviteCollaboratorsExplanation")}</p>
+        <p class="left-align">{t("modal.inviteCollaboratorsExplanation")}</p>
           <div>
             <EmailInput>
               {emails.map((val, ind) => (
                 <div>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder={t("modal.emailAddress")}
-                    value={val} 
-                    onChange={(e) => handleUpdateEmail(e.target.value, ind)} 
+                    value={val}
+                    onChange={(e) => handleUpdateEmail(e.target.value, ind)}
                   />
                   {ind !== 0 && (
                     <button type="button" className="removeuser" onClick={() => handleRemoveUser(ind)}>
-                      <i className="fas fa-times-circle"></i>
+                      <i className="lni lni-close"></i>
                     </button>
                   )}
                 </div>
@@ -206,19 +215,24 @@ const InviteCollaboratorsModal = (props) => {
                       <h4>{email} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
                     )}
                   </div>
-                  <i className="fas fa-times-circle" onClick={() => handleOpenConfirm({id, name, email})}></i>
+                  <i className="lni lni-close" onClick={() => handleOpenConfirm({id, name, email})}></i>
                 </div>
               )) : <p>{t("modal.nobodyHasAccessToX", { name: props.title })}</p>}
             </Collaborators>
           </div>
-          <button 
-            type="button" 
-            className="modal-bottomright-button"
+          <p class="button-container fix">
+          <button
+            type="button"
+            className="green"
             onClick={handleSendEmails}
             disabled={sending}
           >
             {t("modal.send")}
           </button>
+          <button type="button" className="red" onClick={props.close}>
+            {t("common.cancel")}
+          </button>
+        </p>
         </form>
       </div>
       <ConfirmationModal

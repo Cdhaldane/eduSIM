@@ -6,14 +6,24 @@ import Modal from "react-modal";
 import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import DraggableList from "react-draggable-lists";
 
 const Dashboard = (props) => {
   const { user } = useAuth0();
+  const [isLoading, setLoading] = useState(true);
   const [showNote, setShowNote] = useState(false);
-  const [gamedata, getGamedata] = useState([]);
+  const [gamedata, getGamedata] = useState([  {
+        gameinstance_name: 1,
+        name: 'bill'
+    },
+    {
+        id: 2,
+        name: 'ted'
+    }]);
   const [uploadedImages, setUploadedImages] = useState(null);
   const [deletionId, setDeletionId] = useState(null);
   const { t } = useTranslation();
+
 
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const setConfirmationModal = (data, index) => {
@@ -43,6 +53,7 @@ const Dashboard = (props) => {
           }).then((res) => {
             const allData = res.data;
             getGamedata(allData);
+            setLoading(false);
           }).catch(error => {
             console.log(error);
           });
@@ -52,6 +63,10 @@ const Dashboard = (props) => {
     }
     getAllGamedata();
   }, [user]);
+
+  if (isLoading) {
+   return <div className="App"></div>;
+ }
 
   const addNote = (newgamedata) => {
     getGamedata((prevgamedata) => {
@@ -65,6 +80,7 @@ const Dashboard = (props) => {
         return index !== id;
       });
     });
+      window.location.reload();
   }
 
   const toggleModal = () => {
@@ -110,12 +126,22 @@ const Dashboard = (props) => {
       }
     }
   }
+  const listItems = [
+    {
+        id: 1,
+        name: 'bill'
+    },
+    {
+        id: 2,
+        name: 'ted'
+    }
+];
 
   return (
     <div className="dashboard-wrapper">
     <div className="dashboard">
       <div className="page-margin">
-        <button className="addbutton" onClick={toggleModal}>
+        <button className="w-button auto" onClick={toggleModal}>
           {t("admin.addNewSimulation")}
         </button>
       </div>
@@ -123,10 +149,10 @@ const Dashboard = (props) => {
       <div className="page-margin">
         <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim">
-          {gamedata.map((noteItem, index) => {
-            return (
-              <div key={index}>
-                <SimNote
+          <div>
+           <DraggableList width={1600} height={150} rowSize={1} >
+             {gamedata.map((noteItem, index) => (
+               <SimNote
                   id={index}
                   gameid={noteItem.gameinstanceid}
                   img={noteItem.gameinstance_photo_path}
@@ -134,15 +160,16 @@ const Dashboard = (props) => {
                   setConfirmationModal={setConfirmationModal}
                   title={noteItem.gameinstance_name}
                   superadmin={noteItem.createdby_adminid === localStorage.adminid}
-                />
-              </div>
-            );
-          })}
+               />
+             ))}
+           </DraggableList>
+         </div>
         </div>
       </div>
 
       <Modal
         isOpen={showNote}
+        hide={() => setShowNote(false)}
         onRequestClose={toggleModal}
         contentLabel="My dialog"
         className="createmodalarea"

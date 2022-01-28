@@ -33,23 +33,22 @@ const AuthenticationButton = (props) => {
   }
 
   return isAuthenticated ? (
-    <Button
+    <button
       onClick={handleLogout}
       type="button"
       buttonStyle="btn--primary--solid"
-      buttonSize="button--medium"
+      class="w-button"
     >
       {t("navbar.logout")}
-    </Button>
+    </button>
   ) : (
-    <Button
+    <button
       onClick={handleClick}
       type="button"
-      buttonStyle="btn--primary--solid"
-      buttonSize="button--medium"
+      class="w-button small"
     >
       {t("navbar.login")}
-    </Button>
+    </button>
   );
 }
 

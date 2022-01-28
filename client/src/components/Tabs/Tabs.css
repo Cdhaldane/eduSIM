@@ -38,15 +38,16 @@
 .selected-tab button {
   color: var(--text-color);
   background-color: #e5e5e5;
-  font-family: inherit;
   border: none;
-  box-shadow: var(--box-shadow);
+  font-family: inherit;
+  font-weight: bold;
   height: min-content;
   padding: 8px 12px;
   border-radius: 100px;
   margin-left: -40px;
   margin-top: 0px;
   cursor: pointer;
+  opacity: 60%;
 }
 
 .selected-tab button:hover {
@@ -216,6 +217,7 @@
 }
 .content-settings h3 {
   color: var(--primary);
+  font-weight: bold;
 }
 .content-timeinput {
   display: inline;
@@ -293,7 +295,7 @@
   margin: 10px 20px;
 }
 .simadv-inline{
-  margin-left: 3.8vw;
+  margin-left: 73px;
 }
 input[type='radio']:after {
       width: 15px;
