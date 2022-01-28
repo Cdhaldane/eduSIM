@@ -106,7 +106,10 @@ const CreateArea = (props) => {
     fileReader.onload = e => {
       console.log(JSON.parse(e.target.result).data);
       setFiles(JSON.parse(e.target.result));
-      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',(JSON.parse(e.target.result).data)).catch(error => {
+      let parsedJson = (JSON.parse(e.target.result).data);
+      parsedJson.createdby_adminid = localStorage.adminid;
+
+      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',parsedJson).catch(error => {
         console.log(error);
       });
       setNote({
@@ -152,7 +155,7 @@ const CreateArea = (props) => {
   const handleCopySim = (event) => {
     // Setting copy to 1 so when we add we can also update the params to copiedParams
     setCopy(1);
-    setTitle(props.gamedata[event.target.value].gameinstance_name);
+    setTitle(props.gamedata[event.target.value].gameinstance_name + " - copy");
     setFilename(props.gamedata[event.target.value].gameinstance_photo_path);
     setNote({
       title: props.gamedata[event.target.value].gameinstance_name,

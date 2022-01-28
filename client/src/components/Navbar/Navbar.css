@@ -184,6 +184,9 @@
   .nav-home-mobile {
     display: none;
   }
+  .nav-link{
+    color: var(--white);
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -196,7 +199,8 @@
     flex-direction: column;
     width: calc(100% + 20px);
     position: absolute;
-    top: 80px;
+    top: 50px;
+    z-index: 0;
     transform: translateX(-20px);
     opacity: 0;
     padding: 20px 0;

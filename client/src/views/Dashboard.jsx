@@ -6,11 +6,20 @@ import Modal from "react-modal";
 import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import DraggableList from "react-draggable-lists";
 
 const Dashboard = (props) => {
   const { user } = useAuth0();
+  const [isLoading, setLoading] = useState(true);
   const [showNote, setShowNote] = useState(false);
-  const [gamedata, getGamedata] = useState([]);
+  const [gamedata, getGamedata] = useState([  {
+        gameinstance_name: 1,
+        name: 'bill'
+    },
+    {
+        id: 2,
+        name: 'ted'
+    }]);
   const [uploadedImages, setUploadedImages] = useState(null);
   const [deletionId, setDeletionId] = useState(null);
   const { t } = useTranslation();
@@ -44,6 +53,7 @@ const Dashboard = (props) => {
           }).then((res) => {
             const allData = res.data;
             getGamedata(allData);
+            setLoading(false);
           }).catch(error => {
             console.log(error);
           });
@@ -53,6 +63,10 @@ const Dashboard = (props) => {
     }
     getAllGamedata();
   }, [user]);
+
+  if (isLoading) {
+   return <div className="App">Loading...</div>;
+ }
 
   const addNote = (newgamedata) => {
     getGamedata((prevgamedata) => {
@@ -111,6 +125,19 @@ const Dashboard = (props) => {
       }
     }
   }
+  const listItems = [
+    {
+        id: 1,
+        name: 'bill'
+    },
+    {
+        id: 2,
+        name: 'ted'
+    }
+];
+
+console.log(gamedata)
+console.log(listItems)
 
   return (
     <div className="dashboard-wrapper">
@@ -124,10 +151,11 @@ const Dashboard = (props) => {
       <div className="page-margin">
         <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim">
-          {gamedata.map((noteItem, index) => {
-            return (
-              <div key={index}>
-                <SimNote
+          <div>
+           <DraggableList width={300} height={150} rowSize={1}>
+             {gamedata.map((noteItem, index) => (
+               <SimNote
+                  key={index}
                   id={index}
                   gameid={noteItem.gameinstanceid}
                   img={noteItem.gameinstance_photo_path}
@@ -135,10 +163,10 @@ const Dashboard = (props) => {
                   setConfirmationModal={setConfirmationModal}
                   title={noteItem.gameinstance_name}
                   superadmin={noteItem.createdby_adminid === localStorage.adminid}
-                />
-              </div>
-            );
-          })}
+               />
+             ))}
+           </DraggableList>
+         </div>
         </div>
       </div>
 
