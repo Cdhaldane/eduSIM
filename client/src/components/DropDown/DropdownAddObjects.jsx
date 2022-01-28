@@ -164,6 +164,10 @@ const DropdownAddObjects = (props) => {
 
   const handleImgFromComputer = () => {
     const file = document.getElementById("filePickerImageEdit").files[0];
+    if ((file.size / 1000000) > 10) {
+      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
+      return;
+    }
     if (!file.type.toString().includes("image")) {
       alertContext.showAlert(t("alert.fileNotImage"), "error");
       return;
@@ -229,27 +233,29 @@ const DropdownAddObjects = (props) => {
     };
 
     let newPages = [...props.state.pages];
-    const thisPage = newPages[props.state.level - 1];
-    if (props.layer.attrs.name === "group") {
-
-      isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
-
-    } else if (props.layer.attrs.name === "personal") {
-      thisPage.personalLayers.push(name);
-    } else {
-      let oIndex = 0;
-      const overlay = thisPage.overlays.filter((overlay, index) => {
-        if (overlay.id === props.state.overlayOpenIndex) {
-          oIndex = index;
-          return true;
-        } else {
-          return false;
-        }
-      })[0];
-      overlay.layers.push(name);
-      thisPage.overlays[oIndex] = overlay;
+    if (!objectParameters.temporary) {
+      const thisPage = newPages[props.state.level - 1];
+      if (props.layer.attrs.name === "group") {
+  
+        isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
+  
+      } else if (props.layer.attrs.name === "personal") {
+        thisPage.personalLayers.push(name);
+      } else {
+        let oIndex = 0;
+        const overlay = thisPage.overlays.filter((overlay, index) => {
+          if (overlay.id === props.state.overlayOpenIndex) {
+            oIndex = index;
+            return true;
+          } else {
+            return false;
+          }
+        })[0];
+        overlay.layers.push(name);
+        thisPage.overlays[oIndex] = overlay;
+      }
+      newPages[props.state.level - 1] = thisPage;
     }
-    newPages[props.state.level - 1] = thisPage;
 
     props.setState({
       [objectName]: [...objectsState, object],
