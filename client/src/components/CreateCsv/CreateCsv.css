@@ -11,10 +11,12 @@
   font-size: 1rem;
   position: relative;
   z-index: 20000;
-  border-radius: 10%;
+  border-radius: 30px;
 }
 
+
 .areacsv form:after {
+
   --borderWidth: 3px;
   content: '';
   position: absolute;
@@ -22,7 +24,6 @@
   left: calc(-1 * var(--borderWidth));
   height: calc(100% + var(--borderWidth) * 2);
   width: calc(100% + var(--borderWidth) * 2);
-  background: black;
   border-radius: calc(2 * var(--borderWidth));
   z-index: -1;
   animation: animatedgradient 3s ease alternate infinite;
@@ -44,15 +45,15 @@
 .areacsvform {
   position: relative;
   width: 100%;
-  height: 450px;
+  height: auto;
   margin: 30px auto 20px auto;
   background: #fff;
   padding: 30px;
-  box-shadow: 0 2px 5px #ccc;
   text-align: center;
-  border: solid 2px var(--primary);
+  border: solid 2px var(--text-color);
   display: flex;
   flex-direction: column;
+  border-radius: 30px;
 }
 
 .areainvitecollabs > div {
@@ -62,15 +63,16 @@
   overflow-y: auto;
 }
 .areainvitecollabs > p {
-  text-align: left;
   font-size: 1em;
   padding: 0;
   font-weight: unset;
 }
 
 .areacsvform input[type="file"] {
-  display: none; 
+  display: none;
 }
+.left-align{
+  text-align: left}
 
 .modal-csv {
   height: 320px;
@@ -116,7 +118,7 @@
 .areacsv select {
   position: relative;
   bottom: -17px;
-  
+
   color: black;
   text-align: left;
   cursor: pointer;
@@ -129,23 +131,13 @@
   /* Firefox */
 }
 
-.modal-bottomright-button {
-  font-family: inherit;
-  padding: 5px 10px;
-  color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  background-color: var(--primary);
-  border: none;
-  font-size: 1.5rem;
-  align-self: flex-end;
-  margin-top: auto;
-}
+
 .modal-bottomright-button:disabled {
   opacity: 0.5;
   pointer-events: none;
 }
+.modal-bottomright-button:hover {
+  }
 
 .csv-link {
   color: blue;
@@ -220,18 +212,27 @@
 }
 
 #rolesdrops {
+  display: flex;
   position: relative;
   width: 300px;
+  margin-top: 20px;
+  margin-bottom: 100px;
+  vertical-align: middle;
+}
+.role-title{
+  position: relative;
+  top: 6px;
 }
 
 .modal-role-select {
   align-items: center;
   justify-content: space-between;
+
 }
 .modal-role-select > #rolesdrops {
-  margin-top: -170px;
-  height: 55px;
-  display: flex;
+
+
+
 }
 .modal-role-select > #rolesdrops > span {
   transform: translateX(calc(-100% - 10px))
@@ -244,6 +245,7 @@
 .modal-role-select > form {
   display: flex;
   width: 100%;
+  height: 100%;
   justify-content: center;
 }
 

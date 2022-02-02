@@ -54,16 +54,19 @@ const NavBar = (props) => {
             className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
-            <ButtonLink
-              href="/profile"
-              buttonStyle="btn--primary--solid"
-              buttonSize="button--medium"
-            >
-              {t("navbar.profile")}
-            </ButtonLink>
+            <Link to="/profile" className="w-button " type="button">{t("navbar.profile")}</Link>
+
             <AuthenticationButton />
           </div>
         )}
+            <ButtonLink
+              className="nav-links"
+              href="/dashboard"
+              buttonStyle="btn--danger--solid"
+              buttonSize="button--medium"
+            >
+              <i class="fas fa-home"></i>
+            </ButtonLink>
             <ButtonLink
               className="nav-links"
               href="/about"
@@ -73,6 +76,7 @@ const NavBar = (props) => {
               <i className="fas fa-info-circle"></i>
               {t("navbar.about")}
             </ButtonLink>
+
 
         {isAuthenticated ? (
           <img

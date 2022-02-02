@@ -192,7 +192,7 @@ const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, var
           ) : (
             <>
               <Alert done={done} optional={data.optional}>
-                {done ? <i className="fas fa-check-circle" /> : (
+                {done ? <i className="lni lni-checkmark-circle" /> : (
                   data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
                 )}
                 <div>

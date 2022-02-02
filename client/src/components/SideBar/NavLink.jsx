@@ -36,7 +36,7 @@ const StyledLink = styled.a`
     margin-left: 12px;
   }
   .special{
-    padding-left: 40px;
+    padding-left: 0px;
   }
   span {
     padding-left: 14px;
@@ -46,18 +46,20 @@ const StyledLink = styled.a`
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
   p {
-    padding-left: 14px;
+    padding-left: 4px;
     font-size: .7em;
     line-height: .9em;
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
   img{
-    position: absolute;
+    position: relative;
+    left: -10px;
     margin-right: 0px;
-    left: 15px;
     height: 40px;
     width: 40px;
+    max-width: 40px;
+    min-width: 40px;
     border-radius: 10px;
     font-size: 1.5rem;
   }
@@ -98,7 +100,7 @@ const NavLink = forwardRef((props, ref) => {
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.img + ".jpg"} alt="backdrop" />
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.simimg + ".jpg"} alt="backdrop" />
               <div>
                 <span className="special">{props.label}</span>
                 <p className="sublabel">{props.sublabel}</p>

@@ -6,7 +6,7 @@ const LinksGroup = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px 0 14px 0;
-  margin-top: ${props => props.isPlayMode ? 0 : 200}px;
+  margin-top: ${props => props.isPlayMode ? 200 : 200}px;
   margin-right: 2px;
   overflow: hidden;
   overflow-y: auto;

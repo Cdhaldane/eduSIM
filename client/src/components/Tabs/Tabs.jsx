@@ -497,7 +497,7 @@ const Tabs = (props) => {
                 {editingName ? (
                   <div>
                     <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
-                    <i className="fas fa-check content-editname" onClick={handleGroupName} />
+                    <i className="lni lni-checkmark content-editname" onClick={handleGroupName} />
                   </div>
                 ) : (
                   <div>

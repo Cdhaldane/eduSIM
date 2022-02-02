@@ -21,7 +21,7 @@ const Home = (props) => {
          <div className='welcome-notes'>
           <Note
             title={t("home.isStudent")}
-            text={t("home.welcomeText")}
+            text={t("home.student_welcome")}
             url="/welcome"
             img="01_Illustrations Student.png"
             className="welcome-navbutton"
@@ -31,7 +31,7 @@ const Home = (props) => {
             text={t("home.welcomeText")}
             onClick={() => loginWithRedirect({ redirectUri: window.location.origin + "/dashboard", prompt: "select_account" })}
             img="02_Illustrations Teacher.png"
-            className="welcome-navbutton"
+            className="welcome-navbutton fix"
           />
         </div>
       </div>

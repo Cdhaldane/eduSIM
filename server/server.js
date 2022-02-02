@@ -11,7 +11,7 @@ const fileUpload = require('express-fileupload');
 let cors = require('cors')
 
 const ENV = process.env.NODE_ENV  //Tells us if we're working in development or production
-const PORT = process.env.PORT || 5050;
+const PORT = 5050;
 
 //Initialising express and registering the basic middleware
 const app = express();
@@ -46,7 +46,7 @@ const io = require("socket.io")(httpServer, {
 io.on("connection", (socket) => events(io, socket));
 
 httpServer.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}!`);
+  console.log(`Server listening on portt ${PORT}!`);
 });
 
 module.exports = app;

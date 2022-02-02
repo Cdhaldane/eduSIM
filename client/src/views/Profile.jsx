@@ -7,14 +7,19 @@ class Profile extends React.Component {
     const { name, picture, email } = user;
 
     return (
-      <div className="page-layout">
+      <div className="profile-container">
         <div className="profilepic">
           <img
             src={picture}
             alt="Profile"
             className="profilepic"
           />
+          <div className="profilename">
+            <h1>{name}</h1>
+            <h3 className="lead text-muted">{email}</h3>
+          </div>
         </div>
+
         <div className="profilename">
           <h1>{name}</h1>
           <h3 className="lead text-muted">{email}</h3>

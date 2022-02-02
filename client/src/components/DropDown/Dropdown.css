@@ -737,9 +737,24 @@ a {
   top: 0px;
   left: 0px;
 }
-
 #fontpick {
   position: relative;
   left: 20px;
   margin-bottom: -100px;
+}
+.lni{
+  position: relative;
+  bottom: -1px;
+}
+.lni-chevron-down {
+  position: relative;
+  bottom: 2px;
+}
+.lni-chevron-up {
+  position: relative;
+  bottom: 2px;
+}
+.lni-stop {
+  position: relative;
+  top: 1px;
 }

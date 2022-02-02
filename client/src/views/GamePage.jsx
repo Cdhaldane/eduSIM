@@ -181,7 +181,7 @@ const Game = (props) => {
           userId={userId}
           customObjs={customObjs}
           gamepieceStatus={roomStatus.gamepieces || {}}
-          className="grid-sidebar"
+          className="grid-sidebar game"
           visible={showNav}
           close={toggle}
           img={room.gameinstance.gameinstance_photo_path}
@@ -196,8 +196,8 @@ const Game = (props) => {
           alertProps={{
             alerts: tasks[actualLevel] || []
           }}
-          refresh={invalidateSidebar}
-          setDisableNext={setDisableNext}
+
+
         />
         <Main color={pageColor}>
           <CanvasGame

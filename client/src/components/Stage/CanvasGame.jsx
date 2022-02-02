@@ -27,7 +27,7 @@ const EndScreen = styled.div`
   transition: opacity .4s;
   ${(p) => !p.open && `
     opacity: 0;
-    pointer-events: none; 
+    pointer-events: none;
   `}
   & > p {
     font-size: 3em;
@@ -305,7 +305,7 @@ class Graphics extends Component {
           }
         },
         onObjectDragMove: (obj, e) => {
-          if (!obj.rolelevel) {
+          if (!obj.infolevel && !obj.overlay) {
             [
               ...this.state.images,
               ...this.state.rectangles,
@@ -353,6 +353,20 @@ class Graphics extends Component {
                   dragging: userId
                 }
               });
+
+              this.setState({
+                dragTick: (this.state.dragTick + 1) % 4
+              })
+              if (this.state.dragTick == 0) {
+                this.props.socket.emit("interaction", {
+                  gamepieceId: obj.id,
+                  parameters: {
+                    x: e.target.x(),
+                    y: e.target.y(),
+                    dragging: userId
+                  }
+                });
+              }
             }
           }
         }
@@ -494,27 +508,7 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.selectrole && (
-          <div>
-            <Modal
-              isOpen={!this.props.players[this.props.socket.id]}
-              contentLabel="My dialog"
-              className="createmodaltab"
-              overlayClassName="myoverlaytab"
-              closeTimeoutMS={250}
-              ariaHideApp={false}
-            >
-              <CreateRole
-                gameid={this.state.gameinstanceid}
-                handleSubmit={this.handlePlayerInfo}
-                gameroles={this.state.gameroles}
-                players={this.props.players}
-                initialUserInfo={this.props.initialUserInfo}
-                roleSelection={this.props.roleSelection}
-              />
-            </Modal>
-          </div>
-        )}
+
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (

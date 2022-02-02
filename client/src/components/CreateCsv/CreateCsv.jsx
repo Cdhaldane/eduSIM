@@ -42,7 +42,7 @@ const CreateCsv = (props) => {
           roles: response.data.replacedroles.join(', '),
           rolecount: response.data.replacedroles.length
         }), "warning", 6000);
-      } else { 
+      } else {
         alertContext.showAlert(t("alert.addedCSVPlayers", {
           count: result.data.length
         }), "info");
@@ -76,7 +76,7 @@ const CreateCsv = (props) => {
       alertContext.showAlert(t("alert.validCSVError"), "error");
     }
   }
-  
+
   const download = async () => {
     const blob = new Blob([
       "First_Name,Last_Name,Room,Email,Role\n"
@@ -118,9 +118,14 @@ const CreateCsv = (props) => {
             <p>{t("modal.noCSV")}</p>
           </div>
         )}
-        <button className="modal-bottomright-button" onClick={fileUploadHandler} disabled={!file}>
+        <div class="button-container">
+        <button className="modal-button green" onClick={fileUploadHandler} disabled={!file}>
           {t("common.add")}
         </button>
+        <button class="modal-button red" onClick={props.close}>
+          {t("common.cancel")}
+        </button>
+        </div>
       </form>
     </div>
   );

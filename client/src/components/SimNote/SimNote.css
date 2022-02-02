@@ -1,6 +1,5 @@
 .notesim {
   display: flex;
-
   background: #fff;
   z-index: 0;
   border-radius: 7px;
@@ -44,24 +43,22 @@
 }
 .notesim-icons {
   width: 70%;
-  text-align: center;
-  align-items: center;
+  text-align: left;
   align-self: center;
 }
 
 .notesim-icons i {
   font-size: 2vw;
   margin-top: 0.0vw;
-  margin-left: 3.5vw;
+  margin-left: 2.3vw;
   color: var(--primary);
-
 }
 .notesim-icons h1 {
   color: var(--dark);
   font-family:  "Montserrat", sans-serif;
   display: inline;
   vertical-align: 30%;
-  margin-left: 10px;
+  margin-left: 0.5vw;
   font-weight: normal;
 }
 #garbage{
@@ -83,14 +80,18 @@
 
 @media screen and (max-width: 1556px){
   .notesim-icons {
-    margin-left: 100px;
+    margin-left: 60px;
     bottom: 0px;
     font-size: .9em;
     color: var(--dark);
-    text-align: center;
+    text-align: left;
   }
   .notesim-icons h1{
+    margin-left: 5px;
+  }
+  .notesim-icons i {
     margin-left: 10px;
+    margin-top: 10px;
   }
 }
 
@@ -111,7 +112,6 @@
     font-size: 1.0rem;
   }
   .notesim-icons h1{
-    margin-left: 5px;
     vertical-align: middle;
   }
 }
@@ -125,8 +125,6 @@
     margin-left: 0vw;
   }
   .notesim-icons h1{
-    margin-left: 3px;
-    margin-right: 10px;
     vertical-align: middle;
   }
   .notesim h1 {

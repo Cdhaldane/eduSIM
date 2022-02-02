@@ -4,9 +4,10 @@
       "welcome": "Welcome!",
       "isStudent": "Student/Participant?",
       "isTeacher": "Teacher/Facilitator?",
-      "title": "We boost growth for your startup business",
-      "sub-title": "Educational Simulated Interaction Models (eduSIMs) are designed and clinically tested simulations for future teachers and school leaders.",
-      "welcomeText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dui mi, bibendum eu erat id, ultricies semper metus.",
+      "title": "We provide the tools to build online educational simulations",
+      "sub-title": "Educational Simulated Interaction Models (eduSIMs) are designed and clinically tested simulations that can be used by teachers and facilitators to improve engagement and learning in their classrooms or workshops.",
+      "welcomeText": "Choose from a selection of existing simulations to use with your students / participants or create your own.",
+      "student_welcome": "Join an existing simulation. A room code is required from your teacher / facilitator.",
       "alreadyHaveRoomCode": "Already have a room code?",
       "join": "Join!",
       "roomCode": "Room code",
@@ -15,7 +16,7 @@
       "cookieNotice": "Notice.",
       "cookieOverview": "eduSIM uses cookies. By continuing to browse the site you are agreeing to our use of cookies.",
       "cookieOK": "OK",
-      "cookieLearnMore": "Learn More",
+      "cookieLearnMore": "Launch",
       "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Also third party cookies are used for logging in with Google / Microsoft."
     },
     "navbar": {
@@ -41,7 +42,8 @@
       "role": "Role",
       "yes": "Yes",
       "no": "No",
-      "and": "and"
+      "and": "and",
+      "upload": "Upload"
     },
     "admin": {
       "mySimulations": "My simulations",
@@ -70,6 +72,7 @@
       "newGroupX": "New group {{index}}",
       "displayPreviousRuns": "Display previous runs",
       "startedXLastedY": "Started on {{time}}, lasted {{duration}}",
+      "download": "Download",
       "downloadCSV": "Download spreadsheet",
       "downloadJSON": "Download JSON data",
       "overview": "Overview",

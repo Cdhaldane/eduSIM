@@ -11,6 +11,7 @@ import Players from "./submenus/Players";
 import Modal from "react-modal";
 import Performance from "./Performance";
 import { useTranslation } from "react-i18next";
+import { Image } from "cloudinary-react";
 
 const StyledNav = styled.nav`
   background-color: var(--white);
@@ -186,8 +187,8 @@ const Sidebar = (props) => {
 
   const links = [
     {
-      img: localStorage.img,
-      label: localStorage.title,
+      img: localStorage.simimg,
+      label: localStorage.simtitle,
       sublabel: props.subtitle,
       id: "title",
       visible: true,
@@ -279,14 +280,14 @@ const Sidebar = (props) => {
             setExpanded={toggleCompact}
             disabled={props.disabled}
           />
-        {expanded ? (
+        {expanded && !submenuVisible ? (
           <div>
-              <img src="06_eduSIM_vertical.jpg"  className="game-logo-big"/>
+              <Image className="game-logo-big" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1642397684/images/06_eduSIM_vertical_tnvn9p.jpg"} alt="backdrop" />
           </div>
 
         ) : (
           <div>
-              <img src="06_eduSIM_vertical.jpg" className="game-logo" />
+              <Image className="game-logo" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1642397684/images/06_eduSIM_vertical_tnvn9p.jpg"} alt="backdrop" />
           </div>
         )}
 

@@ -1,7 +1,7 @@
 const GameRole = require("../models/GameRoles");
 const GameInstance = require("../models/GameInstances");
 const db = require('../databaseConnection');
-import { v4 as uuidv4 } from 'uuid';
+
 
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
@@ -24,7 +24,7 @@ exports.createRole = async (req, res) => {
   const gameinstanceid = req.body.gameinstanceid;
   const gamerole = req.body.gamerole;
   const numspots = req.body.numspots;
-  
+
   try {
     let newGameInstance = await GameRole.create({
       gameinstanceid,
@@ -69,7 +69,7 @@ exports.deleteRole = async (req, res) => {
 exports.copyRole = async (req, res) => {
   const gameroleid = req.body.gameroleid;
   console.log("TESTING:", gameroleid);
-  
+
   const {
     gamerole,
     numspots,
@@ -111,7 +111,7 @@ exports.copyRole = async (req, res) => {
             i++;
             newIds.push(newId);
             const newItem = {
-              ...item, 
+              ...item,
               id: newId,
               name: newId,
               ref: newId,
@@ -158,7 +158,7 @@ exports.updateRole = async (req, res) => {
     if (name) {
       // update players with this role
       await db.query(`
-        update gameplayers set gamerole = '${name}' where 
+        update gameplayers set gamerole = '${name}' where
         gamerole='${gamerole.gamerole}' and
         gameinstanceid='${gamerole.gameinstanceid}'
       `);
