@@ -13,7 +13,7 @@ import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import JSRunner from "../components/Stage/GamePieces/JSRunner";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
-import fileDownload from "js-file-download";
+
 
 
 const EditPage = React.lazy(() => import("./EditPage"));

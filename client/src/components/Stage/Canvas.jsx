@@ -746,6 +746,8 @@ class Graphics extends Component {
       });
     }
 
+    
+
     if (!event.ctrlKey) {
       this.setState({
         layerDraggable: false

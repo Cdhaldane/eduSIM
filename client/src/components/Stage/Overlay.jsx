@@ -56,8 +56,7 @@ class Overlay extends Component {
             >
               <Stage
                 ref={"overlayStage"}
-                height={document.getElementById("overlayGameContainer") ?
-                  document.getElementById("overlayGameContainer").clientHeight : 0}
+                height={stageHeight}
                 width={document.getElementById("overlayGameContainer") ?
                   document.getElementById("overlayGameContainer").clientWidth : 0}
                 {...(this.props.playMode ? {} :
