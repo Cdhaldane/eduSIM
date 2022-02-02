@@ -162,7 +162,7 @@ class Graphics extends Component {
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
     if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
-    
+
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
@@ -192,7 +192,7 @@ class Graphics extends Component {
       return {
         x: this.props.gamepieceStatus[id].x,
         y: this.props.gamepieceStatus[id].y,
-        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? { 
+        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? {
           opacity: 0.7,
           draggable: false
         } : {})
@@ -218,12 +218,12 @@ class Graphics extends Component {
   }
 
   // for drag calculations
-  realWidth = ({width, radiusX}) => {
+  realWidth = ({ width, radiusX }) => {
     if (!width && radiusX) {
       return radiusX * 2;
     } return width;
   }
-  realHeight = ({height, radiusY}) => {
+  realHeight = ({ height, radiusY }) => {
     if (!height && radiusY) {
       return radiusY * 2;
     } return height;
@@ -244,13 +244,13 @@ class Graphics extends Component {
     const page = this.getPage(this.state.level - 1);
     let overlayPageEnter = null;
     if (page?.overlays) {
-    for (let i = 0; i < page.overlays.length; i++) {
+      for (let i = 0; i < page.overlays.length; i++) {
         if (page.overlays[i].overlayOpenOption === "pageEnter") {
           overlayPageEnter = page.overlays[i];
           break;
         }
       }
-    } 
+    }
     if (
       !this.state.overlayOpen &&
       overlayPageEnter &&
@@ -286,70 +286,74 @@ class Graphics extends Component {
         formatTextMacros: this.formatTextMacros,
         getDragProps: this.getDragProps,
         sendInteraction: this.sendInteraction,
-        dragLayer: () => {},
+        dragLayer: () => { },
         handleDragEnd: (obj, e) => {
-          this.setState({
-            dragTick: 0
-          })
-          if (this.state.dragTick == 0) {
-            this.props.socket.emit("interaction", {
-              gamepieceId: obj.id,
-              parameters: {
-                x: e.target.x(),
-                y: e.target.y(),
-                dragging: null
-              }
-            });
+          if (!obj.rolelevel) {
+            this.setState({
+              dragTick: 0
+            })
+            if (this.state.dragTick == 0) {
+              this.props.socket.emit("interaction", {
+                gamepieceId: obj.id,
+                parameters: {
+                  x: e.target.x(),
+                  y: e.target.y(),
+                  dragging: null
+                }
+              });
+            }
           }
         },
         onObjectDragMove: (obj, e) => {
-          [
-            ...this.state.images,
-            ...this.state.rectangles,
-            ...this.state.ellipses,
-            ...this.state.triangles,
-            ...this.state.stars,
-            ...this.state.texts
-          ].filter(img => (
-            img.rolelevel === obj.rolelevel &&
-            img.level === obj.level &&
-            img.overlay === obj.overlay && 
-            img.overlayIndex === obj.overlayIndex &&
-            img.id !== obj.id &&
-            img.anchor
-          )).forEach(({x, y, width, height, radiusX, radiusY, id}) => {
-            let sX = x, sY = y;
-            if (this.props.gamepieceStatus[id]) {
-              sX = this.props.gamepieceStatus[id].x;
-              sY = this.props.gamepieceStatus[id].y;
-            }
-            let sW = this.realWidth({width, radiusX}), sH = this.realHeight({height, radiusY});
-            const xDist = Math.abs(
-              (e.target.x() + this.originCenter(this.realWidth(obj)/2, obj.id)) - 
-              (sX + this.originCenter(sW/2,id))
-            );
-            const yDist = Math.abs(
-              (e.target.y() + this.originCenter(this.realHeight(obj)/2, obj.id)) - 
-              (sY + this.originCenter(sH/2,id))
-            );
-            if (xDist < sW/2 && yDist < sH/2) {
-              e.target.x(sX + this.originCenter(sW/2,id) - this.originCenter(this.realWidth(obj)/2, obj.id));
-              e.target.y(sY + this.originCenter(sH/2,id) - this.originCenter(this.realHeight(obj)/2, obj.id));
-            }
-          });
-
-          this.setState({
-            dragTick: (this.state.dragTick+1) % 4
-          })
-          if (this.state.dragTick == 0) {
-            this.props.socket.emit("interaction", {
-              gamepieceId: obj.id,
-              parameters: {
-                x: e.target.x(),
-                y: e.target.y(),
-                dragging: userId
+          if (!obj.rolelevel) {
+            [
+              ...this.state.images,
+              ...this.state.rectangles,
+              ...this.state.ellipses,
+              ...this.state.triangles,
+              ...this.state.stars,
+              ...this.state.texts
+            ].filter(img => (
+              img.rolelevel === obj.rolelevel &&
+              img.level === obj.level &&
+              img.overlay === obj.overlay &&
+              img.overlayIndex === obj.overlayIndex &&
+              img.id !== obj.id &&
+              img.anchor
+            )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
+              let sX = x, sY = y;
+              if (this.props.gamepieceStatus[id]) {
+                sX = this.props.gamepieceStatus[id].x;
+                sY = this.props.gamepieceStatus[id].y;
+              }
+              let sW = this.realWidth({ width, radiusX }), sH = this.realHeight({ height, radiusY });
+              const xDist = Math.abs(
+                (e.target.x() + this.originCenter(this.realWidth(obj) / 2, obj.id)) -
+                (sX + this.originCenter(sW / 2, id))
+              );
+              const yDist = Math.abs(
+                (e.target.y() + this.originCenter(this.realHeight(obj) / 2, obj.id)) -
+                (sY + this.originCenter(sH / 2, id))
+              );
+              if (xDist < sW / 2 && yDist < sH / 2) {
+                e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
+                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
               }
             });
+
+            this.setState({
+              dragTick: (this.state.dragTick + 1) % 4
+            })
+            if (this.state.dragTick == 0) {
+              this.props.socket.emit("interaction", {
+                gamepieceId: obj.id,
+                parameters: {
+                  x: e.target.x(),
+                  y: e.target.y(),
+                  dragging: userId
+                }
+              });
+            }
           }
         }
       });
@@ -367,7 +371,7 @@ class Graphics extends Component {
           (this.state.overlayOpen ? "overlay" : "group");
         this.setState({
           canvasLoading: true
-        });   
+        });
         setTimeout(() => this.props.reCenter("play", layer), 300);
       }
     }

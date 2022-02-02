@@ -54,7 +54,7 @@ const Players = ({ players }) => {
           <Player hue={parseInt(dbid, 16) % 360} me={userDBID === dbid} key={dbid}>
             <p>{name[0]}</p>
             <div>
-              <b>{name} {userDBID === dbid && <span>(you)</span>}</b>
+              <b>{name} {userDBID === dbid && <span>({t("sidebar.you")})</span>}</b>
               <p>{role}</p>
             </div>
           </Player>

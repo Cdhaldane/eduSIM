@@ -25,10 +25,12 @@
 html {
   font-family: "Montserrat",
 }
+
 html.notransition * {
   transition-duration: 0s !important;
   animation: none !important;
 }
+
 body {
   background-color: var(--almostwhite);
   margin: 0;
@@ -40,19 +42,19 @@ body {
   height: 100%;
   width: 100%;
 }
+
 img {
   max-width: 100%;
   height: auto;
   width: auto\9; /* ie8 */
 }
 
-<<<<<<< HEAD
-.main-content {
-  height: 100%;
-  overflow-y: auto;
+#personalGameContainer .konvajs-content > canvas,
+#groupGameContainer .konvajs-content > canvas,
+#overlayGameContainer .konvajs-content > canvas {
+  pointer-events: none;
 }
 
-=======
 .full-page-wrapper{
   position: relative;
   min-height: 100vh;
@@ -65,8 +67,6 @@ img {
   padding-bottom: 3.5rem;
 }
 
-
->>>>>>> responsive_ui
 #root {
   height: 100vh;
   display: flex;
@@ -155,11 +155,9 @@ a {
 .welcome-nav h1{
   color: white;
   font-family: "Montserrat", sans-serif;
-<<<<<<< HEAD
   margin-top: 50px;
   font-size: 3em;
   animation: 1s ease-out 0s 1 slideInFromLeft;
-=======
   font-weight: bold;
   font-size: 3.0vw;
   text-align: left;
@@ -181,8 +179,8 @@ a {
   margin-top: 5vw;
   text-align: left;
   height: 100%;
->>>>>>> responsive_ui
 }
+
 .welcome-img{
   margin-right: 8vw;
 }
@@ -205,16 +203,12 @@ a {
   flex-direction: column;
   align-items: center;
   font-size: 1.5em;
-<<<<<<< HEAD
-  height: 100%;
-=======
   height: auto;
   color: var(--primary);
   background-color: var(--almostwhite);
 }
 .welcome-container-welcome form{
   margin-top: 4vw;
->>>>>>> responsive_ui
 }
 
 .welcome-text{
@@ -432,14 +426,9 @@ a {
   flex-direction: column;
   align-items: center;
   position: relative;
-<<<<<<< HEAD
-  min-height: 100%;
-  height: max-content;
-=======
   min-height: auto;
   height: max-content;
   margin-bottom: 100px;
->>>>>>> responsive_ui
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 hr {

@@ -446,7 +446,7 @@ class Graphics extends Component {
       // Delete temp image once image has loaded in
       if (
         prevState.images.length < this.state.images.length &&
-        this.state.videos[this.state.videos.length - 1].temporary
+        this.state.videos[this.state.videos.length - 1]?.temporary
       ) {
         let newVideos = [...this.state.videos];
         newVideos[this.state.videos.length - 1] = null;

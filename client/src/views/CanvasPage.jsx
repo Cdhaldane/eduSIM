@@ -437,6 +437,7 @@ const CanvasPage = (props) => {
           onContextMenu: canvas.onObjectContextMenu
         } : {
           onDragEnd: e => canvas.handleDragEnd(obj, e),
+          userId: canvas.userId
         })
     }
   }
