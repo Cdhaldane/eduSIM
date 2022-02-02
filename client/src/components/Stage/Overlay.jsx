@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
-  Stage,
-  Layer
+  Stage
 } from "react-konva";
 
 class Overlay extends Component {
@@ -31,9 +30,9 @@ class Overlay extends Component {
     } else if (document.getElementById("overlayGameContainer")) {
       stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
-
+    
     return (
-      <div className="overlayMain">
+      <div className={`overlayMain ${this.props.playMode ? "noSideBar" : ""}`}>
         <div>
           <div className="area overlayCanvas">
             <i id="overlayCloseButton" className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />

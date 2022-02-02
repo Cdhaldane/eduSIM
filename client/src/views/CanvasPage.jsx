@@ -734,8 +734,8 @@ const CanvasPage = (props) => {
     scaleY: canvas.state[`${stage}LayerScale`],
     x: canvas.state[`${stage}LayerX`],
     y: canvas.state[`${stage}LayerY`],
-    height: window.innerHeight,
-    width: window.innerWidth,
+    //height: window.innerHeight,
+    //width: window.innerWidth,
     draggable: canvas.state.layerDraggable,
     onDragMove: (e) => canvas.dragLayer(e, false)
   });
@@ -848,8 +848,8 @@ const CanvasPage = (props) => {
         return <Input
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
-          {...canvas.getVariableProps()}
           {...inputProps(obj, canvas)}
+          {...canvas.getVariableProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       default:
@@ -996,13 +996,13 @@ const CanvasPage = (props) => {
       </Layer>
     );
 
-    if (objectIdsNoPencils.filter(id =>
+    /*if (objectIdsNoPencils.filter(id =>
       id.length > 0 && customObjects.some(obj =>
         id.startsWith(obj)
       )
     ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
 
-    return returnValue;
+    return returnValue;*/
   }
 
   return (

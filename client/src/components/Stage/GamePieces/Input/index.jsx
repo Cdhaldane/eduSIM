@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext } from "react";
+import React, { forwardRef, useContext, useState, useEffect } from "react";
 import CustomWrapper from "../CustomWrapper";
 import styled from "styled-components";
 import { SettingsContext } from "../../../../App";
@@ -15,7 +15,7 @@ const Input = forwardRef((props, ref) => {
 
   const varName = props.varName || props.id;
 
-  console.log(props);
+  //console.log(props);
 
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
