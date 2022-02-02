@@ -315,6 +315,7 @@ const Table = (props) => {
                     <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
                   </th>
                 )}
+                <th></th>
                 <th>{t("admin.firstName")}</th>
                 <th>{t("admin.lastName")}</th>
                 <th>{t("admin.emailAddress")}</th>
@@ -326,7 +327,9 @@ const Table = (props) => {
               {contacts.map((contact, index) => (
                 <Fragment key={index}>
                   {editContactId === contact.id ? (
+
                     <EditableRow
+                      contact={contact}
                       editFormData={editFormData}
                       handleEditFormChange={handleEditFormChange}
                       handleCancelClick={handleCancelClick}
@@ -337,6 +340,7 @@ const Table = (props) => {
                       checked={!excludedEmails.includes(contact.id)}
                       online={props.players && props.players.some((id) => id === contact.id)}
                     />
+              
                   ) : (
                     <ReadOnlyRow
                       contact={contact}
@@ -359,6 +363,7 @@ const Table = (props) => {
        ? (<div className="addstudent">
        {/*<h2>Add a student</h2>*/}
        <form onSubmit={handleAddFormSubmit} className="addstudent-form">
+         <div className="invisible"></div>
          <input
            placeholder={t("admin.firstName")}
            id="firstname"

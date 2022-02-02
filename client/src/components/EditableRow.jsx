@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import Gravatar from "react-gravatar";
 
 const EditableRow = ({
   editFormData,
@@ -11,7 +12,8 @@ const EditableRow = ({
   onCheck,
   checked,
   useGroup,
-  groupList
+  groupList,
+  contact
 }) => {
   const { t } = useTranslation();
 
@@ -22,7 +24,9 @@ const EditableRow = ({
           <input type="checkbox" onClick={onCheck} checked={checked} />
         </td>
       )}
-      <td>
+
+      <td><Gravatar email={contact.email}  /></td>
+      <td id="fix1">
         <input
           type="text"
           required="required"
@@ -32,7 +36,7 @@ const EditableRow = ({
           size="1"
         ></input>
       </td>
-      <td>
+      <td id="fix2">
         <input
           type="text"
           required="required"
@@ -42,7 +46,7 @@ const EditableRow = ({
           size="1"
         ></input>
       </td>
-      <td>
+      <td id="fix3">
         <input
           type="text"
           required="required"
@@ -52,7 +56,7 @@ const EditableRow = ({
           size="1"
         ></input>
       </td>
-      <td>
+      <td id="fix4">
         {useGroup ? (
           <select name="group" type="text" required="required" id="roledropdownadd" onChange={handleEditFormChange}>
             <option key={-1} value="">{t("admin.selectAGroup")}</option>)];
@@ -67,14 +71,18 @@ const EditableRow = ({
         )}
       </td>
       <td>
-        <div>
+        <div id="fix5">
+
           <button className="modal-button green" type="submit" >{t("common.save")}</button>
           <button className="modal-button red" type="button" onClick={handleCancelClick}>
           {t("common.cancel")}
           </button>
         </div>
+
       </td>
+
     </tr>
+
   );
 };
 

@@ -231,6 +231,9 @@
   margin: 2px 20px;
   flex: 1;
 }
+.content-radiobuttons input {
+  margin-top: 3px;
+}
 
 .content-editname {
   align-self: center;
@@ -297,10 +300,12 @@
 .simadv-inline{
   margin-left: 73px;
 }
+
 input[type='radio']:after {
       width: 15px;
       height: 15px;
       border-radius: 15px;
+
       top: -2px;
       left: -4px;
       position: relative;
@@ -312,7 +317,8 @@ input[type='radio']:after {
   }
 
   input[type='radio']:checked:after {
-      background-color: var(--primary);
+      display: block;
+      background-color: #ff9898;
       border: 2px solid var(--primary);
   }
 

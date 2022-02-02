@@ -513,7 +513,7 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                    <i className="icons fa fa-window-restore" />
+                    <i className="icons lni lni-credit-cards" />
                   </div>
                 );
               } else {

@@ -59,7 +59,7 @@ const URLVideo = forwardRef((props, ref) => {
   }, [videoElement, props.layer]);
 
   const togglePlay = () => {
-    if (!props.temporary && !props.src.includes(".gif")) {
+    if (!props.temporary) {
       if (isPlaying) {
         videoElement.pause();
         setIsPlaying(false);

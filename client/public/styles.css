@@ -53,6 +53,7 @@ img {
 }
 
 .main-content {
+  z-index: 1000;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -310,15 +311,14 @@ a {
   white-space: nowrap;
   font-size: 1vw;
   font-family: "Montserrat";
-  padding-top: 30px;
   font-weight: normal;
-  height: 2vw;
-  width: 10vw;
+  height: auto;
+  width: auto;
   line-height: 1vw;
   list-style: none;
   margin: 1vw;
+  padding: 0.8vw 3vw;
   outline: none;
-  padding: 16px 23px 32px 23px;
   text-align: center;
   text-decoration: none;
   transition: color 100ms;
@@ -328,12 +328,12 @@ a {
   touch-action: manipulation;
 }
 .small {
-  width: 8vw;
+
 }
 .auto {
   width: auto;
   margin: 0.5vw;
-  padding: 16px 40px 32px 23px;
+
 }
 
 
@@ -784,7 +784,7 @@ hr {
   }
 
   .dashsim {
-    
+
   }
   .column{
     height: 60%;

@@ -14,7 +14,7 @@ const CreateArea = (props) => {
   const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
-  const [imageSelected, setImageSelected] = useState("");
+  const [imageSelected, setImageSelected] = useState("images/ujjtehlwjgsfqngxesnd");
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
@@ -47,26 +47,12 @@ const CreateArea = (props) => {
       alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
       return;
     }
-    if ((imageSelected.size / 1000000) > 10) {
-      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
-      return;
-    }
-
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", imageSelected);
-    formData.append("folder", "images");
-    formData.append("uploader", localStorage.adminid);
 
     try {
-      let url = filename;
-      if (willUpload) {
-        let res = await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData);
-        url = res.data.public_id;
-      }
       let data = {
         gameinstance_name: title,
-        gameinstance_photo_path: url,
+        gameinstance_photo_path: imageSelected,
         game_parameters: "",
         createdby_adminid: localStorage.adminid,
         status: 'created'
@@ -164,6 +150,25 @@ const CreateArea = (props) => {
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
   }
 
+  const openWidget = (event) => {
+    var myWidget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "uottawaedusim",
+        uploadPreset: "bb8lewrh"
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          console.log("Done! Here is the image info: ", result.info);
+          setImageSelected(result.info.public_id);
+          setImg(result.info.url);
+          setWillUpload(true);
+        }
+      }
+    );
+    console.log(note)
+    myWidget.open();
+  }
+
   return (
     <div className="area">
       <form ref={detailsArea} className="form-input">
@@ -245,18 +250,17 @@ const CreateArea = (props) => {
               cloudName="uottawaedusim"
               publicId={image.url}
               onClick={() => {
-                setFilename(image.public_id);
+                setImageSelected(image.public_id);
                 setImg(image.url);
                 setWillUpload(false);
               }}
             />
           ))}
-          <input type="file" name="img" id="file" onChange={onChange} />
-          <label htmlFor="file" className="form-imgsubmit">
-            <button type="button" className="modal-button green form-imgsubmit">
+
+            <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
             {t("modal.imageFromFile")}
             </button>
-          </label>
+
         </form>
       )}
     </div>

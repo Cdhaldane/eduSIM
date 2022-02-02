@@ -378,6 +378,7 @@ const Tabs = (props) => {
                   <h3>{t("admin.simulationAdvancement")}</h3>
                   <div className="content-radiobuttons">
                     <div>
+
                       <input
                         type="radio"
                         checked={displayAdvance() === "teacher"}
@@ -414,6 +415,7 @@ const Tabs = (props) => {
                         className="content-timeinput"
                         disabled={tabs.length === 0 || displayAdvance() !== "timed"}
                       />
+
                       <span>{t("admin.suffixMinutes")}</span>
                     </div>
                   </div>

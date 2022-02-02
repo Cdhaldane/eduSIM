@@ -76,7 +76,7 @@
 }
 
 .overlayMain {
-  float: right;
+  float: left;
   width: calc(100vw - 70px);
   height: 100vh;
   position: relative;

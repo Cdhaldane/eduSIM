@@ -75,8 +75,8 @@
 
 .nav-pic {
   align-content: center;
-  width: 60px;
-  height: 60px;
+  width: 3.3vw;
+  height:3.3vw;
   border-radius: 30px;
   margin-left: 10px;
   position: relative;
@@ -117,7 +117,7 @@
   grid-column: 2;
 }
 .profilepic {
-  width: auto;
+  width: ;
   height: auto;
   border-radius: 30px;
   object-fit: fill;
@@ -163,7 +163,7 @@
     font-size: 1rem;
     position: absolute;
     right: 10px;
-    top: 75px;
+    top: 70px;
     border-radius: 3px;
     color: #181818;
     background: white;

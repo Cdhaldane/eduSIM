@@ -249,7 +249,7 @@ const DropdownTimelineBar = (props) => {
           classNames="pages-css-anim"
           onEnter={calcHeight}
           unmountOnExit>
-          
+
           <div style={{ width: "500px" }}>
             <h1>{t("edit.editPages")}</h1>
             <div>
@@ -375,7 +375,7 @@ const DropdownTimelineBar = (props) => {
                   >
                     <span className="icon-button" style={{
                       backgroundColor: pages[currentSettingsIndex] ?
-                        (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--primary)") : "var(--primary)"
+                        (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--white)") : "var(--white)"
                     }}>
 
                       <i className="icons lni lni-plus" />

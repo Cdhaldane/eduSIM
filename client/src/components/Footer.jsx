@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
+  z-index: 0;
   width: 100%;
   height: 3.5rem;
   width: 100%;
