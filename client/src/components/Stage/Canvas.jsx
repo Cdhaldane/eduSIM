@@ -3,7 +3,6 @@ import fileDownload from 'js-file-download';
 import axios from 'axios';
 import Level from "../Level/Level";
 import Portal from "./Shapes/Portal";
-import Info from "../Information/InformationPopup";
 import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
@@ -23,6 +22,7 @@ import {
 } from "react-konva";
 
 import "./Stage.css";
+import "./Info.css";
 
 let history = [];
 let historyStep = 0;

@@ -210,7 +210,7 @@ const CreateArea = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i id="plus" class="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
+            <i id="plus" className="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
           </div>
           <div className="form-imgpreview">
 
@@ -221,7 +221,7 @@ const CreateArea = (props) => {
             )}
           </div>
         </div>
-        <p class="button-container">
+        <p className="button-container">
         <input type="file" onChange={uploadSim} />
 
         <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>

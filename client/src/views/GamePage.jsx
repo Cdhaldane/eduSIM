@@ -10,7 +10,7 @@ import AutoUpdate from "../components/AutoUpdate";
 import Loading from "../components/Loading/Loading";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../components/Alerts/AlertContext";
-import "../components/Information/Info.css";
+import "../components/Stage/Info.css";
 import "../components/Tabs/Tabs.css";
 import '../components/Stage/Stage.css';
 
@@ -71,7 +71,8 @@ const Game = (props) => {
         params: {
           id: roomid,
         }
-      })
+      });
+
       setRoomInfo(roomData);
 
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -128,12 +129,12 @@ const Game = (props) => {
       });
       client.on("clientLeft", (id) => {
         setPlayers(l => {
-          let n = {...l};
+          let n = { ...l };
           delete n[id];
           return n;
         });
       });
-      client.on("errorLog", ({key, params={}}) => {
+      client.on("errorLog", ({ key, params = {} }) => {
         alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);

@@ -14,8 +14,6 @@ const Poll = forwardRef((props, ref) => {
     setSurvey(new Survey.Model(props.defaultProps.custom.pollJson));
   }, [props.defaultProps.custom.pollJson]);
 
-  console.log(props.status);
-
   useEffect(() => {
     let data = null;
     let page = null;

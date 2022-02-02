@@ -57,16 +57,16 @@ const Timer = forwardRef((props, ref) => {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
-    console.log({...props.status});
+    //console.log({...props.status});
     if (props.infolevel || props.overlay) {
       if (props.status[props.defaultProps.userId] === undefined) return;
-      console.log("YOLK");
+      //console.log("YOLK");
       setRunning(props.status[props.defaultProps.userId].running);
       setStartTime(props.status[props.defaultProps.userId].startTime);
       setElapsedTime(props.status[props.defaultProps.userId].elapsedTime);
     } else {
       if (props.status === undefined || Object.keys(props.status).length === 0) return;
-      console.log("YEET");
+      //console.log("YEET");
       setRunning(props.status.running);
       setStartTime(props.status.startTime);
       setElapsedTime(props.status.elapsedTime);
