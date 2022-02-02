@@ -407,6 +407,7 @@ const CanvasPage = (props) => {
     }
   }
 
+
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
       key: obj.id,

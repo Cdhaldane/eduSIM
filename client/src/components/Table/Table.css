@@ -27,10 +27,13 @@
   width: 10% !important;
 }
 .app-container th:nth-child(4){
-  padding-left: 6%;
+  padding-left: 1%;
 }
 .app-container td:nth-child(4){
-  padding-left: 6%;
+  padding-left: 1%;
+}
+.app-container td:nth-child(5){
+  
 }
 .app-container th:nth-child(3){
   padding-left: 2%;
@@ -44,7 +47,7 @@
 }
 .app-container td:first-child{
   text-align: right;
-  padding-right: 3vw;
+  padding-right: 1.4vw;
   vertical-align: bottom;
 }
 
@@ -235,6 +238,7 @@
   padding: 0px;
   width: 1% !important;
   min-width: 30px;
+  vertical-align: middle !important;
 }
 .table-checkrow > input {
   padding: 100px;

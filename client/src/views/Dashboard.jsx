@@ -7,7 +7,7 @@ import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import DraggableList from "react-draggable-lists";
-import CloudinaryUploadWidget from "../components/Cloudinary/CloudinaryUploadWidget";
+
 
 const Dashboard = (props) => {
   const { user } = useAuth0();
@@ -152,7 +152,7 @@ const Dashboard = (props) => {
         <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim">
           <div>
-           <DraggableList width={1600} height={150} rowSize={1} >
+           <DraggableList width={1200} height={150} rowSize={1} >
              {gamedata.map((noteItem, index) => (
                <SimNote
                   id={index}

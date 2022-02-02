@@ -61,6 +61,7 @@
   flex-direction: column;
   padding: 30px;
   align-items: flex-start;
+  animation: none !important;
 }
 .form-input > div {
   margin: 10px 0;
@@ -73,11 +74,12 @@
 
 .button-container{
   border-top: 1px dashed rgb(145, 145, 145);
-  text-align: right;
   vertical-align: center;
   height: 50px;
   width: 100%;
   margin-top: 10px;
+  display: flex;
+  justify-content:space-between;
 }
 .button-container button {
   font-family: "Montserrat", sans-serif;
@@ -113,10 +115,20 @@
   border-color: var(--color);
 }
 .primary{
-
+  font-size: 1.2vw;
+  color: var(--white);
   border: 2px outset rgb(136, 136, 136);
   background-color: var(--primary);
   border-color: var(--primary);
+}
+.left{
+  width: auto;
+}
+.right{
+  width: auto;
+}
+.button-col {
+  text-align: right;
 }
 
 #add {
@@ -205,6 +217,7 @@
   overflow: hidden;
   border: none;
   outline: none;
+  animation: none !important;
 }
 
 .myoverlay {

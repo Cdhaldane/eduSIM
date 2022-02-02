@@ -8,6 +8,7 @@ import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 
+
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
@@ -161,8 +162,8 @@ class Graphics extends Component {
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: 'https://cdn.hackernoon.com/hn-images/0*xMaFF2hSXpf_kIfG.jpg',
       audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
-      docsrc: "",
-      docimage: null,
+      docsrc: "https://res.cloudinary.com/uottawaedusim/image/upload/v1643788961/pdfs/xzgxf449ecdymapdaukb.pdf",
+      docimage: "",
 
       // Draw
       tool: 'pen', // eraser or pen
@@ -267,8 +268,7 @@ class Graphics extends Component {
         for (let i = 0; i < objects.savedGroups.length; i++) {
           let savedGroup = [];
           for (let j = 0; j < objects.savedGroups[i].length; j++) {
-            const savedGroupData = JSON.parse(objects.savedGroups[i][j]);
-            savedGroup.push(savedGroupData);
+            savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
           }
           parsedSavedGroups.push(savedGroup);
         }
@@ -281,10 +281,13 @@ class Graphics extends Component {
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
           this.setState({
-            [object]: objects[object] || [],
-            savedStateLoaded: true
+            [object]: objects[object] || []
           }, () => {
             if (index === arr.length - 1) {
+              // This is the last loop so all saved data has been loaded
+              this.setState({
+                savedStateLoaded: true
+              });
               // Get full objects for saved groups
               let fullObjSavedGroups = [];
               for (let i = 0; i < this.state.savedGroups.length; i++) {
@@ -444,17 +447,7 @@ class Graphics extends Component {
       }
 
       // Delete temp image once image has loaded in
-      if (
-        prevState.images.length < this.state.images.length &&
-        this.state.videos[this.state.videos.length - 1].temporary
-      ) {
-        let newVideos = [...this.state.videos];
-        newVideos[this.state.videos.length - 1] = null;
-        newVideos = newVideos.filter(n => n);
-        this.setState({
-          videos: newVideos
-        });
-      }
+
 
       // Update the custom objects state in the parent component (if custom objs changed)
       for (let i = 0; i < this.customObjects.length; i++) {
@@ -491,6 +484,7 @@ class Graphics extends Component {
           handleTextTransform: this.handleTextTransform,
           handleTextDblClick: this.handleTextDblClick,
           onDragEndArrow: this.onDragEndArrow,
+          onDocClick: this.onDocClick,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
           objectSnapping: this.objectSnapping,
@@ -673,6 +667,7 @@ class Graphics extends Component {
   }
 
   onObjectContextMenu = e => {
+    console.log(3)
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
       this.state.selectedShapeName !== "pencils" &&
@@ -734,19 +729,28 @@ class Graphics extends Component {
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
-    if (event.targetTouches) {
-      this.setState({
-        touchTime: Date.now(),
-        touchEvent: event
-      });
-    } else {
-      this.setState({
-        touchTime: null,
-        touchEvent: null
-      });
+    if (event.target.parentElement.className === "konvajs-content") {
+      const customObjs = document.getElementsByClassName("customObj");
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].dataset.name;
+        const customObj = this.getKonvaObj(id);
+        const rect = customObjs[i].getBoundingClientRect();
+        if (
+          (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
+          (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
+          (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
+          (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
+          customObj
+        ) {
+          // Clicked on a custom object
+          this.setState({
+            selectedShapeName: id,
+            groupSelection: []
+          }, this.handleObjectSelection);
+          return;
+        }
+      }
     }
-
-    
 
     if (!event.ctrlKey) {
       this.setState({
@@ -767,10 +771,8 @@ class Graphics extends Component {
       }
 
       pos = {
-        x: (event.clientX ? event.clientX :
-          (event.targetTouches ? event.targetTouches[0].clientX : this.state.mouseX)) - sidebarPx,
-        y: (event.clientY ? event.clientY :
-          (event.targetTouches ? event.targetTouches[0].clientY : this.state.mouseY))
+        x: (event.clientX ? event.clientX : event.targetTouches[0].clientX) - sidebarPx,
+        y: (event.clientY ? event.clientY : event.targetTouches[0].clientY)
       }
     }
 
@@ -819,46 +821,17 @@ class Graphics extends Component {
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       let shape = null;
       const objsLayer = this.refs[`${layer}.objects`];
-      if (pos && e.evt) {
-        shape = objsLayer.getIntersection(pos);
+      const pointerPos = objsLayer?.getStage().getPointerPosition();
+      if (pointerPos && e.evt) {
+        shape = objsLayer.getIntersection(pointerPos);
         if (shape && shape.attrs.id === "ContainerRect") {
           shape = null;
         }
       }
 
-      if (event.target.parentElement.className === "konvajs-content") {
-        const customObjs = Array.from(document.getElementsByClassName("customObj"));
-        customObjs.reverse();
-        for (let i = 0; i < customObjs.length; i++) {
-          const id = customObjs[i].dataset.name;
-          const customObj = this.getKonvaObj(id);
-          const rect = customObjs[i].getBoundingClientRect();
-          const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
-          if (
-            !(shape && !onTop) &&
-            (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
-            (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
-            (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
-            (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
-            customObj
-          ) {
-            // Clicked on a custom object
-            this.setState({
-              selectedShapeName: id,
-              groupSelection: [],
-              selection: {
-                ...this.state.selection,
-                isDraggingShape: "customObj"
-              }
-            }, this.handleObjectSelection);
-            return;
-          }
-        }
-      }
-
       this.setState({
         selection: {
-          isDraggingShape: this.isShape(shape) ? shape.id() : null,
+          isDraggingShape: this.isShape(shape),
           visible: true,
           x1: (pos.x + xOffset) / scale,
           y1: (pos.y + yOffset) / scale,
@@ -872,7 +845,7 @@ class Graphics extends Component {
           this.setState({
             selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "",
             groupSelection: shapeGroup ? [shapeGroup] : []
-          }, this.handleObjectSelection);
+          },  this.handleObjectSelection);
         }
       });
     }
@@ -972,53 +945,30 @@ class Graphics extends Component {
         (personalArea ? "personalSelectionRect" : "groupSelectionRect");
       let shape = null;
       let clickShapeGroup = null;
-
-      // Get Konva shape if clicked
-      const objsLayer = this.refs[`${layer}.objects`];
-      const pointerPos = objsLayer?.getStage().getPointerPosition();
-      if (pointerPos) {
-        const layerObjs = objsLayer.children;
-        for (let i = 0; i < layerObjs.length; i++) {
-          const obj = layerObjs[i];
-          const rect = obj.getClientRect();
-          if (
-            obj.attrs.name !== "customObj" &&
-            obj.attrs.id && obj.attrs.id !== "ContainerRect" &&
-            rect.width && rect.height
-          ) {
-            if (
-              pointerPos.x > rect.x && pointerPos.x < rect.x + rect.width &&
-              pointerPos.y > rect.y && pointerPos.y < rect.y + rect.height
-            ) {
-              shape = obj;
-              clickShapeGroup = this.getShapeGroup(shape);
-            }
-          }
-        }
-      }
-
       // Select custom object if clicked
       const customObjs = Array.from(document.getElementsByClassName("customObj"));
-      customObjs.reverse();
       for (let i = 0; i < customObjs.length; i++) {
         const bounds = customObjs[i].getBoundingClientRect();
-        const id = customObjs[i].dataset.name;
-        const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
         if (
-          (!this.state.selection.isDraggingShape || this.state.selection.isDraggingShape === "customObj") &&
-          !(shape && !onTop) &&
           event.clientX > bounds.left && event.clientX < bounds.right &&
           event.clientY > bounds.top && event.clientY < bounds.bottom
         ) {
           this.setState({
             selectedShapeName: customObjs[i].dataset.name,
-            groupSelection: [],
-            selection: {
-              ...this.state.selection,
-              isDraggingShape: "customObj"
-            }
+            groupSelection: []
           }, this.handleObjectSelection);
           return;
+        }
+      }
+      // Get Konva shape if clicked
+      const objsLayer = this.refs[`${layer}.objects`];
+      const pointerPos = objsLayer?.getStage().getPointerPosition();
+      if (pointerPos) {
+        shape = objsLayer.getIntersection(pointerPos);
+        if (shape && shape.attrs.id === "ContainerRect") {
+          shape = null;
+        } else {
+          clickShapeGroup = this.getShapeGroup(shape);
         }
       }
 
@@ -1351,34 +1301,11 @@ class Graphics extends Component {
     }
   }
 
-  simulateMouseEvent = (el, event) => {
-    if (window.MouseEvent && typeof window.MouseEvent === 'function') {
-      event = new MouseEvent(event);
-    } else {
-      event = document.createEvent('MouseEvent');
-      event.initMouseEvent(event);
-    }
-
-    el.dispatchEvent(event);
-  }
-
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
-
-    /*let stageParentElem = "";
-    if (this.state.overlayOpen) {
-      stageParentElem = "overlayGameContainer";
-    } else if (this.state.personalAreaOpen) {
-      stageParentElem = "editPersonalContainer";
-    } else {
-      stageParentElem = "editMainContainer";
-    }
-    const stageElem = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content")[0];
-    this.simulateMouseEvent(stageElem, 'mousedown');*/
-
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
     } else if (type === "" && this.state.groupSelection.length) {
@@ -1523,6 +1450,7 @@ class Graphics extends Component {
     const stageType = this.state.overlayOpen ? "overlayStage" :
       (this.personalAreaOpen ? "personalStage" : "groupStage");
     this.refs[stageType].draw();
+
   }
 
   handleWheel = (e, personalArea) => {
@@ -2144,6 +2072,7 @@ class Graphics extends Component {
   }
 
   handleDownload = (url, filename) => {
+    console.log(url)
     axios.get(url, {
       responseType: 'blob',
     }).then((res) => {
@@ -2933,14 +2862,14 @@ class Graphics extends Component {
       });
     }
     const newPages = [...this.state.pages];
-    const newPage = { ...this.state.pages[this.state.pages.length - 1] };
+    const newPage = {...this.state.pages[this.state.pages.length - 1]};
     newPage.groupLayers = groupLayers;
     newPage.personalLayers = personalLayers;
     const overlays = [...newPage.overlays];
     for (let i = 0; i < overlayLayers.length; i++) {
       const overlayLayer = overlayLayers[i];
       const overlayIndex = overlays.map(overlay => overlay.id).indexOf(overlayLayer.id);
-      const overlay = { ...overlays[overlayIndex] };
+      const overlay = {...overlays[overlayIndex]};
       overlay.layers = overlayLayer.layers;
       overlays[overlayIndex] = overlay;
     }
@@ -3117,7 +3046,7 @@ class Graphics extends Component {
                   }}
                   onClick={() => this.setOverlayOpen(true, overlay.id)}
                 >
-                  <i className="icons fa fa-window-restore" />
+                  <i className="icons lni lni-credit-cards" />
                 </div>
               );
             })}
@@ -3262,10 +3191,8 @@ class Graphics extends Component {
             </>
           )}
           <Stage
-            height={document.getElementById("editMainContainer") ?
-              document.getElementById("editMainContainer").clientHeight : 0}
-            width={document.getElementById("editMainContainer") ?
-              document.getElementById("editMainContainer").clientWidth : 0}
+            height={window.innerHeight}
+            width={window.innerWidth}
             ref="groupStage"
             onMouseDown={(e) => this.onMouseDown(e, false)}
             onMouseUp={(e) => this.handleMouseUp(e, false)}
@@ -3346,6 +3273,7 @@ class Graphics extends Component {
                   cut={this.handleCut}
                   paste={this.handlePaste}
                   delete={this.handleDelete}
+                  onDocClick={this.onDocClick}
                   setPollData={this.setPollData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
@@ -3411,7 +3339,7 @@ class Graphics extends Component {
 
 
 
-              <i className="lni lni-chevron-down"></i>
+              <i class="lni lni-chevron-down"></i>
 
             </button>
           }

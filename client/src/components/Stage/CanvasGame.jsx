@@ -490,7 +490,27 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-      
+        {this.state.selectrole && (
+         <div>
+           <Modal
+             isOpen={!this.props.players[this.props.socket.id]}
+             contentLabel="My dialog"
+             className="createmodaltab"
+             overlayClassName="myoverlaytab"
+             closeTimeoutMS={250}
+             ariaHideApp={false}
+           >
+             <CreateRole
+               gameid={this.state.gameinstanceid}
+               handleSubmit={this.handlePlayerInfo}
+               gameroles={this.state.gameroles}
+               players={this.props.players}
+               initialUserInfo={this.props.initialUserInfo}
+               roleSelection={this.props.roleSelection}
+             />
+           </Modal>
+         </div>
+       )}
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (

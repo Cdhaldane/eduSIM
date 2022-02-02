@@ -67,6 +67,7 @@ const App = (props) => {
     <div className="full-page-wrapper">
     <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
+
         <AlertPopup />
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <Navbar />
@@ -105,10 +106,11 @@ const App = (props) => {
         )}
 
         </Suspense>
-        </div>
+
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
           <FooterBar />
         )}
+        </div>
       </AlertContextProvider>
     </SettingsContext.Provider>
     </div>

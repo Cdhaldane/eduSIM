@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
-  z-index: 0;
+position: absolute;
+bottom: 0px;
+  z-index: -1;
   width: 100%;
-  height: 3.5rem;
+  height: auto;
   width: 100%;
   background-color: var(--primary);
   color: white;
@@ -14,7 +16,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  margin-top: -56px;
+  margin-top: 0px;
   font-size: 0.9em;
   & p {
     display: flex;

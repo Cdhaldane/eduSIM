@@ -305,10 +305,7 @@ const Tabs = (props) => {
   return (
     <>
       {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
-        <div className="logs page-margin" hidden={!viewLogs}>
-          <div className="logs-show" onClick={() => setViewLogs(!viewLogs)}>
-            <h4>{t("admin.displayPreviousRuns")} {viewLogs ? '-' : '+'}</h4>
-          </div>
+        <div className="logs" hidden={!viewLogs}>
           {logs[tabs[toggleState - 1][1]].map(data => (
             <div className="logrow" key={data.gameactionid} hidden={!viewLogs}>
               <div className="logrow-info">
@@ -330,6 +327,7 @@ const Tabs = (props) => {
               </div>
             </div>
           ))}
+            <button onClick={() => setViewLogs(!viewLogs)} className="modal-button primary">{t("admin.displayPreviousRuns")} {viewLogs ? '-' : '+'}</button>
         </div>
       ) : (
         <div className="logs-margin" />

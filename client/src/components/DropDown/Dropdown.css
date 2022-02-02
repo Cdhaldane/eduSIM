@@ -40,6 +40,7 @@ a {
 
 /* Icon Button */
 
+
 .icon-button {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
@@ -241,21 +242,33 @@ a {
 
 /* Dropdown Menu */
 
+@keyframes grow {
+  from {
+    width: 0px;
+    height: 0px;
+  }
+  to {
+    width: 300px;
+    height: 270px;
+  }
+}
+
 .dropdown {
   position: absolute;
   width: 300px;
   height: 200px;
   z-index: 200000;
-
+  white-space: nowrap;
   background-color: var(--white);
   border: 1px solid var(--primary);
-
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
   transition: var(--speed) ease;
   box-shadow: var(--box-shadow);
   font-family: 'Montserrat', sans-serif;
+  animation-duration: 0.5s;
+  animation-name: grow;
 }
 
 .dropdown[disabled] {

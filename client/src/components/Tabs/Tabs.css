@@ -423,6 +423,9 @@ input[type='radio']:after {
 .group-chatlog p {
   height: unset;
 }
+.tab-add-group {
+  z-index: 2;
+}
 
 .createmodaltab {
   display: flex;
@@ -468,24 +471,24 @@ input[type='radio']:after {
 
 .logs {
   display: flex;
-  height: auto;
-  margin-bottom: 10px;
+  height: 10px;
+  width: auto;
+  margin-right: 7vw;
+  margin-bottom: 60px;
   flex-direction: column;
   align-items: flex-end;
+  align-self: flex-end;
   overflow: unset;
+  z-index: 1;
 }
 .logs[hidden] {
-  height: 30px;
-  margin-bottom: 10px;
-  overflow: hidden;
+  text-align: right;
+  align-self: flex-end;
+  margin-bottom: 60px;
+  margin-right: 7vw;
+  height: 10px;
 }
-.logs-show {
-  background-color: var(--primary);
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  user-select: none;
-}
+
 .logrow {
   display: flex;
   align-items: center;
@@ -496,7 +499,7 @@ input[type='radio']:after {
   opacity: 0;
 }
 .logrow-info {
-  background-color: rgba(0,0,0,0.1);
+  background-color: var(--text-color);
   padding: 10px 15px;
   border-radius: 10px;
   display: flex;

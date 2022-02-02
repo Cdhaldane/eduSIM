@@ -3,6 +3,8 @@
   --warning: #ffd028;
   --danger: #eb3f27;
   --success: #75fa83;
+  --green: rgb(161, 255, 148);
+  --red: #ff9898;;
   --white: #ffffff;
   --almostwhite: #F8F8FF;
   --dark: #181717;
@@ -13,7 +15,7 @@
   --border: 1px solid #181818;
   --border-radius: 20px;
   --speed: 500ms;
-  --box-shadow: rgba(0,0,0,0.25) 3px 3px 4px 0px;
+  --box-shadow: rgba(0,0,0,0.25) 10px 3px 4px 0px;
 }
 
 * {
@@ -50,14 +52,14 @@ img {
 
 .full-page-wrapper{
   height: inherit;
+  height: auto;
 }
 
 .main-content {
-  z-index: 1000;
+  z-index: 10;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
-  padding-bottom: 3.5rem;
 }
 
 
@@ -75,6 +77,49 @@ img {
     transform: translateX(0);
   }
 }
+
+@keyframes slide {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 465px;
+    width: 380px;
+    z-index: 10000;
+  }
+}
+@keyframes slideinleft {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 120px;
+    width: 320px;
+    z-index: 10000;
+  }
+}
+
+@keyframes OpenTop {
+  from {
+   opacity: 0;
+   transform: scale(0);
+ }
+ to {
+   opacity: 1;
+   transform: scale(1);
+ }
+}
+
 
 a {
   color: var(--text-color);
@@ -246,16 +291,24 @@ a {
 }
 
 .page-layout {
+  text-align: left;
   display: flex;
   flex-direction: column;
-  padding: 40px;
-  height: max-content;
-  min-height: 100%;
-  width: 100%;
-  max-width: 1000px;
-  color: white;
+  height: 100vh;
+  background-color: var(--white);
+  color: black;
   margin: auto;
   font-size: 0.9em;
+  margin-top: 3vw;
+  padding-left: 10vw;
+  padding-right:10vw;
+  width: 100%;
+
+}
+.terms{
+  text-align: left;
+  margin: 10px;
+  width: 80% !important;
 }
 .page-layout a {
   color: white;
@@ -265,37 +318,17 @@ a {
   margin-left: 20px;
 }
 .page-layout > p {
+  color: black !important;
   margin: 6px 0;
 }
 .page-layout > h3 {
   margin: 10px 0;
+  color: black !important;
+}
+.page-layout > h1 {
+  color: black !important;
 }
 
-.page-layout {
-  display: flex;
-  flex-direction: column;
-  padding: 40px;
-  height: max-content;
-  min-height: 100%;
-  width: 100%;
-  max-width: 1000px;
-  color: white;
-  margin: auto;
-  font-size: 0.9em;
-}
-.page-layout a {
-  color: white;
-  text-decoration: underline;
-}
-.page-layout ul {
-  margin-left: 20px;
-}
-.page-layout > p {
-  margin: 6px 0;
-}
-.page-layout > h3 {
-  margin: 10px 0;
-}
 
 .homebody{
   margin-top: 7%;
@@ -304,6 +337,7 @@ a {
   background-color: var(--primary);
   border-radius: 100px;
   border-style: none;
+  box-shadow: var(--box-shadow);
   box-sizing: border-box;
   color: var(--white);
   cursor: pointer;
@@ -341,7 +375,7 @@ a {
 
 .w-button:hover,
 .w-button:focus {
-  box-shadow: 0 5px 10px grey;
+  box-shadow: 20px 6px 20px grey;
 }
 
 
@@ -620,7 +654,6 @@ hr {
   background-color: #e5e5e5;
   overflow: hidden;
   align-content: center;
-  animation: 1s ease-out 0s 1 slideInFromLeft;
 }
 .game-logo{
   position: absolute;

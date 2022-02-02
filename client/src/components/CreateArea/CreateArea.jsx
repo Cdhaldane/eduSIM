@@ -226,20 +226,22 @@ const CreateArea = (props) => {
             )}
           </div>
         </div>
-        <p class="button-container">
-        <input type="file" onChange={uploadSim} />
-
-        <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
-          {t("common.upload")}
-        </button>
-        <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
+        <p className="button-container">
+          <div className="button-col left">
+            <input type="file" onChange={uploadSim} />
+            <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
+              {t("common.upload")}
+            </button>
+            <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
+          </div>
+          <div className="button-col right">
         <button type="button" className="green" onClick={uploadImage}>
           {t("common.add")}
         </button>
         <button type="button" className="red" onClick={props.onDelete}>
           {t("common.cancel")}
         </button>
-
+        </div>
       </p>
       </form>
       {moreImages && (
