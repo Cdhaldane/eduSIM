@@ -288,7 +288,7 @@ class Graphics extends Component {
         sendInteraction: this.sendInteraction,
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
-          if (!obj.rolelevel) {
+          if (!obj.infolevel && !obj.overlay) {
             this.setState({
               dragTick: 0
             })

@@ -57,16 +57,13 @@ const Timer = forwardRef((props, ref) => {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
-    //console.log({...props.status});
     if (props.infolevel || props.overlay) {
       if (props.status[props.defaultProps.userId] === undefined) return;
-      //console.log("YOLK");
       setRunning(props.status[props.defaultProps.userId].running);
       setStartTime(props.status[props.defaultProps.userId].startTime);
       setElapsedTime(props.status[props.defaultProps.userId].elapsedTime);
     } else {
       if (props.status === undefined || Object.keys(props.status).length === 0) return;
-      //console.log("YEET");
       setRunning(props.status.running);
       setStartTime(props.status.startTime);
       setElapsedTime(props.status.elapsedTime);
@@ -74,44 +71,44 @@ const Timer = forwardRef((props, ref) => {
   }, [props.status]);
 
   // Formats the status data according to if it is for personal/overlay or group area
-  const formatData = (type, val) => {
+  const formatData = (val) => {
     if (props.infolevel || props.overlay) {
       return {
         ...props.status,
         [props.defaultProps.userId]: {
           ...props.status[props.defaultProps.userId],
-          [type]: val
+          ...val
         }
       }
     } else {
       return {
         ...props.status,
-        [type]: val
+        ...val
       }
     }
   }
 
   const toggleRun = () => {
     if (!running) {
-      props.updateStatus({
+      props.updateStatus(formatData({
         running: true,
         startTime: moment().valueOf(),
         elapsedTime: elapsedTime
-      });
+      }));
     } else {
-      props.updateStatus({
+      props.updateStatus(formatData({
         running: false,
         elapsedTime: moment().diff(moment(startTime - elapsedTime))
-      })
+      }))
     }
   };
 
   const onReset = () => {
-    props.updateStatus({
+    props.updateStatus(formatData({
       running: false,
       startTime: null,
       elapsedTime: 0
-    });
+    }));
   };
 
   const runningValue = () => {
