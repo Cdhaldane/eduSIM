@@ -443,19 +443,6 @@ class Graphics extends Component {
         }
       }
 
-      // Delete temp image once image has loaded in
-      if (
-        prevState.images.length < this.state.images.length &&
-        this.state.videos[this.state.videos.length - 1]?.temporary
-      ) {
-        let newVideos = [...this.state.videos];
-        newVideos[this.state.videos.length - 1] = null;
-        newVideos = newVideos.filter(n => n);
-        this.setState({
-          videos: newVideos
-        });
-      }
-
       // Update the custom objects state in the parent component (if custom objs changed)
       for (let i = 0; i < this.customObjects.length; i++) {
         if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {

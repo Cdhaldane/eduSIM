@@ -388,6 +388,8 @@
       "simNameRequired": "A name is required for the simulation.",
       "simAlreadyExists": "A simulation with this name already exists. Please pick a new name.",
       "imageTooLarge": "Image must be 10MB or less. Please pick a smaller image.",
+      "loadingMedia": "Media is loading.", 
+      "loadedMedia": "Media loaded.", 
       "addedCSVPlayers_one": "Successfully added {{count}} player.",
       "addedCSVPlayers_other": "Successfully added {{count}} players.",
       "filledEmptyRoles_one": "Nonexistant role {{roles}} has been replaced with an empty slot.",

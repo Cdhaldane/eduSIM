@@ -503,7 +503,6 @@ const CanvasPage = (props) => {
 
   const videoProps = (obj, layer) => {
     return {
-      temporary: obj.temporary,
       type: "video",
       src: obj.vidsrc,
       image: obj.vidsrc,
