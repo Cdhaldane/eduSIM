@@ -10,6 +10,8 @@ const Poll = forwardRef((props, ref) => {
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
   const [completed, setCompleted] = useState();
 
+  survey.mode = props.editMode ? 'display' : "";
+
   useEffect(() => {
     setSurvey(new Survey.Model(props.defaultProps.custom.pollJson));
   }, [props.defaultProps.custom.pollJson]);

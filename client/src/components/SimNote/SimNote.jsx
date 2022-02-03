@@ -4,7 +4,6 @@ import "./SimNote.css";
 import { Image } from "cloudinary-react";
 import Modal from "react-modal";
 import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
-import moment from "moment";
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
@@ -25,7 +24,6 @@ const SimNote = (props) => {
       }
     }).then((res) => {
         setJson(JSON.stringify(res));
-        console.log(res)
         let str = res.data.updatedAt.slice(0, -14);
         setDate(str)
         setSimName(res.data.gameinstance_name)
