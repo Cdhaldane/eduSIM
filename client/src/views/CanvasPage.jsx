@@ -888,24 +888,25 @@ const CanvasPage = (props) => {
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
     return (
-      <Layer {...layerProps(canvas, stage, "objects")}>
-        {/* This Rect is for dragging the canvas */}
-        {editMode && (
-          <Rect
-            id="ContainerRect"
-            x={canvasX}
-            y={canvasY}
-            height={canvasH}
-            width={canvasW}
-          // Canvas Drag Rect Outline - FOR DEBUGGING
-          //stroke={"red"}
-          //strokeWidth={2}
-          //strokeScaleEnabled={false}
-          />
-        )}
+      <>
+        <Layer {...layerProps(canvas, stage, "objects")}>
+          {/* This Rect is for dragging the canvas */}
+          {editMode && (
+            <Rect
+              id="ContainerRect"
+              x={canvasX}
+              y={canvasY}
+              height={canvasH}
+              width={canvasW}
+            // Canvas Drag Rect Outline - FOR DEBUGGING
+            //stroke={"red"}
+            //strokeWidth={2}
+            //strokeScaleEnabled={false}
+            />
+          )}
 
-        {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-        {/*editMode && (
+          {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
+          {/*editMode && (
           <Ellipse
               fill={"red"}
               x={0}
@@ -917,82 +918,84 @@ const CanvasPage = (props) => {
             />
           )*/}
 
-        {/* Render the objects in the layer */}
-        {objectIds.map((id, index) => {
-          if (index !== 0) {
-            const type = id.replace(/\d+$/, "");
-            const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+          {/* Render the objects in the layer */}
+          {objectIds.map((id, index) => {
+            if (index !== 0) {
+              const type = id.replace(/\d+$/, "");
+              const obj = canvas.state[type].filter(obj => obj.id === id)[0];
 
-            const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
-            const customObj = customChild ? customChild.parentElement : null;
+              const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
+              const customObj = customChild ? customChild.parentElement : null;
 
-            if (customObj && (newLayers || canvas.state.customRenderRequested)) {
-              if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
-              setTimeout(() => {
-                let stageParentElem = "";
-                if (stage === "overlay") {
-                  stageParentElem = "overlayGameContainer";
-                } else if (stage === "personal") {
-                  stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
-                } else {
-                  stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
-                }
-                const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
-                const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
-
-                if (stageElem) {
-                  const canvasElem = stageElem.querySelectorAll("canvas")[0];
-
-                  if (obj.onTop) {
-                    insertNodeAfter(customObj, canvasElem);
+              if (customObj && (newLayers || canvas.state.customRenderRequested)) {
+                if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
+                setTimeout(() => {
+                  let stageParentElem = "";
+                  if (stage === "overlay") {
+                    stageParentElem = "overlayGameContainer";
+                  } else if (stage === "personal") {
+                    stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
                   } else {
-                    stageElem.insertBefore(customObj, canvasElem);
+                    stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
                   }
-                }
-              }, 0);
-              setPrevLayers(objectIdsNoPencils);
-            }
+                  const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
+                  const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
 
-            return obj && objectIsOnStage(obj, canvas) === checkStage ? (
-              renderObject(obj, index, canvas, editMode, type, stage)
-            ) : null;
-          } else {
-            let objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
-            objs = objs.filter((e) => {
-              return e !== undefined;
-            });
-            return (
-              <React.Fragment key={"drawings"}>
-                {objs.map((obj, index) => (
-                  <React.Fragment key={index}>
-                    {renderObject(obj, index, canvas, editMode, "pencils", stage)}
-                  </React.Fragment>
-                ))}
-              </React.Fragment>
-            );
-          }
-        })}
+                  if (stageElem) {
+                    const canvasElem = stageElem.querySelectorAll("canvas")[0];
 
-        {editMode && (
-          <>
-            {canvas.state.arrows.map((obj, index) => {
+                    if (obj.onTop) {
+                      insertNodeAfter(customObj, canvasElem);
+                    } else {
+                      stageElem.insertBefore(customObj, canvasElem);
+                    }
+                  }
+                }, 0);
+                setPrevLayers(objectIdsNoPencils);
+              }
+
+              return obj && objectIsOnStage(obj, canvas) === checkStage ? (
+                renderObject(obj, index, canvas, editMode, type, stage)
+              ) : null;
+            } else {
+              let objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
+              objs = objs.filter((e) => {
+                return e !== undefined;
+              });
               return (
-                !obj.from &&
-                !obj.to &&
-                obj.level === canvas.state.level &&
-                obj.infolevel === (stage === "personal")
-              ) ?
-                <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
-            })}
-            {canvas.state.guides.map((obj, index) => {
-              return <Line {...guideProps(obj, index, canvas, editMode)} />
-            })}
-            {/* This is the blue transformer rectangle that pops up when objects are selected */}
-            <TransformerComponent {...transformerProps(stage, canvas)} />
-            <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
-          </>
-        )}
-      </Layer>
+                <React.Fragment key={"drawings"}>
+                  {objs.map((obj, index) => (
+                    <React.Fragment key={index}>
+                      {renderObject(obj, index, canvas, editMode, "pencils", stage)}
+                    </React.Fragment>
+                  ))}
+                </React.Fragment>
+              );
+            }
+          })}
+
+          {editMode && (
+            <>
+              {canvas.state.arrows.map((obj, index) => {
+                return (
+                  !obj.from &&
+                  !obj.to &&
+                  obj.level === canvas.state.level &&
+                  obj.infolevel === (stage === "personal")
+                ) ?
+                  <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
+              })}
+              {canvas.state.guides.map((obj, index) => {
+                return <Line {...guideProps(obj, index, canvas, editMode)} />
+              })}
+              {/* This is the blue transformer rectangle that pops up when objects are selected */}
+              <TransformerComponent {...transformerProps(stage, canvas)} />
+              <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
+            </>
+          )}
+        </Layer>
+        <Layer {...layerProps(canvas, stage, "dragging")} />
+      </>
     );
 
     /*if (objectIdsNoPencils.filter(id =>

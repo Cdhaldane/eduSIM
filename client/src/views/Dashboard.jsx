@@ -23,8 +23,6 @@ const Dashboard = (props) => {
   const [uploadedImages, setUploadedImages] = useState(null);
   const [deletionId, setDeletionId] = useState(null);
   const { t } = useTranslation();
-
-
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
@@ -126,16 +124,6 @@ const Dashboard = (props) => {
       }
     }
   }
-  const listItems = [
-    {
-      id: 1,
-      name: 'bill'
-    },
-    {
-      id: 2,
-      name: 'ted'
-    }
-  ];
 
   return (
     <div className="dashboard-wrapper">
