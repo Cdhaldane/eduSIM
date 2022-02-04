@@ -69,57 +69,6 @@ img {
   flex-direction: column;
 }
 
-@keyframes slideInFromLeft {
-  0% {
-    transform: translateX(-100vw);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide {
-  from {
-    margin-left: -20px;
-    height: 10px;
-    width: 50px;
-    z-index: 0;
-    bottom: 50px;
-  }
-  to {
-    margin-left: 0px;
-    height: 465px;
-    width: 380px;
-    z-index: 10000;
-  }
-}
-@keyframes slideinleft {
-  from {
-    margin-left: -20px;
-    height: 10px;
-    width: 50px;
-    z-index: 0;
-    bottom: 50px;
-  }
-  to {
-    margin-left: 0px;
-    height: 120px;
-    width: 320px;
-    z-index: 10000;
-  }
-}
-
-@keyframes OpenTop {
-  from {
-   opacity: 0;
-   transform: scale(0);
- }
- to {
-   opacity: 1;
-   transform: scale(1);
- }
-}
-
 
 a {
   color: var(--text-color);

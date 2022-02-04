@@ -89,8 +89,6 @@ const CustomWrapper = forwardRef((props, ref) => {
       editMode={props.editMode}
     >
       <div
-        onClick={() => props.updateKonva ? props.updateKonva(ref._stringRef, true) : null}
-        onContextMenu={() => props.updateKonva ? props.updateKonva(ref._stringRef, true) : null}
         className={"customObj"}
         data-name={ref._stringRef}
         ref={ref}

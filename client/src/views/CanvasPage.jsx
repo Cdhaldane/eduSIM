@@ -702,8 +702,7 @@ const CanvasPage = (props) => {
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
       onMouseMove: (e) => canvas.handleMouseOver(e, false),
-      onTransformEnd: (e) => canvas.onObjectTransformEnd(e),
-      updateKonva: canvas.getKonvaObj
+      onTransformEnd: (e) => canvas.onObjectTransformEnd(e)
     };
   }
 

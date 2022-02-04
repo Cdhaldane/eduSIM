@@ -33,9 +33,9 @@ const Welcome = (props) => {
 
   return (
     <div className="welcome-container-welcome">
-    <div class='row'>
-      <div class='column left'>
-        <div class='welcome-text'>
+    <div className='row'>
+      <div className='column left'>
+        <div className='welcome-text'>
         <h1>{t("home.alreadyHaveRoomCode")}</h1>
           <Trans i18nKey="home.getCodeOrCreateSim">
               If not, get one from your teacher/facilitator, or
@@ -54,8 +54,8 @@ const Welcome = (props) => {
             </form>
         </div>
       </div>
-      <div class='column right'>
-         <div class='welcome-img'>
+      <div className='column right'>
+         <div className='welcome-img'>
             <img src="03_Illustrations LogoIn.png"></img>
         </div>
       </div>
