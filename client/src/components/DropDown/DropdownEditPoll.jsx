@@ -24,14 +24,8 @@ const DropdownEditPoll = (props) => {
   }, []);
 
   useEffect(() => {
-    const inputs = Array.prototype.slice.call(document.getElementsByClassName("pollEditQuestionInput"));
-    const inputFocused = inputs.some((input) => input === document.activeElement);
     if (pages) {
-      const theInput = document.activeElement;
       createJson();
-      if (inputFocused) {
-        setTimeout(() => theInput.focus(), 0);
-      }
     }
     calcHeight();
   }, [pages]);

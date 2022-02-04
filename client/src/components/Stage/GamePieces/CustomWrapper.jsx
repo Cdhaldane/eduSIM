@@ -5,7 +5,7 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const obj = useRef(null);
 
-  // if rendering outside a konva canvas:
+  // If rendering outside a konva canvas:
   // use the transform properties and apply them directly to style
   if (props.static) {
     return (
@@ -27,17 +27,6 @@ const CustomWrapper = forwardRef((props, ref) => {
         {props.children}
       </div>
     );
-  }
-
-  const getObj = () => {
-    return obj.current.parentElement;
-  }
-
-  const handleLoad = () => {
-    const thisObj = getObj();
-    if (props.defaultProps.editMode) {
-      thisObj.parentElement.style.pointerEvents = "none";
-    }
   }
 
   let scrollTimeout = null;
@@ -73,12 +62,6 @@ const CustomWrapper = forwardRef((props, ref) => {
       window.removeEventListener("keyup", activateDrag);
     }
   }, []);
-
-  useEffect(() => {
-    if (obj.current) {
-      handleLoad();
-    }
-  }, [obj.current]);
 
   return (
     <KonvaHtml

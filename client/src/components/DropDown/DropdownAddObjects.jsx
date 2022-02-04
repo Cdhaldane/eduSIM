@@ -126,7 +126,7 @@ const DropdownAddObjects = (props) => {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
           .then((res) => {
             const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : "."+(res.data.format || "jpg"));
+            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : "." + (res.data.format || "jpg"));
             setImageUploaded(true);
             setImageUploading(false);
             props.handleImage(name);
@@ -233,29 +233,27 @@ const DropdownAddObjects = (props) => {
     };
 
     let newPages = [...props.state.pages];
-    if (!objectParameters.temporary) {
-      const thisPage = newPages[props.state.level - 1];
-      if (props.layer.attrs.name === "group") {
-  
-        isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
-  
-      } else if (props.layer.attrs.name === "personal") {
-        thisPage.personalLayers.push(name);
-      } else {
-        let oIndex = 0;
-        const overlay = thisPage.overlays.filter((overlay, index) => {
-          if (overlay.id === props.state.overlayOpenIndex) {
-            oIndex = index;
-            return true;
-          } else {
-            return false;
-          }
-        })[0];
-        overlay.layers.push(name);
-        thisPage.overlays[oIndex] = overlay;
-      }
-      newPages[props.state.level - 1] = thisPage;
+    const thisPage = newPages[props.state.level - 1];
+    if (props.layer.attrs.name === "group") {
+
+      isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
+
+    } else if (props.layer.attrs.name === "personal") {
+      thisPage.personalLayers.push(name);
+    } else {
+      let oIndex = 0;
+      const overlay = thisPage.overlays.filter((overlay, index) => {
+        if (overlay.id === props.state.overlayOpenIndex) {
+          oIndex = index;
+          return true;
+        } else {
+          return false;
+        }
+      })[0];
+      overlay.layers.push(name);
+      thisPage.overlays[oIndex] = overlay;
     }
+    newPages[props.state.level - 1] = thisPage;
 
     props.setState({
       [objectName]: [...objectsState, object],
@@ -358,23 +356,13 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = () => {
-    addObjectToLayer(
-      "videos",
-      {
-        temporary: true,
-        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
-        stroke: 'black',
-        strokeWidth: 0,
-        opacity: 1,
-        width: 1000,
-        height: 800
-      }
-    );
+    alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
 
     getMeta(
       props.state.imgsrc,
       "img",
       (width, height) => {
+        alertContext.showAlert(t("alert.loadedMedia"), "info");
         addObjectToLayer(
           "images",
           {
@@ -391,22 +379,13 @@ const DropdownAddObjects = (props) => {
   }
 
   const addVideo = () => {
-    addObjectToLayer(
-      "videos",
-      {
-        temporary: true,
-        vidsrc: "https://thumbs.gfycat.com/CreepyPessimisticAlbino-mobile.mp4",
-        stroke: 'black',
-        strokeWidth: 0,
-        opacity: 1,
-        width: 1500,
-        height: 1500
-      }
-    );
+    alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
+
     getMeta(
       props.state.vidsrc,
       "video",
       (width, height) => {
+        alertContext.showAlert(t("alert.loadedMedia"), "info");
         addObjectToLayer(
           "videos",
           {
@@ -782,9 +761,7 @@ const DropdownAddObjects = (props) => {
             <DropdownItem
               leftIcon={
                 !imageUploading ? (
-
                   <i className={`icons lni lni-plus`} onClick={(e) => {
-
                     if (imageUploaded) {
                       addImage(e);
                     }

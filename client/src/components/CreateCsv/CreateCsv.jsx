@@ -118,11 +118,11 @@ const CreateCsv = (props) => {
             <p>{t("modal.noCSV")}</p>
           </div>
         )}
-        <div class="button-container">
+        <div className="button-container">
         <button className="modal-button green" onClick={fileUploadHandler} disabled={!file}>
           {t("common.add")}
         </button>
-        <button class="modal-button red" onClick={props.close}>
+        <button className="modal-button red" onClick={props.close}>
           {t("common.cancel")}
         </button>
         </div>

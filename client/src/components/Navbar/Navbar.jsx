@@ -65,7 +65,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <i class="fas fa-home"></i>
+              <i className="fas fa-home"></i>
             </ButtonLink>
             <ButtonLink
               className="nav-links"

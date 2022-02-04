@@ -1,6 +1,7 @@
 import React from "react";
 import { CSSTransition } from 'react-transition-group';
 import { useAlertContext } from './AlertContext';
+import Loading from "../Loading/Loading";
 
 import "./AlertPopup.css";
 
@@ -24,7 +25,8 @@ const AlertPopup = () => {
       <div className={"alert-popup " +
         (alertContext.type === "warning" ? "warning " : "") +
         (alertContext.type === "info" ? "info " : "") +
-        (alertContext.type === "error" ? "error " : "")}>
+        (alertContext.type === "error" ? "error " : "") +
+        (alertContext.type === "loading" ? "info " : "")}>
 
         {alertContext.type === "warning" && (
           <i className="fas fa-exclamation-triangle alert-popup-icon warning" />
@@ -35,7 +37,11 @@ const AlertPopup = () => {
         {alertContext.type === "error" && (
           <i className="fas fa-exclamation-triangle alert-popup-icon error" />
         )}
-
+        {alertContext.type === "loading" && (
+          <div className="loadingMediaAlert">
+            <Loading />
+          </div>
+        )}
         {alertContext.text}
       </div>
     </CSSTransition>

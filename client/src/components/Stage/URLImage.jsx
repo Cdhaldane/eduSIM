@@ -10,7 +10,8 @@ const URLImage = forwardRef((props, ref) => {
     const img = new window.Image();
     img.src = url;
     img.onload = () => {
-      callback(this.width, this.height);
+      // this.width, this.height
+      callback();
     }
   }
 

@@ -10,6 +10,8 @@ const Poll = forwardRef((props, ref) => {
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
   const [completed, setCompleted] = useState();
 
+  survey.mode = props.editMode ? 'display' : "";
+
   useEffect(() => {
     setSurvey(new Survey.Model(props.defaultProps.custom.pollJson));
   }, [props.defaultProps.custom.pollJson]);
@@ -76,7 +78,7 @@ const Poll = forwardRef((props, ref) => {
     }
   }
 
-  // Formats the status data according to if it is for personal or group area
+  // Formats the status data according to if it is for personal/overlay or group area
   const formatData = (type, val) => {
     if (props.infolevel || props.overlay) {
       return {

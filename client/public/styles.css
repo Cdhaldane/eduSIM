@@ -13,7 +13,7 @@
   --border: 1px solid #181818;
   --border-radius: 20px;
   --speed: 500ms;
-  --box-shadow: rgba(0,0,0,0.25) 3px 3px 4px 0px;
+  --box-shadow: rgba(0, 0, 0, 0.25) 3px 3px 4px 0px;
 }
 
 * {
@@ -25,10 +25,12 @@
 html {
   font-family: "Montserrat",
 }
+
 html.notransition * {
   transition-duration: 0s !important;
   animation: none !important;
 }
+
 body {
   background-color: var(--almostwhite);
   margin: 0;
@@ -41,14 +43,21 @@ body {
   width: 100%;
   zoom: auto;
 }
+
 img {
   max-width: 100%;
   height: auto;
-  width: auto\9; /* ie8 */
+  width: auto\9;
+  /* ie8 */
 }
 
+#personalGameContainer .konvajs-content>canvas,
+#groupGameContainer .konvajs-content>canvas,
+#overlayGameContainer .konvajs-content>canvas {
+  pointer-events: none;
+}
 
-.full-page-wrapper{
+.full-page-wrapper {
   height: inherit;
 }
 
@@ -58,7 +67,6 @@ img {
   overflow-x: hidden;
   padding-bottom: 3.5rem;
 }
-
 
 #root {
   height: 100vh;
@@ -70,6 +78,7 @@ img {
   0% {
     transform: translateX(-100vw);
   }
+
   100% {
     transform: translateX(0);
   }
@@ -79,7 +88,8 @@ a {
   color: var(--text-color);
   text-decoration: none;
 }
-.full-page-wrapper{
+
+.full-page-wrapper {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -104,6 +114,7 @@ a {
 .noCursor:hover {
   cursor: none;
 }
+
 .grabCursor:hover {
   cursor: grab;
 }
@@ -126,6 +137,7 @@ a {
   flex-direction: column;
   flex: 1 1 auto;
 }
+
 .left {
   width: 40%;
 }
@@ -137,24 +149,31 @@ a {
 
 .welcome-nav {
   margin-top: 5vw;
-  margin-left: 12vw;;
+  margin-left: 12vw;
+  ;
 }
+
 .welcome-nav img {
   max-width: 100%;
   height: auto;
   margin-top: 2vw;
   margin-right: 3vw;
 }
-.welcome-nav h1{
+
+.welcome-nav h1 {
   color: white;
   font-family: "Montserrat", sans-serif;
+  margin-top: 50px;
+  font-size: 3em;
+  animation: 1s ease-out 0s 1 slideInFromLeft;
   font-weight: bold;
   font-size: 2.5vw;
   text-align: left;
   width: 100%;
   margin-top: 2vw;
 }
-.welcome-nav h2{
+
+.welcome-nav h2 {
   color: white;
   font-family: "Montserrat", sans-serif;
   margin-top: 20px;
@@ -169,13 +188,15 @@ a {
   text-align: left;
   height: 100%;
 }
-.welcome-img{
+
+.welcome-img {
   margin-right: 8vw;
 }
 
 .welcome-noanim {
   animation: unset;
 }
+
 .welcome-container {
   text-align: center;
   display: flex;
@@ -195,12 +216,12 @@ a {
   color: var(--primary);
   background-color: var(--almostwhite);
 }
-.welcome-container-welcome form{
-  margin-top: 4vw;
 
+.welcome-container-welcome form {
+  margin-top: 4vw;
 }
 
-.welcome-text{
+.welcome-text {
   text-align: left;
   vertical-align: middle;
   width: 70%;
@@ -208,7 +229,8 @@ a {
   margin-left: 9vw;
   font-size: 1.3vw;
 }
-.welcome-text h1{
+
+.welcome-text h1 {
   width: 80%;
   font-weight: bold;
   font-size: 3vw;
@@ -216,16 +238,17 @@ a {
 }
 
 
-.welcome-container > * {
+.welcome-container>* {
   margin-bottom: 10px;
 }
+
 .welcome-join {
   display: flex;
   align-items: center;
   margin-top: 0px;
 }
 
-.welcome-join > input[type="submit"] {
+.welcome-join>input[type="submit"] {
   padding: 0.8em;
   border-radius: 100px;
   width: 200px;
@@ -256,17 +279,21 @@ a {
   margin: auto;
   font-size: 0.9em;
 }
+
 .page-layout a {
   color: white;
   text-decoration: underline;
 }
+
 .page-layout ul {
   margin-left: 20px;
 }
-.page-layout > p {
+
+.page-layout>p {
   margin: 6px 0;
 }
-.page-layout > h3 {
+
+.page-layout>h3 {
   margin: 10px 0;
 }
 
@@ -282,24 +309,29 @@ a {
   margin: auto;
   font-size: 0.9em;
 }
+
 .page-layout a {
   color: white;
   text-decoration: underline;
 }
+
 .page-layout ul {
   margin-left: 20px;
 }
-.page-layout > p {
+
+.page-layout>p {
   margin: 6px 0;
 }
-.page-layout > h3 {
+
+.page-layout>h3 {
   margin: 10px 0;
 }
 
-.homebody{
+.homebody {
   margin-top: 7%;
 }
-.w-button{
+
+.w-button {
   background-color: var(--primary);
   border-radius: 100px;
   border-style: none;
@@ -327,9 +359,11 @@ a {
   -webkit-user-select: none;
   touch-action: manipulation;
 }
+
 .small {
   width: 8vw;
 }
+
 .auto {
   width: auto;
   margin: 0.5vw;
@@ -369,6 +403,7 @@ a {
   margin-bottom: 1vw;
   color: var(--dark);
 }
+
 .welcome-navbutton h2 {
   font-family: "Montserrat", sans-serif;
   font-size: 1.2vw;
@@ -376,7 +411,8 @@ a {
   margin-bottom: 1vw;
   color: var(--dark);
 }
-.fix h2{
+
+.fix h2 {
   font-size: 1.05vw;
 }
 
@@ -399,7 +435,8 @@ a {
   outline: none;
   box-shadow: 0 2px 10px #ccc;
 }
-.dashboard-wrapper{
+
+.dashboard-wrapper {
   font-size: 1.5em;
   height: auto;
   color: var(--primary);
@@ -416,36 +453,38 @@ a {
   flex-direction: column;
   align-items: center;
   position: relative;
-
   min-height: auto;
   height: max-content;
   margin-bottom: 100px;
-
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
+
 hr {
   margin: 10px 0;
   border-width: 1px;
 }
-.dashboard > hr {
+
+.dashboard>hr {
   align-self: stretch;
   margin-top: 20px;
   margin-bottom: 20px;
   border-width: 1px;
 }
+
 .dashboard-home {
   align-self: flex-start;
   margin-bottom: 10px;
 }
+
 .page-margin {
   margin-top: 3vw;
   margin-bottom: 0px;
   width: 85%;
 
 }
-.page-margin button{
 
-}
+.page-margin button {}
+
 .page-margin h2 {
   color: var(--primary);
   font-size: 2.3rem;
@@ -465,11 +504,12 @@ hr {
   border: none;
   outline: none;
   background: inherit;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   cursor: pointer;
 }
-.dashboard-new > span {
+
+.dashboard-new>span {
   text-decoration: underline;
   margin-right: 10px;
 }
@@ -477,7 +517,7 @@ hr {
 .addbutton {
   padding: 10px 50px;
   align-self: flex-start;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.3rem;
   color: white;
   background-color: var(--primary);
@@ -487,14 +527,17 @@ hr {
   vertical-align: middle;
   border-radius: 100px
 }
-.addbutton:hover{
+
+.addbutton:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
-.join-wrapper{
+
+.join-wrapper {
   height: auto;
   background-color: var(--almostwhite);
 }
+
 .join {
   color: var(--almostwhite);
   font-family: "Montserrat", sans-serif;
@@ -516,6 +559,7 @@ hr {
   align-items: flex-end;
   vertical-align: middle;
 }
+
 .joinboard-info {
   display: flex;
   flex-direction: column;
@@ -523,6 +567,7 @@ hr {
   white-space: nowrap;
   margin: auto 0 auto 10px;
 }
+
 .joinboard-image {
   height: 100px;
   width: 120px;
@@ -531,6 +576,7 @@ hr {
   opacity: 100%;
   border: 1px solid var(--primary);
 }
+
 .joinboard-title {
   font-size: 1.5rem;
   font-weight: 700;
@@ -538,12 +584,14 @@ hr {
   position: relative;
   top: 0px;
   left: 10px;
-  word-break:break-word;
+  word-break: break-word;
 }
+
 .joinboard-disabled {
   opacity: 0.3;
   pointer-events: none;
 }
+
 .joinboard-controls {
   margin-left: auto;
   display: flex;
@@ -553,10 +601,12 @@ hr {
   line-height: 1.3em;
   font-size: .9em;
 }
+
 .joinboard-buttons {
   display: flex;
   margin-top: 5px;
 }
+
 .joinboard-button {
   color: var(--primary);
   border: 1px solid var(--primary);
@@ -569,6 +619,7 @@ hr {
   cursor: pointer;
   background-color: var(--white);
 }
+
 .lni-play {
   position: relative;
   left: 2px;
@@ -622,14 +673,16 @@ hr {
   align-content: center;
   animation: 1s ease-out 0s 1 slideInFromLeft;
 }
-.game-logo{
+
+.game-logo {
   position: absolute;
   top: 10px;
   left: 15px;
   width: 40px;
   height: 50px;
 }
-.game-logo-big{
+
+.game-logo-big {
   position: absolute;
   top: 20px;
   left: 55px;
@@ -643,7 +696,7 @@ hr {
   width: 100vw;
 }
 
-#levels input, select{
+#levels input, select {
   position: relative;
   top: -870px;
   left: 220px;
@@ -654,7 +707,7 @@ hr {
   border-radius: 10px;
 }
 
-#editmode{
+#editmode {
   opacity: 0.7;
   transform: rotate(45deg);
   position: absolute;
@@ -663,13 +716,13 @@ hr {
   font-family: 'Cedarville Cursive', cursive;
 }
 
-#save{
+#save {
   position: relative;
   top: -1000px;
   left: 840px;
   width: 100px;
   height: 50px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.5rem;
   color: white;
   background-color: var(--primary);
@@ -680,7 +733,7 @@ hr {
   border-radius: 10px
 }
 
-#save:hover{
+#save:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
 }
@@ -693,17 +746,19 @@ hr {
   z-index: 1;
   padding: 1.5em;
   background-color: white;
-  border: solid var(--primary) 2px ;
+  border: solid var(--primary) 2px;
   border-radius: 8px;
   transform: translateY(-100%);
   transition: transform .3s;
 }
+
 .saved-active {
   transform: translateY(0);
 
 }
+
 .saved h1 {
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.45rem;
   font-weight: 700;
   color: #636363;
@@ -711,6 +766,7 @@ hr {
   text-align: center;
   top: 0px;
 }
+
 #link {
   color: var(--primary);
   font-size: inherit;
@@ -718,9 +774,10 @@ hr {
   border: none;
   outline: none;
   background: inherit;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
 }
+
 #authbutton {
   position: relative;
   left: -200px;
@@ -738,7 +795,7 @@ hr {
   opacity: 0.8;
 }
 
-.selectrole-container{
+.selectrole-container {
   position: absolute;
   left: 10%;
   top: 10%;
@@ -749,30 +806,34 @@ hr {
   border: 2px solid black;
 }
 
-.game{
+.game {
   position: absolute;
   top: 1000000px;
 }
 
 
 @media screen and (orientation: portrait) {
-  .addbutton{
+  .addbutton {
     font-size: 1.0rem;
   }
-  .page-margin h2{
+
+  .page-margin h2 {
     font-size: 1.0rem;
   }
-  .playbtn{
+
+  .playbtn {
     left: 132px;
     width: 50px;
     height: 50px;
   }
-  .pausebtn{
+
+  .pausebtn {
     left: 160px;
     width: 50px;
     height: 50px;
   }
-  .refreshbtn{
+
+  .refreshbtn {
     left: 190px;
     width: 50px;
     height: 50px;
@@ -783,19 +844,20 @@ hr {
     padding: 1em;
   }
 
-  .dashsim {
-    
-  }
-  .column{
+  .dashsim {}
+
+  .column {
     height: 60%;
     position: relative;
   }
+
   .row {
     align-items: center;
     flex-wrap: wrap;
     width: 100%;
     height: 40%;
   }
+
   .left {
     position: relative;
     width: 100%;
@@ -806,12 +868,14 @@ hr {
     width: 100%;
     height: 100%;
   }
+
   .welcome-nav {
     vertical-align: bottom;
     position: absolute;
     bottom: 10px;
   }
-  .welcome-text{
+
+  .welcome-text {
     text-align: center;
     align-self: center;
     align-content: center;
@@ -820,21 +884,25 @@ hr {
     margin-top: 20vw;
     font-size: 4vw;
   }
-  .welcome-img{
+
+  .welcome-img {
     margin: 0px;
     margin-top: 0vw;
   }
-  .welcome-text h1{
+
+  .welcome-text h1 {
     width: 100%;
     font-weight: bold;
     font-size: 8vw;
     margin-bottom: 1.5vw
   }
+
   .welcome-join {
     display: flex;
     align-items: center;
     margin-top: 0px;
   }
+
   .welcome-text form {
     margin-top: 5.5vw;
   }
@@ -852,12 +920,14 @@ hr {
     flex-wrap: nowrap;
     max-width: 100%;
   }
+
   .welcome-navbutton h1 {
     font-family: "Montserrat", sans-serif;
     font-size: 3.5vw;
     margin-bottom: 1vw;
     color: var(--dark);
   }
+
   .welcome-navbutton h2 {
     font-family: "Montserrat", sans-serif;
     font-size: 2vw;
@@ -865,29 +935,34 @@ hr {
     margin-bottom: 1vw;
     color: var(--dark);
   }
+
   .welcome-navbutton img {
     height: 15vw;
     width: auto;
   }
+
   .welcome-nav img {
     margin-top: -20vw;
     opacity: 0;
   }
-  .welcome-nav h1{
-  font-size: 5.0vw;
+
+  .welcome-nav h1 {
+    font-size: 5.0vw;
   }
-  .welcome-nav h2{
+
+  .welcome-nav h2 {
     font-size: 3vw;
   }
+
   .welcome-notes {
     margin-left: 5vw;
     position: absolute;
     top: 0px;
   }
-  .mobile-view{
 
-  }
-  .w-button{
+  .mobile-view {}
+
+  .w-button {
     font-size: 2vw;
     height: 4vw;
     width: 30vw;

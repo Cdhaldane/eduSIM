@@ -3,7 +3,6 @@ import fileDownload from 'js-file-download';
 import axios from 'axios';
 import Level from "../Level/Level";
 import Portal from "./Shapes/Portal";
-import Info from "../Information/InformationPopup";
 import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
@@ -23,6 +22,7 @@ import {
 } from "react-konva";
 
 import "./Stage.css";
+import "./Info.css";
 
 let history = [];
 let historyStep = 0;
@@ -443,19 +443,6 @@ class Graphics extends Component {
         }
       }
 
-      // Delete temp image once image has loaded in
-      if (
-        prevState.images.length < this.state.images.length &&
-        this.state.videos[this.state.videos.length - 1].temporary
-      ) {
-        let newVideos = [...this.state.videos];
-        newVideos[this.state.videos.length - 1] = null;
-        newVideos = newVideos.filter(n => n);
-        this.setState({
-          videos: newVideos
-        });
-      }
-
       // Update the custom objects state in the parent component (if custom objs changed)
       for (let i = 0; i < this.customObjects.length; i++) {
         if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
@@ -846,6 +833,7 @@ class Graphics extends Component {
               groupSelection: [],
               selection: {
                 ...this.state.selection,
+                visible: true,
                 isDraggingShape: "customObj"
               }
             }, this.handleObjectSelection);
@@ -1463,7 +1451,27 @@ class Graphics extends Component {
                 groupSelection: [shapeGroup]
               }, this.handleObjectSelection);
             } else {
-              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
+              let shapeId = "";
+              if (this.state.selection.isDraggingShape === "customObj") {
+                const customObjs = Array.from(document.getElementsByClassName("customObj"));
+                customObjs.reverse();
+                for (let i = 0; i < customObjs.length; i++) {
+                  const bounds = customObjs[i].getBoundingClientRect();
+                  const id = customObjs[i].dataset.name;
+                  const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
+                  if (
+                    (!this.state.selection.isDraggingShape || this.state.selection.isDraggingShape === "customObj") &&
+                    !(shape && !onTop) &&
+                    pos.x > bounds.left && pos.x < bounds.right &&
+                    pos.y > bounds.top && pos.y < bounds.bottom
+                  ) {
+                    shapeId = customObjs[i].dataset.name;
+                    break;
+                  }
+                }
+              } else {
+                shapeId = shape.id();
+              }
               this.setState({
                 selectedShapeName: this.checkName(shapeId),
                 groupSelection: []
@@ -1504,6 +1512,11 @@ class Graphics extends Component {
       }
     } else {
       shape = this.refs[ref];
+    }
+    if (!this.customObjects.includes(objectsName)) {
+      shape.moveTo(this.refs[`${layer}.objects`]);
+      // Add one to zIndex go over ContainerRect
+      shape.setZIndex(this.getLayers().indexOf(ref) + 1);
     }
 
     this.setState(prevState => ({
@@ -2100,7 +2113,6 @@ class Graphics extends Component {
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-          //console.log(this.state.savedGroups[i][j].attrs.id);
           if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
             return this.state.savedGroups[i];
           }
@@ -2151,7 +2163,6 @@ class Graphics extends Component {
 
   // Turn <Text> into <textarea> for editing on double click
   handleTextDblClick = (text, layer) => {
-    console.log(layer);
     if (text) {
       // Adjust location based on info or main
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -2508,6 +2519,10 @@ class Graphics extends Component {
   }
 
   onObjectDragMove = (obj, e) => {
+    const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
+      (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+    this.refs[obj.id].moveTo(this.refs[`${layer}.dragging`]);
+
     this.objectSnapping(obj, e);
     this.state.arrows.map(arrow => {
       if (arrow.from !== undefined) {
@@ -2923,7 +2938,6 @@ class Graphics extends Component {
         }
       }
     }
-    console.log(toBeSaved);
     for (let i = 0; i < this.savedObjects.length; i++) {
       const type = this.savedObjects[i];
       this.setState({

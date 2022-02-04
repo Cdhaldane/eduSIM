@@ -12,19 +12,17 @@ const Dashboard = (props) => {
   const { user } = useAuth0();
   const [isLoading, setLoading] = useState(true);
   const [showNote, setShowNote] = useState(false);
-  const [gamedata, getGamedata] = useState([  {
-        gameinstance_name: 1,
-        name: 'bill'
-    },
-    {
-        id: 2,
-        name: 'ted'
-    }]);
+  const [gamedata, getGamedata] = useState([{
+    gameinstance_name: 1,
+    name: 'bill'
+  },
+  {
+    id: 2,
+    name: 'ted'
+  }]);
   const [uploadedImages, setUploadedImages] = useState(null);
   const [deletionId, setDeletionId] = useState(null);
   const { t } = useTranslation();
-
-
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
@@ -65,8 +63,8 @@ const Dashboard = (props) => {
   }, [user]);
 
   if (isLoading) {
-   return <div className="App"></div>;
- }
+    return <div className="App"></div>;
+  }
 
   const addNote = (newgamedata) => {
     getGamedata((prevgamedata) => {
@@ -80,7 +78,7 @@ const Dashboard = (props) => {
         return index !== id;
       });
     });
-      window.location.reload();
+    window.location.reload();
   }
 
   const toggleModal = () => {
@@ -126,75 +124,66 @@ const Dashboard = (props) => {
       }
     }
   }
-  const listItems = [
-    {
-        id: 1,
-        name: 'bill'
-    },
-    {
-        id: 2,
-        name: 'ted'
-    }
-];
 
   return (
     <div className="dashboard-wrapper">
-    <div className="dashboard">
-      <div className="page-margin">
-        <button className="w-button auto" onClick={toggleModal}>
-          {t("admin.addNewSimulation")}
-        </button>
-      </div>
-
-      <div className="page-margin">
-        <h2>{t("admin.mySimulations")}</h2>
-        <div className="dashsim">
-          <div>
-           <DraggableList width={1600} height={150} rowSize={1} >
-             {gamedata.map((noteItem, index) => (
-               <SimNote
-                  id={index}
-                  gameid={noteItem.gameinstanceid}
-                  img={noteItem.gameinstance_photo_path}
-                  adminid={noteItem.createdby_adminid}
-                  setConfirmationModal={setConfirmationModal}
-                  title={noteItem.gameinstance_name}
-                  superadmin={noteItem.createdby_adminid === localStorage.adminid}
-               />
-             ))}
-           </DraggableList>
-         </div>
+      <div className="dashboard">
+        <div className="page-margin">
+          <button className="w-button auto" onClick={toggleModal}>
+            {t("admin.addNewSimulation")}
+          </button>
         </div>
-      </div>
 
-      <Modal
-        isOpen={showNote}
-        hide={() => setShowNote(false)}
-        onRequestClose={toggleModal}
-        contentLabel="My dialog"
-        className="createmodalarea"
-        overlayClassName="myoverlay"
-        closeTimeoutMS={250}
-        ariaHideApp={false}
-      >
-        <CreateArea
-          onAdd={addNote}
-          onDelete={() => setShowNote(!showNote)}
-          gamedata={gamedata}
+        <div className="page-margin">
+          <h2>{t("admin.mySimulations")}</h2>
+          <div className="dashsim">
+            <div>
+              <DraggableList width={1600} height={150} rowSize={1} >
+                {gamedata.map((noteItem, index) => (
+                  <SimNote
+                    key={index}
+                    id={index}
+                    gameid={noteItem.gameinstanceid}
+                    img={noteItem.gameinstance_photo_path}
+                    adminid={noteItem.createdby_adminid}
+                    setConfirmationModal={setConfirmationModal}
+                    title={noteItem.gameinstance_name}
+                    superadmin={noteItem.createdby_adminid === localStorage.adminid}
+                  />
+                ))}
+              </DraggableList>
+            </div>
+          </div>
+        </div>
+
+        <Modal
           isOpen={showNote}
-          close={toggleModal}
-          previewImages={uploadedImages}
-        />
-      </Modal>
+          hide={() => setShowNote(false)}
+          onRequestClose={toggleModal}
+          contentLabel="My dialog"
+          className="createmodalarea"
+          overlayClassName="myoverlay"
+          closeTimeoutMS={250}
+          ariaHideApp={false}
+        >
+          <CreateArea
+            onAdd={addNote}
+            onDelete={() => setShowNote(!showNote)}
+            gamedata={gamedata}
+            isOpen={showNote}
+            close={toggleModal}
+            previewImages={uploadedImages}
+          />
+        </Modal>
 
-      <ConfirmationModal
-        visible={confirmationVisible}
-        hide={() => setConfirmationModal(false)}
-        confirmFunction={confirmAction}
-        confirmMessage={t("admin.deleteSimConfirm")}
-        message={getConfirmMessage()}
-      />
-    </div>
+        <ConfirmationModal
+          visible={confirmationVisible}
+          hide={() => setConfirmationModal(false)}
+          confirmFunction={confirmAction}
+          confirmMessage={t("admin.deleteSimConfirm")}
+          message={getConfirmMessage()}
+        />
+      </div>
     </div>
   );
 }

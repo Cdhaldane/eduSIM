@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import AutoUpdate from "../../../AutoUpdate";
 import CustomWrapper from "../CustomWrapper";
 import styled from 'styled-components';
@@ -51,58 +51,88 @@ const TimerContainer = styled.div`
 const Timer = forwardRef((props, ref) => {
 
   const limit = props.timeLimit;
-  
-  const { 
-    running = false,
-    startTime,
-    elapsedTime = 0
-  } = props.status;
+
+  const [running, setRunning] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  useEffect(() => {
+    if (props.infolevel || props.overlay) {
+      if (props.status[props.defaultProps.userId] === undefined) return;
+      setRunning(props.status[props.defaultProps.userId].running);
+      setStartTime(props.status[props.defaultProps.userId].startTime);
+      setElapsedTime(props.status[props.defaultProps.userId].elapsedTime);
+    } else {
+      if (props.status === undefined || Object.keys(props.status).length === 0) return;
+      setRunning(props.status.running);
+      setStartTime(props.status.startTime);
+      setElapsedTime(props.status.elapsedTime);
+    }
+  }, [props.status]);
+
+  // Formats the status data according to if it is for personal/overlay or group area
+  const formatData = (val) => {
+    if (props.infolevel || props.overlay) {
+      return {
+        ...props.status,
+        [props.defaultProps.userId]: {
+          ...props.status[props.defaultProps.userId],
+          ...val
+        }
+      }
+    } else {
+      return {
+        ...props.status,
+        ...val
+      }
+    }
+  }
 
   const toggleRun = () => {
     if (!running) {
-      props.updateStatus({ 
+      props.updateStatus(formatData({
         running: true,
         startTime: moment().valueOf(),
         elapsedTime: elapsedTime
-      });
+      }));
     } else {
-      props.updateStatus({
+      props.updateStatus(formatData({
         running: false,
         elapsedTime: moment().diff(moment(startTime - elapsedTime))
-      })
+      }))
     }
   };
 
   const onReset = () => {
-    props.updateStatus({ 
+    props.updateStatus(formatData({
       running: false,
       startTime: null,
       elapsedTime: 0
-    });
+    }));
   };
 
   const runningValue = () => {
     if (limit) {
-      if (moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000*limit) {
-        return (moment().diff(moment(startTime - elapsedTime)).valueOf()/500) % 2 < 1 ? '00:00.00' : '';
+      if (moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000 * limit) {
+        return (moment().diff(moment(startTime - elapsedTime)).valueOf() / 500) % 2 < 1 ? '00:00.00' : '';
       }
-      return moment(1000*limit - moment().diff(moment(startTime - elapsedTime))).format('mm:ss.SS');
+      return moment(1000 * limit - moment().diff(moment(startTime - elapsedTime))).format('mm:ss.SS');
     }
     return moment(moment().diff(moment(startTime - elapsedTime))).format('mm:ss.SS');
   }
 
   const elapsedValue = () => {
     if (limit) {
-      if (elapsedTime > 1000*limit) {
+      if (elapsedTime > 1000 * limit) {
         return "00:00.00";
       }
-      return moment(1000*limit - elapsedTime).format('mm:ss.SS');
+      return moment(1000 * limit - elapsedTime).format('mm:ss.SS');
     }
     return moment(elapsedTime).format('mm:ss.SS');
   }
 
   const isDone = () => {
-    return (elapsedTime > 0 || running) && (elapsedTime > 1000*limit || moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000*limit);
+    return (elapsedTime > 0 || running) && (elapsedTime > 1000 * limit || moment().diff(moment(startTime - elapsedTime)).valueOf() > 1000 * limit);
   }
 
   const updateValue = (value) => {

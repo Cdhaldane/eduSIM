@@ -75,13 +75,17 @@
   padding: 0 !important;
 }
 
-.overlayMain {
+.noSideBar {
   float: right;
+}
+
+.overlayMain {
   width: calc(100vw - 70px);
   height: 100vh;
-  position: relative;
+  position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 6;
+  left: 70px;
 }
 
 .overlayMain>div {
@@ -108,6 +112,7 @@
 @media screen and (orientation: portrait) {
   .overlayMain {
     width: 100vw;
+    left: 0px;
   }
 
   .overlayButton {

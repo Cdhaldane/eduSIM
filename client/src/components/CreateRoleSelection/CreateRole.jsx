@@ -81,7 +81,7 @@ const CreateRole = (props) => {
           <p>{userExists ? t("game.joiningAsX", { name: `${props.initialUserInfo.fname} ${props.initialUserInfo.lname}` }) : t("game.inputName")}</p>
         </div>
         <div id="rolesdrops">
-          <span class="role-title">{t("common.role")}</span>
+          <span className="role-title">{t("common.role")}</span>
           <DropdownRoles
             gameid={props.gameid}
             roleLevel={handleSetRole}

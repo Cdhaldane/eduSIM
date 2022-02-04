@@ -3,7 +3,7 @@ import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import { Image, Text } from "react-konva";
 
 const URLVideo = forwardRef((props, ref) => {
-  const [isPlaying, setIsPlaying] = useState(props.temporary);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [fillPatternImage, setFillPatternImage] = useState(null);
   const [playPauseScale, setPlayPauseScale] = useState(0);
   const playPause = useRef();
@@ -59,7 +59,7 @@ const URLVideo = forwardRef((props, ref) => {
   }, [videoElement, props.layer]);
 
   const togglePlay = () => {
-    if (!props.temporary && !props.src.includes(".gif")) {
+    if (!props.src.includes(".gif")) {
       if (isPlaying) {
         videoElement.pause();
         setIsPlaying(false);
@@ -100,22 +100,20 @@ const URLVideo = forwardRef((props, ref) => {
         stroke={props.stroke}
         strokeWidth={props.strokeWidth}
       />
-      {!props.temporary && (
-        <Text
-          ref={playPause}
-          fontSize={props.scaleX ?
-            Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
-            playPauseScale}
-          fontFamily={"Montserrat"}
-          text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
-          fill={"black"}
-          x={props.x}
-          y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
-          width={props.scaleX ? props.width * props.scaleX : props.width}
-          rotation={props.rotation}
-          opacity={0.5}
-        />
-      )}
+      <Text
+        ref={playPause}
+        fontSize={props.scaleX ?
+          Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
+          playPauseScale}
+        fontFamily={"Montserrat"}
+        text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
+        fill={"black"}
+        x={props.x}
+        y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
+        width={props.scaleX ? props.width * props.scaleX : props.width}
+        rotation={props.rotation}
+        opacity={0.5}
+      />
     </>
   );
 });

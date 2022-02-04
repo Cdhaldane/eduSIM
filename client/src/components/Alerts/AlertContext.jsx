@@ -16,7 +16,8 @@ const AlertContextProvider = (props) => {
     setText(text);
     setType(type);
     setTime(timeMS);
-    setVisible(true);
+    setVisible(false);
+    setTimeout(setVisible(true), 0);
   }
 
   const hideAlert = () => setVisible(false);

@@ -8,6 +8,7 @@ import moment from "moment";
 import { useTranslation } from "react-i18next";
 
 import "./Level.css";
+import "../Stage/Info.css";
 
 const Level = (props) => {
 
@@ -213,7 +214,7 @@ const Level = (props) => {
           )}
 
           {props.handlePageNum && (
-            <div class="pencil-container">
+            <div className="pencil-container">
             <Pencil
               id="Timeline"
               psize="3"
