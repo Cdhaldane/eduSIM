@@ -34,7 +34,7 @@ const ConfirmationModal = (props) => {
       <div className={"confirmationModalButtons"}>
         <button id={"confirmModalConfirmButton"} onClick={() => {
           document.getElementById("confirmModalConfirmButton").disabled = true;
-          props.confirmFunction();
+          props.confirmFunction(props.id);
           hide();
         }}>
           {props.confirmMessage}

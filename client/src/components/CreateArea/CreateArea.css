@@ -83,10 +83,13 @@
 }
 .button-container button {
   font-family: "Montserrat", sans-serif;
+  height: 100% !important;
+  width: auto !important;
   font-size: 1.5rem;
   margin: 10px;
   margin-top: 18px;
   margin-right: 0px;
+  height: auto;
   padding: 5px;
   border-radius: 5px;
   display: inline-block;
@@ -108,7 +111,6 @@
   border-color: var(--color);
 }
 .red {
-
   border: 2px outset rgb(136, 136, 136);
   --color: #ff9898;
   background-color: var(--color);
@@ -121,14 +123,16 @@
   background-color: var(--primary);
   border-color: var(--primary);
 }
-.left{
+.left-ca{
+  margin-left: -10px;
   width: auto;
 }
-.right{
+.right-ca{
   width: auto;
 }
 .button-col {
   text-align: right;
+  margin-top: 40px;
 }
 
 #add {
@@ -306,6 +310,7 @@ select#imgoptions option[value="img3"] {
   border-radius: 0%;
   margin-top: 10px;
   padding: 10px;
+  min-height: 80px;
   display: inline-block;
   overflow-y: hidden;
 }

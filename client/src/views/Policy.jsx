@@ -6,10 +6,11 @@ function Policy(props){
 
   return (
     <div className="page-layout">
+      <div className="privacy-container">
       <h1>Privacy Policy</h1>
       <p>
-        By using this website, you hereby consent to this 
-        Privacy Policy and agree to its terms. This Privacy Policy 
+        By using this website, you hereby consent to this
+        Privacy Policy and agree to its terms. This Privacy Policy
         applies only to the eduSIM website with
         regards to the information that it shares and/or collects.
         As eduSIM is still currently in development, the Privacy
@@ -47,10 +48,10 @@ function Policy(props){
       </p>
       <h3>Cookies</h3>
       <p>
-        eduSIM uses cookies to store session information and 
-        remember who you are. eduSIM relies on third-party 
-        software such as Auth0, which enables users to 
-        log in using external accounts 
+        eduSIM uses cookies to store session information and
+        remember who you are. eduSIM relies on third-party
+        software such as Auth0, which enables users to
+        log in using external accounts
         and is known to use cookies in order
         to keep track of session data.
         To view more information about Auth0's privacy
@@ -58,10 +59,10 @@ function Policy(props){
       </p>
       <h3>Data Retention</h3>
       <p>
-        We generally retain personal data associated with you for 
+        We generally retain personal data associated with you for
         as long as it may be relevant to the eduSIM platform.
-        If you wish to remove and/or receive a copy of any personal 
-        information that you believe is applicable to you, 
+        If you wish to remove and/or receive a copy of any personal
+        information that you believe is applicable to you,
         please <a href="mailto:edusimuottawa@outlook.ca">contact us.</a>
       </p>
       <p>
@@ -69,6 +70,7 @@ function Policy(props){
         is able to personally identify anybody under the age
         of 13.
       </p>
+      </div>
     </div>
   );
 }

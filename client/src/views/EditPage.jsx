@@ -97,8 +97,8 @@ const EditPage = (props) => {
               className="grid-sidebar"
               visible={showNav}
               close={toggle}
-              img={props.location.img}
-              title={props.location.title}
+              img={localStorage.simimg}
+              title={localStorage.simtitle}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks

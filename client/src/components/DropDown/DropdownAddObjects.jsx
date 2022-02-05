@@ -17,6 +17,7 @@ const DropdownAddObjects = (props) => {
   const dropdownRef = useRef(null);
 
   const [imageUploaded, setImageUploaded] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [imageUploading, setImageUploading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
@@ -49,7 +50,6 @@ const DropdownAddObjects = (props) => {
     if (transformY < 0) {
       transformY = 0;
     }
-
     return {
       x: transformX,
       y: transformY
@@ -58,8 +58,9 @@ const DropdownAddObjects = (props) => {
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
 
+
   useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+
 
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
@@ -75,6 +76,7 @@ const DropdownAddObjects = (props) => {
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);
+    setLoading(false);
   }
 
   const handleClickOutside = e => {
@@ -94,6 +96,7 @@ const DropdownAddObjects = (props) => {
 
     setMenuHeight(height);
   }
+
 
   const filesubmitNote = async event => {
     event.preventDefault();
@@ -224,9 +227,9 @@ const DropdownAddObjects = (props) => {
     if (!objectParameters.temporary) {
       const thisPage = newPages[props.state.level - 1];
       if (props.layer.attrs.name === "group") {
-  
+
         isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
-  
+
       } else if (props.layer.attrs.name === "personal") {
         thisPage.personalLayers.push(name);
       } else {
@@ -616,7 +619,7 @@ const DropdownAddObjects = (props) => {
     myWidget.open();
   }
 
-  return (
+  return isLoading ? false :(
     <div
       className="dropdown"
       style={{

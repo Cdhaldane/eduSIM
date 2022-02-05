@@ -1,5 +1,7 @@
 .NavbarItems {
   background-color: var(--white);
+  position: absolute;
+  top: 0px;
   width: 100%;
   height: auto;
   display: flex;
@@ -107,7 +109,7 @@
 }
 
 .profile-container{
-  height: auto;
+  min-height: 100vh;
   width: auto;
   margin: 100px;
   display: grid;
@@ -168,7 +170,7 @@
     color: #181818;
     background: white;
     transition: all 0.3s;
-    
+
   }
   .profilevist h2 {
     color: #181818;

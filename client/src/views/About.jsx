@@ -5,8 +5,10 @@ const About = (props) => {
   const { t } = useTranslation();
 
   return (
-    <div className="welcome-container">
+    <div className="page-layout">
+      <div className="privacy-container">
       <h1 className="welcome">{t("home.about")}</h1>
+      </div>
     </div>
   );
 }

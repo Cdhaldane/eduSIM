@@ -607,7 +607,7 @@ class Graphics extends Component {
                 backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
               }}
             >
-              <div id="playModeRoleLabel"><b>{this.props.t("common.role")}: </b>{this.state.rolelevel}</div>
+              <div id="playModeRoleLabel">{this.state.rolelevel}</div>
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"

@@ -213,7 +213,7 @@ const Level = (props) => {
           )}
 
           {props.handlePageNum && (
-            <div class="pencil-container">
+            <div className="pencil-container">
             <Pencil
               id="Timeline"
               psize="3"

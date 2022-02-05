@@ -36,8 +36,7 @@ const AuthenticationButton = (props) => {
     <button
       onClick={handleLogout}
       type="button"
-      buttonStyle="btn--primary--solid"
-      class="w-button"
+      className="w-button"
     >
       {t("navbar.logout")}
     </button>
@@ -45,7 +44,7 @@ const AuthenticationButton = (props) => {
     <button
       onClick={handleClick}
       type="button"
-      class="w-button small"
+      className="w-button small"
     >
       {t("navbar.login")}
     </button>

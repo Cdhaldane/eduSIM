@@ -146,6 +146,7 @@ a {
 /**************************************************/
 
 #pageSettingsDropdown {
+  white-space: normal;
   padding: 10px;
   text-align: center;
 }
@@ -256,7 +257,6 @@ a {
 .dropdown {
   position: absolute;
   width: 300px;
-  height: 200px;
   z-index: 200000;
   white-space: nowrap;
   background-color: var(--white);
@@ -279,6 +279,7 @@ a {
 .timelineDropdown {
   right: 2.5%;
   top: 60px;
+  animation-name: none !important;
 }
 
 .menu {
@@ -473,6 +474,10 @@ a {
 .dropdown button::selection {
   background-color: var(--white);
   color: white;
+}
+.nav {
+  animation-name: slideDown;
+  animation-duration: 0.5s;
 }
 
 #pagetype input, #pagetype textarea {

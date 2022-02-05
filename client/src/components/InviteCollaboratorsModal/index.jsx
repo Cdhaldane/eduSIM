@@ -179,7 +179,7 @@ const InviteCollaboratorsModal = (props) => {
       <div className="areacsv">
         <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
           <h1 className="modal-title">{t("modal.inviteCollaborators")}</h1>
-        <p class="left-align">{t("modal.inviteCollaboratorsExplanation")}</p>
+        <p className="left-align">{t("modal.inviteCollaboratorsExplanation")}</p>
           <div>
             <EmailInput>
               {emails.map((val, ind) => (
@@ -220,10 +220,10 @@ const InviteCollaboratorsModal = (props) => {
               )) : <p>{t("modal.nobodyHasAccessToX", { name: props.title })}</p>}
             </Collaborators>
           </div>
-          <p class="button-container fix">
+          <p className="button-container fix">
           <button
             type="button"
-            className="green"
+            className="modal-button green"
             onClick={handleSendEmails}
             disabled={sending}
           >

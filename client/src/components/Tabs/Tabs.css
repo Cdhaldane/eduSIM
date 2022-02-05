@@ -74,6 +74,7 @@
 }
 .tabs{
   margin: 0 auto;
+  margin-top: 5vw;
   text-align: center;
   display: block;
 }
@@ -474,7 +475,7 @@ input[type='radio']:after {
   height: 10px;
   width: auto;
   margin-right: 7vw;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
   flex-direction: column;
   align-items: flex-end;
   align-self: flex-end;
@@ -484,7 +485,7 @@ input[type='radio']:after {
 .logs[hidden] {
   text-align: right;
   align-self: flex-end;
-  margin-bottom: 60px;
+  margin-bottom: 30px;
   margin-right: 7vw;
   height: 10px;
 }
@@ -492,7 +493,7 @@ input[type='radio']:after {
 .logrow {
   display: flex;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 0px;
   transition: opacity .3s;
 }
 .logrow[hidden] {

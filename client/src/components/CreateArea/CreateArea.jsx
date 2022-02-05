@@ -73,17 +73,23 @@ const CreateArea = (props) => {
         }).catch(error => {
           console.log(error);
         });
-        props.onAdd(note);
+        props.onAdd();
       } else {
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).catch(error => {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
+          var temp = JSON.parse(localStorage.getItem("order"));
+          console.log(temp)
+          temp.push(res.data)
+          console.log(temp)
+          localStorage.setItem("order", JSON.stringify(temp))
+          props.onAdd();
+        }).catch(error => {
           console.log(error);
-        });
-        props.onAdd(note);
+        })
       }
-      window.location.reload();
     } catch (error) {
       console.log(error);
     }
+    props.close();
   };
 
   const uploadSim = (e) => {
@@ -98,10 +104,6 @@ const CreateArea = (props) => {
       axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',parsedJson).catch(error => {
         console.log(error);
       });
-      setNote({
-        title: JSON.parse(e.target.result).data.gameinstance_name,
-        img: JSON.parse(e.target.result).data.gameinstance_photo_path
-      })
       window.location.reload()
     };
 
@@ -115,10 +117,6 @@ const CreateArea = (props) => {
   const onChange = (event) => {
     setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]));
-    setNote({
-      title: title,
-      img: URL.createObjectURL(event.target.files[0]),
-    });
     setWillUpload(true);
   }
 
@@ -132,21 +130,15 @@ const CreateArea = (props) => {
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       // Here I will be creating my options dynamically based on
       items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
-
       // What props are currently passed to the parent component
     }
     return items;
   }
 
   const handleCopySim = (event) => {
-    // Setting copy to 1 so when we add we can also update the params to copiedParams
     setCopy(1);
     setTitle(props.gamedata[event.target.value].gameinstance_name + " - copy");
     setFilename(props.gamedata[event.target.value].gameinstance_photo_path);
-    setNote({
-      title: props.gamedata[event.target.value].gameinstance_name,
-      img: props.gamedata[event.target.value].gameinstance_photo_path,
-    });
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
   }
 
@@ -165,7 +157,6 @@ const CreateArea = (props) => {
         }
       }
     );
-    console.log(note)
     myWidget.open();
   }
 
@@ -215,7 +206,7 @@ const CreateArea = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i id="plus" class="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
+            <i id="plus" className="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
           </div>
           <div className="form-imgpreview">
 
@@ -226,23 +217,23 @@ const CreateArea = (props) => {
             )}
           </div>
         </div>
-        <p className="button-container">
-          <div className="button-col left">
+        <div className="button-container">
+          <div className="button-col left-ca">
             <input type="file" onChange={uploadSim} />
             <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
               {t("common.upload")}
             </button>
             <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
           </div>
-          <div className="button-col right">
+          <div className="button-col right-ca">
         <button type="button" className="green" onClick={uploadImage}>
           {t("common.add")}
         </button>
-        <button type="button" className="red" onClick={props.onDelete}>
+        <button type="button" className="red" onClick={props.close}>
           {t("common.cancel")}
         </button>
         </div>
-      </p>
+      </div>
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">

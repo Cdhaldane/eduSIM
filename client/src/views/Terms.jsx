@@ -6,7 +6,7 @@ function Terms(props){
 
   return (
     <div className="page-layout">
-      
+      <div className="privacy-container">
       <h1>Terms of Service</h1>
       <h3>Consent</h3>
       <p>
@@ -76,6 +76,7 @@ function Terms(props){
         eduSIM holds the right to disable your access to the eduSIM website at our discretion
         without notice or explanation and regardless of your conduct or submitted user content.
       </p>
+      </div>
     </div>
   );
 }
