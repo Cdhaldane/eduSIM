@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import "./ContextMenu.css"
 
 const ContextMenu = (props) => {
+  console.log(props)
   const [drop, setDrop] = useState(false);
   const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
   const [conditionsVisible, setConditionsVisible] = useState(false);
@@ -34,6 +35,7 @@ const ContextMenu = (props) => {
   }
 
   const handleClickOutside = e => {
+
     if (menu.current && !menu.current.contains(e.target)) {
       props.close();
     }
@@ -69,20 +71,22 @@ const ContextMenu = (props) => {
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.position.x, props.position.y).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.position.x, props.position.y).y);
 
+
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
 
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
-    setContextMenuTitle();
-
+    if(!props.selectedShapeName==""){
+      setContextMenuTitle();
+    }
     return () => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('contextmenu', handleRightClick);
     }
-  }, []);
+  }, [props.selectedShapeName]);
 
   const handleRightClick = (e) => {
     setDrop(false);
@@ -143,6 +147,7 @@ const ContextMenu = (props) => {
   return (
     <div
       ref={menu}
+      key={props.position.x}
       className="cmenu"
       style={{
         width: "155px",
@@ -151,9 +156,7 @@ const ContextMenu = (props) => {
       }}
     >
       <ul>
-        <li onClick={props.cut}>{t("common.cut")}</li>
-        <li onClick={props.copy}>{t("common.copy")}</li>
-        <li onClick={props.paste}>{t("common.paste")}</li>
+
         <li onClick={props.delete}>{t("common.delete")}</li>
         {!props.addGroup && !props.unGroup && (
           <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
@@ -217,7 +220,7 @@ const ContextMenu = (props) => {
       {conditionsVisible && (
         <div className="drop">
           <div
-            className="dropdownedit conditionsedit"
+            className="dropdownedit conditionsedit fixed-anim"
             style={{
               ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
             }}

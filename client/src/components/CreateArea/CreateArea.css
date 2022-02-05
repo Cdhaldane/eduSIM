@@ -61,6 +61,7 @@
   flex-direction: column;
   padding: 30px;
   align-items: flex-start;
+  animation: none !important;
 }
 .form-input > div {
   margin: 10px 0;
@@ -73,18 +74,22 @@
 
 .button-container{
   border-top: 1px dashed rgb(145, 145, 145);
-  text-align: right;
   vertical-align: center;
   height: 50px;
   width: 100%;
   margin-top: 10px;
+  display: flex;
+  justify-content:space-between;
 }
 .button-container button {
   font-family: "Montserrat", sans-serif;
+  height: 100% !important;
+  width: auto !important;
   font-size: 1.5rem;
-  margin: 10px;
   margin-top: 18px;
-  margin-right: 0px;
+  margin-right: 5px;
+  margin-left: 5px;
+  height: auto;
   padding: 5px;
   border-radius: 5px;
   display: inline-block;
@@ -106,18 +111,30 @@
   border-color: var(--color);
 }
 .red {
-
   border: 2px outset rgb(136, 136, 136);
   --color: #ff9898;
   background-color: var(--color);
   border-color: var(--color);
 }
 .primary{
-
+  font-size: 1.2vw;
+  color: var(--white);
   border: 2px outset rgb(136, 136, 136);
   background-color: var(--primary);
   border-color: var(--primary);
 }
+.left-ca{
+  margin-left: 0px !important;
+  width: auto;
+}
+.right-ca{
+  width: auto;
+}
+.button-col {
+  text-align: right;
+  margin-top: 40px;
+}
+
 
 #add {
   color: white;
@@ -205,6 +222,7 @@
   overflow: hidden;
   border: none;
   outline: none;
+  animation: none !important;
 }
 
 .myoverlay {
@@ -293,6 +311,7 @@ select#imgoptions option[value="img3"] {
   border-radius: 0%;
   margin-top: 10px;
   padding: 10px;
+  min-height: 80px;
   display: inline-block;
   overflow-y: hidden;
 }

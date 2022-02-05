@@ -36,7 +36,9 @@ const StyledLink = styled.a`
     margin-left: 12px;
   }
   .special{
+    width: auto;
     padding-left: 0px;
+    overflow-x: scroll;
   }
   span {
     padding-left: 14px;

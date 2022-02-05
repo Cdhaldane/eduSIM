@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import Gravatar from "react-gravatar";
 
 const ReadOnlyRow = ({
   contact,
@@ -13,12 +14,14 @@ const ReadOnlyRow = ({
 }) => {
   const { t } = useTranslation();
   return (
+
     <tr className={online ? "user-online" : ""}>
       {onCheck && (
         <td className="table-checkrow">
           <input type="checkbox" onClick={onCheck} checked={checked} />
         </td>
       )}
+      <td><Gravatar email={contact.email} /></td>
       <td>{contact.firstName} {online && <span>(ingame)</span>}</td>
       <td>{contact.lastName}</td>
       <td>{contact.email}</td>

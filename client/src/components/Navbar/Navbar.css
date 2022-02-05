@@ -1,5 +1,7 @@
 .NavbarItems {
   background-color: var(--white);
+  position: absolute;
+  top: 0px;
   width: 100%;
   height: auto;
   display: flex;
@@ -75,8 +77,8 @@
 
 .nav-pic {
   align-content: center;
-  width: 60px;
-  height: 60px;
+  width: 3.3vw;
+  height:3.3vw;
   border-radius: 30px;
   margin-left: 10px;
   position: relative;
@@ -107,7 +109,7 @@
 }
 
 .profile-container{
-  height: auto;
+  min-height: 100vh;
   width: auto;
   margin: 100px;
   display: grid;
@@ -117,7 +119,7 @@
   grid-column: 2;
 }
 .profilepic {
-  width: auto;
+  width: ;
   height: auto;
   border-radius: 30px;
   object-fit: fill;
@@ -163,11 +165,12 @@
     font-size: 1rem;
     position: absolute;
     right: 10px;
-    top: 75px;
+    top: 70px;
     border-radius: 3px;
     color: #181818;
     background: white;
     transition: all 0.3s;
+
   }
   .profilevist h2 {
     color: #181818;

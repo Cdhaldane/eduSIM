@@ -17,6 +17,7 @@ const DropdownAddObjects = (props) => {
   const dropdownRef = useRef(null);
 
   const [imageUploaded, setImageUploaded] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [imageUploading, setImageUploading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
@@ -28,7 +29,7 @@ const DropdownAddObjects = (props) => {
   const [imgsrc, setImgsrc] = useState("");
   const [vidsrc, setVidsrc] = useState("");
   const [audiosrc, setAudiosrc] = useState("");
-  const [file, setFile] = useState("");
+  const [docfile, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
 
   const alertContext = useAlertContext();
@@ -49,7 +50,6 @@ const DropdownAddObjects = (props) => {
     if (transformY < 0) {
       transformY = 0;
     }
-
     return {
       x: transformX,
       y: transformY
@@ -58,8 +58,9 @@ const DropdownAddObjects = (props) => {
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
 
+
   useEffect(() => {
-    setMenuHeight(dropdownRef.current?.firstChild.scrollHeight);
+
 
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
@@ -75,6 +76,7 @@ const DropdownAddObjects = (props) => {
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);
+    setLoading(false);
   }
 
   const handleClickOutside = e => {
@@ -94,6 +96,7 @@ const DropdownAddObjects = (props) => {
 
     setMenuHeight(height);
   }
+
 
   const filesubmitNote = async event => {
     event.preventDefault();
@@ -115,40 +118,27 @@ const DropdownAddObjects = (props) => {
   }
 
   const uploadFile = async (file, type, isGIF) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", type + "s");
-    formData.append("uploader", localStorage.adminid);
-
     try {
       if (type === "image") {
         setImageUploading(true);
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-          .then((res) => {
-            const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + (isGIF ? ".gif" : "." + (res.data.format || "jpg"));
-            setImageUploaded(true);
-            setImageUploading(false);
-            props.handleImage(name);
-          });
+
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file +  ".jpg";
+        setImageUploaded(true);
+        setImageUploading(false);
+        props.handleImage(name);
       } else if (type === "video") {
         setVideoUploading(true);
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
-          .then((res) => {
-            const allData = res.data.public_id;
-            const name = `https://res.cloudinary.com/uottawaedusim/video/upload/${allData}.mp4}`;
-            setVideoUploaded(true);
-            setVideoUploading(false);
-            props.handleVideo(name);
-          });
+        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp4";
+        setVideoUploaded(true);
+        setVideoUploading(false);
+        props.handleVideo(name);
       } else if (type === "audio") {
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/video/upload', formData)
-          .then((res) => {
-            const allData = res.data.public_id;
-            const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + allData + ".mp3";
-            setAudioUploaded(true);
-            props.handleAudio(name);
-          });
+        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp3";
+        setAudioUploaded(true);
+        props.handleAudio(name);
+      } else if (type === "pdf") {
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".pdf";
+        props.handleDocument(name);
       }
     } catch (error) {
       if (type === "image") {
@@ -357,7 +347,6 @@ const DropdownAddObjects = (props) => {
 
   const addImage = () => {
     alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
-
     getMeta(
       props.state.imgsrc,
       "img",
@@ -366,6 +355,7 @@ const DropdownAddObjects = (props) => {
         addObjectToLayer(
           "images",
           {
+            temporary: false,
             imgsrc: props.state.imgsrc,
             stroke: 'black',
             strokeWidth: 0,
@@ -380,7 +370,6 @@ const DropdownAddObjects = (props) => {
 
   const addVideo = () => {
     alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
-
     getMeta(
       props.state.vidsrc,
       "video",
@@ -389,6 +378,7 @@ const DropdownAddObjects = (props) => {
         addObjectToLayer(
           "videos",
           {
+            temporary: false,
             width: width,
             height: height,
             vidsrc: props.state.vidsrc,
@@ -433,17 +423,7 @@ const DropdownAddObjects = (props) => {
   }
 
   const addDocument = () => {
-    const bimage = new window.Image();
-    bimage.onload = () => {
-      props.setState({
-        docimage: bimage
-      })
-    };
-    bimage.src = 'downloadicon.png';
-    bimage.width = 10;
-    bimage.height = 10;
-
-    addObjectToLayer(
+      addObjectToLayer(
       "documents",
       {
         stroke: 'black',
@@ -452,7 +432,8 @@ const DropdownAddObjects = (props) => {
         fillPatternOffset: "",
         rotation: 0,
         width: 100,
-        height: 100
+        height: 100,
+        docsrc: docfile
       }
     );
   }
@@ -606,11 +587,40 @@ const DropdownAddObjects = (props) => {
     setAudiosrc(url);
   }
 
-  const handleFilesubmit = (e) => {
-    filesubmitNote(e);
+  const handleDocument = (e) => {
+    props.handleDocument(e.target.value);
+    setFile(e.target.value)
+    console.log(e.target.value)
   }
 
-  return (
+  const openWidget = (preset) => {
+
+    let myWidget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "uottawaedusim",
+        uploadPreset: preset
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          console.log("Done! Here is the image info: ", result.info);
+          let type = "";
+          if(preset == "bb8lewrh"){
+            type = "image"
+          } else if (preset == "tj5ptxi8") {
+            type = "video"
+          } else if (preset == "du7sbfat"){
+            type = "audio"
+          } else if (preset == "mfcgzpkg"){
+            type == "pdf"
+          }
+          uploadFile(result.info.public_id, type);
+        }
+      }
+    );
+    myWidget.open();
+  }
+
+  return isLoading ? false :(
     <div
       className="dropdown"
       style={{
@@ -772,13 +782,10 @@ const DropdownAddObjects = (props) => {
                   </div>
                 )
               }>
-              <input
-                type="file"
-                name="img"
-                className={"addObjectFilePicker"}
-                id="filePickerImageEdit"
-                onChange={handleImgFromComputer}
-              />
+              <button type="button" className="add-media-button" onClick={() => openWidget("bb8lewrh")}>
+              {t("modal.imageFromFile")}
+              </button>
+
             </DropdownItem>
           </div>
 
@@ -824,13 +831,9 @@ const DropdownAddObjects = (props) => {
                   </div>
                 )
               }>
-              <input
-                type="file"
-                name="img"
-                className={"addObjectFilePicker"}
-                id="filePickerVideoEdit"
-                onChange={handleVideoFromComputer}
-              />
+              <button type="button" className="add-media-button" onClick={() => openWidget("tj5ptxi8")} >
+              {t("modal.imageFromFile")}
+              </button>
             </DropdownItem>
           </div>
 
@@ -866,13 +869,9 @@ const DropdownAddObjects = (props) => {
                   addAudio(e);
                 }
               }}></i>}>
-              <input
-                type="file"
-                name="img"
-                className={"addObjectFilePicker"}
-                id="filePickerAudioEdit"
-                onChange={handleAudioFromComputer}
-              />
+              <button type="button" className="add-media-button" onClick={() => openWidget("du7sbfat")}>
+              {t("modal.imageFromFile")}
+              </button>
             </DropdownItem>
           </div>
 
@@ -902,22 +901,11 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.media.addDocument")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons lni lni-plus" onClick={handleFilesubmit}></i>}>
+            leftIcon={<i className="icons lni lni-plus" onClick={(e) => addDocument(e)}></i>}>
+            <button type="button" className="add-media-button" onClick={() => openWidget("mfcgzpkg")}>
+            {t("modal.imageFromFile")}
+            </button>
           </DropdownItem>
-          <input
-            type="file"
-            name="img"
-            id="file"
-            onChange={handleFile}
-          />
-          <label id="fileI" htmlFor="file">{t("edit.media.fromFile")}</label>
-
-          <DropdownItem
-            onClick={addDocument}
-
-            leftIcon={<i className="icons lni lni-plus"
-
-              onClick={addDocument}></i>}>{t("common.add")}</DropdownItem>
         </div>
       </CSSTransition>
 

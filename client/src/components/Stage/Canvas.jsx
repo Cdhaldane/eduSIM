@@ -7,6 +7,7 @@ import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 
+
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
@@ -161,8 +162,8 @@ class Graphics extends Component {
       vidsrc: "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c4/Physicsworks.ogv/Physicsworks.ogv.240p.vp9.webm",
       imgsrc: 'https://cdn.hackernoon.com/hn-images/0*xMaFF2hSXpf_kIfG.jpg',
       audsrc: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/shoptalk-clip.mp3",
-      docsrc: "",
-      docimage: null,
+      docsrc: "https://res.cloudinary.com/uottawaedusim/image/upload/v1643788961/pdfs/xzgxf449ecdymapdaukb.pdf",
+      docimage: "",
 
       // Draw
       tool: 'pen', // eraser or pen
@@ -443,6 +444,9 @@ class Graphics extends Component {
         }
       }
 
+      // Delete temp image once image has loaded in
+
+
       // Update the custom objects state in the parent component (if custom objs changed)
       for (let i = 0; i < this.customObjects.length; i++) {
         if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
@@ -478,6 +482,7 @@ class Graphics extends Component {
           handleTextTransform: this.handleTextTransform,
           handleTextDblClick: this.handleTextDblClick,
           onDragEndArrow: this.onDragEndArrow,
+          onDocClick: this.onDocClick,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
           objectSnapping: this.objectSnapping,
@@ -660,6 +665,7 @@ class Graphics extends Component {
   }
 
   onObjectContextMenu = e => {
+
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
       this.state.selectedShapeName !== "pencils" &&
@@ -721,16 +727,27 @@ class Graphics extends Component {
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
-    if (event.targetTouches) {
-      this.setState({
-        touchTime: Date.now(),
-        touchEvent: event
-      });
-    } else {
-      this.setState({
-        touchTime: null,
-        touchEvent: null
-      });
+    if (event.target.parentElement.className === "konvajs-content") {
+      const customObjs = document.getElementsByClassName("customObj");
+      for (let i = 0; i < customObjs.length; i++) {
+        const id = customObjs[i].dataset.name;
+        const customObj = this.getKonvaObj(id);
+        const rect = customObjs[i].getBoundingClientRect();
+        if (
+          (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
+          (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
+          (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
+          (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
+          customObj
+        ) {
+          // Clicked on a custom object
+          this.setState({
+            selectedShapeName: id,
+            groupSelection: []
+          }, this.handleObjectSelection);
+          return;
+        }
+      }
     }
 
     if (!event.ctrlKey) {
@@ -1534,6 +1551,7 @@ class Graphics extends Component {
     const stageType = this.state.overlayOpen ? "overlayStage" :
       (this.personalAreaOpen ? "personalStage" : "groupStage");
     this.refs[stageType].draw();
+
   }
 
   handleWheel = (e, personalArea) => {
@@ -2154,6 +2172,7 @@ class Graphics extends Component {
   }
 
   handleDownload = (url, filename) => {
+    console.log(url)
     axios.get(url, {
       responseType: 'blob',
     }).then((res) => {
@@ -3129,7 +3148,7 @@ class Graphics extends Component {
                   }}
                   onClick={() => this.setOverlayOpen(true, overlay.id)}
                 >
-                  <i className="icons fa fa-window-restore" />
+                  <i className="icons lni lni-credit-cards" />
                 </div>
               );
             })}
@@ -3274,10 +3293,8 @@ class Graphics extends Component {
             </>
           )}
           <Stage
-            height={document.getElementById("editMainContainer") ?
-              document.getElementById("editMainContainer").clientHeight : 0}
-            width={document.getElementById("editMainContainer") ?
-              document.getElementById("editMainContainer").clientWidth : 0}
+            height={window.innerHeight}
+            width={window.innerWidth}
             ref="groupStage"
             onMouseDown={(e) => this.onMouseDown(e, false)}
             onMouseUp={(e) => this.handleMouseUp(e, false)}
@@ -3358,6 +3375,7 @@ class Graphics extends Component {
                   cut={this.handleCut}
                   paste={this.handlePaste}
                   delete={this.handleDelete}
+                  onDocClick={this.onDocClick}
                   setPollData={this.setPollData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}

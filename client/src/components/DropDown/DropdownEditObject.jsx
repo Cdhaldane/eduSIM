@@ -15,10 +15,11 @@ import DropdownEditPoll from './DropdownEditPoll';
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
+
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
-  const [fillColor, setFillColor] = useState("");
-  const [strokeColor, setStrokeColor] = useState("");
+  const [fillColor, setFillColor] = useState("black");
+  const [strokeColor, setStrokeColor] = useState("black");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
   const [font, setFont] = React.useState("Belgrano");
@@ -48,12 +49,12 @@ const DropdownEditObject = (props) => {
   const [topOffset, setTopOffset] = useState(calcTopOffset());
 
   useEffect(() => {
-    if (props.title === "Edit Shape") {
+    if (props.title === "shape") {
       setOpacity(shape.attrs.opacity ? shape.attrs.opacity : 1);
       setStrokeColor(shape.attrs.stroke);
       setFillColor(shape.attrs.fill);
       setStrokeWidth(shape.attrs.strokeWidth);
-    } else if (props.title === "Edit Text") {
+    } else if (props.title === "text") {
       if (props.font) {
         setFillColor(props.font.attrs.fill);
         setOpacity(props.font.attrs.opacity);
@@ -97,12 +98,12 @@ const DropdownEditObject = (props) => {
   }
 
   const handleChangeF = (e) => {
-    setFillColor(e);
+    setFillColor(e.hex);
     props.handleFillColor(e);
   }
 
   const handleChangeS = (e) => {
-    setStrokeColor(e);
+    setStrokeColor(e.hex);
     props.handleStrokeColor(e);
   }
 
@@ -244,7 +245,7 @@ const DropdownEditObject = (props) => {
       /* Edit a Shape Object */
       return (
         <div
-          className="dropdownedit paddingRight"
+          className="dropdownedit paddingRight fixed-anim-2"
           ref={dropdownRef}
           style={{
             ...leftOrRight,

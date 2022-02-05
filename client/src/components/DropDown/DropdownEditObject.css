@@ -25,15 +25,30 @@ ul {
 }
 
 /* Dropdown Menu */
-
+.fixed-anim {
+  animation-duration: 1.0s;
+  animation-name: slideinleft !important;
+}
+.fixed-anim-2 {
+  animation-duration: 1.0s;
+  animation-name: slide !important;
+  white-space: nowrap;
+}
+.fixed-anim select {
+  text-align: left;
+  height: auto !important;
+}
 .dropdownedit {
   position: absolute;
   bottom: -2px;
   background-color: rgba(255, 255, 255, 0.8);
-  border: var(--border);
-  border-radius: 5px;
+  border: 1px solid var(--primary);
+  border-radius: 30px;
   padding: 10px;
   box-shadow: var(--box-shadow);
+  overflow: hidden;
+  animation-duration: 0.5s;
+  animation-name: slidePoll;
 }
 
 .dropdownedit.paddingRight {

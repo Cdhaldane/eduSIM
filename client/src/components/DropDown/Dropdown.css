@@ -15,7 +15,6 @@ a {
   background-color: #e4e4e4;
 
   border: 1px solid rgb(44, 44, 44);
-
 }
 
 .inputButtonDefault:hover {
@@ -40,6 +39,7 @@ a {
 }
 
 /* Icon Button */
+
 
 .icon-button {
   --button-size: calc(var(--nav-size) * 0.5);
@@ -146,6 +146,7 @@ a {
 /**************************************************/
 
 #pageSettingsDropdown {
+  white-space: normal;
   padding: 10px;
   text-align: center;
 }
@@ -242,21 +243,32 @@ a {
 
 /* Dropdown Menu */
 
+@keyframes grow {
+  from {
+    width: 0px;
+    height: 0px;
+  }
+  to {
+    width: 300px;
+    height: 270px;
+  }
+}
+
 .dropdown {
   position: absolute;
   width: 300px;
-  height: 200px;
   z-index: 200000;
-
+  white-space: nowrap;
   background-color: var(--white);
   border: 1px solid var(--primary);
-
   border-radius: var(--border-radius);
   padding: 0rem;
   overflow: hidden;
   transition: var(--speed) ease;
   box-shadow: var(--box-shadow);
   font-family: 'Montserrat', sans-serif;
+  animation-duration: 0.5s;
+  animation-name: grow;
 }
 
 .dropdown[disabled] {
@@ -267,6 +279,7 @@ a {
 .timelineDropdown {
   right: 2.5%;
   top: 60px;
+  animation-name: none !important;
 }
 
 .menu {
@@ -473,6 +486,10 @@ a {
 .dropdown button::selection {
   background-color: var(--white);
   color: white;
+}
+.nav {
+  animation-name: slideDown;
+  animation-duration: 0.5s;
 }
 
 #pagetype input, #pagetype textarea {
@@ -696,7 +713,7 @@ a {
 
   font-size: 0.9em;
   padding-left: 0.5em;
-  width: 90%;
+  width: 82%;
   height: 70%;
 }
 
@@ -769,4 +786,19 @@ a {
 .lni-stop {
   position: relative;
   top: 1px;
+}
+
+.add-media-button {
+  position: relative !important;
+  left: 0px !important;
+  width: 100% !important;
+  text-align: left !important;
+  height: auto !important;
+  color: var(--text-color) !important;
+  font-size: 0.8em !important;
+  padding: 13px !important;
+  background-color: transparent !important;
+}
+.add-media-button:hover {
+  background-color: transparent !important;
 }

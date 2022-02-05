@@ -1,8 +1,10 @@
 .notesim {
+  position: absolute;
+  float: left;
   display: flex;
   background: #fff;
   z-index: 0;
-  border-radius: 7px;
+  border-radius: 7px 7px 7px 7px;
   box-shadow: 0 2px 10px #ccc;
   padding: 10px;
   margin: 0 10px 10px 0;
@@ -11,6 +13,38 @@
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   color: var(--dark);
+  box-shadow:rgba(0,0,0,0.25) 3px 3px 3px 3px;
+}
+
+.notesim-draggable {
+  display: inline-block;
+  position: relative;
+  bottom: 10px;
+  right: 10px;
+  width: 30px;
+  margin-left: 0px;
+  padding-left: 0px;
+  padding: 0px !important;
+  height: 120px;
+  border-radius: 8px 0px 0px 8px;
+  z-index: 1;
+  background-color: #D3D3D3;
+}
+.notesim-draggable:hover {
+  cursor: grab;
+}
+.notesim-draggable:active{
+  cursor: grabbing;
+  }
+.drag-icons{
+  background-image: radial-gradient(var(--white) 40%, transparent 40%);
+  background-size: 4px 4px;
+  background-position: 50% 50%;
+  background-repeat: repeat;
+  width: 22px;
+  height: 10px;
+  margin-left: 4px;
+  margin-top: 55px;
 }
 
 .notesim h1 {
@@ -39,6 +73,7 @@
   border-radius: 10px;
   object-fit: cover;
   position: absolute;
+  margin-left: .3vw;
   border: 1px solid var(--primary);
 }
 .notesim-icons {

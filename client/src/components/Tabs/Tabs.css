@@ -74,6 +74,7 @@
 }
 .tabs{
   margin: 0 auto;
+  margin-top: 5vw;
   text-align: center;
   display: block;
 }
@@ -231,6 +232,9 @@
   margin: 2px 20px;
   flex: 1;
 }
+.content-radiobuttons input {
+  margin-top: 3px;
+}
 
 .content-editname {
   align-self: center;
@@ -297,10 +301,12 @@
 .simadv-inline{
   margin-left: 73px;
 }
+
 input[type='radio']:after {
       width: 15px;
       height: 15px;
       border-radius: 15px;
+
       top: -2px;
       left: -4px;
       position: relative;
@@ -312,7 +318,8 @@ input[type='radio']:after {
   }
 
   input[type='radio']:checked:after {
-      background-color: var(--primary);
+      display: block;
+      background-color: #ff9898;
       border: 2px solid var(--primary);
   }
 
@@ -417,6 +424,9 @@ input[type='radio']:after {
 .group-chatlog p {
   height: unset;
 }
+.tab-add-group {
+  z-index: 2;
+}
 
 .createmodaltab {
   display: flex;
@@ -462,35 +472,35 @@ input[type='radio']:after {
 
 .logs {
   display: flex;
-  height: auto;
-  margin-bottom: 10px;
+  height: 10px;
+  width: auto;
+  margin-right: 7vw;
+  margin-bottom: 30px;
   flex-direction: column;
   align-items: flex-end;
+  align-self: flex-end;
   overflow: unset;
+  z-index: 1;
 }
 .logs[hidden] {
-  height: 30px;
-  margin-bottom: 10px;
-  overflow: hidden;
+  text-align: right;
+  align-self: flex-end;
+  margin-bottom: 30px;
+  margin-right: 7vw;
+  height: 10px;
 }
-.logs-show {
-  background-color: var(--primary);
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  user-select: none;
-}
+
 .logrow {
   display: flex;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 0px;
   transition: opacity .3s;
 }
 .logrow[hidden] {
   opacity: 0;
 }
 .logrow-info {
-  background-color: rgba(0,0,0,0.1);
+  background-color: var(--text-color);
   padding: 10px 15px;
   border-radius: 10px;
   display: flex;

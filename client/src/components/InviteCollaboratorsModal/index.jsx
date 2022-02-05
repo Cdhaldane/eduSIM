@@ -223,7 +223,7 @@ const InviteCollaboratorsModal = (props) => {
           <p className="button-container fix">
           <button
             type="button"
-            className="green"
+            className="green left-ca"
             onClick={handleSendEmails}
             disabled={sending}
           >

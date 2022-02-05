@@ -14,7 +14,7 @@ const CreateArea = (props) => {
   const [title, setTitle] = useState("");
   const [checked, setChecked] = useState(false);
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
-  const [imageSelected, setImageSelected] = useState("");
+  const [imageSelected, setImageSelected] = useState("images/ujjtehlwjgsfqngxesnd");
   const [copy, setCopy] = useState(0);
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
@@ -47,26 +47,12 @@ const CreateArea = (props) => {
       alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
       return;
     }
-    if ((imageSelected.size / 1000000) > 10) {
-      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
-      return;
-    }
-
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", imageSelected);
-    formData.append("folder", "images");
-    formData.append("uploader", localStorage.adminid);
 
     try {
-      let url = filename;
-      if (willUpload) {
-        let res = await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData);
-        url = res.data.public_id;
-      }
       let data = {
         gameinstance_name: title,
-        gameinstance_photo_path: url,
+        gameinstance_photo_path: imageSelected,
         game_parameters: "",
         createdby_adminid: localStorage.adminid,
         status: 'created'
@@ -87,17 +73,23 @@ const CreateArea = (props) => {
         }).catch(error => {
           console.log(error);
         });
-        props.onAdd(note);
+        props.onAdd();
       } else {
-        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).catch(error => {
+        await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
+          var temp = JSON.parse(localStorage.getItem("order"));
+          console.log(temp)
+          temp.push(res.data)
+          console.log(temp)
+          localStorage.setItem("order", JSON.stringify(temp))
+          props.onAdd();
+        }).catch(error => {
           console.log(error);
-        });
-        props.onAdd(note);
+        })
       }
-      window.location.reload();
     } catch (error) {
       console.log(error);
     }
+    props.close();
   };
 
   const uploadSim = (e) => {
@@ -112,10 +104,6 @@ const CreateArea = (props) => {
       axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',parsedJson).catch(error => {
         console.log(error);
       });
-      setNote({
-        title: JSON.parse(e.target.result).data.gameinstance_name,
-        img: JSON.parse(e.target.result).data.gameinstance_photo_path
-      })
       window.location.reload()
     };
 
@@ -129,10 +117,6 @@ const CreateArea = (props) => {
   const onChange = (event) => {
     setImageSelected(event.target.files[0]);
     setImg(URL.createObjectURL(event.target.files[0]));
-    setNote({
-      title: title,
-      img: URL.createObjectURL(event.target.files[0]),
-    });
     setWillUpload(true);
   }
 
@@ -146,22 +130,34 @@ const CreateArea = (props) => {
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       // Here I will be creating my options dynamically based on
       items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
-
       // What props are currently passed to the parent component
     }
     return items;
   }
 
   const handleCopySim = (event) => {
-    // Setting copy to 1 so when we add we can also update the params to copiedParams
     setCopy(1);
     setTitle(props.gamedata[event.target.value].gameinstance_name + " - copy");
     setFilename(props.gamedata[event.target.value].gameinstance_photo_path);
-    setNote({
-      title: props.gamedata[event.target.value].gameinstance_name,
-      img: props.gamedata[event.target.value].gameinstance_photo_path,
-    });
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
+  }
+
+  const openWidget = (event) => {
+    var myWidget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "uottawaedusim",
+        uploadPreset: "bb8lewrh"
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          console.log("Done! Here is the image info: ", result.info);
+          setImageSelected(result.info.public_id);
+          setImg(result.info.url);
+          setWillUpload(true);
+        }
+      }
+    );
+    myWidget.open();
   }
 
   return (
@@ -221,21 +217,23 @@ const CreateArea = (props) => {
             )}
           </div>
         </div>
-        <p className="button-container">
-        <input type="file" onChange={uploadSim} />
-
-        <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
-          {t("common.upload")}
-        </button>
-        <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
-        <button type="button" className="green" onClick={uploadImage}>
+        <div className="button-container">
+          <div className="button-col left-ca">
+            <input type="file" onChange={uploadSim} />
+            <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
+              {t("common.upload")}
+            </button>
+            <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
+          </div>
+          <div className="button-col right-ca">
+        <button type="button" className="green left-ca" onClick={uploadImage}>
           {t("common.add")}
         </button>
-        <button type="button" className="red" onClick={props.onDelete}>
+        <button type="button" className="red" onClick={props.close}>
           {t("common.cancel")}
         </button>
-
-      </p>
+        </div>
+      </div>
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
@@ -245,18 +243,17 @@ const CreateArea = (props) => {
               cloudName="uottawaedusim"
               publicId={image.url}
               onClick={() => {
-                setFilename(image.public_id);
+                setImageSelected(image.public_id);
                 setImg(image.url);
                 setWillUpload(false);
               }}
             />
           ))}
-          <input type="file" name="img" id="file" onChange={onChange} />
-          <label htmlFor="file" className="form-imgsubmit">
-            <button type="button" className="modal-button green form-imgsubmit">
+
+            <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
             {t("modal.imageFromFile")}
             </button>
-          </label>
+
         </form>
       )}
     </div>

@@ -14,6 +14,8 @@ import JSRunner from "../components/Stage/GamePieces/JSRunner";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
 
+
+
 const EditPage = React.lazy(() => import("./EditPage"));
 const GamePage = React.lazy(() => import("./GamePage"));
 
@@ -405,6 +407,7 @@ const CanvasPage = (props) => {
     }
   }
 
+
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
       key: obj.id,
@@ -528,15 +531,22 @@ const CanvasPage = (props) => {
     }
   }
 
+
+
   const documentProps = (obj, canvas) => {
+    const bimage = new window.Image();
+     bimage.src = 'downloadicon.png';
+     bimage.width = 10;
+     bimage.height = 10;
     return {
       width: obj.width,
       height: obj.height,
-      fillPatternImage: canvas.state.docimage,
+      fillPatternImage: bimage,
       fillPatternOffset: obj.fillPatternOffset,
       fillPatternScaleY: 0.2,
       fillPatternScaleX: 0.2,
-      image: obj.image
+      image: obj.image,
+      onDblClick: () => canvas.onDocClick()
     }
   }
 

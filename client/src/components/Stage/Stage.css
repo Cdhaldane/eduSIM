@@ -75,17 +75,17 @@
   padding: 0 !important;
 }
 
-.noSideBar {
-  float: right;
-}
-
 .overlayMain {
+  float: left;
   width: calc(100vw - 70px);
   height: 100vh;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 6;
-  left: 70px;
+  animation-duration: 1.0s;
+  transform-style: preserve-3d;
+	transform-origin: 50% 100%;
+	animation: OpenTop 1s;
 }
 
 .overlayMain>div {
@@ -151,6 +151,8 @@
   text-shadow: -1px 1px 0 white;
   border: 1px solid var(--primary);
   padding: 5px;
+  padding-left: 19px;
+  padding-right: 20px;
 }
 
 #playModeRoleLabel>b {

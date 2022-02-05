@@ -55,7 +55,7 @@ const DropdownNavigationBar = (props) => {
   }
 
   return (
-    <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
+    <div className="dropdown nav" style={{ height: menuHeight }} ref={dropdownRef}>
       <CSSTransition
         in={true}
         timeout={500}

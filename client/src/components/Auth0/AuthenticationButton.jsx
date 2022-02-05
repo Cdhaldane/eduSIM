@@ -36,7 +36,6 @@ const AuthenticationButton = (props) => {
     <button
       onClick={handleLogout}
       type="button"
-      buttonStyle="btn--primary--solid"
       className="w-button"
     >
       {t("navbar.logout")}
