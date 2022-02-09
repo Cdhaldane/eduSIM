@@ -10,6 +10,7 @@ import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import CreateEdit from "../components/CreateEdit/CreateEdit";
 
 const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
@@ -20,6 +21,9 @@ const Join = (props) => {
   const [roomMessages, setRoomMessages] = useState({});
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
+  const [editModal, setEditModal] = useState(false);
+  const [image, setImage] = useState();
+  const [title, setTitle] = useState();
   const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
   const { t } = useTranslation();
@@ -35,9 +39,14 @@ const Join = (props) => {
   if (props.location.title !== undefined) {
     localStorage.setItem('title', props.location.title);
   }
-
   if (props.location.img !== undefined) {
     localStorage.setItem('img', props.location.img);
+  }
+  if(title == null){
+    setTitle(localStorage.title)
+  }
+  if(image == null){
+    setImage(localStorage.img)
   }
 
   const toggleModal = () => {
@@ -152,6 +161,12 @@ const Join = (props) => {
       room: currentRoom[2]
     }));
   };
+  const updateTitle = (title) => {
+    setTitle(title);
+  }
+  const updateImg = (img) => {
+    setImage(img);
+  }
 
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
@@ -173,12 +188,14 @@ const Join = (props) => {
           cloudName="uottawaedusim"
           publicId={
             "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-            localStorage.img
+            image
           }
           alt="backdrop"
         />
         <div className="joinboard-info">
-          <h2 className="joinboard-title">{localStorage.title}</h2>
+          <h2 className="joinboard-title">{title}   <i className="lni lni-pencil joinboard-edit" onClick={() => {
+              setEditModal(true);
+            }} ><h1>Edit</h1></i></h2>
           <button onClick={() => setShowNote(!showNote)} className="addbutton">
             {t("admin.addStudentCSV")}
           </button>
@@ -267,6 +284,26 @@ const Join = (props) => {
           success={() => setRefreshRooms(r => r + 1)}
         />
       </Modal>
+      <Modal
+        isOpen={editModal}
+        hide={() => setEditModal(false)}
+        onRequestClose={toggleModal}
+        contentLabel="My dialog"
+        className="createmodalarea"
+        overlayClassName="myoverlay"
+        closeTimeoutMS={250}
+        ariaHideApp={false}
+      >
+      <CreateEdit
+        updateTitle={updateTitle}
+        updateImg={updateImg}
+        gameid={localStorage.gameid}
+        isOpen={editModal}
+        close={() => setEditModal(false)}
+        title={props.location.title}
+        img={props.location.img}
+      />
+        </Modal>
 
       <Tabs
         customObjNames={props.customObjects}

@@ -409,6 +409,7 @@ class Graphics extends Component {
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
+
     this.toggleModal();
     let role = initRole;
     if (this.props.roleSelection === "random") role = -1;
@@ -417,18 +418,18 @@ class Graphics extends Component {
       rolelevel: role || ''
     });
     let id = dbid
+    let gameid = localStorage.gameid;
     if (!dbid) id = Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
     this.props.socket.emit("playerUpdate", {
       role, name, dbid: this.props.initialUserId || id, invited: !!this.props.initialUserId
     })
-    localStorage.setItem('userInfo', JSON.stringify({ role, name, dbid: this.props.initialUserId || id }));
+    localStorage.setItem('userInfo', JSON.stringify({ gameid, role, name, dbid: this.props.initialUserId || id }));
   }
 
   componentDidMount() {
     this.setState({
       selectrole: true
     })
-
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
 
@@ -443,7 +444,7 @@ class Graphics extends Component {
       });
     } catch (e) { };
 
-    if (localStorage.userInfo) {
+    if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
       const info = JSON.parse(localStorage.userInfo);
       if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
       this.handlePlayerInfo(info);

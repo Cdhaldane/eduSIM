@@ -3,11 +3,13 @@ import axios from "axios";
 import Table from "../Table/Table";
 import CreateEmail from "../CreateEmail/CreateEmail";
 import Modal from "react-modal";
+import { io } from "socket.io-client";
 import { useAlertContext } from "../Alerts/AlertContext";
 import moment from "moment";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Performance from "../SideBar/Performance";
 import { useTranslation } from "react-i18next";
+import Messages from "../SideBar/submenus/Messages"
 
 import "./Tabs.css";
 
@@ -23,6 +25,16 @@ const Tabs = (props) => {
   const [removeLog, setRemoveLog] = useState(null);
   const [customObjs, setCustomObjs] = useState();
   const [editingName, setEditingName] = useState(false);
+
+  const [room, setRoomInfo] = useState(null);
+  const [socket, setSocketInfo] = useState(null);
+  const [roomStatus, setRoomStatus] = useState({});
+  const [showNav, setShowNav] = useState(false);
+  const [players, setPlayers] = useState({});
+  const [messageBacklog, setMessageBacklog] = useState([]);
+  const [level, setLevel] = useState(1);
+  const [roles, setRoles] = useState(null);
+
   const { t } = useTranslation();
 
   const alertContext = useAlertContext();
@@ -57,6 +69,9 @@ const Tabs = (props) => {
         setCustomObjs(customObjs);
       }
     }).catch(error => console.error(error));
+
+
+
   }, [props.gameid, props.refreshRooms]);
 
   const toggleTab = (index) => {
@@ -521,6 +536,7 @@ const Tabs = (props) => {
               <div className="groupcontainer">
                 <div className="group-column">
                   <h3>{t("admin.chat")}</h3>
+                  <Messages socket={socket}/>
                   <div className="group-chatlog">
                     <div>
                       {props.chatMessages.map(({ sender, message }, index) => (

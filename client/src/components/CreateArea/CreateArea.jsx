@@ -8,7 +8,7 @@ import "./CreateArea.css";
 
 const CreateArea = (props) => {
   const [note, setNote] = useState([]);
-  const [img, setImg] = useState("Demo.jpg");
+  const [img, setImg] = useState("https://res.cloudinary.com/uottawaedusim/image/upload/v1630036729/images/ujjtehlwjgsfqngxesnd.jpg");
   const [files, setFiles] = useState("");
   const [moreImages, setMoreImages] = useState(false);
   const [title, setTitle] = useState("");
@@ -22,9 +22,7 @@ const CreateArea = (props) => {
   const detailsArea = new useRef();
   const imageArea = new useRef();
   const fileInputRef= new useRef();
-
   const alertContext = useAlertContext();
-
   const handleClickOutside = e => {
     if (detailsArea.current &&
       !(detailsArea.current.contains(e.target) || (imageArea.current && imageArea.current.contains(e.target)))) {
@@ -48,7 +46,18 @@ const CreateArea = (props) => {
       return;
     }
     event.preventDefault();
-
+    if(localStorage.images == null || localStorage.images == "" ){
+      var temp = []
+      temp.push(imageSelected)
+      localStorage.setItem("images", JSON.stringify(temp))
+    } else {
+      var temp = JSON.parse(localStorage.getItem("images"));
+      temp.push(imageSelected)
+      if(temp.length > 5){
+        temp.shift();
+      }
+      localStorage.setItem("images", JSON.stringify(temp))
+    }
     try {
       let data = {
         gameinstance_name: title,
@@ -77,9 +86,7 @@ const CreateArea = (props) => {
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
           var temp = JSON.parse(localStorage.getItem("order"));
-          console.log(temp)
           temp.push(res.data)
-          console.log(temp)
           localStorage.setItem("order", JSON.stringify(temp))
           props.onAdd();
         }).catch(error => {
@@ -96,7 +103,6 @@ const CreateArea = (props) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
     fileReader.onload = e => {
-      console.log(JSON.parse(e.target.result).data);
       setFiles(JSON.parse(e.target.result));
       let parsedJson = (JSON.parse(e.target.result).data);
       parsedJson.createdby_adminid = localStorage.adminid;
@@ -111,13 +117,6 @@ const CreateArea = (props) => {
   }
   const handleSimUpload = (e) => {
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',JSON.parse(e));
-  }
-
-  // Handles selection of img from file
-  const onChange = (event) => {
-    setImageSelected(event.target.files[0]);
-    setImg(URL.createObjectURL(event.target.files[0]));
-    setWillUpload(true);
   }
 
   // Handle input and adds title and img to notes array
@@ -211,9 +210,19 @@ const CreateArea = (props) => {
           <div className="form-imgpreview">
 
             {img ? (
-              <img id="preview" alt="preview" src={img} />
+              <Image
+                id="preview"
+                cloudName="uottawaedusim"
+                publicId={imageSelected}
+
+              />
             ) : (
-              <img id="previewno" alt="preview" src={img} />
+              <Image
+                id="nopreview"
+                cloudName="uottawaedusim"
+                publicId={imageSelected}
+
+              />
             )}
           </div>
         </div>
@@ -237,15 +246,14 @@ const CreateArea = (props) => {
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
-        {props.previewImages?.map((image, index) => (
+        {JSON.parse(localStorage.images).map((image, index) => (
             <Image
               key={index}
               cloudName="uottawaedusim"
-              publicId={image.url}
+              publicId={image}
               onClick={() => {
-                setImageSelected(image.public_id);
-                setImg(image.url);
-                setWillUpload(false);
+                setImageSelected(image);
+                setImg(image);
               }}
             />
           ))}

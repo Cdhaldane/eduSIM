@@ -98,7 +98,9 @@
   transform: translate(calc(-50% - var(--margin)), calc(-50% - var(--margin)));
   position: absolute;
 }
-
+.noSideBar {
+  margin-left: 70px;
+}
 .gameLoadingOverlay {
   z-index: 100;
   width: 10%;
