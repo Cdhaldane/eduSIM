@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import "./ContextMenu.css"
 
 const ContextMenu = (props) => {
-  console.log(props)
   const [drop, setDrop] = useState(false);
   const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
   const [conditionsVisible, setConditionsVisible] = useState(false);

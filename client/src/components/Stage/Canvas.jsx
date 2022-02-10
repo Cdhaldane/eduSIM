@@ -724,30 +724,94 @@ class Graphics extends Component {
     node.getLayer().batchDraw();
   };
 
+  // Return the ID of top most object at a given position on screen
+  // With some basic object info
+  // If no object is found return null
+  getTopObjAtPos = (pos) => {
+    // pos should be in the form of {x: #, y: #}
+    // where x and y are relative to the client (not the stage)
+    const layer = this.state.overlayOpen ? "overlayAreaLayer" :
+      (this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer");
+    let stageElem = null;
+    if (layer === "overlayAreaLayer") {
+      stageElem = document.getElementById("overlayGameContainer").querySelector(".konvajs-content");
+    } else if (layer === "personalAreaLayer") {
+      stageElem = document.getElementById("personalMainContainer").querySelector(".konvajs-content");
+    } else {
+      stageElem = document.getElementById("editMainContainer").querySelector(".konvajs-content");
+    }
+    const stageBox = stageElem.getBoundingClientRect();
+    // This is the position relative to the stage (whereas pos is relative to the whole screen)
+    const relPos = {
+      x: pos.x - stageBox.x,
+      y: pos.y - stageBox.y
+    };
+    const layerIds = this.getLayers();
+
+    // First check Konva component intersections
+    let shape = this.refs[`${layer}.objects`].getIntersection(relPos);
+    if (shape?.attrs?.id === "customRect") {
+      // Only run this if a customRect gets in the way but the object is in the back
+      // because it is very inefficient
+      shape = this.refs[`${layer}.objects`].getAllIntersections(relPos).filter(obj => {
+        return obj?.attrs?.id !== "customRect" && obj?.attrs?.id !== "ContainerRect";
+      }).pop();
+    }
+    if (shape && (shape.attrs.id === "ContainerRect" || shape.attrs.id === undefined)) {
+      shape = null;
+    }
+
+    // Now check if a custom component is on top
+    const customObjs = Array.from(document.getElementsByClassName("customObj")).reverse();
+    for (let i = 0; i < customObjs.length; i++) {
+      const obj = customObjs[i];
+      const id = obj.dataset.name;
+      const objType = this.getObjType(id);
+      const objState = this.state[objType].filter(obj => obj.id === id)[0];
+      const objBox = obj.getBoundingClientRect();
+      if (layerIds.includes(id)) {
+        if (
+          pos.x > objBox.x && pos.x < objBox.x + objBox.width &&
+          pos.y > objBox.y && pos.y < objBox.y + objBox.height &&
+          (!shape || objState.onTop)
+        ) {
+          shape = objState;
+          break;
+        }
+      } else {
+        console.error("ERROR: Custom object not in current layers being rendered.");
+      }
+    }
+
+    if (shape?.attrs?.id) {
+      return {
+        id: shape.attrs.id,
+        custom: false
+      };
+    } else if (shape?.id) {
+      return {
+        id: shape.id,
+        custom: true
+      };
+    } else {
+      return null;
+    }
+  }
+
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
-    if (event.target.parentElement.className === "konvajs-content") {
-      const customObjs = document.getElementsByClassName("customObj");
-      for (let i = 0; i < customObjs.length; i++) {
-        const id = customObjs[i].dataset.name;
-        const customObj = this.getKonvaObj(id);
-        const rect = customObjs[i].getBoundingClientRect();
-        if (
-          (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
-          (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
-          (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
-          (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
-          customObj
-        ) {
-          // Clicked on a custom object
-          this.setState({
-            selectedShapeName: id,
-            groupSelection: []
-          }, this.handleObjectSelection);
-          return;
-        }
-      }
+    const shape = this.getTopObjAtPos({
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (shape?.custom) {
+      this.setState({
+        selectedShapeName: shape.id,
+        groupSelection: []
+      }, this.handleObjectSelection);
+      return;
     }
 
     if (!event.ctrlKey) {
@@ -817,51 +881,9 @@ class Graphics extends Component {
         }
       }
 
-      const layer = personalArea ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-      let shape = null;
-      const objsLayer = this.refs[`${layer}.objects`];
-      if (pos && e.evt) {
-        shape = objsLayer.getIntersection(pos);
-        if (shape && shape.attrs.id === "ContainerRect") {
-          shape = null;
-        }
-      }
-
-      if (event.target.parentElement.className === "konvajs-content") {
-        const customObjs = Array.from(document.getElementsByClassName("customObj"));
-        customObjs.reverse();
-        for (let i = 0; i < customObjs.length; i++) {
-          const id = customObjs[i].dataset.name;
-          const customObj = this.getKonvaObj(id);
-          const rect = customObjs[i].getBoundingClientRect();
-          const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
-          if (
-            !(shape && !onTop) &&
-            (event.x ? event.x : event.targetTouches[0].clientX) > rect.x &&
-            (event.y ? event.y : event.targetTouches[0].clientY) > rect.y &&
-            (event.x ? event.x : event.targetTouches[0].clientX) < rect.x + rect.width &&
-            (event.y ? event.y : event.targetTouches[0].clientY) < rect.y + rect.height &&
-            customObj
-          ) {
-            // Clicked on a custom object
-            this.setState({
-              selectedShapeName: id,
-              groupSelection: [],
-              selection: {
-                ...this.state.selection,
-                visible: true,
-                isDraggingShape: "customObj"
-              }
-            }, this.handleObjectSelection);
-            return;
-          }
-        }
-      }
-
       this.setState({
         selection: {
-          isDraggingShape: this.isShape(shape) ? shape.id() : null,
+          isDraggingShape: shape ? shape.id : null,
           visible: true,
           x1: (pos.x + xOffset) / scale,
           y1: (pos.y + yOffset) / scale,
@@ -871,9 +893,9 @@ class Graphics extends Component {
       }, () => {
         this.updateSelectionRect(personalArea);
         if (event.buttons === 1 && !event.shiftKey) {
-          const shapeGroup = this.getShapeGroup(shape);
+          const shapeGroup = shape ? this.getShapeGroup(this.refs[shape.id]) : null;
           this.setState({
-            selectedShapeName: this.isShape(shape) ? shapeGroup ? "" : shape.id() : "",
+            selectedShapeName: shape ? (shapeGroup ? "" : shape.id) : "",
             groupSelection: shapeGroup ? [shapeGroup] : []
           }, this.handleObjectSelection);
         }
@@ -923,6 +945,11 @@ class Graphics extends Component {
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
 
+    const shape = this.getTopObjAtPos({
+      x: event.clientX,
+      y: event.clientY
+    });
+
     if (this.state.lineTransformDragging) {
       this.setState({
         lineTransformDragging: false
@@ -969,70 +996,32 @@ class Graphics extends Component {
         return;
       }
 
-      const layer = personalArea ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-      const selectionRect = this.state.overlayOpen ? "overlaySelectionRect" :
-        (personalArea ? "personalSelectionRect" : "groupSelectionRect");
-      let shape = null;
-      let clickShapeGroup = null;
-
-      // Get Konva shape if clicked
-      const objsLayer = this.refs[`${layer}.objects`];
-      const pointerPos = objsLayer?.getStage().getPointerPosition();
-      if (pointerPos) {
-        const layerObjs = objsLayer.children;
-        for (let i = 0; i < layerObjs.length; i++) {
-          const obj = layerObjs[i];
-          const rect = obj.getClientRect();
-          if (
-            obj.attrs.name !== "customObj" &&
-            obj.attrs.id && obj.attrs.id !== "ContainerRect" &&
-            rect.width && rect.height
-          ) {
-            if (
-              pointerPos.x > rect.x && pointerPos.x < rect.x + rect.width &&
-              pointerPos.y > rect.y && pointerPos.y < rect.y + rect.height
-            ) {
-              shape = obj;
-              clickShapeGroup = this.getShapeGroup(shape);
-            }
+      if (shape?.custom) {
+        this.setState({
+          selectedShapeName: shape.id,
+          groupSelection: [],
+          selection: {
+            ...this.state.selection,
+            isDraggingShape: "customObj"
           }
-        }
+        }, this.handleObjectSelection);
+        return;
       }
 
-      // Select custom object if clicked
-      const customObjs = Array.from(document.getElementsByClassName("customObj"));
-      customObjs.reverse();
-      for (let i = 0; i < customObjs.length; i++) {
-        const bounds = customObjs[i].getBoundingClientRect();
-        const id = customObjs[i].dataset.name;
-        const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
-        if (
-          (!this.state.selection.isDraggingShape || this.state.selection.isDraggingShape === "customObj") &&
-          !(shape && !onTop) &&
-          event.clientX > bounds.left && event.clientX < bounds.right &&
-          event.clientY > bounds.top && event.clientY < bounds.bottom
-        ) {
-          this.setState({
-            selectedShapeName: customObjs[i].dataset.name,
-            groupSelection: [],
-            selection: {
-              ...this.state.selection,
-              isDraggingShape: "customObj"
-            }
-          }, this.handleObjectSelection);
-          return;
-        }
-      }
+      const clickShapeGroup = shape && !shape.custom ? this.getShapeGroup(this.refs[shape.id]) : null;
 
       if (event.button === 0) {
         // LEFT CLICK
+        const layer = this.state.overlayOpen ? "overlayAreaLayer" :
+          (this.state.personalAreaOpen ? "personalAreaLayer" : "groupAreaLayer");
+        const selectionRect = this.state.overlayOpen ? "overlaySelectionRect" :
+          (personalArea ? "personalSelectionRect" : "groupSelectionRect");
         const selBox = this.refs[selectionRect] ? this.refs[selectionRect].getClientRect() : null;
         if (!selBox) return;
         if (selBox.width > 1 && selBox.height > 1) {
           // This only runs if there has been a rectangle selection (click and drag selection)
           const elements = [];
-          objsLayer.find(".shape").forEach((elementNode) => {
+          this.refs[`${layer}.objects`].find(".shape").forEach((elementNode) => {
             const elBox = elementNode.getClientRect();
             if (Konva.Util.haveIntersection(selBox, elBox)) {
               elements.push(elementNode);
@@ -1086,7 +1075,7 @@ class Graphics extends Component {
           }
         } else {
           // There has been a single left click
-          if (this.isShape(shape)) {
+          if (shape) {
             if (event.shiftKey) {
               // Shift selected -> create group selection
 
@@ -1102,7 +1091,7 @@ class Graphics extends Component {
               for (let i = 0; i < this.state.groupSelection.length; i++) {
                 const obj = this.state.groupSelection[i];
                 if (!Array.isArray(obj)) {
-                  if (obj.attrs.id === shape.id()) {
+                  if (obj.attrs.id === shape.id) {
                     alreadySelectedCurrent = true;
                   }
                   if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
@@ -1122,20 +1111,26 @@ class Graphics extends Component {
                 }
               }
 
-              if (this.state.selectedShapeName !== shape.id() || this.state.groupSelection.length) {
+              if (this.state.selectedShapeName !== shape.id || this.state.groupSelection.length) {
                 if (!alreadySelectedCurrent) {
                   // ADD SELECTION
                   const newSelection = [...this.state.groupSelection];
-                  if (!alreadySelectedPrev && this.state.selectedShapeName !== shape.id() && this.state.selectedShapeName) {
+                  if (
+                    !alreadySelectedPrev &&
+                    this.state.selectedShapeName !== shape.id &&
+                    this.state.selectedShapeName &&
+                    !this.customObjects.includes(this.getObjType(this.state.selectedShapeName))
+                  ) {
                     // A shape is already selected in selectedShapeName but not in groupSelection
-                    // Add it to groupSelection
+                    // Add it to groupSelection (unless it is a custom object since those cause
+                    // cyclic object value errors when parsing the JSON)
                     newSelection.push(this.refs[this.state.selectedShapeName]);
                   }
                   if (newSelection.length === 0) {
                     // Shift select with nothing else selected so set it as the selection
                     if (!clickShapeGroup) {
                       this.setState({
-                        selectedShapeName: this.checkName(shape.id()),
+                        selectedShapeName: this.checkName(shape.id),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     } else {
@@ -1149,7 +1144,7 @@ class Graphics extends Component {
                     if (!clickShapeGroup) {
                       this.setState({
                         selectedShapeName: "",
-                        groupSelection: [...newSelection, this.refs[shape.id()]]
+                        groupSelection: [...newSelection, this.refs[shape.id]]
                       }, this.handleObjectSelection);
                     } else {
                       this.setState({
@@ -1171,7 +1166,7 @@ class Graphics extends Component {
                         return true;
                       }
                     } else {
-                      return obj.attrs.id !== shape.id();
+                      return obj.attrs.id !== shape.id;
                     }
                   });
                   if (newGroupSelection.length === 1) {
@@ -1203,9 +1198,8 @@ class Graphics extends Component {
                   groupSelection: [clickShapeGroup]
                 }, this.handleObjectSelection);
               } else {
-                const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
                 this.setState({
-                  selectedShapeName: this.checkName(shapeId),
+                  selectedShapeName: this.checkName(shape.id),
                   groupSelection: []
                 }, this.handleObjectSelection);
               }
@@ -1227,7 +1221,7 @@ class Graphics extends Component {
           return;
         }
 
-        if (this.isShape(shape) && shape.attrs.id !== "pencils") {
+        if (shape && shape.id !== "pencils") {
           if (clickShapeGroup) {
             // Check if group already selected to avoid duplicates
             let alreadySelected = false;
@@ -1250,7 +1244,7 @@ class Graphics extends Component {
             for (let i = 0; i < this.state.groupSelection.length; i++) {
               if (
                 !Array.isArray(this.state.groupSelection[i]) &&
-                this.state.groupSelection[i].attrs.id === shape.id()
+                this.state.groupSelection[i].attrs.id === shape.id
               ) {
                 shapeIsInGroupSelection = true;
                 break;
@@ -1258,9 +1252,8 @@ class Graphics extends Component {
             }
 
             if (!shapeIsInGroupSelection) {
-              const shapeId = e.evt ? shape.id() : e.target.closest(".customObj").dataset.name;
               this.setState({
-                selectedShapeName: this.checkName(shapeId),
+                selectedShapeName: this.checkName(shape.id),
                 groupSelection: []
               }, this.handleObjectSelection);
 
@@ -1296,7 +1289,7 @@ class Graphics extends Component {
             contextMenuY = "groupAreaContextMenuY";
           }
           let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-          if (sidebarPx > 0 && layer === this.refs.personalAreaLayer) {
+          if (sidebarPx > 0 && !this.state.overlayOpen && this.state.personalAreaOpen) {
             sidebarPx = 100;
           }
 
@@ -1337,23 +1330,6 @@ class Graphics extends Component {
     }
   };
 
-  isShape = (shape) => {
-    if (shape === true) {
-      return true;
-    }
-    if (
-      shape === null ||
-      shape === undefined ||
-      shape.name() === null ||
-      shape.name() === undefined ||
-      shape.id() === "ContainerRect"
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   simulateMouseEvent = (el, event) => {
     if (window.MouseEvent && typeof window.MouseEvent === 'function') {
       event = new MouseEvent(event);
@@ -1370,17 +1346,6 @@ class Graphics extends Component {
     const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
-
-    /*let stageParentElem = "";
-    if (this.state.overlayOpen) {
-      stageParentElem = "overlayGameContainer";
-    } else if (this.state.personalAreaOpen) {
-      stageParentElem = "editPersonalContainer";
-    } else {
-      stageParentElem = "editMainContainer";
-    }
-    const stageElem = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content")[0];
-    this.simulateMouseEvent(stageElem, 'mousedown');*/
 
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
@@ -1512,10 +1477,6 @@ class Graphics extends Component {
   };
 
   handleDragEnd = (e, objectsName, ref) => {
-    this.setState({
-      guides: []
-    });
-
     let shape = null;
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
@@ -1547,6 +1508,12 @@ class Graphics extends Component {
           : eachObj
       )
     }));
+
+    this.setState({
+      selectedShapeName: ref,
+      groupSelection: [],
+      guides: []
+    }, this.handleObjectSelection);
 
     const stageType = this.state.overlayOpen ? "overlayStage" :
       (this.personalAreaOpen ? "personalStage" : "groupStage");
@@ -2172,7 +2139,6 @@ class Graphics extends Component {
   }
 
   handleDownload = (url, filename) => {
-    console.log(url)
     axios.get(url, {
       responseType: 'blob',
     }).then((res) => {
@@ -2409,51 +2375,52 @@ class Graphics extends Component {
   // returns the Konva Group associated with the KonvaHtml of the object
   getKonvaObj = (id, updateState, showTransformer) => {
     if (id && id !== "pencils") {
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
+        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+      const groups = this.refs[`${layer}.objects`].find('Group');
+      for (let i = 0; i < groups.length; i++) {
+        const group = groups[i];
+        group.moveToBottom();
+        if (group.attrs.id === id) {
+          if (updateState) {
+            const elem = this.refs[id];
+            const style = window.getComputedStyle(elem);
+            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
+            const x = matrix.translateX;
+            const y = matrix.translateY;
+            const width = elem.clientWidth;
+            const height = elem.clientHeight;
+
+            const paddingPercent = 0.05;
+            this.setState({
+              customRect: [{
+                ...this.state.customRect[0],
+                currentId: id,
+                x: x - ((width * paddingPercent) / 2),
+                y: y - ((height * paddingPercent) / 2)
+              }]
+            });
+
+            const sizeRect = this.refs.customRect;
+            sizeRect.attrs.currentId = id;
+            sizeRect.attrs.width = width * (1 + paddingPercent);
+            sizeRect.attrs.height = height * (1 + paddingPercent);
+            group.add(sizeRect);
+            group.moveToTop();
+
+            if (showTransformer) {
+              this.setState({
+                selectedShapeName: id
+              }, this.handleObjectSelection);
+            }
+          }
+          return group;
+        }
+      }
       if (this.refs[id].attrs) {
         return this.refs[id];
-      } else {
-        const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-          (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-        const groups = this.refs[`${layer}.objects`].find('Group');
-        for (let i = 0; i < groups.length; i++) {
-          if (groups[i].attrs.id === id) {
-            const group = groups[i];
-            if (updateState) {
-              const elem = this.refs[id];
-              const style = window.getComputedStyle(elem);
-              const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
-              const x = matrix.translateX;
-              const y = matrix.translateY;
-              const width = elem.clientWidth;
-              const height = elem.clientHeight;
-
-              const paddingPercent = 0.05;
-              this.setState({
-                customRect: [{
-                  ...this.state.customRect[0],
-                  currentId: id,
-                  x: x - ((width * paddingPercent) / 2),
-                  y: y - ((height * paddingPercent) / 2)
-                }]
-              });
-
-              const sizeRect = this.refs.customRect;
-              sizeRect.attrs.currentId = id;
-              sizeRect.attrs.width = width * (1 + paddingPercent);
-              sizeRect.attrs.height = height * (1 + paddingPercent);
-              group.add(sizeRect);
-
-              if (showTransformer) {
-                this.setState({
-                  selectedShapeName: id
-                }, this.handleObjectSelection);
-              }
-            }
-            return group;
-          }
-        }
-        return null;
       }
+      return null;
     }
   }
 
@@ -3458,7 +3425,10 @@ class Graphics extends Component {
                 setTimeout(() => this.props.reCenter("edit", "personal"), 0);
               }}
               personalAreaOpen={this.state.personalAreaOpen}
-              openInfoSection={() => this.setState(() => this.handlePersonalAreaOpen(true))}
+              openInfoSection={() => {
+                this.refs.customRectCanvas.add(this.refs.customRect);
+                this.setState(() => this.handlePersonalAreaOpen(true));
+              }}
               roleLevel={this.handleRoleLevel}
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}
