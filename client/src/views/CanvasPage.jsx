@@ -10,11 +10,8 @@ import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "../components/Stage/GamePieces/Connect4/Board";
 import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
-import JSRunner from "../components/Stage/GamePieces/JSRunner";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
-
-
 
 const EditPage = React.lazy(() => import("./EditPage"));
 const GamePage = React.lazy(() => import("./GamePage"));
@@ -535,9 +532,9 @@ const CanvasPage = (props) => {
 
   const documentProps = (obj, canvas) => {
     const bimage = new window.Image();
-     bimage.src = 'downloadicon.png';
-     bimage.width = 10;
-     bimage.height = 10;
+    bimage.src = 'downloadicon.png';
+    bimage.width = 10;
+    bimage.height = 10;
     return {
       width: obj.width,
       height: obj.height,
@@ -983,7 +980,8 @@ const CanvasPage = (props) => {
               );
             }
           })}
-
+        </Layer>
+        <Layer {...layerProps(canvas, stage, "dragging")}>
           {editMode && (
             <>
               {canvas.state.arrows.map((obj, index) => {
@@ -1004,7 +1002,6 @@ const CanvasPage = (props) => {
             </>
           )}
         </Layer>
-        <Layer {...layerProps(canvas, stage, "dragging")} />
       </>
     );
 

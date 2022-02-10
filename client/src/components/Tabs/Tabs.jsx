@@ -39,7 +39,7 @@ const Tabs = (props) => {
       }
       setTabs(cart);
     }).catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 
     // Get the object data for this game
@@ -91,17 +91,6 @@ const Tabs = (props) => {
   };
 
   const handleNewGroup = (e) => {
-    // Check if name is empty or a duplicate
-    // if (newGroup.trim() === "") {
-    //   console.log(tabs);
-    //   alertContext.showAlert("Group name cannot be empty.", "warning");
-    //   return;
-    // }
-    // if (tabs.some((tab) => tab[0] === newGroup.trim())) {
-    //   alertContext.showAlert("A group with this name already exists. Please pick a new name.", "warning");
-    //   return;
-    // }
-
     e.preventDefault();
     let index = tabs.length + 1;
     tabs.forEach(tab => {
@@ -117,8 +106,7 @@ const Tabs = (props) => {
         if (props.socket) {
           props.socket.emit("joinRoom", res.data.gameroom_url);
         }
-      })
-      .catch(error => console.log(error.response));
+      }).catch(error => console.error(error.response));
   }
 
   const handleGroupName = (e) => {
@@ -126,12 +114,12 @@ const Tabs = (props) => {
       alertContext.showAlert(t("alert.emptyGroupName"), "warning");
       return;
     }
-    if (tabs.some((tab, ind) => tab[0] === newName.trim() && toggleState-1 !== ind)) {
+    if (tabs.some((tab, ind) => tab[0] === newName.trim() && toggleState - 1 !== ind)) {
       alertContext.showAlert(t("alert.groupAlreadyExists"), "warning");
       return;
     }
     let data = {
-      gameroomid: tabs[toggleState-1][1],
+      gameroomid: tabs[toggleState - 1][1],
       gameroom_name: newName
     }
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updateRoomName', data)
@@ -143,8 +131,7 @@ const Tabs = (props) => {
           return val;
         }))
         setEditingName(false);
-      })
-      .catch(error => console.log(error.response));
+      }).catch(error => console.error(error.response));
   }
 
   const toggleModal = (e) => {
@@ -159,12 +146,7 @@ const Tabs = (props) => {
       params: {
         id: tabs[index][1]
       }
-    })
-      .then((res) => {
-        console.log(res)
-
-      })
-      .catch(error => console.log(error.response));
+    }).catch(error => console.error(error.response));
     setTabs(tabs.filter((_, i) => i != index));
     setToggleState(0);
     props.setRoom(null);
@@ -295,7 +277,7 @@ const Tabs = (props) => {
         [removeLog.room]: prev[removeLog.room].filter(val => val.gameactionid !== removeLog.id)
       }));
       setRemoveLog(null);
-    }).catch(error => console.log(error.response));
+    }).catch(error => console.error(error.response));
   }
 
   useEffect(() => {
@@ -327,7 +309,7 @@ const Tabs = (props) => {
               </div>
             </div>
           ))}
-            <button onClick={() => setViewLogs(!viewLogs)} className="modal-button primary">{t("admin.displayPreviousRuns")} {viewLogs ? '-' : '+'}</button>
+          <button onClick={() => setViewLogs(!viewLogs)} className="modal-button primary">{t("admin.displayPreviousRuns")} {viewLogs ? '-' : '+'}</button>
         </div>
       ) : (
         <div className="logs-margin" />
@@ -336,7 +318,7 @@ const Tabs = (props) => {
         <ul className="selected-tab">
 
           <li
-             className="tab-overview"
+            className="tab-overview"
             onClick={() => toggleTab(0)}
             className={toggleState === 0 ? "selected" : ""}
           >
@@ -366,12 +348,12 @@ const Tabs = (props) => {
             <div className="content-row">
               <div className="content-settings">
                 <h3>{t("admin.settings")}</h3>
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="studentbuttonemail"
-                  >
-                    {t("admin.openEmailModal")}
-                  </button>
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="studentbuttonemail"
+                >
+                  {t("admin.openEmailModal")}
+                </button>
                 <div className="simadv">
                   <h3>{t("admin.simulationAdvancement")}</h3>
                   <div className="content-radiobuttons">
@@ -508,7 +490,7 @@ const Tabs = (props) => {
                   </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
-                {t("admin.joinRoom")}
+                  {t("admin.joinRoom")}
                 </a>
                 <button
                   onClick={() => handleDeleteGroup(tab)}

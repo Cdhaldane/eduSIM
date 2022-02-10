@@ -35,8 +35,7 @@ const CreateCsv = (props) => {
         id: props.gameid
       }
     }).then(response => {
-      console.log(response);
-      if (response.data.replacedroles.length>0) {
+      if (response.data.replacedroles.length > 0) {
         alertContext.showAlert(t("alert.addedCSVPlayersEmptyRoles", {
           playercount: result.data.length,
           roles: response.data.replacedroles.join(', '),
@@ -50,7 +49,7 @@ const CreateCsv = (props) => {
       props.success();
       props.close();
     }).catch(err => {
-      console.log(err);
+      console.error(err);
       alertContext.showAlert(err?.response?.data?.message || t("alert.genericError"), "error");
     });
   }
@@ -63,13 +62,12 @@ const CreateCsv = (props) => {
         async (file) => {
           const text = await file.text();
           let results = parse(text, { header: true });
-          if (results.errors.length>0) {
+          if (results.errors.length > 0) {
             alertContext.showAlert(t("alert.validCSVError"), "error");
             return;
           }
           setResult(results);
           setFile(file);
-          console.log(results);
         }
       );
     } else {
@@ -100,7 +98,7 @@ const CreateCsv = (props) => {
       <form ref={form} className="areacsvform modal-csv">
         <p className="modal-title">{t("modal.addStudentCSV")}</p>
         <div className="areacsv-links">
-          <input type="file" name="img" id="csv-file" onChange={onChange} value=""/>
+          <input type="file" name="img" id="csv-file" onChange={onChange} value="" />
           <label for="csv-file" className="csv-link">{t("modal.uploadCSV")}</label>
           <input type="button" id="csv-filedownload" onClick={download} value={t("modal.downloadCSVTemplate")} />
         </div>
@@ -119,12 +117,12 @@ const CreateCsv = (props) => {
           </div>
         )}
         <div className="button-container">
-        <button className="modal-button green" onClick={fileUploadHandler} disabled={!file}>
-          {t("common.add")}
-        </button>
-        <button className="modal-button red" onClick={props.close}>
-          {t("common.cancel")}
-        </button>
+          <button className="modal-button green" onClick={fileUploadHandler} disabled={!file}>
+            {t("common.add")}
+          </button>
+          <button className="modal-button red" onClick={props.close}>
+            {t("common.cancel")}
+          </button>
         </div>
       </form>
     </div>

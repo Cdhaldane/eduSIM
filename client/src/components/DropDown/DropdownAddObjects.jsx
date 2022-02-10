@@ -122,7 +122,7 @@ const DropdownAddObjects = (props) => {
       if (type === "image") {
         setImageUploading(true);
 
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file +  ".jpg";
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".jpg";
         setImageUploaded(true);
         setImageUploading(false);
         props.handleImage(name);
@@ -423,7 +423,7 @@ const DropdownAddObjects = (props) => {
   }
 
   const addDocument = () => {
-      addObjectToLayer(
+    addObjectToLayer(
       "documents",
       {
         stroke: 'black',
@@ -587,12 +587,6 @@ const DropdownAddObjects = (props) => {
     setAudiosrc(url);
   }
 
-  const handleDocument = (e) => {
-    props.handleDocument(e.target.value);
-    setFile(e.target.value)
-    console.log(e.target.value)
-  }
-
   const openWidget = (preset) => {
 
     let myWidget = window.cloudinary.createUploadWidget(
@@ -602,15 +596,14 @@ const DropdownAddObjects = (props) => {
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
-          console.log("Done! Here is the image info: ", result.info);
           let type = "";
-          if(preset == "bb8lewrh"){
+          if (preset == "bb8lewrh") {
             type = "image"
           } else if (preset == "tj5ptxi8") {
             type = "video"
-          } else if (preset == "du7sbfat"){
+          } else if (preset == "du7sbfat") {
             type = "audio"
-          } else if (preset == "mfcgzpkg"){
+          } else if (preset == "mfcgzpkg") {
             type == "pdf"
           }
           uploadFile(result.info.public_id, type);
@@ -620,7 +613,7 @@ const DropdownAddObjects = (props) => {
     myWidget.open();
   }
 
-  return isLoading ? false :(
+  return isLoading ? false : (
     <div
       className="dropdown"
       style={{
@@ -783,7 +776,7 @@ const DropdownAddObjects = (props) => {
                 )
               }>
               <button type="button" className="add-media-button" onClick={() => openWidget("bb8lewrh")}>
-              {t("modal.imageFromFile")}
+                {t("modal.imageFromFile")}
               </button>
 
             </DropdownItem>
@@ -832,7 +825,7 @@ const DropdownAddObjects = (props) => {
                 )
               }>
               <button type="button" className="add-media-button" onClick={() => openWidget("tj5ptxi8")} >
-              {t("modal.imageFromFile")}
+                {t("modal.imageFromFile")}
               </button>
             </DropdownItem>
           </div>
@@ -870,7 +863,7 @@ const DropdownAddObjects = (props) => {
                 }
               }}></i>}>
               <button type="button" className="add-media-button" onClick={() => openWidget("du7sbfat")}>
-              {t("modal.imageFromFile")}
+                {t("modal.imageFromFile")}
               </button>
             </DropdownItem>
           </div>
@@ -903,7 +896,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             leftIcon={<i className="icons lni lni-plus" onClick={(e) => addDocument(e)}></i>}>
             <button type="button" className="add-media-button" onClick={() => openWidget("mfcgzpkg")}>
-            {t("modal.imageFromFile")}
+              {t("modal.imageFromFile")}
             </button>
           </DropdownItem>
         </div>

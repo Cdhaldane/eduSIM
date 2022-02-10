@@ -26,7 +26,6 @@ const Dashboard = (props) => {
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
     if (data) {
-      console.log(index)
       setDeletionId(index);
     } else {
       setDeletionId(null);
@@ -49,22 +48,22 @@ const Dashboard = (props) => {
         }).then((res) => {
           let allData = res.data;
 
-          if(localStorage.order)
+          if (localStorage.order)
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData)
           setLoading(false);
         }).catch(error => {
-          console.log(error);
+          console.error(error);
         });
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   }
 
   useEffect(() => {
-  getAllGamedata()
-}, [localStorage.order]);
+    getAllGamedata()
+  }, [localStorage.order]);
 
   if (isLoading) {
     return <div className="App"></div>;
@@ -97,7 +96,7 @@ const Dashboard = (props) => {
   const getConfirmMessage = () => {
     // if (gamedata[deletionId]) {
     //   if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
-        return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
+    return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
     //   } else {
     //     return t("admin.revokeSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
     //   }
@@ -107,29 +106,29 @@ const Dashboard = (props) => {
   const confirmAction = () => {
     if (deletionId) {
 
-        deleteNote(deletionId);
-        var body = {
-          id: deletionId
-        }
-        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).then((res) => {
-          var temp = JSON.parse(localStorage.getItem("order"));
-            temp = temp.filter(function(item) {
-                return item.gameinstanceid != res.data.gameinstance.gameinstanceid;
-            });
-            localStorage.setItem("order", JSON.stringify(temp))
-        }).catch(error => {
-          console.error(error);
+      deleteNote(deletionId);
+      var body = {
+        id: deletionId
+      }
+      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).then((res) => {
+        var temp = JSON.parse(localStorage.getItem("order"));
+        temp = temp.filter(function (item) {
+          return item.gameinstanceid != res.data.gameinstance.gameinstanceid;
         });
-     // else {
-     //    deleteNote(deletionId);
-     //
-     //    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/revokeGameInstanceAccess', {
-     //      gameinstanceid: gamedata[deletionId].gameinstanceid,
-     //      adminid: localStorage.adminid
-     //    }).catch(error => {
-     //      console.error(error);
-     //    });
-     //  }
+        localStorage.setItem("order", JSON.stringify(temp))
+      }).catch(error => {
+        console.error(error);
+      });
+      // else {
+      //    deleteNote(deletionId);
+      //
+      //    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/revokeGameInstanceAccess', {
+      //      gameinstanceid: gamedata[deletionId].gameinstanceid,
+      //      adminid: localStorage.adminid
+      //    }).catch(error => {
+      //      console.error(error);
+      //    });
+      //  }
     }
   }
 
@@ -138,14 +137,14 @@ const Dashboard = (props) => {
     var element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
-}
+  }
 
   const fn = (order, active, originalIndex, curIndex, y) => (index) =>
-  active && index === originalIndex
-    ? { y: curIndex * 150 + y, scale: 1.1, zIndex: '1', shadow: 15, immediate: (n) => n === 'y' || n === 'zIndex' }
-    : { y: order.indexOf(index) * 150, scale: 1, zIndex: '0', shadow: 1, immediate: false }
+    active && index === originalIndex
+      ? { y: curIndex * 150 + y, scale: 1.1, zIndex: '1', shadow: 15, immediate: (n) => n === 'y' || n === 'zIndex' }
+      : { y: order.indexOf(index) * 150, scale: 1, zIndex: '0', shadow: 1, immediate: false }
 
-  function DraggableList({items}) {
+  function DraggableList({ items }) {
     const order = useRef(items.map((_, index) => index)) // Store indicies as a local ref, this represents the item order
     const [springs, setSprings] = useSprings(items.length, fn(order.current)) // Create springs, each corresponds to an item, controlling its transform, scale, etc.
 
@@ -162,29 +161,29 @@ const Dashboard = (props) => {
     })
     return (
       <div>
-      {springs.map(({ zIndex, shadow, y, scale }, i) => (
-        <animated.div
-          {...bind(i)}
-          key={i}
-          style={{
-            zIndex,
-            boxShadow: shadow.to((s) => `rgba(0, 0, 0, 0.15) 0px ${s}px ${2 * s}px 0px`),
-            y
-          }}
-        >
-          <SimNote
+        {springs.map(({ zIndex, shadow, y, scale }, i) => (
+          <animated.div
+            {...bind(i)}
             key={i}
-            id={i}
-            gameid={items[i].gameinstanceid}
-            img={items[i].gameinstance_photo_path}
-            adminid={items[i].createdby_adminid}
-            setConfirmationModal={setConfirmationModal}
-            title={items[i].gameinstance_name}
-            superadmin={items[i].createdby_adminid === localStorage.adminid}
-          />
-        </animated.div>
-      ))}
-    </div>
+            style={{
+              zIndex,
+              boxShadow: shadow.to((s) => `rgba(0, 0, 0, 0.15) 0px ${s}px ${2 * s}px 0px`),
+              y
+            }}
+          >
+            <SimNote
+              key={i}
+              id={i}
+              gameid={items[i].gameinstanceid}
+              img={items[i].gameinstance_photo_path}
+              adminid={items[i].createdby_adminid}
+              setConfirmationModal={setConfirmationModal}
+              title={items[i].gameinstance_name}
+              superadmin={items[i].createdby_adminid === localStorage.adminid}
+            />
+          </animated.div>
+        ))}
+      </div>
     )
   }
 
@@ -192,35 +191,35 @@ const Dashboard = (props) => {
     <div className="dashboard-wrapper" style={{
       height: gamedata.length * 190 + 250,
     }}>
-    <div className="dashboard">
-      <div className="page-margin">
-        <button className="w-button auto" onClick={toggleModal}>
-          {t("admin.addNewSimulation")}
-        </button>
-      </div>
-      <div className="page-margin">
-        <h2>{t("admin.mySimulations")}</h2>
-        <div className="dashsim">
-              <DraggableList items={gamedata}/>
+      <div className="dashboard">
+        <div className="page-margin">
+          <button className="w-button auto" onClick={toggleModal}>
+            {t("admin.addNewSimulation")}
+          </button>
         </div>
-      </div>
-      <Modal
-        isOpen={showNote}
-        hide={() => setShowNote(false)}
-        onRequestClose={toggleModal}
-        contentLabel="My dialog"
-        className="createmodalarea"
-        overlayClassName="myoverlay"
-        closeTimeoutMS={250}
-        ariaHideApp={false}
-      >
-        <CreateArea
-          onAdd={addNote}
-          gamedata={gamedata}
+        <div className="page-margin">
+          <h2>{t("admin.mySimulations")}</h2>
+          <div className="dashsim">
+            <DraggableList items={gamedata} />
+          </div>
+        </div>
+        <Modal
           isOpen={showNote}
-          close={toggleModal}
-          previewImages={uploadedImages}
-        />
+          hide={() => setShowNote(false)}
+          onRequestClose={toggleModal}
+          contentLabel="My dialog"
+          className="createmodalarea"
+          overlayClassName="myoverlay"
+          closeTimeoutMS={250}
+          ariaHideApp={false}
+        >
+          <CreateArea
+            onAdd={addNote}
+            gamedata={gamedata}
+            isOpen={showNote}
+            close={toggleModal}
+            previewImages={uploadedImages}
+          />
         </Modal>
 
         <ConfirmationModal

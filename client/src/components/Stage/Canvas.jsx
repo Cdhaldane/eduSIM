@@ -1002,9 +1002,13 @@ class Graphics extends Component {
           groupSelection: [],
           selection: {
             ...this.state.selection,
-            isDraggingShape: "customObj"
+            isDraggingShape: "customObj",
+            visible: false
           }
-        }, this.handleObjectSelection);
+        }, () => {
+          this.handleObjectSelection();
+          this.updateSelectionRect(personalArea);
+        });
         return;
       }
 

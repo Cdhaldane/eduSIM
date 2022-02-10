@@ -58,7 +58,7 @@ router.post("/sendInviteEmails", async (req, res) => {
   
     await smtpTransport.sendMail(mailOptions, (error, response) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(400).send(error);
       } else {
         res.send('Email sent: ' + response.response);
@@ -134,7 +134,7 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
   
     await smtpTransport.sendMail(mailOptions, (error, response) => {
       if (error) {
-        console.log(error);
+        console.error(error);
         res.status(400).send(error);
       } else {
         res.send('Email sent: ' + response.response);
