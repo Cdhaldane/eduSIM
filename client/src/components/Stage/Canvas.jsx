@@ -2541,7 +2541,6 @@ class Graphics extends Component {
 
   // Snapping functionality based on:
   // https://konvajs.org/docs/sandbox/Objects_Snapping.html
-
   collide = (rect1, rect2, padding, part) => {
     let rect1Top = rect1.y;
     let rect1Bottom = rect1.y + rect1.height;

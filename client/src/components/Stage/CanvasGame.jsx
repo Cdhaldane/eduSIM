@@ -188,11 +188,12 @@ class Graphics extends Component {
 
   getDragProps = (id) => {
     const obj = this.props.gamepieceStatus[id] || {};
-    if (obj.x && obj.y) {
+    if (obj.x && obj.y && JSON.parse(localStorage.getItem('userInfo'))?.dbid &&
+      obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid) {
       return {
         x: this.props.gamepieceStatus[id].x,
         y: this.props.gamepieceStatus[id].y,
-        ...(obj.dragging && obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid ? {
+        ...(obj.dragging ? {
           opacity: 0.7,
           draggable: false
         } : {})
@@ -291,7 +292,7 @@ class Graphics extends Component {
           if (!obj.infolevel && !obj.overlay) {
             this.setState({
               dragTick: 0
-            })
+            });
             if (this.state.dragTick == 0) {
               this.props.socket.emit("interaction", {
                 gamepieceId: obj.id,
@@ -341,10 +342,13 @@ class Graphics extends Component {
               }
             });
 
+            // What is this?
             this.setState({
               dragTick: (this.state.dragTick + 1) % 4
-            })
+            });
             if (this.state.dragTick == 0) {
+              // The drag ticking ensures that this does not run too often
+              // Update object with latest drag position
               this.props.socket.emit("interaction", {
                 gamepieceId: obj.id,
                 parameters: {
@@ -353,20 +357,6 @@ class Graphics extends Component {
                   dragging: userId
                 }
               });
-
-              this.setState({
-                dragTick: (this.state.dragTick + 1) % 4
-              })
-              if (this.state.dragTick == 0) {
-                this.props.socket.emit("interaction", {
-                  gamepieceId: obj.id,
-                  parameters: {
-                    x: e.target.x(),
-                    y: e.target.y(),
-                    dragging: userId
-                  }
-                });
-              }
             }
           }
         }
@@ -509,26 +499,26 @@ class Graphics extends Component {
     return (
       <React.Fragment>
         {this.state.selectrole && (
-         <div>
-           <Modal
-             isOpen={!this.props.players[this.props.socket.id]}
-             contentLabel="My dialog"
-             className="createmodaltab"
-             overlayClassName="myoverlaytab"
-             closeTimeoutMS={250}
-             ariaHideApp={false}
-           >
-             <CreateRole
-               gameid={this.state.gameinstanceid}
-               handleSubmit={this.handlePlayerInfo}
-               gameroles={this.state.gameroles}
-               players={this.props.players}
-               initialUserInfo={this.props.initialUserInfo}
-               roleSelection={this.props.roleSelection}
-             />
-           </Modal>
-         </div>
-       )}
+          <div>
+            <Modal
+              isOpen={!this.props.players[this.props.socket.id]}
+              contentLabel="My dialog"
+              className="createmodaltab"
+              overlayClassName="myoverlaytab"
+              closeTimeoutMS={250}
+              ariaHideApp={false}
+            >
+              <CreateRole
+                gameid={this.state.gameinstanceid}
+                handleSubmit={this.handlePlayerInfo}
+                gameroles={this.state.gameroles}
+                players={this.props.players}
+                initialUserInfo={this.props.initialUserInfo}
+                roleSelection={this.props.roleSelection}
+              />
+            </Modal>
+          </div>
+        )}
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (
