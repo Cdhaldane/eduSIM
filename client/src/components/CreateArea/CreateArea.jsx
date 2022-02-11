@@ -21,7 +21,7 @@ const CreateArea = (props) => {
   const { t } = useTranslation();
   const detailsArea = new useRef();
   const imageArea = new useRef();
-  const fileInputRef= new useRef();
+  const fileInputRef = new useRef();
 
   const alertContext = useAlertContext();
 
@@ -65,29 +65,25 @@ const CreateArea = (props) => {
             createdby_adminid: localStorage.adminid,
             invite_url: ""
           }
-          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then((res) => {
-            console.log(res);
-          }).catch(error => {
-            console.log(error);
+          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).catch(error => {
+            console.error(error);
           });
         }).catch(error => {
-          console.log(error);
+          console.error(error);
         });
         props.onAdd();
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
           var temp = JSON.parse(localStorage.getItem("order"));
-          console.log(temp)
-          temp.push(res.data)
-          console.log(temp)
+          temp.push(res.data);
           localStorage.setItem("order", JSON.stringify(temp))
           props.onAdd();
         }).catch(error => {
-          console.log(error);
+          console.error(error);
         })
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     props.close();
   };
@@ -96,13 +92,12 @@ const CreateArea = (props) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
     fileReader.onload = e => {
-      console.log(JSON.parse(e.target.result).data);
       setFiles(JSON.parse(e.target.result));
       let parsedJson = (JSON.parse(e.target.result).data);
       parsedJson.createdby_adminid = localStorage.adminid;
 
-      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',parsedJson).catch(error => {
-        console.log(error);
+      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', parsedJson).catch(error => {
+        console.error(error);
       });
       window.location.reload()
     };
@@ -110,7 +105,7 @@ const CreateArea = (props) => {
 
   }
   const handleSimUpload = (e) => {
-    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance',JSON.parse(e));
+    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', JSON.parse(e));
   }
 
   // Handles selection of img from file
@@ -150,7 +145,6 @@ const CreateArea = (props) => {
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
-          console.log("Done! Here is the image info: ", result.info);
           setImageSelected(result.info.public_id);
           setImg(result.info.url);
           setWillUpload(true);
@@ -220,24 +214,24 @@ const CreateArea = (props) => {
         <div className="button-container">
           <div className="button-col left-ca">
             <input type="file" onChange={uploadSim} />
-            <button type="button" className="green" onClick={()=>fileInputRef.current.click()}>
+            <button type="button" className="green" onClick={() => fileInputRef.current.click()}>
               {t("common.upload")}
             </button>
-            <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file'hidden/>
+            <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file' hidden />
           </div>
           <div className="button-col right-ca">
-        <button type="button" className="green left-ca" onClick={uploadImage}>
-          {t("common.add")}
-        </button>
-        <button type="button" className="red" onClick={props.close}>
-          {t("common.cancel")}
-        </button>
+            <button type="button" className="green left-ca" onClick={uploadImage}>
+              {t("common.add")}
+            </button>
+            <button type="button" className="red" onClick={props.close}>
+              {t("common.cancel")}
+            </button>
+          </div>
         </div>
-      </div>
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
-        {props.previewImages?.map((image, index) => (
+          {props.previewImages?.map((image, index) => (
             <Image
               key={index}
               cloudName="uottawaedusim"
@@ -250,9 +244,9 @@ const CreateArea = (props) => {
             />
           ))}
 
-            <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
+          <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
             {t("modal.imageFromFile")}
-            </button>
+          </button>
 
         </form>
       )}

@@ -92,7 +92,7 @@ const InviteCollaboratorsModal = (props) => {
         const allData = res.data;
         setCollaborators(allData);
       }).catch(error => {
-        console.log(error);
+        console.error(error);
       });
     })();
   }, [user]);
@@ -120,7 +120,7 @@ const InviteCollaboratorsModal = (props) => {
     // a user clicked outside would fire after the email element disappears,
     // which means it no longer is contained in the form and triggers
     // the modal to close. >:(
-    setTimeout(() => setEmails(emails.filter((_,i) => i!=ind)), 20);
+    setTimeout(() => setEmails(emails.filter((_, i) => i != ind)), 20);
   }
 
   const handleSendEmails = () => {
@@ -135,7 +135,7 @@ const InviteCollaboratorsModal = (props) => {
       props.close();
       setSending(false);
     }).catch((error) => {
-      console.log(error);
+      console.error(error);
       if (error) {
         alertContext.showAlert(t("alert.inviteError"), "error");
       }
@@ -159,7 +159,7 @@ const InviteCollaboratorsModal = (props) => {
       const allData = res.data;
       setCollaborators(allData);
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
     setRevokeUser(null);
   }
@@ -177,9 +177,9 @@ const InviteCollaboratorsModal = (props) => {
   return (
     <>
       <div className="areacsv">
-        <form ref={detailsArea} onSubmit={(e) => {e.preventDefault(); return false;}} className="areacsvform areainvitecollabs">
+        <form ref={detailsArea} onSubmit={(e) => { e.preventDefault(); return false; }} className="areacsvform areainvitecollabs">
           <h1 className="modal-title">{t("modal.inviteCollaborators")}</h1>
-        <p className="left-align">{t("modal.inviteCollaboratorsExplanation")}</p>
+          <p className="left-align">{t("modal.inviteCollaboratorsExplanation")}</p>
           <div>
             <EmailInput>
               {emails.map((val, ind) => (
@@ -203,36 +203,36 @@ const InviteCollaboratorsModal = (props) => {
             </EmailInput>
             <Collaborators>
               <h3>{t("modal.peopleWithAccessToX", { name: props.title })}</h3>
-              {collaborators.length>0 ? collaborators.map(({adminid: id, name, email, verified}) => (
+              {collaborators.length > 0 ? collaborators.map(({ adminid: id, name, email, verified }) => (
                 <div>
                   <div>
                     {name ? (
                       <>
-                      <h4>{name} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
-                      <p>{email}</p>
+                        <h4>{name} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
+                        <p>{email}</p>
                       </>
                     ) : (
                       <h4>{email} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
                     )}
                   </div>
-                  <i className="lni lni-close" onClick={() => handleOpenConfirm({id, name, email})}></i>
+                  <i className="lni lni-close" onClick={() => handleOpenConfirm({ id, name, email })}></i>
                 </div>
               )) : <p>{t("modal.nobodyHasAccessToX", { name: props.title })}</p>}
             </Collaborators>
           </div>
           <p className="button-container fix">
-          <button
-            type="button"
-            className="green left-ca"
-            onClick={handleSendEmails}
-            disabled={sending}
-          >
-            {t("modal.send")}
-          </button>
-          <button type="button" className="red" onClick={props.close}>
-            {t("common.cancel")}
-          </button>
-        </p>
+            <button
+              type="button"
+              className="green left-ca"
+              onClick={handleSendEmails}
+              disabled={sending}
+            >
+              {t("modal.send")}
+            </button>
+            <button type="button" className="red" onClick={props.close}>
+              {t("common.cancel")}
+            </button>
+          </p>
         </form>
       </div>
       <ConfirmationModal
@@ -240,7 +240,7 @@ const InviteCollaboratorsModal = (props) => {
         hide={hideConfirm}
         confirmFunction={handleRevokeUser}
         confirmMessage={t("modal.confirmRevokeAccess")}
-        message={revokeUser && t("modal.revokeAccessToXForY", { name: props.title, person: revokeUser.name || revokeUser.email})}
+        message={revokeUser && t("modal.revokeAccessToXForY", { name: props.title, person: revokeUser.name || revokeUser.email })}
       />
     </>
   );

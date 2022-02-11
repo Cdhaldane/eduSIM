@@ -15,8 +15,6 @@ const Input = forwardRef((props, ref) => {
 
   const varName = props.varName || props.id;
 
-  //console.log(props);
-
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value);

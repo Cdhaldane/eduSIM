@@ -61,7 +61,7 @@ const DropdownEditObject = (props) => {
         setFont(props.font.attrs.fontFamily);
         setFontSize(props.font.attrs.fontSize);
       } else {
-        console.log("No Font Error!");
+        console.error("ERROR: No Font.");
       }
     } else if (props.title === "Edit Poll") {
 
@@ -220,7 +220,7 @@ const DropdownEditObject = (props) => {
     }));
   }
 
-  const handleTimeLimit = (num, correct=false) => {
+  const handleTimeLimit = (num, correct = false) => {
     let val = num;
     if (correct && (isNaN(num) || parseInt(num) < 1 || num.length == 0)) {
       val = 1;
@@ -353,7 +353,7 @@ const DropdownEditObject = (props) => {
             <div className="menuedit">
               <h1>{t("edit.textEdit")}</h1>
               <b>
-              {t("edit.textColor")}
+                {t("edit.textColor")}
                 <TwitterPicker
                   colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                   color={fillColor}

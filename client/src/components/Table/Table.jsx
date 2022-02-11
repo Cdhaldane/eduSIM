@@ -68,7 +68,7 @@ const Table = (props) => {
         }
         setContacts(data)
       }).catch(error => {
-        console.log(error);
+        console.error(error);
       });
     } else {
       setGroupOr("common.role")
@@ -97,7 +97,7 @@ const Table = (props) => {
         }
         setContacts(data);
       }).catch(error => {
-        console.log(error);
+        console.error(error);
       });
     }
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -114,7 +114,7 @@ const Table = (props) => {
       }
       setRolelist(items);
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   }, [props]);
 
@@ -165,7 +165,7 @@ const Table = (props) => {
       const newContacts = [...contacts, newContact];
       setContacts(newContacts);
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
     return false;
   };
@@ -198,10 +198,8 @@ const Table = (props) => {
       gamerole: newContacts[index].gamerole,
       game_room: newContacts[index].group
     }
-    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updatePlayer', data).then((res) => {
-      console.log(res);
-    }).catch(error => {
-      console.log(error);
+    axios.put(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/updatePlayer', data).catch(error => {
+      console.error(error);
     });
   };
 
@@ -232,10 +230,8 @@ const Table = (props) => {
       params: {
         id: contactId
       }
-    }).then((res) => {
-      console.log(res);
     }).catch(error => {
-      console.log(error);
+      console.error(error);
     });
   };
 
@@ -252,7 +248,7 @@ const Table = (props) => {
       props.onEmailSent();
       setSending(false);
     }).catch((error) => {
-      console.log(error);
+      console.error(error);
       if (error) {
         alertContext.showAlert(t("alert.emailError"), "error");
       }
@@ -306,113 +302,113 @@ const Table = (props) => {
         >
         </div>
       </div>
-        <form onSubmit={handleEditFormSubmit}>
-          <table className="table-el">
-            <thead>
-              <tr>
-                {props.email && (
-                  <th className="table-checkrow">
-                    <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
-                  </th>
+      <form onSubmit={handleEditFormSubmit}>
+        <table className="table-el">
+          <thead>
+            <tr>
+              {props.email && (
+                <th className="table-checkrow">
+                  <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
+                </th>
+              )}
+              <th></th>
+              <th>{t("admin.firstName")}</th>
+              <th>{t("admin.lastName")}</th>
+              <th>{t("admin.emailAddress")}</th>
+              <th>{t(groupOr)}</th>
+              <th>{t("admin.actions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {contacts.map((contact, index) => (
+              <Fragment key={index}>
+                {editContactId === contact.id ? (
+
+                  <EditableRow
+                    contact={contact}
+                    editFormData={editFormData}
+                    handleEditFormChange={handleEditFormChange}
+                    handleCancelClick={handleCancelClick}
+                    rolelist={rolelist}
+                    groupList={props.groups || []}
+                    useGroup={groupOr === "admin.group"}
+                    onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                    checked={!excludedEmails.includes(contact.id)}
+                    online={props.players && props.players.some((id) => id === contact.id)}
+                  />
+
+                ) : (
+                  <ReadOnlyRow
+                    contact={contact}
+                    handleEditClick={handleEditClick}
+                    handleDeleteClick={() => handleDeleteClick(contact.id)}
+                    onCheck={props.email && (() => handleCheckEmail(contact.id))}
+                    groupList={props.groups || []}
+                    useGroup={groupOr === "admin.group"}
+                    checked={!excludedEmails.includes(contact.id)}
+                    online={props.players && props.players.some((id) => id === contact.id)}
+                  />
                 )}
-                <th></th>
-                <th>{t("admin.firstName")}</th>
-                <th>{t("admin.lastName")}</th>
-                <th>{t("admin.emailAddress")}</th>
-                <th>{t(groupOr)}</th>
-                <th>{t("admin.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contacts.map((contact, index) => (
-                <Fragment key={index}>
-                  {editContactId === contact.id ? (
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </form>
 
-                    <EditableRow
-                      contact={contact}
-                      editFormData={editFormData}
-                      handleEditFormChange={handleEditFormChange}
-                      handleCancelClick={handleCancelClick}
-                      rolelist={rolelist}
-                      groupList={props.groups || []}
-                      useGroup={groupOr === "admin.group"}
-                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
-                      checked={!excludedEmails.includes(contact.id)}
-                      online={props.players && props.players.some((id) => id === contact.id)}
-                    />
-              
-                  ) : (
-                    <ReadOnlyRow
-                      contact={contact}
-                      handleEditClick={handleEditClick}
-                      handleDeleteClick={() => handleDeleteClick(contact.id)}
-                      onCheck={props.email && (() => handleCheckEmail(contact.id))}
-                      groupList={props.groups || []}
-                      useGroup={groupOr === "admin.group"}
-                      checked={!excludedEmails.includes(contact.id)}
-                      online={props.players && props.players.some((id) => id === contact.id)}
-                    />
-                  )}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </form>
-
-        {(props.addstudent)
-       ? (<div className="addstudent">
-       {/*<h2>Add a student</h2>*/}
-       <form onSubmit={handleAddFormSubmit} className="addstudent-form">
-         <div className="invisible"></div>
-         <input
-           placeholder={t("admin.firstName")}
-           id="firstname"
-           type="text"
-           name="firstName"
-           required="required"
-           onChange={handleAddFormChange}
-           className="input-box"
-         />
-         <input
-           placeholder={t("admin.lastName")}
-           id="lastname"
-           type="text"
-           name="lastName"
-           required="required"
-           onChange={handleAddFormChange}
-           className="input-box"
-         />
-         <input
-           placeholder={t("admin.emailAddress")}
-           id="email"
-           type="text"
-           name="email"
-           required="required"
-           onChange={handleAddFormChange}
-           className="input-box email"
-         />
-       <select name="group" type="none" required="required" id="roledropdown" onChange={handleAddFormChange}>
-           {rolelist}
-         </select>
-       <button type="submit" className="modal-button green add-student-b">{t("common.add")}</button>
-       </form>
-       </div>)
-       : <>
-        {props.email && (
-          <div className="button-container">
-          <button
-            className="modal-button green "
-            onClick={handleEmail}
-            disabled={sending || excludedEmails.length === contacts.length}
-          >
-            {t("modal.email")}
-          </button>
-          <button className="modal-button red" onClick={props.close}>
-            {t("common.cancel")}
-          </button>
-          </div>
-        )}
-       </>
+      {(props.addstudent)
+        ? (<div className="addstudent">
+          {/*<h2>Add a student</h2>*/}
+          <form onSubmit={handleAddFormSubmit} className="addstudent-form">
+            <div className="invisible"></div>
+            <input
+              placeholder={t("admin.firstName")}
+              id="firstname"
+              type="text"
+              name="firstName"
+              required="required"
+              onChange={handleAddFormChange}
+              className="input-box"
+            />
+            <input
+              placeholder={t("admin.lastName")}
+              id="lastname"
+              type="text"
+              name="lastName"
+              required="required"
+              onChange={handleAddFormChange}
+              className="input-box"
+            />
+            <input
+              placeholder={t("admin.emailAddress")}
+              id="email"
+              type="text"
+              name="email"
+              required="required"
+              onChange={handleAddFormChange}
+              className="input-box email"
+            />
+            <select name="group" type="none" required="required" id="roledropdown" onChange={handleAddFormChange}>
+              {rolelist}
+            </select>
+            <button type="submit" className="modal-button green add-student-b">{t("common.add")}</button>
+          </form>
+        </div>)
+        : <>
+          {props.email && (
+            <div className="button-container">
+              <button
+                className="modal-button green "
+                onClick={handleEmail}
+                disabled={sending || excludedEmails.length === contacts.length}
+              >
+                {t("modal.email")}
+              </button>
+              <button className="modal-button red" onClick={props.close}>
+                {t("common.cancel")}
+              </button>
+            </div>
+          )}
+        </>
       }
     </div>
   );
