@@ -62,6 +62,10 @@
   cursor: pointer;
 }
 
+.customObj button {
+  float: none;
+}
+
 .personalAreaToggle {
   color: var(--primary);
   padding: 0px 8px 0px 8px;
