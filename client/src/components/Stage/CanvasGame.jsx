@@ -188,11 +188,16 @@ class Graphics extends Component {
 
   getDragProps = (id) => {
     const obj = this.props.gamepieceStatus[id] || {};
-    if (obj.x && obj.y && JSON.parse(localStorage.getItem('userInfo'))?.dbid &&
-      obj.dragging !== JSON.parse(localStorage.getItem('userInfo')).dbid) {
+    const dbid = JSON.parse(localStorage.getItem('userInfo'))?.dbid;
+    const synched = obj[dbid];
+    if (
+      dbid &&
+      (obj.x && obj.y || obj[dbid]) &&
+      obj.dragging !== dbid
+    ) {
       return {
-        x: this.props.gamepieceStatus[id].x,
-        y: this.props.gamepieceStatus[id].y,
+        x: synched ? synched.x : obj.x,
+        y: synched ? synched.y : obj.y,
         ...(obj.dragging ? {
           opacity: 0.7,
           draggable: false
@@ -289,20 +294,25 @@ class Graphics extends Component {
         sendInteraction: this.sendInteraction,
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
-          if (!obj.infolevel && !obj.overlay) {
-            this.setState({
-              dragTick: 0
-            });
-            if (this.state.dragTick == 0) {
-              this.props.socket.emit("interaction", {
-                gamepieceId: obj.id,
-                parameters: {
+          this.setState({
+            dragTick: 0
+          });
+          const synched = !obj.infolevel && !obj.overlay;
+          if (this.state.dragTick == 0) {
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                ...this.props.gamepieceStatus[obj.id],
+                [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null : 
+                {
                   x: e.target.x(),
-                  y: e.target.y(),
-                  dragging: null
-                }
-              });
-            }
+                  y: e.target.y()
+                },
+                x: synched ? e.target.x() : null,
+                y: synched ? e.target.y() : null,
+                dragging: null
+              }
+            });
           }
         },
         onObjectDragMove: (obj, e) => {
