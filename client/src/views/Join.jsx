@@ -64,6 +64,7 @@ const Join = (props) => {
         }
       });
       client.on("roomStatusUpdate", (data) => {
+
         setRoomStatus((rooms) => ({
           ...rooms,
           [data.room]: data.status
@@ -73,6 +74,11 @@ const Join = (props) => {
             ...messages,
             [data.room]: data.chatlog
           }));
+          for(let i = 0; i < data.chatlog.length; i++){
+            if(data.chatlog[i].sender.name === undefined){
+              data.chatlog[i].sender.name = "Admin"
+            }
+          }
         }
         if (data.players) {
           setPlayers((players) => ({
@@ -95,10 +101,14 @@ const Join = (props) => {
         });
       });
       client.on("message", (data) => {
+        if(data.sender.name === undefined){
+          data.sender.name="Admin";
+        }
         setRoomMessages((messages) => ({
           ...messages,
-          [data.room]: [...messages[data.room] || [], { sender: data.sender, message: data.message }]
+          [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
         }));
+        console.log(roomMessages)
       });
       client.on("errorLog", ({key, params={}}) => {
         alertContext.showAlert(t(key, params), "error");
@@ -190,7 +200,7 @@ const Join = (props) => {
             "https://res.cloudinary.com/uottawaedusim/image/upload/" +
             image
           }
-          alt="backdrop"
+          alt={t("alt.sim")}
         />
         <div className="joinboard-info">
           <h2 className="joinboard-title">{title}   <i className="lni lni-pencil joinboard-edit" onClick={() => {

@@ -214,14 +214,14 @@ const CreateArea = (props) => {
                 id="preview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
-
+                alt={t("alt.sim")}
               />
             ) : (
               <Image
                 id="nopreview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
-
+                alt={t("alt.sim")}
               />
             )}
           </div>
@@ -255,6 +255,7 @@ const CreateArea = (props) => {
                 setImageSelected(image);
                 setImg(image);
               }}
+              alt={t("alt.sim")}
             />
           ))}
 

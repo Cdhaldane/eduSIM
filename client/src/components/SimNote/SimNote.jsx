@@ -58,7 +58,7 @@ const SimNote = (props) => {
             publicId={
               "https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img
             }
-            alt="backdrop"
+            alt={t("alt.sim")}
           />
             <h1>{props.title}</h1>
         </div>

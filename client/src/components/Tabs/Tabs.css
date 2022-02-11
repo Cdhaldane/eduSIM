@@ -396,7 +396,6 @@ input[type='radio']:after {
   display: flex;
   border: 1px solid black;
   border-radius: 10px;
-  opacity: 50%;
 }
 .groupcontainer h3{
   position: relative;
@@ -404,6 +403,7 @@ input[type='radio']:after {
   left: 10px;
   width: auto;
   color: var(--text-color);
+    opacity: 50%;
 }
 .group-column {
   flex: 1;
@@ -423,6 +423,9 @@ input[type='radio']:after {
 }
 .group-chatlog p {
   height: unset;
+}
+.Admin{
+  color: var(--primary) !important;
 }
 .tab-add-group {
   z-index: 2;

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
@@ -15,7 +15,6 @@ import DropdownEditPoll from './DropdownEditPoll';
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
-
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -427,7 +426,7 @@ const DropdownEditObject = (props) => {
     } else if (props.title === "timer") {
       return (
         <div
-          className="dropdownedit"
+          className="dropdownedit timer"
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -469,7 +468,7 @@ const DropdownEditObject = (props) => {
     } else if (props.title === "html") {
       return (
         <div
-          className="dropdownedit"
+          className="dropdownedit html"
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -518,7 +517,7 @@ const DropdownEditObject = (props) => {
     } else if (props.title === "input") {
       return (
         <div
-          className="dropdownedit"
+          className={"dropdownedit input " + objState.varType}
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -537,10 +536,18 @@ const DropdownEditObject = (props) => {
                 <option value="text">{t("edit.input.textbox")}</option>
                 <option value="button">{t("edit.input.button")}</option>
               </select>
+              {objState.infolevel !== true ? (
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
+                ) :
+                (
+                  <div className="htmliframeinput">
+                    <input type="checkbox" disabled={true} checked={false} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                    <p>{t("edit.variableSync")}</p>
+                  </div>
+                )}
               <p>{t("edit.variableNameToSet")}</p>
               <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
               <p>{t("edit.label")}</p>

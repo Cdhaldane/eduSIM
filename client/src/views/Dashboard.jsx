@@ -48,7 +48,6 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-          console.log(res.data)
           if(localStorage.order)
             getGamedata(JSON.parse(localStorage.order));
           else
@@ -192,7 +191,7 @@ const Dashboard = (props) => {
     <div className="dashboard-wrapper" style={{
       height: gamedata.length * 190 + 250,
     }}>
-    <div className="dashboard">
+    <div className="dashboard disable-dbl-tap-zoom">
       <div className="page-margin">
         <button className="w-button auto" onClick={toggleModal}>
           {t("admin.addNewSimulation")}

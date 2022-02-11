@@ -924,6 +924,9 @@ hr {
   position: absolute;
   top: 1000000px;
 }
+.disable-dbl-tap-zoom {
+  touch-action: manipulation;
+}
 
 
 @media screen and (orientation: portrait) {

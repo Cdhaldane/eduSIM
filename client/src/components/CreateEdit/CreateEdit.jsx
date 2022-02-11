@@ -135,12 +135,14 @@ const CreateEdit = (props) => {
                 id="preview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
+                alt={t("alt.sim")}
               />
             ) : (
               <Image
                 id="nopreview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
+                alt={t("alt.sim")}
               />
             )}
           </div>
@@ -167,6 +169,7 @@ const CreateEdit = (props) => {
                 setImageSelected(image);
                 setImg(image);
               }}
+              alt={t("alt.sim")}
             />
           ))}
       <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>

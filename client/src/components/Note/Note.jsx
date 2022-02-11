@@ -9,7 +9,7 @@ const Note = (props) => {
   return (
     props.onClick ? (
       <div className={props.className} alt="sim background"  >
-        <img src={props.img} alt="note background"/>
+        <img src={props.img} alt={t("alt.students")}/>
         <div className="mobile-view">
         <h1>{props.title}</h1>
         <h2>{props.text}</h2>
@@ -18,7 +18,7 @@ const Note = (props) => {
       </div>
     ) : (
       <div  className={props.className} >
-        <img src={props.img} alt="note background"/>
+        <img src={props.img} alt={t("alt.teacher")}/>
       <div className="mobile-view">
         <h1>{props.title}</h1>
         <h2>{props.text}</h2>

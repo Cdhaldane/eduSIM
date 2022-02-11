@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import Table from "../Table/Table";
 import CreateEmail from "../CreateEmail/CreateEmail";
@@ -25,6 +26,8 @@ const Tabs = (props) => {
   const [removeLog, setRemoveLog] = useState(null);
   const [customObjs, setCustomObjs] = useState();
   const [editingName, setEditingName] = useState(false);
+  const [page, setPage] = useState();
+  const [isLoading, setLoading] = useState(true);
 
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
@@ -34,6 +37,8 @@ const Tabs = (props) => {
   const [messageBacklog, setMessageBacklog] = useState([]);
   const [level, setLevel] = useState(1);
   const [roles, setRoles] = useState(null);
+  const userid = "Admin"
+  const [queryUser, setQueryUser] = useState({});
 
   const { t } = useTranslation();
 
@@ -317,6 +322,79 @@ const Tabs = (props) => {
     props.updateNumTabs(tabs.length);
   }, [tabs]);
 
+  const connectChat = (x) => {
+    (async function () {
+      const { data: roomData } = await axios.get(
+        process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
+        params: {
+          id: tabs[x][2],
+        }
+      }).catch((error) => {console.log(error)});
+
+      setRoomInfo(roomData);
+      console.log(roomData)
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
+        params: {
+          gameinstanceid: roomData.gameinstanceid,
+        }
+      }).then((res) => {
+        const rolesData = [];
+        for (let i = 0; i < res.data.length; i++) {
+          rolesData.push({
+            id: res.data[i].gameroleid,
+            roleName: res.data[i].gamerole,
+            numOfSpots: res.data[i].numspots
+          });
+        }
+        setRoles(rolesData);
+      })
+      let adminJSON = {"gameid":tabs[x][2],"role":"None","name":"Admin","dbid":"111111"}
+      localStorage.setItem("userInfo", JSON.stringify(adminJSON))
+      setQueryUser("Admin");
+
+      const client = await io(process.env.REACT_APP_API_ORIGIN, {
+        query: {
+          room: tabs[x][2]
+        }
+      });
+      client.on("connectStatus", ({ players, chatlog, ...status }) => {
+        setPlayers(players);
+        setRoomStatus(status || {});
+        setMessageBacklog(chatlog);
+      });
+      client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
+        if (refresh) {
+          localStorage.removeItem("userInfo");
+          window.location.reload();
+        }
+        if (lastSetVar) {
+          sessionStorage.setItem('lastSetVar', lastSetVar);
+        }
+        setRoomStatus(status);
+      });
+      client.on("clientJoined", ({ id, ...player }) => {
+        setPlayers(l => ({
+          ...l,
+          [id]: player
+        }));
+      });
+      client.on("clientLeft", (id) => {
+        setPlayers(l => {
+          let n = { ...l };
+          delete n[id];
+          return n;
+        });
+      });
+      client.on("errorLog", ({ key, params = {} }) => {
+        alertContext.showAlert(t(key, params), "error");
+      });
+      setSocketInfo(client);
+      setLoading(false);
+      console.log(client)
+      return () => client.disconnect();
+    }());
+  }
+
   return (
     <>
       {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
@@ -359,9 +437,14 @@ const Tabs = (props) => {
           </li>
 
           {tabs.map((tab, i) => (
+
             <li
               key={i}
-              onClick={() => toggleTab(i + 1)}
+              onClick={() => {
+                toggleTab(i + 1)
+                setPage(i+1)
+                connectChat(i)
+              }}
               className={toggleState === i + 1 ? "selected" : ""}
             >
               <span className="tab-text">{tab[0]}</span>
@@ -382,7 +465,7 @@ const Tabs = (props) => {
               <div className="content-settings">
                 <h3>{t("admin.settings")}</h3>
                   <button
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => {setIsOpen(!isOpen)}}
                     className="studentbuttonemail"
                   >
                     {t("admin.openEmailModal")}
@@ -536,14 +619,16 @@ const Tabs = (props) => {
               <div className="groupcontainer">
                 <div className="group-column">
                   <h3>{t("admin.chat")}</h3>
-                  <Messages socket={socket}/>
                   <div className="group-chatlog">
                     <div>
                       {props.chatMessages.map(({ sender, message }, index) => (
-                        <p key={index}><b>{sender.name}: </b>{message}</p>
+                        <p key={index}><b className={sender.name}>{sender.name}: </b>{message}</p>
                       ))}
                     </div>
                   </div>
+                  <Messages
+                    socket={socket}
+                  />
                 </div>
                 <div className="group-column">
                   <h3 >{t("admin.performanceReport")}</h3>
