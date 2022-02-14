@@ -7,7 +7,8 @@
   display: flex;
   justify-content: space-between;
   font-size: 1.2vw;
-  z-index: 1000;
+  z-index: 10;
+  box-shadow: rgba(0,0,0,0.1) 0px 1px 0px 0px;
 }
 
 .navbar-logo {

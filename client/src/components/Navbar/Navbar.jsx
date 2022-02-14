@@ -39,7 +39,7 @@ const NavBar = (props) => {
     <nav className="NavbarItems">
       <a href="/">
         <div className="logo-container">
-          <img src="03_eduSIM_horizontal.png" className="navbar-logo"></img>
+          <img src="03_eduSIM_horizontal.png" className="navbar-logo" alt={t("alt.navbar")}></img>
           <div className="vl"></div>
           <h1 className="title">{t("navbar.title")}</h1>
         </div>
@@ -65,7 +65,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <i className="fas fa-home"></i>
+              <i className="fas fa-home" alt={t("alt.home")}></i>
             </ButtonLink>
             <ButtonLink
               className="nav-links"
@@ -82,7 +82,7 @@ const NavBar = (props) => {
           <img
             className="nav-pic"
             src={user.picture}
-            alt="profile"
+            alt={t("alt.profile")}
             onClick={toggleContextMenu}
           />
         ) : (

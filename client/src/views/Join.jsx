@@ -10,6 +10,7 @@ import moment from "moment";
 import AutoUpdate from "../components/AutoUpdate";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import CreateEdit from "../components/CreateEdit/CreateEdit";
 
 const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
@@ -18,8 +19,12 @@ const Join = (props) => {
   const [players, setPlayers] = useState({});
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
+  const [allRoomMessages, setAllRoomMessages] = useState([])
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
+  const [editModal, setEditModal] = useState(false);
+  const [image, setImage] = useState();
+  const [title, setTitle] = useState();
   const [refreshRooms, setRefreshRooms] = useState(0);
   const alertContext = useAlertContext();
   const { t } = useTranslation();
@@ -35,9 +40,14 @@ const Join = (props) => {
   if (props.location.title !== undefined) {
     localStorage.setItem('title', props.location.title);
   }
-
   if (props.location.img !== undefined) {
     localStorage.setItem('img', props.location.img);
+  }
+  if(title == null){
+    setTitle(localStorage.title)
+  }
+  if(image == null){
+    setImage(localStorage.img)
   }
 
   const toggleModal = () => {
@@ -55,6 +65,20 @@ const Join = (props) => {
         }
       });
       client.on("roomStatusUpdate", (data) => {
+        if(data.chatlog){
+        let name;
+        for(let i = 0; i < data.chatlog.length; i++){
+          if(data.chatlog.length != 0){
+            if(data.chatlog[i].sender.name === undefined){
+              name="Admin"
+            }
+            else{
+              name=data.chatlog[i].sender.name
+            }
+            setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.chatlog[i].room, name, data.chatlog[i].message]]);
+          }
+        }
+      }
         setRoomStatus((rooms) => ({
           ...rooms,
           [data.room]: data.status
@@ -64,6 +88,11 @@ const Join = (props) => {
             ...messages,
             [data.room]: data.chatlog
           }));
+          for(let i = 0; i < data.chatlog.length; i++){
+            if(data.chatlog[i].sender.name === undefined){
+              data.chatlog[i].sender.name = "Admin"
+            }
+          }
         }
         if (data.players) {
           setPlayers((players) => ({
@@ -86,9 +115,14 @@ const Join = (props) => {
         });
       });
       client.on("message", (data) => {
+        console.log(data)
+        if(data.sender.name === undefined){
+          data.sender.name="Admin";
+        }
+        setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.room,   data.sender.name, data.message]]);
         setRoomMessages((messages) => ({
           ...messages,
-          [data.room]: [...messages[data.room] || [], { sender: data.sender, message: data.message }]
+          [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
         }));
       });
       client.on("errorLog", ({key, params={}}) => {
@@ -100,11 +134,15 @@ const Join = (props) => {
     run();
   }, []);
 
+
+
+
   const currentRoomStatus = useMemo(() => {
     if (currentRoom) {
       return roomStatus[currentRoom[2]] || {};
     } return {};
   }, [roomStatus, currentRoom]);
+
 
   const currentRoomMessages = useMemo(() => {
     if (currentRoom) {
@@ -118,6 +156,10 @@ const Join = (props) => {
       room: currentRoom[2]
     }));
   };
+
+  const adminMessage = async (m) => {
+    await socket.emit("message", "hi")
+  }
 
   const pauseSim = async () => {
     if (!socket) return;
@@ -152,6 +194,12 @@ const Join = (props) => {
       room: currentRoom[2]
     }));
   };
+  const updateTitle = (title) => {
+    setTitle(title);
+  }
+  const updateImg = (img) => {
+    setImage(img);
+  }
 
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
@@ -173,12 +221,14 @@ const Join = (props) => {
           cloudName="uottawaedusim"
           publicId={
             "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-            localStorage.img
+            image
           }
-          alt="backdrop"
+          alt={t("alt.sim")}
         />
         <div className="joinboard-info">
-          <h2 className="joinboard-title">{localStorage.title}</h2>
+          <h2 className="joinboard-title">{title}   <i className="lni lni-pencil joinboard-edit" onClick={() => {
+              setEditModal(true);
+            }} ><h1>Edit</h1></i></h2>
           <button onClick={() => setShowNote(!showNote)} className="addbutton">
             {t("admin.addStudentCSV")}
           </button>
@@ -267,6 +317,26 @@ const Join = (props) => {
           success={() => setRefreshRooms(r => r + 1)}
         />
       </Modal>
+      <Modal
+        isOpen={editModal}
+        hide={() => setEditModal(false)}
+        onRequestClose={toggleModal}
+        contentLabel="My dialog"
+        className="createmodalarea"
+        overlayClassName="myoverlay"
+        closeTimeoutMS={250}
+        ariaHideApp={false}
+      >
+      <CreateEdit
+        updateTitle={updateTitle}
+        updateImg={updateImg}
+        gameid={localStorage.gameid}
+        isOpen={editModal}
+        close={() => setEditModal(false)}
+        title={props.location.title}
+        img={props.location.img}
+      />
+        </Modal>
 
       <Tabs
         customObjNames={props.customObjects}
@@ -275,10 +345,12 @@ const Join = (props) => {
         title={localStorage.title}
         setRoom={setCurrentRoom}
         chatMessages={currentRoomMessages}
+        allMessages={allRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
         refreshRooms={refreshRooms}
         players={playerDBIDS}
+        adminMessage={adminMessage}
         updateNumTabs={l => setNumTabs(l)}
       />
 

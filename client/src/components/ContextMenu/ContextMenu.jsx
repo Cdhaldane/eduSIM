@@ -155,7 +155,8 @@ const ContextMenu = (props) => {
       }}
     >
       <ul>
-
+        <li onClick={props.cut}>{t("common.cut")}</li>
+        <li onClick={props.copy}>{t("common.copy")}</li>
         <li onClick={props.delete}>{t("common.delete")}</li>
         {!props.addGroup && !props.unGroup && (
           <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>

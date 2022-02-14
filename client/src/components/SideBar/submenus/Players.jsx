@@ -10,14 +10,14 @@ const Container = styled.div`
   padding: 20px;
 `;
 
-const Player = styled.div`   
+const Player = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 2px;
   padding: 6px;
   border-radius: 6px;
   ${p => p.me && 'background-color: #a4db7f59;'}
-  & > p { 
+  & > p {
     width: 34px;
     height: 34px;
     background-color: hsl(${p => p.hue || 0}, 66%, 40%);
@@ -44,7 +44,6 @@ const Players = ({ players }) => {
   const { t } = useTranslation();
 
   const userDBID = JSON.parse(localStorage.userInfo || '{}')?.dbid;
-
   return (
     <Container>
       <h2>{t("sidebar.users")}</h2>

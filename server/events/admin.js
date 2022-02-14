@@ -1,9 +1,10 @@
-import { 
-  updateRoomStatus, 
-  getSimulationRooms, 
-  getRoomStatus, 
+import {
+  updateRoomStatus,
+  getSimulationRooms,
+  getRoomStatus,
   clearRoomStatus,
   getChatlog,
+  updateChatlog,
   getInteractions,
   updateRoomTimeout,
   clearRoomTimeout
@@ -50,6 +51,32 @@ export default async (server, client, event, args) => {
 
       break;
     };
+    case "message": {
+      const rooms = await getSimulationRooms(game);
+      const { message, group } = args;
+      const sender = { name:"Admin" }
+
+
+
+      rooms.forEach(async ({ dataValues: roomss }) => {
+        let room = roomss.gameroom_url
+
+        updateChatlog(room, {
+          sender,
+          room,
+          message,
+          group: group.length > 0 ? group : undefined,
+          timeSent: moment().valueOf()
+        });
+
+        server.to(roomss.gameroom_url).emit("message", {
+          sender,
+          room,
+          message
+        });
+      });
+      break;
+    }
     case "gamePause": {
       // admin pressed the pause button
       // this is pretty similar to gameStart
@@ -235,7 +262,7 @@ export default async (server, client, event, args) => {
 
       break;
     }
-    
+
     case "goToPrevPage": {
       // admin pressed previous page (teacher advancement only)
       // similar to goToNextPage

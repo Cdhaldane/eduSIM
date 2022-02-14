@@ -103,6 +103,7 @@ const Messages = (props) => {
     if (props.messageBacklog && props.messageBacklog.length>0) {
       setMessageLog(props.messageBacklog);
     }
+
   }, [props.messageBacklog]);
 
   const sendMessage = (event) => {
@@ -110,7 +111,7 @@ const Messages = (props) => {
     if (!messageInput) {
       return false;
     };
-    props.socket.emit("message", { 
+    props.socket.emit("message", {
       message: messageInput,
       group: Object.values(sendGroup)
     });
@@ -139,21 +140,28 @@ const Messages = (props) => {
       setSendGroup(old => ({...old, [id]: {id, name, dbid}}));
     }
   }
+  const fixAdmin = () => {
+    for(let i = 0; i < messageLog.length; i++){
+      if(messageLog[i].sender.name === undefined){
+        messageLog[i].sender.name = "Admin"
+      }
+    }
+  }
+  fixAdmin();
 
   const removeWhisper = () => setSendGroup(() => new Set());
-
   return (props.socket ? (
     <MessageContainer>
       <div>
         {messageLog.map(({sender: {id, name, dbid}, message, group}, ind) => (
-          <Message 
+          <Message
             key={ind}
-            sender={props.socket.id === id || dbid === sessionId} 
+            sender={props.socket.id === id || dbid === sessionId}
             onClick={() => addWhisper({id, name, dbid}, group)}
             private={group && group.length>0}
           >
             {group && group.length>0 && (<aside>To: {group.map(mem => mem.id === props.socket.id ? t("sidebar.you") : mem.name).join(', ')}</aside>)}
-            <b>{(props.socket.id !== id && dbid !== sessionId ? t("sidebar.xSays", { name }) : t("sidebar.youSaid"))}</b>
+            <b>{(props.socket.id !== id && dbid !== sessionId ? t("sidebar.xSays", { name }) : t("sidebar.youSaid")) }</b>
             <p>{message}</p>
           </Message>
         ))}

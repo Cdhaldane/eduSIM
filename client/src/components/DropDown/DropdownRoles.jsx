@@ -211,7 +211,7 @@ const DropdownRoles = (props) => {
                   </span>
                 )}
                 {index === 0 && (
-                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} />
+                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i className="icons lni lni-crown" /></span>
                 )}
                 {role.roleName}
                 {role.numOfSpots !== -1 && ` (${role.numOfSpots})`}

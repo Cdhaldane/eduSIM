@@ -388,8 +388,8 @@
       "simNameRequired": "A name is required for the simulation.",
       "simAlreadyExists": "A simulation with this name already exists. Please pick a new name.",
       "imageTooLarge": "Image must be 10MB or less. Please pick a smaller image.",
-      "loadingMedia": "Media is loading.", 
-      "loadedMedia": "Media loaded.", 
+      "loadingMedia": "Media is loading.",
+      "loadedMedia": "Media loaded.",
       "addedCSVPlayers_one": "Successfully added {{count}} player.",
       "addedCSVPlayers_other": "Successfully added {{count}} players.",
       "filledEmptyRoles_one": "Nonexistant role {{roles}} has been replaced with an empty slot.",
@@ -423,6 +423,15 @@
       "simAccessGranted": "You have been granted access to a new simulation!",
       "inviteInvalid": "An error occured. The URL may be malformed, or the invite was invalid.",
       "maxOverlays": "There can only be a maximum of 6 overlays per page. No overlay added."
+    },
+    "alt": {
+      "students": "Students chatting",
+      "teacher": "Teacher presenting",
+      "team": "Team working",
+      "navbar": "eduSIM Logo",
+      "home": "Navigation house",
+      "profile": "Your profile picture",
+      "sim": "Simulation background picture"
     }
   }
 }
