@@ -10,7 +10,7 @@ import moment from "moment";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import Performance from "../SideBar/Performance";
 import { useTranslation } from "react-i18next";
-import Messages from "../SideBar/submenus/Messages"
+import Messages from "../SideBar/submenus/Messages";
 
 import "./Tabs.css";
 
@@ -26,12 +26,14 @@ const Tabs = (props) => {
   const [removeLog, setRemoveLog] = useState(null);
   const [customObjs, setCustomObjs] = useState();
   const [editingName, setEditingName] = useState(false);
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(0);
   const [isLoading, setLoading] = useState(true);
 
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
+  const [socketO, setSocketOInfo] = useState(null);
   const [roomStatus, setRoomStatus] = useState({});
+  const [allRoomMessages, setAllRoomMessages] = useState([]);
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
   const [messageBacklog, setMessageBacklog] = useState([]);
@@ -74,9 +76,6 @@ const Tabs = (props) => {
         setCustomObjs(customObjs);
       }
     }).catch(error => console.error(error));
-
-
-
   }, [props.gameid, props.refreshRooms]);
 
   const toggleTab = (index) => {
@@ -322,6 +321,17 @@ const Tabs = (props) => {
     props.updateNumTabs(tabs.length);
   }, [tabs]);
 
+  useEffect(() => {
+    let messages = props.allMessages;
+    for(let i = 0; i < tabs.length; i++){
+      for(let j = 0; j < props.allMessages.length; j++){
+        if(messages[j][0] === tabs[i][2])
+          messages[j][0] = tabs[i][0]
+      }
+    }
+    setAllRoomMessages(messages)
+  }), [props.allMessages]
+
   const connectChat = (x) => {
     (async function () {
       const { data: roomData } = await axios.get(
@@ -330,9 +340,7 @@ const Tabs = (props) => {
           id: tabs[x][2],
         }
       }).catch((error) => {console.log(error)});
-
       setRoomInfo(roomData);
-      console.log(roomData)
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
         params: {
           gameinstanceid: roomData.gameinstanceid,
@@ -356,7 +364,7 @@ const Tabs = (props) => {
         query: {
           room: tabs[x][2]
         }
-      });
+      })
       client.on("connectStatus", ({ players, chatlog, ...status }) => {
         setPlayers(players);
         setRoomStatus(status || {});
@@ -388,12 +396,14 @@ const Tabs = (props) => {
       client.on("errorLog", ({ key, params = {} }) => {
         alertContext.showAlert(t(key, params), "error");
       });
+
       setSocketInfo(client);
       setLoading(false);
-      console.log(client)
       return () => client.disconnect();
     }());
   }
+
+
 
   return (
     <>
@@ -430,7 +440,9 @@ const Tabs = (props) => {
 
           <li
              className="tab-overview"
-            onClick={() => toggleTab(0)}
+            onClick={() => {
+              toggleTab(0)
+            }}
             className={toggleState === 0 ? "selected" : ""}
           >
             <span className="tab-text">{t("admin.overview")}</span>
@@ -442,7 +454,6 @@ const Tabs = (props) => {
               key={i}
               onClick={() => {
                 toggleTab(i + 1)
-                setPage(i+1)
                 connectChat(i)
               }}
               className={toggleState === i + 1 ? "selected" : ""}
@@ -472,6 +483,7 @@ const Tabs = (props) => {
                   </button>
                 <div className="simadv">
                   <h3>{t("admin.simulationAdvancement")}</h3>
+
                   <div className="content-radiobuttons">
                     <div>
 
@@ -559,6 +571,19 @@ const Tabs = (props) => {
                       />{" "}
                       {t("admin.randomPerLevel")}
                     </div>
+                  </div>
+                </div>
+                <div className="groupcontainer overview">
+                  <div className="group-column">
+                    <h3>{t("admin.chat")}</h3>
+                    <div className="group-chatlog">
+                      <div>
+                        {allRoomMessages.map(( message, index) => (
+                          <p key={index}><b className="bold1">{message[0]} - </b><b className={message[1]}>{message[1]}: </b>{message[2]}</p>
+                        ))}
+                      </div>
+                    </div>
+                    <Messages socket={props.socket}/>
                   </div>
                 </div>
               </div>

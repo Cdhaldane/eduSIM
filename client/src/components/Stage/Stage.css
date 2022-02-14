@@ -155,6 +155,7 @@
   padding: 5px;
   padding-left: 19px;
   padding-right: 20px;
+  z-index: 10000;
 }
 
 #playModeRoleLabel>b {

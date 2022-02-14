@@ -1,6 +1,6 @@
-import { 
-  getPlayer, 
-  setPlayer, 
+import {
+  getPlayer,
+  setPlayer,
   getPlayerByDBID,
   getRoomStatus,
   updateRoomStatus,
@@ -12,7 +12,7 @@ import moment from "moment";
 
 export default async (server, client, event, args) => {
   const { room } = client.handshake.query;
-  
+
   switch (event) {
     case "message": {
       // received a message from a simulation player
@@ -89,7 +89,7 @@ export default async (server, client, event, args) => {
       // add this to list of game interactions and update room status if needed
       // if "sameState" is off, dont update the game state and just log it
       const { gamepieceId, parameters, sameState } = args;
-      
+
       const { running, gamepieces, level } = await getRoomStatus(room);
 
       if (!running) {
@@ -131,7 +131,7 @@ export default async (server, client, event, args) => {
       // eg. someone inputted something into a textbox gamepiece
       // treat it similarly to a regular interaction
       const { name, value, increment = false } = args;
-      
+
       const { running, variables = {}, level } = await getRoomStatus(room);
 
       if (!running) {
@@ -165,7 +165,7 @@ export default async (server, client, event, args) => {
 
       break;
     };
-    
+
     case "goToPage": {
       // player advanced a page in the simulation
       // update room state with new page index

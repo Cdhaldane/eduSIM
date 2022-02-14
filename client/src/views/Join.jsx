@@ -19,6 +19,7 @@ const Join = (props) => {
   const [players, setPlayers] = useState({});
   const [roomStatus, setRoomStatus] = useState({});
   const [roomMessages, setRoomMessages] = useState({});
+  const [allRoomMessages, setAllRoomMessages] = useState([])
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
   const [editModal, setEditModal] = useState(false);
@@ -64,7 +65,20 @@ const Join = (props) => {
         }
       });
       client.on("roomStatusUpdate", (data) => {
-
+        if(data.chatlog){
+        let name;
+        for(let i = 0; i < data.chatlog.length; i++){
+          if(data.chatlog.length != 0){
+            if(data.chatlog[i].sender.name === undefined){
+              name="Admin"
+            }
+            else{
+              name=data.chatlog[i].sender.name
+            }
+            setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.chatlog[i].room, name, data.chatlog[i].message]]);
+          }
+        }
+      }
         setRoomStatus((rooms) => ({
           ...rooms,
           [data.room]: data.status
@@ -101,14 +115,15 @@ const Join = (props) => {
         });
       });
       client.on("message", (data) => {
+        console.log(data)
         if(data.sender.name === undefined){
           data.sender.name="Admin";
         }
+        setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.room,   data.sender.name, data.message]]);
         setRoomMessages((messages) => ({
           ...messages,
           [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
         }));
-        console.log(roomMessages)
       });
       client.on("errorLog", ({key, params={}}) => {
         alertContext.showAlert(t(key, params), "error");
@@ -119,11 +134,15 @@ const Join = (props) => {
     run();
   }, []);
 
+
+
+
   const currentRoomStatus = useMemo(() => {
     if (currentRoom) {
       return roomStatus[currentRoom[2]] || {};
     } return {};
   }, [roomStatus, currentRoom]);
+
 
   const currentRoomMessages = useMemo(() => {
     if (currentRoom) {
@@ -137,6 +156,10 @@ const Join = (props) => {
       room: currentRoom[2]
     }));
   };
+
+  const adminMessage = async (m) => {
+    await socket.emit("message", "hi")
+  }
 
   const pauseSim = async () => {
     if (!socket) return;
@@ -322,10 +345,12 @@ const Join = (props) => {
         title={localStorage.title}
         setRoom={setCurrentRoom}
         chatMessages={currentRoomMessages}
+        allMessages={allRoomMessages}
         socket={socket}
         roomStatus={roomStatus}
         refreshRooms={refreshRooms}
         players={playerDBIDS}
+        adminMessage={adminMessage}
         updateNumTabs={l => setNumTabs(l)}
       />
 
