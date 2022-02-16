@@ -95,6 +95,7 @@ const CanvasPage = (props) => {
 
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
+      console.log(gameEditPropsRef.current)
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;

@@ -665,7 +665,6 @@ class Graphics extends Component {
   }
 
   onObjectContextMenu = e => {
-
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
       this.state.selectedShapeName !== "pencils" &&
@@ -831,7 +830,6 @@ class Graphics extends Component {
       if (sidebarPx > 0 && personalArea) {
         sidebarPx = 100;
       }
-
       pos = {
         x: (event.clientX ? event.clientX :
           (event.targetTouches ? event.targetTouches[0].clientX : this.state.mouseX)) - sidebarPx,
@@ -880,15 +878,20 @@ class Graphics extends Component {
           return;
         }
       }
-
+      let xFix = 0;
+      let yFix = 0;
+      if(this.state.overlayOpen){
+        xFix=900;
+        yFix=400;
+      }
       this.setState({
         selection: {
           isDraggingShape: shape ? shape.id : null,
           visible: true,
-          x1: (pos.x + xOffset) / scale,
-          y1: (pos.y + yOffset) / scale,
-          x2: (pos.x + xOffset) / scale,
-          y2: (pos.y + yOffset) / scale
+          x1: (pos.x + xOffset + xFix) / scale,
+          y1: (pos.y + yOffset + yFix) / scale,
+          x2: (pos.x + xOffset + xFix) / scale,
+          y2: (pos.y + yOffset + yFix) / scale
         }
       }, () => {
         this.updateSelectionRect(personalArea);
