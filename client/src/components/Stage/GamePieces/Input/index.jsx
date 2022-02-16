@@ -6,11 +6,10 @@ import { SettingsContext } from "../../../../App";
 const Wrapper = styled.div`
   & > * {
     font-size: ${p => p.textsize || '1'}em;
-  } 
+  }
 `;
 
 const Input = forwardRef((props, ref) => {
-
   const { settings } = useContext(SettingsContext);
 
   const varName = props.varName || props.id;
@@ -68,7 +67,9 @@ const Input = forwardRef((props, ref) => {
             <input
               type="checkbox"
               checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+              onChange={(e) => {handleChangeValue((!!getValue() ? false : true))
+                props.handleLevel(1);
+              }}
             />
           )
         })[props.varType]}

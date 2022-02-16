@@ -176,6 +176,11 @@ const Game = (props) => {
 
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
 
+  useEffect(() => {
+
+  }, [props.handleLevel]);
+
+
   return (
     !isLoading ? (
       <>
@@ -190,6 +195,7 @@ const Game = (props) => {
           title={room.gameinstance.gameinstance_name}
           subtitle={room.gameroom_name}
           socket={socket}
+          handleLevel={props.handleLevel}
           variables={roomStatus.variables || {}}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
@@ -217,6 +223,8 @@ const Game = (props) => {
             gameinstance={room.gameinstance}
             socket={socket}
             players={parsedPlayers}
+            handleLevel={props.handleLevel}
+            realLevel={props.level}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}

@@ -218,6 +218,7 @@ const Sidebar = (props) => {
           editpage={!props.game}
           refresh={props.refresh}
           variables={props.variables}
+          handleLevel={props.handleLevel}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />

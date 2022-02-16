@@ -187,14 +187,25 @@ a {
 }
 
 .overlayConditions {
-  margin: 10px 0px;
+  margin: 0px 0px;
   border-top: 1px dotted black;
 }
 
 .overlayConditions>input {
+  width: 60%;
+  font-size: 0.8em;
+  padding-left: 0.25em;
+  font-family: "Montserrat";
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 2px solid var(--text-color);
+  border-radius: 4px;
+}
+.overlayConditions>select {
   margin: 5px 0px;
-  width: 100%;
-  font-size: 0.9em;
+  width: 40%;
+  font-size: 0.8em;
   padding-left: 0.25em;
   font-family: "Montserrat";
 }

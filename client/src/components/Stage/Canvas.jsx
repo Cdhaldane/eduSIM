@@ -3344,6 +3344,7 @@ class Graphics extends Component {
                   copy={this.handleCopy}
                   cut={this.handleCut}
                   paste={this.handlePaste}
+                  handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
                   setPollData={this.setPollData}

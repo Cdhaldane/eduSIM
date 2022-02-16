@@ -473,6 +473,7 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
+      console.log(value)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -611,6 +612,8 @@ class Graphics extends Component {
             number={this.state.pageNumber}
             ptype={this.state.ptype}
             level={this.handleLevel}
+            handleLevel={this.props.handleLevel}
+            realLevel={this.props.realLevel}
             gamepage
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}

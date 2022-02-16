@@ -22,6 +22,8 @@ const DropdownAddObjects = (props) => {
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [videoUploading, setVideoUploading] = useState(false);
   const [audioUploaded, setAudioUploaded] = useState(false);
+  const [fixX, setFixX] = useState(0);
+  const [fixY, setFixY] = useState(0);
 
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
@@ -58,9 +60,22 @@ const DropdownAddObjects = (props) => {
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
 
+  const isChrome = window.chrome;
+  let winNav = window.navigator;
+  let vendorName = winNav.vendor;
+  let isChromeCheck = false;
+  if(isChrome !== null && typeof isChrome !== "undefined" && vendorName === "Google Inc."){
+    isChromeCheck=true;
+  }
 
   useEffect(() => {
-
+    console.log(isChromeCheck)
+    if(isChrome){
+      if(props.type === "overlay"){
+        setFixX(930);
+        setFixY(500)
+      }
+    }
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleReposition);
@@ -198,9 +213,22 @@ const DropdownAddObjects = (props) => {
     const isCustom = props.customObjects.includes(objectName);
 
 
+
     const name = objectName + numOfObj;
-    const objX = props.state.selectedContextMenu.position.relX;
-    const objY = props.state.selectedContextMenu.position.relY;
+    let objX = props.state.selectedContextMenu.position.relX;
+    let objY = props.state.selectedContextMenu.position.relY;
+    const paddingPx = 7;
+    const screenH = window.innerHeight - paddingPx;
+    const screenW = window.innerWidth - paddingPx;
+
+    if(objX > screenW) {
+      objX = objX - 200;
+      console.log(true)
+    }
+    if(objY > screenH) {
+      objY = objY - 200;
+      console.log(true)
+    }
 
     const object = {
       rolelevel: props.state.rolelevel,
@@ -617,8 +645,8 @@ const DropdownAddObjects = (props) => {
       className="dropdown"
       style={{
         height: menuHeight,
-        transform: `translateX(${props.xPos + offsetX}px)
-                    translateY(${props.yPos + offsetY}px)`,
+        transform: `translateX(${props.xPos - sidebarWidth + offsetX + fixX}px)
+                    translateY(${props.yPos + offsetY + fixY}px)`,
       }}
       ref={dropdownRef}
       onContextMenu={(e) => {

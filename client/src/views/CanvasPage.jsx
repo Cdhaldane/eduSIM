@@ -775,6 +775,17 @@ const CanvasPage = (props) => {
     return true;
   }
 
+  const [level, setLevel] = useState(1)
+  const handleLevel = (e) => {
+    if(e < 0){
+      setLevel(e)
+    } else {
+    setLevel(level + 1)
+    if(level > 7){
+      setLevel(1)
+    }
+  }
+  }
   /*-------------------------------------------------------------/
    * RENDER FUNCTION
    * This renders the objects with their props to the canvasses.
@@ -784,6 +795,7 @@ const CanvasPage = (props) => {
   const canvasY = -(maxCanvasScaleFactor / 2) * window.innerHeight;
   const canvasW = window.innerWidth * maxCanvasScaleFactor;
   const canvasH = window.innerHeight * maxCanvasScaleFactor;
+
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
@@ -857,6 +869,7 @@ const CanvasPage = (props) => {
           {...inputProps(obj, canvas)}
           {...canvas.getVariableProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
+          handleLevel={handleLevel}
         />;
       default:
         return null;
@@ -1032,6 +1045,8 @@ const CanvasPage = (props) => {
           canvasHeights={playModeCanvasHeights}
           customObjectsLabels={customObjects}
           loadObjects={loadObjects}
+          handleLevel={handleLevel}
+          level={level}
           reCenter={reCenterObjects}
           setGamePlayProps={setGamePlayProps}
           savedObjects={savedObjects}

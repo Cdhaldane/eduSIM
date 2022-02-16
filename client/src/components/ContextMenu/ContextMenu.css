@@ -94,3 +94,7 @@
 .conditionsbetween > p {
   margin: 0 10px;
 }
+.smaller{
+  font-size: .75em !important;
+  margin-top: 5px;
+}
