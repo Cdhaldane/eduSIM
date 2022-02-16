@@ -66,8 +66,8 @@
   color: var(--primary);
   text-decoration: none;
   padding: 0px;
-  margin-left: 20px;
   font-size: 2vw;
+  margin-left: 1vw;
 }
 
 .nav-links:hover {
@@ -152,6 +152,32 @@
   color: white;
   margin-right: 8px;
 }
+.darkmode-button{
+  font-size: 1.0em;
+  font-weight: lighter;
+  font-family: "Montserrat", sans-serif;
+  border: none;
+  background: none;
+  color: var(--white);
+}
+.util-box{
+  background-color: var(--primary);
+  border: 1px solid var(--dark);
+  width: auto;
+  height: auto;
+  padding: 10px 10px;
+  border-radius: 10px;
+  position: relative;
+  right: 10vw;
+  }
+.fa-home {
+  margin-right: 0.4vw;
+}
+.fa-sun, .fa-moon{
+  margin-right: 0.4vw;
+  margin-left: 1vw;
+}
+
 
 @media screen and (orientation: landscape) {
   .profilevist {
@@ -196,6 +222,7 @@
 @media screen and (orientation: portrait) {
   .NavbarItems {
     position: relative;
+    z-index: 1000;
   }
   .nav-menu {
     background: #181818;
@@ -204,7 +231,7 @@
     width: calc(100% + 20px);
     position: absolute;
     top: 50px;
-    z-index: 0;
+    z-index: 1000;
     transform: translateX(-20px);
     opacity: 0;
     padding: 20px 0;

@@ -28,7 +28,10 @@
       "termsOfService": "Terms of Service",
       "privacyPolicy": "Privacy Policy",
       "copyright": "Copyright © {{year}} eduSIM",
-      "contact": "Contact"
+      "contact": "Contact",
+      "home": "Home",
+      "light": "Light",
+      "dark": "Dark"
     },
     "common": {
       "add": "Add",

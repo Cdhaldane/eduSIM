@@ -28,6 +28,7 @@
   },
   "description": "",
   "dependencies": {
-    "gifler": "^0.1.0"
+    "gifler": "^0.1.0",
+    "usehooks-ts": "^2.4.0"
   }
 }

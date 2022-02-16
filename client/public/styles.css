@@ -17,6 +17,13 @@
   --speed: 500ms;
   --box-shadow: rgba(0,0,0,0.25) 5px 5px 4px 0px;
 }
+[data-theme='dark'] {
+  --white: black;
+  --background: black;
+  --text-primary: white;
+  --text-secondary: grey;
+  --accent: darkred;
+}
 
 * {
   padding: 0;
@@ -59,6 +66,9 @@ img {
   pointer-events: none;
 }
 
+.white-content {
+  background: #e4e4e4;
+}
 
 .full-page-wrapper{
   flex-direction: column;
@@ -247,7 +257,7 @@ a {
 
 .welcome-nav {
   margin-top: 10vw;
-  margin-left: 12vw;;
+  margin-left: 12vw;
 }
 
 .welcome-nav img {

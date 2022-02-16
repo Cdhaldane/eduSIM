@@ -303,7 +303,7 @@ class Graphics extends Component {
               gamepieceId: obj.id,
               parameters: {
                 ...this.props.gamepieceStatus[obj.id],
-                [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null : 
+                [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
                 {
                   x: e.target.x(),
                   y: e.target.y()
@@ -409,7 +409,6 @@ class Graphics extends Component {
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
-
     this.toggleModal();
     let role = initRole;
     if (this.props.roleSelection === "random") role = -1;
@@ -444,11 +443,13 @@ class Graphics extends Component {
       });
     } catch (e) { };
 
+    if(localStorage.userInfo){
     if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
       const info = JSON.parse(localStorage.userInfo);
       if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
       this.handlePlayerInfo(info);
     }
+  }
 
     // Reposition / scale objects on screen resize
     let resizeTimeout;
