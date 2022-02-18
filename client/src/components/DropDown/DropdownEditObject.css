@@ -4,10 +4,68 @@ ul {
   padding: 0;
 }
 
+@keyframes timer {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 214px;
+    width: 272px;
+    z-index: 10000;
+  }
+}
+@keyframes html {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 528px;
+    width: 272px;
+    z-index: 10000;
+  }
+}
+@keyframes input {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 424px;
+    width: 272px;
+    z-index: 10000;
+  }
+}
+@keyframes checkbox {
+  from {
+    margin-left: -20px;
+    height: 10px;
+    width: 50px;
+    z-index: 0;
+    bottom: 50px;
+  }
+  to {
+    margin-left: 0px;
+    height: 279px;
+    width: 272px;
+    z-index: 10000;
+  }
+}
+
 /* Icon Button */
-
-
-
 .htmledit > span {
   font-size: 0.8em;
 }
@@ -49,6 +107,22 @@ ul {
   overflow: hidden;
   animation-duration: 0.5s;
   animation-name: slidePoll;
+}
+.timer {
+  animation-duration: 0.5s;
+  animation-name: timer;
+}
+.html {
+  animation-duration: 0.5s;
+  animation-name: html;
+}
+.input {
+  animation-duration: 0.5s;
+  animation-name: input;
+}
+.checkbox {
+  animation-duration: 0.5s;
+  animation-name: checkbox;
 }
 
 .dropdownedit.paddingRight {

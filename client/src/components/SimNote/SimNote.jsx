@@ -50,21 +50,21 @@ const SimNote = (props) => {
   }
 
   return (
-    <div className="notesim" >
-      <div className="notesim-draggable"><div className="drag-icons"></div></div>
-      <div className="notesim-thumbnail">
-        <Image
-          cloudName="uottawaedusim"
-          publicId={
-            "https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img
-          }
-          alt="backdrop"
-        />
-        <h1>{props.title}</h1>
-      </div>
-      <div className="notesim-icons">
-        {props.superadmin ? (
-          <>
+      <div className="notesim" >
+        <div className="notesim-draggable"><div className="drag-icons"></div></div>
+        <div className="notesim-thumbnail">
+          <Image
+            cloudName="uottawaedusim"
+            publicId={
+              "https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img
+            }
+            alt={t("alt.sim")}
+          />
+            <h1>{props.title}</h1>
+        </div>
+        <div className="notesim-icons">
+          {props.superadmin ? (
+            <>
             <i
               className="lni lni-calendar notesim-icon"
               aria-hidden="true"

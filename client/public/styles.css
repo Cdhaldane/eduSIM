@@ -64,9 +64,35 @@ img {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: scroll;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  overflow-y: overlay;
+  z-index: 2000;
 }
+
+.full-page-wrapper::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.full-page-wrapper::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+.full-page-wrapper::-webkit-scrollbar-thumb
+{
+	background-color: var(--text-color);
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
 
 .main-content {
   min-height: 100%;
@@ -77,9 +103,7 @@ img {
   scrollbar-width: none;  /* Firefox */
 }
 
-.full-page-wrapper::-webkit-scrollbar {
-    display: none;
-}
+
 
 #root {
   height: 100vh;
@@ -238,7 +262,6 @@ a {
   font-family: "Montserrat", sans-serif;
   margin-top: 50px;
   font-size: 3em;
-  animation: 1s ease-out 0s 1 slideInFromLeft;
   font-weight: bold;
   font-size: 2.5vw;
   text-align: left;
@@ -628,6 +651,28 @@ hr {
   margin: auto 0 auto 10px;
 }
 
+.joinboard-edit{
+  position: absolute;
+  vertical-align: middle;
+  float: right !important;
+  align-self: center;
+  color: var(--primary) !important;
+  padding: 8px;
+  border-radius: 100px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1.0em !important;
+}
+.joinboard-edit h1{
+  color: var(--text-color);
+  font-family:  "Montserrat", sans-serif;
+  font-size: 0.6em;
+  font-weight: normal;
+  display: inline;
+  vertical-align: 20%;
+  margin-left: 5px;
+}
+
 .joinboard-image {
   height: 100px;
   width: 120px;
@@ -638,6 +683,7 @@ hr {
 }
 
 .joinboard-title {
+  float: left;
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0px;
@@ -645,7 +691,9 @@ hr {
   top: 0px;
   left: 10px;
   word-break: break-word;
+  white-space: nowrap;
 }
+
 
 .joinboard-disabled {
   opacity: 0.3;
@@ -876,6 +924,9 @@ hr {
   position: absolute;
   top: 1000000px;
 }
+.disable-dbl-tap-zoom {
+  touch-action: manipulation;
+}
 
 
 @media screen and (orientation: portrait) {
@@ -1042,6 +1093,9 @@ hr {
   }
   .dashboard-wrapper{
     height: auto;
+  }
+  .joinboard-edit{
+    bottom: -6px;
   }
 
 

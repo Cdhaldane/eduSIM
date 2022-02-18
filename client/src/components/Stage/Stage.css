@@ -98,7 +98,9 @@
   transform: translate(calc(-50% - var(--margin)), calc(-50% - var(--margin)));
   position: absolute;
 }
-
+.noSideBar {
+  margin-left: 70px;
+}
 .gameLoadingOverlay {
   z-index: 100;
   width: 10%;
@@ -153,6 +155,7 @@
   padding: 5px;
   padding-left: 19px;
   padding-right: 20px;
+  z-index: 10000;
 }
 
 #playModeRoleLabel>b {

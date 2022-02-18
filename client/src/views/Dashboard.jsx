@@ -47,8 +47,7 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-
-          if (localStorage.order)
+          if(localStorage.order)
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData)
@@ -191,11 +190,16 @@ const Dashboard = (props) => {
     <div className="dashboard-wrapper" style={{
       height: gamedata.length * 190 + 250,
     }}>
-      <div className="dashboard">
-        <div className="page-margin">
-          <button className="w-button auto" onClick={toggleModal}>
-            {t("admin.addNewSimulation")}
-          </button>
+    <div className="dashboard disable-dbl-tap-zoom">
+      <div className="page-margin">
+        <button className="w-button auto" onClick={toggleModal}>
+          {t("admin.addNewSimulation")}
+        </button>
+      </div>
+      <div className="page-margin">
+        <h2>{t("admin.mySimulations")}</h2>
+        <div className="dashsim">
+              <DraggableList items={gamedata}/>
         </div>
         <div className="page-margin">
           <h2>{t("admin.mySimulations")}</h2>
@@ -231,6 +235,7 @@ const Dashboard = (props) => {
         />
       </div>
     </div>
+  </div>
   );
 }
 

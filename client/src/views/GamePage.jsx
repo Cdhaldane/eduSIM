@@ -74,7 +74,7 @@ const Game = (props) => {
       });
 
       setRoomInfo(roomData);
-
+      console.log(roomData)
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
         params: {
           gameinstanceid: roomData.gameinstanceid,
@@ -98,6 +98,7 @@ const Game = (props) => {
           }
         }).then((res) => {
           setQueryUser(res.data);
+          consoe.log(res.data)
         });
       }
 

@@ -2,6 +2,7 @@ import { NavLink as Link } from "react-router-dom"
 import styled from "styled-components"
 import React, { forwardRef } from "react"
 import { Image } from "cloudinary-react";
+import { useTranslation, Trans } from "react-i18next";
 
 const StyledLink = styled.a`
   min-height: 56px;
@@ -83,6 +84,7 @@ const StyledLink = styled.a`
 `;
 
 const NavLink = forwardRef((props, ref) => {
+  const { t } = useTranslation();
 
   return (
     <StyledLink
@@ -102,7 +104,7 @@ const NavLink = forwardRef((props, ref) => {
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.simimg + ".jpg"} alt="backdrop" />
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.simimg + ".jpg"}  alt={t("alt.sim")} />
               <div>
                 <span className="special">{props.label}</span>
                 <p className="sublabel">{props.sublabel}</p>

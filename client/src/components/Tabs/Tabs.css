@@ -297,9 +297,19 @@
   display: flex;
   font-size: .7em;
   margin: 10px 20px;
+  width: 50%;
 }
 .simadv-inline{
   margin-left: 73px;
+}
+.simadv-row{
+  position: relative;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 20px;
+}
+.overview{
+  margin-top: 20px;
 }
 
 input[type='radio']:after {
@@ -396,7 +406,6 @@ input[type='radio']:after {
   display: flex;
   border: 1px solid black;
   border-radius: 10px;
-  opacity: 50%;
 }
 .groupcontainer h3{
   position: relative;
@@ -404,6 +413,7 @@ input[type='radio']:after {
   left: 10px;
   width: auto;
   color: var(--text-color);
+    opacity: 50%;
 }
 .group-column {
   flex: 1;
@@ -423,6 +433,9 @@ input[type='radio']:after {
 }
 .group-chatlog p {
   height: unset;
+}
+.Admin{
+  color: var(--primary) !important;
 }
 .tab-add-group {
   z-index: 2;
@@ -537,7 +550,12 @@ input[type='radio']:after {
   color: var(--primary);
   font-size: 2.0rem;
 }
-
+.bold1{
+  color: var(--dark);
+}
+.Admin{
+  color: var(--primary);
+}
 #roomh3 {
   position: relative;
   top: 250px;
