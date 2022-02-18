@@ -103,13 +103,17 @@ const CanvasPage = (props) => {
     }
   }
 
+  // In game mode to prevent screen resizing due to dragging shapes out of bounds
+  // It will use the initial zoom settings until a resize occurs
+  const [zoomSettings, setZoomSettings] = useState(null);
+
   const [prevLayers, setPrevLayers] = useState([]);
 
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
-  const reCenterObjects = (mode, layer) => {
+  const reCenterObjects = (mode, layer, from) => {
     let canvas = getUpdatedCanvasState(mode);
     if (!canvas) {
       return;
@@ -117,6 +121,31 @@ const CanvasPage = (props) => {
 
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
+      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
+      console.log(zoomSettings);
+      if (
+        mode === "play" &&
+        zoomSettings &&
+        (zoomSettings[areaString].resize ||
+        from !== "resize") &&
+        zoomSettings[areaString]
+      ) {
+        canvas.setState({
+          [`${areaString}LayerX`]: zoomSettings[areaString].x,
+          [`${areaString}LayerY`]: zoomSettings[areaString].y,
+          [`${areaString}LayerScale`]: zoomSettings[areaString].scale,
+          canvasLoading: false
+        });
+        if (document.getElementById(`${areaString}GameContainer`)) {
+          document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
+        }
+        setPlayModeCanvasHeights({
+          overlay: areaString === "overlay" ? zoomSettings[areaString].newHeight : 0,
+          personal: areaString === "personal" ? zoomSettings[areaString].newHeight : 0,
+          group: areaString === "group" ? zoomSettings[areaString].newHeight : 0,
+        });
+        return;
+      }
       if (
         !(canvas &&
           canvas.setState &&
@@ -125,8 +154,6 @@ const CanvasPage = (props) => {
       ) {
         return;
       }
-
-      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       if (mode === "play" && document.getElementById(`${areaString}GameContainer`)) {
         document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
       }
@@ -181,6 +208,7 @@ const CanvasPage = (props) => {
             y = 0;
             scale = 1;
           }
+          let newHeight;
           // Scale and fit to top leftR
           canvas.setState({
             [`${areaString}LayerX`]: x,
@@ -238,7 +266,7 @@ const CanvasPage = (props) => {
                 }
               }, 0);
 
-              const newHeight = availableRatio * scaleDown > contentRatio ? canvasH : null;
+              newHeight = availableRatio * scaleDown > contentRatio ? canvasH : null;
               setPlayModeCanvasHeights({
                 overlay: areaString === "overlay" ? newHeight : 0,
                 personal: areaString === "personal" ? newHeight : 0,
@@ -257,9 +285,34 @@ const CanvasPage = (props) => {
               y = (availableH - (contentH * scale)) / 2;
               x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : leftPadding;
             }
+            const newX = canvas.state[`${areaString}LayerX`] + x;
+            const newY = canvas.state[`${areaString}LayerY`] + y;
+            if (mode === "play") {
+              setZoomSettings({
+                group: {
+                  resize: from === "resize" ? true : zoomSettings?.group?.resize,
+                  ...zoomSettings?.group
+                },
+                overlay: {
+                  resize: from === "resize" ? true : zoomSettings?.overlay?.resize,
+                  ...zoomSettings?.overlay
+                },
+                personal: {
+                  resize: from === "resize" ? true : zoomSettings?.personal?.resize,
+                  ...zoomSettings?.personal
+                },
+                [areaString]: {
+                  x: newX,
+                  y: newY,
+                  scale: scale,
+                  newHeight: newHeight,
+                  resize: false
+                }
+              });
+            }
             canvas.setState({
-              [`${areaString}LayerX`]: canvas.state[`${areaString}LayerX`] + x,
-              [`${areaString}LayerY`]: canvas.state[`${areaString}LayerY`] + y,
+              [`${areaString}LayerX`]: newX,
+              [`${areaString}LayerY`]: newY,
               canvasLoading: false
             });
           }, 0));

@@ -454,7 +454,7 @@ class Graphics extends Component {
     window.onresize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        this.props.reCenter("play");
+        this.props.reCenter("play", "all", "resize");
       }, 100);
     };
   }

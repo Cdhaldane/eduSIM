@@ -127,6 +127,9 @@ const KonvaHtml = ({
     id: refName,
     name: "customObj",
     draggable: true,
+    onTransformStart: () => {
+      console.log("BOOM");
+    },
     onTransformEnd: defaultProps.onTransformEnd,
     onDragMove: (e) => {
       objectSnapping(groupRef.current, e);

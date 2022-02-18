@@ -508,7 +508,8 @@ class Graphics extends Component {
           this.setState({
             canvasLoading: true,
             selectedShapeName: "",
-            groupSelection: []
+            groupSelection: [],
+            customRenderRequested: true
           });
           setTimeout(() => this.props.reCenter("edit", layer), 300);
         }
@@ -784,11 +785,13 @@ class Graphics extends Component {
     }
 
     if (shape?.attrs?.id) {
+      console.log(shape.attrs.id);
       return {
         id: shape.attrs.id,
         custom: false
       };
     } else if (shape?.id) {
+      console.log("CUSTOM:", shape.id);
       return {
         id: shape.id,
         custom: true
@@ -805,14 +808,6 @@ class Graphics extends Component {
       x: event.clientX,
       y: event.clientY
     });
-
-    if (shape?.custom) {
-      this.setState({
-        selectedShapeName: shape.id,
-        groupSelection: []
-      }, this.handleObjectSelection);
-      return;
-    }
 
     if (!event.ctrlKey) {
       this.setState({
@@ -892,13 +887,6 @@ class Graphics extends Component {
         }
       }, () => {
         this.updateSelectionRect(personalArea);
-        if (event.buttons === 1 && !event.shiftKey) {
-          const shapeGroup = shape ? this.getShapeGroup(this.refs[shape.id]) : null;
-          this.setState({
-            selectedShapeName: shape ? (shapeGroup ? "" : shape.id) : "",
-            groupSelection: shapeGroup ? [shapeGroup] : []
-          }, this.handleObjectSelection);
-        }
       });
     }
   };
@@ -2728,7 +2716,10 @@ class Graphics extends Component {
   }
 
   onObjectTransformStart = () => {
-    this.setState({ isTransforming: true });
+    console.log("HHH");
+    this.setState({ 
+      isTransforming: true 
+    });
   }
 
   onObjectTransformEnd = (obj) => {
