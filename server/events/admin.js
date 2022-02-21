@@ -51,16 +51,14 @@ export default async (server, client, event, args) => {
 
       break;
     };
+
     case "message": {
       const rooms = await getSimulationRooms(game);
       const { message, group } = args;
       const sender = { name:"Admin" }
 
-
-
       rooms.forEach(async ({ dataValues: roomss }) => {
         let room = roomss.gameroom_url
-
         updateChatlog(room, {
           sender,
           room,
@@ -68,7 +66,6 @@ export default async (server, client, event, args) => {
           group: group.length > 0 ? group : undefined,
           timeSent: moment().valueOf()
         });
-
         server.to(roomss.gameroom_url).emit("message", {
           sender,
           room,

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import moment from "moment";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
+import { Image } from "cloudinary-react";
 
 import {
   Stage
@@ -59,7 +60,8 @@ class Graphics extends Component {
     ...this.props.savedObjects,
 
     "status",
-    "pages"
+    "pages",
+    "overlayImage"
   ];
 
   constructor(props) {
@@ -168,7 +170,6 @@ class Graphics extends Component {
 
     let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
     let varLen = isNaN(val) ? (val || "").length : val;
-
     switch (conditions.condition) {
       case "isequal":
         return val == trueValue;
@@ -240,21 +241,41 @@ class Graphics extends Component {
       name.startsWith("triangles")) ? 0 : value;
   }
 
-
+  renderOverlay = (page) => {
+    if(!this.state.overlayOpen){
+    this.setState({
+      overlayOpenIndex: page.id,
+      overlayOpen: true
+    });
+    }
+  }
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
-
     // Show overlay if it is the next page and a pageEnter overlay is available
     const page = this.getPage(this.state.level - 1);
     let overlayPageEnter = null;
+    let overlayCondition = null;
     if (page?.overlays) {
       for (let i = 0; i < page.overlays.length; i++) {
         if (page.overlays[i].overlayOpenOption === "pageEnter") {
           overlayPageEnter = page.overlays[i];
           break;
         }
+        if(page.overlays[i].overlayCondition){
+          let conditions = page.overlays[i].overlayCondition.conditions
+
+        if(conditions != undefined){
+          let overlayCheck = this.checkObjConditions(conditions)
+          if(overlayCheck){
+            overlayCondition = page.overlays[i];
+            this.renderOverlay(overlayCondition)
+            break;
+          }
+
+        }
+      }
       }
     }
     if (
@@ -473,7 +494,6 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
-      console.log(value)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -486,6 +506,7 @@ class Graphics extends Component {
       level: e
     });
   }
+
 
   toggleModal = () => {
     this.setState({
@@ -554,7 +575,17 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                    <i className="icons lni lni-credit-cards" />
+                  {!this.state.overlayImage ? (
+                  <i className="icons lni lni-credit-cards" />
+                  ) : (
+                    <Image
+                      className="overlayIcons"
+                      cloudName="uottawaedusim"
+                      publicId={
+                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
+                      }
+                    />
+                  )}
                   </div>
                 );
               } else {
@@ -597,8 +628,6 @@ class Graphics extends Component {
             {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>
         </div>
-
-
         <div className="eheader">
           <Level
             handlePageCloseOverlay={(index) => {

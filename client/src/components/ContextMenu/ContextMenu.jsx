@@ -131,7 +131,6 @@ const ContextMenu = (props) => {
   );
 
   const handleUpdateConditions = (key, value) => {
-    console.log(conditions)
     setConditions(old => ({
       ...old,
       [key]: value ? value : undefined
@@ -144,7 +143,6 @@ const ContextMenu = (props) => {
     });
   }
   const handleUpdateVar = (key, value) => {
-    console.log(conditions)
     setConditions(old => ({
       ...old,
       [key]: value ? value : undefined
@@ -288,19 +286,6 @@ const ContextMenu = (props) => {
                 />
               </div>
             )}
-            <p className="smaller">{t("edit.setVariable")}</p>
-            <input
-              type="text"
-              placeholder={t("edit.variableName")}
-              value={conditions?.varName2 || ""}
-              onChange={(e) => handleUpdateConditions("varName2", e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder={t("edit.number")}
-              value={conditions?.varNumber || ""}
-              onChange={(e) => handleUpdateVar("varNumber", e.target.value)}
-            />
           </div>
         </div>
       )}

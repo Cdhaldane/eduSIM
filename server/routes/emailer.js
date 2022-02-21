@@ -9,10 +9,15 @@ router.post("/sendInviteEmails", async (req, res) => {
   let { simid, admin, simname, exclude } = req.body
 
   let smtpTransport = nodemailer.createTransport({
-    service: 'hotmail',
+    host: "smtp-mail.outlook.com", // hostname
+    secureConnection: false, // TLS requires secureConnection to be false
+    port: 587, // port for secure SMTP
+    tls: {
+    ciphers:'SSLv3'
+    },
+    requireTLS:true,//this parameter solved problem for me
     maxConnections: 1,
     maxMessages: 1,
-    pool: true,
     auth: {
       user: "edusimuottawa@outlook.com",
       pass: "Legodinosaur"
@@ -20,8 +25,8 @@ router.post("/sendInviteEmails", async (req, res) => {
   });
 
   let [contacts] = await db.query(`
-    select p.fname, p.lname, p.gameplayerid, p.player_email, r.gameroom_url from gameplayers p, gamerooms r where 
-    p.gameinstanceid='${simid}' and 
+    select p.fname, p.lname, p.gameplayerid, p.player_email, r.gameroom_url from gameplayers p, gamerooms r where
+    p.gameinstanceid='${simid}' and
     r.gameinstanceid='${simid}' and
     r.gameroom_name=p.game_room
   `);
@@ -29,7 +34,7 @@ router.post("/sendInviteEmails", async (req, res) => {
   contacts = contacts.filter(({ gameplayerid }) => !exclude.includes(gameplayerid));
 
   for (const data of contacts) {
-  
+
     let mailOptions = {
       from: 'edusimuottawa@outlook.com',
       to: data.player_email,
@@ -55,7 +60,7 @@ router.post("/sendInviteEmails", async (req, res) => {
       </table>
       `
     };
-  
+
     await smtpTransport.sendMail(mailOptions, (error, response) => {
       if (error) {
         console.error(error);
@@ -73,10 +78,13 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
   let { simid, admin, emails, simname } = req.body
 
   let smtpTransport = nodemailer.createTransport({
-    service: 'hotmail',
-    maxConnections: 1,
-    maxMessages: 1,
-    pool: true,
+    host: "smtp-mail.outlook.com", // hostname
+    secureConnection: false, // TLS requires secureConnection to be false
+    port: 587, // port for secure SMTP
+    tls: {
+    ciphers:'SSLv3'
+    },
+    requireTLS:true,//this parameter solved problem for me
     auth: {
       user: "edusimuottawa@outlook.com",
       pass: "Legodinosaur"
@@ -84,7 +92,7 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
   });
 
   for (const email of emails) {
-  
+
     const adminobj = await AdminAccount.findOne({
       where: {
         email: email,
@@ -92,7 +100,7 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
     });
 
     let adminid = adminobj && adminobj.dataValues && adminobj.dataValues.adminid;
-  
+
     if (!adminid) {
       let newAdmin = await AdminAccount.create({
         email
@@ -106,7 +114,7 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
       gameinstanceid: simid,
       verified: false
     });
-  
+
     let mailOptions = {
       from: 'edusimuottawa@outlook.com',
       to: email,
@@ -131,7 +139,7 @@ router.post("/sendCollaboratorEmails", async (req, res) => {
       </table>
       `
     };
-  
+
     await smtpTransport.sendMail(mailOptions, (error, response) => {
       if (error) {
         console.error(error);

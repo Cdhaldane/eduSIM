@@ -187,8 +187,8 @@ const Sidebar = (props) => {
 
   const links = [
     {
-      img: localStorage.simimg,
-      label: localStorage.simtitle,
+      img: props.img,
+      label: props.title,
       sublabel: props.subtitle,
       id: "title",
       visible: true,

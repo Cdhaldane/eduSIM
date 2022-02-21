@@ -485,20 +485,20 @@ input[type='radio']:after {
 
 .logs {
   display: flex;
-  height: 10px;
+  height: auto !important;
+  width: auto !important;
   width: auto;
   margin-right: 7vw;
-  margin-bottom: 30px;
+  margin-bottom: -90px;
   flex-direction: column;
   align-items: flex-end;
   align-self: flex-end;
-  overflow: unset;
   z-index: 1;
 }
 .logs[hidden] {
   text-align: right;
   align-self: flex-end;
-  margin-bottom: 30px;
+  margin-bottom: -90px;
   margin-right: 7vw;
   height: 10px;
 }

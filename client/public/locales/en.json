@@ -386,7 +386,8 @@
       "noCSV": "No spreadsheet file detected",
       "containsXEntries_one": "Contains {{count}} entry",
       "containsXEntries_other": "Contains {{count}} entries",
-      "downloadCSVTemplate": "Download CSV template"
+      "downloadCSVTemplate": "Download CSV template",
+      "overlayImage": "Upload icon"
     },
     "alert": {
       "inviteSuccessful": "Invitations have been successfully sent to given email addresses.",

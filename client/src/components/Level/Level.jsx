@@ -11,7 +11,6 @@ import "./Level.css";
 import "../Stage/Info.css";
 
 const Level = (props) => {
-
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
@@ -33,8 +32,6 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
-    console.log(count)
-    console.log(props.realLevel)
     let closeOverlay = null;
     if (props.page) {
       for (let i = 0; i < props.page.overlays.length; i++) {

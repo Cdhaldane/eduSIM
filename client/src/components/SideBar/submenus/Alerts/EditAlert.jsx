@@ -102,14 +102,12 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
       ...old,
       optional: !formData.optional
     }));
-    console.log(formData)
   }
   const setAdvanceOn = () => {
     setFormData(old => ({
       ...old,
       advance: !formData.advance
     }));
-    localStorage.setItem("advance", !formData.advance)
   }
 
   useEffect(() => {
@@ -119,19 +117,14 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
     }
   }, [init, hidden]);
 
-  useEffect(() => {
-
-  }, [formData]);
-
-
   return (
     <Container hidden={hidden}>
       <div>
-        <input type="checkbox" checked={!formData.advance} onChange={setAdvanceOn} />
+        <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
         <label>{t("edit.requiredToAdvance")}</label>
       </div>
       <div>
-        <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
+        <input type="checkbox" checked={!formData.advance} onChange={setAdvanceOn} />
         <label>{t("edit.whenCompleted")}</label>
       </div>
       <label>{t("edit.unfinishedLabel")}</label>

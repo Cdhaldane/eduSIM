@@ -10,6 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
+
   const { settings } = useContext(SettingsContext);
 
   const varName = props.varName || props.id;
@@ -24,6 +25,7 @@ const Input = forwardRef((props, ref) => {
         ...vars,
         [varName]: value
       }));
+      console.log(sessionStorage)
       sessionStorage.setItem('lastSetVar', varName);
       props.refresh();
     }
@@ -67,9 +69,7 @@ const Input = forwardRef((props, ref) => {
             <input
               type="checkbox"
               checked={!!getValue()}
-              onChange={(e) => {handleChangeValue((!!getValue() ? false : true))
-                props.handleLevel(1);
-              }}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
             />
           )
         })[props.varType]}
