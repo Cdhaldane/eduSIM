@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
+  console.log(props)
   const { t } = useTranslation();
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
@@ -50,10 +51,12 @@ const Performance = forwardRef((props, ref) => {
     // so get all responses from users
     let answer = "";
     const responses = [];
+    if(allData.isComplete){
     for (const userId in allData) {
-      const personalResponse = allData[userId].data ? allData[userId].data[question.name] : undefined;
+      const personalResponse = allData.data ? allData.data[question.name] : undefined;
       responses.push(personalResponse);
     }
+  }
     const responseSet = new Set(responses);
     responseSet.delete(undefined);
     const responsesNoDupes = [...responseSet];
@@ -122,7 +125,7 @@ const Performance = forwardRef((props, ref) => {
   return (
     <>
       <div className={`area ${props.adminMode ? "forceDivNormal" : ""}`}>
-        <form className={`form-input performanceForm 
+        <form className={`form-input performanceForm
         ${props.adminMode ? "forceDivNormal noForm" : ""}`} ref={ref}>
           {props.setData && (
             <div className="performanceContainer">

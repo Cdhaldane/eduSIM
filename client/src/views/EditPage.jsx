@@ -97,6 +97,7 @@ const EditPage = (props) => {
               className="grid-sidebar"
               visible={showNav}
               close={toggle}
+            
               img={localStorage.simimg}
               title={localStorage.simtitle}
               alertProps={{

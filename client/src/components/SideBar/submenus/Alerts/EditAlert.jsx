@@ -80,6 +80,7 @@ const Container = styled.form`
 const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
   const [formData, setFormData] = useState(init);
   const [lastHidden, setLastHidden] = useState(hidden);
+  const [advance, setAdvance] = useState(false);
   const { t } = useTranslation();
 
   const addAlert = (e) => {
@@ -102,7 +103,12 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
       optional: !formData.optional
     }));
   }
-
+  const setAdvanceOn = () => {
+    setFormData(old => ({
+      ...old,
+      advance: !formData.advance
+    }));
+  }
 
   useEffect(() => {
     if (lastHidden !== hidden) {
@@ -117,16 +123,20 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
         <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
         <label>{t("edit.requiredToAdvance")}</label>
       </div>
+      <div>
+        <input type="checkbox" checked={!formData.advance} onChange={setAdvanceOn} />
+        <label>{t("edit.whenCompleted")}</label>
+      </div>
       <label>{t("edit.unfinishedLabel")}</label>
       <input type="text" placeholder="Not yet completed" value={formData.offLabel || ""} onChange={changeValue("offLabel")} />
       <label>{t("edit.finishedLabel")}</label>
       <input type="text" placeholder="Completed" value={formData.onLabel || ""} onChange={changeValue("onLabel")} />
       <label>{t("edit.completedWhen")}</label>
       <input type="text" placeholder="Variable name" value={formData.varName || ""} onChange={changeValue("varName")} />
-      <select 
+      <select
         name="inputtype"
         value={formData.varCondition}
-        onChange={changeValue("varCondition")} 
+        onChange={changeValue("varCondition")}
       >
         {[
           "positive",
@@ -146,7 +156,7 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden }) => {
       {formData.varCondition == 'between' && (
         <row>
           <input type="text" placeholder={t("edit.minimum")} value={formData.varCheck || ""} onChange={changeValue("varCheck")} />
-          <p>and</p> 
+          <p>and</p>
           <input type="text" placeholder={t("edit.maximum")} value={formData.varCheckAlt || ""} onChange={changeValue("varCheckAlt")} />
         </row>
       )}

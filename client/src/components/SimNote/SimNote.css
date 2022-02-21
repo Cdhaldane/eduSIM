@@ -85,7 +85,7 @@
 .notesim-icons i {
   font-size: 2vw;
   margin-top: 0.0vw;
-  margin-left: 2.3vw;
+  margin-left: 2.0vw;
   color: var(--primary);
 }
 .notesim-icons h1 {
@@ -93,7 +93,7 @@
   font-family:  "Montserrat", sans-serif;
   display: inline;
   vertical-align: 30%;
-  margin-left: 0.5vw;
+  margin-left: 0.3vw;
   font-weight: normal;
 }
 #garbage{

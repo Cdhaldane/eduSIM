@@ -15,7 +15,7 @@ const AlertsContainer = styled.div`
 const Alert = styled.div`
   display: flex;
   align-items: center;
-  margin: 5px 0;    
+  margin: 5px 0;
   background-color: ${p => p.done ? 'rgb(101, 159, 69)' : (
     p.optional ? 'rgb(185, 109, 53)' : 'rgb(185, 53, 53)'
   )};
@@ -92,7 +92,7 @@ const EditButtons = styled.div`
   }
 `;
 
-const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) => {
+const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) => {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const { t } = useTranslation();
@@ -127,7 +127,7 @@ const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, var
       return n;
     });
   };
-  
+
   const handleMoveDown = (index) => {
     setAlerts(old => {
       let n = [...old];
@@ -167,13 +167,25 @@ const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, var
     }
   }
 
-  const taskTrueCount = alerts.reduce((a,data) => 
+  const taskTrueCount = alerts.reduce((a,data) =>
     !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a+1 : a
-  , 0);
+  , 0)
+
 
   useEffect(() => {
     setTicker(taskTrueCount);
+    const done = taskTrueCount;
   }, [taskTrueCount, refresh]);
+
+  useEffect(() => {
+    for(let i = 0; i < alerts.length; i++){
+      if(checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)){
+      if(!alerts[i].advance){
+        handleLevel();
+      }
+    }
+    }
+  }), []
 
   return (
     <AlertsContainer>
@@ -200,7 +212,7 @@ const Alerts = ({ editpage = true, alerts=[], setAlerts, setTicker, refresh, var
                   <div>{done ? data.onLabel : data.offLabel}</div>
                 </div>
               </Alert>
-              {editpage && 
+              {editpage &&
                 <EditButtons>
                   <button onClick={() => setTimeout(() => handleMoveUp(index), 10)}>
                     <i className="fas fa-angle-up" />

@@ -187,14 +187,28 @@ a {
 }
 
 .overlayConditions {
-  margin: 10px 0px;
+  margin: 0px 0px;
   border-top: 1px dotted black;
+  display: grid;
 }
 
 .overlayConditions>input {
+  height: 30px;
+  width: 100%;
+  font-size: 0.8em;
+  padding-left: 0.25em;
+  font-family: "Montserrat";
+  margin-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 2px solid var(--text-color);
+  border-radius: 4px;
+}
+.overlayConditions>select {
+  height: 30px;
   margin: 5px 0px;
   width: 100%;
-  font-size: 0.9em;
+  font-size: 0.8em;
   padding-left: 0.25em;
   font-family: "Montserrat";
 }
@@ -214,6 +228,29 @@ a {
 .overlayConditionsDisabled:hover {
   cursor: not-allowed;
 }
+.modal-overlay-button{
+  color: var(--dark) !important;
+  font-size: .8em !important;
+  height: auto !important;
+  margin-top: 8px;
+  margin-left: 30px;
+  right: 0px;
+  float: right;
+  border: 2px outset rgb(136, 136, 136) !important;
+  --color: rgb(161, 255, 148);
+  background-color: var(--color) !important;
+  border-color: var(--color) !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 7px !important;
+}
+.overlay-title{
+  float: left;
+}
+.overlay-title-container{
+  display: inline-block;
+}
+
 
 .timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-up,
 .timelineDropdown>.menu>div>div>.menu-item>.icons-right>.icon-button>.fa-angle-down {

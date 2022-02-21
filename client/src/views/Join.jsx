@@ -286,14 +286,14 @@ const Join = (props) => {
                   onClick={handlePrevPage}
                   title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
                 >
-                  <i className="lni lni-angle-double-right"></i>
+                  <i className="lni lni-angle-double-left"></i>
                 </button>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handleNextPage}
                   title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
                 >
-                  <i className="lni lni-angle-double-left"></i>
+                  <i className="lni lni-angle-double-right"></i>
                 </button>
               </>
             )}

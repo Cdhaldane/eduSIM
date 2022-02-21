@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Switch from "react-switch";
+import debounce from 'lodash.debounce';
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
 import { useTranslation } from "react-i18next";
@@ -10,9 +11,8 @@ const DropdownOverlay = (props) => {
 
   const menuElem = useRef();
   const [selectedOption, setSelectedOption] = useState();
-  const [conditions, setConditions] = useState({
-    condition: true
-  });
+  const [conditions, setConditions] = useState(props.getOverlayState(props.overlayIndex)?.overlayCondition?.conditions || {});
+  const [imageSelected, setImageSelected] = useState("images/ujjtehlwjgsfqngxesnd");
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -61,6 +61,32 @@ const DropdownOverlay = (props) => {
     }
   }
 
+  const debounceObjState = useCallback(
+    debounce(state => handleChangeCondition(state), 100),
+    [], // will be created only once initially
+  );
+
+
+  const handleUpdateConditions = (key, value) => {
+    setConditions(old => ({
+      ...old,
+      [key]: value ? value : undefined
+    }))
+    debounceObjState({
+      conditions: {
+        ...conditions,
+        [key]: value ? value : undefined
+      }
+    });
+  }
+
+  const handleChangeCondition = (e) => {
+    console.log(e)
+    const pages = [...props.pages];
+    pages[props.level - 1].overlays[props.overlayIndex].overlayCondition = e;
+    props.changePages(pages)
+  }
+
   const hideToggled = (e) => {
     setHideBtn(e);
     const pages = [...props.pages];
@@ -74,11 +100,33 @@ const DropdownOverlay = (props) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+
+  const openWidget = (event) => {
+    var myWidget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "uottawaedusim",
+        uploadPreset: "bb8lewrh"
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          props.handleOverlayIcon(result.info.public_id)
+        }
+      }
+    );
+    myWidget.open();
+  }
+
+
+
   return (
     <>
       <div className="dropdown overlayOptionsDropdown" ref={menuElem}>
         <div className="menu">
-          <h1>{t("edit.overlayXSettings", { name: props.overlayIndex + 1 })}</h1>
+          <div className="overlay-title-container"><h1 className="overlay-title">{t("edit.overlayXSettings", { name: props.overlayIndex + 1 })}</h1>
+            <button type="button" className="modal-overlay-button" onClick={openWidget}>
+              {t("modal.overlayImage")}
+            </button>
+          </div>
           <div className="overlayHideRow">
             <h2 className="overlaySettingsSub">{t("edit.hideOverlayButton")}</h2>
             <Switch
@@ -146,25 +194,25 @@ const DropdownOverlay = (props) => {
               <input
                 type="text"
                 placeholder={t("edit.variableName")}
-                value={null}
-                onChange={null}
+                value={conditions?.varName || ""}
+                onChange={(e) => handleUpdateConditions("varName", e.target.value)}
               />
               <select
                 name="inputtype"
                 value={conditions?.condition}
-                onChange={null}
+                onChange={(e) => handleUpdateConditions("condition", e.target.value)}
               >
                 <option value="positive">{t("edit.cond.positive")}</option>
                 <option value="negative">{t("edit.cond.negative")}</option>
-                <option value="equalto">{t("edit.cond.isequal")}</option>
+                <option value="isequal">{t("edit.cond.isequal")}</option>
                 <option value="onchange">{t("edit.cond.onchange")}</option>
               </select>
-              {conditions?.condition === "equalto" && (
+              {conditions?.condition === "isequal" && (
                 <input
                   type="text"
                   placeholder={t("edit.valueToCheckAgainst")}
-                  value={null}
-                  onChange={null}
+                  value={conditions?.trueValue || ""}
+                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
                 />
               )}
             </div>

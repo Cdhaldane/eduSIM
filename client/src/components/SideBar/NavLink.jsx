@@ -104,7 +104,7 @@ const NavLink = forwardRef((props, ref) => {
             </>
           ) : (
             <>
-              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + localStorage.simimg + ".jpg"}  alt={t("alt.sim")} />
+              <Image cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img + ".jpg"}  alt={t("alt.sim")} />
               <div>
                 <span className="special">{props.label}</span>
                 <p className="sublabel">{props.sublabel}</p>

@@ -238,6 +238,8 @@ const Table = (props) => {
   const handleEmail = (e) => {
     e.preventDefault();
     setSending(true);
+    console.log(props)
+    console.log(excludedEmails)
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendInviteEmails', {
       exclude: excludedEmails,
       simname: props.title,

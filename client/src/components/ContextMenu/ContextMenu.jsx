@@ -142,6 +142,18 @@ const ContextMenu = (props) => {
       }
     });
   }
+  const handleUpdateVar = (key, value) => {
+    setConditions(old => ({
+      ...old,
+      [key]: value ? value : undefined
+    }))
+    debounceObjState({
+      conditions: {
+        ...conditions,
+        [key]: value ? value : undefined
+      }
+    });
+  }
 
   return (
     <div

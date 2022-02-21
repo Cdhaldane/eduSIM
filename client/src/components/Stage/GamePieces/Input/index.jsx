@@ -6,7 +6,7 @@ import { SettingsContext } from "../../../../App";
 const Wrapper = styled.div`
   & > * {
     font-size: ${p => p.textsize || '1'}em;
-  } 
+  }
 `;
 
 const Input = forwardRef((props, ref) => {
@@ -25,6 +25,7 @@ const Input = forwardRef((props, ref) => {
         ...vars,
         [varName]: value
       }));
+      console.log(sessionStorage)
       sessionStorage.setItem('lastSetVar', varName);
       props.refresh();
     }

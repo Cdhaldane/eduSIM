@@ -30,6 +30,16 @@
   z-index: 2;
 }
 
+.overlayIcons{
+  border: 1px solid var(--dark);
+}
+
+.overlayIcons:hover{
+  cursor: pointer;
+  position: relative;
+  top: -2px;
+}
+
 .overlayButton>i {
   color: var(--primary);
   font-size: 40px;
