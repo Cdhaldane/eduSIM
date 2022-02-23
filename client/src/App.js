@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
 import CookiesPopup from "./components/Alerts/CookiesPopup";
+import { useLocalStorage } from 'usehooks-ts'
 import "./components/CreateCsv/CreateCsv.css";
 import "./components/CreateArea/CreateArea.css";
 
@@ -39,6 +40,8 @@ const App = (props) => {
 
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
   const [cookiesPopupVisible, setCookiesPopupVisible] = useState(true);
+  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -52,6 +55,11 @@ const App = (props) => {
     });
   }
 
+  const switchTheme= () => {
+    const newTheme= theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme)
+   }
+
   useEffect(() => {
     document.documentElement.style.filter = (
       localSettings.contrast ? 'saturate(1.25) grayscale(.1) contrast(1.2)' : ''
@@ -64,13 +72,13 @@ const App = (props) => {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="full-page-wrapper">
+    <div className="full-page-wrapper" data-theme={theme}>
     <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
       <AlertContextProvider>
 
         <AlertPopup />
         {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-          <Navbar />
+          <Navbar switchTheme={switchTheme}/>
         )}
         <div className="main-content">
         <Suspense fallback={<Loading />}>

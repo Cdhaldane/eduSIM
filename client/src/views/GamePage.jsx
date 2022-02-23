@@ -72,9 +72,7 @@ const Game = (props) => {
           id: roomid,
         }
       });
-
       setRoomInfo(roomData);
-      console.log(roomData)
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
         params: {
           gameinstanceid: roomData.gameinstanceid,
@@ -154,9 +152,7 @@ const Game = (props) => {
     const count = (roomStatus.settings?.advanceMode || 1) * 60000;
     return (count - timeFromNow()) - Math.floor((count - timeFromNow()) / count) * count
   };
-
-  const actualLevel = roomStatus.level || level;
-
+  let actualLevel = roomStatus.level || level;
   // Parse seeded roles
   const parsedPlayers = useMemo(() => {
     let newPlayers = {};
@@ -176,6 +172,13 @@ const Game = (props) => {
 
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
 
+  const handleLevel = () => {
+    console.log(roomStatus)
+    socket.emit("goToPage", {
+      level: actualLevel + 1
+    });
+  }
+
   return (
     !isLoading ? (
       <>
@@ -186,10 +189,11 @@ const Game = (props) => {
           className="grid-sidebar game"
           visible={showNav}
           close={toggle}
-          img={room.gameinstance.gameinstance_photo_path}
-          title={room.gameinstance.gameinstance_name}
-          subtitle={room.gameroom_name}
+          img={room.gameinstance.gameinstance_photo_path  || ""}
+          title={room.gameinstance.gameinstance_name || ""}
+          subtitle={room.gameroom_name || ""}
           socket={socket}
+          handleLevel={handleLevel}
           variables={roomStatus.variables || {}}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
@@ -198,8 +202,6 @@ const Game = (props) => {
           alertProps={{
             alerts: tasks[actualLevel] || []
           }}
-
-
         />
         <Main color={pageColor}>
           <CanvasGame
@@ -217,6 +219,7 @@ const Game = (props) => {
             gameinstance={room.gameinstance}
             socket={socket}
             players={parsedPlayers}
+            handleLevel={handleLevel}
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}

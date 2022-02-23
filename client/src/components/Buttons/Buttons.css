@@ -4,7 +4,6 @@
     outline: none;
     border: none;
     cursor: pointer;
-    margin-right: 2vw;
     background-color: var(--white);
     transition: transform 0.3s ease;
     font-family: inherit;
@@ -70,10 +69,7 @@
 /* Button Sizes */
 
 .btn--medium {
-    padding: 8px 20px;
-    border-radius: 50px;
-    font-size: 1.3vw;
-    font-weight: bolder;
+
 }
 
 .btn--large {

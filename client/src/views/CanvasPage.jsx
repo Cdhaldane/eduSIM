@@ -95,6 +95,7 @@ const CanvasPage = (props) => {
 
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
+      console.log(gameEditPropsRef.current)
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;
@@ -836,6 +837,7 @@ const CanvasPage = (props) => {
   const canvasW = window.innerWidth * maxCanvasScaleFactor;
   const canvasH = window.innerHeight * maxCanvasScaleFactor;
 
+
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
@@ -1064,7 +1066,6 @@ const CanvasPage = (props) => {
 
     return returnValue;*/
   }
-
   return (
     <Suspense fallback={<Loading />}>
       {props.edit ? (

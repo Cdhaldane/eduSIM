@@ -28,7 +28,10 @@
       "termsOfService": "Terms of Service",
       "privacyPolicy": "Privacy Policy",
       "copyright": "Copyright © {{year}} eduSIM",
-      "contact": "Contact"
+      "contact": "Contact",
+      "home": "Home",
+      "light": "Light",
+      "dark": "Dark"
     },
     "common": {
       "add": "Add",
@@ -310,12 +313,15 @@
       "sendAtIntervals": "Send at intervals",
       "label": "Label",
       "requiredToAdvance": "Required to advance",
+      "whenCompleted": "Advance if completed",
       "unfinishedLabel": "Unfinished label",
       "finishedLabel": "Finished label",
       "completedWhen": "Completed when...",
       "variableSync": "Synchronize across clients",
       "inputType": "Input type",
       "onlyDisplayThisIf": "Only display this if...",
+      "number": "Some number...",
+      "setVariable": "When activated set variable to...",
       "variableName": "Variable name",
       "variableNameToSet": "Variable name to set",
       "variablesToSendCommaSeparated": "Variables to send (separated by commas)",
@@ -380,7 +386,8 @@
       "noCSV": "No spreadsheet file detected",
       "containsXEntries_one": "Contains {{count}} entry",
       "containsXEntries_other": "Contains {{count}} entries",
-      "downloadCSVTemplate": "Download CSV template"
+      "downloadCSVTemplate": "Download CSV template",
+      "overlayImage": "Upload icon"
     },
     "alert": {
       "inviteSuccessful": "Invitations have been successfully sent to given email addresses.",

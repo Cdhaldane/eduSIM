@@ -52,6 +52,7 @@ const Dashboard = (props) => {
           else
             getGamedata(allData)
           setLoading(false);
+          console.log(allData)
         }).catch(error => {
           console.error(error);
         });
@@ -200,12 +201,6 @@ const Dashboard = (props) => {
         <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim">
               <DraggableList items={gamedata}/>
-        </div>
-        <div className="page-margin">
-          <h2>{t("admin.mySimulations")}</h2>
-          <div className="dashsim">
-            <DraggableList items={gamedata} />
-          </div>
         </div>
         <Modal
           isOpen={showNote}

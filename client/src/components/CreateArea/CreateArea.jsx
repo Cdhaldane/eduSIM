@@ -16,6 +16,7 @@ const CreateArea = (props) => {
   const [filename, setFilename] = useState("images/ujjtehlwjgsfqngxesnd");
   const [imageSelected, setImageSelected] = useState("images/ujjtehlwjgsfqngxesnd");
   const [copy, setCopy] = useState(0);
+  const [prevImages] = useState(localStorage.getItem("images"));
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
   const { t } = useTranslation();
@@ -104,11 +105,14 @@ const CreateArea = (props) => {
       setFiles(JSON.parse(e.target.result));
       let parsedJson = (JSON.parse(e.target.result).data);
       parsedJson.createdby_adminid = localStorage.adminid;
+      console.log(parsedJson)
+      setTitle(parsedJson.gameinstance_name + " - copy");
+      setImageSelected(parsedJson.gameinstance_photo_path);
 
       axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', parsedJson).catch(error => {
         console.error(error);
       });
-      window.location.reload()
+      // window.location.reload()
     };
 
 
@@ -243,7 +247,9 @@ const CreateArea = (props) => {
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
-        {JSON.parse(localStorage.images).map((image, index) => (
+        {prevImages ? (
+        <div>
+        {JSON.parse(prevImages).map((image, index) => (
             <Image
               key={index}
               cloudName="uottawaedusim"
@@ -255,7 +261,10 @@ const CreateArea = (props) => {
               alt={t("alt.sim")}
             />
           ))}
-
+          </div>
+        ) : (
+          <div></div>
+        )}
           <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
             {t("modal.imageFromFile")}
           </button>

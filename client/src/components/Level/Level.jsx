@@ -11,13 +11,11 @@ import "./Level.css";
 import "../Stage/Info.css";
 
 const Level = (props) => {
-
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const infoPopup = new useRef();
   const infoBtn = new useRef();
-
   let items = [];
 
   const handleClickOutside = e => {
@@ -54,6 +52,7 @@ const Level = (props) => {
       if (e > count + 1) return;
       if (!props.freeAdvance) return;
       props.level(e);
+
     } else {
       props.level(e);
       setCount(e);
@@ -65,6 +64,17 @@ const Level = (props) => {
       setCount(props.levelVal);
     }
   }, [props.levelVal]);
+
+  const firstUpdate = useRef(true);
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    } else {
+    handleLevel(props.realLevel)
+    console.log(props.realLevel)
+  }
+  }, [props.realLevel]);
 
   const createSelectItems = () => {
     // Replace empty names with Untitled#

@@ -6,7 +6,6 @@ import './Poll.css';
 import "survey-react/survey.css";
 
 const Poll = forwardRef((props, ref) => {
-
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
   const [completed, setCompleted] = useState();
 

@@ -5,6 +5,7 @@ import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import ButtonLink from "../Buttons/ButtonLink";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useLocalStorage } from 'usehooks-ts'
 
 import "./Navbar.css";
 
@@ -14,6 +15,8 @@ const NavBar = (props) => {
   const { user } = props.auth0;
   const profileDropdown = useRef();
   const { t } = useTranslation();
+  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
@@ -59,6 +62,10 @@ const NavBar = (props) => {
             <AuthenticationButton />
           </div>
         )}
+
+
+
+
             <ButtonLink
               className="nav-links"
               href="/dashboard"
@@ -66,6 +73,7 @@ const NavBar = (props) => {
               buttonSize="button--medium"
             >
               <i className="fas fa-home" alt={t("alt.home")}></i>
+              {t("navbar.home")}
             </ButtonLink>
             <ButtonLink
               className="nav-links"
@@ -94,3 +102,14 @@ const NavBar = (props) => {
 }
 
 export default withAuth0(NavBar);
+
+// <div className="util-box">
+//   <button onClick={props.switchTheme} className="darkmode-button">
+//     {theme === 'light' ? 'en' : 'fr'}
+//   </button>
+//   <button onClick={props.switchTheme} className="darkmode-button">
+//     <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+//   {theme === 'light' ? 'Dark' : 'Light'}
+//   </button>
+// </div>
+//

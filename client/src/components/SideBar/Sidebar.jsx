@@ -187,8 +187,8 @@ const Sidebar = (props) => {
 
   const links = [
     {
-      img: localStorage.simimg,
-      label: localStorage.simtitle,
+      img: props.img,
+      label: props.title,
       sublabel: props.subtitle,
       id: "title",
       visible: true,
@@ -218,6 +218,7 @@ const Sidebar = (props) => {
           editpage={!props.game}
           refresh={props.refresh}
           variables={props.variables}
+          handleLevel={props.handleLevel}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />

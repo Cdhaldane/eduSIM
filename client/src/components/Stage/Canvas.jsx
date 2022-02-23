@@ -6,6 +6,7 @@ import Portal from "./Shapes/Portal";
 import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
+import { Image } from "cloudinary-react";
 
 
 // Dropdowns
@@ -53,7 +54,7 @@ class Graphics extends Component {
     ...this.deletionCounts,
 
     "savedGroups",
-
+    "overlayImage",
     // Pages
     "pages",
     "numberOfPages",
@@ -136,6 +137,7 @@ class Graphics extends Component {
       overlayOpen: false,
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
+      overlayImage: -1,
 
       // Context Menu
       selectedContextMenu: null,
@@ -263,6 +265,7 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
+        console.log(res.data.game_parameters)
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -541,6 +544,7 @@ class Graphics extends Component {
         this.handleCopyPage(pageCopied);
       }
     });
+    console.log(this.state.pages)
   }
 
   handleNumOfPagesChange = (e) => {
@@ -572,7 +576,7 @@ class Graphics extends Component {
       };
     }
     storedObj.tasks = this.props.tasks;
-
+    console.log(storedObj)
     this.setState({
       saved: storedObj
     });
@@ -666,7 +670,6 @@ class Graphics extends Component {
   }
 
   onObjectContextMenu = e => {
-
     if (
       (this.state.selectedShapeName || this.state.groupSelection.length) &&
       this.state.selectedShapeName !== "pencils" &&
@@ -824,7 +827,6 @@ class Graphics extends Component {
       if (sidebarPx > 0 && personalArea) {
         sidebarPx = 100;
       }
-
       pos = {
         x: (event.clientX ? event.clientX :
           (event.targetTouches ? event.targetTouches[0].clientX : this.state.mouseX)) - sidebarPx,
@@ -873,15 +875,20 @@ class Graphics extends Component {
           return;
         }
       }
-
+      let xFix = 0;
+      let yFix = 0;
+      if(this.state.overlayOpen){
+        xFix=900;
+        yFix=400;
+      }
       this.setState({
         selection: {
           isDraggingShape: shape ? shape.id : null,
           visible: true,
-          x1: (pos.x + xOffset) / scale,
-          y1: (pos.y + yOffset) / scale,
-          x2: (pos.x + xOffset) / scale,
-          y2: (pos.y + yOffset) / scale
+          x1: (pos.x + xOffset + xFix) / scale,
+          y1: (pos.y + yOffset + yFix) / scale,
+          x2: (pos.x + xOffset + xFix) / scale,
+          y2: (pos.y + yOffset + yFix) / scale
         }
       }, () => {
         this.updateSelectionRect(personalArea);
@@ -2324,7 +2331,11 @@ class Graphics extends Component {
       rotation: skewX // Rotation is the same as skew x
     };
   }
-
+  getOverlayState = (index) => {
+    console.log(index)
+    console.log(this.state.level)
+    return this.state.pages[this.state.level - 1].overlays[index];
+  }
   getSelectedObj = () => {
     if (this.state.selectedShapeName) {
       for (let name of this.savedObjects) {
@@ -2335,6 +2346,7 @@ class Graphics extends Component {
     }
   }
   updateSelectedObj = (newState) => {
+    console.log(newState)
     let type;
     if (this.state.selectedShapeName) {
       for (let name of this.savedObjects) {
@@ -2998,6 +3010,17 @@ class Graphics extends Component {
     }
   }
 
+  handleOverlayIcon = (img) => {
+    this.setState({
+      overlayImage: img
+    })
+    this.setState(prevState => ({
+      ...prevState.savedState,
+      [this.state.overlayImage]: img
+    }))
+    console.log(this.savedState)
+  }
+
   render() {
     if (!this.state.savedStateLoaded) return null;
     return (
@@ -3104,9 +3127,22 @@ class Graphics extends Component {
                   style={{
                     top: `${70 * (i + 1)}px`
                   }}
-                  onClick={() => this.setOverlayOpen(true, overlay.id)}
+                  onClick={() => {
+                    this.setOverlayOpen(true, overlay.id)
+                    console.log(this.state.overlayImage)
+                  }}
                 >
+                  {this.state.overlayImage.length == 0 ? (
                   <i className="icons lni lni-credit-cards" />
+                  ) : (
+                    <Image
+                      className="overlayIcons"
+                      cloudName="uottawaedusim"
+                      publicId={
+                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
+                      }
+                    />
+                  )}
                 </div>
               );
             })}
@@ -3119,7 +3155,10 @@ class Graphics extends Component {
             changePages={this.handlePageTitle}
             overlayIndex={this.state.overlayOptionsOpen}
             pages={this.state.pages}
+            getOverlayState={this.getOverlayState}
             level={this.state.level}
+            updateObjState={this.updateSelectedObj}
+            handleOverlayIcon={this.handleOverlayIcon}
           />
         )}
 
@@ -3332,6 +3371,7 @@ class Graphics extends Component {
                   copy={this.handleCopy}
                   cut={this.handleCut}
                   paste={this.handlePaste}
+                  handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
                   setPollData={this.setPollData}
