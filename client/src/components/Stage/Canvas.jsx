@@ -785,13 +785,11 @@ class Graphics extends Component {
     }
 
     if (shape?.attrs?.id) {
-      console.log(shape.attrs.id);
       return {
         id: shape.attrs.id,
         custom: false
       };
     } else if (shape?.id) {
-      console.log("CUSTOM:", shape.id);
       return {
         id: shape.id,
         custom: true
@@ -2716,7 +2714,6 @@ class Graphics extends Component {
   }
 
   onObjectTransformStart = () => {
-    console.log("HHH");
     this.setState({ 
       isTransforming: true 
     });

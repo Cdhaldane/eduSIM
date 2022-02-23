@@ -122,7 +122,6 @@ const CanvasPage = (props) => {
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
       const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
-      console.log(zoomSettings);
       if (
         mode === "play" &&
         zoomSettings &&
@@ -456,7 +455,6 @@ const CanvasPage = (props) => {
       return false;
     }
   }
-
 
   const defaultObjProps = (obj, canvas, editMode) => {
     return {
