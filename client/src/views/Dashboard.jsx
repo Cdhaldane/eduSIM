@@ -50,9 +50,8 @@ const Dashboard = (props) => {
           if(localStorage.order)
             getGamedata(JSON.parse(localStorage.order));
           else
-            getGamedata(allData)
+            getGamedata(allData);
           setLoading(false);
-          console.log(allData)
         }).catch(error => {
           console.error(error);
         });
