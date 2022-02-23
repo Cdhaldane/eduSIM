@@ -49,7 +49,7 @@ class Overlay extends Component {
               style={{
                 backgroundColor: this.props.state.pages[this.props.state.level - 1].overlayColor
               }}
-              className="playModeCanvasContainer"
+              className={this.props.playMode ? "playModeCanvasContainer" : ""}
               tabIndex="0"
               name="pasteContainer"
             >

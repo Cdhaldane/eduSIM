@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
-  console.log(props)
   const { t } = useTranslation();
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
@@ -315,7 +314,7 @@ const Performance = forwardRef((props, ref) => {
                           questions = questions.flat();
                           return (
                             <React.Fragment key={pollI}>
-                              <div className="h2">{t("pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
+                              <div className="h2">{t("edit.pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
                               {questions.map((question, questionI) => {
                                 let answer = "";
                                 if (props.adminMode) {

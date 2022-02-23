@@ -447,6 +447,7 @@ const CanvasPage = (props) => {
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
   const isSelected = (id, canvas) => {
+    return true;
     if (canvas.state.selectedShapeName === id) {
       return true;
     } else if (canvas.state.groupSelection.flat().some(obj => obj?.attrs?.id === id)) {
@@ -528,7 +529,6 @@ const CanvasPage = (props) => {
       width: obj.width,
       height: obj.height,
       fillPatternImage: obj.fillPatternImage,
-      fillPatternOffset: obj.fillPatternOffset,
       image: obj.image
     }
   }
@@ -590,7 +590,6 @@ const CanvasPage = (props) => {
       width: obj.width,
       height: obj.height,
       fillPatternImage: bimage,
-      fillPatternOffset: obj.fillPatternOffset,
       fillPatternScaleY: 0.2,
       fillPatternScaleX: 0.2,
       image: obj.image,

@@ -93,9 +93,7 @@
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 6;
   animation-duration: 1.0s;
-  transform-style: preserve-3d;
-	transform-origin: 50% 100%;
-	animation: OpenTop 1s;
+  transform-origin: 50% 100%;
 }
 
 .overlayMain>div {
@@ -146,6 +144,7 @@
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+  background-image: none !important;
 }
 
 .info0>.playModeCanvasContainer {

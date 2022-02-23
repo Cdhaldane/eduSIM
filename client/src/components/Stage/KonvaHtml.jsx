@@ -1,6 +1,6 @@
-import { useRef, useLayoutEffect, createElement, useEffect } from 'react';
+import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Group } from 'react-konva';
+import { Group, Rect } from 'react-konva';
 
 const needForceStyle = (el) => {
   const pos = window.getComputedStyle(el).position;
@@ -35,6 +35,8 @@ const KonvaHtml = ({
   const groupRef = useRef(null);
   const container = useRef();
   const shouldTransform = transform !== null && transform !== void 0 ? transform : true;
+  const [rectWidth, setRectWidth] = useState(0);
+  const [rectHeight, setRectHeight] = useState(0);
 
   const handleTransform = () => {
     const div = container.current;
@@ -109,6 +111,8 @@ const KonvaHtml = ({
 
   useLayoutEffect(() => {
     if (container.current) {
+      setRectWidth(container.current.clientWidth);
+      setRectHeight(container.current.clientHeight);
       ReactDOM.render(children, container.current);
     }
   });
@@ -122,33 +126,57 @@ const KonvaHtml = ({
     div.style.opacity = visible ? "1" : "0";
   }, [visible]);
 
-  return createElement(Group, {
-    ref: groupRef,
-    id: refName,
-    name: "customObj",
-    draggable: true,
-    onTransformStart: () => {
-      console.log("BOOM");
-    },
-    onTransformEnd: defaultProps.onTransformEnd,
-    onDragMove: (e) => {
-      objectSnapping(groupRef.current, e);
-    },
-    onDragEnd: defaultProps.onDragEnd,
-    customProps: defaultProps.custom,
-    x: defaultProps.x,
-    y: defaultProps.y,
-    visible: visible,
-    rotation: defaultProps.rotation,
-    scaleX: defaultProps.scaleX,
-    scaleY: defaultProps.scaleY,
-    offsetX: 0,
-    offsetY: 0,
-    skewX: 0,
-    skewY: 0,
-    infolevel: defaultProps.infolevel,
-    overlay: defaultProps.overlay
-  });
+  return (
+    <Group
+      ref={groupRef}
+      id={refName}
+      name={"customObj"}
+      draggable={true}
+      onTransformEnd={defaultProps.onTransformEnd}
+      onDragMove={(e) => {
+        objectSnapping(groupRef.current, e);
+      }}
+      onDragEnd={defaultProps.onDragEnd}
+      customProps={defaultProps.custom}
+      x={defaultProps.x}
+      y={defaultProps.y}
+      visible={visible}
+      rotation={defaultProps.rotation}
+      scaleX={defaultProps.scaleX}
+      scaleY={defaultProps.scaleY}
+      offsetX={0}
+      offsetY={0}
+      skewX={0}
+      skewY={0}
+      infolevel={defaultProps.infolevel}
+      overlay={defaultProps.overlay}
+    >
+      {/*<Rect
+        id={"customRect"}
+        name={"customRect"}
+        //ref={"customRect"}
+        draggable={false}
+        visible={true}
+        opacity={1}
+        fill={"green"}
+        width={rectWidth}
+        height={rectHeight}
+        x={0}
+        y={0}
+      /*currentId={this.state.customRect[0].currentId}
+      width={this.state.customRect[0].width}
+      height={this.state.customRect[0].height}
+      x={this.state.customRect[0].x}
+      y={this.state.customRect[0].y}
+      onClick={() => this.onObjectClick(this.state.customRect[0])}
+      onTransformStart={this.onObjectTransformStart}
+      onTransformEnd={() => this.onObjectTransformEnd(this.state.customRect[0])}
+      onDragMove={(e) => this.onObjectDragMove(this.state.customRect[0], e)}
+      onDragEnd={(e) => this.handleDragEnd(e, this.getObjType(this.state.customRect[0].id), this.state.customRect[0].ref)}
+      onContextMenu={this.onObjectContextMenu}
+      />*/}
+    </Group>
+  );
 };
 
 export default KonvaHtml;

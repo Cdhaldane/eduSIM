@@ -265,7 +265,6 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
-        console.log(res.data.game_parameters)
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -576,7 +575,6 @@ class Graphics extends Component {
       };
     }
     storedObj.tasks = this.props.tasks;
-    console.log(storedObj)
     this.setState({
       saved: storedObj
     });

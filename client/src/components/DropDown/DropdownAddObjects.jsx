@@ -11,7 +11,6 @@ import "./Dropdown.css";
 const DEFAULT_STROKE = 2;
 
 const DropdownAddObjects = (props) => {
-  console.log(props)
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(274);
   const dropdownRef = useRef(null);
@@ -69,7 +68,6 @@ const DropdownAddObjects = (props) => {
   }
 
   useEffect(() => {
-    console.log(isChromeCheck)
     if(isChrome){
       if(props.type === "overlay"){
         setFixX(930);
@@ -211,9 +209,7 @@ const DropdownAddObjects = (props) => {
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
 
     const isCustom = props.customObjects.includes(objectName);
-
-
-
+    
     const name = objectName + numOfObj;
     let objX = props.state.selectedContextMenu.position.relX;
     let objY = props.state.selectedContextMenu.position.relY;
@@ -223,11 +219,9 @@ const DropdownAddObjects = (props) => {
 
     if(objX > screenW) {
       objX = objX - 200;
-      console.log(true)
     }
     if(objY > screenH) {
       objY = objY - 200;
-      console.log(true)
     }
 
     const object = {
@@ -456,7 +450,6 @@ const DropdownAddObjects = (props) => {
         stroke: 'black',
         strokeWidth: 0,
         fillPatternImage: props.state.docimage,
-        fillPatternOffset: "",
         rotation: 0,
         width: 100,
         height: 100,

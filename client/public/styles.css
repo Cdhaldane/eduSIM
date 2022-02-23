@@ -821,7 +821,7 @@ hr {
   width: 100vw;
 }
 
-#levels input, select {
+#levels input {
   position: relative;
   top: -870px;
   left: 220px;
