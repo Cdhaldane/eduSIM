@@ -543,7 +543,6 @@ class Graphics extends Component {
         this.handleCopyPage(pageCopied);
       }
     });
-    console.log(this.state.pages)
   }
 
   handleNumOfPagesChange = (e) => {
@@ -873,20 +872,14 @@ class Graphics extends Component {
           return;
         }
       }
-      let xFix = 0;
-      let yFix = 0;
-      if(this.state.overlayOpen){
-        xFix=900;
-        yFix=400;
-      }
       this.setState({
         selection: {
           isDraggingShape: shape ? shape.id : null,
           visible: true,
-          x1: (pos.x + xOffset + xFix) / scale,
-          y1: (pos.y + yOffset + yFix) / scale,
-          x2: (pos.x + xOffset + xFix) / scale,
-          y2: (pos.y + yOffset + yFix) / scale
+          x1: (pos.x + xOffset) / scale,
+          y1: (pos.y + yOffset) / scale,
+          x2: (pos.x + xOffset) / scale,
+          y2: (pos.y + yOffset) / scale
         }
       }, () => {
         this.updateSelectionRect(personalArea);
@@ -2330,8 +2323,6 @@ class Graphics extends Component {
     };
   }
   getOverlayState = (index) => {
-    console.log(index)
-    console.log(this.state.level)
     return this.state.pages[this.state.level - 1].overlays[index];
   }
   getSelectedObj = () => {

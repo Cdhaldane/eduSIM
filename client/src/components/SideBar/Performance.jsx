@@ -40,8 +40,10 @@ const Performance = forwardRef((props, ref) => {
           backgroundColor: answer
         }} />
       );
-    } else {
+    } else if (answer) {
       return answer;
+    } else {
+      return t("edit.noResponses");
     }
   }
 
@@ -50,12 +52,12 @@ const Performance = forwardRef((props, ref) => {
     // so get all responses from users
     let answer = "";
     const responses = [];
-    if(allData.isComplete){
     for (const userId in allData) {
-      const personalResponse = allData.data ? allData.data[question.name] : undefined;
-      responses.push(personalResponse);
+      if (allData[userId]) {
+        const personalResponse = allData[userId].data ? allData[userId].data[question.name] : undefined;
+        responses.push(personalResponse);
+      }
     }
-  }
     const responseSet = new Set(responses);
     responseSet.delete(undefined);
     const responsesNoDupes = [...responseSet];
@@ -318,7 +320,11 @@ const Performance = forwardRef((props, ref) => {
                               {questions.map((question, questionI) => {
                                 let answer = "";
                                 if (props.adminMode) {
-                                  answer = pollAllDataAnswer(props.status[poll.id], question);
+                                  if (question.performanceOption === "groupResponse") {
+                                    answer = pollAnswerHTML(pollData.data[question.name], question);
+                                  } else {
+                                    answer = pollAllDataAnswer(props.status[poll.id], question);
+                                  }
                                 } else if (pollData[question.name] || pollData[question.name] === false) {
                                   if (question.performanceOption === "noShow") {
                                     answer = "";
