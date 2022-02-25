@@ -321,7 +321,11 @@ const Performance = forwardRef((props, ref) => {
                                 let answer = "";
                                 if (props.adminMode) {
                                   if (question.performanceOption === "groupResponse") {
-                                    answer = pollAnswerHTML(pollData.data[question.name], question);
+                                    if (pollData.data) {
+                                      answer = pollAnswerHTML(pollData.data[question.name], question);
+                                    } else {
+                                      answer = t("edit.noResponses");
+                                    }
                                   } else {
                                     answer = pollAllDataAnswer(props.status[poll.id], question);
                                   }
@@ -337,7 +341,7 @@ const Performance = forwardRef((props, ref) => {
                                     answer = pollAllDataAnswer(props.status[poll.id], question);
                                   }
                                 } else {
-                                  answer = null;
+                                  answer = t("edit.noResponses");
                                 }
                                 return (
                                   <React.Fragment key={questionI}>

@@ -119,7 +119,6 @@ class Graphics extends Component {
         canvasLoading: true
       }, () => {
         this.props.setCanvasLoading(this.state.canvasLoading);
-        console.log("BING");
         this.props.reCenter("play");
       });
     }, 0);
@@ -339,6 +338,23 @@ class Graphics extends Component {
           }
         },
         onObjectDragMove: (obj, e) => {
+          // Bound the drag to the edge of the screen
+          const objRef = this.refs[obj.id];
+          const topPad = document.getElementById("levelContainer").clientHeight;
+          const stage = objRef.getLayer();
+          const screenRect = {
+            x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
+            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? topPad : 0)) / stage.scaleY(),
+            width: (stage.width() - (objRef.getClientRect().width /
+              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
+            height: (stage.height() - (objRef.getClientRect().height /
+              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleY()
+          };
+          objRef.y(Math.max(objRef.y(), screenRect.y)); // Top Bound
+          objRef.y(Math.min(objRef.y(), screenRect.y + screenRect.height)); // Bottom Bound
+          objRef.x(Math.max(objRef.x(), screenRect.x)); // Left Bound
+          objRef.x(Math.min(objRef.x(), screenRect.x + screenRect.width)); // Right Bound
+
           if (!obj.infolevel && !obj.overlay) {
             [
               ...this.state.images,
@@ -410,7 +426,6 @@ class Graphics extends Component {
           canvasLoading: true
         });
         setTimeout(() => {
-          console.log("BONG");
           this.props.reCenter("play", layer)
         }, 300);
       }
