@@ -95,7 +95,6 @@ const CanvasPage = (props) => {
 
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
-      console.log(gameEditPropsRef.current)
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;
@@ -106,7 +105,11 @@ const CanvasPage = (props) => {
 
   // In game mode to prevent screen resizing due to dragging shapes out of bounds
   // It will use the initial zoom settings until a resize occurs
-  const [zoomSettings, setZoomSettings] = useState(null);
+  const [zoomSettings, setZoomSettings] = useState({
+    group: { x: null, y: null, scale: null, resize: false },
+    overlay: { x: null, y: null, scale: null, resize: false },
+    personal: { x: null, y: null, scale: null, resize: false }
+  });
 
   const [prevLayers, setPrevLayers] = useState([]);
 
@@ -126,9 +129,11 @@ const CanvasPage = (props) => {
       if (
         mode === "play" &&
         zoomSettings &&
-        (zoomSettings[areaString].resize ||
-        from !== "resize") &&
-        zoomSettings[areaString]
+        zoomSettings[areaString].x &&
+        zoomSettings[areaString].y &&
+        zoomSettings[areaString].scale &&
+        !zoomSettings[areaString].resize &&
+        from !== "resize"
       ) {
         canvas.setState({
           [`${areaString}LayerX`]: zoomSettings[areaString].x,
@@ -287,27 +292,35 @@ const CanvasPage = (props) => {
             }
             const newX = canvas.state[`${areaString}LayerX`] + x;
             const newY = canvas.state[`${areaString}LayerY`] + y;
-            if (mode === "play") {
-              setZoomSettings({
-                group: {
-                  resize: from === "resize" ? true : zoomSettings?.group?.resize,
-                  ...zoomSettings?.group
-                },
-                overlay: {
-                  resize: from === "resize" ? true : zoomSettings?.overlay?.resize,
-                  ...zoomSettings?.overlay
-                },
-                personal: {
-                  resize: from === "resize" ? true : zoomSettings?.personal?.resize,
-                  ...zoomSettings?.personal
-                },
-                [areaString]: {
-                  x: newX,
-                  y: newY,
-                  scale: scale,
-                  newHeight: newHeight,
-                  resize: false
+            if (mode === "play") {   
+              const newCanvZoomSettings = {
+                x: newX,
+                y: newY,
+                scale: scale,
+                newHeight: newHeight,
+                resize: false
+              };
+              let zoomSettingsRest = null;
+              if (from === "resize") {
+                const otherCanvs = ["group", "personal", "overlay"].filter(canv => canv !== areaString);
+                zoomSettingsRest = {
+                  [otherCanvs[0]]: {
+                    ...otherCanvs[0],
+                    resize: true
+                  },
+                  [otherCanvs[1]]: {
+                    ...otherCanvs[1],
+                    resize: true
+                  }
                 }
+              } else {
+                zoomSettingsRest = {
+                  ...zoomSettings
+                }
+              }
+              setZoomSettings({
+                ...zoomSettingsRest,
+                [areaString]: newCanvZoomSettings
               });
             }
             canvas.setState({
@@ -323,6 +336,7 @@ const CanvasPage = (props) => {
         }
       }, 0));
     }
+
     if ((!layer || layer === "group") && !canvas.state.overlayOpen && !canvas.state.personalAreaOpen) {
       _reCenterObjects(false, mode, false);
     }
@@ -448,6 +462,7 @@ const CanvasPage = (props) => {
    * are used by the objects rendered to the canvasses.
    *----------------------------------------------------*/
   const isSelected = (id, canvas) => {
+    return true;
     if (canvas.state.selectedShapeName === id) {
       return true;
     } else if (canvas.state.groupSelection.flat().some(obj => obj?.attrs?.id === id)) {
@@ -529,7 +544,6 @@ const CanvasPage = (props) => {
       width: obj.width,
       height: obj.height,
       fillPatternImage: obj.fillPatternImage,
-      fillPatternOffset: obj.fillPatternOffset,
       image: obj.image
     }
   }
@@ -591,7 +605,6 @@ const CanvasPage = (props) => {
       width: obj.width,
       height: obj.height,
       fillPatternImage: bimage,
-      fillPatternOffset: obj.fillPatternOffset,
       fillPatternScaleY: 0.2,
       fillPatternScaleX: 0.2,
       image: obj.image,
@@ -946,6 +959,8 @@ const CanvasPage = (props) => {
     objectIds = [objectIds.filter(id => id.includes("pencils")), ...objectIds.filter(id => !id.includes("pencils"))];
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
+
+    //console.log(canvas.refs);
 
     return (
       <>

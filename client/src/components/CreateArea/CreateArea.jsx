@@ -105,14 +105,12 @@ const CreateArea = (props) => {
       setFiles(JSON.parse(e.target.result));
       let parsedJson = (JSON.parse(e.target.result).data);
       parsedJson.createdby_adminid = localStorage.adminid;
-      console.log(parsedJson)
       setTitle(parsedJson.gameinstance_name + " - copy");
       setImageSelected(parsedJson.gameinstance_photo_path);
 
       axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', parsedJson).catch(error => {
         console.error(error);
       });
-      // window.location.reload()
     };
 
 

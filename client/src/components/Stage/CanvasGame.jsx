@@ -242,13 +242,14 @@ class Graphics extends Component {
   }
 
   renderOverlay = (page) => {
-    if(!this.state.overlayOpen){
-    this.setState({
-      overlayOpenIndex: page.id,
-      overlayOpen: true
-    });
+    if (!this.state.overlayOpen) {
+      this.setState({
+        overlayOpenIndex: page.id,
+        overlayOpen: true
+      });
     }
   }
+
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
@@ -263,19 +264,19 @@ class Graphics extends Component {
           overlayPageEnter = page.overlays[i];
           break;
         }
-        if(page.overlays[i].overlayCondition){
+        if (page.overlays[i].overlayCondition) {
           let conditions = page.overlays[i].overlayCondition.conditions
 
-        if(conditions != undefined){
-          let overlayCheck = this.checkObjConditions(conditions)
-          if(overlayCheck){
-            overlayCondition = page.overlays[i];
-            this.renderOverlay(overlayCondition)
-            break;
-          }
+          if (conditions != undefined) {
+            let overlayCheck = this.checkObjConditions(conditions)
+            if (overlayCheck) {
+              overlayCondition = page.overlays[i];
+              this.renderOverlay(overlayCondition)
+              break;
+            }
 
+          }
         }
-      }
       }
     }
     if (
@@ -325,10 +326,10 @@ class Graphics extends Component {
               parameters: {
                 ...this.props.gamepieceStatus[obj.id],
                 [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
-                {
-                  x: e.target.x(),
-                  y: e.target.y()
-                },
+                  {
+                    x: e.target.x(),
+                    y: e.target.y()
+                  },
                 x: synched ? e.target.x() : null,
                 y: synched ? e.target.y() : null,
                 dragging: null
@@ -337,6 +338,23 @@ class Graphics extends Component {
           }
         },
         onObjectDragMove: (obj, e) => {
+          // Bound the drag to the edge of the screen
+          const objRef = this.refs[obj.id];
+          const topPad = document.getElementById("levelContainer").clientHeight;
+          const stage = objRef.getLayer();
+          const screenRect = {
+            x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
+            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? topPad : 0)) / stage.scaleY(),
+            width: (stage.width() - (objRef.getClientRect().width /
+              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
+            height: (stage.height() - (objRef.getClientRect().height /
+              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleY()
+          };
+          objRef.y(Math.max(objRef.y(), screenRect.y)); // Top Bound
+          objRef.y(Math.min(objRef.y(), screenRect.y + screenRect.height)); // Bottom Bound
+          objRef.x(Math.max(objRef.x(), screenRect.x)); // Left Bound
+          objRef.x(Math.min(objRef.x(), screenRect.x + screenRect.width)); // Right Bound
+
           if (!obj.infolevel && !obj.overlay) {
             [
               ...this.state.images,
@@ -407,7 +425,9 @@ class Graphics extends Component {
         this.setState({
           canvasLoading: true
         });
-        setTimeout(() => this.props.reCenter("play", layer), 300);
+        setTimeout(() => {
+          this.props.reCenter("play", layer)
+        }, 300);
       }
     }
 
@@ -464,20 +484,22 @@ class Graphics extends Component {
       });
     } catch (e) { };
 
-    if(localStorage.userInfo){
-    if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
-      const info = JSON.parse(localStorage.userInfo);
-      if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
-      this.handlePlayerInfo(info);
+    if (localStorage.userInfo) {
+      if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
+        const info = JSON.parse(localStorage.userInfo);
+        if (this.props.alert) this.props.alert(this.props.t("alert.loggedInAsX", { name: info.name }), "info");
+        this.handlePlayerInfo(info);
+      }
     }
-  }
 
     // Reposition / scale objects on screen resize
     let resizeTimeout;
     window.onresize = () => {
       clearTimeout(resizeTimeout);
+      const layer = this.state.overlayOpen ? "overlay" :
+        (this.state.personalAreaOpen ? "personal" : "group");
       resizeTimeout = setTimeout(() => {
-        this.props.reCenter("play", "all", "resize");
+        this.props.reCenter("play", layer, "resize");
       }, 100);
     };
   }
@@ -575,17 +597,17 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                  {!this.state.overlayImage ? (
-                  <i className="icons lni lni-credit-cards" />
-                  ) : (
-                    <Image
-                      className="overlayIcons"
-                      cloudName="uottawaedusim"
-                      publicId={
-                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
-                      }
-                    />
-                  )}
+                    {!this.state.overlayImage ? (
+                      <i className="icons lni lni-credit-cards" />
+                    ) : (
+                      <Image
+                        className="overlayIcons"
+                        cloudName="uottawaedusim"
+                        publicId={
+                          "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
+                        }
+                      />
+                    )}
                   </div>
                 );
               } else {

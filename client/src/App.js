@@ -41,7 +41,8 @@ const App = (props) => {
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
   const [cookiesPopupVisible, setCookiesPopupVisible] = useState(true);
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+  //const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+  const [theme, setTheme] = "light";
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -57,7 +58,7 @@ const App = (props) => {
 
   const switchTheme= () => {
     const newTheme= theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme)
+    setTheme(newTheme);
    }
 
   useEffect(() => {

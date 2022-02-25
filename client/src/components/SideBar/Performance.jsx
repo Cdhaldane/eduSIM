@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
-  console.log(props)
   const { t } = useTranslation();
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
@@ -41,8 +40,10 @@ const Performance = forwardRef((props, ref) => {
           backgroundColor: answer
         }} />
       );
-    } else {
+    } else if (answer) {
       return answer;
+    } else {
+      return t("edit.noResponses");
     }
   }
 
@@ -51,12 +52,12 @@ const Performance = forwardRef((props, ref) => {
     // so get all responses from users
     let answer = "";
     const responses = [];
-    if(allData.isComplete){
     for (const userId in allData) {
-      const personalResponse = allData.data ? allData.data[question.name] : undefined;
-      responses.push(personalResponse);
+      if (allData[userId]) {
+        const personalResponse = allData[userId].data ? allData[userId].data[question.name] : undefined;
+        responses.push(personalResponse);
+      }
     }
-  }
     const responseSet = new Set(responses);
     responseSet.delete(undefined);
     const responsesNoDupes = [...responseSet];
@@ -315,11 +316,19 @@ const Performance = forwardRef((props, ref) => {
                           questions = questions.flat();
                           return (
                             <React.Fragment key={pollI}>
-                              <div className="h2">{t("pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
+                              <div className="h2">{t("edit.pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
                               {questions.map((question, questionI) => {
                                 let answer = "";
                                 if (props.adminMode) {
-                                  answer = pollAllDataAnswer(props.status[poll.id], question);
+                                  if (question.performanceOption === "groupResponse") {
+                                    if (pollData.data) {
+                                      answer = pollAnswerHTML(pollData.data[question.name], question);
+                                    } else {
+                                      answer = t("edit.noResponses");
+                                    }
+                                  } else {
+                                    answer = pollAllDataAnswer(props.status[poll.id], question);
+                                  }
                                 } else if (pollData[question.name] || pollData[question.name] === false) {
                                   if (question.performanceOption === "noShow") {
                                     answer = "";
@@ -332,7 +341,7 @@ const Performance = forwardRef((props, ref) => {
                                     answer = pollAllDataAnswer(props.status[poll.id], question);
                                   }
                                 } else {
-                                  answer = null;
+                                  answer = t("edit.noResponses");
                                 }
                                 return (
                                   <React.Fragment key={questionI}>

@@ -265,7 +265,6 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
-        console.log(res.data.game_parameters)
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -544,7 +543,6 @@ class Graphics extends Component {
         this.handleCopyPage(pageCopied);
       }
     });
-    console.log(this.state.pages)
   }
 
   handleNumOfPagesChange = (e) => {
@@ -576,7 +574,6 @@ class Graphics extends Component {
       };
     }
     storedObj.tasks = this.props.tasks;
-    console.log(storedObj)
     this.setState({
       saved: storedObj
     });
@@ -875,20 +872,14 @@ class Graphics extends Component {
           return;
         }
       }
-      let xFix = 0;
-      let yFix = 0;
-      if(this.state.overlayOpen){
-        xFix=900;
-        yFix=400;
-      }
       this.setState({
         selection: {
           isDraggingShape: shape ? shape.id : null,
           visible: true,
-          x1: (pos.x + xOffset + xFix) / scale,
-          y1: (pos.y + yOffset + yFix) / scale,
-          x2: (pos.x + xOffset + xFix) / scale,
-          y2: (pos.y + yOffset + yFix) / scale
+          x1: (pos.x + xOffset) / scale,
+          y1: (pos.y + yOffset) / scale,
+          x2: (pos.x + xOffset) / scale,
+          y2: (pos.y + yOffset) / scale
         }
       }, () => {
         this.updateSelectionRect(personalArea);
@@ -2332,8 +2323,6 @@ class Graphics extends Component {
     };
   }
   getOverlayState = (index) => {
-    console.log(index)
-    console.log(this.state.level)
     return this.state.pages[this.state.level - 1].overlays[index];
   }
   getSelectedObj = () => {
@@ -2346,7 +2335,6 @@ class Graphics extends Component {
     }
   }
   updateSelectedObj = (newState) => {
-    console.log(newState)
     let type;
     if (this.state.selectedShapeName) {
       for (let name of this.savedObjects) {
@@ -3018,7 +3006,6 @@ class Graphics extends Component {
       ...prevState.savedState,
       [this.state.overlayImage]: img
     }))
-    console.log(this.savedState)
   }
 
   render() {
@@ -3128,8 +3115,7 @@ class Graphics extends Component {
                     top: `${70 * (i + 1)}px`
                   }}
                   onClick={() => {
-                    this.setOverlayOpen(true, overlay.id)
-                    console.log(this.state.overlayImage)
+                    this.setOverlayOpen(true, overlay.id);
                   }}
                 >
                   {this.state.overlayImage.length == 0 ? (

@@ -32,6 +32,9 @@
   border-radius: 15px 15px 0px 0px;
   z-index: 2;
   transition: none;
+}
+
+.info1>.personalAreaStageContainer {
   background-image:
     repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
     repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);
@@ -76,6 +79,7 @@
   background-color: white;
   pointer-events: all;
 }
+
 .off {
   margin-top: 10px;
 }
