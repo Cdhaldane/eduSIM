@@ -11,7 +11,6 @@ import "./Dropdown.css";
 const DEFAULT_STROKE = 2;
 
 const DropdownAddObjects = (props) => {
-  console.log(props)
   const [activeMenu, setActiveMenu] = useState("main");
   const [menuHeight, setMenuHeight] = useState(274);
   const dropdownRef = useRef(null);
@@ -69,7 +68,6 @@ const DropdownAddObjects = (props) => {
   }
 
   useEffect(() => {
-    console.log(isChromeCheck)
     if(isChrome){
       if(props.type === "overlay"){
         setFixX(930);
@@ -223,11 +221,9 @@ const DropdownAddObjects = (props) => {
 
     if(objX > screenW) {
       objX = objX - 200;
-      console.log(true)
     }
     if(objY > screenH) {
       objY = objY - 200;
-      console.log(true)
     }
 
     const object = {

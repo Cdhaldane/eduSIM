@@ -72,7 +72,6 @@ const ContextMenu = (props) => {
 
 
   useEffect(() => {
-    console.log(props)
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
