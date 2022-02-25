@@ -14,7 +14,7 @@ const Input = forwardRef((props, ref) => {
   const { settings } = useContext(SettingsContext);
 
   const varName = props.varName || props.id;
-
+  console.log(props)
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value);
@@ -33,6 +33,7 @@ const Input = forwardRef((props, ref) => {
 
   const getValue = () => {
     if (props.sync && props.variables) {
+      console.log(props.variable[varName])
       return props.variables[varName];
     } else {
       let vars = {};
@@ -71,6 +72,31 @@ const Input = forwardRef((props, ref) => {
               checked={!!getValue()}
               onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
             />
+          ),
+          radio: (
+            <div className="input-radio">
+            <input
+              type="radio"
+              value="one"
+              name="radio"
+              checked={!!getValue()}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+            />
+            <input
+              type="radio"
+              value="two"
+              name="radio"
+              checked={!!getValue()}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+            />
+            <input
+              type="radio"
+              value="three"
+              name="radio"
+              checked={!!getValue()}
+              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+            />
+            </div>
           )
         })[props.varType]}
       </Wrapper>

@@ -221,7 +221,8 @@
       "input": {
         "button": "Button",
         "textbox": "Textbox",
-        "checkbox": "Checkbox"
+        "checkbox": "Checkbox",
+        "radio": "Radio"
       },
       "addGame": "Add Game",
       "game": {

@@ -507,7 +507,6 @@ class Graphics extends Component {
     });
   }
 
-
   toggleModal = () => {
     this.setState({
       startModalOpen: !this.state.startModalOpen
@@ -575,7 +574,7 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                  {!this.state.overlayImage ? (
+                  {!this.state.overlayImage.length ? (
                   <i className="icons lni lni-credit-cards" />
                   ) : (
                     <Image

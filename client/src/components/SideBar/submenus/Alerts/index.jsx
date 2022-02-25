@@ -96,6 +96,8 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const { t } = useTranslation();
+  const [curr, setCurr] = useState(0)
+  const [firstLoad, setFirstLoad] = useState(false)
 
   const handleAddAlert = (data) => {
     setAlerts(old => [...old, data]);
@@ -171,6 +173,32 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
     !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a+1 : a
   , 0)
 
+  const checkAdvance = () => {
+    let advance = false;
+    let numRequired = 0;
+    let curr = 0;
+    for(let i = 0; i < alerts.length; i++){
+      if(!alerts[i].optional){
+        numRequired += 1;
+      }
+    }
+    for(let i = 0; i < alerts.length; i++){
+      let done = checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)
+      console.log(alerts[i].optional)
+      if(!alerts[i].optional && done){
+        console.log(done)
+        curr +=1;
+      }
+    }
+    console.log(curr)
+    console.log(numRequired)
+    if(curr === numRequired){
+      return true
+    } else {
+      return false
+    }
+  }
+
 
   useEffect(() => {
     setTicker(taskTrueCount);
@@ -180,11 +208,14 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   useEffect(() => {
     for(let i = 0; i < alerts.length; i++){
       if(checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)){
-      if(!alerts[i].advance){
-        handleLevel();
-      }
+        if(!alerts[i].advance){
+          if(checkAdvance() && firstLoad===true){
+            handleLevel();
+          }
+        }
     }
     }
+    setFirstLoad(true)
   }), []
 
   return (

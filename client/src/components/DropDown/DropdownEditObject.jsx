@@ -535,6 +535,7 @@ const DropdownEditObject = (props) => {
                 <option value="checkbox">{t("edit.input.checkbox")}</option>
                 <option value="text">{t("edit.input.textbox")}</option>
                 <option value="button">{t("edit.input.button")}</option>
+                <option value="radio">{t("edit.input.radio")}</option>
               </select>
               {objState.infolevel !== true ? (
               <div className="htmliframeinput">

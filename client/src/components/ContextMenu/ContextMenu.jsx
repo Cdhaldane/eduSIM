@@ -72,6 +72,7 @@ const ContextMenu = (props) => {
 
 
   useEffect(() => {
+    console.log(props)
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
@@ -89,7 +90,6 @@ const ContextMenu = (props) => {
 
   const handleRightClick = (e) => {
     setDrop(false);
-
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);

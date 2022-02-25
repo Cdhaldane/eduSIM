@@ -1018,6 +1018,11 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons lni lni-check-box"
               onClick={() => addInput("checkbox")}></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
+            <DropdownItem
+              onClick={() => addInput("radio")}
+              leftIcon={<i className="icons lni lni-radio-button"
+                onClick={() => addInput("radio")}></i>}>
+              {t("edit.input.radio")}</DropdownItem>
 
 
         </div>

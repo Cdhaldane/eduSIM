@@ -2729,8 +2729,8 @@ class Graphics extends Component {
 
   onObjectTransformStart = () => {
     console.log("HHH");
-    this.setState({ 
-      isTransforming: true 
+    this.setState({
+      isTransforming: true
     });
   }
 
@@ -3135,7 +3135,7 @@ class Graphics extends Component {
                     console.log(this.state.overlayImage)
                   }}
                 >
-                  {this.state.overlayImage.length == 0 ? (
+                  {!this.state.overlayImage.length ? (
                   <i className="icons lni lni-credit-cards" />
                   ) : (
                     <Image

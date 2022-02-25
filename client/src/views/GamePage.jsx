@@ -172,8 +172,19 @@ const Game = (props) => {
 
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
 
+  useEffect(() => {
+    setDisableNext(false)
+    let curr = tasks[roomStatus.level];
+    if(curr){
+    for(let i = 0; i < curr.length; i++){
+      if(curr[i].advance === false){
+        setDisableNext(true)
+      }
+    }
+  }
+  }),[roomStatus.level]
+
   const handleLevel = () => {
-    console.log(roomStatus)
     socket.emit("goToPage", {
       level: actualLevel + 1
     });
