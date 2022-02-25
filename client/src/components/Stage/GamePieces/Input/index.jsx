@@ -14,8 +14,9 @@ const Input = forwardRef((props, ref) => {
   const { settings } = useContext(SettingsContext);
 
   const varName = props.varName || props.id;
-  console.log(props)
+
   const handleChangeValue = (value) => {
+    console.log(value)
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value);
     } else {
@@ -74,27 +75,23 @@ const Input = forwardRef((props, ref) => {
             />
           ),
           radio: (
-            <div className="input-radio">
+            <div className="input-radio" onChange={(e) => handleChangeValue(e.target.value)}>
+
             <input
               type="radio"
               value="one"
               name="radio"
-              checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
             />
             <input
               type="radio"
               value="two"
               name="radio"
-              checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
             />
             <input
               type="radio"
               value="three"
               name="radio"
-              checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+
             />
             </div>
           )
