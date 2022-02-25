@@ -153,7 +153,7 @@ const KonvaHtml = ({
     >
       {/*<Rect
         id={"customRect"}
-        name={"customRect"}
+        name={"refName"}
         //ref={"customRect"}
         draggable={false}
         visible={true}

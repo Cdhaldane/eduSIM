@@ -2335,7 +2335,6 @@ class Graphics extends Component {
     }
   }
   updateSelectedObj = (newState) => {
-    console.log(newState)
     let type;
     if (this.state.selectedShapeName) {
       for (let name of this.savedObjects) {
@@ -3007,7 +3006,6 @@ class Graphics extends Component {
       ...prevState.savedState,
       [this.state.overlayImage]: img
     }))
-    console.log(this.savedState)
   }
 
   render() {
@@ -3117,8 +3115,7 @@ class Graphics extends Component {
                     top: `${70 * (i + 1)}px`
                   }}
                   onClick={() => {
-                    this.setOverlayOpen(true, overlay.id)
-                    console.log(this.state.overlayImage)
+                    this.setOverlayOpen(true, overlay.id);
                   }}
                 >
                   {this.state.overlayImage.length == 0 ? (

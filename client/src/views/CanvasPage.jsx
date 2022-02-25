@@ -960,6 +960,8 @@ const CanvasPage = (props) => {
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
+    //console.log(canvas.refs);
+
     return (
       <>
         <Layer {...layerProps(canvas, stage, "objects")}>
