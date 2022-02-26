@@ -221,7 +221,8 @@
       "input": {
         "button": "Button",
         "textbox": "Textbox",
-        "checkbox": "Checkbox"
+        "checkbox": "Checkbox",
+        "radio": "Radio"
       },
       "addGame": "Add Game",
       "game": {
@@ -241,7 +242,12 @@
       "groupObjects": "Group Objects",
       "ungroupObjects": "Ungroup Objects",
       "layer": "Layer",
+      "radioAmount": "How many radio buttons?",
+      "buttonAmount": "How many variables?",
+      "variableB": "Variables",
+      "radioText": "Options",
       "editPages": "Edit Pages",
+      "levelVar": "*Level variable name = 'Level'",
       "editPageX": "Edit Page: {{name}}",
       "pageXQuestionY": "Page {{p}} Question {{q}}",
       "pageNamePlaceholder": "Page Name",

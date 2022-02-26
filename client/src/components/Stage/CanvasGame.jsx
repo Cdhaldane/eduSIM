@@ -516,6 +516,7 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
+      console.log(name)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -528,7 +529,6 @@ class Graphics extends Component {
       level: e
     });
   }
-
 
   toggleModal = () => {
     this.setState({
@@ -597,17 +597,17 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                    {!this.state.overlayImage ? (
-                      <i className="icons lni lni-credit-cards" />
-                    ) : (
-                      <Image
-                        className="overlayIcons"
-                        cloudName="uottawaedusim"
-                        publicId={
-                          "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
-                        }
-                      />
-                    )}
+                  {!this.state.overlayImage.length ? (
+                  <i className="icons lni lni-credit-cards" />
+                  ) : (
+                    <Image
+                      className="overlayIcons"
+                      cloudName="uottawaedusim"
+                      publicId={
+                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
+                      }
+                    />
+                  )}
                   </div>
                 );
               } else {
@@ -666,6 +666,7 @@ class Graphics extends Component {
             handleLevel={this.props.handleLevel}
             realLevel={this.props.realLevel}
             gamepage
+            updateVariable={this.updateVariable}
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}

@@ -49,7 +49,7 @@ const TimerContainer = styled.div`
 `;
 
 const Timer = forwardRef((props, ref) => {
-
+  console.log(props)
   const limit = props.timeLimit;
 
   const [running, setRunning] = useState(false);
@@ -69,6 +69,8 @@ const Timer = forwardRef((props, ref) => {
       setElapsedTime(props.status.elapsedTime);
     }
   }, [props.status]);
+
+  
 
   // Formats the status data according to if it is for personal/overlay or group area
   const formatData = (val) => {

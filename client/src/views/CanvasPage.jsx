@@ -292,7 +292,7 @@ const CanvasPage = (props) => {
             }
             const newX = canvas.state[`${areaString}LayerX`] + x;
             const newY = canvas.state[`${areaString}LayerY`] + y;
-            if (mode === "play") {   
+            if (mode === "play") {
               const newCanvZoomSettings = {
                 x: newX,
                 y: newY,
@@ -783,6 +783,9 @@ const CanvasPage = (props) => {
     style: obj.style,
     varType: obj.varType,
     varName: obj.varName,
+    amount: obj.amount,
+    variableAmount: obj.variableAmount,
+    radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
     sync: obj.sync

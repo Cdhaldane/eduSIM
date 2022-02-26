@@ -63,6 +63,15 @@ const NavBar = (props) => {
           </div>
         )}
 
+        <div className="util-box">
+          <button onClick={props.switchTheme} className="darkmode-button">
+            {theme === 'light' ? 'en' : 'fr'}
+          </button>
+          <button onClick={props.switchTheme} className="darkmode-button">
+            <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+          {theme === 'light' ? 'Dark' : 'Light'}
+          </button>
+        </div>
 
 
 
@@ -102,14 +111,3 @@ const NavBar = (props) => {
 }
 
 export default withAuth0(NavBar);
-
-// <div className="util-box">
-//   <button onClick={props.switchTheme} className="darkmode-button">
-//     {theme === 'light' ? 'en' : 'fr'}
-//   </button>
-//   <button onClick={props.switchTheme} className="darkmode-button">
-//     <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
-//   {theme === 'light' ? 'Dark' : 'Light'}
-//   </button>
-// </div>
-//

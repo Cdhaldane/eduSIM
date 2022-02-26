@@ -839,3 +839,28 @@ a {
 .add-media-button:hover {
   background-color: transparent !important;
 }
+.timeline-var{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.margin-left{
+  margin-left: 10px;
+}
+
+.title-timeline{
+  display: inline-block !important;
+  height: 100px;
+}
+
+.float-right{
+  position: absolute;
+  right:0px;
+  top: 0px;
+}
+.float-left{
+
+}
+
+.small{
+  font-size: 0.6em !important;
+}

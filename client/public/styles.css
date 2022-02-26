@@ -938,6 +938,22 @@ hr {
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
 }
+.input-radiotrue{
+  margin: 0px 0px;
+  flex: 1;
+}
+.input-radiotrue label{
+  margin-left: 1px !important;
+  position: relative;
+  bottom: 2.5px;
+}
+
+.input-radio input{
+
+}
+.radio-inputs label {
+  margin-left: 3px;
+}
 
 
 @media screen and (orientation: portrait) {

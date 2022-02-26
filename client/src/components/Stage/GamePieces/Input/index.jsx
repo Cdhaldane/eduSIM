@@ -10,36 +10,64 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-
   const { settings } = useContext(SettingsContext);
-
+  const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
 
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
-      props.updateVariable(varName, value);
+        props.updateVariable(varName, value)
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+
       sessionStorage.setItem('gameVars', JSON.stringify({
         ...vars,
         [varName]: value
       }));
-      console.log(sessionStorage)
       sessionStorage.setItem('lastSetVar', varName);
+
       props.refresh();
     }
+    console.log(sessionStorage)
+    console.log(varName.length)
   }
 
   const getValue = () => {
     if (props.sync && props.variables) {
+      console.log(props.variables)
       return props.variables[varName];
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-      return vars[varName];
+
+        return vars[varName];
+
     }
   }
+
+  const calculateRadios = () => {
+    const list = []
+    let length = props.amount;
+    if(!length){
+      length=3;
+    }
+    for (let i = 0; i < length; i++) {
+        list.push(
+          <div className="radio-inputs">
+          <input
+            type="radio"
+            value={props.radioText ? props.radioText[i] : "nothing"}
+            name="radio"
+            checked={!!getValue()}
+          />
+          <label for="radio">{props.radioText ? props.radioText[i] : "nothing"}</label>
+          </div>
+      );
+    }
+    return list
+  }
+
 
   return (
     <CustomWrapper {...props} ref={ref}>
@@ -71,6 +99,11 @@ const Input = forwardRef((props, ref) => {
               checked={!!getValue()}
               onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
             />
+          ),
+          radio: (
+            <div className={"input-radio" + (props.editMode)} onChange={(e) => handleChangeValue(e.target.value)}>
+              {calculateRadios()}
+            </div>
           )
         })[props.varType]}
       </Wrapper>

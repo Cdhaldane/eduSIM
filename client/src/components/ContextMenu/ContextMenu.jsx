@@ -89,7 +89,6 @@ const ContextMenu = (props) => {
 
   const handleRightClick = (e) => {
     setDrop(false);
-
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { ChromePicker } from 'react-color';
 import { CSSTransition } from 'react-transition-group';
+import debounce from 'lodash.debounce';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../Alerts/AlertContext";
@@ -9,7 +10,6 @@ import { useAlertContext } from "../Alerts/AlertContext";
 import "./Dropdown.css";
 
 const DropdownTimelineBar = (props) => {
-
   const UNTITLED_PAGE = "Untitled Page";
   const MAX_PAGE_NUM = 10;
   const MAX_OVERLAY_NUM = 6;
@@ -30,6 +30,7 @@ const DropdownTimelineBar = (props) => {
   const [deletionIndex, setDeletionIndex] = useState(-1);
   const [currentSettingsIndex, setCurrentSettingsIndex] = useState(null);
   const [menuHeight, setMenuHeight] = useState(0);
+  const [objState, setObjState] = useState(props.getObjState());
 
   const alertContext = useAlertContext();
 
@@ -55,6 +56,13 @@ const DropdownTimelineBar = (props) => {
       !colorWarningVisibleRef.current) {
       props.close();
     }
+  }
+  const handleVarName = (val) => {
+    debounceObjState({ varName: val });
+    setObjState(prev => ({
+      ...prev,
+      varName: val
+    }));
   }
 
   useEffect(() => {
@@ -102,6 +110,11 @@ const DropdownTimelineBar = (props) => {
       }
     }, 0);
   }
+
+  const debounceObjState = useCallback(
+    debounce(state => props.updateObjState(state), 100),
+    [], // will be created only once initially
+  );
 
   const editBtns = (page, index) => (
     <div className="icons-right">
@@ -251,7 +264,10 @@ const DropdownTimelineBar = (props) => {
           unmountOnExit>
 
           <div style={{ width: "500px" }}>
-            <h1>{t("edit.editPages")}</h1>
+            <div className="title-timeline">
+              <h1 className="float-left">{t("edit.editPages")}</h1>
+              <h1 className="float-right small">{t("edit.levelVar")}</h1>
+            </div>
             <div>
               {props.pages.map((page, index) => {
                 return (
@@ -473,3 +489,8 @@ const DropdownTimelineBar = (props) => {
 }
 
 export default DropdownTimelineBar;
+
+// <div className="menu-item timeline-var">
+// <p>{t("edit.variableNameToSet")}</p>
+// <input className="add-dropdown-item-input margin-left" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+// </div>
