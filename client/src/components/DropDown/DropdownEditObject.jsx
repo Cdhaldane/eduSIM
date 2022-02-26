@@ -29,7 +29,7 @@ const DropdownEditObject = (props) => {
   const [objState, setObjState] = useState(props.getObjState());
   const { t } = useTranslation();
   const [texts, setTexts] = useState(objState.radioText ? objState.radioText : [])
-  // const [vTexts, setVTexts] = useState(objState.variable ? objState.radioText : [])
+  const [vTexts, setVTexts] = useState(objState.varName ? objState.varName : [])
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -276,18 +276,26 @@ const DropdownEditObject = (props) => {
     const list = [];
     let value = 0;
     if(objState?.variableAmount < 1){
-      let value = 1
+      let value = 1;
     } else {value = objState?.variableAmount;}
     for (let i = 0; i < value; i++) {
         list.push(
           <div>
-          <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+          <input type="text" onChange={e => handleVars(e.target)} value={vTexts[i]} id={i} />
           </div>
       );
     }
     return list
   }
 
+  const handleVars = (e) => {
+    vTexts[e.id] = e.value;
+    debounceObjState({ varName: vTexts });
+    setObjState(prev => ({
+      ...prev,
+      varName: vTexts
+    }));
+  }
 
 
 
@@ -614,10 +622,9 @@ const DropdownEditObject = (props) => {
                 {objState?.varType === "radio" ? (
                   <div className="radio-dropdown">
                   <p>{t("edit.radioAmount")}</p>
-                    <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} />
+                    <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)}  maxlength="1"/>
                     <p>{t("edit.radioText")}</p>
                     {populateRadio()}
-
                   </div>
                 ) :
                 (<div> </div>)
@@ -625,13 +632,14 @@ const DropdownEditObject = (props) => {
               {objState?.varType === "button" ? (
                 <div className="radio-dropdown">
                 <p>{t("edit.buttonAmount")}</p>
-                  <input type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} />
+                  <input type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxlength="1" />
                   <p>{t("edit.variableNameToSet")}</p>
                   {populateVariable()}
 
                 </div>
               ) :
-              (<div> </div>)
+              (<div> <p>{t("edit.variableNameToSet")}</p>
+              <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>)
             }
               <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />

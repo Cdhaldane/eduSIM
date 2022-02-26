@@ -10,26 +10,29 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-  console.log(props)
   const { settings } = useContext(SettingsContext);
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
 
   const handleChangeValue = (value) => {
-    console.log(value)
     if (props.sync && props.updateVariable) {
-      props.updateVariable(varName, value);
+      for(let i = 0; i < varName.length; i++){
+        props.updateVariable(varName[i], value);
+      }
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+
       sessionStorage.setItem('gameVars', JSON.stringify({
         ...vars,
         [varName]: value
       }));
-      console.log(sessionStorage)
       sessionStorage.setItem('lastSetVar', varName);
+
       props.refresh();
     }
+    console.log(sessionStorage)
+    console.log(varName.length)
   }
 
   const getValue = () => {
@@ -39,7 +42,9 @@ const Input = forwardRef((props, ref) => {
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-      return vars[varName];
+
+        return vars[varName];
+
     }
   }
 
