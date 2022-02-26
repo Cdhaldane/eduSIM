@@ -3039,6 +3039,8 @@ class Graphics extends Component {
             });
             setTimeout(() => this.props.reCenter("edit", layer), 0);
           }}
+          updateObjState={this.updateSelectedObj}
+          getObjState={this.getSelectedObj}
           changeObjectPage={this.changeObjectPage}
           handleCopyPage={this.handleCopyPage}
           number={this.state.numberOfPages}
@@ -3047,6 +3049,7 @@ class Graphics extends Component {
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}
+          getO
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}

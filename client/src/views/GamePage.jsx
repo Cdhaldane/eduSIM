@@ -174,7 +174,7 @@ const Game = (props) => {
 
   useEffect(() => {
     setDisableNext(false)
-    let curr = tasks[roomStatus.level];
+    let curr = tasks[actualLevel];
     if(curr){
     for(let i = 0; i < curr.length; i++){
       if(curr[i].advance === false){

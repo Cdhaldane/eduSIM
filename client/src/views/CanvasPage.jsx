@@ -95,7 +95,7 @@ const CanvasPage = (props) => {
 
   const getUpdatedCanvasState = (mode) => {
     if (mode === "edit") {
-      
+
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;
@@ -772,6 +772,9 @@ const CanvasPage = (props) => {
     style: obj.style,
     varType: obj.varType,
     varName: obj.varName,
+    amount: obj.amount,
+    variableAmount: obj.variableAmount,
+    radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
     sync: obj.sync

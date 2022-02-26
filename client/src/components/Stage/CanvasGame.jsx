@@ -643,6 +643,7 @@ class Graphics extends Component {
             handleLevel={this.props.handleLevel}
             realLevel={this.props.realLevel}
             gamepage
+            updateVariable={this.updateVariable}
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}

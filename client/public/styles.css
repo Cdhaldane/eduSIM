@@ -938,13 +938,21 @@ hr {
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
 }
-.input-radio{
-  display: inline;
+.input-radiotrue{
   margin: 0px 0px;
   flex: 1;
 }
+.input-radiotrue label{
+  margin-left: 0px !important;
+  position: relative;
+  bottom: 2.5px;
+}
+
 .input-radio input{
-  margin-left: 5px;
+
+}
+.radio-inputs label {
+  margin-left: 3px;
 }
 
 

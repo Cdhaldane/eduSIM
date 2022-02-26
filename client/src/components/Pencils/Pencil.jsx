@@ -48,8 +48,11 @@ const Pencil = (props) => {
               handlePageTitle={props.handlePageTitle}
               handlePageNum={props.handlePageNum}
               numOfPages={props.numOfPages}
+              updateObjState={props.updateObjState}
               handleCopyPage={props.handleCopyPage}
-              close={handleClose} />
+              close={handleClose}
+              getObjState={props.getObjState}/>
+
           )}
           {props.type === "nav" && (
             <DropdownNavigationBar

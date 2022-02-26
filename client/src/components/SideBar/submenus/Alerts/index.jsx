@@ -184,14 +184,10 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
     }
     for(let i = 0; i < alerts.length; i++){
       let done = checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)
-      console.log(alerts[i].optional)
       if(!alerts[i].optional && done){
-        console.log(done)
         curr +=1;
       }
     }
-    console.log(curr)
-    console.log(numRequired)
     if(curr === numRequired){
       return true
     } else {

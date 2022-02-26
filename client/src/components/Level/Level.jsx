@@ -65,6 +65,18 @@ const Level = (props) => {
     }
   }, [props.levelVal]);
 
+  useEffect(() => {
+    let varName="level"
+    let vars = {};
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    sessionStorage.setItem('gameVars', JSON.stringify({
+      ...vars,
+      [varName]: count
+    }));
+    console.log(sessionStorage)
+    sessionStorage.setItem('lastSetVar', varName);
+  }, [count]);
+
   const firstUpdate = useRef(true);
   useEffect(() => {
     if (firstUpdate.current) {
@@ -108,6 +120,23 @@ const Level = (props) => {
     props.clearCanvasData();
     props.saveGame();
     props.removeJSGIFS();
+  }
+
+  const handleChangeValue = (value) => {
+    console.log(props.getObjState())
+    if (props.sync && props.updateVariable) {
+      props.updateVariable(varName, value);
+    } else {
+      let vars = {};
+      if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+      sessionStorage.setItem('gameVars', JSON.stringify({
+        ...vars,
+        [varName]: value
+      }));
+      console.log(sessionStorage)
+      sessionStorage.setItem('lastSetVar', varName);
+      props.refresh();
+    }
   }
 
   return (
@@ -229,8 +258,11 @@ const Level = (props) => {
               id="Timeline"
               psize="3"
               type="info"
+              getobjState={props.getObjState}
+              updateObjState={props.updateObjState}
               pages={props.pages}
               refreshCanvas={props.refreshCanvas}
+              getObjState={props.getObjState}
               changeObjectPage={props.changeObjectPage}
               handleCopyPage={props.handleCopyPage}
               handlePageTitle={props.handlePageTitle}

@@ -28,6 +28,8 @@ const DropdownEditObject = (props) => {
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.getObjState());
   const { t } = useTranslation();
+  const [texts, setTexts] = useState(objState.radioText ? objState.radioText : [])
+  // const [vTexts, setVTexts] = useState(objState.variable ? objState.radioText : [])
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -161,6 +163,23 @@ const DropdownEditObject = (props) => {
       varName: val
     }));
   }
+  const handleRadio = (val) => {
+    debounceObjState({ amount: val });
+    props.updateObjState({ amount: val });
+    setObjState(prev => ({
+      ...prev,
+      amount: val
+    }));
+  }
+  const handleButtonVariable = (val) => {
+    debounceObjState({ variableAmount: val });
+    props.updateObjState({ variableAmount: val });
+    setObjState(prev => ({
+      ...prev,
+      variableAmount: val
+    }));
+  }
+
   const handleVarEnable = (val) => {
     props.updateObjState({ varEnable: val });
     setObjState(prev => ({
@@ -230,6 +249,49 @@ const DropdownEditObject = (props) => {
       timeLimit: val
     }));
   }
+  const populateRadio = () => {
+    const list = [];
+    let value = 0;
+    for (let i = 0; i < objState?.amount; i++) {
+        list.push(
+          <div>
+          <input type="text" onChange={e => handleRadioText(e.target)} value={texts[i]} id={i} />
+          </div>
+      );
+    }
+    return list
+  }
+
+  const handleRadioText = (e) => {
+    texts[e.id] = e.value;
+    console.log(texts)
+    debounceObjState({ radioText: texts });
+    setObjState(prev => ({
+      ...prev,
+      radioText: texts
+    }));
+  }
+
+  const populateVariable = () => {
+    const list = [];
+    let value = 0;
+    if(objState?.variableAmount < 1){
+      let value = 1
+    } else {value = objState?.variableAmount;}
+    for (let i = 0; i < value; i++) {
+        list.push(
+          <div>
+          <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+          </div>
+      );
+    }
+    return list
+  }
+
+
+
+
+
 
   const newTabInputSettings = (tab) => {
     setInputStrokeWidth(objState.style.borderWidth ?
@@ -549,8 +611,28 @@ const DropdownEditObject = (props) => {
                     <p>{t("edit.variableSync")}</p>
                   </div>
                 )}
-              <p>{t("edit.variableNameToSet")}</p>
-              <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                {objState?.varType === "radio" ? (
+                  <div className="radio-dropdown">
+                  <p>{t("edit.radioAmount")}</p>
+                    <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} />
+                    <p>{t("edit.radioText")}</p>
+                    {populateRadio()}
+
+                  </div>
+                ) :
+                (<div> </div>)
+              }
+              {objState?.varType === "button" ? (
+                <div className="radio-dropdown">
+                <p>{t("edit.buttonAmount")}</p>
+                  <input type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} />
+                  <p>{t("edit.variableNameToSet")}</p>
+                  {populateVariable()}
+
+                </div>
+              ) :
+              (<div> </div>)
+            }
               <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (
