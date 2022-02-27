@@ -14,7 +14,7 @@ const NavBar = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
   const profileDropdown = useRef();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
@@ -32,6 +32,11 @@ const NavBar = (props) => {
       setMenuOpen(false);
       document.removeEventListener('click', handleClickOutside);
     }
+  };
+
+  const switchLanguage = () => {
+    if (i18n.language === 'en') i18n.changeLanguage('fr');
+    else i18n.changeLanguage('en');
   };
 
   useEffect(() => {
@@ -63,7 +68,7 @@ const NavBar = (props) => {
           </div>
         )}
 
-        <div className="util-box">
+        {/* <div className="util-box">
           <button onClick={props.switchTheme} className="darkmode-button">
             {theme === 'light' ? 'en' : 'fr'}
           </button>
@@ -71,7 +76,7 @@ const NavBar = (props) => {
             <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
           {theme === 'light' ? 'Dark' : 'Light'}
           </button>
-        </div>
+        </div> */}
 
 
 
@@ -93,6 +98,9 @@ const NavBar = (props) => {
               <i className="fas fa-info-circle"></i>
               {t("navbar.about")}
             </ButtonLink>
+          <button onClick={switchLanguage} className="lang-button">
+            {i18n.language === 'en' ? 'fr' : 'en'}
+          </button>
 
 
         {isAuthenticated ? (

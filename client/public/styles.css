@@ -399,7 +399,7 @@ a {
   width: 80% !important;
 }
 .privacy-container a {
-  color: white;
+  color: var(--primary);
   text-decoration: underline;
 }
 .privacy-container ul {
@@ -461,7 +461,18 @@ a {
 
 }
 
-
+.about-logos {
+  display: flex;
+  justify-content: center;
+}
+.about-logos > a {
+  height: 50px;
+  display: block;
+  margin: 10px;
+}
+.about-logos > a > img {
+  height: 100%;
+}
 
 
 .w-button:hover,
@@ -1123,6 +1134,12 @@ hr {
   }
   .joinboard-edit{
     bottom: -6px;
+  }
+
+  
+  .about-logos {
+    flex-direction: column;
+    align-items: center;
   }
 
 

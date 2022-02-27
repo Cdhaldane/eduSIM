@@ -6,7 +6,13 @@
       "isTeacher": "Are vous a teacher/facilitator?",
       "alreadyHaveRoomCode": "Alreadie have a room code?",
       "join": "Joine!",
-      "getCodeOrCreateSim": "<1>Create a new simulation</1> if you dont then!!! idk!!"
+      "about": "À propos",
+      "getCodeOrCreateSim": "<1>Create a new simulation</1> if you dont then!!! idk!!",
+      "aboutP1": "eduSIM est une application Web permettant de créer et d'héberger des simulateurs éducatifs en ligne. La principale caractéristique d'eduSIM est qu'elle facilite le travail d'équipe synchronisé sur le Web, permettant à des groupes de participant(e)s de travailler ensemble à distance en temps réel.",
+      "aboutP2": "eduSIM offre de nombreuses fonctionnalités pour créer des simulations complexes, appelées modèles d'interaction simulés éducatifs (eduSIM), avec son mode création. Une fois créées, ces simulations peuvent être administrées à des groupes de participant(e)s avec son mode administration.",
+      "aboutP3": "La plate-forme eduSIM est autorisée en vertu d’une licence <1>Ontario Commons - Sans œuvre dérivée.</1> Les exemples de simulations fournis avec la plate-forme eduSIM sont autorisés en vertu d’une licence internationale <3>Creative Commons Attribution-ShareAlike 4.0.</3>",
+      "aboutP4": "eduSIM a été conçu et développé par le <1>Dumond Design Lab</1> à l'Université d'Ottawa.",
+      "aboutP5": "Ce projet est rendu possible grâce au financement du gouvernement de l’Ontario et au soutien d’eCampusOntario à l’égard de la Stratégie d’apprentissage virtuel. Pour en savoir plus sur la Stratégie d’apprentissage virtuel, consultez le site <1>https://vls.ecampusontario.ca.</1>"
     }
   }
 }

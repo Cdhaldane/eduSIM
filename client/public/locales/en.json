@@ -12,12 +12,17 @@
       "join": "Join!",
       "roomCode": "Room code",
       "getCodeOrCreateSim": "If not, get one from your teacher/facilitator, or <1>create your own simulation.</1>",
-      "about": "About!",
+      "about": "About",
       "cookieNotice": "Notice.",
       "cookieOverview": "eduSIM uses cookies. By continuing to browse the site you are agreeing to our use of cookies.",
       "cookieOK": "OK",
       "cookieLearnMore": "Launch",
-      "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Also third party cookies are used for logging in with Google / Microsoft."
+      "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Also third party cookies are used for logging in with Google / Microsoft.",
+      "aboutP1": "eduSIM is a web based application for creating and hosting online educational simulators. The core feature of eduSIM is that it facilitates synchronized teamwork over the web, allowing groups of participants to work together remotely in realtime.",
+      "aboutP2": "eduSIM offers many features for creating complex simulations, known as Educational Simulated Interaction Models (eduSIMs), via its Edit Mode. Once created, these simulations can be administered to groups of participants via its Admin Mode.",
+      "aboutP3": "The eduSIM platform is licensed under an <1>Ontario Commons License - No Derivatives.</1> Example simulations provided with the eduSIM platform are licensed under a <3>Creative Commons Attribution-ShareAlike 4.0 International License.</3>",
+      "aboutP4": "eduSIM was designed and developed by the <1>Dumond Design Lab</1> at the University of Ottawa.",
+      "aboutP5": "This project is made possible with funding by the Government of Ontario and through eCampusOntario’s support of the Virtual Learning Strategy. To learn more about the Virtual Learning Strategy visit: <1>https://vls.ecampusontario.ca.</1>"
     },
     "navbar": {
       "title": "Educational Simulator Tool",

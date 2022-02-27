@@ -178,6 +178,15 @@
   margin-left: 1vw;
 }
 
+.lang-button {
+  text-transform: uppercase;
+  background: none;
+  color: var(--primary);
+  font-size: 1.3em;
+  padding: 4px;
+  border: none;
+}
+
 
 @media screen and (orientation: landscape) {
   .profilevist {
