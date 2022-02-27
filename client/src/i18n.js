@@ -8,7 +8,7 @@ const resources = { en, fr };
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: "en",
+  lng: localStorage.getItem('lang') || "en",
   interpolation: {
     escapeValue: false
   }

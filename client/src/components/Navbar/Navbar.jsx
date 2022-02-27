@@ -35,8 +35,13 @@ const NavBar = (props) => {
   };
 
   const switchLanguage = () => {
-    if (i18n.language === 'en') i18n.changeLanguage('fr');
-    else i18n.changeLanguage('en');
+    if (i18n.language === 'en') {
+      i18n.changeLanguage('fr');
+      localStorage.setItem('lang', 'fr');
+    } else {
+      i18n.changeLanguage('en');
+      localStorage.setItem('lang', 'en');
+    }
   };
 
   useEffect(() => {
