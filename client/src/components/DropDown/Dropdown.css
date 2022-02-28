@@ -17,6 +17,7 @@ a {
   border: 1px solid rgb(44, 44, 44);
 }
 
+
 .inputButtonDefault:hover {
   filter: brightness(0.85) saturate(1.25) contrast(1.05);
   cursor: pointer;
@@ -528,6 +529,44 @@ a {
   animation-name: slideDown;
   animation-duration: 0.5s;
 }
+.button-vars{
+  display: inline-block !important;
+}
+
+.button-vars h1{
+  float: left !important;
+  position: relative;
+  left: 15px;
+  width: 0% !important;
+}
+
+.float-righty{
+  float: right!important;
+  width: 40% !important;
+}
+.float-left{
+  float: left!important;
+  width: 40% !important;
+}
+.margin-bottom {
+  margin-bottom: 10px !important;
+}
+.variable-dsplay{
+  border: 1px solid var(--dark);
+  border-radius: 10px;
+  padding: 2px;
+}
+.var-output{
+  display: inline-block !important;
+  width: auto !important;
+  text-align: left !important;
+}
+.math-drop{
+  width: 38% !important;
+}
+.math {
+  width: 30% !important;
+}
 
 #pagetype input, #pagetype textarea {
   position: relative;
@@ -849,6 +888,9 @@ a {
 
 .title-timeline{
   display: inline-block !important;
+
+  height: 100px;
+
 }
 
 .float-right{

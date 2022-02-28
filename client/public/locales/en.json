@@ -250,7 +250,7 @@
       "radioAmount": "How many radio buttons?",
       "buttonAmount": "How many variables?",
       "variableB": "Variables",
-      "radioText": "Options",
+      "radioText": "Values",
       "editPages": "Edit Pages",
       "levelVar": "*Level variable name = 'Level'",
       "editPageX": "Edit Page: {{name}}",
