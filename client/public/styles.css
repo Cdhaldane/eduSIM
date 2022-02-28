@@ -950,33 +950,40 @@ hr {
   touch-action: manipulation;
 }
 .input-radiotrue{
-<<<<<<< HEAD
-  margin: 0px 0px;
-  flex: 1;
-}
-=======
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
+}
+.input-vartrue{
+  text-align: left !important;
+  margin: 0px 0px;
+  flex: 1;
+  border-radius: 10px;
 }
 .input-radiofalse{
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
+  border: 1px solid var(--dark);
+  padding: 2px;
+  border-radius: 10px;
 }
 .inputradiofalse{
   margin-left: 5px;
 }
->>>>>>> charlie-working-8
+
 .input-radiotrue label{
   margin-left: 1px !important;
   position: relative;
   bottom: 2.5px;
 }
 
-.input-radio input{
-
+.input-radiotrue {
+  border: 1px solid var(--dark);
+  padding: 2px;
+  border-radius: 10px;
 }
+
 .radio-inputs label {
   margin-left: 3px;
 }
@@ -1151,7 +1158,7 @@ hr {
     bottom: -6px;
   }
 
-  
+
   .about-logos {
     flex-direction: column;
     align-items: center;

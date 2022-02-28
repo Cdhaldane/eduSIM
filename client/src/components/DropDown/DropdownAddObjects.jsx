@@ -1022,9 +1022,6 @@ const DropdownAddObjects = (props) => {
                 leftIcon={<i className="icons lni lni-help"
                   onClick={() => addInput("variable")}></i>}>
                 Variable</DropdownItem>
-
-
-
         </div>
       </CSSTransition>
 

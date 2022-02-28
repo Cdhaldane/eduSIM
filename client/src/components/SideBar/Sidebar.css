@@ -1,0 +1,22 @@
+.variable-box{
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  background-color: var(--almostwhite);
+  padding: 2px;
+  margin-bottom: 20px;
+}
+.variable-inputs{
+  padding: 2px;
+  margin-left: 0px;
+  font-size: 0.6em;
+  text-align: left;
+}
+.variable-inputs h1{
+  margin-left: 5px;
+  margin-bottom: 0px;
+}
+.variable-inputs hr{
+  margin-top: 3px;
+  margin-left: 3px;
+  width: 98%;
+}

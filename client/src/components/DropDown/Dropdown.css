@@ -552,14 +552,15 @@ a {
   margin-bottom: 10px !important;
 }
 .variable-dsplay{
-  border: 1px solid var(--dark);
-  border-radius: 10px;
+
   padding: 2px;
 }
 .var-output{
   display: inline-block !important;
   width: auto !important;
   text-align: left !important;
+  border: 1px solid var(--dark);
+  border-radius: 10px;
 }
 .math-drop{
   width: 38% !important;
@@ -888,9 +889,7 @@ a {
 
 .title-timeline{
   display: inline-block !important;
-
-  height: 100px;
-
+  height: auto;
 }
 
 .float-right{

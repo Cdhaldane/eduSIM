@@ -137,6 +137,7 @@
       "users": "Users",
       "performance": "Performance",
       "settings": "Settings",
+      "variables": "Control Panel",
       "editNavigationBar": "Edit Navigation Bar",
       "xSays": "{{name}} says:",
       "youSaid": "You said:",
@@ -153,7 +154,9 @@
       "taskNotComplete_optional": "OPTIONAL, NOT COMPLETED",
       "taskNotComplete_required": "REQUIRED, NOT COMPLETED",
       "noTasks": "No tasks to complete!",
-      "addNewTask": "ADD NEW TASK"
+      "addNewTask": "ADD NEW TASK",
+      "session": "Your Variables",
+      "game": "Game Variables"
     },
     "edit": {
       "editMode": "Edit Mode",
@@ -227,7 +230,9 @@
         "button": "Button",
         "textbox": "Textbox",
         "checkbox": "Checkbox",
-        "radio": "Radio"
+        "radio": "Radio",
+        "variable": "Variable",
+        "varVal": "Var/Int"
       },
       "addGame": "Add Game",
       "game": {

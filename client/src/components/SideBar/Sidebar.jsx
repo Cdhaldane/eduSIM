@@ -6,6 +6,7 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
+import Variables from "./submenus/Variables";
 import Alerts from "./submenus/Alerts";
 import Players from "./submenus/Players";
 import Modal from "react-modal";
@@ -77,6 +78,7 @@ const Disabled = styled.div`
 `;
 
 const Sidebar = (props) => {
+  console.log(props)
   const sidebarRef = useRef();
   const backdropRef = useRef();
   const [expanded, setExpanded] = useState(false);
@@ -248,7 +250,20 @@ const Sidebar = (props) => {
       label: t("sidebar.settings"),
       visible: svisible,
       submenu: (
-        <Settings />
+        <Settings
+        />
+      )
+    },
+    {
+      icon: "lni lni-control-panel",
+      id: "variables",
+      label: t("sidebar.variables"),
+      visible: true,
+      submenu: (
+        <Variables
+          vars={props.customObjs ? props.customObjs.inputs : []}
+          gameVars={props.variables ? props.variables : []}
+        />
       )
     },
   ];

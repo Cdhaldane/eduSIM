@@ -66,6 +66,7 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   useEffect(() => {
+    console.log(props)
     let varName="level"
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
