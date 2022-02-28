@@ -284,7 +284,7 @@ class Graphics extends Component {
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
           this.setState({
-            [object]: objects[object] || [],
+            [object]: objects[object],
             savedStateLoaded: true
           }, () => {
             if (index === arr.length - 1) {
@@ -529,9 +529,9 @@ class Graphics extends Component {
           movingCanvas: false
         });
       }
-
-      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
-      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
+      const colorPage = this.state.pages[this.state.level - 1] ? this.state.pages[this.state.level - 1] : this.state.pages[this.state.level - 2];
+      document.querySelector(':root').style.setProperty('--primary', colorPage.primaryColor);
+      this.props.setPageColor(colorPage.groupColor);
     }
   }
 
@@ -539,7 +539,7 @@ class Graphics extends Component {
     this.setState({
       pages: newPageTitles
     }, () => {
-      if (pageCopied !== -1) {
+      if (pageCopied !== undefined && pageCopied !== -1) {
         this.handleCopyPage(pageCopied);
       }
     });
@@ -2880,7 +2880,7 @@ class Graphics extends Component {
         if (obj.level === index + 1) {
           const objectsState = this.state[type];
           const objectsDeletedState = this.state[`${type}DeleteCount`];
-          const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState.length : 0) + toBeSaved[type].length + 1;
+          const numOfObj = objectsState.length + (objectsDeletedState ? parseInt(objectsDeletedState) : 0) + toBeSaved[type].length + 1;
           const id = type + numOfObj;
           if (obj?.overlayIndex && obj.overlayIndex !== -1) {
             const inListIndex = overlayLayers.findIndex((layer => layer.id === obj.overlayIndex));
@@ -3033,7 +3033,6 @@ class Graphics extends Component {
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}
-          getO
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}

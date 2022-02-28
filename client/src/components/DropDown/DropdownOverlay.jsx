@@ -81,10 +81,9 @@ const DropdownOverlay = (props) => {
   }
 
   const handleChangeCondition = (e) => {
-    console.log(e)
     const pages = [...props.pages];
     pages[props.level - 1].overlays[props.overlayIndex].overlayCondition = e;
-    props.changePages(pages)
+    props.changePages(pages);
   }
 
   const hideToggled = (e) => {
@@ -131,7 +130,7 @@ const DropdownOverlay = (props) => {
             <h2 className="overlaySettingsSub">{t("edit.hideOverlayButton")}</h2>
             <Switch
               onChange={hideToggled}
-              checked={hideBtn}
+              checked={hideBtn ? hideBtn : false}
               disabled={props.pages[props.level - 1].overlays[props.overlayIndex] ?
                 props.pages[props.level - 1].overlays[props.overlayIndex].overlayOpenOption === "doNotAutoOpen" : false}
               height={25}

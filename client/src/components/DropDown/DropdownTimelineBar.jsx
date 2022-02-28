@@ -120,17 +120,12 @@ const DropdownTimelineBar = (props) => {
     <div className="icons-right">
       {/* EDIT PAGE TITLE */}
       <span className="icon-button" onClick={() => handleModifyPage(index)}>
-
         <i className="icons lni lni-pencil" />
-
       </span>
 
       {/* PAGE SETTINGS */}
       <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
-
-
         <i className="icons lni lni-cog" />
-
       </span>
 
       {/* COPY PAGE */}
@@ -138,18 +133,27 @@ const DropdownTimelineBar = (props) => {
         className={`icon-button ${pages.length >= MAX_PAGE_NUM ? "disabled" : ""}`}
         onClick={async () => {
           if (pages.length < MAX_PAGE_NUM) {
-            // Copy the page and contents
-
+            // Copy the page with settings but no objects
+            const newOverlays = [];
+            for (let i = 0; i < page.overlays.length; i++) {
+              let overlay = {...page.overlays[i]};
+              overlay.layers = [];
+              newOverlays.push(overlay);
+            }
             setCopy(index);
-
-
-
-            props.handleCopyPage(index);
+            setNumOfPages(numOfPages + 1);
+            const newPages = [...pages, {
+              ...page,
+              name: page.name + " - Copy",
+              groupLayers: [],
+              personalLayers: [],
+              overlays: newOverlays
+            }];
+            setPages(newPages);    
           }
         }}
       >
         <i className={`icons lni lni-files`} />
-
       </span>
 
       {/* MOVE PAGE UP */}
@@ -301,9 +305,7 @@ const DropdownTimelineBar = (props) => {
                           setDeletionIndex(index);
                           setConfirmationModal(true);
                         }} >
-
                           <i className="icons lni lni-trash-can" />
-
                         </span>
 
                         {`${page.name}`}
@@ -330,9 +332,7 @@ const DropdownTimelineBar = (props) => {
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
               }}>
-
                 <i className="icons lni lni-plus" />
-
               </span>
               <input
                 className="add-dropdown-item-input"

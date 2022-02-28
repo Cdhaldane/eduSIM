@@ -205,7 +205,7 @@ const DropdownAddObjects = (props) => {
   // Adding Objects
   const addObjectToLayer = (objectName, objectParameters) => {
     const objectsState = props.state[objectName];
-    const objectsDeletedState = props.state[`${objectName}DeleteCount`];
+    const objectsDeletedState = parseInt(props.state[`${objectName}DeleteCount`]);
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
 
     const isCustom = props.customObjects.includes(objectName);

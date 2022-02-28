@@ -66,14 +66,13 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   useEffect(() => {
-    let varName="level"
+    let varName="level";
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     sessionStorage.setItem('gameVars', JSON.stringify({
       ...vars,
       [varName]: count
     }));
-    console.log(sessionStorage)
     sessionStorage.setItem('lastSetVar', varName);
   }, [count]);
 
@@ -83,8 +82,7 @@ const Level = (props) => {
       firstUpdate.current = false;
       return;
     } else {
-    handleLevel(props.realLevel)
-    console.log(props.realLevel)
+    handleLevel(props.realLevel);
   }
   }, [props.realLevel]);
 
@@ -123,7 +121,6 @@ const Level = (props) => {
   }
 
   const handleChangeValue = (value) => {
-    console.log(props.getObjState())
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value);
     } else {
@@ -133,7 +130,6 @@ const Level = (props) => {
         ...vars,
         [varName]: value
       }));
-      console.log(sessionStorage)
       sessionStorage.setItem('lastSetVar', varName);
       props.refresh();
     }
@@ -211,12 +207,6 @@ const Level = (props) => {
           </>
         )}
         <div className="level-nav">
-
-
-
-
-
-
           <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 66 + 'px' }}>
             <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
@@ -285,10 +275,3 @@ const Level = (props) => {
 }
 
 export default Level;
-
-
-// {!props.gamepage && (
-//   <select className="level-select" onChange={handleChange} value={count}>
-//     {createSelectItems()}
-//   </select>
-// )}
