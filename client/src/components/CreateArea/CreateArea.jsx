@@ -19,6 +19,7 @@ const CreateArea = (props) => {
   const [prevImages] = useState(localStorage.getItem("images"));
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
+  const [gameData, setData] = useState("");
   const { t } = useTranslation();
   const detailsArea = new useRef();
   const imageArea = new useRef();
@@ -60,10 +61,11 @@ const CreateArea = (props) => {
       localStorage.setItem("images", JSON.stringify(temp))
     }
     try {
+      console.log(gameData)
       let data = {
         gameinstance_name: title,
         gameinstance_photo_path: imageSelected,
-        game_parameters: "",
+        game_parameters: gameData,
         createdby_adminid: localStorage.adminid,
         status: 'created'
       }
@@ -106,11 +108,8 @@ const CreateArea = (props) => {
       let parsedJson = (JSON.parse(e.target.result).data);
       parsedJson.createdby_adminid = localStorage.adminid;
       setTitle(parsedJson.gameinstance_name + " - copy");
+      setData(parsedJson.game_parameters)
       setImageSelected(parsedJson.gameinstance_photo_path);
-
-      axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', parsedJson).catch(error => {
-        console.error(error);
-      });
     };
 
 

@@ -209,7 +209,7 @@ const DropdownAddObjects = (props) => {
     const numOfObj = objectsState.length + (objectsDeletedState ? objectsDeletedState : 0) + 1;
 
     const isCustom = props.customObjects.includes(objectName);
-    
+
     const name = objectName + numOfObj;
     let objX = props.state.selectedContextMenu.position.relX;
     let objY = props.state.selectedContextMenu.position.relY;
@@ -1011,6 +1011,16 @@ const DropdownAddObjects = (props) => {
             leftIcon={<i className="icons lni lni-check-box"
               onClick={() => addInput("checkbox")}></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
+            <DropdownItem
+              onClick={() => addInput("radio")}
+              leftIcon={<i className="icons lni lni-radio-button"
+                onClick={() => addInput("radio")}></i>}>
+              {t("edit.input.radio")}</DropdownItem>
+              <DropdownItem
+                onClick={() => addInput("variable")}
+                leftIcon={<i className="icons lni lni-help"
+                  onClick={() => addInput("variable")}></i>}>
+                Variable</DropdownItem>
 
 
         </div>

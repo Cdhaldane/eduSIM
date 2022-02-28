@@ -14,7 +14,7 @@ const NavBar = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
   const profileDropdown = useRef();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
@@ -31,6 +31,16 @@ const NavBar = (props) => {
     if (profileDropdown.current && !profileDropdown.current.contains(e.target)) {
       setMenuOpen(false);
       document.removeEventListener('click', handleClickOutside);
+    }
+  };
+
+  const switchLanguage = () => {
+    if (i18n.language === 'en') {
+      i18n.changeLanguage('fr');
+      localStorage.setItem('lang', 'fr');
+    } else {
+      i18n.changeLanguage('en');
+      localStorage.setItem('lang', 'en');
     }
   };
 
@@ -63,6 +73,15 @@ const NavBar = (props) => {
           </div>
         )}
 
+        {/* <div className="util-box">
+          <button onClick={props.switchTheme} className="darkmode-button">
+            {theme === 'light' ? 'en' : 'fr'}
+          </button>
+          <button onClick={props.switchTheme} className="darkmode-button">
+            <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+          {theme === 'light' ? 'Dark' : 'Light'}
+          </button>
+        </div> */}
 
 
 
@@ -84,6 +103,9 @@ const NavBar = (props) => {
               <i className="fas fa-info-circle"></i>
               {t("navbar.about")}
             </ButtonLink>
+          <button onClick={switchLanguage} className="lang-button">
+            {i18n.language === 'en' ? 'fr' : 'en'}
+          </button>
 
 
         {isAuthenticated ? (
@@ -102,14 +124,3 @@ const NavBar = (props) => {
 }
 
 export default withAuth0(NavBar);
-
-// <div className="util-box">
-//   <button onClick={props.switchTheme} className="darkmode-button">
-//     {theme === 'light' ? 'en' : 'fr'}
-//   </button>
-//   <button onClick={props.switchTheme} className="darkmode-button">
-//     <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
-//   {theme === 'light' ? 'Dark' : 'Light'}
-//   </button>
-// </div>
-//

@@ -176,7 +176,7 @@ const CanvasPage = (props) => {
         const personalArea = document.getElementById(personalId).getBoundingClientRect();
         const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
         const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-        const topMenuH = overlay ? 20 : (isPersonalArea ? 80 : topBar.height);
+        const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
         const padding = 80;
         const doublePad = 2 * padding;
         const screenW = window.innerWidth;
@@ -292,7 +292,7 @@ const CanvasPage = (props) => {
             }
             const newX = canvas.state[`${areaString}LayerX`] + x;
             const newY = canvas.state[`${areaString}LayerY`] + y;
-            if (mode === "play") {   
+            if (mode === "play") {
               const newCanvZoomSettings = {
                 x: newX,
                 y: newY,
@@ -783,6 +783,14 @@ const CanvasPage = (props) => {
     style: obj.style,
     varType: obj.varType,
     varName: obj.varName,
+    varValue: obj.varValue,
+    varOne: obj.varOne,
+    varTwo: obj.varTwo,
+    math: obj.math,
+    amount: obj.amount,
+    variableAmount: obj.variableAmount,
+    incr: obj.incr,
+    radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
     sync: obj.sync

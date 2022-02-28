@@ -157,7 +157,7 @@
   color: var(--primary);
   margin-left: -1px;
   height: 0px;
-  margin-top: -36.5px;
+  margin-top: -35.5px;
   transition: .4s margin-left;
 }
 .level-bar > i.level-bar-full {
@@ -351,7 +351,7 @@
   .level-gamepage .level-close {
     margin-top: 15px;
   }
-  
+
 
 
   #levelContainer {
