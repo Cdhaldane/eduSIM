@@ -950,9 +950,24 @@ hr {
   touch-action: manipulation;
 }
 .input-radiotrue{
+<<<<<<< HEAD
   margin: 0px 0px;
   flex: 1;
 }
+=======
+  text-align: left !important;
+  margin: 0px 0px;
+  flex: 1;
+}
+.input-radiofalse{
+  text-align: left !important;
+  margin: 0px 0px;
+  flex: 1;
+}
+.inputradiofalse{
+  margin-left: 5px;
+}
+>>>>>>> charlie-working-8
 .input-radiotrue label{
   margin-left: 1px !important;
   position: relative;
@@ -1137,6 +1152,12 @@ hr {
   }
 
   
+  .about-logos {
+    flex-direction: column;
+    align-items: center;
+  }
+
+
   .about-logos {
     flex-direction: column;
     align-items: center;

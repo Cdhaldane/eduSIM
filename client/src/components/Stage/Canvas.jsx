@@ -3043,6 +3043,7 @@ class Graphics extends Component {
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}
+          getO
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}
