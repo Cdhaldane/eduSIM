@@ -16,7 +16,7 @@ const Input = forwardRef((props, ref) => {
   const [number, setNum] = useState()
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
-        props.updateVariable(varName, value)
+      props.updateVariable(varName, value)
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -33,13 +33,13 @@ const Input = forwardRef((props, ref) => {
 
   const handleChangeValueButton = () => {
     if (props.sync && props.updateVariable) {
-      for(let i = 0; i < props.varName.length; i ++){
+      for (let i = 0; i < props.varName.length; i++) {
         let name = varName[i];
         let value;
-        if(!props.varValue[i]){
+        if (!props.varValue[i]) {
           value = 1;
         }
-        if(Number.isInteger(props.varValue[i])){
+        if (Number.isInteger(props.varValue[i])) {
           value = props.varValue[i] + 1;
         } else {
           value = props.varValue[i];
@@ -49,14 +49,14 @@ const Input = forwardRef((props, ref) => {
       }
     } else {
       let vars = {};
-      for(let i = 0; i < props.varName.length; i ++){
+      for (let i = 0; i < props.varName.length; i++) {
         if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
         let name = varName[i];
         let value;
-        if(!props.varValue[i]){
+        if (!props.varValue[i]) {
           value = 1;
         }
-        if(Number.isInteger(props.varValue[i])){
+        if (Number.isInteger(props.varValue[i])) {
           value = props.varValue[i] + 1;
         } else {
           value = props.varValue[i];
@@ -67,33 +67,29 @@ const Input = forwardRef((props, ref) => {
         }));
         sessionStorage.setItem('lastSetVar', varName);
       }
-      console.log(sessionStorage)
       props.refresh();
     }
-    console.log(sessionStorage)
-    console.log(varName.length)
   }
 
   const getValue = () => {
     if (props.sync && props.variables) {
-      console.log(props.variables)
       return props.variables[varName];
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-        return vars[varName];
+      return vars[varName];
     }
   }
 
 
   const checkRadio = (i) => {
     if (props.sync && props.variables && props.radioText) {
-      return(props.radioText[i] === props.variables[varName])
+      return (props.radioText[i] === props.variables[varName])
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-        if(props.radioText && vars[varName]){
-          return((props.radioText ? props.radioText[i] : 1)  === vars[varName])
+      if (props.radioText && vars[varName]) {
+        return ((props.radioText ? props.radioText[i] : 1) === vars[varName])
       }
     }
   }
@@ -101,15 +97,15 @@ const Input = forwardRef((props, ref) => {
   const calculateRadios = () => {
     const list = []
     let length = props.amount;
-    if(!length){
-      length=3;
+    if (!length) {
+      length = 3;
     }
     for (let i = 0; i < length; i++) {
       let checked = checkRadio(i);
-        list.push(
-          <div className="radio-inputs"   style={{
-              ...props.style
-            }}>
+      list.push(
+        <div className="radio-inputs" style={{
+          ...props.style
+        }}>
           <input
             key={i}
             className={"inputradio" + (props.editMode)}
@@ -118,11 +114,11 @@ const Input = forwardRef((props, ref) => {
             checked={checkRadio(i)}
             onClick={(e) => handleChangeValue(e.target.value)}
           />
-          <label for="radio">{props.radioText ? props.radioText[i] : "nothing"}</label>
-          </div>
+          <label htmlFor="radio">{props.radioText ? props.radioText[i] : "nothing"}</label>
+        </div>
       );
     }
-    return list
+    return list;
   }
 
 
@@ -132,14 +128,14 @@ const Input = forwardRef((props, ref) => {
     let num = "NA";
     let math = (props.math ? props.math : 0)
 
-      let one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
-      let two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
+    let one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
+    let two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
 
     // else {
     //   let one = parseInt(props.variables[props.varOne] ? props.variables[props.varOne] : 0)
     //   let two = parseInt(props.variables[props.varTwo] ? props.variables[props.varOne] : 0)
     // }
-    if(math === "add"){
+    if (math === "add") {
       num = one + two;
     } else if (math === "subtract") {
       num = one - two
@@ -151,7 +147,7 @@ const Input = forwardRef((props, ref) => {
     let vars = {};
 
     return (
-      <div className="var-output" style={{...props.style}}>
+      <div className="var-output" style={{ ...props.style }}>
         <p className="variable-dsplay">{num}</p>
       </div>
     )
@@ -163,21 +159,23 @@ const Input = forwardRef((props, ref) => {
       <Wrapper {...settings}>
         {({
           button: (
-            {...props.incr ? (
-              <button
-             className="inputButtonDefault"
-             style={{
-               ...props.style
-             }}
-             onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
-            ) : (
-              <button
-                className="inputButtonDefault"
-                style={{
-                  ...props.style
-                }}
-                onClick={() => handleChangeValueButton()}>{props.label}</button>
-            )}
+            {
+              ...props.incr ? (
+                <button
+                  className="inputButtonDefault"
+                  style={{
+                    ...props.style
+                  }}
+                  onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
+              ) : (
+                <button
+                  className="inputButtonDefault"
+                  style={{
+                    ...props.style
+                  }}
+                  onClick={() => handleChangeValueButton()}>{props.label}</button>
+              )
+            }
 
           ),
           text: (

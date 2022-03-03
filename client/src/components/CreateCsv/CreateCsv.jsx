@@ -99,7 +99,7 @@ const CreateCsv = (props) => {
         <p className="modal-title">{t("modal.addStudentCSV")}</p>
         <div className="areacsv-links">
           <input type="file" name="img" id="csv-file" onChange={onChange} value="" />
-          <label for="csv-file" className="csv-link">{t("modal.uploadCSV")}</label>
+          <label htmlFor="csv-file" className="csv-link">{t("modal.uploadCSV")}</label>
           <input type="button" id="csv-filedownload" onClick={download} value={t("modal.downloadCSVTemplate")} />
         </div>
         {file ? (
