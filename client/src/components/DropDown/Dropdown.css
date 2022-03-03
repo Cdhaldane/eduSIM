@@ -725,13 +725,12 @@ a {
 }
 
 .icon-button.disabled {
-
-
-
+  filter: saturate(0);
 }
 
 .icon-button.disabled:hover {
   cursor: not-allowed;
+  filter: saturate(0);
 }
 
 #roleNameAdd {

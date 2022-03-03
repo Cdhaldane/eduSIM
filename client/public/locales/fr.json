@@ -261,6 +261,7 @@
       "pageColors": "Couleur de la page",
       "confirmDeletePage": "Voulez-vous vraiment supprimer la page {{name}} ? Cette action ne peut pas être annulée.",
       "deletePage": "Oui - supprimer la page",
+      "unitledPage": "Sans titre",
       "pageColorChangeWarning": "Avertissement : La modification des couleurs sur les pages peut affecter l'accessibilité de l'application. Assurez-vous d'utiliser un contraste suffisamment élevé pour que le texte soit facilement lisible. Cliquez sur confirmer si vous souhaitez activer cette fonctionnalité.",
       "pageColorChangeConfirm": "Confirmer et ne plus afficher",
       "sampleTextQuestion": "Exemple de question textuelle",

@@ -264,7 +264,6 @@ const DropdownEditObject = (props) => {
 
   const handleRadioText = (e) => {
     texts[e.id] = e.value;
-    console.log(texts)
     debounceObjState({ radioText: texts });
     setObjState(prev => ({
       ...prev,

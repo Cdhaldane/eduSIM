@@ -10,15 +10,16 @@ import { useAlertContext } from "../Alerts/AlertContext";
 import "./Dropdown.css";
 
 const DropdownTimelineBar = (props) => {
-  const UNTITLED_PAGE = "Untitled Page";
-  const MAX_PAGE_NUM = 10;
-  const MAX_OVERLAY_NUM = 6;
 
   const [pages, setPages] = useState(props.pages);
   const [numOfPages, setNumOfPages] = useState(props.numOfPages);
   const [pageColorSettings, setPageColorSettings] = useState("foreground");
   const dropdown = useRef();
   const { t } = useTranslation();
+
+  const UNTITLED_PAGE = t("edit.untitledPage");
+  const MAX_PAGE_NUM = 10;
+  const MAX_OVERLAY_NUM = 6;
 
   const [copy, setCopy] = useState(-1);
 
@@ -82,6 +83,9 @@ const DropdownTimelineBar = (props) => {
   }, [pages]);
 
   const pageNameChanged = (name, index) => {
+    if (!name) {
+      name = UNTITLED_PAGE;
+    }
     const newArr = pages.slice();
     newArr[index].name = name;
     setPages(newArr);
@@ -136,7 +140,7 @@ const DropdownTimelineBar = (props) => {
             // Copy the page with settings but no objects
             const newOverlays = [];
             for (let i = 0; i < page.overlays.length; i++) {
-              let overlay = {...page.overlays[i]};
+              let overlay = { ...page.overlays[i] };
               overlay.layers = [];
               newOverlays.push(overlay);
             }
@@ -149,7 +153,7 @@ const DropdownTimelineBar = (props) => {
               personalLayers: [],
               overlays: newOverlays
             }];
-            setPages(newPages);    
+            setPages(newPages);
           }
         }}
       >
@@ -185,9 +189,7 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-
         <i className={`icons lni lni-chevron-up`} />
-
       </span>
 
       {/* MOVE PAGE DOWN */}
@@ -219,9 +221,7 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-
         <i className={`icons lni lni-chevron-down`} />
-
       </span>
     </div>
   );
@@ -301,13 +301,19 @@ const DropdownTimelineBar = (props) => {
                         key={index}
                         disabled={false}
                       >
-                        <span className="icon-button" onClick={() => {
-                          setDeletionIndex(index);
-                          setConfirmationModal(true);
-                        }} >
+                        <span
+                          className="icon-button" onClick={() => {
+                            if (index > 0) {
+                              setDeletionIndex(index);
+                              setConfirmationModal(true);
+                            }
+                          }}
+                          style={{
+                            filter: `${index === 0 && props.pages.length === 1 ? "saturate(0)" : "none"}`
+                          }}
+                        >
                           <i className="icons lni lni-trash-can" />
                         </span>
-
                         {`${page.name}`}
                         {editBtns(page, index)}
                       </div>
@@ -390,13 +396,14 @@ const DropdownTimelineBar = (props) => {
                       }
                     }}
                   >
-                    <span className="icon-button" style={{
-                      backgroundColor: pages[currentSettingsIndex] ?
-                        (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "grey" : "var(--white)") : "var(--white)"
-                    }}>
-
+                    <span
+                      className="icon-button"
+                      style={{
+                        filter: pages[currentSettingsIndex] ?
+                          (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "saturate(0)" : "none") : "none"
+                      }}
+                    >
                       <i className="icons lni lni-plus" />
-
                     </span>
                   </div>
                 </div>

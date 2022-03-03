@@ -529,9 +529,16 @@ class Graphics extends Component {
           movingCanvas: false
         });
       }
-      const colorPage = this.state.pages[this.state.level - 1] ? this.state.pages[this.state.level - 1] : this.state.pages[this.state.level - 2];
-      document.querySelector(':root').style.setProperty('--primary', colorPage.primaryColor);
-      this.props.setPageColor(colorPage.groupColor);
+
+      let pageDownNum = 1;
+      if (this.state.level > this.state.pages.length) {
+        this.setState({
+          level: this.state.level - 1
+        });
+        pageDownNum++;
+      }
+      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - pageDownNum].primaryColor);
+      this.props.setPageColor(this.state.pages[this.state.level - pageDownNum].groupColor);
     }
   }
 
@@ -2862,8 +2869,8 @@ class Graphics extends Component {
 
   handleCopyPage = (index) => {
     // Copy all objects from chosen level to new level
-    const groupLayers = [];
-    const personalLayers = [];
+    const groupLayers = Array(this.state.pages[this.state.level - 1].groupLayers.length);
+    const personalLayers = Array(this.state.pages[this.state.level - 1].personalLayers.length);
     const overlayLayers = [];
     let toBeSaved = {};
     for (let i = 0; i < this.savedObjects.length; i++) {
@@ -2884,25 +2891,28 @@ class Graphics extends Component {
           const id = type + numOfObj;
           if (obj?.overlayIndex && obj.overlayIndex !== -1) {
             const inListIndex = overlayLayers.findIndex((layer => layer.id === obj.overlayIndex));
+            const pageOverlays = this.state.pages[obj.level - 1].overlays;
+            const currLayers = pageOverlays[pageOverlays.map(overlay => overlay.id).indexOf(obj.overlayIndex)].layers;
             if (inListIndex !== -1) {
+              const layersArr = [...overlayLayers[inListIndex].layers];
+              layersArr[currLayers.indexOf(obj.id)] = id;
               const newLayers = {
                 id: overlayLayers[inListIndex].id,
-                layers: [
-                  ...overlayLayers[inListIndex].layers,
-                  id
-                ]
+                layers: layersArr
               }
               overlayLayers[inListIndex] = newLayers;
             } else {
+              const layersArr = Array(currLayers.length);
+              layersArr[currLayers.indexOf(obj.id)] = id;
               overlayLayers.push({
                 id: obj.overlayIndex,
-                layers: [id]
+                layers: layersArr
               });
             }
           } else if (obj.infolevel) {
-            personalLayers.push(id);
+            personalLayers[this.state.pages[obj.level - 1].personalLayers.indexOf(obj.id)] = id;
           } else {
-            groupLayers.push(id);
+            groupLayers[this.state.pages[obj.level - 1].groupLayers.indexOf(obj.id)] = id;
           }
           const newObj = {
             ...obj,
