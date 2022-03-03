@@ -664,7 +664,6 @@ const DropdownAddObjects = (props) => {
             {t("edit.addMedia")}
           </DropdownItem>
           <DropdownItem
-
             leftIcon={<i className="icons lni lni-hand"></i>}
             onClick={() => setActiveMenu("pieces")}>
             {t("edit.addInteractive")}
@@ -675,9 +674,7 @@ const DropdownAddObjects = (props) => {
             {t("edit.addInput")}
           </DropdownItem>
           <DropdownItem
-
             leftIcon={<i className="icons lni lni-game"></i>}
-
             onClick={() => setActiveMenu("games")}>
             {t("edit.addGames")}
           </DropdownItem>
@@ -699,18 +696,13 @@ const DropdownAddObjects = (props) => {
 
           <DropdownItem
             onClick={addText}
-
-
             leftIcon={<i className="icons lni lni-comments-alt" onClick={addText}></i>}>
             {t("edit.shape.text")}
           </DropdownItem>
-
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons lni lni-stop" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>
           <DropdownItem onClick={addCircle} leftIcon={<i className="icons lni lni-circle-plus" onClick={addCircle}></i>}>{t("edit.shape.circle")}</DropdownItem>
           <DropdownItem onClick={addTriangle} leftIcon={<i className="icons lni lni-play" onClick={addTriangle}></i>}>{t("edit.shape.triangle")}</DropdownItem>
           <DropdownItem onClick={addStar} leftIcon={<i className="icons lni lni-star" onClick={addStar}></i>}>{t("edit.shape.star")}</DropdownItem>
-
-
           <DropdownItem
             onClick={addLine}
             leftIcon={<i className="icons" onClick={addLine} style={{

@@ -257,6 +257,7 @@ a {
 }
 
 .welcome-nav {
+  width: auto;
   margin-top: 10vw;
   margin-left: 12vw;
 }
@@ -391,7 +392,7 @@ a {
   padding-left: 10vw;
   padding-right:10vw;
   width: 100%;
-
+  margin-bottom: 50px;
 }
 .terms{
   text-align: left;
@@ -493,7 +494,7 @@ a {
   margin: 3vw 3vw;
   margin-bottom: -10vw;
   max-width: 20vw;
-  max-height: auto;
+  max-height: 28vw;
   text-align: center;
   vertical-align: middle;
   flex: 1;
@@ -502,20 +503,28 @@ a {
 .welcome-navbutton h1 {
   font-family: "Montserrat", sans-serif;
   font-size: 1.5vw;
-  margin-bottom: 1vw;
+  height: 2vw !important;
+  text-align: center !important;
+  margin-bottom: 0.5vw;
   color: var(--dark);
 }
+
+.fr h1{
+  font-size: 1.1vw !important;
+}
+
+
 
 .welcome-navbutton h2 {
   font-family: "Montserrat", sans-serif;
   font-size: 1.2vw;
   font-weight: lighter;
-  margin-bottom: 1vw;
+  height: 8vw !important;
   color: var(--dark);
 }
 
 .fix h2 {
-  font-size: 1.05vw;
+  font-size: 1.1vw;
 }
 
 .welcome-navbutton img {
@@ -959,6 +968,7 @@ hr {
   margin: 0px 0px;
   flex: 1;
   border-radius: 10px;
+  padding: 10px;
 }
 .input-radiofalse{
   text-align: left !important;
@@ -1048,8 +1058,20 @@ hr {
 
   .welcome-nav {
     margin-top: 10vh;
+    margin-right: 2vh;
+    margin-left: 2vh;
     vertical-align: bottom;
     z-index: 100;
+  }
+
+  .welcome-nav h1{
+    font-size: 5.0vw;
+    text-align: center;
+  }
+  .welcome-nav h2{
+    margin-left: 8vw;
+    font-size: 2.5vw;
+    text-align: left;
   }
 
   .welcome-text {
@@ -1122,21 +1144,11 @@ hr {
     width: auto;
   }
 
-  .welcome-nav img {
-    margin-top: -20vw;
-    opacity: 0;
+  .fr h1{
+    font-size: 3.5vw !important;
   }
 
-  .welcome-nav h1 {
-    font-size: 5.0vw;
-  }
 
-  .welcome-nav h2 {
-    font-size: 3vw;
-  }
-  .mobile-view{
-
-  }
   .main-content{
     min-height: 100vw;
   }

@@ -85,15 +85,15 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <i id="pencil" className="lni lni-pencil" aria-hidden="true"><h1>Edit</h1></i>
+              <i id="pencil" className="lni lni-pencil" aria-hidden="true"><h1>{t("admin.simedit")}</h1></i>
             </Link>
-            <i id="add-user" className="lni lni-users" onClick={() => setModalOpen(true)}><h1>Invite Collaborators</h1></i>
+            <i id="add-user" className="lni lni-users" onClick={() => setModalOpen(true)}><h1>{t("admin.siminvite")}</h1></i>
             <i
               id="garbage"
               className="lni lni-trash-can"
               aria-hidden="true"
               onClick={() => props.setConfirmationModal(true, props.gameid)}
-            ><h1>Delete</h1></i>
+            ><h1>{t("admin.simdelete")}</h1></i>
 
           </>
         ) : (
@@ -112,7 +112,7 @@ const SimNote = (props) => {
             id="play"
             className="lni lni-chevron-right-circle"
             onClick={() => localStorage.setItem("gameid", props.gameid)}
-          ><h1>Run</h1></i>
+          ><h1>{t("admin.simrun")}</h1></i>
         </Link>
       </div>
       <Modal
