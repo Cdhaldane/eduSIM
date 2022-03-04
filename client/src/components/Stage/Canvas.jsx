@@ -314,6 +314,12 @@ class Graphics extends Component {
 
               for (let j = 0; j < this.customObjects.length; j++) {
                 const type = this.customObjects[j];
+                if (this.state[type] === undefined) {
+                  this.setState({
+                    [type]: []
+                  });
+                  continue;
+                }
                 for (let i = 0; i < this.state[type].length; i++) {
                   const state = this.state[type][i];
                   this.setCustomGroupPos(state, "groupAreaLayer");
@@ -400,7 +406,7 @@ class Graphics extends Component {
     history.push(this.state);
 
     this.props.setPerformanceFunctions({
-      setPollData: this.setPollData
+      setCustomObjData: this.setCustomObjData
     });
   }
 
@@ -491,6 +497,7 @@ class Graphics extends Component {
           onMouseDown: this.onMouseDown,
           getKonvaObj: this.getKonvaObj,
           getObjType: this.getObjType,
+          setCustomObjData: this.setCustomObjData,
           getInteractiveProps: this.getInteractiveProps,
           getVariableProps: () => { },
           getDragProps: () => { },
@@ -2674,15 +2681,15 @@ class Graphics extends Component {
     });
   }
 
-  setPollData = (type, data, id) => {
+  setCustomObjData = (customObj, type, data, id) => {
     this.setState(prevState => ({
-      polls: prevState.polls.map(poll =>
-        poll.id === id
+      [customObj]: prevState[customObj].map(obj =>
+        obj.id === id
           ? {
-            ...poll,
+            ...obj,
             [type]: data
           }
-          : poll
+          : obj
       )
     }));
   }
@@ -3043,7 +3050,6 @@ class Graphics extends Component {
           saveGame={this.handleSave}
           pages={this.state.pages}
           level={this.handleLevel}
-          getO
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}
@@ -3373,7 +3379,7 @@ class Graphics extends Component {
                   handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
-                  setPollData={this.setPollData}
+                  setCustomObjData={this.setCustomObjData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
                   layers={this.getLayers()}

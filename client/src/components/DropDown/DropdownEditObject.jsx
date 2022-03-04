@@ -340,11 +340,6 @@ const DropdownEditObject = (props) => {
     }));
   }
 
-
-
-
-
-
   const newTabInputSettings = (tab) => {
     setInputStrokeWidth(objState.style.borderWidth ?
       parseInt(objState.style.borderWidth.slice(0, -2)) : DEFAULT_INPUT_STROKE_W);
@@ -529,7 +524,7 @@ const DropdownEditObject = (props) => {
             unmountOnExit>
             <div className="menuedit">
               <DropdownEditPoll
-                setData={props.setPollData}
+                setData={props.setCustomObjData}
                 shape={shape}
                 title={t("edit.pollEdit")}
               />

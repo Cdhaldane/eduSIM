@@ -61,6 +61,10 @@ img {
   /* ie8 */
 }
 
+.konvajs-content>canvas {
+  pointer-events: none;
+}
+
 #personalGameContainer .konvajs-content>canvas,
 #groupGameContainer .konvajs-content>canvas,
 #overlayGameContainer .konvajs-content>canvas {

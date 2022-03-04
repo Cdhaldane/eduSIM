@@ -18,7 +18,7 @@ const Performance = forwardRef((props, ref) => {
     const newPollJson = { ...props.customObjs.polls[pollI].json };
     newPollJson.pages[pageI].questions[qI] = newQ;
 
-    props.setData.setPollData("json", newPollJson, id);
+    props.setData.setCustomObjData("polls", "json", newPollJson, id);
   }
 
   const PIE_CHART_COLORS = ["#edae49", "#d1495b", "#00798c", "#30638e", "#003d5b", "#7dce82", "#3cdbd3"];
@@ -152,7 +152,7 @@ const Performance = forwardRef((props, ref) => {
                                     width={45}
                                     handleDiameter={23}
                                     onChange={(val) => {
-                                      props.setData.setPollData("performanceEnabled", val, poll.id);
+                                      props.setData.setCustomObjData("polls", "performanceEnabled", val, poll.id);
                                     }}
                                     checked={poll.performanceEnabled}
                                   />

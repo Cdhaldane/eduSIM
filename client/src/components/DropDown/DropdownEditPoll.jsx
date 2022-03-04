@@ -55,7 +55,7 @@ const DropdownEditPoll = (props) => {
       "showProgressBar": pages.length === 1 ? null : "bottom",
       "pages": pagesJson
     };
-    props.setData("json", json, props.shape.attrs.id);
+    props.setData("polls", "json", json, props.shape.attrs.id);
   }
 
   const setQuestionParam = (type, pIndex, qIndex, val) => {
