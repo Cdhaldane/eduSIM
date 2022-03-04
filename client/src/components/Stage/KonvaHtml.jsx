@@ -131,7 +131,7 @@ const KonvaHtml = ({
       ref={groupRef}
       id={refName}
       name={"customObj"}
-      draggable={false}
+      draggable={refName.includes("richText") ? false : true}
       onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
         objectSnapping(groupRef.current, e);

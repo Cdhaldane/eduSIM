@@ -987,7 +987,7 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
       objectIds = overlay.layers;
     }
-    objectIds = [objectIds.filter(id => id.includes("pencils")), ...objectIds.filter(id => !id.includes("pencils"))];
+    objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
