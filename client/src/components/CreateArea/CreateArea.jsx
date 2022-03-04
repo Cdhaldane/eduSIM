@@ -61,7 +61,6 @@ const CreateArea = (props) => {
       localStorage.setItem("images", JSON.stringify(temp))
     }
     try {
-      console.log(gameData)
       let data = {
         gameinstance_name: title,
         gameinstance_photo_path: imageSelected,

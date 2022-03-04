@@ -412,6 +412,15 @@ const DropdownAddObjects = (props) => {
     );
   }
 
+  const addNewText = () => {
+    addObjectToLayer(
+      "richTexts",
+      {
+        editorState: null
+      }
+    );
+  }
+
   const addText = () => {
     addObjectToLayer(
       "texts",
@@ -699,10 +708,14 @@ const DropdownAddObjects = (props) => {
 
           <DropdownItem
             onClick={addText}
-
-
             leftIcon={<i className="icons lni lni-comments-alt" onClick={addText}></i>}>
             {t("edit.shape.text")}
+          </DropdownItem>
+
+          <DropdownItem
+            onClick={addNewText}
+            leftIcon={<i className="icons lni lni-comments-alt" onClick={addNewText}></i>}>
+            New Text
           </DropdownItem>
 
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons lni lni-stop" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>

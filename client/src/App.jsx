@@ -32,7 +32,8 @@ const customObjects = [
   "tics",
   "htmlFrames",
   "inputs",
-  "timers"
+  "timers",
+  "richTexts"
 ];
 
 const App = (props) => {

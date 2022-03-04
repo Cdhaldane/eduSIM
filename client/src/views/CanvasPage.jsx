@@ -8,6 +8,7 @@ import URLVideo from "../components/Stage/URLVideos";
 import URLImage from "../components/Stage/URLImage";
 import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Connect4 from "../components/Stage/GamePieces/Connect4/Board";
+import RichText from "../components/Stage/GamePieces/RichText/RichText";
 import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import Timer from "../components/Stage/GamePieces/Timer";
@@ -102,6 +103,8 @@ const CanvasPage = (props) => {
       return null;
     }
   }
+
+  const richTextRef = useRef(null);
 
   // In game mode to prevent screen resizing due to dragging shapes out of bounds
   // It will use the initial zoom settings until a resize occurs
@@ -819,6 +822,17 @@ const CanvasPage = (props) => {
     onDragMove: (e) => canvas.dragLayer(e, false)
   });
 
+  const richTextProps = (obj, canvas, editMode) => {
+    return {
+      editMode: editMode,
+      selected: canvas.state.selectedShapeName === obj.id,
+      editorState: obj.editorState,
+      setEditorState: (data) => {
+        canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
+      }
+    };
+  }
+
   const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
@@ -884,6 +898,15 @@ const CanvasPage = (props) => {
         return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
       case "lines":
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
+      case "richTexts":
+        return <RichText
+          defaultProps={{...defaultObjProps(obj, canvas, editMode)}}
+          {...richTextProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
+          draggable={false}
+        />;
       case "polls":
         return <Poll
           defaultProps={{
