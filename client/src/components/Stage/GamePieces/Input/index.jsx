@@ -14,8 +14,6 @@ const Input = forwardRef((props, ref) => {
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
   const [number, setNum] = useState(0)
-  console.log(props.variables)
-  console.log(JSON.parse(sessionStorage.gameVars))
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
         props.updateVariable(varName, value)
@@ -45,7 +43,6 @@ const Input = forwardRef((props, ref) => {
         } else {
           value = props.varValue[i];
         }
-        console.log(value)
         props.updateVariable(name, value)
       }
     } else {
@@ -68,7 +65,6 @@ const Input = forwardRef((props, ref) => {
         }));
         sessionStorage.setItem('lastSetVar', varName);
       }
-      console.log(sessionStorage)
       props.refresh();
     }
   }
@@ -112,7 +108,7 @@ const Input = forwardRef((props, ref) => {
             type="radio"
             value={props.radioText ? props.radioText[i] : "nothing"}
             checked={checkRadio(i)}
-            onClick={(e) => handleChangeValue(e.target.value)}
+            onClick={(e) => (props.visible ? handleChangeValue(e.target.value) : false)}
           />
           <label for="radio">{props.radioText ? props.radioText[i] : "nothing"}</label>
           </div>
@@ -129,7 +125,6 @@ const Input = forwardRef((props, ref) => {
     let math = (props.math ? props.math : 0)
     let one, two;
     if(!props.sync){
-      console.log(sessionVars[props.varOne])
        one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
        two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
     }  else {
@@ -152,9 +147,6 @@ const Input = forwardRef((props, ref) => {
     } else if (math === "multiply") {
       num = one * two
     }
-    console.log(props.variables)
-    console.log(one)
-    console.log(two)
 
     if(num!==number && Number.isInteger(num)){
       setNum(num)
@@ -176,49 +168,49 @@ const Input = forwardRef((props, ref) => {
           button: (
             {...props.incr ? (
               <button
-             className="inputButtonDefault"
+             className={"inputButtonDefault " + props.visible}
              style={{
                ...props.style
              }}
-             onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
+             onClick={() => (props.visible ? handleChangeValue((getValue() || 0) + 1) : false)}>{props.label}</button>
             ) : (
               <button
                 className="inputButtonDefault"
                 style={{
                   ...props.style
                 }}
-                onClick={() => handleChangeValueButton()}>{props.label}</button>
+                onClick={() => (props.visible ? handleChangeValueButton() : false)}>{props.label}</button>
             )}
 
           ),
           text: (
             <input
               type="text"
-              className="inputTextDefault"
+              className={"inputTextDefault " + props.visible}
               style={{
                 ...props.style
               }}
               placeholder={props.label}
               value={getValue()}
-              onChange={(e) => handleChangeValue(e.target.value)}
+              onChange={(e) => (props.visible ? handleChangeValue(e.target.value) : false)}
             />
           ),
           checkbox: (
             <input
               type="checkbox"
               checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+              onChange={(e) => (props.visible ? handleChangeValue((!!getValue() ? false : true)) : false)}
             />
           ),
           radio: (
-            <div className={"input-radio" + (props.editMode)} style={{
+            <div className={"inputButtonDefault " + "input-radio" + (props.editMode) + " " + props.visible} style={{
                 ...props.style
               }}>
               {calculateRadios()}
             </div>
           ),
           variable: (
-            <div className={"input-var" + (props.editMode)}>
+            <div className={"input-var" + (props.editMode) + " " + props.visible}>
               {calculateVariable()}
             </div>
           )

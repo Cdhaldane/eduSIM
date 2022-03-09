@@ -255,6 +255,7 @@ class Graphics extends Component {
     this.reloadFromSavedState(props.doNotRecalculateBounds);
   }
 
+
   reloadFromSavedState = (doNotRecalculateBounds) => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
       params: {

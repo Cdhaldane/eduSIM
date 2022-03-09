@@ -55,6 +55,7 @@ const CreateEdit = (props) => {
           setImg(result.info.url);
           setWillUpload(true);
           localStorage.setItem("img", result.info.public_id)
+          myWidget.close();
         }
       }
     );

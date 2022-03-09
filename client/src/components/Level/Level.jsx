@@ -31,6 +31,37 @@ const Level = (props) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  const checkObjConditions = (varName, condition, check, checkAlt) => {
+    if (!varName) return true;
+    let vars = {};
+    let variables = props.variables;
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
+    if (Object.keys(variables).length > 0) vars = { ...vars, ...variables };
+
+    let trueValue = isNaN(check) ? check : parseInt(check);
+    let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
+
+    let val = vars[varName];
+    let varLen = isNaN(val) ? (val || "").length : val;
+
+    switch (condition) {
+      case "isequal":
+        return val == trueValue;
+      case "isgreater":
+        return varLen > trueValue;
+      case "isless":
+        return varLen < trueValue;
+      case "between":
+        return varLen <= trueValueAlt && varLen >= trueValue;
+      case "negative":
+        return !val;
+      case "onchange":
+        return sessionStorage.lastSetVar === varName
+      default: return !!val;
+    }
+  }
+
   const handleLevel = (e) => {
     let closeOverlay = null;
     if (props.page) {
@@ -44,20 +75,35 @@ const Level = (props) => {
     if (e > count &&
       props.page &&
       closeOverlay) {
-      props.handlePageCloseOverlay(closeOverlay.id);
+      props.handlePageOpenOverlay(closeOverlay.id);
       return;
     }
     if (props.gamepage) {
-      if (e > count && props.disableNext) return;
-      if (e > count + 1) return;
-      if (!props.freeAdvance) return;
+      if (e > count + 1 && props.disableNext) {
+        return
+      };
+      if (e > count + 1) {
+        return;
+      }
+      if (!props.freeAdvance){
+        return;
+      }
       props.level(e);
-
+      setCount(e)
     } else {
       props.level(e);
       setCount(e);
     }
   }
+
+  useEffect(() => {
+    for(let i = 0; i < (props.alerts ? props.alerts.length - 1 : 0); i++){
+      if(checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)){
+        console.log(2)
+        handleLevel(count+1);
+      }
+    }
+  }, [props.variables])
 
   useEffect(() => {
     if (props.levelVal) {
@@ -66,7 +112,6 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   useEffect(() => {
-    console.log(props)
     let varName="level"
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);

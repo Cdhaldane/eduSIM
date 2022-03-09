@@ -13,14 +13,16 @@ a {
   border-radius: 0.5em;
   padding: 0.2em;
   background-color: #e4e4e4;
-
   border: 1px solid rgb(44, 44, 44);
 }
 
+.false{
+  display: none !important;
+}
 
 .inputButtonDefault:hover {
   filter: brightness(0.85) saturate(1.25) contrast(1.05);
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .inputButtonDefault:active {

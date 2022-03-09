@@ -12,6 +12,7 @@
   text-align: left;
 }
 .variable-inputs h1{
+  float: left;
   margin-left: 5px;
   margin-bottom: 0px;
 }
@@ -19,4 +20,12 @@
   margin-top: 3px;
   margin-left: 3px;
   width: 98%;
+}
+.variable-inputs input{
+  border-radius: 10px;
+  border: 1px solid var(--dark);
+  padding: 3px;
+  margin-left: 10px;
+  opacity: 70%;
+  width: 73%;
 }

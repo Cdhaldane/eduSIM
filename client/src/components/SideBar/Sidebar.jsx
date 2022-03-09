@@ -78,7 +78,7 @@ const Disabled = styled.div`
 `;
 
 const Sidebar = (props) => {
-  console.log(props)
+
   const sidebarRef = useRef();
   const backdropRef = useRef();
   const [expanded, setExpanded] = useState(false);
@@ -261,6 +261,7 @@ const Sidebar = (props) => {
       visible: true,
       submenu: (
         <Variables
+          editpage={!props.game}
           vars={props.customObjs ? props.customObjs.inputs : []}
           gameVars={props.variables ? props.variables : []}
         />

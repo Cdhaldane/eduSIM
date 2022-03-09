@@ -100,6 +100,7 @@ class Graphics extends Component {
       nextLevelOnOverlayClose: false,
 
       level: 1,
+      nextLevel: 2,
       pageNumber: 6,
       pages: [],
 
@@ -470,6 +471,9 @@ class Graphics extends Component {
     this.setState({
       selectrole: true
     })
+    this.setState({
+      nextLevel: this.state.level+1
+    })
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
 
@@ -516,7 +520,6 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
-      console.log(name)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -535,6 +538,7 @@ class Graphics extends Component {
       startModalOpen: !this.state.startModalOpen
     });
   }
+
 
   componentWillReceiveProps = ({ level }) => {
     if (level) {
@@ -632,6 +636,7 @@ class Graphics extends Component {
                 this.handleLevel(this.state.level + 1);
               }
             }}
+            handleLevel={this.handleLevel}
             state={this.state}
             propsIn={this.props}
             setRefs={(type, ref) => {
@@ -654,11 +659,19 @@ class Graphics extends Component {
           <Level
             handlePageCloseOverlay={(index) => {
               this.setState({
-                overlayOpen: true,
-                overlayOpenIndex: index,
-                nextLevelOnOverlayClose: true
+                overlayOpen: false,
+                nextLevelOnOverlayClose: false,
+                overlayOpenIndex: -1
               });
             }}
+            handlePageOpenOverlay={(index) => {
+              this.setState({
+                overlayOpen: true,
+                overlayOpenIndex: index
+              });
+            }}
+            variables={this.props.variables}
+            alerts={this.props.alerts}
             page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}

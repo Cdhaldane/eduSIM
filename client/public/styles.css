@@ -408,7 +408,8 @@ a {
 }
 .privacy-container > p {
   color: black !important;
-  margin: 6px 0;
+  margin: 10px 0;
+  padding: 2px;
 }
 .privacy-container > h3 {
   margin: 10px 0;
@@ -953,7 +954,7 @@ hr {
 
 .game {
   position: absolute;
-  top: 1000000px;
+  top: 1000px;
 }
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
@@ -963,24 +964,34 @@ hr {
   margin: 0px 0px;
   flex: 1;
 }
+.radio-inputs:hover{
+  cursor: pointer !important;
+}
+.radio-inputs label:hover{
+  cursor: pointer !important;
+}
 .input-vartrue{
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
   border-radius: 10px;
-  padding: 10px;
+  padding: 10px !important;
 }
 .input-radiofalse{
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
   border: 1px solid var(--dark);
-  padding: 2px;
+  padding: 2px !important;
   border-radius: 10px;
 }
 .inputradiofalse{
   margin-left: 5px;
 }
+.inputradiofalse:hover{
+  cursor: pointer !important;
+}
+
 
 .input-radiotrue label{
   margin-left: 1px !important;

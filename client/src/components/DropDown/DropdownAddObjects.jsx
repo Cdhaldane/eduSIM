@@ -133,23 +133,26 @@ const DropdownAddObjects = (props) => {
     try {
       if (type === "image") {
         setImageUploading(true);
-
         const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".jpg";
         setImageUploaded(true);
         setImageUploading(false);
+        addImage(name)
         props.handleImage(name);
       } else if (type === "video") {
         setVideoUploading(true);
         const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp4";
         setVideoUploaded(true);
         setVideoUploading(false);
+        addVideo(name)
         props.handleVideo(name);
       } else if (type === "audio") {
         const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp3";
         setAudioUploaded(true);
+        addAudio(name)
         props.handleAudio(name);
       } else if (type === "pdf") {
         const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".pdf";
+        addDocument(name)
         props.handleDocument(name);
       }
     } catch (error) {
@@ -162,6 +165,7 @@ const DropdownAddObjects = (props) => {
       }
       console.error(error);
     }
+
   }
 
   const handleImgFromComputer = () => {
@@ -366,7 +370,7 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  const addImage = () => {
+  const addImage = (img) => {
     alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
     getMeta(
       props.state.imgsrc,
@@ -377,20 +381,21 @@ const DropdownAddObjects = (props) => {
           "images",
           {
             temporary: false,
-            imgsrc: props.state.imgsrc,
+            imgsrc: img,
             stroke: 'black',
             strokeWidth: 0,
             opacity: 1,
-            width: width,
-            height: height
+            width: img.clientWidth,
+            height: img.clientHeight
           }
         );
       }
     );
   }
 
-  const addVideo = () => {
+  const addVideo = (video) => {
     alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
+    var videos = document.getElementById("video")
     getMeta(
       props.state.vidsrc,
       "video",
@@ -400,9 +405,9 @@ const DropdownAddObjects = (props) => {
           "videos",
           {
             temporary: false,
-            width: width,
-            height: height,
-            vidsrc: props.state.vidsrc,
+            width: 700,
+            height: 400,
+            vidsrc: video,
             stroke: 'black',
             strokeWidth: 0,
             opacity: 1
@@ -428,12 +433,12 @@ const DropdownAddObjects = (props) => {
     );
   }
 
-  const addAudio = () => {
+  const addAudio = (audio) => {
     addObjectToLayer(
       "audios",
       {
         imgsrc: "sound.png",
-        audsrc: props.state.audsrc,
+        audsrc: audio,
         stroke: 'black',
         strokeWidth: 0,
         opacity: 1,
@@ -443,7 +448,7 @@ const DropdownAddObjects = (props) => {
     );
   }
 
-  const addDocument = () => {
+  const addDocument = (document) => {
     addObjectToLayer(
       "documents",
       {
@@ -453,7 +458,7 @@ const DropdownAddObjects = (props) => {
         rotation: 0,
         width: 100,
         height: 100,
-        docsrc: docfile
+        docsrc: document
       }
     );
   }
@@ -612,7 +617,8 @@ const DropdownAddObjects = (props) => {
     let myWidget = window.cloudinary.createUploadWidget(
       {
         cloudName: "uottawaedusim",
-        uploadPreset: preset
+        uploadPreset: preset,
+        singleUploadAutoClose:true
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
@@ -627,11 +633,14 @@ const DropdownAddObjects = (props) => {
             type == "pdf"
           }
           uploadFile(result.info.public_id, type);
+          myWidget.close();
         }
       }
     );
+    props.close();
     myWidget.open();
   }
+
 
   return isLoading ? false : (
     <div
