@@ -109,6 +109,7 @@ const DropdownOverlay = (props) => {
       (error, result) => {
         if (!error && result && result.event === "success") {
           props.handleOverlayIcon(result.info.public_id)
+          myWidget.close();
         }
       }
     );

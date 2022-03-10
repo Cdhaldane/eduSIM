@@ -13,14 +13,16 @@ a {
   border-radius: 0.5em;
   padding: 0.2em;
   background-color: #e4e4e4;
-
   border: 1px solid rgb(44, 44, 44);
 }
 
+.false{
+  display: none !important;
+}
 
 .inputButtonDefault:hover {
   filter: brightness(0.85) saturate(1.25) contrast(1.05);
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .inputButtonDefault:active {
@@ -552,14 +554,15 @@ a {
   margin-bottom: 10px !important;
 }
 .variable-dsplay{
-  border: 1px solid var(--dark);
-  border-radius: 10px;
+
   padding: 2px;
 }
 .var-output{
   display: inline-block !important;
   width: auto !important;
   text-align: left !important;
+  border: 1px solid var(--dark);
+  border-radius: 10px;
 }
 .math-drop{
   width: 38% !important;
@@ -887,6 +890,7 @@ a {
 
 .title-timeline{
   display: inline-block !important;
+  height: auto;
 }
 
 .float-right{

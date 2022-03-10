@@ -23,6 +23,14 @@ class Overlay extends Component {
     }
   }
 
+  handleClose = () => {
+    let page = this.props.state.pages[this.props.state.level-1]
+    if(page.overlays[0].overlayOpenOption === "pageExit" && this.props.playMode){
+      this.props.handleLevel(this.props.state.level+1)
+    }
+    this.props.closeOverlay();
+  }
+
   render() {
     let stageHeight = 0;
     if (this.props.playMode && this.props.propsIn.canvasHeights.overlay) {
@@ -30,12 +38,12 @@ class Overlay extends Component {
     } else if (document.getElementById("overlayGameContainer")) {
       stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
-    
+
     return (
       <div className={`overlayMain ${this.props.playMode ? "noSideBar" : ""}`}>
         <div>
           <div className="area overlayCanvas">
-            <i id="overlayCloseButton" className="fas fa-times fa-3x" onClick={this.props.closeOverlay} />
+            <i id="overlayCloseButton" className="fas fa-times fa-3x" onClick={this.handleClose} />
             {/* The Konva Stage */}
             <div
               {...(this.props.playMode ? {} :

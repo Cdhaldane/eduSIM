@@ -39,7 +39,6 @@ const PauseCover = styled.div`
 `;
 
 const Game = (props) => {
-
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
@@ -185,9 +184,7 @@ const Game = (props) => {
   }),[roomStatus.level]
 
   const handleLevel = () => {
-    socket.emit("goToPage", {
-      level: actualLevel + 1
-    });
+      setLevel(roomStatus.level + 1);
   }
 
   return (
@@ -229,6 +226,7 @@ const Game = (props) => {
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
+            alerts={tasks[actualLevel] || []}
             players={parsedPlayers}
             handleLevel={handleLevel}
             level={actualLevel}

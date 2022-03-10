@@ -13,7 +13,7 @@ const Input = forwardRef((props, ref) => {
   const { settings } = useContext(SettingsContext);
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
-  const [number, setNum] = useState()
+  const [number, setNum] = useState(0)
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value)
@@ -43,7 +43,7 @@ const Input = forwardRef((props, ref) => {
         } else {
           value = props.varValue[i];
         }
-        props.updateVariable(name, value);
+        props.updateVariable(name, value)
       }
     } else {
       let vars = {};
@@ -100,17 +100,15 @@ const Input = forwardRef((props, ref) => {
     }
     for (let i = 0; i < length; i++) {
       let checked = checkRadio(i);
-      list.push(
-        <div className="radio-inputs" style={{
-          ...props.style
-        }}>
+        list.push(
+          <div className="radio-inputs" key={i}>
           <input
             key={i}
             className={"inputradio" + (props.editMode)}
             type="radio"
             value={props.radioText ? props.radioText[i] : "nothing"}
             checked={checkRadio(i)}
-            onClick={(e) => handleChangeValue(e.target.value)}
+            onClick={(e) => (props.visible ? handleChangeValue(e.target.value) : false)}
           />
           <label htmlFor="radio">{props.radioText ? props.radioText[i] : "nothing"}</label>
         </div>
@@ -121,19 +119,26 @@ const Input = forwardRef((props, ref) => {
 
 
   const calculateVariable = () => {
+    if(!props.editMode){
     let sessionVars = JSON.parse(sessionStorage.gameVars)
-    let text = varName;
     let num = "NA";
     let math = (props.math ? props.math : 0)
+    let one, two;
+    if(!props.sync){
+       one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
+       two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
+    }  else {
+       one = parseInt(props.variables[props.varOne] ? props.variables[props.varOne] : 0)
+       two = parseInt(props.variables[props.varTwo] ? props.variables[props.varTwo] : 0)
+    }
 
-    let one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
-    let two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
+    if(parseInt(props.varOne)){
+        one = props.varOne
+    } if(parseInt(props.varTwo)){
+        two = props.varTwo
+    }
 
-    // else {
-    //   let one = parseInt(props.variables[props.varOne] ? props.variables[props.varOne] : 0)
-    //   let two = parseInt(props.variables[props.varTwo] ? props.variables[props.varOne] : 0)
-    // }
-    if (math === "add") {
+    if(math === "add"){
       num = one + two;
     } else if (math === "subtract") {
       num = one - two
@@ -142,11 +147,15 @@ const Input = forwardRef((props, ref) => {
     } else if (math === "multiply") {
       num = one * two
     }
-    let vars = {};
 
+    if(num!==number && Number.isInteger(num)){
+      setNum(num)
+      handleChangeValue(num)
+    }
+  }
     return (
-      <div className="var-output" style={{ ...props.style }}>
-        <p className="variable-dsplay">{num}</p>
+      <div className="var-output" style={{...props.style}}>
+        <p className="variable-dsplay">{number}</p>
       </div>
     )
   }
@@ -157,51 +166,51 @@ const Input = forwardRef((props, ref) => {
       <Wrapper {...settings}>
         {({
           button: (
-            {
-              ...props.incr ? (
-                <button
-                  className="inputButtonDefault"
-                  style={{
-                    ...props.style
-                  }}
-                  onClick={() => handleChangeValue((getValue() || 0) + 1)}>{props.label}</button>
-              ) : (
-                <button
-                  className="inputButtonDefault"
-                  style={{
-                    ...props.style
-                  }}
-                  onClick={() => handleChangeValueButton()}>{props.label}</button>
-              )
-            }
+            {...props.incr ? (
+              <button
+             className={"inputButtonDefault " + props.visible}
+             style={{
+               ...props.style
+             }}
+             onClick={() => (props.visible ? handleChangeValue((getValue() || 0) + 1) : false)}>{props.label}</button>
+            ) : (
+              <button
+                className="inputButtonDefault"
+                style={{
+                  ...props.style
+                }}
+                onClick={() => (props.visible ? handleChangeValueButton() : false)}>{props.label}</button>
+            )}
 
           ),
           text: (
             <input
               type="text"
-              className="inputTextDefault"
+              className={"inputTextDefault " + props.visible}
               style={{
                 ...props.style
               }}
               placeholder={props.label}
               value={getValue()}
-              onChange={(e) => handleChangeValue(e.target.value)}
+              onChange={(e) => (props.visible ? handleChangeValue(e.target.value) : false)}
             />
           ),
           checkbox: (
             <input
               type="checkbox"
               checked={!!getValue()}
-              onChange={(e) => handleChangeValue((!!getValue() ? false : true))}
+              onChange={(e) => (props.visible ? handleChangeValue((!!getValue() ? false : true)) : false)}
             />
           ),
           radio: (
-            <div className={"input-radio" + (props.editMode)}>
+            <div className={"inputButtonDefault " + "input-radio" + (props.editMode) + " " + props.visible} style={{
+                ...props.style
+              }}>
               {calculateRadios()}
             </div>
           ),
           variable: (
-            <div className={"input-radio" + (props.editMode)}>
+            <div className={"input-var" + (props.editMode) + " " + props.visible}>
               {calculateVariable()}
             </div>
           )

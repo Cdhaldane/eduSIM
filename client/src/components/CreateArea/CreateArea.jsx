@@ -150,6 +150,7 @@ const CreateArea = (props) => {
           setImageSelected(result.info.public_id);
           setImg(result.info.url);
           setWillUpload(true);
+          myWidget.close();
         }
       }
     );

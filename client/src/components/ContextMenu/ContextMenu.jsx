@@ -140,6 +140,7 @@ const ContextMenu = (props) => {
         [key]: value ? value : undefined
       }
     });
+      console.log(conditions)
   }
   const handleUpdateVar = (key, value) => {
     setConditions(old => ({
