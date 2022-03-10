@@ -77,7 +77,7 @@ const ContextMenu = (props) => {
     document.addEventListener('contextmenu', handleRightClick);
 
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
-    if(!props.selectedShapeName==""){
+    if (!props.selectedShapeName == "") {
       setContextMenuTitle();
     }
     return () => {
@@ -172,9 +172,10 @@ const ContextMenu = (props) => {
         {!props.addGroup && !props.unGroup && (
           <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
         )}
-        {!props.addGroup && !props.unGroup && (
-          <li onClick={handleEdit}>{t(`edit.${editTitle}Edit`)}</li>
-        )}
+        {!props.addGroup && !props.unGroup &&
+          !props.selectedShapeName.includes("richText") && (
+            <li onClick={handleEdit}>{t(`edit.${editTitle}Edit`)}</li>
+          )}
         {props.addGroup && (
           <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>
         )}
@@ -198,8 +199,8 @@ const ContextMenu = (props) => {
           <li
             onClick={() => props.layerDown(props.selectedShapeName)}
             className={`${props.getObjState()?.onTop !== undefined ?
-            (!props.getObjState().onTop ? "disabled" : "") :
-            (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
+              (!props.getObjState().onTop ? "disabled" : "") :
+              (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
           >
             <i className="fas fa-arrow-down" />
           </li>

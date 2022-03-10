@@ -826,9 +826,16 @@ const CanvasPage = (props) => {
       selected: canvas.state.selectedShapeName === obj.id,
       editorState: obj.editorState,
       stateWithMacros: editMode ? null : canvas.formatTextMacros(false, obj.editorState),
-      setEditorState: (data) => {
-        canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
-      }
+      isDraggable: editMode ? obj.draggable : false,
+      ...(editMode ?
+        {
+          setDraggable: (data) => {
+            canvas.setCustomObjData("richTexts", "draggable", data, obj.id);
+          },
+          setEditorState: (data) => {
+            canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
+          }
+        } : {})
     };
   }
 
@@ -899,12 +906,14 @@ const CanvasPage = (props) => {
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "richTexts":
         return <RichText
-          defaultProps={{...defaultObjProps(obj, canvas, editMode)}}
-          {...richTextProps(obj, canvas, editMode)}
+          defaultProps={{
+            ...defaultObjProps(obj, canvas, editMode),
+            ...richTextProps(obj, canvas, editMode)
+          }}
           {...canvas.getInteractiveProps(obj.id)}
           {...defaultObjProps(obj, canvas, editMode)}
+          {...richTextProps(obj, canvas, editMode)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
-          draggable={false}
         />;
       case "polls":
         return <Poll

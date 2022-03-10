@@ -416,7 +416,8 @@ const DropdownAddObjects = (props) => {
     addObjectToLayer(
       "richTexts",
       {
-        editorState: null
+        editorState: null,
+        draggable: true
       }
     );
   }

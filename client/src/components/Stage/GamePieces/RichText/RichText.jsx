@@ -21,6 +21,7 @@ const RichText = forwardRef((props, ref) => {
   const [fontSizeMenuOpen, setFontSizeMenuOpen] = useState(false);
   const [fontFamilyMenuOpen, setFontFamilyMenuOpen] = useState(false);
   const [fontColorMenuOpen, setFontColorMenuOpen] = useState(false);
+  const [editingActive, setEditingActive] = useState(false);
   const editorRef = useRef(null);
   const fontSizeRef = useRef(null);
   const fontFamilyRef = useRef(null);
@@ -77,6 +78,18 @@ const RichText = forwardRef((props, ref) => {
       setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(props.stateWithMacros))));
     }
   }, [props.stateWithMacros]);
+
+  useEffect(() => {
+    if (!props.selected) {
+      setEditingActive(false);
+    }
+  }, [props.selected]);
+
+  useEffect(() => {
+    if (props.editMode) {
+      props.setDraggable(!editingActive);
+    }
+  }, [editingActive]);
 
   // The font colors
   const BLACK = "#000000";
@@ -299,7 +312,7 @@ const RichText = forwardRef((props, ref) => {
       {...props}
       ref={ref}
     >
-      <div className={`${!props.editMode ? "playMode" : ""} richTextContainer`}>
+      <div className={`richTextContainer ${!props.editMode ? "playMode" : ""} ${editingActive ? "richTextEdit" : ""}`}>
         <div className={`RichEditor-root`}>
           <div>
             <Editor
@@ -314,7 +327,14 @@ const RichText = forwardRef((props, ref) => {
               spellCheck={false}
             />
           </div>
-          {props.selected && (
+          {props.selected && !editingActive && (
+            <button id="RichText-Activate" onClick={() => {
+              setEditingActive(true);
+            }}>
+              Activate Text Edit Mode
+            </button>
+          )}
+          {props.selected && editingActive && (
             <>
               <div className="RichEditor-controls">
                 {INLINE_STYLES.map((type) => {
