@@ -138,12 +138,12 @@ const KonvaHtml = ({
       }}
       onDragEnd={defaultProps.onDragEnd}
       customProps={defaultProps.custom}
-      x={defaultProps.x || 0}
-      y={defaultProps.y || 0}
+      x={defaultProps.x}
+      y={defaultProps.y}
       visible={visible}
-      rotation={defaultProps.rotation || 0}
-      scaleX={defaultProps.scaleX || 0}
-      scaleY={defaultProps.scaleY || 0}
+      rotation={defaultProps.rotation}
+      scaleX={defaultProps.scaleX}
+      scaleY={defaultProps.scaleY}
       offsetX={0}
       offsetY={0}
       skewX={0}

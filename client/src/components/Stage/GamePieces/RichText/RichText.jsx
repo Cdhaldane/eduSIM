@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback } from 'react';
 import CustomWrapper from "../CustomWrapper";
+import { useTranslation } from "react-i18next";
 import Editor from '@draft-js-plugins/editor';
 import {
   EditorState,
@@ -24,6 +25,8 @@ const RichText = forwardRef((props, ref) => {
   const fontSizeRef = useRef(null);
   const fontFamilyRef = useRef(null);
   const fontColorRef = useRef(null);
+
+  const { t } = useTranslation();
 
   const handleClickOutside = e => {
     if (fontSizeRef.current && !fontSizeRef.current.contains(e.target)) {
@@ -68,6 +71,12 @@ const RichText = forwardRef((props, ref) => {
       props.setEditorState(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
     }
   }, [editorState]);
+
+  useEffect(() => {
+    if (props.stateWithMacros) {
+      setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(props.stateWithMacros))));
+    }
+  }, [props.stateWithMacros]);
 
   // The font colors
   const BLACK = "#000000";
@@ -301,7 +310,7 @@ const RichText = forwardRef((props, ref) => {
               handleKeyCommand={handleKeyCommand}
               keyBindingFn={mapKeyToEditorCommand}
               onChange={setEditorState}
-              placeholder="Tell a story..."
+              placeholder={t("edit.richText.placeholder")}
               spellCheck={false}
             />
           </div>
@@ -406,7 +415,7 @@ const RichText = forwardRef((props, ref) => {
                             <div className="dropdownBtn" onClick={() => {
                               setFontFamilyMenuOpen(!fontFamilyMenuOpen);
                             }}>
-                              Font Family
+                              {t("edit.richText.fontFamily")}
                             </div>
                           </div>
                         </>,
@@ -418,43 +427,43 @@ const RichText = forwardRef((props, ref) => {
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: BLACK }}
                                 >
-                                  Black
+                                  {t("edit.richText.black")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: GREY }}
                                 >
-                                  Grey
+                                  {t("edit.richText.grey")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: GREEN }}
                                 >
-                                  Green
+                                  {t("edit.richText.green")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: BLUE }}
                                 >
-                                  Blue
+                                  {t("edit.richText.blue")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: RED }}
                                 >
-                                  Red
+                                  {t("edit.richText.red")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: ORANGE }}
                                 >
-                                  Orange
+                                  {t("edit.richText.orange")}
                                 </button>
                                 <button
                                   onClick={(e) => fontColorBtn(e, type)}
                                   style={{ color: YELLOW }}
                                 >
-                                  Yellow
+                                  {t("edit.richText.yellow")}
                                 </button>
                               </div>
                             )}

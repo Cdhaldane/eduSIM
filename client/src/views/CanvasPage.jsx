@@ -648,7 +648,7 @@ const CanvasPage = (props) => {
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
-      text: editMode ? obj.text : canvas.formatTextMacros(obj.text),
+      text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
       ...(editMode ?
         {
@@ -825,6 +825,7 @@ const CanvasPage = (props) => {
       editMode: editMode,
       selected: canvas.state.selectedShapeName === obj.id,
       editorState: obj.editorState,
+      stateWithMacros: editMode ? null : canvas.formatTextMacros(false, obj.editorState),
       setEditorState: (data) => {
         canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
       }

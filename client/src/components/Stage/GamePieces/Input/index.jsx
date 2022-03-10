@@ -26,7 +26,6 @@ const Input = forwardRef((props, ref) => {
         [varName]: value
       }));
       sessionStorage.setItem('lastSetVar', varName);
-      console.log(sessionStorage)
       props.refresh();
     }
   }
@@ -44,8 +43,7 @@ const Input = forwardRef((props, ref) => {
         } else {
           value = props.varValue[i];
         }
-        console.log(value)
-        props.updateVariable(name, value)
+        props.updateVariable(name, value);
       }
     } else {
       let vars = {};

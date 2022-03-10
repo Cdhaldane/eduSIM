@@ -305,6 +305,17 @@
         "date": "Date",
         "color": "Colour"
       },
+      "richText": {
+        "fontFamily": "Font Family",
+        "black": "Black",
+        "grey": "Grey",
+        "green": "Green",
+        "blue": "Blue",
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "placeholder": "Write something here..."
+      },
       "colorFill": "Fill",
       "colorStroke": "Stroke",
       "strokeWidth": "Stroke width",

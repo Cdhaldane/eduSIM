@@ -41,6 +41,10 @@
   margin-top: 10px;
 }
 
+.DraftEditor-root {
+  padding-bottom: 10px;
+}
+
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
 .RichEditor-editor .public-DraftEditor-content {
   margin: 0 -15px -15px;
