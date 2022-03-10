@@ -4,9 +4,17 @@ import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
 import styled from "styled-components";
 import moment from "moment";
+import { OrderedSet } from "immutable";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
+import {
+  EditorState,
+  SelectionState,
+  convertToRaw,
+  convertFromRaw,
+  Modifier
+} from 'draft-js';
 
 import {
   Stage
@@ -124,38 +132,101 @@ class Graphics extends Component {
     }, 0);
   }
 
-  formatTextMacros = (text) => {
-    let start = false, newText = text;
-    for (let i = 0; i < newText.length; i++) {
-      const c = newText[i];
-      if (c === "{") start = i;
-      if (c === "}" && start !== false) {
-        let content, key;
-        switch (key = newText.slice(start + 1, i)) {
-          case "playername":
-            content = this.props.players[this.props.socket.id]?.name;
-            break;
-          case "playerrole":
-            content = this.props.players[this.props.socket.id]?.role || "(no role selected)";
-            break;
-          case "lastsetvar":
-            content = sessionStorage.lastSetVar;
-            break;
-          case "currentdate":
-            content = moment().format("dddd, MMMM Do YYYY");
-            break;
-          default:
-            let vars = {};
-            if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-            if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
-            content = vars[key];
-        }
-        newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
-        i = start;
-        start = false;
-      }
+  // Replaces variables in text content (stored in {})
+  formatTextMacros = (simple, text) => {
+    let newText;
+    let editorContent;
+    let editorState;
+    let blocks;
+    // Simple mode modifies a string, Rich text mode modifies an EditorState (draft.js)
+    if (simple) {
+      newText = text;
+    } else {
+      editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(text)));
+      editorContent = editorState.getCurrentContent();
+      newText = editorContent.getPlainText('\u0001');
+      blocks = editorContent.getBlocksAsArray().map(block => [block.getKey(), block.getText()]);
     }
-    return newText;
+    let start = false;
+    if (simple) {
+      for (let i = 0; i < newText.length; i++) {
+        const c = newText[i];
+        if (c === "{") start = i;
+        if (c === "}" && start !== false) {
+          let content, key;
+          switch (key = newText.slice(start + 1, i)) {
+            case "playername":
+              content = this.props.players[this.props.socket.id]?.name;
+              break;
+            case "playerrole":
+              content = this.props.players[this.props.socket.id]?.role || "(no role selected)";
+              break;
+            case "lastsetvar":
+              content = sessionStorage.lastSetVar;
+              break;
+            case "currentdate":
+              content = moment().format("dddd, MMMM Do YYYY");
+              break;
+            default:
+              let vars = {};
+              if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+              if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
+              content = vars[key];
+          }
+          newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
+          i = start;
+          start = false;
+        }
+      }
+      return newText;
+    } else {
+      // Go block by block
+      let vars = {};
+      if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+      const varKeys = Object.keys(vars);
+      for (let blockNum = 0; blockNum < blocks.length; blockNum++) {
+        const blockKey = blocks[blockNum][0];
+        const blockText = blocks[blockNum][1];
+        for (let varNum = 0; varNum < varKeys.length; varNum++) {
+          if (blockText.includes(`{${varKeys[varNum]}}`)) {
+            // Replace the text
+            const selectionStart = blockText.indexOf(`{${varKeys[varNum]}}`);
+            const selectionEnd = selectionStart + varKeys[varNum].length + 2
+            const selection = SelectionState.createEmpty(blockKey).merge({
+              focusOffset: selectionEnd,
+              anchorOffset: selectionStart,
+            });
+
+            let charList = editorContent.getBlockForKey(blockKey).getCharacterList();
+            for (let i = 0; i < charList.size; i++) {
+              if (i < selectionStart || i > selectionEnd) {
+                charList = charList.set(i, null);
+              }
+            }
+            const textStyles = charList.reduce((styles, c) => {
+              if (styles && c) {
+                return styles.union(c.getStyle());
+              } else {
+                return styles;
+              }
+            }, OrderedSet());
+
+            editorContent = Modifier.replaceText(
+              editorContent,
+              selection,
+              vars[varKeys[varNum]].toString(),
+              textStyles
+            );
+          }
+        }
+      }
+      const newEditorState = EditorState.push(
+        editorState,
+        editorContent,
+        'remove-range'
+      );
+      return JSON.stringify(convertToRaw(newEditorState.getCurrentContent()));
+    }
   };
 
   checkObjConditions = (conditions) => {
@@ -426,7 +497,7 @@ class Graphics extends Component {
           canvasLoading: true
         });
         setTimeout(() => {
-          this.props.reCenter("play", layer)
+          this.props.reCenter("play", layer, this.state.level !== prevState.level ? "resize" : "normal")
         }, 300);
       }
     }
@@ -597,17 +668,17 @@ class Graphics extends Component {
                       top: `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                  {!this.state.overlayImage.length ? (
-                  <i className="icons lni lni-credit-cards" />
-                  ) : (
-                    <Image
-                      className="overlayIcons"
-                      cloudName="uottawaedusim"
-                      publicId={
-                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
-                      }
-                    />
-                  )}
+                    {!this.state.overlayImage.length ? (
+                      <i className="icons lni lni-credit-cards" />
+                    ) : (
+                      <Image
+                        className="overlayIcons"
+                        cloudName="uottawaedusim"
+                        publicId={
+                          "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
+                        }
+                      />
+                    )}
                   </div>
                 );
               } else {

@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Group, Rect } from 'react-konva';
+import { Group } from 'react-konva';
 
 const needForceStyle = (el) => {
   const pos = window.getComputedStyle(el).position;
@@ -131,7 +131,7 @@ const KonvaHtml = ({
       ref={groupRef}
       id={refName}
       name={"customObj"}
-      draggable={refName.includes("richText") ? false : true}
+      draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
       onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
         objectSnapping(groupRef.current, e);

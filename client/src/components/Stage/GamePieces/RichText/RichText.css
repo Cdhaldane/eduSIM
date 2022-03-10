@@ -1,12 +1,37 @@
-.richTextContainer {
+.richTextEdit {
   pointer-events: auto !important;
 }
 
+.richTextContainer {
+  text-align: center;
+}
+
+.RichEditor-leftAlign>.public-DraftStyleDefault-block {
+  text-align: left;
+}
+
+.RichEditor-rightAlign>.public-DraftStyleDefault-block {
+  text-align: right;
+}
+
+.RichEditor-centerAlign>.public-DraftStyleDefault-block {
+  text-align: center;
+}
+
+.RichEditor-justifyAlign>.public-DraftStyleDefault-block {
+  display: block;
+  text-align: justify;
+}
+
+.RichEditor-justifyAlign>.public-DraftStyleDefault-block span {
+  white-space: pre-line;
+}
 
 .RichEditor-root {
   font-family: 'Georgia', serif;
-  font-size: 20px;
+  font-size: 12px;
   padding: 15px;
+  width: 500px;
 }
 
 .richTextContainer.playMode {
@@ -18,6 +43,10 @@
   cursor: text;
   font-size: 16px;
   margin-top: 10px;
+}
+
+.DraftEditor-root {
+  padding-bottom: 10px;
 }
 
 .RichEditor-editor .public-DraftEditorPlaceholder-root,
@@ -52,23 +81,127 @@
 
 .RichEditor-controls {
   font-family: 'Helvetica', sans-serif;
-  font-size: 18px;
+  font-size: 11px;
   margin-bottom: 5px;
   user-select: none;
   background-color: rgba(255, 255, 255, 1);
-  padding: 2px;
+  padding: 2px 5px;
   border-radius: 5px;
   box-shadow: 0px 0px 0px 2px #999;
+  text-align: left;
 }
 
 .RichEditor-styleButton {
-  color: #999;
+  color: rgb(49, 49, 49);
   cursor: pointer;
-  margin-right: 16px;
+  margin-right: 10px;
   padding: 2px 0;
   display: inline-block;
 }
 
+.RichEditor-styleButton>img {
+  height: 12px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle
+}
+
 .RichEditor-activeButton {
   color: #5890ff;
+}
+
+.RichEditor-activeButton>img {
+  filter: contrast(0.5) sepia(1) brightness(1.5) saturate(10) hue-rotate(190deg)
+}
+
+#RichText-fontSizeSelector {
+  /* A reset of styles, including removing the default dropdown arrow */
+  /*appearance: none;*/
+
+  /* Additional resets for further consistency */
+  background-color: transparent;
+  border: 2px solid #999;
+  padding: 0 0 0 0;
+  margin: 0;
+  width: 35px;
+  height: 25px;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.customDropdown {
+  background-color: rgb(187, 187, 255);
+}
+
+.dropdownBtn>img {
+  height: 12px;
+  vertical-align: middle;
+}
+
+.dropdownBtn:hover {
+  cursor: pointer;
+}
+
+.dropdownBtn {
+  display: inline-block;
+  background-color: white;
+}
+
+.dropdownMenu.fontFamily {
+  transform: translateY(calc(-100% - 4.5px)) translateX(-23px);
+}
+
+.dropdownMenu.fontFamily > button {
+  width: 100px;
+}
+
+.dropdownMenu.fontColor {
+  transform: translateY(calc(-100% - 4.5px)) translateX(-20px);
+}
+
+.dropdownMenu.fontColor > button {
+  width: 50px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  z-index: 100;
+  transform: translateY(calc(-100% - 4.5px)) translateX(-5px);
+}
+
+.dropdownMenu>button:hover {
+  background-color: rgb(228, 228, 228);
+}
+
+.dropdownMenu button:first-child {
+  border-radius: 4px 4px 0px 0px;
+  border-top: 1px solid rgb(148, 148, 148);
+}
+
+.dropdownMenu>button {
+  padding: 1px 3px;
+  border: 1px solid rgb(148, 148, 148);
+  border-top: 1px solid rgb(236, 236, 236);
+  border-bottom: none;
+  border-radius: 0px;
+  display: block;
+  color: black;
+  font-size: 10px;
+  width: 20px;
+  background-color: white;
+}
+
+#RichText-Activate:hover {
+  background-color: rgb(228, 228, 228);
+}
+
+#RichText-Activate {
+  pointer-events: auto !important;
+  background-color: rgba(255, 255, 255, 1);
+  padding: 2px 5px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0px 0px 0px 2px #999;
 }

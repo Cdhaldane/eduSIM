@@ -13,6 +13,7 @@
     "gif-frames": "^1.0.1",
     "gifler": "^0.1.0",
     "i18next": "^21.5.6",
+    "immutable": "^4.0.0",
     "js-file-download": "^0.4.12",
     "konva": "^8.0.4",
     "lodash-es": "^4.17.21",

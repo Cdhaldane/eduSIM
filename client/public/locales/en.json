@@ -192,7 +192,8 @@
       "foreground": "Foreground",
       "addShape": "Add Shape",
       "shape": {
-        "text": "Text",
+        "simpleText": "Simple Text",
+        "richText": "Rich Text",
         "square": "Square",
         "circle": "Circle",
         "triangle": "Triangle",
@@ -303,6 +304,17 @@
         "boolean": "Boolean",
         "date": "Date",
         "color": "Colour"
+      },
+      "richText": {
+        "fontFamily": "Font Family",
+        "black": "Black",
+        "grey": "Grey",
+        "green": "Green",
+        "blue": "Blue",
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "placeholder": "Write something here..."
       },
       "colorFill": "Fill",
       "colorStroke": "Stroke",

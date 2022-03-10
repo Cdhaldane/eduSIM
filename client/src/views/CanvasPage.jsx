@@ -104,8 +104,6 @@ const CanvasPage = (props) => {
     }
   }
 
-  const richTextRef = useRef(null);
-
   // In game mode to prevent screen resizing due to dragging shapes out of bounds
   // It will use the initial zoom settings until a resize occurs
   const [zoomSettings, setZoomSettings] = useState({
@@ -650,7 +648,7 @@ const CanvasPage = (props) => {
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
-      text: editMode ? obj.text : canvas.formatTextMacros(obj.text),
+      text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
       ...(editMode ?
         {
@@ -827,9 +825,17 @@ const CanvasPage = (props) => {
       editMode: editMode,
       selected: canvas.state.selectedShapeName === obj.id,
       editorState: obj.editorState,
-      setEditorState: (data) => {
-        canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
-      }
+      stateWithMacros: editMode ? null : canvas.formatTextMacros(false, obj.editorState),
+      isDraggable: editMode ? obj.draggable : false,
+      ...(editMode ?
+        {
+          setDraggable: (data) => {
+            canvas.setCustomObjData("richTexts", "draggable", data, obj.id);
+          },
+          setEditorState: (data) => {
+            canvas.setCustomObjData("richTexts", "editorState", data, obj.id);
+          }
+        } : {})
     };
   }
 
@@ -900,12 +906,14 @@ const CanvasPage = (props) => {
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "richTexts":
         return <RichText
-          defaultProps={{...defaultObjProps(obj, canvas, editMode)}}
-          {...richTextProps(obj, canvas, editMode)}
+          defaultProps={{
+            ...defaultObjProps(obj, canvas, editMode),
+            ...richTextProps(obj, canvas, editMode)
+          }}
           {...canvas.getInteractiveProps(obj.id)}
           {...defaultObjProps(obj, canvas, editMode)}
+          {...richTextProps(obj, canvas, editMode)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
-          draggable={false}
         />;
       case "polls":
         return <Poll

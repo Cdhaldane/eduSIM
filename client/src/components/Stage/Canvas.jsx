@@ -8,7 +8,6 @@ import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 
-
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
@@ -3183,10 +3182,10 @@ class Graphics extends Component {
               visible={true}
               opacity={0}
               currentId={this.state.customRect[0].currentId}
-              width={this.state.customRect[0].width}
-              height={this.state.customRect[0].height}
-              x={this.state.customRect[0].x}
-              y={this.state.customRect[0].y}
+              width={this.state.customRect[0].width || 0}
+              height={this.state.customRect[0].height || 0}
+              x={this.state.customRect[0].x || 0}
+              y={this.state.customRect[0].y || 0}
               onClick={() => this.onObjectClick(this.state.customRect[0])}
               onTransformStart={this.onObjectTransformStart}
               onTransformEnd={() => this.onObjectTransformEnd(this.state.customRect[0])}
