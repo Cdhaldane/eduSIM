@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Group, Rect } from 'react-konva';
+import { Group } from 'react-konva';
 
 const needForceStyle = (el) => {
   const pos = window.getComputedStyle(el).position;
@@ -138,12 +138,12 @@ const KonvaHtml = ({
       }}
       onDragEnd={defaultProps.onDragEnd}
       customProps={defaultProps.custom}
-      x={defaultProps.x}
-      y={defaultProps.y}
+      x={defaultProps.x || 0}
+      y={defaultProps.y || 0}
       visible={visible}
-      rotation={defaultProps.rotation}
-      scaleX={defaultProps.scaleX}
-      scaleY={defaultProps.scaleY}
+      rotation={defaultProps.rotation || 0}
+      scaleX={defaultProps.scaleX || 0}
+      scaleY={defaultProps.scaleY || 0}
       offsetX={0}
       offsetY={0}
       skewX={0}

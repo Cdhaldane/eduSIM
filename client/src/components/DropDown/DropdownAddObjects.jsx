@@ -709,13 +709,13 @@ const DropdownAddObjects = (props) => {
           <DropdownItem
             onClick={addText}
             leftIcon={<i className="icons lni lni-comments-alt" onClick={addText}></i>}>
-            {t("edit.shape.text")}
+            {t("edit.shape.simpleText")}
           </DropdownItem>
 
           <DropdownItem
             onClick={addNewText}
             leftIcon={<i className="icons lni lni-comments-alt" onClick={addNewText}></i>}>
-            New Text
+            {t("edit.shape.richText")}
           </DropdownItem>
 
           <DropdownItem onClick={addRectangle} leftIcon={<i className="icons lni lni-stop" onClick={addRectangle} ></i>}>{t("edit.shape.square")}</DropdownItem>

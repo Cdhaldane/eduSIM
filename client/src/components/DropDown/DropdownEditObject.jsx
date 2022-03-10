@@ -749,7 +749,7 @@ const DropdownEditObject = (props) => {
                       className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
                       onClick={() => newTabInputSettings("text")}
                     >
-                      {t("edit.shape.text")}
+                      {t("edit.shape.simpleText")}
                     </button>
                   </div>
                   {inputCurrentOptions === "fill" && (

@@ -192,7 +192,8 @@
       "foreground": "Foreground",
       "addShape": "Add Shape",
       "shape": {
-        "text": "Text",
+        "simpleText": "Simple Text",
+        "richText": "Rich Text",
         "square": "Square",
         "circle": "Circle",
         "triangle": "Triangle",

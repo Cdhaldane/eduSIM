@@ -104,8 +104,6 @@ const CanvasPage = (props) => {
     }
   }
 
-  const richTextRef = useRef(null);
-
   // In game mode to prevent screen resizing due to dragging shapes out of bounds
   // It will use the initial zoom settings until a resize occurs
   const [zoomSettings, setZoomSettings] = useState({
