@@ -155,6 +155,7 @@
       "taskNotComplete_required": "REQUIRED, NOT COMPLETED",
       "noTasks": "No tasks to complete!",
       "addNewTask": "ADD NEW TASK",
+      "addNewVar": "ADD NEW VARIABLE",
       "session": "Your Variables",
       "game": "Game Variables"
     },

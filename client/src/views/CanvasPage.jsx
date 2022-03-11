@@ -1129,6 +1129,7 @@ const CanvasPage = (props) => {
           savedObjects={savedObjects}
           customDeletes={customDeletes}
           allDeletes={allDeletes}
+        
           {...props}
         />
       ) : (

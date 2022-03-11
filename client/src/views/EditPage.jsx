@@ -36,7 +36,6 @@ const GridMain = styled.main`
 `;
 
 const EditPage = (props) => {
-
   const [customObjs, setCustomObjs] = useState({});
   const [pageColor, setPageColor] = useState("#FFF");
   const [performanceFunctions, setPerformanceFunctions] = useState({});
@@ -48,6 +47,7 @@ const EditPage = (props) => {
   const dropdownContext = useDropdownContext();
 
   const [tasks, setTasks] = useState({});
+  const [vars, setVars] = useState({});
   const [page, setPage] = useState(1);
 
   if (props.location.img) {
@@ -66,9 +66,15 @@ const EditPage = (props) => {
     document.body.style.zoom = "100%";
   }, [updater]);
 
+  useEffect(() => {
+
+  }, [])
+
   const handlePage = (l) => {
     setPage(l);
   }
+
+
 
   const handleSetTasks = (f) => {
     if (typeof f === 'function') {
@@ -86,6 +92,10 @@ const EditPage = (props) => {
     }
   }
 
+  const handleSetVars = (data) => {
+      setVars(old => [...old, data])
+  }
+
   return (
     <div className="editpage">
       <Container>
@@ -97,9 +107,10 @@ const EditPage = (props) => {
               className="grid-sidebar"
               visible={showNav}
               close={toggle}
-            
+              variables={vars || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
+              setVars={handleSetVars}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks
@@ -126,8 +137,10 @@ const EditPage = (props) => {
                 showAlert={alertContext.showAlert}
                 adminid={localStorage.adminid}
                 gameinstance={localStorage.gameinstance}
+                variables={vars || {}}
                 tasks={tasks || {}}
                 setTasks={setTasks}
+                setVars={setVars}
                 handleLevel={handlePage}
               />
             ) : null}

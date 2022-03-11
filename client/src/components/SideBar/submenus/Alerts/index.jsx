@@ -206,7 +206,7 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
       if(checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)){
         if(!alerts[i].advance){
           if(checkAdvance() && firstLoad===true){
-            
+
           }
         }
     }

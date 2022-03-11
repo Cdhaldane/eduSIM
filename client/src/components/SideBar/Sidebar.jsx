@@ -155,6 +155,7 @@ const Sidebar = (props) => {
     setSubmenuVisible(false);
   }, [props.disabled]);
 
+
   const toggleCompact = (val) => {
     if (!props.disabled) {
       setExpanded(val);
@@ -264,6 +265,7 @@ const Sidebar = (props) => {
           editpage={!props.game}
           vars={props.customObjs ? props.customObjs.inputs : []}
           gameVars={props.variables ? props.variables : []}
+          setVars={props.setVars}
         />
       )
     },
