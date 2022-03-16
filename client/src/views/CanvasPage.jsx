@@ -962,6 +962,7 @@ const CanvasPage = (props) => {
           {...inputProps(obj, canvas)}
           {...canvas.getVariableProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
+          random={Math.floor(Math.random() * 10)}
         />;
       default:
         return null;
@@ -1129,7 +1130,7 @@ const CanvasPage = (props) => {
           savedObjects={savedObjects}
           customDeletes={customDeletes}
           allDeletes={allDeletes}
-        
+
           {...props}
         />
       ) : (

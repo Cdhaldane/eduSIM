@@ -10,11 +10,11 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-  console.log(props.variables)
   const { settings } = useContext(SettingsContext);
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
   const [number, setNum] = useState(0)
+
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
       props.updateVariable(varName, value)
@@ -148,6 +148,7 @@ const Input = forwardRef((props, ref) => {
     } else if (math === "multiply") {
       num = one * two
     }
+
 
     if(num!==number && Number.isInteger(num)){
       setNum(num)

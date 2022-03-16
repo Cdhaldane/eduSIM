@@ -24,12 +24,14 @@ exports.createRole = async (req, res) => {
   const gameinstanceid = req.body.gameinstanceid;
   const gamerole = req.body.gamerole;
   const numspots = req.body.numspots;
+  const roleDesc = "";
 
   try {
     let newGameInstance = await GameRole.create({
       gameinstanceid,
       gamerole,
-      numspots
+      numspots,
+      roleDesc
     });
     return res.send(newGameInstance);
   } catch (err) {
@@ -139,7 +141,7 @@ exports.copyRole = async (req, res) => {
 };
 
 exports.updateRole = async (req, res) => {
-  const { id, name, numspots } = req.body;
+  const { id, name, numspots, roleDesc } = req.body;
 
   const gamerole = await GameRole.findOne({
     where: {
@@ -187,6 +189,8 @@ exports.updateRole = async (req, res) => {
     }
 
     if (numspots) gamerole.numspots = numspots;
+
+    if (roleDesc) gamerole.roleDesc = roleDesc;
 
     gamerole.save();
 

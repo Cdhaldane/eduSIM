@@ -651,13 +651,15 @@ class Graphics extends Component {
     });
   }
 
-  handleEditRole = async ({ id, roleName, roleNum }) => {
+  handleEditRole = async ({ id, roleName, roleNum, roleDesc }) => {
     await this.handleSave();
     return axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
       id: id,
       name: roleName,
-      numspots: roleNum
+      numspots: roleNum,
+      roleDesc: roleDesc,
     }).then((res) => {
+      console.log(res)
       let objects = JSON.parse(res.data.gameinstance.game_parameters);
 
       // Parse the saved groups

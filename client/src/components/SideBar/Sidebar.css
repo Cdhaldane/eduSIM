@@ -2,6 +2,17 @@
   padding: 2px;
   margin-bottom: 20px;
   color: var(--white);
+  overflow-y: scroll;
+  min-height: 60px;
+}
+
+.variable-box::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+.variable-box::-webkit-scrollbar-thumb {
+    background: #FF0000;
 }
 .variable-inputs{
   padding: 2px;
@@ -13,6 +24,10 @@
   background-color: rgb(185, 53, 53);
   margin-top: 10px;
   height: 40px;
+}
+.gameVar h1 {
+  max-width: 500px !important;
+  padding: 3px 10px;;
 }
 
 .variable-inputs i{
@@ -27,13 +42,13 @@
 }
 .variable-main{
   float: none;
-  margin-top: 2px;
+  margin-top: 4px;
   text-align: left;
 }
 .variable-inputs h1{
   font-weight: 200 !important;
   float: left;
-  margin-left: 5px;
+  margin-left: 0px !important;
   max-width: 65px;
   overflow-x:hidden;
 }
@@ -49,7 +64,7 @@
   font-weight: 200 !important;
   float: left;
   text-align: right;
-  margin-left:2px;
+  margin-left:5px;
   margin-top: 0px;
   font-size: 2.0em;
 }
@@ -67,7 +82,7 @@
   border: none;
   padding: 5px 3px;
   margin-right: 2px;
-  margin-top: 2px;
+  margin-top: 1px;
   opacity: 100%;
   width: 60%;
   background-color: white !important;
@@ -144,4 +159,108 @@
   font-size: 1.0em;
   font-weight:1 !important;
   border-radius: 6px;
+}
+
+.green {
+  background-color: rgb(101, 159, 69) !important;
+  border: 1px solid var(--green);
+}
+
+.green h3 {
+  margin-top: 4px;
+}
+
+
+/* NOTES */
+
+.sidebar-notes{
+  margin-left: 20px;
+  margin-top: 30px;
+  font-size: 1.3em;
+}
+
+.notes-header  {
+  display: flex;
+}
+.notes-header h2{
+  float: left;
+  margin-right: 30px;
+  position: relative;
+  bottom: 5px;
+}
+.notes-title {
+  font-size: 0.7em;
+  margin-left: 0px;
+  margin-top: 10px;
+}
+.top-note {
+  margin-top: 10px !important;
+}
+.notes-text{
+  width: 50% !important;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  min-height: 30px;
+}
+.notes-textarea{
+  resize: none;
+  width: 100%;
+  min-height: 60px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 3px;
+  opacity: 0.8;
+}
+
+.notes-card{
+  margin-top: 20px;
+  background-color: var(--red);
+  border-radius: 8px;
+  padding: 10px;
+}
+.notes-card h1 {
+  color: white;
+  font-size: 0.7em;
+  margin-bottom: 3px;
+}
+.read{
+  background-color: var(--almostwhite);
+  padding: 4px;
+  border: none;
+  margin-bottom: 6px;
+}
+.notes-buttons {
+  text-align: right;
+  position: relative;
+  margin-right: 10px;
+  top: -17px;
+  right: 0px;
+}
+.notes-buttons button{
+  background-color: var(--primary);
+  padding: 4px;
+  border: 3px solid var(--white);
+  border-radius: 8px;
+  margin-left: 10px;
+}
+.notes-buttons i{
+  border: 0px !important;
+  font-size: 1.4em !important;
+  color: var(--white);
+}
+
+
+
+
+
+
+
+
+.notes-textarea::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+.notes-textarea::-webkit-scrollbar-thumb {
+  background: #FF0000;
 }

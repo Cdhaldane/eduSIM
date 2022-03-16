@@ -19,10 +19,12 @@ const DropdownRoles = (props) => {
   const [menuHeight, setMenuHeight] = useState(null);
   const [roleName, setRoleName] = useState("");
   const [roleNum, setRoleNum] = useState("");
+  const [roleDesc, setRoleDesc] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [modifyIndex, setModifyIndex] = useState(-1);
+  const [selected, setSelected] = useState(-1)
 
   const alertContext = useAlertContext();
 
@@ -50,7 +52,8 @@ const DropdownRoles = (props) => {
         rolesData.push({
           id: res.data[i].gameroleid,
           roleName: res.data[i].gamerole,
-          numOfSpots: res.data[i].numspots
+          numOfSpots: res.data[i].numspots,
+          roleDesc: res.data[i].roleDesc
         });
       }
       if (rolesData.length) {
@@ -60,12 +63,14 @@ const DropdownRoles = (props) => {
           gameinstanceid: props.gameid,
           gamerole: t("game.defaultRole"),
           numspots: -1,
+          roleDesc: "Default role",
         };
         axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
           setRoles([{
             id: res.data.gameroleid,
             roleName: t("game.defaultRole"),
             numOfSpots: -1,
+            roleDesc: res.data.roleDesc,
           }]);
         }).catch(error => {
           console.error(error);
@@ -74,6 +79,7 @@ const DropdownRoles = (props) => {
     }).catch(error => {
       console.error(error);
     });
+
   }
 
   const handleClickOutside = e => {
@@ -121,20 +127,24 @@ const DropdownRoles = (props) => {
   }
 
   const handleSubmitModification = async () => {
+    console.log(roleDesc)
     await props.handleEditRole({
       id: roles[modifyIndex].id,
       roleName,
-      roleNum
+      roleNum,
+      roleDesc
     });
     setRoles(roles.map((v, i) => i === modifyIndex ? {
       ...v,
       roleName: roleName,
-      numOfSpots: roleNum
+      numOfSpots: roleNum,
+      roleDesc: roleDesc
     } : v));
     setSelectedRole(roleName);
-    props.roleLevel(roleName, roleNum);
+    props.roleLevel(roleName, roleNum, roleDesc);
     setRoleName('');
     setRoleNum('');
+    setRoleDesc('');
     setModifyIndex(-1);
   }
 
@@ -143,7 +153,8 @@ const DropdownRoles = (props) => {
     setRoles([...roles, {
       id: newRole.gameroleid,
       roleName: newRole.gamerole,
-      numOfSpots: newRole.numspots
+      numOfSpots: newRole.numspots,
+      roleDesc: newRole.roleDesc
     }]);
   }
 
@@ -196,7 +207,7 @@ const DropdownRoles = (props) => {
             ) : (
               <div
                 className="menu-item"
-                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
+                onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots, index)}
                 key={index}
                 disabled={modifyIndex >= 0}
               >
@@ -230,7 +241,7 @@ const DropdownRoles = (props) => {
           ) : (
             <div
             className="menu-item"
-            onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots)}
+            onClick={(e) => handleRoleSelected(e, role.roleName, role.numOfSpots, index)}
             key={index}
             disabled={role.numOfSpots !== -1 &&
               props.rolesTaken[role.roleName] &&
@@ -259,10 +270,12 @@ const DropdownRoles = (props) => {
     }
   }, [props.initRole]);
 
-  const handleRoleSelected = (e, roleName, roleNum) => {
+  const handleRoleSelected = (e, roleName, roleNum,index) => {
+    console.log(index)
     if (!e.target.className.startsWith("icon")) {
+      setSelected(index)
       setSelectedRole(roleName);
-      props.roleLevel(roleName, roleNum);
+      props.roleLevel(roleName, roleNum, roleDesc);
       handleActiveMenuChange('main');
     }
   }
@@ -307,7 +320,8 @@ const DropdownRoles = (props) => {
     let data = {
       gameinstanceid: props.gameid,
       gamerole: roleName.trim(),
-      numspots: parseInt(roleNum)
+      numspots: parseInt(roleNum),
+      roleDesc: "temp"
     };
 
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
@@ -317,6 +331,10 @@ const DropdownRoles = (props) => {
     }).catch(error => {
       console.error(error);
     });
+  }
+
+  const handleEditSelect = (e) => {
+    setRoleDesc(e)
   }
 
   return (
@@ -332,12 +350,47 @@ const DropdownRoles = (props) => {
             goToMenu="roles"
             icon={<i className="icons lni lni-crown"></i>}>
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
+          </DropdownItem>
+          <div className="dropdown-desc">
             {selectedRole && !props.disabled && (
-              <button className="role-deselect-icon" onClick={handleDeselectRole}>
-                <i className="lni lni-close-circle"></i>
+              <button className={props.editMode ? "role-deselect-icon" : "role-deselect-icon gamemode"} onClick={() => setActiveMenu('edit')}>
+                <i className="lni lni-license"></i>
               </button>
             )}
+          </div>
+        </div>
+      </CSSTransition>
+
+      <CSSTransition
+        in={activeMenu === 'edit'}
+        timeout={500}
+        classNames="menu-primary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            goToMenu="main"
+            icon={<i className="icons lni lni-arrow-left"></i>}>
+            <h2 className="smaller">{props.editmode ? "Add Role Description" : "Role Description"}</h2>
           </DropdownItem>
+          {props.editMode
+            ? <textarea
+              wrap="soft"
+              value={roleDesc}
+              onChange={e => handleEditSelect(e.target.value)}
+              className="role-desc"
+              placeholder={roles[1] ? roles[1].roleDesc : ""}
+            />
+            : <textarea
+              readOnly
+              wrap="soft"
+              value={roleDesc}
+              onChange={e => handleEditSelect(e.target.value)}
+              className="role-desc"
+              placeholder={roles[selected] ? roles[selected].roleDesc : ""}
+            />
+          }
+
         </div>
       </CSSTransition>
 

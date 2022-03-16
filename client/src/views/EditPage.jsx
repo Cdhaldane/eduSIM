@@ -47,7 +47,7 @@ const EditPage = (props) => {
   const dropdownContext = useDropdownContext();
 
   const [tasks, setTasks] = useState({});
-  const [vars, setVars] = useState({});
+  const [vars, setVars] = useState([]);
   const [page, setPage] = useState(1);
 
   if (props.location.img) {
@@ -96,6 +96,16 @@ const EditPage = (props) => {
       setVars(old => [...old, data])
   }
 
+  const handleEditVars = (data) => {
+    console.log(data)
+      setVars(data)
+  }
+
+  const handleDeleteVars = (data) => {
+    console.log(data)
+    setVars(data)
+  }
+
   return (
     <div className="editpage">
       <Container>
@@ -111,6 +121,8 @@ const EditPage = (props) => {
               img={localStorage.simimg}
               title={localStorage.simtitle}
               setVars={handleSetVars}
+              editVars={handleEditVars}
+              delVars={handleDeleteVars}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks

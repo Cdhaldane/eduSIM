@@ -156,8 +156,10 @@
       "noTasks": "No tasks to complete!",
       "addNewTask": "ADD NEW TASK",
       "addNewVar": "ADD NEW VARIABLE",
+      "addNewNote": "ADD NEW NOTE",
       "session": "Your Variables",
-      "game": "Game Variables"
+      "game": "Game Variables",
+      "notes": "Notes"
     },
     "edit": {
       "editMode": "Edit Mode",
@@ -234,7 +236,7 @@
         "checkbox": "Checkbox",
         "radio": "Radio",
         "variable": "Variable",
-        "varVal": "Var/Int"
+        "varVal": "Var/Int/Random"
       },
       "addGame": "Add Game",
       "game": {
@@ -259,7 +261,7 @@
       "variableB": "Variables",
       "radioText": "Values",
       "editPages": "Edit Pages",
-      "levelVar": "*Level variable name = 'Level'",
+      "levelVar": "*Page variable name = 'Page'",
       "editPageX": "Edit Page: {{name}}",
       "pageXQuestionY": "Page {{p}} Question {{q}}",
       "pageNamePlaceholder": "Page Name",

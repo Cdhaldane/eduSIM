@@ -11,6 +11,7 @@ const SettingsContainer = styled.div`
   flex-direction: column;
   height: inherit;
   padding: 20px;
+
 `;
 
 const SettingRow = styled.div`
@@ -52,20 +53,32 @@ const Variables = (props) => {
   const [isShown, setIsShown] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [current, setCurrent] = useState();
+  const [updater, setUpdater] = useState(0);
+
   const populateSessionVars = () => {
-    let vars = props ? props.vars : 0;
     let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
+    let vars = props ? props.vars : 0;
+    let varName = Object.keys(sessionVars);
+    let varValue = Object.values(sessionVars);
+    varName.shift();
+    varValue.shift();
     let list = [];
-    let varName
-    for(let i = 0; i < (vars ? vars.length : 0); i++){
+    let out = "Empty";
+    let gameVar = [];
+    if(props.editpage){
+      for(let i = 0; i < (vars ? vars.length : 0); i++){
         if(!vars[i].sync){
-          varName=vars[i].varName
-          list.push(
-            <div className="variable-inputs"><h1>{varName} = {sessionVars[varName]}</h1></div>
-          )
+          gameVar.push(vars[i].varName)
         }
       }
-
+        for(let i = 0; i < (gameVar.length); i++){
+          list.push(<div className="variable-inputs gameVar"><h1>{gameVar[i]} = 'Empty'</h1></div>)
+      }
+    } else {
+    for(let i = 0; i < (vars ? varName.length : 0); i++){
+      list.push(<div className="variable-inputs gameVar"><h1>{varName[i]} = {varValue[i]}</h1></div>)
+    }
+  }
     return list
   }
 
@@ -83,9 +96,8 @@ const Variables = (props) => {
   const populateGameVars = () => {
     let vars = props ? props.vars : 0;
     let data = props.gameVars
-    console.log(vars)
     let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-    let list = [<div className="variable-inputs"><h3>Level‏ = ‎{sessionVars["level"]}</h3></div>];
+    let list = props.editpage ? [<div className="variable-inputs green"><h3>Page‏ ‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["level"]}</h3></div>] : [<div className="variable-inputs green"><h3>Level ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["level"]}</h3></div>]
     let variable;
     let length;
     let items = [];
@@ -102,25 +114,20 @@ const Variables = (props) => {
       items.push(keyArr)
     }
     check = uniq(items)
-    console.log(check)
-
-
       for(let i = 0; i < (check ? check.length : 0); i++){
         if(check){
           list.push(
-            !props.editpage ? <div className="variable-inputs"><h1>{check[i]} = {props.gameVars[vars[i].varName]}</h1></div> :
+            !props.editpage ? <div className="variable-inputs gameVar"><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
             <div className="variable-inputs">
-              <i className="fas fa-times-circle" onClick={() => deleteVar(i)}/>
+              <i className="lni lni-trash-can" onClick={() => deleteVar(i)}/>
             <div className="variable-main">
               <h1
                 onClick={() => {
                   setIsShown(true)
                   setCurrent(i)
-                  console.log(isShown)
-                  console.log(current === i)
                 }}
                 onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
-              <input type="text" value={gameText} placeholder={"Some Value"} onChange={e => handleGame(e.target.value, variable)}/>
+              <input type="text" placeholder={data[i] ? Object.values(data[i]) : "X"} onChange={e => handleGame(e.target.value, variable, i)}/>
               <h2>=</h2>
 
             {(isShown && current === i) && (
@@ -175,22 +182,25 @@ const Variables = (props) => {
     return items;
   }
 
-  const handleGame = (e, varName) => {
+  const handleGame = (e, varName, i) => {
     setGameText(e)
-    this.props.socket.emit("varChange", {
-      varName, e
-    })
+    let vars = props ? props.gameVars : 0;
+    let key = Object.keys(vars[i])
+    vars[i][key] = e ;
+    props.editVars(vars);
   }
 
   const addVar = () => {
     setShowAdd(false)
     let data = {[varName]: varValue}
-    console.log(data)
     props.setVars(data);
   }
 
   const deleteVar = (i) => {
-    console.log(i)
+    let vars = props ? props.gameVars : 0;
+    vars.splice(i, 1);
+    props.delVars(vars)
+    setUpdater(updater + 1)
   }
 
 
@@ -209,14 +219,16 @@ const Variables = (props) => {
         <i className="settings-icons lni lni-users"></i>
         <b>{t("sidebar.game")}</b>
       </SettingRow>
-      <div className="variable-box">
+      <div className="variable-box" key={updater}>
       {populateGameVars()}
       </div>
       <SettingRow>
+      {props.editpage && (
       <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
         <i className="fas fa-plus-circle"  />
       {t("sidebar.addNewVar")}
       </div>
+    )}
       {showAdd && (
         <div className="variable-adding">
           <div className="variable-hold">

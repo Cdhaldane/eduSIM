@@ -252,7 +252,7 @@
       "variableB": "Variables",
       "radioText": "Options",
       "editPages": "Modifier les pages",
-      "levelVar": "*Variable de la page = 'Level'",
+      "levelVar": "*Variable de la page = 'Page'",
       "editPageX": "Modifier la page: {{name}}",
       "pageXQuestionY": "Page {{p}} Question {{q}}",
       "pageNamePlaceholder": "Nom de la page",

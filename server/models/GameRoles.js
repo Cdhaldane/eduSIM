@@ -18,6 +18,9 @@ const gameroles = db.define('gameroles', {
   numspots: {
     type: Sequelize.INTEGER,
     allowNull: false
+  },
+  roleDesc: {
+    type: Sequelize.STRING(250),
   }
 });
 

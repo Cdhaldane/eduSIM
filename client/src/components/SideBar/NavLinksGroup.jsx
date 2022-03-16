@@ -10,6 +10,7 @@ const LinksGroup = styled.div`
   margin-right: 2px;
   overflow: hidden;
   overflow-y: auto;
+  scrollbar-width: none; 
   ::-webkit-scrollbar {
     width: 4px;
   }

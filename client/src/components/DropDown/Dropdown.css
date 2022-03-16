@@ -430,6 +430,24 @@ a {
   margin-left: auto;
   margin-right: 6px;
   border-radius: 0 !important;
+  color: var(--primary) !important;
+  font-size: 1.0em !important;
+  z-index: 2000;
+}
+
+.role-deselect-icon i {
+  color: var(--primary) !important;
+  font-size: 1.5em !important;
+  position: relative;
+  right: 3px;
+  top: 0px !important;
+  z-index: 1000;
+}
+
+.gamemode i {
+  position: relative;
+  top: 4px !important;
+  left: 0px !important;
 }
 
 /* CSSTransition classes  */
@@ -568,7 +586,37 @@ a {
   width: 38% !important;
 }
 .math {
+  font-size: 0.7em !important;
+  font-weight: bold !important;
+  height: 30px !important;
   width: 30% !important;
+  z-index: 1000;
+}
+.radio-dropdown h1 {
+  font-size: 0.5em !important;
+  text-align: left !important;
+  opacity: 0.5;
+  margin-top: -10px !important;
+}
+.math:hover{
+  position: absolute;
+  height: 50px !important;
+  width: 93% !important;
+  font-size: 0.7em !important;
+}
+.mathy {
+  font-size: 0.7em !important;
+  font-weight: bold !important;
+  height: 30px !important;
+  width: 30% !important;
+  z-index: 100;
+}
+.mathy:hover{
+  position: absolute;
+  left: 10px;
+  height: 50px !important;
+  width: 93% !important;
+  font-size: 0.7em !important;
 }
 
 #pagetype input, #pagetype textarea {
@@ -904,4 +952,27 @@ a {
 
 .small{
   font-size: 0.6em !important;
+}
+.smaller{
+  font-weight: lighter;
+  margin-bottom: 5px;
+}
+
+/* Role description  */
+
+.dropdown-desc {
+  position: absolute;
+  right: 5px;
+  top: -8px;
+}
+.role-desc{
+  width: 90%;
+  margin-bottom: 10px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  vertical-align: text-top;
+  color: var(--text-color);
+  padding: 10px;
+  resize: none;
+  margin-top: 10px;
 }

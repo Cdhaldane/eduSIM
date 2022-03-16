@@ -86,7 +86,7 @@ const CreateArea = (props) => {
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
           var temp = JSON.parse(localStorage.getItem("order"));
-          temp.push(res.data)
+          temp.unshift(res.data)
           localStorage.setItem("order", JSON.stringify(temp))
           props.onAdd();
         }).catch(error => {
