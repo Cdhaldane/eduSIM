@@ -8,6 +8,7 @@ import "survey-react/survey.css";
 const Poll = forwardRef((props, ref) => {
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
   const [completed, setCompleted] = useState();
+  const customName = props.defaultProps.custom.customName;
 
   survey.mode = props.editMode ? 'display' : "";
 
@@ -57,6 +58,44 @@ const Poll = forwardRef((props, ref) => {
   }, [props.status]);
 
   const onValueChanged = (survey) => {
+    const pages = props.defaultProps.custom.pollJson.pages;
+    let questions = [];
+    for (let i = 0; i < pages.length; i++) {
+      questions.push(pages[i].questions);
+    }
+    questions = questions.flat();
+
+    // Check if values are the correct answer and set variable
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const correctVar = customName + `_q${i + 1}_correct`;
+      let answer = survey.data[question.name];
+      if (answer === undefined || answer === null) {
+        setVar(correctVar, false);
+        continue;
+      }
+      if (typeof answer === "boolean") {
+        answer = answer ? "yes" : "no";
+      }
+      if (question.type === "text") {
+        answer = answer.toLowerCase();
+      }
+
+      const correctAnswer = question.correctAnswer;
+      if (correctAnswer !== null) {
+        if (
+          (correctAnswer === answer) ||
+          (question.type === "text" && Array.isArray(correctAnswer) && correctAnswer.map(ans => ans.toLowerCase()).includes(answer)) ||
+          (question.type === "checkbox" && Array.isArray(answer) && Array.isArray(correctAnswer) &&
+            (new Set([...(new Set(answer))].filter(x => (new Set(correctAnswer)).has(x)))).size > 0)
+        ) {
+          setVar(correctVar, true);
+        } else {
+          setVar(correctVar, false);
+        }
+      }
+    }
+
     props.updateStatus(formatData("data", survey.data));
   }
 
@@ -70,10 +109,23 @@ const Poll = forwardRef((props, ref) => {
     props.updateStatus(formatData("page", pageStatus));
   }
 
+  const setVar = (varName, value) => {
+    let vars = {};
+    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+    sessionStorage.setItem('gameVars', JSON.stringify({
+      ...vars,
+      [varName]: value
+    }));
+    sessionStorage.setItem('lastSetVar', varName);
+  }
+
   const onComplete = (survey) => {
     if (!props.status.isComplete) {
       setCompleted(true);
       props.updateStatus(formatData("isComplete", true));
+
+      // Set the completion variable
+      setVar(customName + "_completed", true);
     }
   }
 

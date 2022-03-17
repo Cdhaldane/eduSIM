@@ -79,7 +79,6 @@ const Input = forwardRef((props, ref) => {
     }
   }
 
-
   const checkRadio = (i) => {
     if (props.sync && props.variables && props.radioText) {
       return (props.radioText[i] === props.variables[varName])
@@ -116,7 +115,6 @@ const Input = forwardRef((props, ref) => {
     }
     return list;
   }
-
 
   const calculateVariable = () => {
     if(!props.editMode){

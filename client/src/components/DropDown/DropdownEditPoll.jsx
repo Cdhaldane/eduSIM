@@ -36,7 +36,7 @@ const DropdownEditPoll = (props) => {
       const qJson = questions.map((q, index) => {
         return {
           id: q.id,
-          name: t("edit.pageXQuestionY", { p: pIndex+1, q: index+1 }),
+          name: t("edit.pageXQuestionY", { p: pIndex + 1, q: index + 1 }),
           type: q.type,
           inputType: q.inputType,
           title: q.title,
@@ -489,7 +489,7 @@ const DropdownEditPoll = (props) => {
             className="editPollNameBox"
             value={name}
             onChange={(e) => {
-              props.setData("customName", e.target.value, props.shape.attrs.id);
+              props.setData("polls", "customName", e.target.value, props.shape.attrs.id);
               setName(e.target.value);
             }}
           />
@@ -554,9 +554,10 @@ const DropdownEditPoll = (props) => {
             display: "inline"
           }}
           >
-            {t("edit.editQuestionX", { name:
-              pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].title ||
-              pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].name
+            {t("edit.editQuestionX", {
+              name:
+                pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].title ||
+                pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].name
             })}
           </h1>
           <table
@@ -596,26 +597,64 @@ const DropdownEditPoll = (props) => {
           >
             {t("edit.correctAnswerBlankAccepted")}
             {["text"].includes(getSelectedQType()) && (
-              <input
-                className="editPollAnswerBox"
-                type="text"
-                placeholder={t("edit.answerValuePlaceholder")}
-                value={
-                  pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
-                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
-                }
-                onChange={(e) => {
-                  setQuestionParam(
-                    "correctAnswer",
-                    currentQuestion.pIndex,
-                    currentQuestion.qIndex,
-                    e.target.value
-                  );
-                }}
-              />
+              <>
+                <p style={{fontSize: "0.8em"}}>{t("edit.correctAnswerSeparateByComma")}</p>
+                <input
+                  className="editPollAnswerBox"
+                  type="text"
+                  placeholder={t("edit.answerValuePlaceholder")}
+                  value={
+                    pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer ?
+                      pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].correctAnswer : ""
+                  }
+                  onChange={(e) => {
+                    const answer = e.target.value.split(",").map(val => val.trimStart());
+                    setQuestionParam(
+                      "correctAnswer",
+                      currentQuestion.pIndex,
+                      currentQuestion.qIndex,
+                      answer
+                    );
+                  }}
+                />
+              </>
             )}
 
-            {["dropdown", "checkbox", "boolean", "radiogroup"].includes(getSelectedQType()) && (
+            {/* Allow for mutliple correct answers for checkbox */}
+            {["checkbox"].includes(getSelectedQType()) && (
+              <>
+                {pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices.map((choice) => (
+                  <div className="pollCorrectAnswerCheckboxContainer">
+                    <input 
+                    type="checkbox" 
+                    id={choice} 
+                    name="pollCorrectAnswerCheckbox" 
+                    value={choice} 
+                    onChange={() => {
+                      const answer = Array.from(document.getElementsByClassName("pollCorrectAnswerCheckboxContainer")).map((box) => {
+                        const input = box.firstChild.value;
+                        const checked = box.firstChild.checked;
+                        if (checked) {
+                          return input;
+                        } else {
+                          return null;
+                        }
+                      }).filter(obj => obj !== null);
+                      setQuestionParam(
+                        "correctAnswer",
+                        currentQuestion.pIndex,
+                        currentQuestion.qIndex,
+                        answer
+                      );
+                    }}
+                    />
+                    <label for={choice}>{choice}</label><br />
+                  </div>
+                ))}
+              </>
+            )}
+
+            {["dropdown", "boolean", "radiogroup"].includes(getSelectedQType()) && (
               <select
                 className="editPollAnswerBox"
                 value={
