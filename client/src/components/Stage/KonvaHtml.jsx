@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Group } from 'react-konva';
+import { Group, Rect } from 'react-konva';
 
 const needForceStyle = (el) => {
   const pos = window.getComputedStyle(el).position;
@@ -126,6 +126,8 @@ const KonvaHtml = ({
     div.style.opacity = visible ? "1" : "0";
   }, [visible]);
 
+  // 
+
   return (
     <Group
       ref={groupRef}
@@ -152,10 +154,10 @@ const KonvaHtml = ({
       overlay={defaultProps.overlay}
     >
       {/*<Rect
+        ref={groupRef}
         id={"customRect"}
-        name={"refName"}
-        //ref={"customRect"}
-        draggable={false}
+        name={"customObj"}
+        draggable={true}
         visible={true}
         opacity={1}
         fill={"green"}
@@ -163,6 +165,15 @@ const KonvaHtml = ({
         height={rectHeight}
         x={0}
         y={0}
+        onClick={defaultProps.onClick}
+        onTransformStart={defaultProps.onTransformStart}
+        onTransformEnd={defaultProps.onTransformEnd}
+        onDragMove={defaultProps.onDragMove}
+        onDragEnd={defaultProps.onDragEnd}
+        onContextMenu={(e) => {
+          console.log("CONTEXT MENU");
+          defaultProps.onContextMenu(e);
+        }}
       /*currentId={this.state.customRect[0].currentId}
       width={this.state.customRect[0].width}
       height={this.state.customRect[0].height}

@@ -474,6 +474,7 @@ const CanvasPage = (props) => {
   }
 
   const defaultObjProps = (obj, canvas, editMode) => {
+    //isSelected(obj.id, canvas)
     return {
       key: obj.id,
       visible: canvas.state.canvasLoading ? false :
@@ -493,7 +494,7 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) && isSelected(obj.id, canvas) : obj.draggable,
+      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
       editMode: editMode,
       onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
