@@ -265,6 +265,7 @@
       "newPagePlaceholder": "New Page Name",
       "addOverlay": "Add Overlay",
       "pageColors": "Page Colours",
+      "newPage": "New Page",
       "confirmDeletePage": "Are you sure you want to delete page {{name}}? This action cannot be undone.",
       "deletePage": "Yes - Delete page",
       "untitledPage": "Untitled",
@@ -300,6 +301,7 @@
       "editQuestionX": "Edit Question: \"{{name}}\"",
       "addOption": "Add option",
       "correctAnswerBlankAccepted": "Correct Answer (Leave blank if not applicable):",
+      "correctAnswerSeparateByComma": "To put multiple valid answers separate them by a comma.",
       "answerValuePlaceholder": "Answer value here",
       "pollq": {
         "text": "Text",

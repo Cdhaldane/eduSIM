@@ -2509,6 +2509,10 @@ class Graphics extends Component {
   }
 
   onObjectDragMove = (obj, e) => {
+    if (this.customObjects.includes(this.getObjType(obj.id))) {
+      // Don't run this for custom objects
+      return;
+    }
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
     this.refs[obj.id].moveTo(this.refs[`${layer}.dragging`]);
@@ -3168,7 +3172,7 @@ class Graphics extends Component {
         )}
 
         {/* ---- CUSTOM RECT CANVAS ---- */}
-        <Stage
+        {<Stage
           id="customRectCanvas"
           style={{ display: "none" }}
           width={10}
@@ -3195,7 +3199,7 @@ class Graphics extends Component {
               onContextMenu={this.onObjectContextMenu}
             />
           </Layer>
-        </Stage>
+        </Stage>}
 
         {/* ---- OVERLAY CANVAS ---- */}
         {this.state.overlayOpen && (

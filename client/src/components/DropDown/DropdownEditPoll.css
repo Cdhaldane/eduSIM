@@ -1,5 +1,16 @@
 /* Edit Poll */
 
+.pollCorrectAnswerCheckboxContainer {
+  text-align: left;
+  padding: 5px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.pollCorrectAnswerCheckboxContainer label {
+  display: inline-block;
+}
+
 .editPollQuestionBox {
   font-size: 19px;
   border-radius: 2px;
