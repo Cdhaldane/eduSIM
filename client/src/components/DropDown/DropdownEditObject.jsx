@@ -329,6 +329,9 @@ const DropdownEditObject = (props) => {
   }
   const handleMathTwo = (e) => {
     let value = e.value;
+    if(value === "Random"){
+      value = Math.floor(Math.random() * 10)
+    }
     if(parseInt(e.value)){
       value = parseInt(e.value)
     }
@@ -706,11 +709,12 @@ const DropdownEditObject = (props) => {
                   <option value="">select option</option>
                   <option value="add">Add</option>
                   <option value="subtract">Subtract</option>
-                  <option value="multiply">multiply</option>
-                  <option value="divide">divide</option>
+                  <option value="multiply">Multiply</option>
+                  <option value="divide">Divide</option>
                 </select>
-                <input className="float-righty math" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
+                <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
                 </div>
+                <h1>* Random = Rational # 0-10</h1>
                 </div>
               ) :
               (<div> </div>)

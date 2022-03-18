@@ -62,7 +62,12 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     getAllGamedata()
+
   }, [localStorage.order]);
+
+  useEffect(() => {
+
+  }, [gamedata]);
 
   if (isLoading) {
     return <div className="App"></div>;

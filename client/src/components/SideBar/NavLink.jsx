@@ -26,12 +26,14 @@ const StyledLink = styled.a`
     justify-content: center;
   }
   .countIndicator {
-    position: absolute;
+    position: relative;
+    margin-right: -28px; 
     background-color: rgb(34 125 204);
     color: var(--primary);
     font-size: .7em;
     padding: 2px 6px;
     border-radius: 12px;
+    left: -25px;
     top: 16p;
     margin-top: 20px;
     margin-left: 12px;

@@ -7,6 +7,7 @@ import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
 import Variables from "./submenus/Variables";
+import Notes from "./submenus/Notes";
 import Alerts from "./submenus/Alerts";
 import Players from "./submenus/Players";
 import Modal from "react-modal";
@@ -155,6 +156,7 @@ const Sidebar = (props) => {
     setSubmenuVisible(false);
   }, [props.disabled]);
 
+
   const toggleCompact = (val) => {
     if (!props.disabled) {
       setExpanded(val);
@@ -264,6 +266,21 @@ const Sidebar = (props) => {
           editpage={!props.game}
           vars={props.customObjs ? props.customObjs.inputs : []}
           gameVars={props.variables ? props.variables : []}
+          setVars={props.setVars}
+          editVars={props.editVars}
+          delVars={props.delVars}
+        />
+      )
+    },
+    {
+      icon: "lni lni-notepad",
+      id: "notes",
+      label: t("sidebar.notes"),
+      visible: props.game ? true : false,
+      submenu: (
+        <Notes
+          editpage={!props.game}
+
         />
       )
     },

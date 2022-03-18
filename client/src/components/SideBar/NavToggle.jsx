@@ -5,6 +5,7 @@ const Button = styled.button`
     background-color: transparent;
     border: none;
     min-height: 42px;
+    margin-bottom: 100px;
     color: var(--primary);
     ${(p) => !p.disabled && "cursor: pointer;"}
     ${(p) => p.disabled && "opacity: 0.5;"}

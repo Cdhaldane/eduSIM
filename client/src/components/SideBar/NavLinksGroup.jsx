@@ -10,21 +10,27 @@ const LinksGroup = styled.div`
   margin-right: 2px;
   overflow: hidden;
   overflow-y: auto;
+  scrollbar-color: var(--primary) white;
+  scrollbar-width: 10px;
   ::-webkit-scrollbar {
     width: 4px;
   }
   /* Track */
   ::-webkit-scrollbar-track {
-    background: transparent;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
   }
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 4px;
-  }
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background-color: var(--primary);
+  	background-image: -webkit-linear-gradient(45deg,
+  	                                          rgba(255, 255, 255, .2) 25%,
+  											  transparent 25%,
+  											  transparent 50%,
+  											  rgba(255, 255, 255, .2) 50%,
+  											  rgba(255, 255, 255, .2) 75%,
+  											  transparent 75%,
+  											  transparent)
   }
 `;
 

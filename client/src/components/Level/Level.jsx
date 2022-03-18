@@ -111,7 +111,7 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   useEffect(() => {
-    let varName="level"
+    let varName="Page"
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     sessionStorage.setItem('gameVars', JSON.stringify({
