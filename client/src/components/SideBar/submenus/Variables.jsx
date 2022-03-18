@@ -127,7 +127,7 @@ const Variables = (props) => {
                   setCurrent(i)
                 }}
                 onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
-              <input type="text" placeholder={data[i] ? Object.values(data[i]) : "X"} onChange={e => handleGame(e.target.value, variable, i)}/>
+              <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
               <h2>=</h2>
 
             {(isShown && current === i) && (

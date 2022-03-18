@@ -80,7 +80,7 @@ img {
   justify-content: space-between;
   overflow-y: scroll;
   overflow-y: overlay;
-  z-index: 2000;
+  z-index: 2;
 }
 
 .full-page-wrapper::-webkit-scrollbar-track
@@ -91,7 +91,7 @@ img {
 
 .full-page-wrapper::-webkit-scrollbar
 {
-	width: 10px;
+	width: 15px;
 	background-color: #F5F5F5;
 }
 

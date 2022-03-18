@@ -27,6 +27,7 @@ const StyledLink = styled.a`
   }
   .countIndicator {
     position: relative;
+    margin-right: -28px; 
     background-color: rgb(34 125 204);
     color: var(--primary);
     font-size: .7em;
