@@ -280,7 +280,10 @@ const Sidebar = (props) => {
       submenu: (
         <Notes
           editpage={!props.game}
-
+          setNotes={props.setNotes}
+          editNotes={props.editNotes}
+          delNotes={props.delNotes}
+          notes = {props.notes ? props.notes : []}
         />
       )
     },

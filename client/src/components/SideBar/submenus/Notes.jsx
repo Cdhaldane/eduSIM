@@ -1,4 +1,4 @@
-import React, { useContext, useState} from "react";
+import React, { useContext, useState, useEffect} from "react";
 import styled from "styled-components";
 import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
@@ -9,6 +9,7 @@ import "../Sidebar.css";
 
 
 const Notes = (props) => {
+  console.log(props.notes)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -16,16 +17,77 @@ const Notes = (props) => {
   const [updater, setUpdater] = useState(0);
   const [checked, setChecked] = useState(true)
   const [showAdd, setShowAdd] = useState(false);
-  const [noteData, setNoteData] = useState( []);
+  const [noteData, setNoteData] = useState(localStorage.notes ? JSON.parse(localStorage.notes) : []);
   const [noteTitle, setNoteTitle] = useState();
   const [noteBody, setNoteBody] = useState();
+  const [editMode, setEditMode] = useState(false)
+  const [index, setIndex] = useState(-1)
+  const [editText, setEditText] = useState();
+  const [editTitle, setEditTitle] = useState();
+
+  useEffect(() => {
+    if(!checked){
+      setNoteData(props.notes)
+    } else {
+      setNoteData(localStorage.notes ? JSON.parse(localStorage.notes) : [])
+    }
+  }, [checked])
+
+  useEffect(() => {
+      if(!checked){
+        setNoteData(props.notes)
+    }
+  }, [props.notes])
+
+  useEffect(() => {
+    setUpdater(updater + 1)
+  }, [])
 
   const addNote = () => {
     let add = [noteTitle,noteBody]
+    if(checked){
+      let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+      out.push(add)
+      setNoteData(out)
+      localStorage.setItem("notes", JSON.stringify(out))
+    } else {
+      let out = props.notes || [];
+      out.push(add)
+      props.setNotes(out)
+    }
     setUpdater(updater + 1)
-    noteData.push(add)
     setNoteTitle('')
     setNoteBody('')
+    setShowAdd(false)
+  }
+
+  const deleteNote = (i) => {
+    let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+    out.splice(i, 1);
+    localStorage.setItem("notes", JSON.stringify(out))
+    setNoteData(out)
+    setUpdater(updater + 1)
+  }
+
+  const editNote = (i) => {
+    setEditMode(true)
+    setIndex(i)
+    setEditText(noteData[i][1])
+    setEditTitle(noteData[i][0])
+  }
+  const handleEdit = (i) => {
+    let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+    out[i] = [editTitle, editText]
+    localStorage.setItem("notes", JSON.stringify(out))
+    setNoteData(out)
+    setUpdater(updater + 1)
+    setEditMode(false)
+  }
+  const handleTextArea = (e) => {
+    setEditText(e)
+  }
+  const handleTitleArea = (e) => {
+    setEditTitle(e)
   }
 
   const calculateNotes = () => {
@@ -35,23 +97,29 @@ const Notes = (props) => {
       list.push(
         <div>
         <div className="notes-card">
-          <h1>{noteData[i][0]}</h1>
+          <input
+            wrap="soft"
+            className="notes-title-card read"
+            readOnly={!(editMode && index === i)}
+            value={!(editMode && index === i) ? noteData[i][0] : editTitle}
+            disabled={!(editMode && index === i)}
+            onChange={(e) => handleTitleArea(e.target.value)}
+          />
           <textarea
             wrap="soft"
             className="notes-textarea read"
-            readOnly
-            value={noteData[i][1]}
-            disabled="yes"
+            readOnly={!(editMode && index === i)}
+            value={!(editMode && index === i) ? noteData[i][1] : editText}
+            disabled={!(editMode && index === i)}
+            onChange={(e) => handleTextArea(e.target.value)}
           />
-
         </div>
         <div className="notes-buttons">
-          <button onClick={""}>
-            <i className="fas fa-pen" />
-          </button>
-          <button onClick={""}>
-            <i className="fas fa-trash" />
-          </button>
+          {!(editMode && index === i) ? <i className="fas fa-pen" onClick={() => editNote(i)}/>
+          : <i className="lni lni-checkmark green"  onClick={() => handleEdit(i)}/>
+          }
+          {!(editMode && index === i) ? <i className="fas fa-trash"  onClick={() => deleteNote(i)} />
+          : <i className="lni lni-close red" onClick={() => setEditMode(false)} />}
         </div>
       </div>
       )

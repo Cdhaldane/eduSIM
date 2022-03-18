@@ -46,7 +46,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
@@ -130,6 +130,7 @@ CREATE TABLE public.gameroles (
     gameroleid uuid NOT NULL,
     gameinstanceid uuid NOT NULL,
     gamerole character varying(250),
+    roleDesc character varying(250),
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL
 );
@@ -150,7 +151,7 @@ CREATE TABLE public.gameplayers (
     player_email character varying(250),
     gamerole character varying(250),
     "createdAt" timestamp without time zone,
-    "updatedAt" timestamp with time zone NOT NULL 
+    "updatedAt" timestamp with time zone NOT NULL
 );
 
 
@@ -175,4 +176,3 @@ ALTER TABLE ONLY public.gameplayers
 --
 -- PostgreSQL database dump complete
 --
-

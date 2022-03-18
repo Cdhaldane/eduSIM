@@ -354,7 +354,7 @@ const DropdownRoles = (props) => {
           <div className="dropdown-desc">
             {selectedRole && !props.disabled && (
               <button className={props.editMode ? "role-deselect-icon" : "role-deselect-icon gamemode"} onClick={() => setActiveMenu('edit')}>
-                <i className="lni lni-license"></i>
+                <i className="lni lni-license" onClick={() => props.openInfoSection()}></i>
               </button>
             )}
           </div>

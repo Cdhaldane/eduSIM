@@ -79,8 +79,8 @@ img {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: scroll;
-  overflow-y: overlay;
-  z-index: 2;
+  scrollbar-color: var(--primary) var(--white);
+  scrollbar-width: thin;
 }
 
 .full-page-wrapper::-webkit-scrollbar-track
@@ -318,6 +318,7 @@ a {
   align-items: center;
   min-height: 100vh;
   background-color: var(--primary);
+  margin-top: -50px;
 }
 
 .welcome-container-welcome {
@@ -328,6 +329,7 @@ a {
   font-size: 1.5em;
   min-height: 100vh;
   color: var(--primary);
+    margin-top: -50px;
   background-color: var(--almostwhite);
 }
 
@@ -392,7 +394,6 @@ a {
   color: black;
   margin: auto;
   font-size: 0.9em;
-  margin-top: 3vw;
   padding-left: 10vw;
   padding-right:10vw;
   width: 100%;
@@ -570,7 +571,6 @@ a {
   flex-direction: column;
   align-items: center;
   position: relative;
-  margin-top: 5vw;
   min-height: 100vh;
   margin-bottom: 100px;
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
@@ -836,8 +836,9 @@ hr {
   position: absolute;
   top: 20px;
   left: 55px;
-  width: 140px;
-  height: 160px;
+  width: 8vw;
+  height: 10vw;
+  margin-bottom: 10px;
 }
 
 .eheader {

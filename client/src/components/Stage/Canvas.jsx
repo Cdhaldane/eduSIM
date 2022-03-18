@@ -283,6 +283,9 @@ class Graphics extends Component {
         if (this.props.setVars) {
           this.props.setVars(objects.variables || {});
         }
+        if (this.props.setNotes) {
+          this.props.setNotes(objects.notes || {});
+        }
 
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
@@ -592,6 +595,7 @@ class Graphics extends Component {
     }
     storedObj.tasks = this.props.tasks;
     storedObj.variables = this.props.variables;
+    storedObj.notes = this.props.notes;
     this.setState({
       saved: storedObj
     });

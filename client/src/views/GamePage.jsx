@@ -51,6 +51,7 @@ const Game = (props) => {
   const [isLoading, setLoading] = useState(true);
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
+  const [notes, setNotes] = useState();
   const [userId, setUserId] = useState();
   const [pageColor, setPageColor] = useState("#FFF");
   const [canvasLoading, setCanvasLoading] = useState(false);
@@ -187,6 +188,18 @@ const Game = (props) => {
       setLevel(roomStatus.level + 1);
   }
 
+  const handleSetNotes = (data) => {
+      setNotes(data)
+  }
+
+  const handleEditNotes = (data) => {
+      setNotes(data)
+  }
+
+  const handleDelNotes = (data) => {
+    setNotes(data)
+  }
+
   return (
     !isLoading ? (
       <>
@@ -210,6 +223,10 @@ const Game = (props) => {
           alertProps={{
             alerts: tasks[actualLevel] || []
           }}
+          notes={notes || []}
+          setNotes={handleSetNotes}
+          editNotes={handleEditNotes}
+          delNotes={handleDelNotes}
         />
         <Main color={pageColor}>
           <CanvasGame
@@ -233,6 +250,8 @@ const Game = (props) => {
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
             variables={roomStatus.variables || {}}
+            setNotes={setNotes}
+            notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}
             initialUserId={userid}

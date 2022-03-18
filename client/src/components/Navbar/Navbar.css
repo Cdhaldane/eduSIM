@@ -1,14 +1,13 @@
 .NavbarItems {
   background-color: var(--white);
-  position: absolute;
+  position: relative;
   top: 0px;
-  right: 17px;
   width: 100%;
   height: auto;
   display: flex;
   justify-content: space-between;
   font-size: 1.2vw;
-  z-index: -1;
+  z-index: 1;
   box-shadow: rgba(0,0,0,0.1) 0px 1px 0px 0px;
 }
 

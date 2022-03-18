@@ -97,12 +97,10 @@ const EditPage = (props) => {
   }
 
   const handleEditVars = (data) => {
-    console.log(data)
       setVars(data)
   }
 
   const handleDeleteVars = (data) => {
-    console.log(data)
     setVars(data)
   }
 
