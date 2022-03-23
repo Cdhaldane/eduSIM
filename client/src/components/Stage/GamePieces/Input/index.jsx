@@ -14,6 +14,8 @@ const Input = forwardRef((props, ref) => {
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
   const [number, setNum] = useState(0)
+  const [updater, setUpdater] = useState(0)
+  const random = useState(props.random)
 
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
@@ -35,14 +37,9 @@ const Input = forwardRef((props, ref) => {
     if (props.sync && props.updateVariable) {
       for (let i = 0; i < props.varName.length; i++) {
         let name = varName[i];
-        let value;
-        if (!props.varValue[i]) {
-          value = 1;
-        }
-        if (Number.isInteger(props.varValue[i])) {
-          value = props.varValue[i] + 1;
-        } else {
-          value = props.varValue[i];
+        let value = props.varValue[i];
+        if(!isNaN(value)){
+          value = parseInt(props.varValue[i])
         }
         props.updateVariable(name, value)
       }
@@ -92,6 +89,8 @@ const Input = forwardRef((props, ref) => {
     }
   }
 
+
+
   const calculateRadios = () => {
     const list = []
     let length = props.amount;
@@ -117,7 +116,7 @@ const Input = forwardRef((props, ref) => {
     return list;
   }
 
-  const calculateVariable = () => {
+  useEffect(()=>{
     if(!props.editMode){
     let sessionVars = JSON.parse(sessionStorage.gameVars)
     let num = "NA";
@@ -133,10 +132,12 @@ const Input = forwardRef((props, ref) => {
 
     if(parseInt(props.varOne)){
         one = props.varOne
-    } if(parseInt(props.varTwo)){
+    }if(parseInt(props.varTwo)){
         two = props.varTwo
     }
-
+    if(props.varTwo === "Random" && num !==number){
+        two = parseFloat(random)
+    }
     if(math === "add"){
       num = one + two;
     } else if (math === "subtract") {
@@ -147,18 +148,18 @@ const Input = forwardRef((props, ref) => {
       num = one * two
     }
 
-
-    if(num!==number && Number.isInteger(num)){
+    if(num!==number){
+      num = Math.round(num * 100) / 100
       setNum(num)
-      handleChangeValue(num)
+      if(props.variables[props.varName] !== num && props.varName && num){
+        handleChangeValue(num)
+      }
     }
   }
-    return (
-      <div className="var-output" style={{...props.style}}>
-        <p className="variable-dsplay">{number}</p>
-      </div>
-    )
-  }
+}, [props.variables])
+
+
+
 
 
   return (
@@ -175,7 +176,7 @@ const Input = forwardRef((props, ref) => {
              onClick={() => (props.visible ? handleChangeValue((getValue() || 0) + 1) : false)}>{props.label}</button>
             ) : (
               <button
-                className="inputButtonDefault"
+                className={"inputButtonDefault " + props.visible}
                 style={{
                   ...props.style
                 }}
@@ -197,6 +198,7 @@ const Input = forwardRef((props, ref) => {
           ),
           checkbox: (
             <input
+              className={"inputButtonDefault " + props.visible}
               type="checkbox"
               checked={!!getValue()}
               onChange={(e) => (props.visible ? handleChangeValue((!!getValue() ? false : true)) : false)}
@@ -210,8 +212,10 @@ const Input = forwardRef((props, ref) => {
             </div>
           ),
           variable: (
-            <div className={"input-var" + (props.editMode) + " " + props.visible}>
-              {calculateVariable()}
+            <div className={"input-var" + (props.editMode) + " " + props.visible} >
+              <div className="var-output" style={{...props.style}} >
+                <p className="variable-dsplay" key={number}>{number}</p>
+              </div>
             </div>
           )
         })[props.varType]}

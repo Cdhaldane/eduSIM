@@ -145,6 +145,33 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-image: none !important;
+  scrollbar-color: var(--primary) var(--white) !important;
+  scrollbar-width: thin !important;
+}
+
+.playModeCanvasContainer::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.playModeCanvasContainer::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+.playModeCanvasContainer::-webkit-scrollbar-thumb
+{
+	background-color: var(--text-color);
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
 }
 
 .info0>.playModeCanvasContainer {

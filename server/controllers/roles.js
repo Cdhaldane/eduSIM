@@ -75,7 +75,8 @@ exports.copyRole = async (req, res) => {
   const {
     gamerole,
     numspots,
-    gameinstanceid
+    gameinstanceid,
+    roleDesc
   } = await GameRole.findOne({
     where: {
       gameroleid,
@@ -94,6 +95,7 @@ exports.copyRole = async (req, res) => {
     let newGameRole = await GameRole.create({
       gameinstanceid,
       gamerole: gamerole+" (Copy)",
+      roleDesc: "",
       numspots: numspots === -1 ? 1 : numspots
     });
     const instance = await GameInstance.findOne({

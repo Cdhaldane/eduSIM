@@ -20,11 +20,11 @@ const gameroles = db.define('gameroles', {
     allowNull: false
   },
   roleDesc: {
-    type: Sequelize.STRING(250),
+    type: Sequelize.STRING(250)
   }
 });
 
-gameroles.sync().then(() => {
+gameroles.sync({alter: true}).then(() => {
   console.log('GameRoles table created');
 });
 

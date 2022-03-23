@@ -9,7 +9,6 @@ import "../Sidebar.css";
 
 
 const Notes = (props) => {
-  console.log(props.notes)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -116,7 +115,7 @@ const Notes = (props) => {
         </div>
         <div className="notes-buttons">
           {!(editMode && index === i) ? <i className="fas fa-pen" onClick={() => editNote(i)}/>
-          : <i className="lni lni-checkmark green"  onClick={() => handleEdit(i)}/>
+        : <i className="lni lni-checkmark greenMain"  onClick={() => handleEdit(i)}/>
           }
           {!(editMode && index === i) ? <i className="fas fa-trash"  onClick={() => deleteNote(i)} />
           : <i className="lni lni-close red" onClick={() => setEditMode(false)} />}

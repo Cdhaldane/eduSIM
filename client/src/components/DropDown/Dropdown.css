@@ -361,6 +361,11 @@ a {
   margin-bottom: 0px;
   cursor: pointer;
 }
+.menu-item h1 {
+  max-width: 200px !important;
+  margin-left: -10px !important;
+  overflow: hidden !important;
+}
 
 .loadingMediaAlert {
   width: 25px;
@@ -557,6 +562,7 @@ a {
   float: left !important;
   position: relative;
   left: 15px;
+  top: 18px;
   width: 0% !important;
 }
 
@@ -975,4 +981,14 @@ a {
   padding: 10px;
   resize: none;
   margin-top: 10px;
+}
+.roles-submit{
+  margin-right: 25px !important;
+  margin-bottom: 10px !important;
+  height: auto !important;
+  padding: 3px;
+  background-color: var(--primary) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  width: 90% !important;
 }

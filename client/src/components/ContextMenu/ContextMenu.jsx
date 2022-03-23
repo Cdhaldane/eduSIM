@@ -10,6 +10,7 @@ const ContextMenu = (props) => {
   const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
   const [conditionsVisible, setConditionsVisible] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
+  const [updater, setUpdater] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const menu = useRef();
   const { t } = useTranslation();
@@ -76,10 +77,15 @@ const ContextMenu = (props) => {
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
 
+    const offset = calcOutOfBounds(props.position.x, props.position.y);
+    setOffsetX(-offset.x);
+    setOffsetY(-offset.y);
+
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
     if (!props.selectedShapeName == "") {
       setContextMenuTitle();
     }
+
     return () => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
@@ -92,6 +98,7 @@ const ContextMenu = (props) => {
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);
+    setUpdater(true)
     setEditModalLeft(offset.left);
   }
 

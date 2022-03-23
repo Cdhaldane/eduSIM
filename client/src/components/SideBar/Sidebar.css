@@ -1,8 +1,19 @@
+.variable-container {
+  display: flex;
+  flex-direction: column;
+  height: inherit;
+  padding: 20px;
+  scrollbar-color: var(--primary) var(--white) !important;
+  scrollbar-width: thin !important;
+}
+
 .variable-box{
   padding: 2px;
   margin-bottom: 20px;
   color: var(--white);
   overflow-y: scroll;
+  scrollbar-color: var(--primary) var(--white) !important;
+  scrollbar-width: thin !important;
   min-height: 60px;
 }
 
@@ -68,6 +79,13 @@
   margin-top: 0px;
   font-size: 2.0em;
 }
+
+.variable-inputs h3:first-child {
+  margin-right: 30px;
+}
+.variable-inputs h3:nth-child(2)  {
+  margin-right: 10px;
+}
 .variable-inputs h1:hover{
   cursor: pointer;
 }
@@ -98,7 +116,7 @@
   opacity: 0.4;
   width: 99%;
   transition: 0.2s opacity;
-  margin-top: -10px;
+  margin-top: 10px;
 }
 .variable-add i{
   font-size: 1.5em;
@@ -161,7 +179,7 @@
   border-radius: 6px;
 }
 
-.green {
+.greenMain {
   background-color: rgb(101, 159, 69) !important;
   border: 1px solid var(--green);
 }
@@ -177,6 +195,7 @@
   margin-left: 20px;
   margin-top: 30px;
   font-size: 1.3em;
+  width: 90%;
 }
 
 .notes-header  {
@@ -197,7 +216,7 @@
 }
 .notes-title button {
   width: 45%;
-  font-size: 1.3em;
+  font-size: 1.2em;
   border: none;
   background-color: var(--primary);
   color: white;
@@ -233,10 +252,14 @@
   border-radius: 8px;
   padding: 3px;
   opacity: 0.8;
+  margin-bottom: 15px !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-color) var(--white);
 }
 .notes-title-card {
   border-radius: 8px;
   opacity: 0.8;
+  width: 70%;
 }
 
 .notes-card{
@@ -244,6 +267,7 @@
   background-color: var(--red);
   border-radius: 8px;
   padding: 10px;
+  min-height: 130px;
 }
 .notes-card h1 {
   color: white;
@@ -254,7 +278,7 @@
   background-color: var(--almostwhite);
   padding: 4px;
   border: none;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 .notes-buttons {
   text-align: right;

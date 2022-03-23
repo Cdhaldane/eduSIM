@@ -6,18 +6,11 @@ import { useTranslation } from "react-i18next";
 
 import "../Sidebar.css";
 
-const SettingsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: inherit;
-  padding: 20px;
-
-`;
-
 const SettingRow = styled.div`
   display: flex;
   align-items: center;
   margin: 5px 0 10px;
+  overflow-y: hidden !important;
   & > i {
     margin-left: 10px;
     margin-right: 10px;
@@ -72,13 +65,40 @@ const Variables = (props) => {
         }
       }
         for(let i = 0; i < (gameVar.length); i++){
-          list.push(<div className="variable-inputs gameVar"><h1>{gameVar[i]} = 'Empty'</h1></div>)
+          list.push(<div className="variable-inputs gameVar"><h1
+          onClick={() => {
+              setIsShown(true)
+              setCurrent(i)
+            }}
+          onMouseLeave={() => setIsShown(false)}>{gameVar[i] !== "" ? gameVar[i] : "Undefined" } = Empty</h1></div>)
+          {(isShown && current === i) && (
+            <div className="variable-hover">
+              {populateNames()}
+            </div>
+          )}
       }
     } else {
     for(let i = 0; i < (vars ? varName.length : 0); i++){
-      list.push(<div className="variable-inputs gameVar"><h1>{varName[i]} = {varValue[i]}</h1></div>)
+      if(varValue[i] === true){
+        varValue[i] = "True"
+      } else if (varValue[i] === false){
+        varValue[i] = "False"
+      }
+      if(varValue[i])
+        list.push(<div className="variable-inputs gameVar"><h1
+        onClick={() => {
+            setIsShown(true)
+            setCurrent(i)
+          }}
+        onMouseLeave={() => setIsShown(false)}>{varName[i] !== "" ? varName[i] : "Undefined"} = {varValue[i]}</h1></div>)
+        {(isShown && current === i) && (
+          <div className="variable-hover">
+            {populateNames()}
+          </div>
+        )}
     }
   }
+
     return list
   }
 
@@ -97,7 +117,7 @@ const Variables = (props) => {
     let vars = props ? props.vars : 0;
     let data = props.gameVars
     let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-    let list = props.editpage ? [<div className="variable-inputs green"><h3>Page‏ ‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green"><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
+    let list = props.editpage ? [<div className="variable-inputs green"><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green"><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
     let variable;
     let length;
     let items = [];
@@ -206,7 +226,7 @@ const Variables = (props) => {
 
 
   return (
-    <SettingsContainer>
+    <div className="variable-container">
       <h2>{t("sidebar.variables")}</h2>
       <SettingRow>
         <i className="settings-icons lni lni-user"></i>
@@ -247,7 +267,7 @@ const Variables = (props) => {
         </div>
       )}
     </SettingRow>
-    </SettingsContainer>
+    </div>
   );
 }
 

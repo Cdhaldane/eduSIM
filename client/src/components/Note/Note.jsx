@@ -1,11 +1,9 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Note.css";
 import { useTranslation } from "react-i18next";
 
 const Note = (props) => {
-  console.log(props.className + localStorage.lang)
   const { t } = useTranslation();
   return (
     props.onClick ? (

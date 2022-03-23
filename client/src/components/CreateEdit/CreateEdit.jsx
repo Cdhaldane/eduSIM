@@ -152,7 +152,7 @@ const CreateEdit = (props) => {
         <div className="button-container">
 
         <button type="button" className="green left-ca top" onClick={uploadImage}>
-          {t("common.edit")}
+          {t("common.save")}
         </button>
         <button type="button" className="red top" onClick={props.close}>
           {t("common.cancel")}
@@ -170,7 +170,6 @@ const CreateEdit = (props) => {
               onClick={() => {
                 setImageSelected(image);
                 setImg(image);
-                localStorage.setItem("img", image)
               }}
               alt={t("alt.sim")}
             />

@@ -79,7 +79,7 @@ img {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: scroll;
-  scrollbar-color: var(--primary) var(--white);
+  scrollbar-color: var(--text-color) var(--white);
   scrollbar-width: thin;
 }
 
@@ -91,7 +91,7 @@ img {
 
 .full-page-wrapper::-webkit-scrollbar
 {
-	width: 15px;
+	width: 10px;
 	background-color: #F5F5F5;
 }
 
@@ -746,7 +746,7 @@ hr {
   line-height: 1.3em;
   font-size: .9em;
   width: 200px;
-
+  z-index: 1000;
 }
 .joinboard-controls p {
 
@@ -809,8 +809,19 @@ hr {
   font-size: 20rem;
   color: white;
   background-color: #e5e5e5;
-  overflow: hidden;
+  overflow-y: hidden !important;
 }
+.gamepage-container {
+  position: fixed;
+  top: 0;
+  left: 20px !important;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e5e5;
+  overflow: hidden !important;
+  align-content: center;
+}
+
 
 /* edit page stuff */
 .editpage {

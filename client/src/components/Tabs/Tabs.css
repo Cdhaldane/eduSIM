@@ -494,11 +494,13 @@ input[type='radio']:after {
   align-items: flex-end;
   align-self: flex-end;
   z-index: 1;
+  transition: opacity .3s;
 }
 .logs[hidden] {
   text-align: right;
   align-self: flex-end;
-  margin-bottom: -90px;
+  position: relative;
+  margin-top: 0px;
   margin-right: 7vw;
   height: 10px;
 }
@@ -507,10 +509,11 @@ input[type='radio']:after {
   display: flex;
   align-items: center;
   margin-top: 0px;
-  transition: opacity .3s;
 }
 .logrow[hidden] {
+  position: absolute;
   opacity: 0;
+  z-index: -1;
 }
 .logrow-info {
   background-color: var(--text-color);

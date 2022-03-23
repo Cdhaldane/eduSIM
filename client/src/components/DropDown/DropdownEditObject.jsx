@@ -307,7 +307,14 @@ const DropdownEditObject = (props) => {
 
 
   const handleVarValue = (e) => {
-    vTextsV[e.id] = e.value;
+    let val;
+    if(isNaN(val)){
+      val = e.value;
+    } else {
+      val = parseInt(e.value)
+    }
+    console.log(parseInt(e.value))
+    vTextsV[e.id] = val;
     debounceObjState({ varValue: vTextsV });
     setObjState(prev => ({
       ...prev,
@@ -329,9 +336,6 @@ const DropdownEditObject = (props) => {
   }
   const handleMathTwo = (e) => {
     let value = e.value;
-    if(value === "Random"){
-      value = Math.floor(Math.random() * 10)
-    }
     if(parseInt(e.value)){
       value = parseInt(e.value)
     }
@@ -658,18 +662,12 @@ const DropdownEditObject = (props) => {
                 <option value="radio">{t("edit.input.radio")}</option>
                 <option value="variable">{t("edit.input.variable")}</option>
               </select>
-              {objState.infolevel !== true ? (
+      
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
-                ) :
-                (
-                  <div className="htmliframeinput">
-                    <input type="checkbox" disabled={true} checked={false} onChange={() => handleProperty(!objState?.sync, 'sync')} />
-                    <p>{t("edit.variableSync")}</p>
-                  </div>
-                )}
+
                 {objState?.varType === "radio" ? (
                   <div className="radio-dropdown">
                   <p>{t("edit.radioAmount")}</p>
