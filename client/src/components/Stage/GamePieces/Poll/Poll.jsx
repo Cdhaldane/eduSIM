@@ -81,13 +81,17 @@ const Poll = forwardRef((props, ref) => {
         answer = answer.toLowerCase();
       }
 
+      //             (new Set([...(new Set(answer))].filter(x => (new Set(correctAnswer)).has(x)))).size > 0) &&
       const correctAnswer = question.correctAnswer;
       if (correctAnswer !== null) {
         if (
           (correctAnswer === answer) ||
           (question.type === "text" && Array.isArray(correctAnswer) && correctAnswer.map(ans => ans.toLowerCase()).includes(answer)) ||
-          (question.type === "checkbox" && Array.isArray(answer) && Array.isArray(correctAnswer) &&
-            (new Set([...(new Set(answer))].filter(x => (new Set(correctAnswer)).has(x)))).size > 0)
+          (question.type === "checkbox" && Array.isArray(answer) && Array.isArray(correctAnswer) && 
+          answer.length === correctAnswer.length &&
+          answer.sort().every((ans, i) => {
+            return ans === correctAnswer.sort()[i];
+          }))
         ) {
           setVar(correctVar, true);
         } else {

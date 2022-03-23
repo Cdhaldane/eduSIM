@@ -9,7 +9,6 @@ import "../Sidebar.css";
 
 
 const Notes = (props) => {
-  console.log(props.notes)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])

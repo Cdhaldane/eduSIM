@@ -58,10 +58,10 @@ const App = (props) => {
     });
   }
 
-  const switchTheme= () => {
-    const newTheme= theme === 'light' ? 'dark' : 'light';
+  const switchTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-   }
+  }
 
   useEffect(() => {
     document.documentElement.style.filter = (
@@ -72,58 +72,63 @@ const App = (props) => {
   }, [localSettings]);
 
   const { isLoading } = props.auth0;
+  console.log(isLoading);
   if (isLoading) return <Loading />;
+
+  const test = false;
 
   return (
     <div className="full-page-wrapper" data-theme={theme}>
-    <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
-      <AlertContextProvider>
+      <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
+        <AlertContextProvider>
 
-        <AlertPopup />
-        {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-          <Navbar switchTheme={switchTheme}/>
-        )}
-        <div className="main-content">
-        <Suspense fallback={<Loading />}>
-          <Switch>
-            <Route exact path="/" >
-              <Home />
-            </Route>
+          <AlertPopup />
+          {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+            <Navbar switchTheme={switchTheme} />
+          )}
+          <div className="main-content">
+            <Suspense fallback={<>
+              <Loading />
+            </>}>
+              <Switch>
+                <Route exact path="/" >
+                  <Home />
+                </Route>
+                {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+                  <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
+                )}
+                <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
+                <Route exact path="/about" render={(props) => <About {...props} />} />
+                <Route exact path="/terms" render={(props) => <Terms {...props} />} />
+                <Route exact path="/privacy" render={(props) => <Policy {...props} />} />
+                <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
+                <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
+                <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
+                <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
+                <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
+                <ProtectedRoute path="/join" render={(props) =>
+                  <Join
+                    customObjects={customObjects}
+                    {...props}
+                  />}
+                />
+              </Switch>
+              {cookiesPopupVisible &&
+                document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
+                  <CookiesPopup close={() => {
+                    setCookiesPopupVisible(false);
+                    document.cookie = "cookiesAccepted=true";
+                  }} />
+                )}
+
+            </Suspense>
+
             {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-              <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
+              <FooterBar />
             )}
-            <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
-            <Route exact path="/about" render={(props) => <About {...props} />} />
-            <Route exact path="/terms" render={(props) => <Terms {...props} />} />
-            <Route exact path="/privacy" render={(props) => <Policy {...props} />} />
-            <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
-            <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
-            <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
-            <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
-            <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-            <ProtectedRoute path="/join" render={(props) =>
-              <Join
-                customObjects={customObjects}
-                {...props}
-              />}
-            />
-          </Switch>
-          {cookiesPopupVisible &&
-        document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
-          <CookiesPopup close={() => {
-            setCookiesPopupVisible(false);
-            document.cookie = "cookiesAccepted=true";
-          }} />
-        )}
-
-        </Suspense>
-
-        {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
-          <FooterBar />
-        )}
-        </div>
-      </AlertContextProvider>
-    </SettingsContext.Provider>
+          </div>
+        </AlertContextProvider>
+      </SettingsContext.Provider>
     </div>
   );
 }

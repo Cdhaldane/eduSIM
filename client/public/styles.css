@@ -76,6 +76,7 @@ img {
 }
 
 .full-page-wrapper{
+  min-height: 100%;
   flex-direction: column;
   justify-content: space-between;
   overflow-y: scroll;
