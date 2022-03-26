@@ -663,7 +663,6 @@ class Graphics extends Component {
       numspots: roleNum,
       roleDesc: roleDesc,
     }).then((res) => {
-      console.log(res)
       let objects = JSON.parse(res.data.gameinstance.game_parameters);
 
       // Parse the saved groups
@@ -888,7 +887,7 @@ class Graphics extends Component {
         id: `pencils${this.state.pencils.length}`,
         infolevel: personalArea,
         rolelevel: this.state.rolelevel,
-        strokeWidth: this.state.drawStrokeWidth
+        strokeWidth: this.state.drawStrokeWidth,
       };
       this.setState({
         pencils: [...this.state.pencils, newPencil]
@@ -1426,6 +1425,7 @@ class Graphics extends Component {
       const shape = this.refs[stage + "Stage"].getIntersection(pos);
 
       if (this.state.lineTransformDragging) {
+
         const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
         const newLine = [...this.state.lines].filter(line => line.id === this.state.selectedShapeName)[0];
 
@@ -1434,7 +1434,8 @@ class Graphics extends Component {
 
         newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
         newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
-
+        console.log([...this.state.lines].filter(line => line.id === this.state.selectedShapeName))
+        console.log(newLines)
         this.setState({
           lines: [...newLines, newLine]
         });

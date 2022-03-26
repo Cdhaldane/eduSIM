@@ -15,6 +15,7 @@
   scrollbar-color: var(--primary) var(--white) !important;
   scrollbar-width: thin !important;
   min-height: 60px;
+  max-height: 300px;
 }
 
 .variable-box::-webkit-scrollbar {
@@ -226,7 +227,7 @@
   border: 2px outset rgb(136, 136, 136);
   border-color: var(--primary);
   margin-bottom: 20px;
-  opacity: 0.8;
+  opacity: 0.5;
 }
 .notes-title button:focus{
   opacity: 0.4;

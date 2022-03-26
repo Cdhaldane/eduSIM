@@ -94,7 +94,7 @@ const Notes = (props) => {
 
     for(let i =0; i < noteData.length; i ++){
       list.push(
-        <div>
+        <div key={i}>
         <div className="notes-card">
           <input
             wrap="soft"

@@ -19,9 +19,9 @@ const DropdownRoles = (props) => {
   const [menuHeight, setMenuHeight] = useState(null);
   const [roleName, setRoleName] = useState("");
   const [roleNum, setRoleNum] = useState("");
-  const [roleDesc, setRoleDesc] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [roleDesc, setRoleDesc] = useState("");
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [selected, setSelected] = useState(-1)
@@ -281,6 +281,7 @@ const DropdownRoles = (props) => {
       setSelectedRole(roleName);
       setRoleName(roleName);
       setRoleNum(roleNum);
+      setRoleDesc(roles[index].roleDesc)
       props.roleLevel(roleName, roleNum, roleDesc);
       handleActiveMenuChange('main');
     }
@@ -385,7 +386,7 @@ const DropdownRoles = (props) => {
               value={roleDesc}
               onChange={e => handleEditSelect(e.target.value)}
               className="role-desc"
-              placeholder={roles[selected] ? roles[selected].roleDesc : ""}
+
             />
           <button className="roles-submit" onClick={handleSubmitModification}>Submit</button></>
             : <textarea

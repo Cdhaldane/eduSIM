@@ -65,17 +65,19 @@ const Variables = (props) => {
         }
       }
         for(let i = 0; i < (gameVar.length); i++){
-          list.push(<div className="variable-inputs gameVar"><h1
+          if(gameVar[i] !== ""){
+          list.push(<div className="variable-inputs gameVar" key={i}><h1
           onClick={() => {
               setIsShown(true)
               setCurrent(i)
             }}
           onMouseLeave={() => setIsShown(false)}>{gameVar[i] !== "" ? gameVar[i] : "Undefined" } = Empty</h1></div>)
           {(isShown && current === i) && (
-            <div className="variable-hover">
+            <div className="variable-hover" key={i}>
               {populateNames()}
             </div>
           )}
+        }
       }
     } else {
     for(let i = 0; i < (vars ? varName.length : 0); i++){
@@ -84,18 +86,19 @@ const Variables = (props) => {
       } else if (varValue[i] === false){
         varValue[i] = "False"
       }
-      if(varValue[i])
-        list.push(<div className="variable-inputs gameVar"><h1
+        if(gameVar[i] !== "" ){
+        list.push(<div className="variable-inputs gameVar" key={i}><h1
         onClick={() => {
             setIsShown(true)
             setCurrent(i)
           }}
         onMouseLeave={() => setIsShown(false)}>{varName[i] !== "" ? varName[i] : "Undefined"} = {varValue[i]}</h1></div>)
         {(isShown && current === i) && (
-          <div className="variable-hover">
+          <div className="variable-hover" key={i}>
             {populateNames()}
           </div>
         )}
+      }
     }
   }
 
@@ -137,10 +140,10 @@ const Variables = (props) => {
       for(let i = 0; i < (check ? check.length : 0); i++){
         if(check){
           list.push(
-            !props.editpage ? <div className="variable-inputs gameVar"><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
-            <div className="variable-inputs">
+            !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
+            <div className="variable-inputs" key={i}>
               <i className="lni lni-trash-can" onClick={() => deleteVar(i)}/>
-            <div className="variable-main">
+            <div className="variable-main" key={i}>
               <h1
                 onClick={() => {
                   setIsShown(true)
@@ -151,7 +154,7 @@ const Variables = (props) => {
               <h2>=</h2>
 
             {(isShown && current === i) && (
-              <div className="variable-hover">
+              <div className="variable-hover" key={i}>
                 {populateNames(check[i])}
               </div>
             )}
@@ -177,7 +180,7 @@ const Variables = (props) => {
       }
     }
     for(let i = 0; i < actual.length; i ++){
-      out.push(<div>{actual[i]}</div>)
+      out.push(<div  key={i}>{actual[i]}</div>)
     }
     return out
   }
@@ -196,7 +199,7 @@ const Variables = (props) => {
     let items = [(<option value="">Select a previous sim</option>)];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       // Here I will be creating my options dynamically based on
-      items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
+      items.push(<option value={i} key={i}>{props.gamedata[i].gameinstance_name}</option>);
       // What props are currently passed to the parent component
     }
     return items;

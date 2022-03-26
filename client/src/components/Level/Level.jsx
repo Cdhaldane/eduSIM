@@ -97,7 +97,7 @@ const Level = (props) => {
   }
 
   useEffect(() => {
-    for(let i = 0; i < (props.alerts ? props.alerts.length - 1 : 0); i++){
+    for(let i = 0; i < (props.alerts ? props.alerts.length : 0); i++){
       if(checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)){
         handleLevel(count+1)
       }
