@@ -16,7 +16,11 @@ import '../components/Stage/Stage.css';
 
 const Main = styled.main`
   grid-area: main;
-  background-color: ${p => p.color}
+  background-color: ${p => p.color};
+  padding-left: 70px;
+  @media screen and (orientation: portrait) {
+    padding-left: 0px;
+  }
 `;
 
 const PauseCover = styled.div`

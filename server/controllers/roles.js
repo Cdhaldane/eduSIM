@@ -6,6 +6,9 @@ const db = require('../databaseConnection');
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
 
+  console.log("HELLO");
+  console.log(gameinstanceid);
+
   try {
     let gamerole = await GameRole.findAll({
       where: {
@@ -14,6 +17,7 @@ exports.getGameRoles = async (req, res) => {
     });
     return res.send(gamerole);
   } catch (err) {
+    console.log(err);
     return res.status(400).send({
       message: `No game roles found with the id ${gameinstanceid}`,
     });
