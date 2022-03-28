@@ -663,7 +663,6 @@ class Graphics extends Component {
       numspots: roleNum,
       roleDesc: roleDesc,
     }).then((res) => {
-      console.log(res)
       let objects = JSON.parse(res.data.gameinstance.game_parameters);
 
       // Parse the saved groups
@@ -713,7 +712,6 @@ class Graphics extends Component {
         x: mouseX,
         y: mouseY
       };
-
       let singleGroupSelected = false;
       if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
         singleGroupSelected = true;
@@ -825,7 +823,6 @@ class Graphics extends Component {
 
   onMouseDown = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
-
     const shape = this.getTopObjAtPos({
       x: event.clientX,
       y: event.clientY
@@ -836,12 +833,21 @@ class Graphics extends Component {
         layerDraggable: false
       });
     }
-
+    let fixX = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+    let fixY = 0;
+    if(this.state.personalAreaOpen){
+      fixX= window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
+      fixY= window.matchMedia("(orientation: portrait)").matches ? 110 : 60;
+    }
+    if (this.state.overlayOpen){
+      fixX= window.matchMedia("(orientation: portrait)").matches ? 30 : 100 ;
+      fixY= 30;
+    }
     let pos = null;
     if (event.layerX) {
       pos = {
-        x: event.layerX,
-        y: event.layerY
+        x: event.clientX - fixX,
+        y: event.clientY - fixY
       };
     } else {
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -855,7 +861,6 @@ class Graphics extends Component {
           (event.targetTouches ? event.targetTouches[0].clientY : this.state.mouseY))
       }
     }
-
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
@@ -882,7 +887,7 @@ class Graphics extends Component {
         id: `pencils${this.state.pencils.length}`,
         infolevel: personalArea,
         rolelevel: this.state.rolelevel,
-        strokeWidth: this.state.drawStrokeWidth
+        strokeWidth: this.state.drawStrokeWidth,
       };
       this.setState({
         pencils: [...this.state.pencils, newPencil]
@@ -965,8 +970,13 @@ class Graphics extends Component {
       document.body.style.cursor = "auto";
     }
 
-    let layerX = event.layerX;
-    let layerY = event.layerY;
+    let layerX = event.clientX - 60;
+    let layerY = event.clientY;
+
+    if(this.state.personalAreaOpen){
+      layerX = event.clientX - 135;
+      layerY = event.clientY - 65;
+    }
 
     // Determine how long screen has been clicked (if on mobile)
     if (this.state.touchTime && this.state.touchEvent) {
@@ -1415,6 +1425,7 @@ class Graphics extends Component {
       const shape = this.refs[stage + "Stage"].getIntersection(pos);
 
       if (this.state.lineTransformDragging) {
+
         const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
         const newLine = [...this.state.lines].filter(line => line.id === this.state.selectedShapeName)[0];
 
@@ -1423,7 +1434,8 @@ class Graphics extends Component {
 
         newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
         newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
-
+        console.log([...this.state.lines].filter(line => line.id === this.state.selectedShapeName))
+        console.log(newLines)
         this.setState({
           lines: [...newLines, newLine]
         });
@@ -3145,7 +3157,7 @@ class Graphics extends Component {
                     });
                   }}
                   style={{
-                    top: `${70 * (i + 1)}px`
+                    top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (i + 1)}px`
                   }}
                   onClick={() => {
                     this.setOverlayOpen(true, overlay.id);

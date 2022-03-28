@@ -120,9 +120,7 @@ const CanvasPage = (props) => {
       zoomSettings.personal.x === null &&
       zoomSettings.overlay.x === null
       ) {
-      console.log("OOGA");
       const poll2 = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === "polls2")[0];
-      console.log(poll2?.getBoundingClientRect());
       reCenterObjects(props.edit ? "edit" : "play");
     }
   }, [zoomSettings]);
@@ -148,7 +146,7 @@ const CanvasPage = (props) => {
 
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
-      console.log({...zoomSettings});
+
 
       const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       if (
@@ -221,7 +219,6 @@ const CanvasPage = (props) => {
           let y = null;
           let scale = null;
           const contentW = maxX - minX;
-          console.log(maxX, minX);
           const contentH = maxY - minY;
           const contentRatio = contentW / contentH;
           if (availableRatio > contentRatio && mode !== "play") {
@@ -988,7 +985,7 @@ const CanvasPage = (props) => {
           {...inputProps(obj, canvas)}
           {...canvas.getVariableProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
-          random={Math.floor(Math.random() * 10)}
+          random={Math.random()}
         />;
       default:
         return null;

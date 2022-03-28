@@ -11,7 +11,7 @@ const LinksGroup = styled.div`
   overflow: hidden;
   overflow-y: auto;
   scrollbar-color: var(--primary) white;
-  scrollbar-width: 10px;
+  scrollbar-width: thin;
   ::-webkit-scrollbar {
     width: 4px;
   }

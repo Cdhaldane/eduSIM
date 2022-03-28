@@ -206,7 +206,7 @@ const Game = (props) => {
 
   return (
     !isLoading ? (
-      <>
+      <div className="editpage">
         <Sidebar
           userId={userId}
           customObjs={customObjs}
@@ -283,7 +283,7 @@ const Game = (props) => {
             <Loading />
           </div>
         )}
-      </>
+      </div>
     ) : (
       <Loading />
     )

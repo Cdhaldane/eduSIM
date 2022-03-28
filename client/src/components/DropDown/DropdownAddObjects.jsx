@@ -59,21 +59,9 @@ const DropdownAddObjects = (props) => {
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.xPos, props.yPos).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.xPos, props.yPos).y);
 
-  const isChrome = window.chrome;
-  let winNav = window.navigator;
-  let vendorName = winNav.vendor;
-  let isChromeCheck = false;
-  if(isChrome !== null && typeof isChrome !== "undefined" && vendorName === "Google Inc."){
-    isChromeCheck=true;
-  }
+
 
   useEffect(() => {
-    if(isChrome){
-      if(props.type === "overlay"){
-        setFixX(930);
-        setFixY(500)
-      }
-    }
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleReposition);
@@ -657,8 +645,8 @@ const DropdownAddObjects = (props) => {
       className="dropdown"
       style={{
         height: menuHeight,
-        transform: `translateX(${props.xPos - sidebarWidth + offsetX + fixX}px)
-                    translateY(${props.yPos + offsetY + fixY}px)`,
+        transform: `translateX(${props.xPos - sidebarWidth + offsetX}px)
+                    translateY(${props.yPos + offsetY}px)`,
       }}
       ref={dropdownRef}
       onContextMenu={(e) => {

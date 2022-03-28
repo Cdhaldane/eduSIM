@@ -260,7 +260,7 @@ const Sidebar = (props) => {
       icon: "lni lni-control-panel",
       id: "variables",
       label: t("sidebar.variables"),
-      visible: true,
+      visible: props.game ? false : true,
       submenu: (
         <Variables
           editpage={!props.game}

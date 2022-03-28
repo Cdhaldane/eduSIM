@@ -94,7 +94,7 @@ const Notes = (props) => {
 
     for(let i =0; i < noteData.length; i ++){
       list.push(
-        <div>
+        <div key={i}>
         <div className="notes-card">
           <input
             wrap="soft"
@@ -115,7 +115,7 @@ const Notes = (props) => {
         </div>
         <div className="notes-buttons">
           {!(editMode && index === i) ? <i className="fas fa-pen" onClick={() => editNote(i)}/>
-          : <i className="lni lni-checkmark green"  onClick={() => handleEdit(i)}/>
+        : <i className="lni lni-checkmark greenMain"  onClick={() => handleEdit(i)}/>
           }
           {!(editMode && index === i) ? <i className="fas fa-trash"  onClick={() => deleteNote(i)} />
           : <i className="lni lni-close red" onClick={() => setEditMode(false)} />}

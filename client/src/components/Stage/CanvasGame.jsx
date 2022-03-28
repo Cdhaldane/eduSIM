@@ -690,7 +690,7 @@ class Graphics extends Component {
                     className="overlayButton"
                     onClick={() => this.setOverlayOpen(true, overlay.id)}
                     style={{
-                      top: `${70 * (nonHiddenI + 1)}px`
+                      top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
                     {!this.state.overlayImage.length ? (
