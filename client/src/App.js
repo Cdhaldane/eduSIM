@@ -72,10 +72,7 @@ const App = (props) => {
   }, [localSettings]);
 
   const { isLoading } = props.auth0;
-  console.log(isLoading);
   if (isLoading) return <Loading />;
-
-  const test = false;
 
   return (
     <div className="full-page-wrapper" data-theme={theme}>

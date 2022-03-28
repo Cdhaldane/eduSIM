@@ -40,7 +40,7 @@ class Overlay extends Component {
     }
 
     return (
-      <div className={`overlayMain ${this.props.playMode ? "noSideBar" : ""}`}>
+      <div className={`overlayMain`}>
         <div>
           <div className="area overlayCanvas">
             <i id="overlayCloseButton" className="fas fa-times fa-3x" onClick={this.handleClose} />

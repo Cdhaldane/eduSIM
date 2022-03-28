@@ -498,6 +498,7 @@ class Graphics extends Component {
           canvasLoading: true
         });
         setTimeout(() => {
+          console.log("RENDER");
           this.props.reCenter("play", layer, this.state.level !== prevState.level ? "resize" : "normal")
         }, 300);
       }
@@ -626,6 +627,26 @@ class Graphics extends Component {
     });
   }
 
+  contextMenuEventShortcuts = (event) => {
+    const x = 88,
+      deleteKey = 46,
+      copy = 67,
+      paste = 86,
+      z = 90,
+      y = 89,
+      r = 82;
+    if (event.shiftKey && event.keyCode === r) {
+      console.log("HELLO");
+      this.props.reCenter("play");
+    } else if (event.altKey && event.keyCode === r) {
+      // Print Info (FOR DEBUGGING)
+      console.log("Refs:");
+      console.log({ ...this.refs });
+      console.log("State:");
+      console.log({ ...this.state });
+    }
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -717,7 +738,7 @@ class Graphics extends Component {
         )}
 
         {/* ---- GROUP CANVAS ---- */}
-        <div id="groupGameContainer" className="playModeCanvasContainer">
+        <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <Stage
             height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}

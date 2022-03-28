@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useRef, useContext } from "react";
+import React, { Suspense, useState, useRef, useContext, useEffect } from "react";
 import { SettingsContext } from "../App";
 import Loading from "../components/Loading/Loading";
 import WebFont from "webfontloader";
@@ -114,11 +114,33 @@ const CanvasPage = (props) => {
 
   const [prevLayers, setPrevLayers] = useState([]);
 
+  useEffect(() => {
+    if (
+      zoomSettings.group.x === null &&
+      zoomSettings.personal.x === null &&
+      zoomSettings.overlay.x === null
+      ) {
+      console.log("OOGA");
+      const poll2 = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === "polls2")[0];
+      console.log(poll2?.getBoundingClientRect());
+      reCenterObjects(props.edit ? "edit" : "play");
+    }
+  }, [zoomSettings]);
+
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
    * The following functions are used to reposition the objects so they all fit on the canvas
    *------------------------------------------------------------------------------------------*/
   const reCenterObjects = (mode, layer, from) => {
+    if (from === "resize") {
+      setZoomSettings({
+        group: { x: null, y: null, scale: null, resize: false },
+        overlay: { x: null, y: null, scale: null, resize: false },
+        personal: { x: null, y: null, scale: null, resize: false }
+      });
+      return;
+    }
+
     let canvas = getUpdatedCanvasState(mode);
     if (!canvas) {
       return;
@@ -126,6 +148,8 @@ const CanvasPage = (props) => {
 
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
+      console.log({...zoomSettings});
+
       const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       if (
         mode === "play" &&
@@ -163,6 +187,7 @@ const CanvasPage = (props) => {
       if (mode === "play" && document.getElementById(`${areaString}GameContainer`)) {
         document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
       }
+
       // Reset to default position and scale
       canvas.setState({
         [`${areaString}LayerX`]: 0,
@@ -196,6 +221,7 @@ const CanvasPage = (props) => {
           let y = null;
           let scale = null;
           const contentW = maxX - minX;
+          console.log(maxX, minX);
           const contentH = maxY - minY;
           const contentRatio = contentW / contentH;
           if (availableRatio > contentRatio && mode !== "play") {
@@ -285,11 +311,10 @@ const CanvasPage = (props) => {
             // Center contents
             if (availableRatio > contentRatio) {
               y = 40;
-              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding :
-                sideMenuW + (availableW - (contentW * scale)) / 2;
+              x = mode === "play" ? leftPadding : sideMenuW + (availableW - (contentW * scale)) / 2;
             } else {
               y = (availableH - (contentH * scale)) / 2;
-              x = mode === "play" ? (areaString === "group" ? sideMenuW : 0) + leftPadding : leftPadding;
+              x = leftPadding;
             }
             const newX = canvas.state[`${areaString}LayerX`] + x;
             const newY = canvas.state[`${areaString}LayerY`] + y;
@@ -306,11 +331,11 @@ const CanvasPage = (props) => {
                 const otherCanvs = ["group", "personal", "overlay"].filter(canv => canv !== areaString);
                 zoomSettingsRest = {
                   [otherCanvs[0]]: {
-                    ...otherCanvs[0],
+                    ...zoomSettings[otherCanvs[0]],
                     resize: true
                   },
                   [otherCanvs[1]]: {
-                    ...otherCanvs[1],
+                    ...zoomSettings[otherCanvs[1]],
                     resize: true
                   }
                 }
