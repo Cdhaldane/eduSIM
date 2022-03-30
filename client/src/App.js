@@ -34,7 +34,9 @@ const customObjects = [
   "htmlFrames",
   "inputs",
   "timers",
-  "richTexts"
+  "richTexts",
+  "videos",
+  "audios",
 ];
 
 const App = (props) => {

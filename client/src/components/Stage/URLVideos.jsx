@@ -1,120 +1,38 @@
 import Konva from "konva"
-import React, { useState, forwardRef, useEffect, useRef } from 'react';
-import { Image, Text } from "react-konva";
+import React, { useState, forwardRef, useEffect, useRef, useContext } from 'react';
+import CustomWrapper from "./GamePieces/CustomWrapper";
+import ReactPlayer from 'react-player'
+import ReactAudioPlayer from 'react-audio-player';
+import { SettingsContext } from "../../App";
+
 
 const URLVideo = forwardRef((props, ref) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [fillPatternImage, setFillPatternImage] = useState(null);
-  const [playPauseScale, setPlayPauseScale] = useState(0);
-  const playPause = useRef();
+  console.log(props)
 
-  if (props.fillPatternImage) {
-    const bimage = new window.Image();
-    bimage.onload = () => {
-      setFillPatternImage(bimage);
-    }
-    bimage.src = 'sound.png';
-  }
+  const [playing, setPlaying] = useState(false)
 
-  useEffect(() => {
-    if (props.type === "video") {
-      setPlayPauseScale(30);
-    } else if (props.type === "audio") {
-      setPlayPauseScale(15);
-    }
-  }, []);
-
-  const videoElement = React.useMemo(() => {
-    const element = document.createElement("video");
-    element.src = props.src;
-    element.loop = true;
-    element.autoplay = true;
-    return element;
-  }, [props.src]);
-
-
-  useEffect(() => {
-    const onload = () => {
-      //
-    };
-
-    videoElement.addEventListener("loadedmetadata", onload);
-
-    return () => {
-      videoElement.pause();
-      videoElement.removeEventListener("loadedmetadata", onload);
-    };
-  }, [videoElement]);
-
-  useEffect(() => {
-    videoElement.play();
-    const layer = props.layer.getStage();
-
-    const anim = new Konva.Animation(() => { }, layer);
-    anim.start();
-
-    return () => {
-      anim.stop();
-    };
-  }, [videoElement, props.layer]);
-
-  const togglePlay = () => {
-    if (!props.src.includes(".gif")) {
-      if (isPlaying) {
-        videoElement.pause();
-        setIsPlaying(false);
-      } else {
-        videoElement.play();
-        setIsPlaying(true);
-      }
-    }
+  const handlePlay = () => {
+    setPlaying(!playing)
+    console.log(playing)
   }
 
   return (
-    <>
-      <Image
-        visible={props.visible}
-        fillPatternImage={fillPatternImage}
-        fillPatternScaleY={0.4}
-        fillPatternScaleX={0.4}
-        draggable
-        x={props.x}
-        y={props.y}
-        scaleY={props.scaleY}
-        scaleX={props.scaleX}
-        width={props.width}
-        height={props.height}
-        image={videoElement}
-        ref={ref}
-        id={props.id}
-        name="shape"
-        opacity={props.opacity}
-        onClick={togglePlay}
-        onTransformStart={props.onTransformStart}
-        onTransform={props.onTransform}
-        onTransformEnd={props.onTransformEnd}
-        onDragMove={props.onDragMove}
-        onDragEnd={props.onDragEnd}
-        onContextMenu={props.onContextMenu}
-        rotation={props.rotation}
-        stroke={props.stroke}
-        strokeWidth={props.strokeWidth}
-      />
-      <Text
-        ref={playPause}
-        fontSize={props.scaleX ?
-          Math.min(props.scaleX * playPauseScale, props.scaleY * playPauseScale) :
-          playPauseScale}
-        fontFamily={"Montserrat"}
-        text={isPlaying ? "Playing... ▶" : "Paused... ⏸"}
-        fill={"black"}
-        x={props.x}
-        y={playPause.current ? props.y - playPause.current.height() - 5 : props.y}
-        width={props.scaleX ? props.width * props.scaleX : props.width}
-        rotation={props.rotation}
-        opacity={0.5}
-      />
-    </>
+    <CustomWrapper {...props} ref={ref}>
+        <div className="video-container">
+          {props?.type === "audio" ? (
+            <ReactAudioPlayer
+               src={props.src}
+               controls={true}
+               preload="none"
+            />
+          ) : (
+            <ReactPlayer url={props.src}
+              playing={playing}
+              controls={props.editMode ?  false : true}
+            />
+          )}
+        </div>
+    </CustomWrapper>
   );
 });
 

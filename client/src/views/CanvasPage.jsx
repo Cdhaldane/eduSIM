@@ -36,7 +36,6 @@ const konvaObjects = [
   "texts",
   "triangles",
   "images",
-  "videos",
   "audios",
   "documents",
   "lines",
@@ -595,20 +594,15 @@ const CanvasPage = (props) => {
     return {
       type: "video",
       src: obj.vidsrc,
-      image: obj.vidsrc,
-      layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      width: obj.width,
-      height: obj.height
+
     }
   }
 
   const audioProps = (obj, layer) => {
     return {
       type: "audio",
-      src: obj.vidsrc,
-      image: obj.vidsrc,
+      src: obj.audsrc,
+      image: obj.imgsrc,
       layer: layer,
       scaleX: obj.scaleX,
       scaleY: obj.scaleY,
@@ -914,9 +908,21 @@ const CanvasPage = (props) => {
       case "images":
         return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} /> : null;
       case "videos":
-        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...videoProps(obj, layer)} /> : null;
+        return <URLVideo
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...videoProps(obj, canvas)}
+          {...canvas.getVariableProps()}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
+        />;
       case "audios":
-        return layer ? <URLVideo {...defaultObjProps(obj, canvas, editMode)} {...audioProps(obj, layer)} /> : null;
+        return <URLVideo
+        defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+        {...defaultObjProps(obj, canvas, editMode)}
+        {...audioProps(obj, canvas)}
+        {...canvas.getVariableProps()}
+        {...(editMode ? customObjProps(obj, canvas) : {})}
+      />;
       case "documents":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
@@ -1034,6 +1040,7 @@ const CanvasPage = (props) => {
               y={canvasY}
               height={canvasH}
               width={canvasW}
+
             // Canvas Drag Rect Outline - FOR DEBUGGING
             //stroke={"red"}
             //strokeWidth={2}

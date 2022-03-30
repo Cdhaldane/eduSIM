@@ -197,10 +197,40 @@
   margin-top: 30px;
   font-size: 1.3em;
   width: 90%;
+  overflow-y: scroll;
+  height: 95%;
+  scrollbar-width: thin;
 }
+
+.sidebar-notes::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.sidebar-notes::-webkit-scrollbar
+{
+	width: 0px;
+	background-color: #F5F5F5;
+}
+
+.sidebar-notes::-webkit-scrollbar-thumb
+{
+	background-color: var(--text-color);
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
 
 .notes-header  {
   display: flex;
+
 }
 .notes-header h2{
   float: left;
@@ -269,6 +299,7 @@
   border-radius: 8px;
   padding: 10px;
   min-height: 130px;
+  margin-right: 2px !important;
 }
 .notes-card h1 {
   color: white;

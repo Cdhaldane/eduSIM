@@ -64,14 +64,15 @@ const CreateEdit = (props) => {
 
   const uploadImage = async event => {
     // Check if name is empty or a duplicate
+    let data = JSON.parse(localStorage.order)
     if (title.trim() === "") {
       alertContext.showAlert(t("alert.simNameRequired"), "warning");
       return;
     }
-    // if (localStorage.order.some(game => game.gameinstance_name === title.trim())) {
-    //   alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
-    //   return;
-    // }
+    if (data.some(game => game.gameinstance_name === title.trim())) {
+      alertContext.showAlert(t("alert.simAlreadyExists"), "warning");
+      return;
+    }
     event.preventDefault();
     if(localStorage.images == null || localStorage.images == "" ){
       var temp = []

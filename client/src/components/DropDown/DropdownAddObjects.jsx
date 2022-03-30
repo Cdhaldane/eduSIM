@@ -382,25 +382,10 @@ const DropdownAddObjects = (props) => {
   }
 
   const addVideo = (video) => {
-    alertContext.showAlert(t("alert.loadingMedia"), "loading", 300000);
-    var videos = document.getElementById("video")
-    getMeta(
-      props.state.vidsrc,
-      "video",
-      (width, height) => {
-        alertContext.showAlert(t("alert.loadedMedia"), "info");
-        addObjectToLayer(
-          "videos",
-          {
-            temporary: false,
-            width: 700,
-            height: 400,
-            vidsrc: video,
-            stroke: 'black',
-            strokeWidth: 0,
-            opacity: 1
-          }
-        );
+    addObjectToLayer(
+      "videos",
+      {
+        vidsrc: video,
       }
     );
   }
@@ -432,16 +417,12 @@ const DropdownAddObjects = (props) => {
   }
 
   const addAudio = (audio) => {
+    console.log(audio)
     addObjectToLayer(
       "audios",
       {
         imgsrc: "sound.png",
         audsrc: audio,
-        stroke: 'black',
-        strokeWidth: 0,
-        opacity: 1,
-        width: 100,
-        height: 100
       }
     );
   }
@@ -567,7 +548,8 @@ const DropdownAddObjects = (props) => {
         url.includes(".mp4") ||
         url.includes(".webm") ||
         url.includes(".ogv") ||
-        url.includes(".avi")
+        url.includes(".avi") ||
+        url.includes(".youtube")
       )) {
       return true;
     } else {
@@ -859,7 +841,7 @@ const DropdownAddObjects = (props) => {
             <DropdownItem
               leftIcon={<i className="icons lni lni-plus" onClick={(e) => {
                 if (validVideoURL) {
-                  addVideo(e);
+                  addVideo(vidsrc);
                 }
               }}></i>}>
               <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.videoURL")} onChange={handleVideo} value={vidsrc} />

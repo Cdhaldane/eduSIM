@@ -28,7 +28,7 @@ const DropdownEditObject = (props) => {
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.getObjState());
   const { t } = useTranslation();
-  const [texts, setTexts] = useState(objState.radioText ? objState.radioText : [])
+  const [texts, setTexts] = useState("")
   const [vTexts, setVTexts] = useState(objState.varName ? objState.varName : [])
 
   const [vTextsV, setVTextsV] = useState(objState.varValue ? objState.varValue : [])
@@ -74,6 +74,10 @@ const DropdownEditObject = (props) => {
 
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+      // setTexts([])
+  }, [activeMenu])
 
   // Slider Styles
   const railStyle = {
@@ -255,11 +259,12 @@ const DropdownEditObject = (props) => {
   }
   const populateRadio = () => {
     const list = [];
+    console.log(objState)
     let value = 0;
-    for (let i = 0; i < (objState?.amount ? objState?.amount : 3); i++) {
+    for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
         list.push(
           <div>
-          <input type="text" onChange={e => handleRadioText(e.target)} value={texts[i]} id={i} placeholder={t("edit.radioText")} />
+          <input type="text" onChange={e => handleRadioText(e.target)} value={objState?.radioText ? objState?.radioText[i] : texts[i]} id={i} key={i} placeholder={t("edit.radioText")} />
           </div>
       );
     }
@@ -267,12 +272,20 @@ const DropdownEditObject = (props) => {
   }
 
   const handleRadioText = (e) => {
-    texts[e.id] = e.value;
-    debounceObjState({ radioText: texts });
+    let arr = []
+    for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
+        if(e.id != i){
+          arr[i] = objState?.radioText ? objState?.radioText[i] : texts[i]
+        }
+    }
+    arr[e.id] = e.value;
+    props.updateObjState({ radioText: arr });
+    debounceObjState({ radioText: arr });
     setObjState(prev => ({
       ...prev,
-      radioText: texts
+      radioText: arr
     }));
+
   }
 
   const populateVariable = () => {
@@ -280,14 +293,14 @@ const DropdownEditObject = (props) => {
     let value = 0;
     if(objState?.variableAmount < 1){
       let value = 1;
-    } else {value = objState?.variableAmount;}
+    } else {value = objState?.variableAmount}
     for (let i = 0; i < value; i++) {
         list.push(
 
           <div className = "button-vars">
-          <input className="float-left" type="text" onChange={e => handleVars(e.target)} value={vTexts[i]} id={i} placeholder="variable"/>
+          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState?.varName[i]} placeholder="variable"/>
           <h1>=</h1>
-          <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} value={vTextsV[i]} id={i} placeholder="value"/>
+        <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState?.varValue[i]}  placeholder="value"/>
 
           </div>
       );
@@ -297,11 +310,23 @@ const DropdownEditObject = (props) => {
 
 
   const handleVars = (e) => {
-    vTexts[e.id] = e.value;
-    debounceObjState({ varName: vTexts });
+    let value = 0;
+    if(objState?.variableAmount < 1){
+      let value = 1;
+    } else {value = objState?.variableAmount}
+
+    let arr = []
+    for (let i = 0; i < value; i++) {
+        if(e.id != i){
+          arr[i] = objState?.varName[i]
+        }
+    }
+    arr[e.id] = e.value;
+    props.updateObjState({ varName: arr });
+    debounceObjState({ varName: arr });
     setObjState(prev => ({
       ...prev,
-      varName: vTexts
+      varName: arr
     }));
   }
 
@@ -313,12 +338,23 @@ const DropdownEditObject = (props) => {
     } else {
       val = parseInt(e.value)
     }
-    console.log(parseInt(e.value))
-    vTextsV[e.id] = val;
-    debounceObjState({ varValue: vTextsV });
+    let value = 0;
+    if(objState?.variableAmount < 1){
+      let value = 1;
+    } else {value = objState?.variableAmount}
+
+    let arr = []
+    for (let i = 0; i < value; i++) {
+        if(e.id != i){
+          arr[i] = objState?.varValue[i]
+        }
+    }
+    arr[e.id] = val;
+    props.updateObjState({ varValue: arr });
+    debounceObjState({ varValue: arr });
     setObjState(prev => ({
       ...prev,
-      varValue: vTextsV
+      varValue: arr
     }));
   }
 
@@ -662,7 +698,7 @@ const DropdownEditObject = (props) => {
                 <option value="radio">{t("edit.input.radio")}</option>
                 <option value="variable">{t("edit.input.variable")}</option>
               </select>
-      
+
               <div className="htmliframeinput">
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
@@ -726,7 +762,7 @@ const DropdownEditObject = (props) => {
                 {!objState?.incr ? (
                   <div>
                 <p>{t("edit.buttonAmount")}</p>
-                  <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxlength="1" />
+                <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxlength="1" />
 
                   {populateVariable()}
                 </div>
@@ -756,7 +792,7 @@ const DropdownEditObject = (props) => {
                       {t("edit.colorStroke")}
                     </button>
                     <button
-                      className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
+                      className={`${inputCurrentOptions === "text" ? "editInputOptionSelected simple" : "simple"}`}
                       onClick={() => newTabInputSettings("text")}
                     >
                       {t("edit.shape.simpleText")}
