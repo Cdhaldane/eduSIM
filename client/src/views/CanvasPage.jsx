@@ -26,7 +26,9 @@ import {
   RegularPolygon,
   Line,
   Arrow,
-  Layer
+  Shape,
+  Layer,
+  Transformer
 } from "react-konva";
 
 const konvaObjects = [
@@ -66,6 +68,8 @@ const CanvasPage = (props) => {
   const allDeletes = [
     ...savedObjects.map(name => `${name}DeleteCount`)
   ];
+
+  const positionRectRef = useRef();
 
   const [gameEditProps, _setGameEditProps] = useState();
   const gameEditPropsRef = useRef();
@@ -119,7 +123,7 @@ const CanvasPage = (props) => {
       zoomSettings.group.x === null &&
       zoomSettings.personal.x === null &&
       zoomSettings.overlay.x === null
-      ) {
+    ) {
       const poll2 = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === "polls2")[0];
       reCenterObjects(props.edit ? "edit" : "play");
     }
@@ -862,6 +866,59 @@ const CanvasPage = (props) => {
     };
   }
 
+  const positionRectProps = (obj, canvas, stage) => {
+    const page = canvas.state.pages[canvas.state.level - 1];
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI ? page.overlays[overlayI] : null;
+    let positionRect = null;
+    if (stage === "group") {
+      positionRect = group;
+    } else if (stage === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = overlay;
+    }
+    return {
+      scaleX: positionRect.scaleX,
+      scaleY: positionRect.scaleY,
+      width: positionRect.w,
+      height: positionRect.h,
+      x: positionRect.x,
+      y: positionRect.y,
+      listening: false,
+      onTransform: (e) => {
+        const scaleX = e.target.scaleX();
+        const scaleY = e.target.scaleY();
+        const x = e.target.x();
+        const y = e.target.y();
+        const newPage = { ...page };
+        const newRect = {
+          ...positionRect,
+          x: x,
+          y: y,
+          scaleX: scaleX,
+          scaleY: scaleY
+        };
+        if (stage === "group") {
+          newPage.groupPositionRect = newRect;
+        } else if (stage === "personal") {
+          newPage.personalPositionRect = newRect;
+        } else {
+          newPage.overlays[overlayI].positionRect = newRect;
+        }
+        const newPages = [...canvas.state.pages];
+        newPages[canvas.state.level - 1] = newPage;
+        canvas.setState({
+          pages: newPages
+        });
+      }
+    }
+  }
+
   const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
@@ -1003,7 +1060,22 @@ const CanvasPage = (props) => {
       );
     }
 
+    // Get the positionRect
     const page = canvas.state.pages[canvas.state.level - 1];
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI ? page.overlays[overlayI] : null;
+    let positionRect = null;
+    if (stage === "group") {
+      positionRect = group;
+    } else if (stage === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = overlay;
+    }
 
     if (!page) return null;
 
@@ -1028,17 +1100,19 @@ const CanvasPage = (props) => {
         <Layer {...layerProps(canvas, stage, "objects")}>
           {/* This Rect is for dragging the canvas */}
           {editMode && (
-            <Rect
-              id="ContainerRect"
-              x={canvasX}
-              y={canvasY}
-              height={canvasH}
-              width={canvasW}
-            // Canvas Drag Rect Outline - FOR DEBUGGING
-            //stroke={"red"}
-            //strokeWidth={2}
-            //strokeScaleEnabled={false}
-            />
+            <>
+              <Rect
+                id="ContainerRect"
+                x={canvasX}
+                y={canvasY}
+                height={canvasH}
+                width={canvasW}
+              // Canvas Drag Rect Outline - FOR DEBUGGING
+              //stroke={"red"}
+              //strokeWidth={2}
+              //strokeScaleEnabled={false}
+              />
+            </>
           )}
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
@@ -1125,6 +1199,42 @@ const CanvasPage = (props) => {
               {canvas.state.guides.map((obj, index) => {
                 return <Line {...guideProps(obj, index, canvas, editMode)} />
               })}
+              {/* This is the stage container */}
+              <Shape
+                sceneFunc={(ctx) => {
+                  // Make background
+                  ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+                  ctx.fillRect(canvasX, canvasY, canvasH, canvasW);
+
+                  // Make the hole
+                  ctx.clearRect(
+                    positionRect.x,
+                    positionRect.y,
+                    positionRect.w * positionRect.scaleX,
+                    positionRect.h * positionRect.scaleY
+                  );
+                }}
+                listening={false}
+              />
+              {/* This is the render boundary box */}
+              <Rect
+                ref={positionRectRef}
+                {...positionRectProps(positionRect, canvas, stage)}
+              />
+              <Transformer
+                nodes={positionRectRef.current ? [positionRectRef.current] : []}
+                name="transformer"
+                keepRatio={false}
+                rotateEnabled={false}
+                anchorStroke={'white'}
+                anchorFill={'black'}
+                anchorSize={10}
+                anchorCornerRadius={5}
+                borderStrokeWidth={2}
+                borderStroke={'white'}
+                borderDash={[3, 3]}
+                flipEnabled={false}
+              />
               {/* This is the blue transformer rectangle that pops up when objects are selected */}
               <TransformerComponent {...transformerProps(stage, canvas)} />
               <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />

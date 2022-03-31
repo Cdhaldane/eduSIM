@@ -54,6 +54,9 @@ class Graphics extends Component {
 
     "savedGroups",
     "overlayImage",
+
+    "positionRect",
+
     // Pages
     "pages",
     "numberOfPages",
@@ -79,11 +82,22 @@ class Graphics extends Component {
       }
     }
 
+    // This is the boundary of the scene (for the play mode)
+    const positionRect = {
+      x: 0,
+      y: 0,
+      w: 1000,
+      h: 750,
+      scaleX: 1,
+      scaleY: 1
+    };
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
       primaryColor: "#8f001a",
       groupColor: "#FFF",
       personalColor: "#FFF",
+      groupPositionRect: positionRect,
+      personalPositionRect: positionRect,
       overlayColor: "#FFF",
       overlays: [],
       groupLayers: [],
@@ -835,13 +849,13 @@ class Graphics extends Component {
     }
     let fixX = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
     let fixY = 0;
-    if(this.state.personalAreaOpen){
-      fixX= window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
-      fixY= window.matchMedia("(orientation: portrait)").matches ? 110 : 60;
+    if (this.state.personalAreaOpen) {
+      fixX = window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
+      fixY = window.matchMedia("(orientation: portrait)").matches ? 110 : 60;
     }
-    if (this.state.overlayOpen){
-      fixX= window.matchMedia("(orientation: portrait)").matches ? 30 : 100 ;
-      fixY= 30;
+    if (this.state.overlayOpen) {
+      fixX = window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
+      fixY = 30;
     }
     let pos = null;
     if (event.layerX) {
@@ -973,7 +987,7 @@ class Graphics extends Component {
     let layerX = event.clientX - 60;
     let layerY = event.clientY;
 
-    if(this.state.personalAreaOpen){
+    if (this.state.personalAreaOpen) {
       layerX = event.clientX - 135;
       layerY = event.clientY - 65;
     }
@@ -1546,42 +1560,40 @@ class Graphics extends Component {
   }
 
   handleWheel = (e, personalArea) => {
-    if (this.getLayers().length) {
-      e.evt.preventDefault();
+    e.evt.preventDefault();
 
-      const scaleBy = 1.2;
-      const stage = this.state.overlayOpen ? "overlay" : (personalArea ? "personal" : "group");
-      const layer = this.refs[`${stage}AreaLayer.objects`];
+    const scaleBy = 1.2;
+    const stage = this.state.overlayOpen ? "overlay" : (personalArea ? "personal" : "group");
+    const layer = this.refs[`${stage}AreaLayer.objects`];
 
-      const oldScale = layer.scaleX();
-      const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const oldScale = layer.scaleX();
+    const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      const s = layer.getStage();
-      const pointer = s.getPointerPosition();
-      const mousePos = {
-        x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
-        y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
-      }
-      const maxZoom = 250;
-      const newPos = {
-        x: pointer.x - mousePos.x * Math.min(newScale, maxZoom),
-        y: pointer.y - mousePos.y * Math.min(newScale, maxZoom),
-      };
-
-      layer.scale({
-        x: Math.min(newScale, maxZoom),
-        y: Math.min(newScale, maxZoom)
-      });
-      const layerScale = `${stage}LayerScale`;
-      if (newScale > maxZoom) {
-        this.props.showAlert(this.props.t("alert.maxZoomReached"), "info");
-      }
-      this.setState({
-        [layerScale]: Math.min(newScale, maxZoom),
-        [`${stage}LayerX`]: newPos.x,
-        [`${stage}LayerY`]: newPos.y,
-      });
+    const s = layer.getStage();
+    const pointer = s.getPointerPosition();
+    const mousePos = {
+      x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
+      y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
     }
+    const maxZoom = 250;
+    const newPos = {
+      x: pointer.x - mousePos.x * Math.min(newScale, maxZoom),
+      y: pointer.y - mousePos.y * Math.min(newScale, maxZoom),
+    };
+
+    layer.scale({
+      x: Math.min(newScale, maxZoom),
+      y: Math.min(newScale, maxZoom)
+    });
+    const layerScale = `${stage}LayerScale`;
+    if (newScale > maxZoom) {
+      this.props.showAlert(this.props.t("alert.maxZoomReached"), "info");
+    }
+    this.setState({
+      [layerScale]: Math.min(newScale, maxZoom),
+      [`${stage}LayerX`]: newPos.x,
+      [`${stage}LayerY`]: newPos.y,
+    });
   }
 
   dragLayer = (e) => {
@@ -3164,7 +3176,7 @@ class Graphics extends Component {
                   }}
                 >
                   {!this.state.overlayImage.length ? (
-                  <i className="icons lni lni-credit-cards" />
+                    <i className="icons lni lni-credit-cards" />
                   ) : (
                     <Image
                       className="overlayIcons"

@@ -497,8 +497,3 @@ const DropdownTimelineBar = (props) => {
 }
 
 export default DropdownTimelineBar;
-
-// <div className="menu-item timeline-var">
-// <p>{t("edit.variableNameToSet")}</p>
-// <input className="add-dropdown-item-input margin-left" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-// </div>
