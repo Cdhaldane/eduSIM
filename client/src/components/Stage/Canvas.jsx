@@ -64,6 +64,16 @@ class Graphics extends Component {
     "status",
   ];
 
+  // This is the boundary of the scene (for the play mode)
+  positionRect = {
+    x: 0,
+    y: 0,
+    w: 1000,
+    h: 750,
+    scaleX: 1,
+    scaleY: 1
+  };
+
   constructor(props) {
     super(props);
 
@@ -82,22 +92,13 @@ class Graphics extends Component {
       }
     }
 
-    // This is the boundary of the scene (for the play mode)
-    const positionRect = {
-      x: 0,
-      y: 0,
-      w: 1000,
-      h: 750,
-      scaleX: 1,
-      scaleY: 1
-    };
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
       primaryColor: "#8f001a",
       groupColor: "#FFF",
       personalColor: "#FFF",
-      groupPositionRect: positionRect,
-      personalPositionRect: positionRect,
+      groupPositionRect: this.positionRect,
+      personalPositionRect: this.positionRect,
       overlayColor: "#FFF",
       overlays: [],
       groupLayers: [],
@@ -3069,6 +3070,7 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         <Level
+          positionRect={this.positionRect}
           refreshCanvas={() => {
             // Refresh canvas
             const layer = this.state.personalAreaOpen ? "personal" :

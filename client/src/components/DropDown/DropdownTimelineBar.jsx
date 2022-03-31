@@ -330,6 +330,8 @@ const DropdownTimelineBar = (props) => {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
                   overlays: [],
                   groupLayers: [],
+                  groupPositionRect: props.positionRect,
+                  personalPositionRect: props.positionRect,
                   personalLayers: [],
                   primaryColor: "#8f001a",
                   groupColor: "#FFF",
@@ -389,6 +391,7 @@ const DropdownTimelineBar = (props) => {
                         newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
                           id: uuidv4(),
                           overlayOpenOption: "doNotAutoOpen",
+                          positionRect: props.positionRect,
                           hideBtn: false,
                           layers: []
                         }];

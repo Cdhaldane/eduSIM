@@ -85,7 +85,7 @@ const Level = (props) => {
       if (e > count + 1) {
         return;
       }
-      if (!props.freeAdvance){
+      if (!props.freeAdvance) {
         return;
       }
       props.level(e);
@@ -97,9 +97,9 @@ const Level = (props) => {
   }
 
   useEffect(() => {
-    for(let i = 0; i < (props.alerts ? props.alerts.length : 0); i++){
-      if(checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)){
-        handleLevel(count+1)
+    for (let i = 0; i < (props.alerts ? props.alerts.length : 0); i++) {
+      if (checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)) {
+        handleLevel(count + 1)
       }
     }
   }, [props.variables])
@@ -111,7 +111,7 @@ const Level = (props) => {
   }, [props.levelVal]);
 
   useEffect(() => {
-    let varName="Page"
+    let varName = "Page"
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     sessionStorage.setItem('gameVars', JSON.stringify({
@@ -127,8 +127,8 @@ const Level = (props) => {
       firstUpdate.current = false;
       return;
     } else {
-    handleLevel(props.realLevel);
-  }
+      handleLevel(props.realLevel);
+    }
   }, [props.realLevel]);
 
   const createSelectItems = () => {
@@ -289,21 +289,22 @@ const Level = (props) => {
 
           {props.handlePageNum && (
             <div className="pencil-container">
-            <Pencil
-              id="Timeline"
-              psize="3"
-              type="info"
-              getobjState={props.getObjState}
-              updateObjState={props.updateObjState}
-              pages={props.pages}
-              refreshCanvas={props.refreshCanvas}
-              getObjState={props.getObjState}
-              changeObjectPage={props.changeObjectPage}
-              handleCopyPage={props.handleCopyPage}
-              handlePageTitle={props.handlePageTitle}
-              handlePageNum={props.handlePageNum}
-              numOfPages={props.numOfPages}
-            />
+              <Pencil
+                positionRect={props.positionRect}
+                id="Timeline"
+                psize="3"
+                type="info"
+                getobjState={props.getObjState}
+                updateObjState={props.updateObjState}
+                pages={props.pages}
+                refreshCanvas={props.refreshCanvas}
+                getObjState={props.getObjState}
+                changeObjectPage={props.changeObjectPage}
+                handleCopyPage={props.handleCopyPage}
+                handlePageTitle={props.handlePageTitle}
+                handlePageNum={props.handlePageNum}
+                numOfPages={props.numOfPages}
+              />
             </div>
           )}
         </div>
@@ -311,7 +312,7 @@ const Level = (props) => {
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
             <i className="lni lni-exit"></i>
-          <h1>{t("edit.exit")}</h1>
+            <h1>{t("edit.exit")}</h1>
           </Link>
         )}
       </div>
