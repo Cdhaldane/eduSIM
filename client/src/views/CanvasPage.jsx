@@ -148,11 +148,44 @@ const CanvasPage = (props) => {
       return;
     }
 
+    const areaString = canvas.state.overlayOpen ? "overlay" :
+      (canvas.state.personalAreaOpen ? "personal" : "group");
+
+    const page = canvas.state.pages[canvas.state.level - 1];
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
+    let positionRect = null;
+    if (areaString === "overlay") {
+      positionRect = overlay;
+    } else if (areaString === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = group;
+    }
+
+    if (mode === "play") {
+      console.log("TESTING");
+      return;
+    }
+
+    if (canvas.getLayers().length === 0) {
+      // Reset to default position and scale
+      canvas.setState({
+        [`${areaString}LayerX`]: -positionRect.x,
+        [`${areaString}LayerY`]: -positionRect.y,
+        [`${areaString}LayerScale`]: 1,
+        canvasLoading: false
+      });
+      return;
+    }
+
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
 
-
-      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       if (
         mode === "play" &&
         zoomSettings &&
@@ -1062,6 +1095,9 @@ const CanvasPage = (props) => {
 
     // Get the positionRect
     const page = canvas.state.pages[canvas.state.level - 1];
+    if (!page) {
+      return;
+    }
     const group = page.groupPositionRect;
     const personal = page.personalPositionRect;
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
@@ -1117,7 +1153,7 @@ const CanvasPage = (props) => {
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
           {/*editMode && (
-          <Ellipse
+            <Ellipse
               fill={"red"}
               x={0}
               y={0}

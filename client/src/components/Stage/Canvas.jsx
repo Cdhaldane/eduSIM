@@ -68,10 +68,10 @@ class Graphics extends Component {
   positionRect = {
     x: 0,
     y: 0,
-    w: 1000,
-    h: 750,
-    scaleX: 1,
-    scaleY: 1
+    w: 1920,
+    h: 1080,
+    scaleX: window.innerWidth/1920,
+    scaleY: window.innerHeight/1080
   };
 
   constructor(props) {
@@ -522,7 +522,8 @@ class Graphics extends Component {
           getInteractiveProps: this.getInteractiveProps,
           getVariableProps: () => { },
           getDragProps: () => { },
-          dragLayer: this.dragLayer
+          dragLayer: this.dragLayer,
+          getLayers: this.getLayers
         });
 
         // Recenter if the canvas has changed
