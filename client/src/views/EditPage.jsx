@@ -66,16 +66,10 @@ const EditPage = (props) => {
     document.body.style.zoom = "100%";
   }, [updater]);
 
-  useEffect(() => {
-
-  }, [])
-
   const handlePage = (l) => {
     setPage(l);
   }
-
-
-
+  
   const handleSetTasks = (f) => {
     if (typeof f === 'function') {
       setTasks(old => {

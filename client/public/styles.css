@@ -65,6 +65,10 @@ img {
   pointer-events: none;
 }
 
+#groupGameContainer {
+  margin-top: 55px;
+}
+
 #personalGameContainer .konvajs-content>canvas,
 #groupGameContainer .konvajs-content>canvas,
 #overlayGameContainer .konvajs-content>canvas {

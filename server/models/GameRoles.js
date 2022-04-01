@@ -24,7 +24,7 @@ const gameroles = db.define('gameroles', {
   }
 });
 
-gameroles.sync({alter: true}).then(() => {
+gameroles.sync({ alter: true }).then(() => {
   console.log('GameRoles table created');
 });
 

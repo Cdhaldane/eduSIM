@@ -26,7 +26,9 @@ import {
   RegularPolygon,
   Line,
   Arrow,
-  Layer
+  Shape,
+  Layer,
+  Transformer
 } from "react-konva";
 
 const konvaObjects = [
@@ -66,6 +68,8 @@ const CanvasPage = (props) => {
   const allDeletes = [
     ...savedObjects.map(name => `${name}DeleteCount`)
   ];
+
+  const positionRectRef = useRef();
 
   const [gameEditProps, _setGameEditProps] = useState();
   const gameEditPropsRef = useRef();
@@ -119,7 +123,7 @@ const CanvasPage = (props) => {
       zoomSettings.group.x === null &&
       zoomSettings.personal.x === null &&
       zoomSettings.overlay.x === null
-      ) {
+    ) {
       const poll2 = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === "polls2")[0];
       reCenterObjects(props.edit ? "edit" : "play");
     }
@@ -144,11 +148,69 @@ const CanvasPage = (props) => {
       return;
     }
 
+    const areaString = canvas.state.overlayOpen ? "overlay" :
+      (canvas.state.personalAreaOpen ? "personal" : "group");
+
+    const page = canvas.state.pages[canvas.state.level - 1];
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
+    let positionRect = null;
+    if (areaString === "overlay") {
+      positionRect = overlay;
+    } else if (areaString === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = group;
+    }
+
+    if (mode === "play") {
+      const isPersonalArea = areaString === "personal";
+      const overlay = areaString === "overlay";
+      const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
+      const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
+      const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
+      const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
+      const personalArea = document.getElementById(personalId).getBoundingClientRect();
+      const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+      const screenW = window.innerWidth;
+      const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
+      const availableW = isPersonalArea ? personalArea.width : screenW - sideMenuW;
+
+      const newScale = availableW/(positionRect.w*positionRect.scaleX);
+      const newHeight = (positionRect.h+topMenuH)*positionRect.scaleY*newScale;
+      setPlayModeCanvasHeights({
+        overlay: areaString === "overlay" ? newHeight : 0,
+        personal: areaString === "personal" ? newHeight : 0,
+        group: areaString === "group" ? newHeight : 0,
+      });
+
+      canvas.setState({
+        [`${areaString}LayerX`]: -positionRect.x*newScale,
+        [`${areaString}LayerY`]: -positionRect.y*newScale,
+        [`${areaString}LayerScale`]: newScale,
+        canvasLoading: false
+      });
+      return;
+    }
+
+    if (canvas.getLayers().length === 0) {
+      // Reset to default position and scale
+      canvas.setState({
+        [`${areaString}LayerX`]: -positionRect.x,
+        [`${areaString}LayerY`]: -positionRect.y,
+        [`${areaString}LayerScale`]: 1,
+        canvasLoading: false
+      });
+      return;
+    }
+
     // Runs for personal and group area
     const _reCenterObjects = (isPersonalArea, mode, overlay) => {
 
-
-      const areaString = isPersonalArea ? "personal" : (overlay ? "overlay" : "group");
       if (
         mode === "play" &&
         zoomSettings &&
@@ -862,6 +924,59 @@ const CanvasPage = (props) => {
     };
   }
 
+  const positionRectProps = (obj, canvas, stage) => {
+    const page = canvas.state.pages[canvas.state.level - 1];
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
+    let positionRect = null;
+    if (stage === "group") {
+      positionRect = group;
+    } else if (stage === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = overlay;
+    }
+    return {
+      scaleX: positionRect.scaleX,
+      scaleY: positionRect.scaleY,
+      width: positionRect.w,
+      height: positionRect.h,
+      x: positionRect.x,
+      y: positionRect.y,
+      listening: false,
+      onTransform: (e) => {
+        const scaleX = e.target.scaleX();
+        const scaleY = e.target.scaleY();
+        const x = e.target.x();
+        const y = e.target.y();
+        const newPage = { ...page };
+        const newRect = {
+          ...positionRect,
+          x: x,
+          y: y,
+          scaleX: scaleX,
+          scaleY: scaleY
+        };
+        if (stage === "group") {
+          newPage.groupPositionRect = newRect;
+        } else if (stage === "personal") {
+          newPage.personalPositionRect = newRect;
+        } else {
+          newPage.overlays[overlayI].positionRect = newRect;
+        }
+        const newPages = [...canvas.state.pages];
+        newPages[canvas.state.level - 1] = newPage;
+        canvas.setState({
+          pages: newPages
+        });
+      }
+    }
+  }
+
   const pollProps = (obj, canvas, editMode) => {
     return {
       custom: {
@@ -1003,7 +1118,25 @@ const CanvasPage = (props) => {
       );
     }
 
+    // Get the positionRect
     const page = canvas.state.pages[canvas.state.level - 1];
+    if (!page) {
+      return;
+    }
+    const group = page.groupPositionRect;
+    const personal = page.personalPositionRect;
+    const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
+      overlay.id === canvas.state.overlayOpenIndex
+    ) : null;
+    const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
+    let positionRect = null;
+    if (stage === "group") {
+      positionRect = group;
+    } else if (stage === "personal") {
+      positionRect = personal;
+    } else {
+      positionRect = overlay;
+    }
 
     if (!page) return null;
 
@@ -1028,22 +1161,24 @@ const CanvasPage = (props) => {
         <Layer {...layerProps(canvas, stage, "objects")}>
           {/* This Rect is for dragging the canvas */}
           {editMode && (
-            <Rect
-              id="ContainerRect"
-              x={canvasX}
-              y={canvasY}
-              height={canvasH}
-              width={canvasW}
-            // Canvas Drag Rect Outline - FOR DEBUGGING
-            //stroke={"red"}
-            //strokeWidth={2}
-            //strokeScaleEnabled={false}
-            />
+            <>
+              <Rect
+                id="ContainerRect"
+                x={canvasX}
+                y={canvasY}
+                height={canvasH}
+                width={canvasW}
+              // Canvas Drag Rect Outline - FOR DEBUGGING
+              //stroke={"red"}
+              //strokeWidth={2}
+              //strokeScaleEnabled={false}
+              />
+            </>
           )}
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-          {/*editMode && (
-          <Ellipse
+          {/*
+            <Ellipse
               fill={"red"}
               x={0}
               y={0}
@@ -1052,7 +1187,7 @@ const CanvasPage = (props) => {
                 y: 10
               }}
             />
-          )*/}
+          */}
 
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
@@ -1125,6 +1260,42 @@ const CanvasPage = (props) => {
               {canvas.state.guides.map((obj, index) => {
                 return <Line {...guideProps(obj, index, canvas, editMode)} />
               })}
+              {/* This is the stage container */}
+              <Shape
+                sceneFunc={(ctx) => {
+                  // Make background
+                  ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+                  ctx.fillRect(canvasX, canvasY, canvasH, canvasW);
+
+                  // Make the hole
+                  ctx.clearRect(
+                    positionRect.x,
+                    positionRect.y,
+                    positionRect.w * positionRect.scaleX,
+                    positionRect.h * positionRect.scaleY
+                  );
+                }}
+                listening={false}
+              />
+              {/* This is the render boundary box */}
+              <Rect
+                ref={positionRectRef}
+                {...positionRectProps(positionRect, canvas, stage)}
+              />
+              <Transformer
+                nodes={positionRectRef.current ? [positionRectRef.current] : []}
+                name="transformer"
+                keepRatio={false}
+                rotateEnabled={false}
+                anchorStroke={'white'}
+                anchorFill={'black'}
+                anchorSize={10}
+                anchorCornerRadius={5}
+                borderStrokeWidth={2}
+                borderStroke={'white'}
+                borderDash={[3, 3]}
+                flipEnabled={false}
+              />
               {/* This is the blue transformer rectangle that pops up when objects are selected */}
               <TransformerComponent {...transformerProps(stage, canvas)} />
               <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />

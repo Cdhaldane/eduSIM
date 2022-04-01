@@ -330,6 +330,8 @@ const DropdownTimelineBar = (props) => {
                   name: newPageName ? newPageName : UNTITLED_PAGE,
                   overlays: [],
                   groupLayers: [],
+                  groupPositionRect: props.positionRect,
+                  personalPositionRect: props.positionRect,
                   personalLayers: [],
                   primaryColor: "#8f001a",
                   groupColor: "#FFF",
@@ -389,6 +391,7 @@ const DropdownTimelineBar = (props) => {
                         newArr[currentSettingsIndex].overlays = [...newArr[currentSettingsIndex].overlays, {
                           id: uuidv4(),
                           overlayOpenOption: "doNotAutoOpen",
+                          positionRect: props.positionRect,
                           hideBtn: false,
                           layers: []
                         }];
@@ -497,8 +500,3 @@ const DropdownTimelineBar = (props) => {
 }
 
 export default DropdownTimelineBar;
-
-// <div className="menu-item timeline-var">
-// <p>{t("edit.variableNameToSet")}</p>
-// <input className="add-dropdown-item-input margin-left" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-// </div>
