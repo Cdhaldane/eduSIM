@@ -498,7 +498,6 @@ class Graphics extends Component {
           canvasLoading: true
         });
         setTimeout(() => {
-          console.log("RENDER");
           this.props.reCenter("play", layer, this.state.level !== prevState.level ? "resize" : "normal")
         }, 300);
       }

@@ -168,7 +168,32 @@ const CanvasPage = (props) => {
     }
 
     if (mode === "play") {
-      console.log("TESTING");
+      const isPersonalArea = areaString === "personal";
+      const overlay = areaString === "overlay";
+      const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
+      const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
+      const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
+      const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
+      const personalArea = document.getElementById(personalId).getBoundingClientRect();
+      const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
+      const screenW = window.innerWidth;
+      const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
+      const availableW = isPersonalArea ? personalArea.width : screenW - sideMenuW;
+
+      const newScale = availableW/(positionRect.w*positionRect.scaleX);
+      const newHeight = (positionRect.h+topMenuH)*positionRect.scaleY*newScale;
+      setPlayModeCanvasHeights({
+        overlay: areaString === "overlay" ? newHeight : 0,
+        personal: areaString === "personal" ? newHeight : 0,
+        group: areaString === "group" ? newHeight : 0,
+      });
+
+      canvas.setState({
+        [`${areaString}LayerX`]: -positionRect.x*newScale,
+        [`${areaString}LayerY`]: -positionRect.y*newScale,
+        [`${areaString}LayerScale`]: newScale,
+        canvasLoading: false
+      });
       return;
     }
 
@@ -1152,7 +1177,7 @@ const CanvasPage = (props) => {
           )}
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-          {/*editMode && (
+          {/*
             <Ellipse
               fill={"red"}
               x={0}
@@ -1162,7 +1187,7 @@ const CanvasPage = (props) => {
                 y: 10
               }}
             />
-          )*/}
+          */}
 
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
