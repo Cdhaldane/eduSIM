@@ -7,8 +7,6 @@ import { SettingsContext } from "../../App";
 
 
 const URLVideo = forwardRef((props, ref) => {
-  console.log(props)
-
   const [playing, setPlaying] = useState(false)
 
   const handlePlay = () => {
@@ -22,13 +20,18 @@ const URLVideo = forwardRef((props, ref) => {
           {props?.type === "audio" ? (
             <ReactAudioPlayer
                src={props.src}
-               controls={true}
+               volume={props.volume}
+               loop={props.loop}
+               autoPlay={props.autoStart && !props.editMode ? true : false}
+               controls={!props.editMode && props.autoStart ?  false : true}
                preload="none"
             />
           ) : (
             <ReactPlayer url={props.src}
-              playing={playing}
-              controls={props.editMode ?  false : true}
+              volume={props.volume}
+              loop={props.loop}
+              playing={props.autoStart && !props.editMode ? true : false}
+              controls={props.editMode || props.autoStart ?  false : true}
             />
           )}
         </div>

@@ -54,6 +54,13 @@ const DropdownEditObject = (props) => {
   const [topOffset, setTopOffset] = useState(calcTopOffset());
 
   useEffect(() => {
+    if (!objState.volume){
+      props.updateObjState({ volume: 1 });
+      setObjState(prev => ({
+        ...prev,
+        volume: 1
+      }));
+    }
     if (props.title === "shape") {
       setOpacity(shape.attrs.opacity ? shape.attrs.opacity : 1);
       setStrokeColor(shape.attrs.stroke);
@@ -124,6 +131,15 @@ const DropdownEditObject = (props) => {
   const onSliderChangeO = (e) => {
     setOpacity(e);
     props.handleOpacity(e);
+  }
+
+  const onSliderChangeV = (e) => {
+    console.log(e)
+    props.updateObjState({ volume: e });
+    setObjState(prev => ({
+      ...prev,
+      volume: e
+    }));
   }
 
   const handleSize = (e) => {
@@ -398,7 +414,7 @@ const DropdownEditObject = (props) => {
       (tab === "stroke" ? objState.style.borderColor : objState.style.color));
     setInputCurrentOptions(tab);
   }
-
+  console.log(objState)
   if (!loading) {
     if (props.title === "shape") {
       /* Edit a Shape Object */
@@ -417,7 +433,9 @@ const DropdownEditObject = (props) => {
             unmountOnExit>
             <div className="menuedit">
               <h1>{t("edit.shapeEdit")}</h1>
-              {!props.selectedShapeName.includes("lines") && (
+            {!((objState?.id).includes("videos") || (objState?.id).includes("audios"))  && (
+              <>
+            {!props.selectedShapeName.includes("lines") && (
                 <>
                   <b>
                     {t("edit.colorFill")}
@@ -471,6 +489,40 @@ const DropdownEditObject = (props) => {
                 />
               </b>
               <br />
+            </>
+            )}
+            {(objState?.id).includes("videos") || (objState?.id).includes("audios") ? (
+              <div>
+              <div>
+
+              <b>
+                {t("edit.volume")}
+                <Slider
+                  className="slider"
+                  value={objState?.volume}
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  onChange={onSliderChangeV}
+                  railStyle={railStyle}
+                  handleStyle={handleStyle}
+                  trackStyle={trackStyle}
+                />
+              </b>
+              <br />
+              </div>
+              <div className="dropdowncheckbox">
+                <input type="checkbox" checked={!!objState?.autoStart} onChange={() => handleProperty(!objState?.autoStart, 'autoStart')} />
+                <p>{t("edit.autoStart")}</p>
+              </div>
+              <div className="dropdowncheckbox">
+                <input type="checkbox" checked={!!objState?.loop} onChange={() => handleProperty(!objState?.loop, 'loop')} />
+              <p>{t("edit.loop")}</p>
+              </div>
+              </div>
+              ) :
+              (<div> </div>)
+              }
               <div className="dropdowncheckbox">
                 <input type="checkbox" checked={!!objState?.draggable} onChange={() => handleProperty(!objState?.draggable, 'draggable')} />
                 <p>{t("edit.draggable")}</p>
@@ -480,6 +532,7 @@ const DropdownEditObject = (props) => {
                 <p>{t("edit.setAsAnchorPoint")}</p>
               </div>
             </div>
+
           </CSSTransition>
           <CSSTransition
             in={activeMenu === 'shapes'}

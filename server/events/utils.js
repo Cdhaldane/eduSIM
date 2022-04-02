@@ -28,6 +28,8 @@ let interactions = new Map();
 // message lists
 let chatlogs = new Map();
 
+let notelogs = new Map();
+
 // stores the setTimeout objects for simulation rooms
 // so we can destroy them if needed
 let timeouts = new Map();
@@ -48,6 +50,7 @@ export const updateRoomStatus = async (id, val) => {
 export const clearRoomStatus = async (id, keepSettings=true, wipeLogs=true) => {
   if (wipeLogs) {
     chatlogs.delete(id);
+    notelogs.delete(id)
     interactions.delete(id);
   }
   if (keepSettings) {
@@ -146,6 +149,22 @@ export const updateChatlog = async (roomid, message) => {
 };
 export const getChatlog = async (roomid) => {
   return chatlogs.get(roomid) || [];
+};
+export const updateNotelog = async (roomid, note) => {
+  const old = notelogs.get(roomid) || [];
+  old.push(note);
+  notelogs.set(roomid, old);
+  return true;
+};
+export const deleteNotelog = async (roomid, note) => {
+  console.log(note)
+  const old = notelogs.get(roomid) || [];
+  old.splice(note, 1);
+  notelogs.set(roomid, old);
+  return true;
+};
+export const getNotelog = async (roomid) => {
+  return notelogs.get(roomid) || [];
 };
 
 export const updateRoomTimeout = async (id, server) => {

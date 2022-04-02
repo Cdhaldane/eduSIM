@@ -594,7 +594,8 @@ const CanvasPage = (props) => {
     return {
       type: "video",
       src: obj.vidsrc,
-
+      autoStart: obj.autoStart,
+      volume: obj.volume,
     }
   }
 
@@ -602,6 +603,8 @@ const CanvasPage = (props) => {
     return {
       type: "audio",
       src: obj.audsrc,
+      volume: obj.volume,
+      autoStart: obj.autoStart,
       image: obj.imgsrc,
       layer: layer,
       scaleX: obj.scaleX,

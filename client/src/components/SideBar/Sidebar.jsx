@@ -283,7 +283,8 @@ const Sidebar = (props) => {
           setNotes={props.setNotes}
           editNotes={props.editNotes}
           delNotes={props.delNotes}
-          notes = {props.notes ? props.notes : []}
+          notes = {props.notes}
+          socket={props.socket}
         />
       )
     },

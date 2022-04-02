@@ -518,6 +518,7 @@ a {
 
 .fr h1{
   font-size: 1.1vw !important;
+  margin-left: -10px !important;
 }
 
 
@@ -1095,6 +1096,7 @@ hr {
   .welcome-nav h1{
     font-size: 5.0vw;
     text-align: center;
+    margin-top: 100px;
   }
   .welcome-nav h2{
     margin-left: 8vw;
@@ -1113,6 +1115,7 @@ hr {
   }
   .welcome-notes {
     margin-left: 5vw;
+    margin-top: 100px;
     bottom: 0px;
     left: 0px;
   }
@@ -1155,7 +1158,7 @@ hr {
   .welcome-navbutton h1 {
     font-family: "Montserrat", sans-serif;
     font-size: 3.5vw;
-    margin-bottom: 1vw;
+    margin-bottom: 5vw !important;
     color: var(--dark);
   }
 
@@ -1163,7 +1166,7 @@ hr {
     font-family: "Montserrat", sans-serif;
     font-size: 2vw;
     font-weight: lighter;
-    margin-bottom: 1vw;
+    margin-top: 10px !important;
     color: var(--dark);
   }
 
@@ -1189,7 +1192,10 @@ hr {
     width: 30vw;
   }
   .fix{
-    padding-top:15px;
+      padding-top:10px !important;
+  }
+  .fox{
+
   }
   .dashboard-wrapper{
     height: auto;

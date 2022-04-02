@@ -17,6 +17,8 @@ const Notes = (props) => {
   const [checked, setChecked] = useState(true)
   const [showAdd, setShowAdd] = useState(false);
   const [noteData, setNoteData] = useState(localStorage.notes ? JSON.parse(localStorage.notes) : []);
+  const [noteLog, setNoteLog] = useState([]);
+  const [deleteIndex, setDeleteIndex] = useState([]);
   const [noteTitle, setNoteTitle] = useState();
   const [noteBody, setNoteBody] = useState();
   const [editMode, setEditMode] = useState(false)
@@ -26,17 +28,36 @@ const Notes = (props) => {
 
   useEffect(() => {
     if(!checked){
-      setNoteData(props.notes)
+      let data = props.notes.notes;
+      let out = [];
+      for(let i  = 0; i < data.length; i++){
+        out.push(data[i].note)
+      }
+      console.log(noteLog)
+      for(let i  = 0; i < noteLog.length; i++){
+        out.push(noteLog[i])
+      }
+      for(let i  = 0; i < deleteIndex.length; i++){
+        out.splice(deleteIndex[i], 1)
+      }
+
+      setNoteData(out)
     } else {
       setNoteData(localStorage.notes ? JSON.parse(localStorage.notes) : [])
+      console.log(JSON.parse(localStorage.notes))
     }
-  }, [checked])
+  }, [checked, updater])
 
   useEffect(() => {
-      if(!checked){
-        setNoteData(props.notes)
-    }
-  }, [props.notes])
+    if (props.socket) {
+      props.socket.on("note", ({ sender, note, group }) => {
+        console.log(note)
+        let out = noteData;
+        out.push(note);
+        setNoteData(out)
+    })
+  }
+  }, []);
 
   useEffect(() => {
     setUpdater(updater + 1)
@@ -50,9 +71,16 @@ const Notes = (props) => {
       setNoteData(out)
       localStorage.setItem("notes", JSON.stringify(out))
     } else {
-      let out = props.notes || [];
+      let out = noteData;
+      let outNote = noteLog;
       out.push(add)
-      props.setNotes(out)
+      outNote.push(add)
+      setNoteData(out)
+      setNoteLog(outNote)
+      props.socket.emit("note", {
+        note: add,
+        group: ""
+      });
     }
     setUpdater(updater + 1)
     setNoteTitle('')
@@ -61,11 +89,26 @@ const Notes = (props) => {
   }
 
   const deleteNote = (i) => {
-    let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
-    out.splice(i, 1);
-    localStorage.setItem("notes", JSON.stringify(out))
-    setNoteData(out)
-    setUpdater(updater + 1)
+
+    if(checked){
+      let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+      out.splice(i, 1);
+      localStorage.setItem("notes", JSON.stringify(out))
+      setNoteData(out)
+      setUpdater(updater + 1)
+    } else {
+      let out = noteData;
+      let outNote = deleteIndex;
+      out.splice(i, 1)
+      outNote.push(i)
+      setDeleteIndex(outNote)
+      setNoteData(out)
+      setUpdater(updater + 1)
+      props.socket.emit("delete", {
+        note: i,
+        group: ""
+      });
+    }
   }
 
   const editNote = (i) => {

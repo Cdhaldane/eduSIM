@@ -103,10 +103,10 @@ const Messages = (props) => {
     if (props.messageBacklog && props.messageBacklog.length>0) {
       setMessageLog(props.messageBacklog);
     }
-
   }, [props.messageBacklog]);
 
   const sendMessage = (event) => {
+    console.log(Object.values(sendGroup))
     event.preventDefault();
     if (!messageInput) {
       return false;

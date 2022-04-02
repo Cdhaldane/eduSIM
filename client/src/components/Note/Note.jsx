@@ -12,7 +12,7 @@ const Note = (props) => {
         <div className="mobile-view">
           <h1>{props.title}</h1>
           <h2>{props.text}</h2>
-          <button onClick={props.onClick} type="button" className="w-button">{t("home.cookieLearnMore")}</button>
+          <button onClick={props.onClick} type="button" className="w-button fox">{t("home.cookieLearnMore")}</button>
         </div>
       </div>
     ) : (

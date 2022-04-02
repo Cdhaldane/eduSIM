@@ -109,10 +109,12 @@ const Game = (props) => {
           room: roomid
         }
       });
-      client.on("connectStatus", ({ players, chatlog, ...status }) => {
+      client.on("connectStatus", ({ players, chatlog, notelog, ...status }) => {
+        console.log(notelog)
         setPlayers(players);
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
+        setNotes(notelog);
       });
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
@@ -227,7 +229,7 @@ const Game = (props) => {
           alertProps={{
             alerts: tasks[actualLevel] || []
           }}
-          notes={notes || []}
+          notes={{ notes }}
           setNotes={handleSetNotes}
           editNotes={handleEditNotes}
           delNotes={handleDelNotes}

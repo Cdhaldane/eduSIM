@@ -193,13 +193,16 @@
 /* NOTES */
 
 .sidebar-notes{
-  margin-left: 20px;
+  margin-left: 10px;
   margin-top: 30px;
   font-size: 1.3em;
-  width: 90%;
+  width: 98%;
   overflow-y: scroll;
   height: 95%;
   scrollbar-width: thin;
+}
+.notes-main{
+  margin-right: 10px;
 }
 
 .sidebar-notes::-webkit-scrollbar-track
@@ -242,6 +245,7 @@
   display: flex;
   font-size: 0.7em;
   margin-left: 0px;
+  margin-right: 10px;
   margin-top: 10px;
   justify-content: space-between;
 }
@@ -267,7 +271,9 @@
   opacity: 1;
 }
 .top-note {
+  width: 97%;
   margin-top: 10px !important;
+  margin-right: 10px !important;
 }
 .notes-text{
   width: 50% !important;
