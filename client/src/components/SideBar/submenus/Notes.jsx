@@ -48,16 +48,16 @@ const Notes = (props) => {
     }
   }, [checked, updater])
 
-  useEffect(() => {
-    if (props.socket) {
-      props.socket.on("note", ({ sender, note, group }) => {
-        console.log(note)
-        let out = noteData;
-        out.push(note);
-        setNoteData(out)
-    })
-  }
-  }, []);
+  // useEffect(() => {
+  //   if (props.socket) {
+  //     props.socket.on("note", ({ sender, note, group }) => {
+  //       console.log(note)
+  //       let out = noteData;
+  //       out.push(note);
+  //       setNoteData(out)
+  //   })
+  // }
+  // }, []);
 
   useEffect(() => {
     setUpdater(updater + 1)
