@@ -55,8 +55,6 @@ class Graphics extends Component {
     "savedGroups",
     "overlayImage",
 
-    "positionRect",
-
     // Pages
     "pages",
     "numberOfPages",
@@ -70,8 +68,8 @@ class Graphics extends Component {
     y: 0,
     w: 1920,
     h: 1080,
-    scaleX: window.innerWidth/1920,
-    scaleY: window.innerHeight/1080
+    scaleX: 1,
+    scaleY: 1
   };
 
   constructor(props) {
@@ -3166,6 +3164,7 @@ class Graphics extends Component {
                   key={i}
                   className="overlayButton"
                   onContextMenu={(e) => {
+                    if (this.state.personalAreaOpen) return;
                     e.preventDefault();
                     this.setState({
                       overlayOptionsOpen: i
@@ -3175,6 +3174,7 @@ class Graphics extends Component {
                     top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (i + 1)}px`
                   }}
                   onClick={() => {
+                    if (this.state.personalAreaOpen) return;
                     this.setOverlayOpen(true, overlay.id);
                   }}
                 >
@@ -3482,8 +3482,6 @@ class Graphics extends Component {
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>
-
-
 
               <i className="lni lni-chevron-down"></i>
 
