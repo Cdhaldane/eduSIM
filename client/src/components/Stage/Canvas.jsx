@@ -302,6 +302,25 @@ class Graphics extends Component {
 
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
+          // Add backwards compatability for the new centering system
+          if (object === "pages") {
+            for (let i = 0; i < objects[object].length; i++) {
+              const page = objects[object][i];
+              const overlays = page.overlays;
+              if (!page.groupPositionRect) {
+                page.groupPositionRect = this.positionRect;
+              }
+              if (!page.personalPositionRect) {
+                page.personalPositionRect = this.positionRect;
+              }
+              for (let j = 0; j < overlays.length; j++) {
+                const overlay = overlays[j];
+                if (!overlay.positionRect) {
+                  overlay.positionRect = this.positionRect;
+                }
+              }
+            }
+          }
           this.setState({
             [object]: objects[object],
             savedStateLoaded: true

@@ -198,6 +198,7 @@ const CanvasPage = (props) => {
       return;
     }
 
+    // Edit mode centering with no objects
     if (canvas.getLayers().length === 0) {
       // Reset to default position and scale
       canvas.setState({
