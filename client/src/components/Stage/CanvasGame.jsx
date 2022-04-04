@@ -687,7 +687,10 @@ class Graphics extends Component {
                   <div
                     key={i}
                     className="overlayButton"
-                    onClick={() => this.setOverlayOpen(true, overlay.id)}
+                    onClick={() => {
+                      if (this.state.personalAreaOpen) return;
+                      this.setOverlayOpen(true, overlay.id);
+                    }}
                     style={{
                       top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (nonHiddenI + 1)}px`
                     }}

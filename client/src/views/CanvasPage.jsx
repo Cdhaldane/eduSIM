@@ -70,6 +70,7 @@ const CanvasPage = (props) => {
   ];
 
   const positionRectRef = useRef();
+  const positionRectPersonalRef = useRef();
 
   const [gameEditProps, _setGameEditProps] = useState();
   const gameEditPropsRef = useRef();
@@ -180,8 +181,8 @@ const CanvasPage = (props) => {
       const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
       const availableW = isPersonalArea ? personalArea.width : screenW - sideMenuW;
 
-      const newScale = availableW/(positionRect.w*positionRect.scaleX);
-      const newHeight = (positionRect.h+topMenuH)*positionRect.scaleY*newScale;
+      const newScale = availableW / (positionRect.w * positionRect.scaleX);
+      const newHeight = (positionRect.h + topMenuH) * positionRect.scaleY * newScale;
       setPlayModeCanvasHeights({
         overlay: areaString === "overlay" ? newHeight : 0,
         personal: areaString === "personal" ? newHeight : 0,
@@ -189,14 +190,15 @@ const CanvasPage = (props) => {
       });
 
       canvas.setState({
-        [`${areaString}LayerX`]: -positionRect.x*newScale,
-        [`${areaString}LayerY`]: -positionRect.y*newScale,
+        [`${areaString}LayerX`]: -positionRect.x * newScale,
+        [`${areaString}LayerY`]: -positionRect.y * newScale,
         [`${areaString}LayerScale`]: newScale,
         canvasLoading: false
       });
       return;
     }
 
+    // Edit mode centering with no objects
     if (canvas.getLayers().length === 0) {
       // Reset to default position and scale
       canvas.setState({
@@ -924,7 +926,7 @@ const CanvasPage = (props) => {
     };
   }
 
-  const positionRectProps = (obj, canvas, stage) => {
+  const positionRectProps = (canvas, stage) => {
     const page = canvas.state.pages[canvas.state.level - 1];
     const group = page.groupPositionRect;
     const personal = page.personalPositionRect;
@@ -941,6 +943,14 @@ const CanvasPage = (props) => {
       positionRect = overlay;
     }
     return {
+      label: {
+        text: `${Math.round(positionRect.w * positionRect.scaleX)} x ${Math.round(positionRect.h * positionRect.scaleY)}`,
+        fontSize: 20,
+        fill: "#808080",
+        padding: 10,
+        x: positionRect.x,
+        y: positionRect.y
+      },
       scaleX: positionRect.scaleX,
       scaleY: positionRect.scaleY,
       width: positionRect.w,
@@ -1260,42 +1270,50 @@ const CanvasPage = (props) => {
               {canvas.state.guides.map((obj, index) => {
                 return <Line {...guideProps(obj, index, canvas, editMode)} />
               })}
-              {/* This is the stage container */}
-              <Shape
-                sceneFunc={(ctx) => {
-                  // Make background
-                  ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-                  ctx.fillRect(canvasX, canvasY, canvasH, canvasW);
+              {/* This is the stage container (positionRect) */}
+              {!(canvas.state.personalAreaOpen && !canvas.state.rolelevel) && (
+                <>
+                  <Shape
+                    sceneFunc={(ctx) => {
+                      // Make background
+                      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+                      ctx.fillRect(canvasX, canvasY, canvasH, canvasW);
 
-                  // Make the hole
-                  ctx.clearRect(
-                    positionRect.x,
-                    positionRect.y,
-                    positionRect.w * positionRect.scaleX,
-                    positionRect.h * positionRect.scaleY
-                  );
-                }}
-                listening={false}
-              />
-              {/* This is the render boundary box */}
-              <Rect
-                ref={positionRectRef}
-                {...positionRectProps(positionRect, canvas, stage)}
-              />
-              <Transformer
-                nodes={positionRectRef.current ? [positionRectRef.current] : []}
-                name="transformer"
-                keepRatio={false}
-                rotateEnabled={false}
-                anchorStroke={'white'}
-                anchorFill={'black'}
-                anchorSize={10}
-                anchorCornerRadius={5}
-                borderStrokeWidth={2}
-                borderStroke={'white'}
-                borderDash={[3, 3]}
-                flipEnabled={false}
-              />
+                      // Make the hole
+                      ctx.clearRect(
+                        positionRect.x,
+                        positionRect.y,
+                        positionRect.w * positionRect.scaleX,
+                        positionRect.h * positionRect.scaleY
+                      );
+                    }}
+                    listening={false}
+                  />
+                  <Rect
+                    ref={canvas.state.personalAreaOpen ? positionRectPersonalRef : positionRectRef}
+                    {...positionRectProps(canvas, stage)}
+                  />
+                  <Text
+                    {...positionRectProps(canvas, stage).label}
+                  />
+                  <Transformer
+                    nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ? 
+                      [positionRectPersonalRef.current] : 
+                      (positionRectRef.current ? [positionRectRef.current] : [])}
+                    name="transformer"
+                    keepRatio={false}
+                    rotateEnabled={false}
+                    anchorStroke={'white'}
+                    anchorFill={'black'}
+                    anchorSize={10}
+                    anchorCornerRadius={5}
+                    borderStrokeWidth={2}
+                    borderStroke={'white'}
+                    borderDash={[3, 3]}
+                    flipEnabled={false}
+                  />
+                </>
+              )}
               {/* This is the blue transformer rectangle that pops up when objects are selected */}
               <TransformerComponent {...transformerProps(stage, canvas)} />
               <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />
