@@ -175,8 +175,14 @@ ul {
 }
 
 .editInputOptionSelected {
+  display: inline;
   background-color: #bcd6ff;
   border: 1px solid rgb(112, 112, 112) !important;
+}
+.simple {
+  position: relative;
+  top: 9px;
+  margin-top: 10px !important;
 }
 
 .menu-itemedit {

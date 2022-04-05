@@ -117,8 +117,8 @@ const Sidebar = (props) => {
   const handleClickOutside = e => {
     if ((!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) &&
       !e.target.className.toString().includes('remove-whisper')) {
-      setExpanded(false);
-      setSubmenuVisible(false);
+      // setExpanded(false);
+      // setSubmenuVisible(false);
     }
 
     if (performanceModal.current && performanceBtn.current &&
@@ -283,7 +283,8 @@ const Sidebar = (props) => {
           setNotes={props.setNotes}
           editNotes={props.editNotes}
           delNotes={props.delNotes}
-          notes = {props.notes ? props.notes : []}
+          notes = {props.notes}
+          socket={props.socket}
         />
       )
     },

@@ -5,6 +5,9 @@ import {
   getRoomStatus,
   updateRoomStatus,
   updateChatlog,
+  updateNotelog,
+  deleteNotelog,
+  editNotelog,
   updateRoomTimeout,
   addInteraction
 } from './utils';
@@ -58,6 +61,81 @@ export default async (server, client, event, args) => {
       break;
     };
 
+    case "note": {
+      // received a message from a simulation player
+      // update chatlog and send message to everyone involved (sim or group)
+      const { note, group } = args;
+
+      const sender = await getPlayer(client.id);
+
+        updateNotelog(room, {
+          sender,
+          room,
+          note,
+          group: group.length > 0 ? group : undefined,
+          timeSent: moment().valueOf()
+        });
+        server.to(room).emit("note", {
+          sender,
+          room,
+          note
+        });
+
+
+        break;
+    };
+    case "delete": {
+      // received a message from a simulation player
+      // update chatlog and send message to everyone involved (sim or group)
+      const { note, group } = args;
+
+      const sender = await getPlayer(client.id);
+
+        deleteNotelog(room, {
+          sender,
+          room,
+          note,
+          group: group.length > 0 ? group : undefined,
+          timeSent: moment().valueOf()
+        });
+
+        server.to(room).emit("delete", {
+          sender,
+          room,
+          note
+        });
+
+
+      break;
+    };
+    case "edit": {
+      // received a message from a simulation player
+      // update chatlog and send message to everyone involved (sim or group)
+      const { note, i, group } = args;
+
+      const sender = await getPlayer(client.id);
+
+        editNotelog(room, {
+          sender,
+          room,
+          note,
+          i,
+          group: group.length > 0 ? group : undefined,
+          timeSent: moment().valueOf()
+        });
+
+        server.to(room).emit("edit", {
+          sender,
+          room,
+          note,
+          i
+        });
+
+
+      break;
+    };
+
+
     case "playerUpdate": {
       // player chose a name and role
       // but we treat this as a player just joined for everyone else
@@ -89,6 +167,7 @@ export default async (server, client, event, args) => {
       // add this to list of game interactions and update room status if needed
       // if "sameState" is off, dont update the game state and just log it
       const { gamepieceId, parameters, sameState } = args;
+
 
       const { running, gamepieces, level } = await getRoomStatus(room);
 

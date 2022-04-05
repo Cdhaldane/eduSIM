@@ -17,6 +17,8 @@ const Notes = (props) => {
   const [checked, setChecked] = useState(true)
   const [showAdd, setShowAdd] = useState(false);
   const [noteData, setNoteData] = useState(localStorage.notes ? JSON.parse(localStorage.notes) : []);
+  const [noteLog, setNoteLog] = useState([]);
+  const [deleteIndex, setDeleteIndex] = useState([]);
   const [noteTitle, setNoteTitle] = useState();
   const [noteBody, setNoteBody] = useState();
   const [editMode, setEditMode] = useState(false)
@@ -25,22 +27,36 @@ const Notes = (props) => {
   const [editTitle, setEditTitle] = useState();
 
   useEffect(() => {
-    if(!checked){
-      setNoteData(props.notes)
-    } else {
-      setNoteData(localStorage.notes ? JSON.parse(localStorage.notes) : [])
+    if(props.notes?.notes && props.notes?.notes.length > 0){
+      for(let i = 0; i < props.notes.notes.length; i++){
+        noteLog.push(props.notes.notes[i].note)
+      }
     }
-  }, [checked])
+  }, [props.notes?.notes])
 
   useEffect(() => {
-      if(!checked){
-        setNoteData(props.notes)
-    }
-  }, [props.notes])
+    if (props.socket) {
+      props.socket.on("note", ({ sender, note, group }) => {
+        let out = noteLog;
+        out.push(note);
+        setNoteLog(out)
+        setUpdater(updater => updater + 1)
+    })
+      props.socket.on("delete", ({ sender, note, group }) => {
+        let out = noteLog;
+        out.splice(note, 1)
+        setNoteLog(out)
+        setUpdater(updater => updater + 1)
+    })
+    props.socket.on("edit", ({ sender, note, group, i }) => {
+        let out = noteLog;
+        out[i] = note;
+        setNoteLog(out)
+        setUpdater(updater => updater + 1)
+  })
+  }
+  }, []);
 
-  useEffect(() => {
-    setUpdater(updater + 1)
-  }, [])
 
   const addNote = () => {
     let add = [noteTitle,noteBody]
@@ -50,36 +66,49 @@ const Notes = (props) => {
       setNoteData(out)
       localStorage.setItem("notes", JSON.stringify(out))
     } else {
-      let out = props.notes || [];
-      out.push(add)
-      props.setNotes(out)
+      props.socket.emit("note", {
+        note: add,
+        group: ""
+      });
     }
-    setUpdater(updater + 1)
     setNoteTitle('')
     setNoteBody('')
     setShowAdd(false)
   }
 
   const deleteNote = (i) => {
-    let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
-    out.splice(i, 1);
-    localStorage.setItem("notes", JSON.stringify(out))
-    setNoteData(out)
-    setUpdater(updater + 1)
+    if(checked){
+      let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+      out.splice(i, 1);
+      localStorage.setItem("notes", JSON.stringify(out))
+      setNoteData(out)
+    } else {
+      props.socket.emit("delete", {
+        note: i,
+        group: ""
+      });
+    }
   }
 
   const editNote = (i) => {
     setEditMode(true)
     setIndex(i)
-    setEditText(noteData[i][1])
-    setEditTitle(noteData[i][0])
+    setEditText(checked ? noteData[i][1] : noteLog[i][1])
+    setEditTitle(checked ? noteData[i][0] : noteLog[i][0])
   }
   const handleEdit = (i) => {
-    let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
-    out[i] = [editTitle, editText]
-    localStorage.setItem("notes", JSON.stringify(out))
-    setNoteData(out)
-    setUpdater(updater + 1)
+    if(checked){
+      let out = localStorage.notes ? JSON.parse(localStorage.notes) : []
+      out[i] = [editTitle, editText]
+      localStorage.setItem("notes", JSON.stringify(out))
+      setNoteData(out)
+    } else {
+      props.socket.emit("edit", {
+        note: [editTitle, editText],
+        i: i,
+        group: ""
+      });
+    }
     setEditMode(false)
   }
   const handleTextArea = (e) => {
@@ -92,15 +121,15 @@ const Notes = (props) => {
   const calculateNotes = () => {
     let list = []
 
-    for(let i =0; i < noteData.length; i ++){
+    for(let i =0; i < (checked ? noteData.length : noteLog.length); i ++){
       list.push(
         <div key={i}>
-        <div className="notes-card">
+        <div className="notes-card" key={updater}>
           <input
             wrap="soft"
             className="notes-title-card read"
             readOnly={!(editMode && index === i)}
-            value={!(editMode && index === i) ? noteData[i][0] : editTitle}
+            value={!(editMode && index === i) ?(checked ? (noteData[i] ? noteData[i][0] : editTitle) : noteLog[i][0]) : editTitle}
             disabled={!(editMode && index === i)}
             onChange={(e) => handleTitleArea(e.target.value)}
           />
@@ -108,7 +137,7 @@ const Notes = (props) => {
             wrap="soft"
             className="notes-textarea read"
             readOnly={!(editMode && index === i)}
-            value={!(editMode && index === i) ? noteData[i][1] : editText}
+            value={!(editMode && index === i) ? (checked ?  (noteData[i] ? noteData[i][1] : editTitle) : noteLog[i][1]) : editText}
             disabled={!(editMode && index === i)}
             onChange={(e) => handleTextArea(e.target.value)}
           />
@@ -135,7 +164,7 @@ const Notes = (props) => {
         <button onClick={() => setChecked(!checked)} disabled={checked}>Personal Notes</button>
         <button onClick={() => setChecked(!checked)} disabled={!checked}>Group Notes</button>
        </div>
-       <div className="notes-main" key={updater}>
+       <div className="notes-main" >
          {calculateNotes()}
        </div>
        <div className="variable-add top-note" onClick={() => setShowAdd(true)} hidden={showAdd}>

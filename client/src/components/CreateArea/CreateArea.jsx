@@ -85,6 +85,23 @@ const CreateArea = (props) => {
         props.onAdd();
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
+          if(gameData.roles) {
+            let roles = JSON.parse(gameData).roles
+            for(let i = 0; i < roles.length; i++){
+              console.log(roles[i])
+              let data = {
+                gameinstanceid: res.data.gameinstanceid,
+                gamerole: roles[i].gamerole,
+                numspots: roles[i].numspots,
+                roleDesc: roles[i].roleDesc,
+              };
+              axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
+                console.log(res)
+              }).catch(error => {
+                console.error(error);
+              });
+            }
+          }
           var temp = JSON.parse(localStorage.getItem("order"));
           temp.unshift(res.data)
           localStorage.setItem("order", JSON.stringify(temp))
@@ -108,6 +125,7 @@ const CreateArea = (props) => {
       parsedJson.createdby_adminid = localStorage.adminid;
       setTitle(parsedJson.gameinstance_name + " - copy");
       setData(parsedJson.game_parameters)
+      console.log(parsedJson.game_parameters)
       setImageSelected(parsedJson.gameinstance_photo_path);
     };
 

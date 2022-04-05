@@ -37,16 +37,32 @@ const SimNote = (props) => {
 
 
   const downloadFile = async () => {
-    const { myData } = { json };
-    const fileName = simName;
-    const blob = new Blob([json], { type: 'application/json' });
-    const href = await URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = href;
-    link.download = fileName + ".json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const getRoles = async () => {
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
+        params: {
+          gameinstanceid: props.gameid,
+        }
+      }).then((res) => {
+        let jsonCopy = JSON.parse(json);
+        let jsonGame = JSON.parse(jsonCopy.data.game_parameters)
+        jsonGame.roles = (res.data)
+        jsonCopy.data.game_parameters = JSON.stringify(jsonGame)
+        console.log(jsonCopy)
+
+        const fileName = simName;
+        const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
+        const href =  URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = fileName + ".json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }).catch(error => {
+        console.error(error);
+      })
+    }
+    getRoles()
   }
 
   return (

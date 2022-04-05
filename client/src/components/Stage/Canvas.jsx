@@ -155,6 +155,7 @@ class Graphics extends Component {
 
       // Context Menu
       selectedContextMenu: null,
+      objectContext: 0,
 
       // The Text Editor (<textarea/>) & other text properties
       textX: 0,
@@ -359,12 +360,6 @@ class Graphics extends Component {
       }
     }).catch(error => {
       console.error(error);
-    });
-
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-        gameinstanceid: this.state.gameinstanceid,
-      }
     });
   }
 
@@ -761,6 +756,7 @@ class Graphics extends Component {
       fill: "rgba(0, 161, 255, 0.3)"
     });
     node.getLayer().batchDraw();
+
   };
 
   // Return the ID of top most object at a given position on screen
@@ -838,12 +834,12 @@ class Graphics extends Component {
   }
 
   onMouseDown = (e, personalArea) => {
+
     const event = e.evt ? e.evt : e;
     const shape = this.getTopObjAtPos({
       x: event.clientX,
       y: event.clientY
     });
-
     if (!event.ctrlKey) {
       this.setState({
         layerDraggable: false
@@ -1531,6 +1527,7 @@ class Graphics extends Component {
     } else {
       shape = this.refs[ref];
     }
+
     if (!this.customObjects.includes(objectsName)) {
       shape.moveTo(this.refs[`${layer}.objects`]);
       // Add one to zIndex go over ContainerRect
@@ -3510,6 +3507,7 @@ class Graphics extends Component {
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}
               handleEditRole={this.handleEditRole}
+              savedRoles={this.state.roles}
               editMode={true}
             />
           </div>

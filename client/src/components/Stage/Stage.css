@@ -199,3 +199,11 @@
   padding: 15px;
   color: var(--primary);
 }
+
+
+/* Video and Audio page stuff */
+
+.video-container {
+  width: 100% !important;
+}
+height: 100% !important;
