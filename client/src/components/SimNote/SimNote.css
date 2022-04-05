@@ -61,7 +61,7 @@
   position: relative;
   width: 80%;
   top: 40px;
-  left: 150px;
+  left: 140px;
   text-align: left;
   color: var(--dark);
 }
@@ -78,7 +78,7 @@
   border: 1px solid var(--primary);
 }
 .notesim-icons {
-  width: 90%;
+  width: 85%;
   text-align: center;
   align-self: center;
 }

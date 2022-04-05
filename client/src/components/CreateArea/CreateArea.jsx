@@ -85,7 +85,8 @@ const CreateArea = (props) => {
         props.onAdd();
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
-          if(gameData.roles) {
+
+          if(gameData) {
             let roles = JSON.parse(gameData).roles
             for(let i = 0; i < roles.length; i++){
               console.log(roles[i])
@@ -125,7 +126,6 @@ const CreateArea = (props) => {
       parsedJson.createdby_adminid = localStorage.adminid;
       setTitle(parsedJson.gameinstance_name + " - copy");
       setData(parsedJson.game_parameters)
-      console.log(parsedJson.game_parameters)
       setImageSelected(parsedJson.gameinstance_photo_path);
     };
 
