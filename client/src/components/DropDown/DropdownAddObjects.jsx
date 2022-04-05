@@ -236,13 +236,15 @@ const DropdownAddObjects = (props) => {
     };
 
     let newPages = [...props.state.pages];
-    const thisPage = newPages[props.state.level - 1];
+    const thisPage = {...newPages[props.state.level - 1]};
     if (props.layer.attrs.name === "group") {
-
-      isCustom ? thisPage.groupLayers.unshift(name) : thisPage.groupLayers.push(name);
-
+      const groupLayers = [...thisPage.groupLayers];
+      isCustom ? groupLayers.unshift(name) : groupLayers.push(name);
+      thisPage.groupLayers = groupLayers;
     } else if (props.layer.attrs.name === "personal") {
-      thisPage.personalLayers.push(name);
+      const personalLayers = [...thisPage.personalLayers];
+      isCustom ? personalLayers.unshift(name) : personalLayers.push(name);
+      thisPage.personalLayers = personalLayers;
     } else {
       let oIndex = 0;
       const overlay = thisPage.overlays.filter((overlay, index) => {
@@ -263,6 +265,8 @@ const DropdownAddObjects = (props) => {
       selectedShapeName: name,
       pages: newPages
     });
+
+    console.log(newPages);
 
     props.close();
   }

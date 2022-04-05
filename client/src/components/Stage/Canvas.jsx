@@ -55,8 +55,6 @@ class Graphics extends Component {
     "savedGroups",
     "overlayImage",
 
-    "positionRect",
-
     // Pages
     "pages",
     "numberOfPages",
@@ -70,8 +68,8 @@ class Graphics extends Component {
     y: 0,
     w: 1920,
     h: 1080,
-    scaleX: window.innerWidth/1920,
-    scaleY: window.innerHeight/1080
+    scaleX: 1,
+    scaleY: 1
   };
 
   constructor(props) {
@@ -305,6 +303,25 @@ class Graphics extends Component {
 
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
+          // Add backwards compatability for the new centering system
+          if (object === "pages") {
+            for (let i = 0; i < objects[object].length; i++) {
+              const page = objects[object][i];
+              const overlays = page.overlays;
+              if (!page.groupPositionRect) {
+                page.groupPositionRect = this.positionRect;
+              }
+              if (!page.personalPositionRect) {
+                page.personalPositionRect = this.positionRect;
+              }
+              for (let j = 0; j < overlays.length; j++) {
+                const overlay = overlays[j];
+                if (!overlay.positionRect) {
+                  overlay.positionRect = this.positionRect;
+                }
+              }
+            }
+          }
           this.setState({
             [object]: objects[object],
             savedStateLoaded: true
@@ -3163,6 +3180,7 @@ class Graphics extends Component {
                   key={i}
                   className="overlayButton"
                   onContextMenu={(e) => {
+                    if (this.state.personalAreaOpen) return;
                     e.preventDefault();
                     this.setState({
                       overlayOptionsOpen: i
@@ -3172,6 +3190,7 @@ class Graphics extends Component {
                     top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (i + 1)}px`
                   }}
                   onClick={() => {
+                    if (this.state.personalAreaOpen) return;
                     this.setOverlayOpen(true, overlay.id);
                   }}
                 >
@@ -3479,8 +3498,6 @@ class Graphics extends Component {
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>
-
-
 
               <i className="lni lni-chevron-down"></i>
 
