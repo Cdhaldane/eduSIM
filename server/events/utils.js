@@ -157,9 +157,15 @@ export const updateNotelog = async (roomid, note) => {
   return true;
 };
 export const deleteNotelog = async (roomid, note) => {
-  console.log(note)
   const old = notelogs.get(roomid) || [];
   old.splice(note, 1);
+  notelogs.set(roomid, old);
+  return true;
+};
+export const editNotelog = async (roomid, note, i) => {
+  const old = notelogs.get(roomid) || [];
+  console.log(note.i)
+  old[note.i] = note;
   notelogs.set(roomid, old);
   return true;
 };

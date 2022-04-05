@@ -59,6 +59,7 @@
 }
 .notesim-thumbnail h1 {
   position: relative;
+  width: 80%;
   top: 40px;
   left: 150px;
   text-align: left;
@@ -77,8 +78,8 @@
   border: 1px solid var(--primary);
 }
 .notesim-icons {
-  width: 70%;
-  text-align: left;
+  width: 90%;
+  text-align: center;
   align-self: center;
 }
 

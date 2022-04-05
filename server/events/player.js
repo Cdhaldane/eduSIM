@@ -7,6 +7,7 @@ import {
   updateChatlog,
   updateNotelog,
   deleteNotelog,
+  editNotelog,
   updateRoomTimeout,
   addInteraction
 } from './utils';
@@ -107,6 +108,32 @@ export default async (server, client, event, args) => {
 
       break;
     };
+    case "edit": {
+      // received a message from a simulation player
+      // update chatlog and send message to everyone involved (sim or group)
+      const { note, i, group } = args;
+
+      const sender = await getPlayer(client.id);
+
+        editNotelog(room, {
+          sender,
+          room,
+          note,
+          i,
+          group: group.length > 0 ? group : undefined,
+          timeSent: moment().valueOf()
+        });
+
+        server.to(room).emit("edit", {
+          sender,
+          room,
+          note,
+          i
+        });
+
+
+      break;
+    };
 
 
     case "playerUpdate": {
@@ -140,7 +167,7 @@ export default async (server, client, event, args) => {
       // add this to list of game interactions and update room status if needed
       // if "sameState" is off, dont update the game state and just log it
       const { gamepieceId, parameters, sameState } = args;
-      
+
 
       const { running, gamepieces, level } = await getRoomStatus(room);
 

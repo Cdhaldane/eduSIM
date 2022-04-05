@@ -50,6 +50,7 @@ const EditPage = (props) => {
   const [vars, setVars] = useState([]);
   const [page, setPage] = useState(1);
 
+
   if (props.location.img) {
     localStorage.setItem('gameinstance', props.location.gameinstance);
     localStorage.setItem('adminid', props.location.adminid);

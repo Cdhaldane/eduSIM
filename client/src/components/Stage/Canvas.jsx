@@ -346,12 +346,6 @@ class Graphics extends Component {
     }).catch(error => {
       console.error(error);
     });
-
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-        gameinstanceid: this.state.gameinstanceid,
-      }
-    });
   }
 
   setCustomGroupPos = (state, layer) => {
@@ -3498,6 +3492,7 @@ class Graphics extends Component {
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}
               handleEditRole={this.handleEditRole}
+              savedRoles={this.state.roles}
               editMode={true}
             />
           </div>

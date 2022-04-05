@@ -37,6 +37,7 @@ const customObjects = [
   "richTexts",
   "videos",
   "audios",
+  "roles",
 ];
 
 const App = (props) => {

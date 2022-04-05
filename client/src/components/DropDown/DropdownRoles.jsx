@@ -25,9 +25,7 @@ const DropdownRoles = (props) => {
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [selected, setSelected] = useState(-1)
-
   const alertContext = useAlertContext();
-
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -57,6 +55,7 @@ const DropdownRoles = (props) => {
         });
       }
       if (rolesData.length) {
+
         setRoles(rolesData);
       } else {
         const defaultRoleAPI = {
