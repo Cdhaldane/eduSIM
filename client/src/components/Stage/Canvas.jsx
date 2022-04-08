@@ -1510,6 +1510,7 @@ class Graphics extends Component {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
           if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
+            console.log("DRAGGING CANVAS");
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
