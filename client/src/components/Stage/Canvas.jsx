@@ -567,7 +567,7 @@ class Graphics extends Component {
           this.state.overlayOpen !== prevState.overlayOpen ||
           this.state.level !== prevState.level
         ) {
-          this.refs.customRectCanvas.add(this.refs.customRect);
+          //this.refs.customRectCanvas.add(this.refs.customRect);
           const layer = this.state.personalAreaOpen ? "personal" :
             (this.state.overlayOpen ? "overlay" : "group");
           this.setState({
@@ -1065,7 +1065,7 @@ class Graphics extends Component {
         return;
       }
 
-      const clickShapeGroup = shape && !shape.custom ? this.getShapeGroup(this.refs[shape.id]) : null;
+      const clickShapeGroup = shape ? this.getShapeGroup(shape.custom ? shape.id : this.refs[shape.id]) : null;
 
       if (event.button === 0) {
         // LEFT CLICK
@@ -1078,7 +1078,7 @@ class Graphics extends Component {
         if (selBox.width > 1 && selBox.height > 1) {
           // This only runs if there has been a rectangle selection (click and drag selection)
           const elements = [];
-          this.refs[`${layer}.objects`].find(".shape").forEach((elementNode) => {
+          this.refs[`${layer}.objects`].find(".shape, .customObj").forEach((elementNode) => {
             const elBox = elementNode.getClientRect();
             if (Konva.Util.haveIntersection(selBox, elBox)) {
               elements.push(elementNode);
@@ -1101,7 +1101,7 @@ class Graphics extends Component {
             for (let i = 0; i < this.state.savedGroups.length; i++) {
               const group = this.state.savedGroups[i];
               for (let j = 0; j < group.length; j++) {
-                if (elemIds.includes(group[j].attrs.id)) {
+                if (elemIds.includes(group[j])) {
                   selectedGroups.push(group);
                   break;
                 }
@@ -1110,10 +1110,9 @@ class Graphics extends Component {
             for (let i = 0; i < selectedGroups.length; i++) {
               const group = selectedGroups[i];
               for (let j = 0; j < group.length; j++) {
-                elemIds = elemIds.filter(e => group[j].attrs.id !== e);
+                elemIds = elemIds.filter(e => group[j] !== e);
               }
             }
-            elemIds = elemIds.map(e => this.refs[e]);
 
             if (selectedGroups.length === 0 && elemIds.length === 1) {
               this.setState({
@@ -1179,14 +1178,7 @@ class Graphics extends Component {
                     this.state.selectedShapeName !== shape.id &&
                     this.state.selectedShapeName
                   ) {
-                    // A shape is already selected in selectedShapeName but not in groupSelection
-                    // Add it to groupSelection (unless it is a custom object since those cause
-                    // cyclic object value errors when parsing the JSON)
-                    if (!this.customObjects.includes(this.getObjType(this.state.selectedShapeName))) {
-                      newSelection.push(this.refs[this.state.selectedShapeName]);
-                    } else {
-                      newSelection.push(this.state.selectedShapeName);
-                    }
+                    newSelection.push(this.state.selectedShapeName);
                   }
                   if (newSelection.length === 0) {
                     // Shift select with nothing else selected so set it as the selection
@@ -1208,7 +1200,7 @@ class Graphics extends Component {
                         selectedShapeName: "",
                         groupSelection: [
                           ...newSelection,
-                          !this.customObjects.includes(this.getObjType(shape.id)) ? this.refs[shape.id] : shape.id
+                          shape.id
                         ]
                       }, this.handleObjectSelection);
                     } else {
@@ -1243,7 +1235,7 @@ class Graphics extends Component {
                       }, this.handleObjectSelection);
                     } else {
                       this.setState({
-                        selectedShapeName: this.checkName(newGroupSelection[0].id()),
+                        selectedShapeName: this.checkName(newGroupSelection[0]),
                         groupSelection: []
                       }, this.handleObjectSelection);
                     }
@@ -1436,7 +1428,13 @@ class Graphics extends Component {
       const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const groups = this.refs[`${layer}.objects`].find('Group');
-      const groupObjs = this.state.groupSelection.flat().map(obj => obj.attrs ? obj : groups.find(groupObj => groupObj.attrs.id === obj));
+      const groupObjs = this.state.groupSelection.flat().map(obj => {
+        if (this.customObjects.includes(this.getObjType(obj))) {
+          return groups.find(groupObj => groupObj.attrs.id === obj);
+        } else {
+          return this.refs[obj];
+        }
+      });
       this.refs[transformer].nodes(groupObjs);
     } else if (this.refs[transformer]) {
       this.refs[transformer].nodes([]);
@@ -1597,8 +1595,7 @@ class Graphics extends Component {
     }));
 
     this.setState({
-      selectedShapeName: ref,
-      groupSelection: [],
+      selectedShapeName: this.state.groupSelection.length ? "" : ref,
       guides: []
     }, this.handleObjectSelection);
 
@@ -1908,7 +1905,7 @@ class Graphics extends Component {
     let affectedTypes = [];
     for (let i = 0; i < toDelete.length; i++) {
       if (!toDelete[i].attrs) {
-        this.refs.customRectCanvas.add(this.refs.customRect);
+        //this.refs.customRectCanvas.add(this.refs.customRect);
       }
       affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
     }
@@ -2159,10 +2156,12 @@ class Graphics extends Component {
         const selection = this.state.groupSelection[x];
         // Item is a group (so ungroup it)
         if (Array.isArray(selection)) {
-          const objId = selection[0].attrs.id;
+          const objId = selection[0].attrs ? selection[0].attrs.id : selection[0];
           for (let i = 0; i < this.state.savedGroups.length; i++) {
             for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-              if (this.state.savedGroups[i][j].attrs.id === objId) {
+              if (this.state.savedGroups[i][j].attrs ? 
+                this.state.savedGroups[i][j].attrs.id === objId :
+                this.state.savedGroups[i][j] === objId) {
                 const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
                 this.setState({
                   selectedShape: "",
@@ -2180,10 +2179,13 @@ class Graphics extends Component {
 
   // Returns the group a shape is part of or null if it isn't in a group
   getShapeGroup = (shape) => {
+    const shapeId = shape.attrs ? shape.id() : shape;
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-          if (this.state.savedGroups[i][j].attrs.id === shape.id()) {
+          if (this.state.savedGroups[i][j].attrs ? 
+            this.state.savedGroups[i][j].attrs.id === shapeId :
+            this.state.savedGroups[i][j] === shapeId) {
             return this.state.savedGroups[i];
           }
         }
@@ -2925,7 +2927,7 @@ class Graphics extends Component {
   }
 
   setOverlayOpen = (val, index) => {
-    this.refs.customRectCanvas.add(this.refs.customRect);
+    //this.refs.customRectCanvas.add(this.refs.customRect);
     this.setState({
       overlayOpen: val,
       overlayOpenIndex: index
@@ -3516,7 +3518,7 @@ class Graphics extends Component {
             ? <button
               className="personalAreaToggle"
               onClick={() => {
-                this.refs.customRectCanvas.add(this.refs.customRect);
+                //this.refs.customRectCanvas.add(this.refs.customRect);
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(true);
                 setTimeout(() => {
@@ -3528,7 +3530,7 @@ class Graphics extends Component {
             : <button
               className="personalAreaToggle"
               onClick={() => {
-                this.refs.customRectCanvas.add(this.refs.customRect);
+                //this.refs.customRectCanvas.add(this.refs.customRect);
                 document.getElementById("editPersonalContainer").classList.add("personalAreaAnimOn");
                 this.handlePersonalAreaOpen(false);
               }}>
@@ -3551,7 +3553,7 @@ class Graphics extends Component {
               }}
               personalAreaOpen={this.state.personalAreaOpen}
               openInfoSection={() => {
-                this.refs.customRectCanvas.add(this.refs.customRect);
+                //this.refs.customRectCanvas.add(this.refs.customRect);
                 this.setState(() => this.handlePersonalAreaOpen(true));
               }}
               roleLevel={this.handleRoleLevel}

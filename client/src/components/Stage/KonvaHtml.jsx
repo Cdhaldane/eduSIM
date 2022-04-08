@@ -155,8 +155,6 @@ const KonvaHtml = ({
     >
       <Rect
         ref={groupRef}
-        id={"customRect"}
-        name={"customObj"}
         visible={true}
         opacity={1}
         width={rectWidth}
