@@ -266,8 +266,6 @@ const DropdownAddObjects = (props) => {
       pages: newPages
     });
 
-    console.log(newPages);
-
     props.close();
   }
 

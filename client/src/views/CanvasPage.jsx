@@ -847,6 +847,7 @@ const CanvasPage = (props) => {
 
   const customObjProps = (obj, canvas) => {
     return {
+      draggable: true,
       onTop: obj.onTop,
       objectSnapping: canvas.objectSnapping,
       onMouseUp: (e) => canvas.handleMouseUp(e, false),

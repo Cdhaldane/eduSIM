@@ -267,6 +267,20 @@ class Graphics extends Component {
     this.reloadFromSavedState(props.doNotRecalculateBounds);
   }
 
+  tryParseJSONObject = (jsonString) => {
+    try {
+      const o = JSON.parse(jsonString);
+
+      // Handle non-exception-throwing cases:
+      // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+      // but... JSON.parse(null) returns null, and typeof null === "object", 
+      // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+      if (o && typeof o === "object") {
+        return o;
+      }
+    } catch (e) { }
+    return false;
+  };
 
   reloadFromSavedState = (doNotRecalculateBounds) => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstance/:adminid/:gameid', {
@@ -283,7 +297,9 @@ class Graphics extends Component {
         for (let i = 0; i < objects.savedGroups.length; i++) {
           let savedGroup = [];
           for (let j = 0; j < objects.savedGroups[i].length; j++) {
-            const savedGroupData = JSON.parse(objects.savedGroups[i][j]);
+            const groupObj = objects.savedGroups[i][j];
+            const parsed = this.tryParseJSONObject(groupObj);
+            const savedGroupData = (parsed !== false) ? parsed : groupObj;
             savedGroup.push(savedGroupData);
           }
           parsedSavedGroups.push(savedGroup);
@@ -331,8 +347,9 @@ class Graphics extends Component {
               for (let i = 0; i < this.state.savedGroups.length; i++) {
                 let savedGroup = [];
                 for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-                  const id = this.state.savedGroups[i][j].attrs.id;
-                  savedGroup.push(this.refs[id]);
+                  const groupObj = this.state.savedGroups[i][j];
+                  const id = groupObj.attrs ? groupObj.attrs.id : groupObj;
+                  savedGroup.push(groupObj.attrs ? this.refs[id] : id);
                 }
                 fullObjSavedGroups.push(savedGroup);
               }
@@ -749,6 +766,7 @@ class Graphics extends Component {
       if (this.state.groupSelection.length === 1 && Array.isArray(this.state.groupSelection[0])) {
         singleGroupSelected = true;
       }
+
       this.setState({
         selectedContextMenu: {
           unGroup: singleGroupSelected ? true : false,
@@ -1047,22 +1065,6 @@ class Graphics extends Component {
         return;
       }
 
-      if (shape?.custom) {
-        this.setState({
-          selectedShapeName: shape.id,
-          groupSelection: [],
-          selection: {
-            ...this.state.selection,
-            isDraggingShape: "customObj",
-            visible: false
-          }
-        }, () => {
-          this.handleObjectSelection();
-          this.updateSelectionRect(personalArea);
-        });
-        return;
-      }
-
       const clickShapeGroup = shape && !shape.custom ? this.getShapeGroup(this.refs[shape.id]) : null;
 
       if (event.button === 0) {
@@ -1146,10 +1148,12 @@ class Graphics extends Component {
               for (let i = 0; i < this.state.groupSelection.length; i++) {
                 const obj = this.state.groupSelection[i];
                 if (!Array.isArray(obj)) {
-                  if (obj.attrs.id === shape.id) {
+                  if (obj.attrs ? obj.attrs.id === shape.id : obj === shape.id) {
                     alreadySelectedCurrent = true;
                   }
-                  if (obj.attrs.id === this.state.selectedShapeName && this.state.selectedShapeName) {
+                  if (obj.attrs ?
+                    this.state.selectedShapeName && obj.attrs.id === this.state.selectedShapeName :
+                    this.state.selectedShapeName && obj === this.selectedShapeName) {
                     alreadySelectedPrev = true;
                   }
                 } else if (clickShapeGroup) {
@@ -1173,13 +1177,16 @@ class Graphics extends Component {
                   if (
                     !alreadySelectedPrev &&
                     this.state.selectedShapeName !== shape.id &&
-                    this.state.selectedShapeName &&
-                    !this.customObjects.includes(this.getObjType(this.state.selectedShapeName))
+                    this.state.selectedShapeName
                   ) {
                     // A shape is already selected in selectedShapeName but not in groupSelection
                     // Add it to groupSelection (unless it is a custom object since those cause
                     // cyclic object value errors when parsing the JSON)
-                    newSelection.push(this.refs[this.state.selectedShapeName]);
+                    if (!this.customObjects.includes(this.getObjType(this.state.selectedShapeName))) {
+                      newSelection.push(this.refs[this.state.selectedShapeName]);
+                    } else {
+                      newSelection.push(this.state.selectedShapeName);
+                    }
                   }
                   if (newSelection.length === 0) {
                     // Shift select with nothing else selected so set it as the selection
@@ -1199,7 +1206,10 @@ class Graphics extends Component {
                     if (!clickShapeGroup) {
                       this.setState({
                         selectedShapeName: "",
-                        groupSelection: [...newSelection, this.refs[shape.id]]
+                        groupSelection: [
+                          ...newSelection,
+                          !this.customObjects.includes(this.getObjType(shape.id)) ? this.refs[shape.id] : shape.id
+                        ]
                       }, this.handleObjectSelection);
                     } else {
                       this.setState({
@@ -1221,7 +1231,7 @@ class Graphics extends Component {
                         return true;
                       }
                     } else {
-                      return obj.attrs.id !== shape.id;
+                      return obj.attrs ? obj.attrs.id !== shape.id : obj !== shape.id;
                     }
                   });
                   if (newGroupSelection.length === 1) {
@@ -1253,6 +1263,22 @@ class Graphics extends Component {
                   groupSelection: [clickShapeGroup]
                 }, this.handleObjectSelection);
               } else {
+                if (shape?.custom) {
+                  this.setState({
+                    selectedShapeName: shape.id,
+                    groupSelection: [],
+                    selection: {
+                      ...this.state.selection,
+                      isDraggingShape: "customObj",
+                      visible: false
+                    }
+                  }, () => {
+                    this.handleObjectSelection();
+                    this.updateSelectionRect(personalArea);
+                  });
+                  return;
+                }
+
                 this.setState({
                   selectedShapeName: this.checkName(shape.id),
                   groupSelection: []
@@ -1299,7 +1325,9 @@ class Graphics extends Component {
             for (let i = 0; i < this.state.groupSelection.length; i++) {
               if (
                 !Array.isArray(this.state.groupSelection[i]) &&
-                this.state.groupSelection[i].attrs.id === shape.id
+                (this.state.groupSelection[i].attrs ?
+                  this.state.groupSelection[i].attrs.id === shape.id :
+                  this.state.groupSelection[i] === shape.id)
               ) {
                 shapeIsInGroupSelection = true;
                 break;
@@ -1405,7 +1433,11 @@ class Graphics extends Component {
     if (this.refs[this.state.selectedShapeName]) {
       this.refs[transformer].nodes([this.getKonvaObj(this.state.selectedShapeName, true, false)]);
     } else if (type === "" && this.state.groupSelection.length) {
-      this.refs[transformer].nodes(this.state.groupSelection.flat());
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
+        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+      const groups = this.refs[`${layer}.objects`].find('Group');
+      const groupObjs = this.state.groupSelection.flat().map(obj => obj.attrs ? obj : groups.find(groupObj => groupObj.attrs.id === obj));
+      this.refs[transformer].nodes(groupObjs);
     } else if (this.refs[transformer]) {
       this.refs[transformer].nodes([]);
     }
@@ -1467,8 +1499,6 @@ class Graphics extends Component {
 
         newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
         newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
-        console.log([...this.state.lines].filter(line => line.id === this.state.selectedShapeName))
-        console.log(newLines)
         this.setState({
           lines: [...newLines, newLine]
         });
@@ -2440,7 +2470,7 @@ class Graphics extends Component {
         group.moveToBottom();
         if (group.attrs.id === id) {
           if (updateState) {
-            const elem = this.refs[id];
+            /*const elem = this.refs[id];
             const style = window.getComputedStyle(elem);
             const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
             const x = matrix.translateX;
@@ -2458,23 +2488,24 @@ class Graphics extends Component {
               }]
             });
 
-            const sizeRect = this.refs.customRect;
+            /*const sizeRect = this.refs.customRect;
             sizeRect.attrs.currentId = id;
             sizeRect.attrs.width = width * (1 + paddingPercent);
             sizeRect.attrs.height = height * (1 + paddingPercent);
             group.add(sizeRect);
-            group.moveToTop();
+            group.moveToTop();*/
 
+            group.moveToTop();
             if (showTransformer) {
               this.setState({
                 selectedShapeName: id
               }, this.handleObjectSelection);
             }
           }
-          return group;
+          return group.children[0];
         }
       }
-      if (this.refs[id].attrs) {
+      if (this.refs[id]?.attrs) {
         return this.refs[id];
       }
       return null;
@@ -3228,7 +3259,7 @@ class Graphics extends Component {
         )}
 
         {/* ---- CUSTOM RECT CANVAS ---- */}
-        {<Stage
+        {/*<Stage
           id="customRectCanvas"
           style={{ display: "none" }}
           width={10}
@@ -3255,7 +3286,7 @@ class Graphics extends Component {
               onContextMenu={this.onObjectContextMenu}
             />
           </Layer>
-        </Stage>}
+        </Stage>*/}
 
         {/* ---- OVERLAY CANVAS ---- */}
         {this.state.overlayOpen && (
