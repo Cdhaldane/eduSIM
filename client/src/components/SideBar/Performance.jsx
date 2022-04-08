@@ -2,10 +2,12 @@ import React, { useState, forwardRef } from "react";
 import Switch from "react-switch";
 import { PieChart, Pie, Legend, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
+  console.log(props)
   const { t } = useTranslation();
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
@@ -121,6 +123,24 @@ const Performance = forwardRef((props, ref) => {
     }
 
     return answer;
+  }
+
+  const getTimer = () => {
+    let timers = props.status?.gamepieces;
+    let timerObjs = props.customObjs.timers;
+    if(timers){
+    let list =[]
+    var result = Object.keys(timers).map((key) => [Number(key), timers[key]]);
+    console.log(timerObjs)
+
+    for(let i = 0; i < result.length; i++){
+      console.log(result[i][1])
+      let time = moment(moment().diff(moment(result[i][1].startTime - result[i][1].elapsedTime))).format('mm:ss.SS')
+      list.push(<div>{timerObjs[i].id} - Page:{timerObjs[i].level} {time}</div>)
+    }
+    return list
+  }
+
   }
 
   return (
@@ -296,6 +316,7 @@ const Performance = forwardRef((props, ref) => {
             <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
               <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
               <div>
+                {getTimer()}
                 {props.status && props.customObjs && (
                   <>
                     {props.customObjs.polls.map((poll, pollI) => {

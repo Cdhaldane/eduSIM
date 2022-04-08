@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+
 const DropdownOverlay = (props) => {
 
   const menuElem = useRef();
@@ -220,10 +222,10 @@ const DropdownOverlay = (props) => {
           <div className="overlayDeleteRow">
             <h2 className="overlaySettingsSub">{t("edit.deleteOverlay")}</h2>
 
-            <i className="icons lni lni-trash-can" onClick={() => {
+            <i onClick={() => {
 
               setConfirmationVisible(true);
-            }} />
+            }} ><Trash className="icon"/></i>
           </div>
         </div>
       </div>

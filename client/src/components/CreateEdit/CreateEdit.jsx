@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import axios from 'axios';
 
+import Plus from "../../../public/icons/plus.svg"
+
 const CreateEdit = (props) => {
   const [file, setFile] = useState('');
   const [result, setResult] = useState('');
@@ -130,7 +132,7 @@ const CreateEdit = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i id="plus" className="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
+              <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon"/></i>
           </div>
           <div className="form-imgpreview">
             {img ? (

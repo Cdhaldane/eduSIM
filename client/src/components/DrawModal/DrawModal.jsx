@@ -4,6 +4,8 @@ import Draggable from "react-draggable";
 
 import "./DrawModal.css";
 
+import Close from "../../../public/icons/close.svg"
+
 const DrawModal = (props) => {
 
   const [color, setColor] = useState("#000");
@@ -70,7 +72,7 @@ const DrawModal = (props) => {
       <div className="drawModalContainer" ref={ref}>
         <div className="drawModalDragBar">
           <button className="drawModalExitButton" onClick={() => props.setDrawMode(false)}>
-            <i className="lni lni-close" />
+            <i><Close className="icon"/></i>
           </button>
         </div>
         <ChromePicker

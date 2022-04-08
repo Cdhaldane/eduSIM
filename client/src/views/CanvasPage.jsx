@@ -1025,6 +1025,7 @@ const CanvasPage = (props) => {
 
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
+
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
@@ -1172,6 +1173,7 @@ const CanvasPage = (props) => {
       objectIds = overlay.layers;
     }
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
+    objectIds = [...new Set(objectIds)];
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
@@ -1211,7 +1213,8 @@ const CanvasPage = (props) => {
 
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
-            if (index !== 0) {
+
+            if (index !== 0 ) {
               const type = id.replace(/\d+$/, "");
               const obj = canvas.state[type].filter(obj => obj.id === id)[0];
 
@@ -1307,8 +1310,8 @@ const CanvasPage = (props) => {
                     {...positionRectProps(canvas, stage).label}
                   />
                   <Transformer
-                    nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ? 
-                      [positionRectPersonalRef.current] : 
+                    nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ?
+                      [positionRectPersonalRef.current] :
                       (positionRectRef.current ? [positionRectRef.current] : [])}
                     name="transformer"
                     keepRatio={false}

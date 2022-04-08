@@ -4,7 +4,15 @@ import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
 import { useTranslation } from "react-i18next";
 
+
+
 import "../Sidebar.css";
+
+import Trash from "../../../../public/icons/trash-can-alt-2.svg"
+import User from "../../../../public/icons/user.svg"
+import Users from "../../../../public/icons/users-2.svg"
+import Plus from "../../../../public/icons/circle-plus.svg"
+
 
 const SettingRow = styled.div`
   display: flex;
@@ -142,7 +150,7 @@ const Variables = (props) => {
          list.push(
            !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
            <div className="variable-inputs" key={i}>
-             <i className="lni lni-trash-can" onClick={() => deleteVar(i)}/>
+             <i  onClick={() => deleteVar(i)}><Trash className="icon"/></i>
            <div className="variable-main" key={i}>
              <h1
                onClick={() => {
@@ -165,7 +173,7 @@ const Variables = (props) => {
      }
    return list
  }
- 
+
   const populateNames = (a) => {
     let vars = props ? props.vars : 0;
     let names = [];
@@ -233,14 +241,14 @@ const Variables = (props) => {
     <div className="variable-container">
       <h2>{t("sidebar.variables")}</h2>
       <SettingRow>
-        <i className="settings-icons lni lni-user"></i>
+        <i className="settings-icons"><User className="icon setting-icon"/></i>
         <b>{t("sidebar.session")}</b>
       </SettingRow>
       <div className="variable-box">
         {populateSessionVars()}
       </div>
       <SettingRow>
-        <i className="settings-icons lni lni-users"></i>
+        <i className="settings-icons"><Users className="icon setting-icon"/></i>
         <b>{t("sidebar.game")}</b>
       </SettingRow>
       <div className="variable-box" key={updater}>
@@ -249,7 +257,7 @@ const Variables = (props) => {
       <SettingRow>
       {props.editpage && (
       <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
-        <i className="fas fa-plus-circle"  />
+        <Plus className="icon plus"/>
       {t("sidebar.addNewVar")}
       </div>
     )}

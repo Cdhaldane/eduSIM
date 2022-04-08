@@ -6,7 +6,7 @@ const LinksGroup = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px -10px 14px 0;
-  margin-top: 13vw;
+  margin-top: 20vh;
   margin-right: 2px;
   overflow: hidden;
   overflow-y: auto;

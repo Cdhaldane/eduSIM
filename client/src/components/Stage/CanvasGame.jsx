@@ -20,6 +20,10 @@ import {
   Stage
 } from "react-konva";
 
+import Layers from "../../../public/icons/layers.svg"
+import Up from "../../../public/icons/chevron-up.svg"
+import Down from "../../../public/icons/chevron-down.svg"
+
 const EndScreen = styled.div`
   position: fixed;
   width: 100vw;
@@ -696,7 +700,7 @@ class Graphics extends Component {
                     }}
                   >
                     {!this.state.overlayImage.length ? (
-                      <i className="icons lni lni-credit-cards" />
+                      <i><Layers clasName="icon overlay-icon"/></i>
                     ) : (
                       <Image
                         className="overlayIcons"
@@ -811,12 +815,12 @@ class Graphics extends Component {
                 ? <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 1 })}>
-                  <i className="fas fa-angle-up fa-3x" />
+                <i><Up className="icon chevrons"/></i>
                 </button>
                 : <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 0 })}>
-                  <i className="fas fa-angle-down fa-3x" />
+                <i><Down className="icon chevrons"/></i>
                 </button>
               }
             </div>

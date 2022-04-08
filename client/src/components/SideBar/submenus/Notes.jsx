@@ -8,6 +8,12 @@ import Switch from "react-switch";
 import "../Sidebar.css";
 
 
+import Check from "../../../../public/icons/checkmark.svg"
+import Pencil from "../../../../public/icons/pencil.svg"
+import Close from "../../../../public/icons/close.svg"
+import Plus from "../../../../public/icons/circle-plus.svg"
+import Trash from "../../../../public/icons/trash-can-alt-2.svg"
+
 const Notes = (props) => {
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
@@ -143,11 +149,11 @@ const Notes = (props) => {
           />
         </div>
         <div className="notes-buttons">
-          {!(editMode && index === i) ? <i className="fas fa-pen" onClick={() => editNote(i)}/>
-        : <i className="lni lni-checkmark greenMain"  onClick={() => handleEdit(i)}/>
+          {!(editMode && index === i) ? <i onClick={() => editNote(i)}><Pencil className="icon note-icon"/></i>
+        : <i className="greenMain"  onClick={() => handleEdit(i)}><Check className="icon white"/></i>
           }
-          {!(editMode && index === i) ? <i className="fas fa-trash"  onClick={() => deleteNote(i)} />
-          : <i className="lni lni-close red" onClick={() => setEditMode(false)} />}
+          {!(editMode && index === i) ? <i  onClick={() => deleteNote(i)} ><Trash className="icon note-icon"/></i>
+        : <i className="red" onClick={() => setEditMode(false)} ><Close className="icon white"/></i>}
         </div>
       </div>
       )
@@ -168,7 +174,7 @@ const Notes = (props) => {
          {calculateNotes()}
        </div>
        <div className="variable-add top-note" onClick={() => setShowAdd(true)} hidden={showAdd}>
-         <i className="fas fa-plus-circle"  />
+         <Plus className="icon small-icon"/>
          {t("sidebar.addNewNote")}
        </div>
        {showAdd && (

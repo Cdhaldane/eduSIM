@@ -186,6 +186,23 @@
   padding: 4px;
   border: none;
 }
+.icon {
+  fill: var(--primary) !important;
+  height: 1.5em;
+  width: 1.5em;
+  vertical-align: -30%;
+  margin-right: 10px;
+}
+.navbar-icons{
+  padding: 10px;
+  font-size: 1.5em;
+  margin-bottom: 0px;
+}
+.information {
+  border: 1px solid var(--primary);
+  border-radius: 100px;
+  font-size: 1.1em;
+}
 
 
 @media screen and (orientation: landscape) {
@@ -227,6 +244,7 @@
     color: var(--white);
   }
 }
+
 
 @media screen and (orientation: portrait) {
   .NavbarItems {

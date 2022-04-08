@@ -70,7 +70,7 @@ const EditPage = (props) => {
   const handlePage = (l) => {
     setPage(l);
   }
-  
+
   const handleSetTasks = (f) => {
     if (typeof f === 'function') {
       setTasks(old => {
@@ -101,7 +101,7 @@ const EditPage = (props) => {
 
   return (
     <div className="editpage">
-      <Container>
+      <div className="editpage-container">
         <Grid>
           <GridNav>
             <Sidebar
@@ -151,7 +151,7 @@ const EditPage = (props) => {
             ) : null}
           </GridMain>
         </Grid>
-      </Container>
+      </div>
       {canvasLoading && (
         <div className="gameLoadingOverlay">
           <Loading />

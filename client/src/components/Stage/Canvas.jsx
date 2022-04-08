@@ -14,6 +14,10 @@ import DropdownAddObjects from "../Dropdown/DropdownAddObjects";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import DropdownOverlay from "../Dropdown/DropdownOverlay";
 
+import Up from "../../../public/icons/chevron-up.svg"
+import Down from "../../../public/icons/chevron-down.svg"
+import Layers from "../../../public/icons/layers.svg"
+
 // Standard Konva Components
 import Konva from "konva";
 import {
@@ -469,8 +473,7 @@ class Graphics extends Component {
         prevMainShapes.push(prevState[type]);
         currentMainShapes.push(this.state[type]);
       }
-
-      if (!this.state.redoing && !this.state.isTransforming) {
+      if ( !this.state.isTransforming) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
             // If text shouldn't update, don't append to history
@@ -480,6 +483,7 @@ class Graphics extends Component {
               let toAppend = this.state;
               history = history.concat(toAppend);
               historyStep++;
+              this.setState({redoing: false})
             }
           }
         }
@@ -1583,7 +1587,7 @@ class Graphics extends Component {
     const layer = this.refs[`${stage}AreaLayer.objects`];
 
     const oldScale = layer.scaleX();
-    const newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    let newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
     const s = layer.getStage();
     const pointer = s.getPointerPosition();
@@ -1592,21 +1596,30 @@ class Graphics extends Component {
       y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
     }
     const maxZoom = 250;
-    const newPos = {
-      x: pointer.x - mousePos.x * Math.min(newScale, maxZoom),
-      y: pointer.y - mousePos.y * Math.min(newScale, maxZoom),
-    };
-
-    layer.scale({
-      x: Math.min(newScale, maxZoom),
-      y: Math.min(newScale, maxZoom)
-    });
-    const layerScale = `${stage}LayerScale`;
+    const maxUnZoom = 0.1;
     if (newScale > maxZoom) {
       this.props.showAlert(this.props.t("alert.maxZoomReached"), "info");
+      newScale = 250
     }
+    if (newScale < maxUnZoom) {
+      this.props.showAlert(this.props.t("alert.maxZoomReached"), "info");
+      newScale = 0.1
+    }
+    const newPos = {
+      x: pointer.x - mousePos.x * newScale ,
+      y: pointer.y - mousePos.y * newScale,
+    };
+
+
+    layer.scale({
+      x: newScale,
+      y: newScale
+    });
+    const layerScale = `${stage}LayerScale`;
+
+
     this.setState({
-      [layerScale]: Math.min(newScale, maxZoom),
+      [layerScale]: newScale,
       [`${stage}LayerX`]: newPos.x,
       [`${stage}LayerY`]: newPos.y,
     });
@@ -1631,9 +1644,10 @@ class Graphics extends Component {
           return;
         }
         historyStep--;
+        const previous = history[historyStep];
         for (let i = 0; i < this.savedObjects.length; i++) {
           this.setState({
-            [this.savedObjects[i]]: history[historyStep][this.savedObjects[i]]
+            [this.savedObjects[i]]: previous[this.savedObjects[i]]
           }, () => {
             const stageType = this.state.overlayOpen ? "overlayStage" :
               (this.personalAreaOpen ? "personalStage" : "groupStage");
@@ -2552,9 +2566,9 @@ class Graphics extends Component {
         });
       }
     } else {
-      this.setState({
-        guides: []
-      });
+      // this.setState({
+      //   guides: []
+      // });
     }
   }
 
@@ -3070,6 +3084,7 @@ class Graphics extends Component {
   }
 
   handleOverlayIcon = (img) => {
+    console.log(this.props)
     this.setState({
       overlayImage: img
     })
@@ -3077,6 +3092,10 @@ class Graphics extends Component {
       ...prevState.savedState,
       [this.state.overlayImage]: img
     }))
+  }
+
+  renderAllObjects = () => {
+    return this.props.loadObjects("group", "edit", this.state.movingCanvas)
   }
 
   render() {
@@ -3195,7 +3214,7 @@ class Graphics extends Component {
                   }}
                 >
                   {!this.state.overlayImage.length ? (
-                    <i className="icons lni lni-credit-cards" />
+                    <i><Layers clasName="icon overlay-icon"/></i>
                   ) : (
                     <Image
                       className="overlayIcons"
@@ -3366,7 +3385,7 @@ class Graphics extends Component {
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen && (
               <>
-                {this.props.loadObjects("group", "edit", this.state.movingCanvas)}
+                {this.renderAllObjects()}
               </>
             )}
           </Stage>
@@ -3489,7 +3508,7 @@ class Graphics extends Component {
                   document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
                 }, 500);
               }}>
-              <i className="lni lni-chevron-up" />
+              <i><Up className="icon chevrons"/></i>
             </button>
             : <button
               className="personalAreaToggle"
@@ -3499,7 +3518,7 @@ class Graphics extends Component {
                 this.handlePersonalAreaOpen(false);
               }}>
 
-              <i className="lni lni-chevron-down"></i>
+                <i><Down className="icon chevrons"/></i>
 
             </button>
           }

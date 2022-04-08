@@ -6,6 +6,8 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 
+import Close from "../../../public/icons/close.svg"
+
 const EmailInput = styled.div`
   display: flex;
   flex-direction: column;
@@ -193,7 +195,7 @@ const InviteCollaboratorsModal = (props) => {
                   />
                   {ind !== 0 && (
                     <button type="button" className="removeuser" onClick={() => handleRemoveUser(ind)}>
-                      <i className="lni lni-close"></i>
+                      <i><Close className="icon"/></i>
                     </button>
                   )}
                 </div>
@@ -216,7 +218,7 @@ const InviteCollaboratorsModal = (props) => {
                       <h4>{email} {verified ? t("modal.suffixAccepted") : t("modal.suffixInvited")}</h4>
                     )}
                   </div>
-                  <i className="lni lni-close" onClick={() => handleOpenConfirm({ id, name, email })}></i>
+                  <i onClick={() => handleOpenConfirm({ id, name, email })}><Close className="icon"/></i>
                 </div>
               )) : <p>{t("modal.nobodyHasAccessToX", { name: props.title })}</p>}
             </Collaborators>

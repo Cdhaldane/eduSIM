@@ -12,6 +12,10 @@ import Performance from "../SideBar/Performance";
 import { useTranslation } from "react-i18next";
 import Messages from "../SideBar/submenus/Messages";
 
+import Pencil from "../../../public/icons/pencil.svg"
+import Check from "../../../public/icons/checkmark.svg"
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+
 import "./Tabs.css";
 
 const Tabs = (props) => {
@@ -408,7 +412,7 @@ const Tabs = (props) => {
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
-                })}><i className="lni lni-trash-can"></i></button>
+                })}><i><Trash className="icon"/></i></button>
               </div>
             </div>
           ))}
@@ -602,14 +606,14 @@ const Tabs = (props) => {
                 {editingName ? (
                   <div>
                     <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
-                    <i className="lni lni-checkmark content-editname" onClick={handleGroupName} />
+                  <i className="content-editname" onClick={handleGroupName} ><Check className="icon edit-icon"/></i>
                   </div>
                 ) : (
                   <div>
                     <h2>{tab[0]}</h2>
-                    <i className="lni lni-pencil content-editname" onClick={() => {
+                    <i className="content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
-                    }} ><h1>Edit</h1></i>
+                    }} ><Pencil className="icon edit-icon"/> <h1>Edit</h1></i>
                   </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">

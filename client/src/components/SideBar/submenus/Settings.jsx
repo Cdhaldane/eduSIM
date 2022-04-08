@@ -5,6 +5,10 @@ import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
 import { useTranslation } from "react-i18next";
 
+import Eye from "../../../../public/icons/eye.svg"
+import Helicopter from "../../../../public/icons/helicopter.svg"
+import Text from "../../../../public/icons/text-format.svg"
+
 const SettingsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -45,7 +49,7 @@ const Settings = (props) => {
       <h2>{t("sidebar.settings")}</h2>
       <hr/>
       <SettingRow>
-        <i className="settings-icons lni lni-eye"></i>
+        <i className="settings-icons"><Eye className="icon setting-icon"/></i>
         <div>
           <b>{t("sidebar.highContrastMode")}</b>
           <p>{t("sidebar.highContrastModeExplanation")}</p>
@@ -57,7 +61,7 @@ const Settings = (props) => {
         />
       </SettingRow>
       <SettingRow>
-        <i className="settings-icons lni lni-helicopter"></i>
+        <i className="settings-icons"><Helicopter className="icon setting-icon"/></i>
         <div>
           <b>{t("sidebar.reduceMotion")}</b>
           <p>{t("sidebar.reduceMotionExplanation")}</p>
@@ -69,7 +73,7 @@ const Settings = (props) => {
         />
       </SettingRow>
       <SettingRow>
-        <i className="settings-icons lni lni-text-format"></i>
+        <i className="settings-icons"><Text className="icon setting-icon"/></i>
         <div>
           <b>{t("sidebar.modifyTextSize")}</b>
           <p>{t("sidebar.modifyTextSizeExplanation")}</p>

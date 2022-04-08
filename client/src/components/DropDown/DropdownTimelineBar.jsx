@@ -9,6 +9,19 @@ import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Dropdown.css";
 
+import Cog from "../../../public/icons/cog.svg"
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+import Up from "../../../public/icons/chevron-up.svg"
+import Down from "../../../public/icons/chevron-down.svg"
+import Check from "../../../public/icons/checkmark.svg"
+import Help from "../../../public/icons/help.svg"
+import Scroll from "../../../public/icons/page.svg"
+import Asterix from "../../../public/icons/asterisk.svg"
+import Left from "../../../public/icons/arrow-left.svg"
+import Pencil from "../../../public/icons/pencil.svg"
+import Plus from "../../../public/icons/plus.svg"
+
+
 const DropdownTimelineBar = (props) => {
 
   const [pages, setPages] = useState(props.pages);
@@ -124,12 +137,12 @@ const DropdownTimelineBar = (props) => {
     <div className="icons-right">
       {/* EDIT PAGE TITLE */}
       <span className="icon-button" onClick={() => handleModifyPage(index)}>
-        <i className="icons lni lni-pencil" />
+        <i><Pencil className="icon timeline-roles"/></i>
       </span>
 
       {/* PAGE SETTINGS */}
       <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
-        <i className="icons lni lni-cog" />
+        <i><Cog className="icon timeline-roles"/></i>
       </span>
 
       {/* COPY PAGE */}
@@ -157,7 +170,7 @@ const DropdownTimelineBar = (props) => {
           }
         }}
       >
-        <i className={`icons lni lni-files`} />
+        <i><Scroll className="icon timeline-roles"/></i>
       </span>
 
       {/* MOVE PAGE UP */}
@@ -189,7 +202,7 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i className={`icons lni lni-chevron-up`} />
+        <i><Up className="icon timeline-roles chevron"/></i>
       </span>
 
       {/* MOVE PAGE DOWN */}
@@ -221,7 +234,7 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i className={`icons lni lni-chevron-down`} />
+        <i><Down className="icon timeline-roles chevron"/></i>
       </span>
     </div>
   );
@@ -282,7 +295,7 @@ const DropdownTimelineBar = (props) => {
                         key={index}
                       >
                         <span className="icon-button" onClick={() => pageNameChanged(modifyPageName, index)}>
-                          <i className="icons lni lni-checkmark" />
+                          <i><Check className="icon timeline-roles"/></i>
                         </span>
                         <input
                           id="roleNameAdd"
@@ -312,7 +325,7 @@ const DropdownTimelineBar = (props) => {
                             filter: `${index === 0 && props.pages.length === 1 ? "saturate(0)" : "none"}`
                           }}
                         >
-                          <i className="icons lni lni-trash-can" />
+                          <i><Trash className="icon timeline-roles"/></i>
                         </span>
                         {`${page.name}`}
                         {editBtns(page, index)}
@@ -341,7 +354,7 @@ const DropdownTimelineBar = (props) => {
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
               }}>
-                <i className="icons lni lni-plus" />
+                <i><Plus className="icon timeline-roles"/></i>
               </span>
               <input
                 className="add-dropdown-item-input"
@@ -365,7 +378,7 @@ const DropdownTimelineBar = (props) => {
             <>
               <div className="menu-item">
                 <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(null), 0)}>
-                  <i className="icons fa fa-arrow-left" />
+                  <i><Left className="icon timeline-roles"/></i>
                 </span>
                 <h1
                   style={{
@@ -406,7 +419,7 @@ const DropdownTimelineBar = (props) => {
                           (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "saturate(0)" : "none") : "none"
                       }}
                     >
-                      <i className="icons lni lni-plus" />
+                      <i><Plus className="icon timeline-roles"/></i>
                     </span>
                   </div>
                 </div>

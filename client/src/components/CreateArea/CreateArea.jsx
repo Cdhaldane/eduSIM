@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
+import Plus from "../../../public/icons/plus.svg"
+
 const CreateArea = (props) => {
   const [note, setNote] = useState([]);
   const [img, setImg] = useState("https://res.cloudinary.com/uottawaedusim/image/upload/v1630036729/images/ujjtehlwjgsfqngxesnd.jpg");
@@ -221,7 +223,7 @@ const CreateArea = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i id="plus" className="lni lni-more" alt="add" onClick={() => setMoreImages(!moreImages)} />
+            <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon create-icon"/></i>
           </div>
           <div className="form-imgpreview">
 
