@@ -28,6 +28,7 @@ const TransformerComponent = forwardRef((props, ref) => {
             ref={ref}
             name="transformer"
             resizeEnabled={false}
+            rotationSnaps={[0, 90, 180, 270]}
           />
         );
       case "texts":

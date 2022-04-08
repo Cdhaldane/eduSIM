@@ -31,7 +31,6 @@ const SettingRow = styled.div`
   }
 `;
 
-
 const Variables = (props) => {
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
@@ -64,43 +63,47 @@ const Variables = (props) => {
           gameVar.push(vars[i].varName)
         }
       }
-        for(let i = 0; i < (gameVar.length); i++){
-          if(gameVar[i] !== ""){
+      for (let i = 0; i < (gameVar.length); i++) {
+        if (gameVar[i] !== "") {
           list.push(<div className="variable-inputs gameVar" key={i}><h1
-          onClick={() => {
+            onClick={() => {
               setIsShown(true)
               setCurrent(i)
             }}
-          onMouseLeave={() => setIsShown(false)}>{gameVar[i] !== "" ? gameVar[i] : "Undefined" } = Empty</h1></div>)
-          {(isShown && current === i) && (
-            <div className="variable-hover" key={i}>
-              {populateNames()}
-            </div>
-          )}
+            onMouseLeave={() => setIsShown(false)}>{gameVar[i] !== "" ? gameVar[i] : "Undefined"} = Empty</h1></div>)
+          {
+            (isShown && current === i) && (
+              <div className="variable-hover" key={i}>
+                {populateNames()}
+              </div>
+            )
+          }
         }
       }
     } else {
-    for(let i = 0; i < (vars ? varName.length : 0); i++){
-      if(varValue[i] === true){
-        varValue[i] = "True"
-      } else if (varValue[i] === false){
-        varValue[i] = "False"
-      }
-        if(gameVar[i] !== "" ){
-        list.push(<div className="variable-inputs gameVar" key={i}><h1
-        onClick={() => {
-            setIsShown(true)
-            setCurrent(i)
-          }}
-        onMouseLeave={() => setIsShown(false)}>{varName[i] !== "" ? varName[i] : "Undefined"} = {varValue[i]}</h1></div>)
-        {(isShown && current === i) && (
-          <div className="variable-hover" key={i}>
-            {populateNames()}
-          </div>
-        )}
+      for (let i = 0; i < (vars ? varName.length : 0); i++) {
+        if (varValue[i] === true) {
+          varValue[i] = "True"
+        } else if (varValue[i] === false) {
+          varValue[i] = "False"
+        }
+        if (gameVar[i] !== "") {
+          list.push(<div className="variable-inputs gameVar" key={i}><h1
+            onClick={() => {
+              setIsShown(true)
+              setCurrent(i)
+            }}
+            onMouseLeave={() => setIsShown(false)}>{varName[i] !== "" ? varName[i] : "Undefined"} = {varValue[i]}</h1></div>)
+          {
+            (isShown && current === i) && (
+              <div className="variable-hover" key={i}>
+                {populateNames()}
+              </div>
+            )
+          }
+        }
       }
     }
-  }
 
     return list
   }
@@ -117,55 +120,71 @@ const Variables = (props) => {
   }
 
   const populateGameVars = () => {
-   let vars = props ? props.vars : 0;
-   let data = props.gameVars
-   let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-   let list = props.editpage ? [<div className="variable-inputs green"><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green"><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
-   let variable;
-   let length;
-   let items = [];
-   let inputs = [];
-   let check;
-   for(let i = 0; i < (vars ? vars.length : 0); i++){
-     if(vars[i].sync){
-       variable = vars[i].varName
-       items.push(variable)
-     }
-   }
-   for(let i = 0; i < data.length; i++){
-     let keyArr = Object.keys(data[i]);
-     items.push(keyArr)
-   }
-   check = uniq(items)
-     for(let i = 0; i < (check ? check.length : 0); i++){
-       if(check){
-         list.push(
-           !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
-           <div className="variable-inputs" key={i}>
-             <i className="lni lni-trash-can" onClick={() => deleteVar(i)}/>
-           <div className="variable-main" key={i}>
-             <h1
-               onClick={() => {
-                 setIsShown(true)
-                 setCurrent(i)
-               }}
-               onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
-             <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
-             <h2>=</h2>
+    let vars = props ? props.vars : 0;
+    let data = props.gameVars
+    let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
+    let list = props.editpage ? [
+      <div className="variable-inputs green" key={-1}>
+        <h3>Page</h3>
+        <h3>=</h3>
+        <h3>{sessionVars["Page"]}</h3>
+      </div>] :
+      [<div className="variable-inputs green" key={-1}>
+        <h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3>
+      </div>];
 
-           {(isShown && current === i) && (
-             <div className="variable-hover" key={i}>
-               {populateNames(check[i])}
-             </div>
-           )}
-           </div>
-         </div>
-         )
-       }
-     }
-   return list
- }
- 
+    let variable;
+    let items = [];
+    for (let i = 0; i < (vars ? vars.length : 0); i++) {
+      if (vars[i].sync) {
+        variable = vars[i].varName;
+        items.push(variable);
+      }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      let keyArr = Object.keys(data[i]);
+      items.push(keyArr);
+    }
+
+    let check = uniq(items);
+    for (let i = 0; i < (check ? check.length : 0); i++) {
+      if (check) {
+        list.push(
+          !props.editpage ? (
+            <div className="variable-inputs gameVar" key={i}>
+              <h1>
+                {check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}
+              </h1>
+            </div>) :
+            (<div className="variable-inputs" key={i}>
+              <i className="lni lni-trash-can" onClick={() => deleteVar(i)} />
+              <div className="variable-main" key={i}>
+                <h1
+                  onClick={() => {
+                    setIsShown(true);
+                    setCurrent(i);
+                  }}
+                  onMouseLeave={() => setIsShown(false)}
+                >
+                  {check[i]}
+                </h1>
+                <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)} />
+                <h2>=</h2>
+
+                {(isShown && current === i) && (
+                  <div className="variable-hover" key={i}>
+                    {populateNames(check[i])}
+                  </div>
+                )}
+              </div>
+            </div>)
+        )
+      }
+    }
+    return list;
+  }
+
   const populateNames = (a) => {
     let vars = props ? props.vars : 0;
     let names = [];
@@ -180,8 +199,8 @@ const Variables = (props) => {
         }
       }
     }
-    for(let i = 0; i < actual.length; i ++){
-      out.push(<div  key={i}>{actual[i]}</div>)
+    for (let i = 0; i < actual.length; i++) {
+      out.push(<div key={i}>{actual[i]}</div>)
     }
     return out
   }
@@ -227,8 +246,6 @@ const Variables = (props) => {
     setUpdater(updater + 1)
   }
 
-
-
   return (
     <div className="variable-container">
       <h2>{t("sidebar.variables")}</h2>
@@ -247,30 +264,30 @@ const Variables = (props) => {
         {populateGameVars()}
       </div>
       <SettingRow>
-      {props.editpage && (
-      <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
-        <i className="fas fa-plus-circle"  />
-      {t("sidebar.addNewVar")}
-      </div>
-    )}
-      {showAdd && (
-        <div className="variable-adding">
-          <div className="variable-hold">
-            <h1>Variable Name</h1>
-            <h1>Variable Value</h1>
-        </div>
-          <div className="variable-hold">
-            <input type="text" value={varName} placeholder={"Some Name"} onChange={(e) => setVarName(e.target.value)}/>
-            <h2> = </h2>
-          <input type="text" value={varValue} placeholder={"Some Value"} onChange={(e) => setVarValue(e.target.value)}/>
-      </div>
-          <div className="variable-hold">
-          <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
-          <button onClick={() => addVar()}>{t("common.add")}</button>
-      </div>
-        </div>
-      )}
-    </SettingRow>
+        {props.editpage && (
+          <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
+            <i className="fas fa-plus-circle" />
+            {t("sidebar.addNewVar")}
+          </div>
+        )}
+        {showAdd && (
+          <div className="variable-adding">
+            <div className="variable-hold">
+              <h1>Variable Name</h1>
+              <h1>Variable Value</h1>
+            </div>
+            <div className="variable-hold">
+              <input type="text" value={varName} placeholder={"Some Name"} onChange={(e) => setVarName(e.target.value)} />
+              <h2> = </h2>
+              <input type="text" value={varValue} placeholder={"Some Value"} onChange={(e) => setVarValue(e.target.value)} />
+            </div>
+            <div className="variable-hold">
+              <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
+              <button onClick={() => addVar()}>{t("common.add")}</button>
+            </div>
+          </div>
+        )}
+      </SettingRow>
     </div>
   );
 }

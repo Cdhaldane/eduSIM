@@ -126,19 +126,20 @@ const KonvaHtml = ({
     div.style.opacity = visible ? "1" : "0";
   }, [visible]);
 
-  // 
-
   return (
     <Group
-      ref={groupRef}
       id={refName}
       name={"customObj"}
       draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
       onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
+        console.log("DRAGGING");
         objectSnapping(groupRef.current, e);
       }}
       onDragEnd={defaultProps.onDragEnd}
+      onContextMenu={(e) => {
+        defaultProps.onContextMenu(e);
+      }}
       customProps={defaultProps.custom}
       x={defaultProps.x}
       y={defaultProps.y}
@@ -153,27 +154,19 @@ const KonvaHtml = ({
       infolevel={defaultProps.infolevel}
       overlay={defaultProps.overlay}
     >
-      {/*<Rect
+      <Rect
         ref={groupRef}
-        id={"customRect"}
-        name={"customObj"}
-        draggable={true}
         visible={true}
         opacity={1}
-        fill={"green"}
         width={rectWidth}
         height={rectHeight}
         x={0}
         y={0}
-        onClick={defaultProps.onClick}
+        /*onClick={defaultProps.onClick}*/
         onTransformStart={defaultProps.onTransformStart}
         onTransformEnd={defaultProps.onTransformEnd}
         onDragMove={defaultProps.onDragMove}
         onDragEnd={defaultProps.onDragEnd}
-        onContextMenu={(e) => {
-          console.log("CONTEXT MENU");
-          defaultProps.onContextMenu(e);
-        }}
       /*currentId={this.state.customRect[0].currentId}
       width={this.state.customRect[0].width}
       height={this.state.customRect[0].height}
@@ -184,8 +177,8 @@ const KonvaHtml = ({
       onTransformEnd={() => this.onObjectTransformEnd(this.state.customRect[0])}
       onDragMove={(e) => this.onObjectDragMove(this.state.customRect[0], e)}
       onDragEnd={(e) => this.handleDragEnd(e, this.getObjType(this.state.customRect[0].id), this.state.customRect[0].ref)}
-      onContextMenu={this.onObjectContextMenu}
-      />*/}
+      onContextMenu={this.onObjectContextMenu}*/
+      />
     </Group>
   );
 };
