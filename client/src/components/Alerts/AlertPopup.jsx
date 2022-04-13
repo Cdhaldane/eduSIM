@@ -5,6 +5,9 @@ import Loading from "../Loading/Loading";
 
 import "./AlertPopup.css";
 
+import Circle from "../../../public/icons/question-circle.svg"
+import Triangle from "../../../public/icons/warning.svg"
+
 const AlertPopup = () => {
 
   const alertContext = useAlertContext();
@@ -29,13 +32,13 @@ const AlertPopup = () => {
         (alertContext.type === "loading" ? "info " : "")}>
 
         {alertContext.type === "warning" && (
-          <i className="fas fa-exclamation-triangle alert-popup-icon warning" />
+          <i className="alert-popup-icon warning" ><Circle className="icon alert-icon"/></i>
         )}
         {alertContext.type === "info" && (
-          <i className="fas fa-info-circle alert-popup-icon info" />
+          <i className="alert-popup-icon info" ><Triangle className="icon alert-icon"/></i>
         )}
         {alertContext.type === "error" && (
-          <i className="fas fa-exclamation-triangle alert-popup-icon error" />
+          <i className="alert-popup-icon error" ><Circle className="icon alert-icon"/></i>
         )}
         {alertContext.type === "loading" && (
           <div className="loadingMediaAlert">

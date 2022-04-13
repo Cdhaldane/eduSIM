@@ -12,6 +12,13 @@ import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import CreateEdit from "../components/CreateEdit/CreateEdit";
 
+import Pencil from "../../public/icons/pencil.svg"
+import Play from "../../public/icons/play.svg"
+import Pause from "../../public/icons/pause.svg"
+import Reload from "../../public/icons/reload.svg"
+import Left from "../../public/icons/angle-double-left.svg"
+import Right from "../../public/icons/angle-double-right.svg"
+
 const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
   const [socket, setSocketInfo] = useState(null);
@@ -226,9 +233,9 @@ const Join = (props) => {
           alt={t("alt.sim")}
         />
         <div className="joinboard-info">
-          <h2 className="joinboard-title">{title}   <i className="lni lni-pencil joinboard-edit" onClick={() => {
+          <h2 className="joinboard-title">{title}   <i className="joinboard-edit"  onClick={() => {
               setEditModal(true);
-            }} ><h1>Edit</h1></i></h2>
+            }}><Pencil className="icon join-icon" /><h1>Edit</h1></i></h2>
           <button onClick={() => setShowNote(!showNote)} className="addbutton">
             {t("admin.addStudentCSV")}
           </button>
@@ -267,9 +274,9 @@ const Join = (props) => {
               title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
             >
               {displayPause ? (
-                <i className="lni lni-pause"></i>
+                <Pause className="icon control-icon"/>
               ) : (
-                <i className="lni lni-play"></i>
+                <Play className="icon control-icon"/>
               )}
             </button>
             <button
@@ -277,7 +284,7 @@ const Join = (props) => {
               onClick={() => setResetID(true)}
               title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
             >
-              <i className="lni lni-reload"></i>
+              <Reload className="icon control-icon"/>
             </button>
             {advanceMode === "teacher" && (
               <>
@@ -286,14 +293,14 @@ const Join = (props) => {
                   onClick={handlePrevPage}
                   title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
                 >
-                  <i className="lni lni-angle-double-left"></i>
+                  <Left className="icon control-icon"/>
                 </button>
                 <button
                   className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
                   onClick={handleNextPage}
                   title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
                 >
-                  <i className="lni lni-angle-double-right"></i>
+                  <Right className="icon control-icon"/>
                 </button>
               </>
             )}

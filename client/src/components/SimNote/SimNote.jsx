@@ -7,6 +7,13 @@ import InviteCollaboratorsModal from "../InviteCollaboratorsModal";
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 
+import Calendar from "../../../public/icons/calendar.svg"
+import Download from "../../../public/icons/download.svg"
+import Pencil from "../../../public/icons/pencil.svg"
+import Mail from "../../../public/icons/int-commercial-mail.svg"
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+import Play from "../../../public/icons/play.svg"
+
 const SimNote = (props) => {
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,8 +54,6 @@ const SimNote = (props) => {
         let jsonGame = JSON.parse(jsonCopy.data.game_parameters)
         jsonGame.roles = (res.data)
         jsonCopy.data.game_parameters = JSON.stringify(jsonGame)
-        console.log(jsonCopy)
-
         const fileName = simName;
         const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
         const href =  URL.createObjectURL(blob);
@@ -81,16 +86,9 @@ const SimNote = (props) => {
         <div className="notesim-icons">
           {props.superadmin ? (
             <>
-            <i
-              className="lni lni-calendar notesim-icon"
-              aria-hidden="true"
+            <i><Calendar className="icon sim-icon" /><h1>{currDate}</h1></i>
+            <i className="notesim-icon" onClick={() => downloadFile()} ><Download className="icon sim-icon" /><h1>{t("admin.download")}</h1></i>
 
-            ><h1>{currDate}</h1></i>
-            <i
-              className="lni lni-download notesim-icon"
-              aria-hidden="true"
-              onClick={() => downloadFile()}
-            ><h1>{t("admin.download")}</h1></i>
 
             <Link
               to={{
@@ -101,19 +99,18 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <i id="pencil" className="lni lni-pencil" aria-hidden="true"><h1>{t("admin.simedit")}</h1></i>
+              <i><Pencil className="icon sim-icon"/><h1>{t("admin.simedit")}</h1></i>
             </Link>
-            <i id="add-user" className="lni lni-users" onClick={() => setModalOpen(true)}><h1>{t("admin.siminvite")}</h1></i>
+            <i id="add-user" onClick={() => setModalOpen(true)}><Mail className="icon sim-icon"/><h1>{t("admin.siminvite")}</h1></i>
             <i
               id="garbage"
-              className="lni lni-trash-can"
               aria-hidden="true"
               onClick={() => props.setConfirmationModal(true, props.gameid)}
-            ><h1>{t("admin.simdelete")}</h1></i>
+            ><Trash className="icon sim-icon"/><h1>{t("admin.simdelete")}</h1></i>
 
           </>
         ) : (
-          <i className="lni lni-users" onClick={() => props.setConfirmationModal(true, props.gameid)} tooltip="test"><h1>Run</h1></i>
+          <i onClick={() => props.setConfirmationModal(true, props.gameid)} tooltip="test"><Trash className="icon sim-icon"/><h1>Run</h1></i>
         )}
         <Link
           to={{
@@ -126,9 +123,8 @@ const SimNote = (props) => {
         >
           <i
             id="play"
-            className="lni lni-chevron-right-circle"
             onClick={() => localStorage.setItem("gameid", props.gameid)}
-          ><h1>{t("admin.simrun")}</h1></i>
+          ><Play className="icon sim-icon"/><h1>{t("admin.simrun")}</h1></i>
         </Link>
       </div>
       <Modal

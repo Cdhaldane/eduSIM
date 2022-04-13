@@ -109,9 +109,14 @@
 .notesim-icon {
   color: var(--primary);
 }
-
 .notesim-icon:hover {
   cursor: pointer;
+}
+.sim-icon{
+  width: 1.0em !important;
+  height: 1.0em !important;
+  vertical-align: -10%;
+  margin-right: 3px;
 }
 
 @media screen and (max-width: 1556px){

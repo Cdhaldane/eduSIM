@@ -21,7 +21,8 @@ const StyledNav = styled.nav`
   width: ${(p) => (p.compact ? "70px" : "256px")};
   height: 100vh;
   position: absolute;
-  top: 0;
+  top: 0px;
+  bottom: 0px;
   left: ${(p) => (p.submenu ? "350px" : "0px")};
   z-index: 1000;
   display: flex;
@@ -199,7 +200,7 @@ const Sidebar = (props) => {
       icon: null
     },
     {
-      icon: "lni lni-bubble",
+      icon: "chat",
       label: t("sidebar.messaging"),
       visible: mvisible,
       id: "messaging",
@@ -213,7 +214,7 @@ const Sidebar = (props) => {
     },
     {
       to: "/alert",
-      icon: "lni lni-alarm",
+      icon: "bell",
       id: "alert",
       label: t("sidebar.alerts"),
       visible: avisible,
@@ -229,7 +230,7 @@ const Sidebar = (props) => {
       )
     },
     {
-      icon: "lni lni-users",
+      icon: "users",
       id: "userlist",
       label: t("sidebar.users"),
       visible: true,
@@ -241,13 +242,13 @@ const Sidebar = (props) => {
     },
     {
       to: "/performance",
-      icon: "lni lni-bar-chart",
+      icon: "graph",
       id: "performance",
       label: t("sidebar.performance"),
       visible: pevisible
     },
     {
-      icon: "lni lni-cog",
+      icon: "cog",
       id: "settings",
       label: t("sidebar.settings"),
       visible: svisible,
@@ -257,7 +258,7 @@ const Sidebar = (props) => {
       )
     },
     {
-      icon: "lni lni-control-panel",
+      icon: "control",
       id: "variables",
       label: t("sidebar.variables"),
       visible: props.game ? false : true,
@@ -273,7 +274,7 @@ const Sidebar = (props) => {
       )
     },
     {
-      icon: "lni lni-notepad",
+      icon: "notes",
       id: "notes",
       label: t("sidebar.notes"),
       visible: props.game ? true : false,
@@ -364,6 +365,7 @@ const Sidebar = (props) => {
           customObjs={props.customObjs}
           ref={performanceModal}
           setData={props.performanceFunctions}
+          variables={props.variables}
         />
       </Modal>
     </>

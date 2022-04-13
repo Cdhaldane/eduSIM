@@ -149,7 +149,7 @@
   border: 2px solid darkgray;
   border-radius: 8px;
   width: 99%;
-  margin-top: -10px;
+  margin-top: 0px;
 }
 .variable-adding h1{
   font-size: 1.05em;
@@ -187,6 +187,15 @@
 
 .green h3 {
   margin-top: 4px;
+}
+.sidebar-icons {
+  fill: var(--primary);
+}
+
+.sidebar-icons span {
+  float: right;
+  white-space: nowrap;
+  font-size: 0.8em;
 }
 
 
@@ -334,10 +343,10 @@
 }
 .notes-buttons i{
   background-color: var(--primary);
-  padding: 4px;
+  padding: 2px;
   border: 3px solid var(--white);
   border-radius: 8px;
-  margin-left: 10px;
+  margin-left: 2px;
   border: 0px !important;
   font-size: 1.4em !important;
   color: var(--white);

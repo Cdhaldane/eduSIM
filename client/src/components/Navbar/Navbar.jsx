@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from 'usehooks-ts'
 
+import Home from "../../../public/icons/house.svg"
+import Info from "../../../public/icons/info.svg"
+
 import "./Navbar.css";
 
 const NavBar = (props) => {
@@ -91,7 +94,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <i className="fas fa-home" alt={t("alt.home")}></i>
+              <Home className="icon navbar-icons custom-icons" alt={t("alt.home")}/>
               {t("navbar.home")}
             </ButtonLink>
             <ButtonLink
@@ -100,7 +103,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <i className="fas fa-info-circle"></i>
+              <Info className="icon information navbar-icons"/>
               {t("navbar.about")}
             </ButtonLink>
           <button onClick={switchLanguage} className="lang-button">

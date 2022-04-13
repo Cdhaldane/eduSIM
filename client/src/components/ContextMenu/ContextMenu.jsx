@@ -5,6 +5,9 @@ import { useTranslation } from "react-i18next";
 
 import "./ContextMenu.css"
 
+import Up from "../../../public/icons/chevron-up.svg"
+import Down from "../../../public/icons/chevron-down.svg"
+
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
   const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
@@ -199,7 +202,7 @@ const ContextMenu = (props) => {
               (props.getObjState().onTop ? "disabled" : "") :
               (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}`}
           >
-            <i className="fas fa-arrow-up" />
+            <i><Up className="icon alert-icon"/></i>
           </li>
         </div>
         <div className="layerBtns">
@@ -209,7 +212,7 @@ const ContextMenu = (props) => {
               (!props.getObjState().onTop ? "disabled" : "") :
               (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
           >
-            <i className="fas fa-arrow-down" />
+            <i><Down className="icon alert-icon"/></i>
           </li>
         </div>
       </ul>

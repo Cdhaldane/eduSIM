@@ -31,6 +31,10 @@ module.exports = {
         },
       },
       {
+       test: /\.svg$/,
+       use: ['@svgr/webpack'],
+      },
+      {
         test: /\.css$/,
         use: [
           {

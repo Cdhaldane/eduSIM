@@ -48,6 +48,7 @@ a {
   --button-size: calc(var(--nav-size) * 0.5);
   width: var(--button-size);
   height: var(--button-size);
+  fill: var(--primary) !important;
   min-width: var(--button-size);
   background-color: var(--white);
   border-radius: 50%;
@@ -65,7 +66,9 @@ a {
 }
 
 .icon-button svg {
-  fill: var(--text-color);
+  position: relative;
+  bottom: -3px;
+  fill: var(--primary);
   width: 20px;
   height: 20px;
 }
@@ -436,17 +439,14 @@ a {
   margin-right: 6px;
   border-radius: 0 !important;
   color: var(--primary) !important;
-  font-size: 1.0em !important;
   z-index: 2000;
 }
 
 .role-deselect-icon i {
-  color: var(--primary) !important;
-  font-size: 1.5em !important;
+  fill: var(--primary) !important;
+  width: 20px !important;
+  height: 20px !important;
   position: relative;
-  right: 3px;
-  top: 0px !important;
-  z-index: 1000;
 }
 
 .gamemode i {
@@ -505,6 +505,7 @@ a {
 
 .icons {
   color: var(--primary);
+  fill: var(--primary) !important;
   font-size: 1.1rem;
 }
 
@@ -970,6 +971,11 @@ a {
   position: absolute;
   right: 5px;
   top: -8px;
+  width: 20px !important;
+}
+.dropdown-desc svg{
+  width: 30px !important;
+  height: 30px !important;
 }
 .role-desc{
   width: 90%;
@@ -991,4 +997,81 @@ a {
   color: white !important;
   border-radius: 8px !important;
   width: 90% !important;
+}
+
+.add-icons {
+  position: relative;
+  left: 5px !important;
+  bottom: 3px !important;
+  fill: var(--primary) !important;
+}
+.roles-icons{
+  fill: var(--primary) !important;
+  position: relative !important;
+  top: 30px !important;
+}
+.card {
+  width: 10px !important;
+  height: 10px !important;
+}
+.nav-icons {
+  position: relative;
+  left: 5px;
+  bottom: 3px !important;
+}
+.timeline-roles{
+  position: relative;
+  left: 5px !important;
+  bottom: 3px !important;
+}
+.chevron {
+  position: relative;
+  left: 0px !important;
+  bottom: 6px !important;
+}
+.pencil {
+  width: 30px !important;
+  height: 30px !important;
+  position: relative;
+  bottom: 3px;
+  margin-right: 0px;
+}
+.setting-icon {
+  width: 50px !important;
+  height: 50px !important;
+}
+.plus {
+  width: 30px !important;
+  height: 30px !important;
+  vertical-align: -50% !important;
+}
+.small-icon {
+  width: 30px !important;
+  height: 30px !important;
+  position: relative;
+  bottom: 0px;
+    vertical-align: -40% !important;
+}
+.overlay-icon {
+  fill: var(--primary) !important;
+}
+.note-icon {
+  fill: var(--white) !important;
+  width: 30px !important;
+  height: 30px !important;
+  position: relative;
+  left: 5px;
+  bottom: 6px;
+}
+.white {
+  fill: var(--white) !important;
+  width: 30px !important;
+  height: 30px !important;
+  position: relative;
+  left: 5px;
+  bottom: 6px;
+}
+.create-icon {
+  fill: var(--dark) !important;
+  margin-left: 10px !important;
 }

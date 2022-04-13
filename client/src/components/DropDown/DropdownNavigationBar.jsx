@@ -6,6 +6,11 @@ import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
+import Message from "../../../public/icons/chat-alt-7.svg"
+import Bell from "../../../public/icons/bell-alt-1.svg"
+import Graph from "../../../public/icons/graph.svg"
+import Cog from "../../../public/icons/cog.svg"
+
 const DropdownNavigationBar = (props) => {
   const { t } = useTranslation();
 
@@ -65,7 +70,7 @@ const DropdownNavigationBar = (props) => {
         <div className="menu">
           <h1>{t("sidebar.editNavigationBar")}</h1>
           <DropdownItem
-            leftIcon={<i className="icons lni lni-comments-reply"></i>}
+            leftIcon={<i><Message className="icon nav-icons"/></i>}
             onClick={handleMessage}>
             {t("sidebar.messaging")}
             <Switch
@@ -75,7 +80,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons lni lni-alarm"></i>}
+            leftIcon={<i><Bell className="icon nav-icons"/></i>}
             onClick={handleAlerts}>
             {t("sidebar.alerts")}
             <Switch
@@ -85,7 +90,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons lni lni-stats-up"></i>}
+            leftIcon={<i><Graph className="icon nav-icons"/></i>}
             onClick={handlePerformance}>
             {t("sidebar.performance")}
             <Switch
@@ -95,7 +100,7 @@ const DropdownNavigationBar = (props) => {
             />
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i className="icons lni lni-cog"></i>}
+            leftIcon={<i><Cog className="icon nav-icons"/></i>}
             onClick={handleSettings}>
             {t("sidebar.settings")}
             <Switch

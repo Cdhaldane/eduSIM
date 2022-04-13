@@ -526,6 +526,21 @@ a {
   margin-left: -10px !important;
 }
 
+.join-icon {
+  width: 1.2em !important;
+  height: 1.2em !important;
+  vertical-align: -20% !important;
+  margin-right: 0px !important;
+}
+.control-icon {
+  margin-left: 10px;
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+.edit-icon {
+  margin-right: -10px !important;
+}
+
 
 
 .welcome-navbutton h2 {
@@ -841,6 +856,13 @@ hr {
   overflow: hidden;
   align-content: center;
 }
+.editpage-container {
+  position: absolute;
+  bottom: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+  top: 0px !important;
+}
 
 .game-logo {
   position: absolute;
@@ -1030,6 +1052,22 @@ hr {
 
 .radio-inputs label {
   margin-left: 3px;
+}
+
+.chevrons {
+  width: 30px !important;
+  height: 30px !important;
+  position: relative;
+  left: 5px;
+  bottom: 0px;
+  padding: 0px !important;
+}
+.exit {
+  width: 30px !important;
+  height: 30px !important;
+  margin-right: 0px !important;
+  position: relative;
+  bottom: 3px;
 }
 
 

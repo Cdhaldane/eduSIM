@@ -4,6 +4,15 @@ import React, { forwardRef } from "react"
 import { Image } from "cloudinary-react";
 import { useTranslation, Trans } from "react-i18next";
 
+import Chat from "../../../public/icons/chat-alt-7.svg"
+import Bell from "../../../public/icons/bell-alt-1.svg"
+import Users from "../../../public/icons/users-2.svg"
+import Calendar from "../../../public/icons/calendar.svg"
+import Graph from "../../../public/icons/graph-alt-4.svg"
+import Cog from "../../../public/icons/cog.svg"
+import Control from "../../../public/icons/control-panel.svg"
+import Notes from "../../../public/icons/notepad.svg"
+
 const StyledLink = styled.a`
   min-height: 56px;
   display: flex;
@@ -18,8 +27,9 @@ const StyledLink = styled.a`
   ${(p) => p.disabled && "opacity: 0.5;"}
   i {
     margin-top: 0px;
-    min-height: 22px;
-    min-width: 22px;
+    margin-right: 0px;
+    height: 26px;
+    width: 26px;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -73,6 +83,9 @@ const StyledLink = styled.a`
       text-decoration: none;
       background-color: var(--primary);
       color: var(--white);
+      i {
+        fill: var(--white) !important;
+      }
     }
   `}
   &.active {
@@ -85,8 +98,37 @@ const StyledLink = styled.a`
   }
 `;
 
+
+
 const NavLink = forwardRef((props, ref) => {
   const { t } = useTranslation();
+
+  const getIcon  = () => {
+      switch (props.iconClassName){
+        case "chat":
+          return <Chat />
+          break;
+        case "bell":
+          return <Bell />
+          break;
+        case "users":
+          return <Users />
+          break;
+        case "graph":
+          return <Graph />
+          break;
+        case "cog":
+          return <Cog />
+          break;
+        case "control":
+          return <Control />
+          break;
+        case "notes":
+          return <Notes />
+          break;
+      }
+
+  }
 
   return (
     <StyledLink
@@ -100,7 +142,7 @@ const NavLink = forwardRef((props, ref) => {
         <>
           {props.iconClassName !== null ? (
             <>
-              <i className={props.iconClassName} ></i>
+              <i className="icon sidebar-icon">{getIcon()}</i>
               {props.count>0 && <div className="countIndicator">{props.count}</div>}
               <span className="label">{props.label}</span>
             </>

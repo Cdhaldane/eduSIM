@@ -186,6 +186,31 @@
   padding: 4px;
   border: none;
 }
+.icon {
+  fill: var(--primary) !important;
+  height: 1.5em;
+  width: 1.5em;
+  vertical-align: -30%;
+  margin-right: 10px;
+}
+.navbar-icons{
+  padding: 10px;
+  font-size: 1.5em;
+  margin-bottom: 0px;
+}
+.information {
+  width: 50px !important;
+  height: 50px !important;
+  margin-right: -0px;
+  vertical-align: -15px!important;
+}
+.custom-icons {
+  width: 50px !important;
+  height: 50px !important;
+  vertical-align: -15px!important;
+  fill:var(--primary) !important;
+  margin-right: -3px !important;
+}
 
 
 @media screen and (orientation: landscape) {
@@ -227,6 +252,7 @@
     color: var(--white);
   }
 }
+
 
 @media screen and (orientation: portrait) {
   .NavbarItems {

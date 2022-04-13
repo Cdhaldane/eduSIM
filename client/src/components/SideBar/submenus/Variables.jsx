@@ -4,7 +4,15 @@ import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
 import { useTranslation } from "react-i18next";
 
+
+
 import "../Sidebar.css";
+
+import Trash from "../../../../public/icons/trash-can-alt-2.svg"
+import User from "../../../../public/icons/user.svg"
+import Users from "../../../../public/icons/users-2.svg"
+import Plus from "../../../../public/icons/circle-plus.svg"
+
 
 const SettingRow = styled.div`
   display: flex;
@@ -120,70 +128,54 @@ const Variables = (props) => {
   }
 
   const populateGameVars = () => {
-    let vars = props ? props.vars : 0;
-    let data = props.gameVars
-    let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-    let list = props.editpage ? [
-      <div className="variable-inputs green" key={-1}>
-        <h3>Page</h3>
-        <h3>=</h3>
-        <h3>{sessionVars["Page"]}</h3>
-      </div>] :
-      [<div className="variable-inputs green" key={-1}>
-        <h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3>
-      </div>];
+   let vars = props ? props.vars : 0;
+   let data = props.gameVars
+   let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
+   let list = props.editpage ? [<div className="variable-inputs green"><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green"><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
+   let variable;
+   let length;
+   let items = [];
+   let inputs = [];
+   let check;
+   for(let i = 0; i < (vars ? vars.length : 0); i++){
+     if(vars[i].sync){
+       variable = vars[i].varName
+       items.push(variable)
+     }
+   }
+   for(let i = 0; i < data.length; i++){
+     let keyArr = Object.keys(data[i]);
+     items.push(keyArr)
+   }
+   check = uniq(items)
+     for(let i = 0; i < (check ? check.length : 0); i++){
+       if(check){
+         list.push(
+           !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
+           <div className="variable-inputs" key={i}>
+             <i  onClick={() => deleteVar(i)}><Trash className="icon"/></i>
+           <div className="variable-main" key={i}>
+             <h1
+               onClick={() => {
+                 setIsShown(true)
+                 setCurrent(i)
+               }}
+               onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
+             <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
+             <h2>=</h2>
 
-    let variable;
-    let items = [];
-    for (let i = 0; i < (vars ? vars.length : 0); i++) {
-      if (vars[i].sync) {
-        variable = vars[i].varName;
-        items.push(variable);
-      }
-    }
-
-    for (let i = 0; i < data.length; i++) {
-      let keyArr = Object.keys(data[i]);
-      items.push(keyArr);
-    }
-
-    let check = uniq(items);
-    for (let i = 0; i < (check ? check.length : 0); i++) {
-      if (check) {
-        list.push(
-          !props.editpage ? (
-            <div className="variable-inputs gameVar" key={i}>
-              <h1>
-                {check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}
-              </h1>
-            </div>) :
-            (<div className="variable-inputs" key={i}>
-              <i className="lni lni-trash-can" onClick={() => deleteVar(i)} />
-              <div className="variable-main" key={i}>
-                <h1
-                  onClick={() => {
-                    setIsShown(true);
-                    setCurrent(i);
-                  }}
-                  onMouseLeave={() => setIsShown(false)}
-                >
-                  {check[i]}
-                </h1>
-                <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)} />
-                <h2>=</h2>
-
-                {(isShown && current === i) && (
-                  <div className="variable-hover" key={i}>
-                    {populateNames(check[i])}
-                  </div>
-                )}
-              </div>
-            </div>)
-        )
-      }
-    }
-    return list;
-  }
+           {(isShown && current === i) && (
+             <div className="variable-hover" key={i}>
+               {populateNames(check[i])}
+             </div>
+           )}
+           </div>
+         </div>
+         )
+       }
+     }
+   return list
+ }
 
   const populateNames = (a) => {
     let vars = props ? props.vars : 0;
@@ -250,44 +242,44 @@ const Variables = (props) => {
     <div className="variable-container">
       <h2>{t("sidebar.variables")}</h2>
       <SettingRow>
-        <i className="settings-icons lni lni-user"></i>
+        <i className="settings-icons"><User className="icon setting-icon"/></i>
         <b>{t("sidebar.session")}</b>
       </SettingRow>
       <div className="variable-box">
         {populateSessionVars()}
       </div>
       <SettingRow>
-        <i className="settings-icons lni lni-users"></i>
+        <i className="settings-icons"><Users className="icon setting-icon"/></i>
         <b>{t("sidebar.game")}</b>
       </SettingRow>
       <div className="variable-box" key={updater}>
         {populateGameVars()}
       </div>
       <SettingRow>
-        {props.editpage && (
-          <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
-            <i className="fas fa-plus-circle" />
-            {t("sidebar.addNewVar")}
-          </div>
-        )}
-        {showAdd && (
-          <div className="variable-adding">
-            <div className="variable-hold">
-              <h1>Variable Name</h1>
-              <h1>Variable Value</h1>
-            </div>
-            <div className="variable-hold">
-              <input type="text" value={varName} placeholder={"Some Name"} onChange={(e) => setVarName(e.target.value)} />
-              <h2> = </h2>
-              <input type="text" value={varValue} placeholder={"Some Value"} onChange={(e) => setVarValue(e.target.value)} />
-            </div>
-            <div className="variable-hold">
-              <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
-              <button onClick={() => addVar()}>{t("common.add")}</button>
-            </div>
-          </div>
-        )}
-      </SettingRow>
+      {props.editpage && (
+      <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
+        <Plus className="icon plus"/>
+      {t("sidebar.addNewVar")}
+      </div>
+    )}
+      {showAdd && (
+        <div className="variable-adding">
+          <div className="variable-hold">
+            <h1>Variable Name</h1>
+            <h1>Variable Value</h1>
+        </div>
+          <div className="variable-hold">
+            <input type="text" value={varName} placeholder={"Some Name"} onChange={(e) => setVarName(e.target.value)}/>
+            <h2> = </h2>
+          <input type="text" value={varValue} placeholder={"Some Value"} onChange={(e) => setVarValue(e.target.value)}/>
+      </div>
+          <div className="variable-hold">
+          <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
+          <button onClick={() => addVar()}>{t("common.add")}</button>
+      </div>
+        </div>
+      )}
+    </SettingRow>
     </div>
   );
 }

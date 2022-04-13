@@ -4,6 +4,10 @@ import styled from "styled-components";
 import EditAlert from "./EditAlert";
 import { useTranslation } from "react-i18next";
 
+
+import Check from "../../../../../public/icons/checkmark.svg"
+import Plus from "../../../../../public/icons/circle-plus.svg"
+
 const AlertsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -231,7 +235,7 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
           ) : (
             <>
               <Alert done={done} optional={data.optional}>
-                {done ? <i className="lni lni-checkmark-circle" /> : (
+                {done ? <i><Check className="icon"/></i> : (
                   data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
                 )}
                 <div>
@@ -272,7 +276,7 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
             onClick={() => setAdding(true)}
             hidden={adding}
           >
-            <i className="fas fa-plus-circle" />
+            <Plus className="icon plus"/>
             {t("sidebar.addNewTask")}
           </AddAlert>
         </>

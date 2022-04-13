@@ -14,7 +14,7 @@
 
 #editMainContainer {
   position: absolute;
-  top: 55px;
+  top: 0px;
   width: 100%;
   height: 100%;
   background-image:
@@ -28,7 +28,7 @@
   height: 50px;
   position: absolute;
   top: 70px;
-  right: 5px;
+  right: 20px;
   z-index: 2;
 }
 
@@ -44,6 +44,10 @@
 
 .overlayButton>i {
   color: var(--primary);
+  font-size: 40px;
+}
+.overlayButton svg {
+  fill: var(--primary);
   font-size: 40px;
 }
 

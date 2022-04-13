@@ -6,6 +6,16 @@ import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 import "./DropdownEditPoll.css";
 
+import Cog from "../../../public/icons/cog.svg"
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+import Up from "../../../public/icons/chevron-up.svg"
+import Down from "../../../public/icons/chevron-down.svg"
+import Check from "../../../public/icons/checkmark.svg"
+import Help from "../../../public/icons/help.svg"
+import Scroll from "../../../public/icons/page.svg"
+import Asterix from "../../../public/icons/asterisk.svg"
+import Left from "../../../public/icons/arrow-left.svg"
+
 const DropdownEditPoll = (props) => {
   const { t } = useTranslation();
 
@@ -174,8 +184,8 @@ const DropdownEditPoll = (props) => {
               }}
             >
               <i
-                className={`fas fa-caret-up ${pIndex === 0 && index === 0 ? "disabled" : ""}`}
-              />
+                className={`${pIndex === 0 && index === 0 ? "disabled" : ""}`}
+              ><Up className="icon poll-icons"/></i>
             </td>
             <td
               className={`editPollEditBtns`}
@@ -214,9 +224,9 @@ const DropdownEditPoll = (props) => {
               }}
             >
               <i
-                className={`fas fa-caret-down
+                className={`
                 ${pIndex === (pages.length - 1) && index === (p.questions.length - 1) ? "disabled" : ""}`}
-              />
+              ><Down className="icon poll-icons"/></i>
             </td>
             <td
               className="editPollEditBtns"
@@ -230,7 +240,7 @@ const DropdownEditPoll = (props) => {
                 }
               }}
             >
-              <i className={`lni lni-cog${(q.inputType || q.type) === "color" ? "disabled" : ""}`} />
+              <i className={`${(q.inputType || q.type) === "color" ? "disabled" : ""}`} ><Cog className="icon poll-icons"/></i>
             </td>
             <td
               className={`editPollEditBtns`}
@@ -254,10 +264,10 @@ const DropdownEditPoll = (props) => {
                 }
               }}>
               <i
-                className={`lni lni-trash-can ${pages.map((p) => {
+                className={`${pages.map((p) => {
                   return p.questions;
                 }).flat().length === 1 ? "disabled" : ""}`}
-              />
+              ><Trash className="icon poll-icons"/></i>
             </td>
           </tr >
         );
@@ -267,7 +277,7 @@ const DropdownEditPoll = (props) => {
           {pIndex > 0 && (
             <tr>
               <td>
-                <i className="fas fa-scroll editPollNewPageIcon" />
+                <i className=" editPollNewPageIcon" ><Scroll className="icon poll-icons"/></i>
                 {t("edit.newPage")}
               </td>
               <td></td>
@@ -295,9 +305,7 @@ const DropdownEditPoll = (props) => {
                   setTimeout(() => setPages(newPages), 0);
                 }}
               >
-                <i
-                  className={`fas fa-caret-up`}
-                />
+                <i><Up className="icon poll-icons"/></i>
               </td>
               <td
                 className={`editPollEditBtns`}
@@ -322,14 +330,12 @@ const DropdownEditPoll = (props) => {
                   setTimeout(() => setPages(newPages), 0);
                 }}
               >
-                <i
-                  className={`fas fa-caret-down`}
-                />
+                  <i><Down className="icon poll-icons"/></i>
               </td>
               <td
                 className="editPollEditBtns"
               >
-                <i className={`lni lni-cogdisabled`} />
+                  <i><Up className="icon poll-icons disabled"/></i>
               </td>
               <td
                 className={"editPollEditBtns"}
@@ -345,9 +351,7 @@ const DropdownEditPoll = (props) => {
                   newPages = [...newPages.slice(0, pIndex), ...newPages.slice(pIndex + 1)];
                   setTimeout(() => setPages(newPages), 0);
                 }}>
-                <i
-                  className={`lni lni-trash-can`}
-                />
+                  <i><Trash className="icon poll-icons"/></i>
               </td>
             </tr>
           )}
@@ -387,8 +391,8 @@ const DropdownEditPoll = (props) => {
                 }
               }}>
               <i
-                className={`lni lni-trash-can ${options.length === 1 ? "disabled" : ""}`}
-              />
+                className={` ${options.length === 1 ? "disabled" : ""}`}
+              ><Trash className="icon poll-icons"/></i>
             </td>
           </tr>
         );
@@ -519,7 +523,7 @@ const DropdownEditPoll = (props) => {
             onClick={addQuestion}
             className="editPollAddQuestionBtn"
           >
-            <i className="fas fa-question-circle" />
+              <i><Help className="icon poll-icons"/></i>
             {t("edit.addQuestion")}
           </button>
 
@@ -548,7 +552,7 @@ const DropdownEditPoll = (props) => {
             }}
             className="editPollBackButton"
           >
-            <i className="fas fa-arrow-left" />
+            <i><Left className="icon poll-icons"/></i>
           </button>
           <h1 style={{
             display: "inline"
@@ -583,7 +587,7 @@ const DropdownEditPoll = (props) => {
                 }}
                 className="editPollAddQuestionBtn"
               >
-                <i className="fas fa-list" />
+                  <i><Page className="icon poll-icons"/></i>
                 {t("edit.addOption")}
               </button>
               <hr />
@@ -625,11 +629,11 @@ const DropdownEditPoll = (props) => {
               <>
                 {pages[currentQuestion.pIndex].questions[currentQuestion.qIndex].choices.map((choice) => (
                   <div className="pollCorrectAnswerCheckboxContainer">
-                    <input 
-                    type="checkbox" 
-                    id={choice} 
-                    name="pollCorrectAnswerCheckbox" 
-                    value={choice} 
+                    <input
+                    type="checkbox"
+                    id={choice}
+                    name="pollCorrectAnswerCheckbox"
+                    value={choice}
                     onChange={() => {
                       const answer = Array.from(document.getElementsByClassName("pollCorrectAnswerCheckboxContainer")).map((box) => {
                         const input = box.firstChild.value;

@@ -1,7 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+
+import Send from "../../../../public/icons/air-mail.svg"
+import Close from "../../../../public/icons/close.svg"
 
 const Message = styled.div`
   background:  ${(p) => (
@@ -170,7 +172,7 @@ const Messages = (props) => {
       {Object.keys(sendGroup).length>0 && (
         <MessageGroup>
           <button onClick={removeWhisper}>
-            <i className="lni lni-close-circle remove-whisper" aria-hidden="true"></i>
+            <i className="remove-whisper" aria-hidden="true"><Close className="icon"/></i>
           </button>
           <p>Sending to: {Object.values(sendGroup).map(mem => mem.name).join(', ')}</p>
         </MessageGroup>
@@ -178,7 +180,7 @@ const Messages = (props) => {
       <form onSubmit={sendMessage} action="#">
         <MessageInput onChange={(e) => setMessageInput(e.target.value)} value={messageInput} placeholder={t("sidebar.typeYourMessageHere")} />
         <MessageSend type="submit" value="send">
-          <i className="fa fa-send fa-2x" ></i>
+          <Send className="icon"/>
         </MessageSend>
       </form>
     </MessageContainer>

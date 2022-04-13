@@ -149,9 +149,10 @@ const Game = (props) => {
   }, [roomid]);
 
   const timeFromNow = () => (
-    roomStatus.running
+    (roomStatus.running
       ? moment(moment()).diff(roomStatus.startTime - (roomStatus.timeElapsed || 0))
       : (roomStatus.timeElapsed || 0)
+    )
   );
 
   const countdown = () => {
@@ -212,7 +213,7 @@ const Game = (props) => {
         <Sidebar
           userId={userId}
           customObjs={customObjs}
-          gamepieceStatus={roomStatus.gamepieces || {}}
+          gamepieceStatus={roomStatus || {}}
           className="grid-sidebar game"
           visible={showNav}
           close={toggle}

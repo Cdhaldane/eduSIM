@@ -12,6 +12,9 @@ import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
 import DropdownEditPoll from './DropdownEditPoll';
 
+
+import Left from "../../../public/icons/arrow-left.svg"
+
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
@@ -540,7 +543,7 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-secondary"
             unmountOnExit>
             <div className="menuedit">
-              <DropdownItem goToMenu="main" leftIcon={<i id="iconsedit" className="lni lni-arrow-left"></i>}>
+              <DropdownItem goToMenu="main" leftIcon={<i><Left id="iconsedit" /></i>}>
                 <h2>COLOUR!</h2>
               </DropdownItem>
             </div>

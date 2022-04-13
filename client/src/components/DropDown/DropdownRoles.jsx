@@ -10,6 +10,15 @@ import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
 
+import Crown from "../../../public/icons/crown.svg"
+import Trash from "../../../public/icons/trash-can-alt-2.svg"
+import Check from "../../../public/icons/checkmark.svg"
+import Copy from "../../../public/icons/copy.svg"
+import Pencil from "../../../public/icons/pencil.svg"
+import Add from "../../../public/icons/plus.svg"
+import Left from "../../../public/icons/arrow-left.svg"
+import Card from "../../../public/icons/id-card.svg"
+
 const DropdownRoles = (props) => {
   const { t } = useTranslation();
 
@@ -187,7 +196,7 @@ const DropdownRoles = (props) => {
                 key={index}
               >
                 <span className="icon-button" onClick={handleSubmitModification}>
-                  <i className="icons lni lni-checkmark" />
+                  <i><Check classname="icon roles-icons"/></i>
                 </span>
                 <input
                   id="roleNameAdd"
@@ -218,12 +227,12 @@ const DropdownRoles = (props) => {
                     setDeleteIndex(index);
                   }} >
 
-                    <i className="icons lni lni-trash-can" />
+                    <i><Trash classname="icon roles-icons"/></i>
 
                   </span>
                 )}
                 {index === 0 && (
-                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i className="icons lni lni-crown" /></span>
+                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i><Crown classname="icon roles-icons"/></i></span>
                 )}
                 <h1>
                 {role.roleName}
@@ -232,11 +241,11 @@ const DropdownRoles = (props) => {
                 <div className="icons-right">
                   <span className="icon-button" onClick={(e) => handleModifyRole(e, index)}>
 
-                    <i className="icons lni lni-pencil" />
+                    <i><Pencil classname="icon roles-icons"/></i>
 
                   </span>
                   <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
-                    <i className="icons lni lni-files" />
+                    <i><Copy classname="icon roles-icons"/></i>
                   </span>
                 </div>
               </div>
@@ -354,13 +363,13 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="roles"
-            icon={<i className="icons lni lni-crown"></i>}>
+            icon={<i><Crown classname="icon roles-icons"/></i>}>
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
           </DropdownItem>
           <div className="dropdown-desc">
             {selectedRole && !props.disabled && (
               <button className={props.editMode ? "role-deselect-icon" : "role-deselect-icon gamemode"} onClick={() => setActiveMenu('edit')}>
-                <i className="lni lni-license" onClick={() => props.openInfoSection()}></i>
+                <i onClick={() => props.openInfoSection()}><Card classname="icon roles-icons card"/></i>
               </button>
             )}
           </div>
@@ -376,7 +385,7 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i className="icons lni lni-arrow-left"></i>}>
+            icon={<i><Left classname="icon roles-icons"/></i>}>
             <h2 className="smaller">{props.editmode ? "Add Role Description" : "Role Description"}</h2>
           </DropdownItem>
           {props.editMode
@@ -411,14 +420,14 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i className="icons lni lni-arrow-left"></i>}>
+            icon={<i><Left classname="icon roles-icons"/></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           {AvailableRoles}
           {props.editMode && (
             <div className="menu-item" disabled={modifyIndex >= 0}>
               <span className="icon-button" onClick={handleAddRole}>
-                <i className="icons lni lni-plus" />
+                <i><Add classname="icon roles-icons"/></i>
               </span>
               <input
                 id="roleNameAdd"
