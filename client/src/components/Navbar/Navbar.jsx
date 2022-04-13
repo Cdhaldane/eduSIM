@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from 'usehooks-ts'
 
-import Home from "../../../public/icons/home.svg"
-import Info from "../../../public/icons/information.svg"
+import Home from "../../../public/icons/house.svg"
+import Info from "../../../public/icons/info.svg"
 
 import "./Navbar.css";
 
@@ -94,7 +94,7 @@ const NavBar = (props) => {
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
             >
-              <Home className="icon navbar-icons" alt={t("alt.home")}/>
+              <Home className="icon navbar-icons custom-icons" alt={t("alt.home")}/>
               {t("navbar.home")}
             </ButtonLink>
             <ButtonLink

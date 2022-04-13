@@ -184,3 +184,41 @@
 .performanceContainer {
   display: block !important;
 }
+
+.performance-inputs {
+  border-radius: 9px;
+  padding: 10px;
+  background-color: var(--red);
+  color: var(--white);
+  width: auto !important;
+  margin: 10px;
+}
+
+.performance-timers {
+  border-radius: 9px;
+  padding: 10px;
+  background-color: var(--red);
+  color: var(--white);
+  width: auto !important;
+  margin: 10px;
+}
+.input-container {
+  margin: 10px;
+  align-items: center;
+}
+
+.input-container p{
+  border-radius: 9px;
+  background-color: var(--red);
+  padding: 10px;
+  margin-bottom: 10px;
+  color: var(--white);
+  font-weight: bold;
+  width: 100px !important;
+}
+.input-container p:hover{
+  cursor: pointer;
+  position: relative;
+  left: 1px;
+  bottom: 1px;
+}

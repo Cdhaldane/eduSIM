@@ -473,17 +473,17 @@ class Graphics extends Component {
         prevMainShapes.push(prevState[type]);
         currentMainShapes.push(this.state[type]);
       }
-      if ( !this.state.isTransforming) {
+      if ( !this.state.isTransforming  && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
             // If text shouldn't update, don't append to history
             if (this.state.shouldTextUpdate) {
+
               let uh = history;
               history = uh.slice(0, historyStep + 1);
               let toAppend = this.state;
               history = history.concat(toAppend);
               historyStep++;
-              this.setState({redoing: false})
             }
           }
         }
@@ -990,7 +990,7 @@ class Graphics extends Component {
 
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
-
+    this.setState({redoing: false})
     const shape = this.getTopObjAtPos({
       x: event.clientX,
       y: event.clientY
@@ -1673,6 +1673,7 @@ class Graphics extends Component {
     historyStep++;
     const next = history[historyStep];
     for (let i = 0; i < this.savedObjects.length; i++) {
+
       this.setState({
         [this.savedObjects[i]]: next[this.savedObjects[i]]
       }, this.forceUpdate);
@@ -1685,6 +1686,7 @@ class Graphics extends Component {
         : this.state.selectedShapeName,
       selectedContextMenu: null
     });
+      console.log(history)
   }
 
   getObjType = (name) => {

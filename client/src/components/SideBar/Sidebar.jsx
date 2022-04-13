@@ -365,6 +365,7 @@ const Sidebar = (props) => {
           customObjs={props.customObjs}
           ref={performanceModal}
           setData={props.performanceFunctions}
+          variables={props.variables}
         />
       </Modal>
     </>

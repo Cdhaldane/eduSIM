@@ -199,9 +199,17 @@
   margin-bottom: 0px;
 }
 .information {
-  border: 1px solid var(--primary);
-  border-radius: 100px;
-  font-size: 1.1em;
+  width: 50px !important;
+  height: 50px !important;
+  margin-right: -0px;
+  vertical-align: -15px!important;
+}
+.custom-icons {
+  width: 50px !important;
+  height: 50px !important;
+  vertical-align: -15px!important;
+  fill:var(--primary) !important;
+  margin-right: -3px !important;
 }
 
 

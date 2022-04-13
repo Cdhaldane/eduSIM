@@ -9,6 +9,8 @@ import "./Performance.css";
 const Performance = forwardRef((props, ref) => {
   console.log(props)
   const { t } = useTranslation();
+  const [ showInputs, setShowInputs] = useState(false)
+  const [ showTimers, setShowTimers] = useState(false)
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
     const val = e.target.value;
@@ -127,20 +129,53 @@ const Performance = forwardRef((props, ref) => {
 
   const getTimer = () => {
     let timers = props.status?.gamepieces;
-    let timerObjs = props.customObjs.timers;
+    let timerObjs = props.customObjs?.timers;
     if(timers){
-    let list =[]
-    var result = Object.keys(timers).map((key) => [Number(key), timers[key]]);
-    console.log(timerObjs)
-
-    for(let i = 0; i < result.length; i++){
-      console.log(result[i][1])
-      let time = moment(moment().diff(moment(result[i][1].startTime - result[i][1].elapsedTime))).format('mm:ss.SS')
-      list.push(<div>{timerObjs[i].id} - Page:{timerObjs[i].level} {time}</div>)
+      let list =[]
+      var result = Object.keys(timers).map((key) => [Number(key), timers[key]]);
+      console.log(props)
+      for(let i = 0; i < result.length; i++){
+        let time = moment(moment().diff(moment(result[i][1].startTime - result[i][1].elapsedTime))).format('mm:ss.SS')
+        list.push(<div className="performance-timers">{timerObjs[i].id} - Page:{timerObjs[i].level} {time}</div>)
+      }
+      return list
     }
-    return list
   }
 
+  const getInputs = () => {
+    let vars = props?.variables;
+    let inputs = props.customObjs?.inputs;
+    let fill = "";
+    let button = ""
+    let type;
+    let varType;
+    let inputType;
+    let name;
+    let list=[];
+    for(let i = 0; i < inputs.length; i++){
+      type = (inputs[i].varName)
+      name=(inputs[i].label)
+      inputType=(inputs[i].varType)
+      varType = vars[type]
+      if(inputType === "button"){
+        fill = "pushed"
+        button = "times"
+      } else {
+        button = ""
+      }
+      if(inputType === "text"){
+        fill = "equals"
+      }
+      if(inputType === "checkbox"){
+        if(varType){
+          varType = "true"
+        } else {
+          varType = "false"
+        }
+      }
+      list.push(<div className="performance-inputs">{inputType}: {name} {fill} {varType} {button}</div>)
+    }
+    return list
   }
 
   return (
@@ -316,7 +351,16 @@ const Performance = forwardRef((props, ref) => {
             <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
               <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
               <div>
-                {getTimer()}
+                <div className="input-container">
+                  <p onClick={() => setShowTimers(!showTimers)}>Timers:</p>
+                  {showTimers && (
+                    getTimer()
+                  )}
+                  <p onClick={() => setShowInputs(!showInputs)}>Inputs:</p>
+                    {showInputs && (
+                      getInputs()
+                    )}
+                </div>
                 {props.status && props.customObjs && (
                   <>
                     {props.customObjs.polls.map((poll, pollI) => {
