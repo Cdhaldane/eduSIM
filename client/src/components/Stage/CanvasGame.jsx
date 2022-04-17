@@ -700,7 +700,7 @@ class Graphics extends Component {
                     }}
                   >
                     {!this.state.overlayImage.length ? (
-                      <i><Layers clasName="icon overlay-icon"/></i>
+                      <i><Layers className="icon overlay-icon"/></i>
                     ) : (
                       <Image
                         className="overlayIcons"

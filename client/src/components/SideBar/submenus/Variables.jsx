@@ -131,7 +131,7 @@ const Variables = (props) => {
    let vars = props ? props.vars : 0;
    let data = props.gameVars
    let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-   let list = props.editpage ? [<div className="variable-inputs green"><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green"><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
+   let list = props.editpage ? [<div className="variable-inputs green" key={-1}><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green" key={-1}><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
    let variable;
    let length;
    let items = [];

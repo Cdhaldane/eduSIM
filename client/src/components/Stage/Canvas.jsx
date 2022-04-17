@@ -332,8 +332,32 @@ class Graphics extends Component {
                 page.groupPositionRect = this.positionRect;
               }
               if (!page.personalPositionRect) {
-                page.personalPositionRect = this.positionRect;
+                page.personalPositionRect = null;
               }
+              // Get the personal roles and give them default values (if none exist yet)
+              axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
+                params: {
+                  gameinstanceid: this.state.gameinstanceid,
+                }
+              }).then((res) => {
+                const rolesData = [];
+                for (let i = 0; i < res.data.length; i++) {
+                  rolesData.push({
+                    id: res.data[i].gameroleid,
+                    roleName: res.data[i].gamerole,
+                    numOfSpots: res.data[i].numspots,
+                    roleDesc: res.data[i].roleDesc
+                  });
+                }
+                for (let i = 0; i < rolesData.length; i++) {
+                  const role = rolesData[i];
+                  if (!page.personalPositionRect[role.roleName]) {
+                    page.personalPositionRect[role.roleName] = this.positionRect;
+                  }
+                }
+              }).catch(error => {
+                console.error(error);
+              });
               for (let j = 0; j < overlays.length; j++) {
                 const overlay = overlays[j];
                 if (!overlay.positionRect) {
@@ -490,7 +514,7 @@ class Graphics extends Component {
         prevMainShapes.push(prevState[type]);
         currentMainShapes.push(this.state[type]);
       }
-      if ( !this.state.isTransforming  && !this.state.redoing) {
+      if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
             // If text shouldn't update, don't append to history
@@ -1008,7 +1032,7 @@ class Graphics extends Component {
 
   handleMouseUp = (e, personalArea) => {
     const event = e.evt ? e.evt : e;
-    this.setState({redoing: false})
+    this.setState({ redoing: false })
     const shape = this.getTopObjAtPos({
       x: event.clientX,
       y: event.clientY
@@ -1510,7 +1534,6 @@ class Graphics extends Component {
         // Only have drag select on left click and drag
         if (event.buttons === 1 && !this.state.layerDraggable) {
           if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
-            console.log("DRAGGING CANVAS");
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
             if (shapeGroup) {
@@ -1634,7 +1657,7 @@ class Graphics extends Component {
       newScale = 0.1
     }
     const newPos = {
-      x: pointer.x - mousePos.x * newScale ,
+      x: pointer.x - mousePos.x * newScale,
       y: pointer.y - mousePos.y * newScale,
     };
 
@@ -1714,7 +1737,7 @@ class Graphics extends Component {
         : this.state.selectedShapeName,
       selectedContextMenu: null
     });
-      console.log(history)
+    console.log(history)
   }
 
   getObjType = (name) => {
@@ -2173,7 +2196,7 @@ class Graphics extends Component {
           const objId = selection[0].attrs ? selection[0].attrs.id : selection[0];
           for (let i = 0; i < this.state.savedGroups.length; i++) {
             for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-              if (this.state.savedGroups[i][j].attrs ? 
+              if (this.state.savedGroups[i][j].attrs ?
                 this.state.savedGroups[i][j].attrs.id === objId :
                 this.state.savedGroups[i][j] === objId) {
                 const newSavedGroups = [...this.state.savedGroups.slice(0, i), ...this.state.savedGroups.slice(i + 1)];
@@ -2197,7 +2220,7 @@ class Graphics extends Component {
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-          if (this.state.savedGroups[i][j].attrs ? 
+          if (this.state.savedGroups[i][j].attrs ?
             this.state.savedGroups[i][j].attrs.id === shapeId :
             this.state.savedGroups[i][j] === shapeId) {
             return this.state.savedGroups[i];
@@ -3250,7 +3273,7 @@ class Graphics extends Component {
                   }}
                 >
                   {!this.state.overlayImage.length ? (
-                    <i><Layers clasName="icon overlay-icon"/></i>
+                    <i><Layers className="icon overlay-icon" /></i>
                   ) : (
                     <Image
                       className="overlayIcons"
@@ -3544,7 +3567,7 @@ class Graphics extends Component {
                   document.getElementById("editPersonalContainer").classList.remove("personalAreaAnimOn");
                 }, 500);
               }}>
-              <i><Up className="icon chevrons"/></i>
+              <i><Up className="icon chevrons" /></i>
             </button>
             : <button
               className="personalAreaToggle"
@@ -3554,7 +3577,7 @@ class Graphics extends Component {
                 this.handlePersonalAreaOpen(false);
               }}>
 
-                <i><Down className="icon chevrons"/></i>
+              <i><Down className="icon chevrons" /></i>
 
             </button>
           }
@@ -3581,6 +3604,41 @@ class Graphics extends Component {
               handleEditRole={this.handleEditRole}
               savedRoles={this.state.roles}
               editMode={true}
+              addNewRoleRect={(name) => {
+                const pages = JSON.parse(JSON.stringify(this.state.pages));
+                for (let i = 0; i < this.state.pages.length; i++) {
+                  const page = pages[i];
+                  page.personalPositionRect[name] = this.positionRect;
+                  pages[i] = page;
+                }
+                this.setState({
+                  pages: pages
+                });
+              }}
+              deleteRoleRect={(name) => {
+                const pages = JSON.parse(JSON.stringify(this.state.pages));
+                for (let i = 0; i < this.state.pages.length; i++) {
+                  const page = pages[i];
+                  delete page.personalPositionRect[name];
+                  pages[i] = page;
+                }
+                this.setState({
+                  pages: pages
+                });
+              }}
+              renameRoleRect={(oldName, newName) => {
+
+                const pages = JSON.parse(JSON.stringify(this.state.pages));
+                for (let i = 0; i < this.state.pages.length; i++) {
+                  const page = pages[i];
+                  page.personalPositionRect[newName] = JSON.parse(JSON.stringify(page.personalPositionRect[oldName]));
+                  delete page.personalPositionRect[oldName];
+                  pages[i] = page;
+                }
+                this.setState({
+                  pages: pages
+                });
+              }}
             />
           </div>
         </div>

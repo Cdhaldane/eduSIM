@@ -7,7 +7,6 @@ import moment from "moment";
 import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
-  console.log(props)
   const { t } = useTranslation();
   const [ showInputs, setShowInputs] = useState(false)
   const [ showTimers, setShowTimers] = useState(false)
