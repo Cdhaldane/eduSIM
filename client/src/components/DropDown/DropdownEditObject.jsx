@@ -137,7 +137,6 @@ const DropdownEditObject = (props) => {
   }
 
   const onSliderChangeV = (e) => {
-    console.log(e)
     props.updateObjState({ volume: e });
     setObjState(prev => ({
       ...prev,
@@ -278,7 +277,6 @@ const DropdownEditObject = (props) => {
   }
   const populateRadio = () => {
     const list = [];
-    console.log(objState)
     let value = 0;
     for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
         list.push(
@@ -417,7 +415,6 @@ const DropdownEditObject = (props) => {
       (tab === "stroke" ? objState.style.borderColor : objState.style.color));
     setInputCurrentOptions(tab);
   }
-  console.log(objState)
   if (!loading) {
     if (props.title === "shape") {
       /* Edit a Shape Object */

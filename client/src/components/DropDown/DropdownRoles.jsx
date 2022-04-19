@@ -64,7 +64,6 @@ const DropdownRoles = (props) => {
         });
       }
       if (rolesData.length) {
-
         setRoles(rolesData);
       } else {
         const defaultRoleAPI = {
@@ -74,12 +73,14 @@ const DropdownRoles = (props) => {
           roleDesc: "Default role",
         };
         axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
-          setRoles([{
+          const defaultRole = {
             id: res.data.gameroleid,
             roleName: t("game.defaultRole"),
             numOfSpots: -1,
             roleDesc: res.data.roleDesc,
-          }]);
+          };
+          setRoles([defaultRole]);
+          props.addNewRoleRect(defaultRole.roleName);
         }).catch(error => {
           console.error(error);
         });
@@ -87,13 +88,13 @@ const DropdownRoles = (props) => {
     }).catch(error => {
       console.error(error);
     });
-
   }
 
   const handleClickOutside = e => {
+    const className = e.target.className.baseVal ? e.target.className.baseVal : e.target.className;
     if (menuElem.current &&
       !menuElem.current.contains(e.target) &&
-      !e.target.className.startsWith("icon") &&
+      !className?.startsWith("icon") &&
       !confirmationVisibleRef.current &&
       activeMenu != 'main') {
       handleActiveMenuChange('main');
@@ -103,7 +104,6 @@ const DropdownRoles = (props) => {
 
   useEffect(() => {
     updateRolesData();
-
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
@@ -142,6 +142,7 @@ const DropdownRoles = (props) => {
       roleNum,
       roleDesc
     });
+    props.renameRoleRect(roles[selected].roleName, roleName);
     setRoles(roles.map((v, i) => i === selected ? {
       ...v,
       roleName: roleName,
@@ -196,7 +197,7 @@ const DropdownRoles = (props) => {
                 key={index}
               >
                 <span className="icon-button" onClick={handleSubmitModification}>
-                  <i><Check classname="icon roles-icons"/></i>
+                  <i><Check className="icon roles-icons"/></i>
                 </span>
                 <input
                   id="roleNameAdd"
@@ -227,12 +228,12 @@ const DropdownRoles = (props) => {
                     setDeleteIndex(index);
                   }} >
 
-                    <i><Trash classname="icon roles-icons"/></i>
+                    <i><Trash className="icon roles-icons"/></i>
 
                   </span>
                 )}
                 {index === 0 && (
-                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i><Crown classname="icon roles-icons"/></i></span>
+                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i><Crown className="icon roles-icons"/></i></span>
                 )}
                 <h1>
                 {role.roleName}
@@ -241,11 +242,11 @@ const DropdownRoles = (props) => {
                 <div className="icons-right">
                   <span className="icon-button" onClick={(e) => handleModifyRole(e, index)}>
 
-                    <i><Pencil classname="icon roles-icons"/></i>
+                    <i><Pencil className="icon roles-icons"/></i>
 
                   </span>
                   <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
-                    <i><Copy classname="icon roles-icons"/></i>
+                    <i><Copy className="icon roles-icons"/></i>
                   </span>
                 </div>
               </div>
@@ -284,7 +285,8 @@ const DropdownRoles = (props) => {
   }, [props.initRole]);
 
   const handleRoleSelected = (e, roleName, roleNum,index) => {
-    if (!e.target.className.startsWith("icon")) {
+    const className = e.target.className.baseVal ? e.target.className.baseVal : e.target.className;
+    if (!className.startsWith("icon")) {
       setSelected(index)
       setSelectedRole(roleName);
       setRoleName(roleName);
@@ -295,21 +297,14 @@ const DropdownRoles = (props) => {
     }
   }
 
-  const handleDeselectRole = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setSelectedRole(null);
-    props.roleLevel(null, null);
-    return false;
-  }
-
   const handleDeleteRole = async (e) => {
+    props.deleteRoleRect(roles[e].roleName);
     await axios.delete(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/deleteRole/:gameroleid', {
       params: {
         id: roles[e].id
       }
     }).then((res) => {
-      props.roleLevel(PLACEHOLDER_TEXT);
+      props.roleLevel("");
       updateRolesData();
     }).catch(error => {
       console.error(error);
@@ -339,6 +334,8 @@ const DropdownRoles = (props) => {
       roleDesc: "temp"
     };
 
+    props.addNewRoleRect(data.gamerole);
+
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
       updateRolesData();
       setRoleName("");
@@ -363,13 +360,13 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="roles"
-            icon={<i><Crown classname="icon roles-icons"/></i>}>
+            icon={<i><Crown className="icon roles-icons"/></i>}>
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
           </DropdownItem>
           <div className="dropdown-desc">
             {selectedRole && !props.disabled && (
               <button className={props.editMode ? "role-deselect-icon" : "role-deselect-icon gamemode"} onClick={() => setActiveMenu('edit')}>
-                <i onClick={() => props.openInfoSection()}><Card classname="icon roles-icons card"/></i>
+                <i onClick={() => props.openInfoSection()}><Card className="icon roles-icons card"/></i>
               </button>
             )}
           </div>
@@ -385,7 +382,7 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i><Left classname="icon roles-icons"/></i>}>
+            icon={<i><Left className="icon roles-icons"/></i>}>
             <h2 className="smaller">{props.editmode ? "Add Role Description" : "Role Description"}</h2>
           </DropdownItem>
           {props.editMode
@@ -420,14 +417,14 @@ const DropdownRoles = (props) => {
         <div className="menu">
           <DropdownItem
             goToMenu="main"
-            icon={<i><Left classname="icon roles-icons"/></i>}>
+            icon={<i><Left className="icon roles-icons"/></i>}>
             <h2>{selectedRole || PLACEHOLDER_TEXT}</h2>
           </DropdownItem>
           {AvailableRoles}
           {props.editMode && (
             <div className="menu-item" disabled={modifyIndex >= 0}>
               <span className="icon-button" onClick={handleAddRole}>
-                <i><Add classname="icon roles-icons"/></i>
+                <i><Add className="icon roles-icons"/></i>
               </span>
               <input
                 id="roleNameAdd"

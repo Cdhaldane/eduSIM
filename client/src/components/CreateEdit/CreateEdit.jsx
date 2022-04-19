@@ -52,7 +52,6 @@ const CreateEdit = (props) => {
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
-          console.log("Done! Here is the image info: ", result.info);
           setImageSelected(result.info.public_id);
           setImg(result.info.url);
           setWillUpload(true);
@@ -95,7 +94,6 @@ const CreateEdit = (props) => {
       gameinstance_photo_path: imageSelected
     }
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then((res) => {
-      console.log(res);
     })
     var temp = JSON.parse(localStorage.getItem("order"));
     for(let i = 0; i < JSON.parse(localStorage.order).length; i++){

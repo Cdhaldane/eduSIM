@@ -1008,7 +1008,8 @@ a {
 .roles-icons{
   fill: var(--primary) !important;
   position: relative !important;
-  top: 30px !important;
+  margin-right: 0 !important;
+  bottom: 3px !important;
 }
 .card {
   width: 10px !important;

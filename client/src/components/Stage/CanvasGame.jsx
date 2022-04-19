@@ -639,7 +639,6 @@ class Graphics extends Component {
       y = 89,
       r = 82;
     if (event.shiftKey && event.keyCode === r) {
-      console.log("HELLO");
       this.props.reCenter("play");
     } else if (event.altKey && event.keyCode === r) {
       // Print Info (FOR DEBUGGING)
@@ -700,7 +699,7 @@ class Graphics extends Component {
                     }}
                   >
                     {!this.state.overlayImage.length ? (
-                      <i><Layers clasName="icon overlay-icon"/></i>
+                      <i><Layers className="icon overlay-icon"/></i>
                     ) : (
                       <Image
                         className="overlayIcons"

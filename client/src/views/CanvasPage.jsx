@@ -153,7 +153,7 @@ const CanvasPage = (props) => {
 
     const page = canvas.state.pages[canvas.state.level - 1];
     const group = page.groupPositionRect;
-    const personal = page.personalPositionRect;
+    const personal = page.personalPositionRect[canvas.state.rolelevel];
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
@@ -198,7 +198,7 @@ const CanvasPage = (props) => {
     }
 
     // Edit mode centering with no objects
-    if (canvas.getLayers().length === 0) {
+    if (canvas.getLayers().length === 0 && positionRect) {
       // Reset to default position and scale
       canvas.setState({
         [`${areaString}LayerX`]: -positionRect.x,
@@ -559,7 +559,6 @@ const CanvasPage = (props) => {
   }
 
   const defaultObjProps = (obj, canvas, editMode) => {
-    //isSelected(obj.id, canvas)
     return {
       key: obj.id,
       visible: canvas.state.canvasLoading ? false :
@@ -587,8 +586,7 @@ const CanvasPage = (props) => {
           onClick: () => canvas.onObjectClick(obj),
           onTransformStart: canvas.onObjectTransformStart,
           onTransformEnd: () => canvas.onObjectTransformEnd(obj),
-          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
-          onContextMenu: canvas.onObjectContextMenu
+          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref)
         } : {
           onDragEnd: e => canvas.handleDragEnd(obj, e),
           userId: canvas.userId
@@ -847,6 +845,7 @@ const CanvasPage = (props) => {
       draggable: true,
       onTop: obj.onTop,
       objectSnapping: canvas.objectSnapping,
+      onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
       onMouseMove: (e) => canvas.handleMouseOver(e, false),
@@ -927,7 +926,7 @@ const CanvasPage = (props) => {
   const positionRectProps = (canvas, stage) => {
     const page = canvas.state.pages[canvas.state.level - 1];
     const group = page.groupPositionRect;
-    const personal = page.personalPositionRect;
+    const personal = page.personalPositionRect[canvas.state.rolelevel];
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
@@ -940,6 +939,7 @@ const CanvasPage = (props) => {
     } else {
       positionRect = overlay;
     }
+    if (positionRect === undefined) return {};
     return {
       label: {
         text: `${Math.round(positionRect.w * positionRect.scaleX)} x ${Math.round(positionRect.h * positionRect.scaleY)}`,
@@ -972,7 +972,7 @@ const CanvasPage = (props) => {
         if (stage === "group") {
           newPage.groupPositionRect = newRect;
         } else if (stage === "personal") {
-          newPage.personalPositionRect = newRect;
+          newPage.personalPositionRect[canvas.state.rolelevel] = newRect;
         } else {
           newPage.overlays[overlayI].positionRect = newRect;
         }
@@ -1047,12 +1047,12 @@ const CanvasPage = (props) => {
         />;
       case "audios":
         return <URLVideo
-        defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
-        {...defaultObjProps(obj, canvas, editMode)}
-        {...audioProps(obj, canvas)}
-        {...canvas.getVariableProps()}
-        {...(editMode ? customObjProps(obj, canvas) : {})}
-      />;
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...audioProps(obj, canvas)}
+          {...canvas.getVariableProps()}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
+        />;
       case "documents":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
       case "triangles":
@@ -1145,7 +1145,7 @@ const CanvasPage = (props) => {
       return;
     }
     const group = page.groupPositionRect;
-    const personal = page.personalPositionRect;
+    const personal = page.personalPositionRect[canvas.state.rolelevel];
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
@@ -1215,7 +1215,7 @@ const CanvasPage = (props) => {
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
 
-            if (index !== 0 ) {
+            if (index !== 0) {
               const type = id.replace(/\d+$/, "");
               const obj = canvas.state[type].filter(obj => obj.id === id)[0];
 
@@ -1285,7 +1285,7 @@ const CanvasPage = (props) => {
                 return <Line {...guideProps(obj, index, canvas, editMode)} />
               })}
               {/* This is the stage container (positionRect) */}
-              {!(canvas.state.personalAreaOpen && !canvas.state.rolelevel) && (
+              {positionRect && (
                 <>
                   <Shape
                     sceneFunc={(ctx) => {

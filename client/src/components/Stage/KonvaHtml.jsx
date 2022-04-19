@@ -29,7 +29,8 @@ const KonvaHtml = ({
   defaultProps,
   visible,
   objectSnapping,
-  editMode
+  editMode,
+  onDragMove
 }) => {
 
   const groupRef = useRef(null);
@@ -133,13 +134,10 @@ const KonvaHtml = ({
       draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
       onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
-        console.log("DRAGGING");
         objectSnapping(groupRef.current, e);
+        onDragMove(e);
       }}
       onDragEnd={defaultProps.onDragEnd}
-      onContextMenu={(e) => {
-        defaultProps.onContextMenu(e);
-      }}
       customProps={defaultProps.custom}
       x={defaultProps.x}
       y={defaultProps.y}
@@ -155,6 +153,7 @@ const KonvaHtml = ({
       overlay={defaultProps.overlay}
     >
       <Rect
+        id={refName}
         ref={groupRef}
         visible={true}
         opacity={1}
