@@ -127,7 +127,6 @@ const InviteCollaboratorsModal = (props) => {
 
   const handleSendEmails = () => {
     setSending(true);
-    console.log(emails)
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/email/sendCollaboratorEmails', {
       emails,
       admin: user.name,

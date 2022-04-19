@@ -639,7 +639,6 @@ class Graphics extends Component {
       y = 89,
       r = 82;
     if (event.shiftKey && event.keyCode === r) {
-      console.log("HELLO");
       this.props.reCenter("play");
     } else if (event.altKey && event.keyCode === r) {
       // Print Info (FOR DEBUGGING)

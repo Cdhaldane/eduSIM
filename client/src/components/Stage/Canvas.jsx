@@ -1329,7 +1329,7 @@ class Graphics extends Component {
               }
             }
 
-            if (!alreadySelected) {
+            if (!alreadySelected) {  
               this.setState({
                 selectedShapeName: "",
                 groupSelection: [...this.state.groupSelection, clickShapeGroup]
@@ -1355,12 +1355,9 @@ class Graphics extends Component {
                 selectedShapeName: this.checkName(shape.id),
                 groupSelection: []
               }, this.handleObjectSelection);
-
-              if (event.changedTouches) {
-                this.onObjectContextMenu(event);
-              }
             }
           }
+          this.onObjectContextMenu(event);
         } else {
           const areaClicked = personalArea ? "personal" : (this.state.overlayOpen ? "overlay" : "group");
           let type;
@@ -1620,7 +1617,7 @@ class Graphics extends Component {
     }));
 
     this.setState({
-      selectedShapeName: this.state.groupSelection.length ? "" : ref,
+      selectedShapeName: this.state.groupSelection.length ? "" : this.state.selectedShapeName,
       guides: []
     }, this.handleObjectSelection);
 
@@ -1737,7 +1734,6 @@ class Graphics extends Component {
         : this.state.selectedShapeName,
       selectedContextMenu: null
     });
-    console.log(history)
   }
 
   getObjType = (name) => {
@@ -2506,35 +2502,8 @@ class Graphics extends Component {
       const groups = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < groups.length; i++) {
         const group = groups[i];
-        group.moveToBottom();
         if (group.attrs.id === id) {
           if (updateState) {
-            /*const elem = this.refs[id];
-            const style = window.getComputedStyle(elem);
-            const matrix = this.decomposeMatrix(new DOMMatrix(style.transform));
-            const x = matrix.translateX;
-            const y = matrix.translateY;
-            const width = elem.clientWidth;
-            const height = elem.clientHeight;
-
-            const paddingPercent = 0.05;
-            this.setState({
-              customRect: [{
-                ...this.state.customRect[0],
-                currentId: id,
-                x: x - ((width * paddingPercent) / 2),
-                y: y - ((height * paddingPercent) / 2)
-              }]
-            });
-
-            /*const sizeRect = this.refs.customRect;
-            sizeRect.attrs.currentId = id;
-            sizeRect.attrs.width = width * (1 + paddingPercent);
-            sizeRect.attrs.height = height * (1 + paddingPercent);
-            group.add(sizeRect);
-            group.moveToTop();*/
-
-            group.moveToTop();
             if (showTransformer) {
               this.setState({
                 selectedShapeName: id
@@ -3143,7 +3112,6 @@ class Graphics extends Component {
   }
 
   handleOverlayIcon = (img) => {
-    console.log(this.props)
     this.setState({
       overlayImage: img
     })

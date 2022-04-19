@@ -91,7 +91,6 @@ const CreateArea = (props) => {
           if(gameData) {
             let roles = JSON.parse(gameData).roles
             for(let i = 0; i < roles.length; i++){
-              console.log(roles[i])
               let data = {
                 gameinstanceid: res.data.gameinstanceid,
                 gamerole: roles[i].gamerole,
@@ -99,7 +98,6 @@ const CreateArea = (props) => {
                 roleDesc: roles[i].roleDesc,
               };
               axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
-                console.log(res)
               }).catch(error => {
                 console.error(error);
               });

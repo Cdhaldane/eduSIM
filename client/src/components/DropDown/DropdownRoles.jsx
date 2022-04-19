@@ -94,7 +94,7 @@ const DropdownRoles = (props) => {
     const className = e.target.className.baseVal ? e.target.className.baseVal : e.target.className;
     if (menuElem.current &&
       !menuElem.current.contains(e.target) &&
-      !className.startsWith("icon") &&
+      !className?.startsWith("icon") &&
       !confirmationVisibleRef.current &&
       activeMenu != 'main') {
       handleActiveMenuChange('main');

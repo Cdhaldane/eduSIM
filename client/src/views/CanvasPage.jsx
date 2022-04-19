@@ -559,7 +559,6 @@ const CanvasPage = (props) => {
   }
 
   const defaultObjProps = (obj, canvas, editMode) => {
-    //isSelected(obj.id, canvas)
     return {
       key: obj.id,
       visible: canvas.state.canvasLoading ? false :
@@ -587,8 +586,7 @@ const CanvasPage = (props) => {
           onClick: () => canvas.onObjectClick(obj),
           onTransformStart: canvas.onObjectTransformStart,
           onTransformEnd: () => canvas.onObjectTransformEnd(obj),
-          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
-          onContextMenu: canvas.onObjectContextMenu
+          onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref)
         } : {
           onDragEnd: e => canvas.handleDragEnd(obj, e),
           userId: canvas.userId
@@ -847,6 +845,7 @@ const CanvasPage = (props) => {
       draggable: true,
       onTop: obj.onTop,
       objectSnapping: canvas.objectSnapping,
+      onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
       onMouseMove: (e) => canvas.handleMouseOver(e, false),

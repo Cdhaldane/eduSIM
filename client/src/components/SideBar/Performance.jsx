@@ -132,7 +132,6 @@ const Performance = forwardRef((props, ref) => {
     if(timers){
       let list =[]
       var result = Object.keys(timers).map((key) => [Number(key), timers[key]]);
-      console.log(props)
       for(let i = 0; i < result.length; i++){
         let time = moment(moment().diff(moment(result[i][1].startTime - result[i][1].elapsedTime))).format('mm:ss.SS')
         list.push(<div className="performance-timers">{timerObjs[i].id} - Page:{timerObjs[i].level} {time}</div>)
