@@ -317,10 +317,9 @@ const DropdownEditObject = (props) => {
         list.push(
 
           <div className = "button-vars">
-          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState?.varName[i]} placeholder="variable"/>
+          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState.varName ? objState.varName[i] : ""} placeholder="variable"/>
           <h1>=</h1>
-        <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState?.varValue[i]}  placeholder="value"/>
-
+        <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState.varValue ? objState.varValue[i] : ""}  placeholder="value"/>
           </div>
       );
     }
@@ -417,7 +416,6 @@ const DropdownEditObject = (props) => {
       (tab === "stroke" ? objState.style.borderColor : objState.style.color));
     setInputCurrentOptions(tab);
   }
-  console.log(objState)
   if (!loading) {
     if (props.title === "shape") {
       /* Edit a Shape Object */

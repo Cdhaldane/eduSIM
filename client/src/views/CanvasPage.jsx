@@ -1149,6 +1149,7 @@ const CanvasPage = (props) => {
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
+
     const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
     let positionRect = null;
     if (stage === "group") {

@@ -3,6 +3,7 @@ import helmet from 'helmet';
 
 import routes from './routes';
 import events from './events';
+import clean from './routes/dbCleanup'
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -47,6 +48,7 @@ io.on("connection", (socket) => events(io, socket));
 
 
 httpServer.listen(PORT, () => {
+
   console.log(`Server listening on portt ${PORT}!`);
 });
 
