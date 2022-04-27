@@ -2842,9 +2842,9 @@ class Graphics extends Component {
         (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const customObjs = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
-        const id = customObjs[i].attrs.id;
+        const id = customObjs[i].children[0].attrs.id;
         if (id === obj.id) {
-          object = customObjs[i];
+          object = customObjs[i].children[0];
           break;
         }
       }
