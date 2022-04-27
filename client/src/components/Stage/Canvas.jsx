@@ -1329,7 +1329,7 @@ class Graphics extends Component {
               }
             }
 
-            if (!alreadySelected) {  
+            if (!alreadySelected) {
               this.setState({
                 selectedShapeName: "",
                 groupSelection: [...this.state.groupSelection, clickShapeGroup]
@@ -2106,45 +2106,43 @@ class Graphics extends Component {
 
   // Stroke Width
   handleWidth = (e) => {
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const objType = this.savedObjects[i];
-      const objects = this.state[objType];
-      if (Array.isArray(objects) && objects.length) {
-        objects.forEach((object) => {
-          if (object.strokeWidth !== null && object.id === this.state.selectedShapeName) {
-            const index = objects.map(object => object.name).indexOf(this.state.selectedShapeName);
-            const newObjs = [
-              ...objects.slice(0, index),
-              ...objects.slice(index + 1)
-            ];
-            this.setState({
-              [objType]: [...newObjs, { ...object, strokeWidth: e }]
-            });
-          }
-        });
-      }
+    const objType = this.getObjType(this.state.selectedShapeName);
+    const objects = JSON.parse(JSON.stringify(this.state[objType]));
+    if (Array.isArray(objects) && objects.length) {
+      objects.forEach((object) => {
+        if (object.id === this.state.selectedShapeName) {
+          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
+          this.setState(prevState => {
+            const objects = JSON.parse(JSON.stringify(prevState[objType]));
+            objects.splice(index, 1);
+            return {
+              ...prevState,
+              [objType]: objects.concat({ ...object, strokeWidth: e })
+            }
+          });
+        }
+      });
     }
   }
 
   // Object Opacity
   handleOpacity = (e) => {
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const objType = this.savedObjects[i];
-      const objects = this.state[objType];
-      if (Array.isArray(objects) && objects.length) {
-        objects.forEach((object) => {
-          if (object.id === this.state.selectedShapeName) {
-            const index = objects.map(object => object.name).indexOf(this.state.selectedShapeName);
-            const newObjs = [
-              ...objects.slice(0, index),
-              ...objects.slice(index + 1)
-            ];
-            this.setState({
-              [objType]: [...newObjs, { ...object, opacity: e }]
-            });
-          }
-        });
-      }
+    const objType = this.getObjType(this.state.selectedShapeName);
+    const objects = JSON.parse(JSON.stringify(this.state[objType]));
+    if (Array.isArray(objects) && objects.length) {
+      objects.forEach((object) => {
+        if (object.id === this.state.selectedShapeName) {
+          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
+          this.setState(prevState => {
+            const objects = JSON.parse(JSON.stringify(prevState[objType]));
+            objects.splice(index, 1);
+            return {
+              ...prevState,
+              [objType]: objects.concat({ ...object, opacity: e })
+            }
+          });
+        }
+      });
     }
   }
 
