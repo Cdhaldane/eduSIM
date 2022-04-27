@@ -605,6 +605,18 @@ a {
   opacity: 0.5;
   margin-top: -10px !important;
 }
+.condition{
+  float: right !important;
+  width: 40px !important;
+  width: 45% !important;
+}
+.conditions{
+  margin-bottom: 5px;
+}
+.larger {
+  width: 45% !important;
+  margin-right: 5px !important;
+}
 .math:hover{
   position: absolute;
   height: 50px !important;
