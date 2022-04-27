@@ -1930,8 +1930,9 @@ class Graphics extends Component {
 
     // Remove from layers
     const layers = [...this.getLayers()];
-    const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
-    const newLayers = layers.filter(layer => !delIds.includes(layer));
+    console.log(toDelete);
+    //const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
+    const newLayers = layers.filter(layer => !toDelete.includes(layer));
     this.setLayers(newLayers);
 
     // Get a list of the affected types
@@ -1940,7 +1941,7 @@ class Graphics extends Component {
       if (!toDelete[i].attrs) {
         //this.refs.customRectCanvas.add(this.refs.customRect);
       }
-      affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
+      affectedTypes.push(this.getObjType(toDelete[i]));
     }
     affectedTypes = [...new Set(affectedTypes)];
 
@@ -1950,8 +1951,8 @@ class Graphics extends Component {
       const type = affectedTypes[i];
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
-        if (this.getObjType(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name) === type) {
-          toDeleteOfType.push(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name);
+        if (this.getObjType(toDelete[j]) === type) {
+          toDeleteOfType.push(toDelete[j]);
         }
       }
       let objs = [...this.state[type]];
