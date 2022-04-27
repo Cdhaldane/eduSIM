@@ -452,8 +452,9 @@ a {
 .gamemode i {
   position: relative;
   top: 4px !important;
-  left: 0px !important;
+  left: -10px !important;
 }
+
 
 /* CSSTransition classes  */
 
@@ -604,6 +605,18 @@ a {
   text-align: left !important;
   opacity: 0.5;
   margin-top: -10px !important;
+}
+.condition{
+  float: right !important;
+  width: 40px !important;
+  width: 45% !important;
+}
+.conditions{
+  margin-bottom: 5px;
+}
+.larger {
+  width: 45% !important;
+  margin-right: 5px !important;
 }
 .math:hover{
   position: absolute;

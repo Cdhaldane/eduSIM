@@ -134,8 +134,8 @@ const KonvaHtml = ({
       draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
       onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
-        objectSnapping(groupRef.current, e);
-        onDragMove(e);
+        // objectSnapping(groupRef.current, e);
+        // onDragMove(e);
       }}
       onDragEnd={defaultProps.onDragEnd}
       customProps={defaultProps.custom}

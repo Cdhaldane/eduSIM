@@ -10,11 +10,11 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-
   const { settings } = useContext(SettingsContext);
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;
   const [number, setNum] = useState(0)
+  const [stat, setStat] = useState(0)
   const [updater, setUpdater] = useState(0)
   const random = useState(props.random)
 
@@ -122,13 +122,13 @@ const Input = forwardRef((props, ref) => {
     let sessionVars = JSON.parse(sessionStorage.gameVars)
     let num = "NA";
     let math = (props.math ? props.math : 0)
-    let one, two;
+    let one, two, con;
     if(!props.sync){
-       one = parseInt(sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
-       two = parseInt(sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
+       one = (sessionVars[props.varOne] ? sessionVars[props.varOne] : 0)
+       two = (sessionVars[props.varTwo] ? sessionVars[props.varTwo] : 0)
     }  else {
-       one = parseInt(props.variables[props.varOne] ? props.variables[props.varOne] : 0)
-       two = parseInt(props.variables[props.varTwo] ? props.variables[props.varTwo] : 0)
+       one = (props.variables[props.varOne] ? props.variables[props.varOne] : 0)
+       two = (props.variables[props.varTwo] ? props.variables[props.varTwo] : 0)
     }
 
     if(parseInt(props.varOne)){
@@ -139,6 +139,10 @@ const Input = forwardRef((props, ref) => {
     if(props.varTwo === "Random" && num !==number){
         two = parseFloat(random)
     }
+    if(props.varOne === "true" || props.varOne === "false"){
+      one = props.varOne;
+    }
+
     if(math === "add"){
       num = one + two;
     } else if (math === "subtract") {
@@ -147,19 +151,52 @@ const Input = forwardRef((props, ref) => {
       num = one / two
     } else if (math === "multiply") {
       num = one * two
+    } else if (math === 0){
+      num = one
     }
 
-    if(num!==number){
-      num = Math.round(num * 100) / 100
-      setNum(num)
-      if(props.variables[props.varName] !== num && props.varName && num){
-        handleChangeValue(num)
+    if(props.conditional === true){
+      let arr = [];
+      let numberArray = [];
+      for(let i = 0; i < props.conditionAmount; i++){
+        if(props.sync){
+          arr.push(props.variables[props.varCon[i]])
+        }
+      }
+      for (var i = 0; i < props.conEquals.length; i++){
+        numberArray.push(props.conEquals[i]);
+      }
+      arr = arr.map(String)
+      numberArray = numberArray.map(String)
+      let check = _.isEqual(arr, numberArray)
+      if(check){
+        setStat("True")
+        con = "True"
+      } else {
+        setStat("False")
+        con = "False"
+      }
+      if(props.variables[props.varName] !== con && props.varName && con){
+        handleChangeValue(con)
+      }
+    } else {
+      if(num!==number){
+        if(num.isInteger) {num = Math.round(num * 100) / 100}
+        setNum(num)
+        if(props.variables[props.varName] !== num && props.varName && num){
+          handleChangeValue(num)
+        }
       }
     }
-  }
+}
 }, [props.variables])
 
-
+const sameMembers = (arr1, arr2) => {
+    const set1 = new Set(arr1);
+    const set2 = new Set(arr2);
+    return arr1.every(item => set2.has(item)) &&
+        arr2.every(item => set1.has(item))
+}
 
 
 
@@ -215,7 +252,7 @@ const Input = forwardRef((props, ref) => {
           variable: (
             <div className={"input-var" + (props.editMode) + " " + props.visible} >
               <div className="var-output" style={{...props.style}} >
-                <p className="variable-dsplay" key={number}>{number}</p>
+                <p className="variable-dsplay" key={number}>{props?.conditional ? (<div>{stat}</div>) : (<div>{number}</div>) }</p>
               </div>
             </div>
           )

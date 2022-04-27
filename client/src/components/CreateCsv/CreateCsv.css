@@ -12,6 +12,7 @@
   position: relative;
   z-index: 20000;
   border-radius: 30px;
+  opacity: 100% !important;
 }
 
 
@@ -219,6 +220,11 @@
   margin-bottom: 100px;
   vertical-align: middle;
 }
+#rolesdrops i {
+  position: relative;
+  bottom: 4px !important;
+  right: 2
+}
 .role-title{
   position: relative;
   top: 6px;
@@ -230,8 +236,6 @@
 
 }
 .modal-role-select > #rolesdrops {
-
-
 
 }
 .modal-role-select > #rolesdrops > span {

@@ -261,7 +261,7 @@ const Sidebar = (props) => {
       icon: "control",
       id: "variables",
       label: t("sidebar.variables"),
-      visible: props.game ? false : true,
+      visible: props.game ? false : false,
       submenu: (
         <Variables
           editpage={!props.game}

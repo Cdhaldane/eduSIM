@@ -267,7 +267,12 @@ const Level = (props) => {
                     ${count - 1 >= num ? 'level-bar-dot-fill' : ''}
                     ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
-                  `} onClick={() => handleLevel(num + 1)}>
+                  `} onClick={() => {
+                    if(!props.freeAdvance){
+                      handleLevel(num + 1)
+                    }
+                  }
+                  }>
                     {props.number > num ? (
                       <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
                     ) : <i className="lni lni-checkmark-circle"></i>}

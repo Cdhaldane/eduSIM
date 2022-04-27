@@ -3,6 +3,7 @@ import helmet from 'helmet';
 
 import routes from './routes';
 import events from './events';
+import clean from './routes/dbCleanup'
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -17,9 +18,11 @@ const PORT = process.env.PORT || 5050;
 const app = express();
 app.use(cors()); // Use this after the variable declaration
 app.use(helmet());
-app.use(express.json()); //-> allows us to access the req.body
-app.use(express.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({ limit: '50mb',
+  parameterLimit: 100000,
+  extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(fileUpload());
 
 app.use('/api/gameinstances', routes.gameinstance);
@@ -47,6 +50,7 @@ io.on("connection", (socket) => events(io, socket));
 
 
 httpServer.listen(PORT, () => {
+
   console.log(`Server listening on portt ${PORT}!`);
 });
 

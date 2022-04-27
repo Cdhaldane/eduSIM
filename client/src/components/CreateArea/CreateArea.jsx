@@ -215,7 +215,7 @@ const CreateArea = (props) => {
             onChange={handleChange}
             value={title}
             placeholder=""
-            maxLength="13"
+            maxLength="25"
           />
         </div>
         <div className="gradient-border">

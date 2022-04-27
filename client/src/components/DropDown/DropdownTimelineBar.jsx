@@ -6,6 +6,7 @@ import debounce from 'lodash.debounce';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../Alerts/AlertContext";
+import ReactTooltip from "react-tooltip";
 
 import "./Dropdown.css";
 
@@ -35,9 +36,6 @@ const DropdownTimelineBar = (props) => {
   const MAX_OVERLAY_NUM = 6;
 
   const [copy, setCopy] = useState(-1);
-
-
-
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [modifyPageName, setModifyPageName] = useState("");
   const [newPageName, setNewPageName] = useState("");
@@ -137,13 +135,18 @@ const DropdownTimelineBar = (props) => {
     <div className="icons-right">
       {/* EDIT PAGE TITLE */}
       <span className="icon-button" onClick={() => handleModifyPage(index)}>
-        <i><Pencil className="icon timeline-roles"/></i>
+        <i data-tip data-for="edit"><Pencil className="icon timeline-roles"/></i>
       </span>
-
+      <ReactTooltip id="edit">
+       <span>Edit</span>
+      </ReactTooltip>
       {/* PAGE SETTINGS */}
-      <span className="icon-button" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
+      <span className="icon-button" data-tip data-for="settings" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
         <i><Cog className="icon timeline-roles"/></i>
       </span>
+      <ReactTooltip id="settings">
+       <span>Settings</span>
+      </ReactTooltip>
 
       {/* COPY PAGE */}
       <span
@@ -170,7 +173,10 @@ const DropdownTimelineBar = (props) => {
           }
         }}
       >
-        <i><Scroll className="icon timeline-roles"/></i>
+        <i data-tip data-for="copy"><Scroll className="icon timeline-roles"/></i>
+        <ReactTooltip id="copy">
+           <span>Copy</span>
+        </ReactTooltip>
       </span>
 
       {/* MOVE PAGE UP */}
@@ -202,7 +208,10 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i><Up className="icon timeline-roles chevron"/></i>
+        <i data-tip data-for="up"><Up className="icon timeline-roles chevron"/></i>
+        <ReactTooltip id="up">
+           <span>Move Up</span>
+        </ReactTooltip>
       </span>
 
       {/* MOVE PAGE DOWN */}
@@ -234,7 +243,10 @@ const DropdownTimelineBar = (props) => {
             }, 0);
           }
         }}>
-        <i><Down className="icon timeline-roles chevron"/></i>
+        <i data-tip data-for="down"><Down className="icon timeline-roles chevron"/></i>
+        <ReactTooltip id="down">
+           <span>Move Down</span>
+        </ReactTooltip>
       </span>
     </div>
   );
@@ -325,7 +337,10 @@ const DropdownTimelineBar = (props) => {
                             filter: `${index === 0 && props.pages.length === 1 ? "saturate(0)" : "none"}`
                           }}
                         >
-                          <i><Trash className="icon timeline-roles"/></i>
+                          <i data-tip data-for="delete" ><Trash className="icon timeline-roles"/></i>
+                          <ReactTooltip id="delete">
+                             <span>Delete</span>
+                          </ReactTooltip>
                         </span>
                         {`${page.name}`}
                         {editBtns(page, index)}
@@ -354,8 +369,11 @@ const DropdownTimelineBar = (props) => {
                 setNewPageName("");
                 setNumOfPages(numOfPages + 1);
               }}>
-                <i><Plus className="icon timeline-roles"/></i>
+              <i data-tip data-for="add"><Plus className="icon timeline-roles"/></i>
               </span>
+              <ReactTooltip id="add">
+                 <span>Add</span>
+              </ReactTooltip>
               <input
                 className="add-dropdown-item-input"
                 type="text"
@@ -419,8 +437,11 @@ const DropdownTimelineBar = (props) => {
                           (pages[currentSettingsIndex].overlays.length >= MAX_OVERLAY_NUM ? "saturate(0)" : "none") : "none"
                       }}
                     >
-                      <i><Plus className="icon timeline-roles"/></i>
+                      <i data-tip data-for="add"><Plus className="icon timeline-roles"/></i>
                     </span>
+                    <ReactTooltip id="add">
+                       <span>Add</span>
+                    </ReactTooltip>
                   </div>
                 </div>
                 <div>

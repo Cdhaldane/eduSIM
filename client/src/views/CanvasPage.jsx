@@ -870,15 +870,20 @@ const CanvasPage = (props) => {
     varName: obj.varName,
     varValue: obj.varValue,
     varOne: obj.varOne,
+    conEquals: obj.conEquals,
     varTwo: obj.varTwo,
     math: obj.math,
     amount: obj.amount,
     variableAmount: obj.variableAmount,
+    conditionAmount: obj.conditionAmount,
+    varCon: obj.varCon,
     incr: obj.incr,
     radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
-    sync: obj.sync
+    sync: obj.sync,
+    conditional: obj.conditional
+
   })
 
   const timerProps = (obj, canvas, editMode) => ({
@@ -1149,6 +1154,7 @@ const CanvasPage = (props) => {
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
+
     const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
     let positionRect = null;
     if (stage === "group") {
@@ -1291,7 +1297,7 @@ const CanvasPage = (props) => {
                     sceneFunc={(ctx) => {
                       // Make background
                       ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-                      ctx.fillRect(canvasX, canvasY, canvasH, canvasW);
+                      ctx.fillRect(canvasX+100000, canvasY, canvasH, canvasW);
 
                       // Make the hole
                       ctx.clearRect(
