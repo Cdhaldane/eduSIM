@@ -1178,6 +1178,7 @@ const CanvasPage = (props) => {
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
+    const newObjIds = JSON.parse(JSON.stringify(objectIds));
     // Put top layer custom objects last in list to correct render order
     objectIds.forEach(id => {
       if (Array.isArray(id)) {
@@ -1187,11 +1188,12 @@ const CanvasPage = (props) => {
       if (customObjects.includes(type)) {
         const obj = canvas.state[type].filter(obj => obj.id === id)[0];
         if (obj.onTop) {
-          objectIds.splice(objectIds.indexOf(id), 1);
-          objectIds.push(id);
+          newObjIds.splice(newObjIds.indexOf(id), 1);
+          newObjIds.push(id);
         }
       }
     });
+    objectIds = newObjIds;
 
     return (
       <>
