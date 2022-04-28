@@ -127,10 +127,12 @@ const KonvaHtml = ({
     div.style.opacity = visible ? "1" : "0";
   }, [visible]);
 
+  console.log(defaultProps.isDraggable);
+
   return (
     <Group
       id={refName}
-      draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
+      draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : false}
       onDragMove={(e) => {
         objectSnapping(groupRef.current, e);
         onDragMove(e);
