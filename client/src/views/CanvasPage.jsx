@@ -1187,7 +1187,7 @@ const CanvasPage = (props) => {
       const type = id.replace(/\d+$/, "");
       if (customObjects.includes(type)) {
         const obj = canvas.state[type].filter(obj => obj.id === id)[0];
-        if (obj.onTop) {
+        if (obj && obj.onTop) {
           newObjIds.splice(newObjIds.indexOf(id), 1);
           newObjIds.push(id);
         }

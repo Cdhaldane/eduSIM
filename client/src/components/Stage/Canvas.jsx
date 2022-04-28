@@ -1737,6 +1737,9 @@ class Graphics extends Component {
   }
 
   getObjType = (name) => {
+    if (typeof name !== 'string') {
+      name = name.dataset ? name.dataset.name : name.attrs.id;
+    }
     return name.replace(/\d+$/, "");
   }
 
@@ -1951,7 +1954,7 @@ class Graphics extends Component {
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
         if (this.getObjType(toDelete[j]) === type) {
-          toDeleteOfType.push(toDelete[j]);
+          toDeleteOfType.push(toDelete[j]?.dataset ? toDelete[j].dataset.name : toDelete[j].attrs.id);
         }
       }
       let objs = [...this.state[type]];

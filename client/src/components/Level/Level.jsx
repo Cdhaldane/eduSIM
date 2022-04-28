@@ -64,7 +64,7 @@ const Level = (props) => {
 
   const handleLevel = (e) => {
     let closeOverlay = null;
-    if (props.page) {
+    if (props?.page?.overlays) {
       for (let i = 0; i < props.page.overlays.length; i++) {
         if (props.page.overlays[i].overlayOpenOption === "pageExit") {
           closeOverlay = props.page.overlays[i];
