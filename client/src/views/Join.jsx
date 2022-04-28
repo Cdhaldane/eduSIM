@@ -122,7 +122,6 @@ const Join = (props) => {
         });
       });
       client.on("message", (data) => {
-        console.log(data)
         if(data.sender.name === undefined){
           data.sender.name="Admin";
         }

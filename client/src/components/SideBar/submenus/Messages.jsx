@@ -108,7 +108,6 @@ const Messages = (props) => {
   }, [props.messageBacklog]);
 
   const sendMessage = (event) => {
-    console.log(Object.values(sendGroup))
     event.preventDefault();
     if (!messageInput) {
       return false;

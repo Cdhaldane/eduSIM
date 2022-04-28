@@ -1930,7 +1930,6 @@ class Graphics extends Component {
 
     // Remove from layers
     const layers = [...this.getLayers()];
-    console.log(toDelete);
     //const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
     const newLayers = layers.filter(layer => !toDelete.includes(layer));
     this.setLayers(newLayers);
@@ -2829,25 +2828,25 @@ class Graphics extends Component {
   }
 
   onObjectTransformEnd = (obj) => {
-    this.setState({ isTransforming: false });
+    this.setState({
+      isTransforming: false
+    });
+
     const custom = this.customObjects.includes(this.getObjType(obj.id));
+    const type = this.getObjType(obj.id);
     let object = null;
-    let type = null;
     if (!custom) {
       object = this.refs[obj.ref];
-      type = this.getObjType(object.attrs.id);
     } else {
-      const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" : (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const customObjs = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
-        const id = customObjs[i].children[0].attrs.id;
+        const id = customObjs[i].attrs.id;
         if (id === obj.id) {
           object = customObjs[i].children[0];
           break;
         }
       }
-      type = this.getObjType(obj.id);
     }
 
     let transformOptions = {};
@@ -2887,7 +2886,7 @@ class Graphics extends Component {
         break;
     }
 
-    if (this.customObjects.includes(type)) {
+    if (custom) {
       transformOptions = {
         scaleX: object.scaleX(),
         scaleY: object.scaleY()
@@ -2902,13 +2901,18 @@ class Graphics extends Component {
               ...o,
               ...transformOptions,
               rotation: object.rotation(),
-              x: object.x(),
-              y: object.y(),
+              x: object.x() + (custom ? obj.x : 0),
+              y: object.y() + (custom ? obj.y : 0)
             }
             : o
         )
       })
     );
+
+    if (custom) {
+      object.x(0);
+      object.y(0);
+    }
 
     if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);

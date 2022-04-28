@@ -1200,7 +1200,7 @@ const CanvasPage = (props) => {
 
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-          {/*
+          {
             <Ellipse
               fill={"red"}
               x={0}
@@ -1210,7 +1210,7 @@ const CanvasPage = (props) => {
                 y: 10
               }}
             />
-          */}
+          }
 
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
