@@ -1178,6 +1178,21 @@ const CanvasPage = (props) => {
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
 
+    // Put top layer custom objects last in list to correct render order
+    objectIds.forEach(id => {
+      if (Array.isArray(id)) {
+        return;
+      }
+      const type = id.replace(/\d+$/, "");
+      if (customObjects.includes(type)) {
+        const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+        if (obj.onTop) {
+          objectIds.splice(objectIds.indexOf(id), 1);
+          objectIds.push(id);
+        }
+      }
+    });
+
     return (
       <>
         <Layer {...layerProps(canvas, stage, "objects")}>
@@ -1200,7 +1215,7 @@ const CanvasPage = (props) => {
 
 
           {/* Puts a red circle at the origin (0, 0) - FOR DEBUGGING */}
-          {
+          {/*
             <Ellipse
               fill={"red"}
               x={0}
@@ -1210,7 +1225,7 @@ const CanvasPage = (props) => {
                 y: 10
               }}
             />
-          }
+            */}
 
           {/* Render the objects in the layer */}
           {objectIds.map((id, index) => {
