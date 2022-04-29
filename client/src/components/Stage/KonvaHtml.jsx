@@ -130,21 +130,16 @@ const KonvaHtml = ({
   return (
     <Group
       id={refName}
-      name={"customObj"}
       draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
-      onTransformEnd={defaultProps.onTransformEnd}
       onDragMove={(e) => {
         // objectSnapping(groupRef.current, e);
         // onDragMove(e);
       }}
       onDragEnd={defaultProps.onDragEnd}
-      customProps={defaultProps.custom}
       x={defaultProps.x}
       y={defaultProps.y}
       visible={visible}
       rotation={defaultProps.rotation}
-      scaleX={defaultProps.scaleX}
-      scaleY={defaultProps.scaleY}
       offsetX={0}
       offsetY={0}
       skewX={0}
@@ -161,11 +156,13 @@ const KonvaHtml = ({
         height={rectHeight}
         x={0}
         y={0}
+        customProps={defaultProps.custom}
         /*onClick={defaultProps.onClick}*/
         onTransformStart={defaultProps.onTransformStart}
         onTransformEnd={defaultProps.onTransformEnd}
-        onDragMove={defaultProps.onDragMove}
-        onDragEnd={defaultProps.onDragEnd}
+        scaleX={defaultProps.scaleX}
+        scaleY={defaultProps.scaleY}
+        name={"customObj"}
       /*currentId={this.state.customRect[0].currentId}
       width={this.state.customRect[0].width}
       height={this.state.customRect[0].height}
