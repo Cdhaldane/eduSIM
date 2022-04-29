@@ -832,28 +832,7 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.media.addVideo")}</h2>
           </DropdownItem>
 
-          <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
-            <DropdownItem
-              leftIcon={
-                !videoUploading ? (
 
-                  <i  onClick={(e) => {
-
-                    if (videoUploaded) {
-                      addVideo(e);
-                    }
-                  }} ><i><Plus className="icon add-icons"/></i></i>
-                ) : (
-                  <div className="loadingMediaAddMenuContainer">
-                    <Loading />
-                  </div>
-                )
-              }>
-              <button type="button" className="add-media-button" onClick={() => openWidget("tj5ptxi8")} >
-                {t("modal.imageFromFile")}
-              </button>
-            </DropdownItem>
-          </div>
 
           <div className={`${validVideoURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
@@ -1036,3 +1015,27 @@ const DropdownAddObjects = (props) => {
 }
 
 export default DropdownAddObjects;
+
+// <div className={`${videoUploaded ? "" : "dropdown-add-disabled"}`}>
+//   <DropdownItem
+//     leftIcon={
+//       !videoUploading ? (
+//
+//         <i  onClick={(e) => {
+//
+//           if (videoUploaded) {
+//             addVideo(e);
+//           }
+//         }} ><i><Plus className="icon add-icons"/></i></i>
+//       ) : (
+//         <div className="loadingMediaAddMenuContainer">
+//           <Loading />
+//         </div>
+//       )
+//     }>
+//     <button type="button" className="add-media-button" onClick={() => openWidget("tj5ptxi8")} >
+//       {t("modal.imageFromFile")}
+//     </button>
+//   </DropdownItem>
+// </div>
+//

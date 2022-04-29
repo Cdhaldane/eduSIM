@@ -648,6 +648,7 @@ const Tabs = (props) => {
                     status={props.roomStatus[Object.keys(props.roomStatus)[0]]
                       ? props.roomStatus[Object.keys(props.roomStatus)[0]].gamepieces : {}}
                     customObjs={customObjs}
+                    gameMode={false}
                   />
                 </div>
               </div>

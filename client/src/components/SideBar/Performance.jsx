@@ -345,7 +345,7 @@ const Performance = forwardRef((props, ref) => {
               </div>
             </div>
           )}
-          {!props.setData && (
+          {!props.setData && props.gameMode && (
             <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
               <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
               <div>
