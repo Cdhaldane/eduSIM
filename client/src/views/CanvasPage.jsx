@@ -892,7 +892,8 @@ const CanvasPage = (props) => {
     varEnable: obj.varEnable,
     refresh: canvas.refresh,
     invisible: obj.invisible && !editMode,
-    controls: obj.controls
+    controls: obj.controls,
+    sync: obj.sync,
   });
 
   const layerProps = (canvas, stage, id) => ({

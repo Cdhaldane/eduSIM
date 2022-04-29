@@ -743,6 +743,10 @@ const DropdownEditObject = (props) => {
                 <input type="checkbox" checked={!!objState?.timeLimit} onChange={() => handleTimeLimit(!objState?.timeLimit ? 60 : null)} />
                 <p>{t("edit.timerCountDown")}</p>
               </div>
+              <div className="htmliframeinput">
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <p>{t("edit.variableSync")}</p>
+              </div>
               {!!objState?.timeLimit && (
                 <>
                   <p>{t("edit.timeLimitSeconds")}</p>

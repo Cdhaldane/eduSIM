@@ -22,12 +22,9 @@ const Chat = ({ location }) => {
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
-
     socket = io(ENDPOINT);
-
     setRoom(room);
     setName(name);
-
     socket.emit('join', { name, room }, (error) => {
       if (error) {
         alert(error);
@@ -47,7 +44,6 @@ const Chat = ({ location }) => {
 
   const sendMessage = (event) => {
     event.preventDefault();
-
     if (message) {
       socket.emit('sendMessage', message, () => setMessage(''));
     }

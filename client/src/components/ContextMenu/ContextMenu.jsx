@@ -79,11 +79,9 @@ const ContextMenu = (props) => {
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('contextmenu', handleRightClick);
-
     const offset = calcOutOfBounds(props.position.x, props.position.y);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);
-
     setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
     if (!props.selectedShapeName == "") {
       setContextMenuTitle();

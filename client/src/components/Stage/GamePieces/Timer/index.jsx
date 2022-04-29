@@ -49,6 +49,7 @@ const TimerContainer = styled.div`
 `;
 
 const Timer = forwardRef((props, ref) => {
+  console.log(props)
   const limit = props.timeLimit;
 
   const [running, setRunning] = useState(false);
@@ -141,6 +142,9 @@ const Timer = forwardRef((props, ref) => {
   }
 
   const updateValue = (value) => {
+    if (props.sync && props.updateVariable) {
+      props.updateVariable(props.varName, value)
+    } else {
     if (props.varName) {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -151,6 +155,7 @@ const Timer = forwardRef((props, ref) => {
       sessionStorage.setItem('lastSetVar', props.varName);
       if (props.refresh) props.refresh();
     }
+  }
   }
 
   useEffect(() => {
