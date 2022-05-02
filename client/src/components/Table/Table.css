@@ -23,28 +23,27 @@
   padding-left: 0px;
 
 }
-.app-container th:first-child{
-  width: 10% !important;
+.app-container th:nth-child(1){
+  width: 7% !important;
 }
-.app-container th:nth-child(4){
-  padding-left: 1%;
-}
-.app-container td:nth-child(4){
-  padding-left: 1%;
-}
-.app-container td:nth-child(5){
-  
+.app-container th:nth-child(2){
+  width: 17.75% !important;
 }
 .app-container th:nth-child(3){
-  padding-left: 2%;
+  width: 17% !important;
 }
-.app-container td:nth-child(3){
-  padding-left: 2%;
+.app-container th:nth-child(4){
+  width: 22% !important;
 }
+.app-container th:nth-child(5){
+  width: 17.5% !important;
+}
+
 .app-container th {
   border-bottom: 1px solid var(--text-color);
-  opacity: 0.5;
+  opacity: 0.9;
 }
+
 .app-container td:first-child{
   text-align: right;
   padding-right: 1.4vw;
@@ -154,11 +153,6 @@
   font-family: inherit;
   height: 90% !important;
 }
-.invisible{
-  opacity: 0%;
-  width: 40%;
-}
-
 
 .add-student-b{
   width: 80% !important;
@@ -233,6 +227,12 @@
   padding: 0px;
   border-bottom: 1.1px solid var(--text-color);
 }
+
+.table-el tr {
+  padding: 0px;
+  border-bottom: 1.1px solid var(--text-color);
+}
+
 .table-checkrow {
   background-color: transparent !important;
   padding: 0px;

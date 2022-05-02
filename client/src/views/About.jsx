@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 
 const About = (props) => {
-  console.log(localStorage)
   const { t } = useTranslation();
 
   return (

@@ -11,7 +11,6 @@ const URLVideo = forwardRef((props, ref) => {
 
   const handlePlay = () => {
     setPlaying(!playing)
-    console.log(playing)
   }
 
   return (

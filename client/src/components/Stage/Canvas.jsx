@@ -1329,7 +1329,7 @@ class Graphics extends Component {
               }
             }
 
-            if (!alreadySelected) {  
+            if (!alreadySelected) {
               this.setState({
                 selectedShapeName: "",
                 groupSelection: [...this.state.groupSelection, clickShapeGroup]
@@ -1737,6 +1737,9 @@ class Graphics extends Component {
   }
 
   getObjType = (name) => {
+    if (typeof name !== 'string') {
+      name = name.dataset ? name.dataset.name : name.attrs.id;
+    }
     return name.replace(/\d+$/, "");
   }
 
@@ -1930,8 +1933,8 @@ class Graphics extends Component {
 
     // Remove from layers
     const layers = [...this.getLayers()];
-    const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
-    const newLayers = layers.filter(layer => !delIds.includes(layer));
+    //const delIds = toDelete.map(obj => obj.attrs ? obj.attrs.id : obj.dataset.name);
+    const newLayers = layers.filter(layer => !toDelete.includes(layer));
     this.setLayers(newLayers);
 
     // Get a list of the affected types
@@ -1940,7 +1943,7 @@ class Graphics extends Component {
       if (!toDelete[i].attrs) {
         //this.refs.customRectCanvas.add(this.refs.customRect);
       }
-      affectedTypes.push(this.getObjType(toDelete[i].attrs ? toDelete[i].attrs.id : toDelete[i].dataset.name));
+      affectedTypes.push(this.getObjType(toDelete[i]));
     }
     affectedTypes = [...new Set(affectedTypes)];
 
@@ -1950,8 +1953,8 @@ class Graphics extends Component {
       const type = affectedTypes[i];
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
-        if (this.getObjType(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name) === type) {
-          toDeleteOfType.push(toDelete[j].attrs ? toDelete[j].attrs.id : toDelete[j].dataset.name);
+        if (this.getObjType(toDelete[j]) === type) {
+          toDeleteOfType.push(toDelete[j]?.dataset ? toDelete[j].dataset.name : toDelete[j].attrs.id);
         }
       }
       let objs = [...this.state[type]];
@@ -2106,45 +2109,43 @@ class Graphics extends Component {
 
   // Stroke Width
   handleWidth = (e) => {
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const objType = this.savedObjects[i];
-      const objects = this.state[objType];
-      if (Array.isArray(objects) && objects.length) {
-        objects.forEach((object) => {
-          if (object.strokeWidth !== null && object.id === this.state.selectedShapeName) {
-            const index = objects.map(object => object.name).indexOf(this.state.selectedShapeName);
-            const newObjs = [
-              ...objects.slice(0, index),
-              ...objects.slice(index + 1)
-            ];
-            this.setState({
-              [objType]: [...newObjs, { ...object, strokeWidth: e }]
-            });
-          }
-        });
-      }
+    const objType = this.getObjType(this.state.selectedShapeName);
+    const objects = JSON.parse(JSON.stringify(this.state[objType]));
+    if (Array.isArray(objects) && objects.length) {
+      objects.forEach((object) => {
+        if (object.id === this.state.selectedShapeName) {
+          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
+          this.setState(prevState => {
+            const objects = JSON.parse(JSON.stringify(prevState[objType]));
+            objects.splice(index, 1);
+            return {
+              ...prevState,
+              [objType]: objects.concat({ ...object, strokeWidth: e })
+            }
+          });
+        }
+      });
     }
   }
 
   // Object Opacity
   handleOpacity = (e) => {
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      const objType = this.savedObjects[i];
-      const objects = this.state[objType];
-      if (Array.isArray(objects) && objects.length) {
-        objects.forEach((object) => {
-          if (object.id === this.state.selectedShapeName) {
-            const index = objects.map(object => object.name).indexOf(this.state.selectedShapeName);
-            const newObjs = [
-              ...objects.slice(0, index),
-              ...objects.slice(index + 1)
-            ];
-            this.setState({
-              [objType]: [...newObjs, { ...object, opacity: e }]
-            });
-          }
-        });
-      }
+    const objType = this.getObjType(this.state.selectedShapeName);
+    const objects = JSON.parse(JSON.stringify(this.state[objType]));
+    if (Array.isArray(objects) && objects.length) {
+      objects.forEach((object) => {
+        if (object.id === this.state.selectedShapeName) {
+          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
+          this.setState(prevState => {
+            const objects = JSON.parse(JSON.stringify(prevState[objType]));
+            objects.splice(index, 1);
+            return {
+              ...prevState,
+              [objType]: objects.concat({ ...object, opacity: e })
+            }
+          });
+        }
+      });
     }
   }
 
@@ -2830,25 +2831,25 @@ class Graphics extends Component {
   }
 
   onObjectTransformEnd = (obj) => {
-    this.setState({ isTransforming: false });
+    this.setState({
+      isTransforming: false
+    });
+
     const custom = this.customObjects.includes(this.getObjType(obj.id));
+    const type = this.getObjType(obj.id);
     let object = null;
-    let type = null;
     if (!custom) {
       object = this.refs[obj.ref];
-      type = this.getObjType(object.attrs.id);
     } else {
-      const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
-        (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+      const layer = this.state.personalAreaOpen ? "personalAreaLayer" : (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
       const customObjs = this.refs[`${layer}.objects`].find('Group');
       for (let i = 0; i < customObjs.length; i++) {
-        const id = customObjs[i].children[0].attrs.id;
+        const id = customObjs[i].attrs.id;
         if (id === obj.id) {
           object = customObjs[i].children[0];
           break;
         }
       }
-      type = this.getObjType(obj.id);
     }
 
     let transformOptions = {};
@@ -2888,7 +2889,7 @@ class Graphics extends Component {
         break;
     }
 
-    if (this.customObjects.includes(type)) {
+    if (custom) {
       transformOptions = {
         scaleX: object.scaleX(),
         scaleY: object.scaleY()
@@ -2903,13 +2904,18 @@ class Graphics extends Component {
               ...o,
               ...transformOptions,
               rotation: object.rotation(),
-              x: object.x(),
-              y: object.y(),
+              x: object.x() + (custom ? obj.x : 0),
+              y: object.y() + (custom ? obj.y : 0)
             }
             : o
         )
       })
     );
+
+    if (custom) {
+      object.x(0);
+      object.y(0);
+    }
 
     if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
