@@ -6,21 +6,22 @@
   height: auto;
   display: flex;
   justify-content: space-between;
-  font-size: 1.2vw;
+  font-size: 1.3vw;
   z-index: 1;
-  box-shadow: rgba(0,0,0,0.1) 0px 1px 0px 0px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 0px 0px;
 }
 
 .navbar-logo {
   color: white;
-  vertical-align:middle;
+  vertical-align: middle;
   margin-left: 5vw;
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 2px;
   cursor: pointer;
-  height:3vw;
+  height: 3vw;
 }
+
 .vl {
   border-left: 2px solid var(--primary);
   display: inline;
@@ -30,6 +31,7 @@
   margin-top: 10px;
   margin-bottom: 10px
 }
+
 .logo-container {
   margin-top: 20px;
   height: 100%;
@@ -38,7 +40,8 @@
   justify-content: center;
   align-items: center;
 }
-.title{
+
+.title {
   color: var(--dark);
   display: inline;
   vertical-align: -20%;
@@ -78,8 +81,8 @@
 
 .nav-pic {
   align-content: center;
-  width: 3.3vw;
-  height:3.3vw;
+  width: 3vw;
+  height: 3vw;
   border-radius: 30px;
   margin-left: 10px;
   position: relative;
@@ -109,7 +112,7 @@
   bottom: -30px;
 }
 
-.profile-container{
+.profile-container {
   min-height: 100vh;
   width: auto;
   margin: 100px;
@@ -119,6 +122,7 @@
   grid-row: 2;
   grid-column: 2;
 }
+
 .profilepic {
   width: ;
   height: auto;
@@ -144,7 +148,7 @@
   display: none;
 }
 
-.profilevist > * {
+.profilevist>* {
   margin: 5px 0px;
 }
 
@@ -152,7 +156,8 @@
   color: white;
   margin-right: 8px;
 }
-.darkmode-button{
+
+.darkmode-button {
   font-size: 1.0em;
   font-weight: lighter;
   font-family: "Montserrat", sans-serif;
@@ -160,7 +165,8 @@
   background: none;
   color: var(--white);
 }
-.util-box{
+
+.util-box {
   background-color: var(--primary);
   border: 1px solid var(--dark);
   width: auto;
@@ -169,11 +175,13 @@
   border-radius: 10px;
   position: relative;
   right: 10vw;
-  }
+}
+
 .fa-home {
   margin-right: 0.4vw;
 }
-.fa-sun, .fa-moon{
+
+.fa-sun, .fa-moon {
   margin-right: 0.4vw;
   margin-left: 1vw;
 }
@@ -186,6 +194,7 @@
   padding: 4px;
   border: none;
 }
+
 .icon {
   fill: var(--primary) !important;
   height: 1.5em;
@@ -193,22 +202,25 @@
   vertical-align: -30%;
   margin-right: 10px;
 }
-.navbar-icons{
+
+.navbar-icons {
   padding: 10px;
   font-size: 1.5em;
   margin-bottom: 0px;
 }
+
 .information {
   width: 50px !important;
   height: 50px !important;
   margin-right: -0px;
-  vertical-align: -15px!important;
+  vertical-align: -15px !important;
 }
+
 .custom-icons {
   width: 50px !important;
   height: 50px !important;
-  vertical-align: -15px!important;
-  fill:var(--primary) !important;
+  vertical-align: -15px !important;
+  fill: var(--primary) !important;
   margin-right: -3px !important;
 }
 
@@ -233,22 +245,26 @@
     transition: all 0.3s;
 
   }
+
   .profilevist h2 {
     color: #181818;
     text-align: center;
     font-size: 1.5rem;
     padding: 10px;
   }
+
   .profilevist-closed {
     right: 0;
     opacity: 0;
     pointer-events: none;
     transition: none;
   }
+
   .nav-home-mobile {
     display: none;
   }
-  .nav-link{
+
+  .nav-link {
     color: var(--white);
   }
 }
@@ -259,6 +275,7 @@
     position: relative;
     z-index: 1000;
   }
+
   .nav-menu {
     background: #181818;
     display: flex;
@@ -273,13 +290,15 @@
     pointer-events: none;
   }
 
-  .nav-menu > a,
-  .nav-menu > button {
+  .nav-menu>a,
+  .nav-menu>button {
     margin: 5px 0;
   }
+
   .nav-pic {
     display: none;
   }
+
   .nav-menu.active {
     transform: none;
     opacity: 1;
@@ -288,6 +307,7 @@
     width: 100%;
     pointer-events: unset;
   }
+
   .nav-links {
     text-align: center;
     position: relative;
@@ -303,6 +323,7 @@
     width: 100%;
     display: table;
   }
+
   .menu-icon {
     display: inline-flex;
     margin-top: 10px;
@@ -310,10 +331,12 @@
     font-size: 1.8rem;
     cursor: pointer;
   }
+
   .menu-close {
     color: var(--primary);
     font-size: 2rem;
   }
+
   .nav-links-mobile {
     position: relative;
     top: -100px;
@@ -328,11 +351,13 @@
     color: white;
     font-size: 2rem;
   }
+
   .nav-links-mobile:hover {
     background: var(--primary);
     color: black;
     transition: 250ms;
   }
+
   .profilevist {
     display: flex;
     flex-direction: column;
@@ -343,13 +368,14 @@
   .profilevist a {
     color: white;
   }
+
   .nav-home {
     display: none;
   }
 
 }
 
-.fa-info-circle{
+.fa-info-circle {
   color: var(--primary);
   margin-right: 10px;
 }

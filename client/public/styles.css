@@ -4,7 +4,7 @@
   --danger: #eb3f27;
   --success: #75fa83;
   --green: rgb(161, 255, 148);
-  --red: #ff9898;;
+  --red: #cf6161;;
   --white: #ffffff;
   --almostwhite: #F8F8FF;
   --dark: #181717;
@@ -208,6 +208,11 @@ img {
  }
 }
 
+.nav-menu a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 a {
   color: var(--text-color);
@@ -710,14 +715,12 @@ hr {
 }
 
 .joinboard-edit{
-  position: absolute;
   vertical-align: middle;
-  float: right !important;
   align-self: center;
   color: var(--primary) !important;
   padding: 8px;
+  padding-bottom: 12px;
   border-radius: 100px;
-  margin-left: 10px;
   cursor: pointer;
   font-size: 1.0em !important;
 }

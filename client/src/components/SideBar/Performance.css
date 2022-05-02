@@ -7,7 +7,7 @@
 
 .noForm {
   overflow: hidden;
-  height: 300px !important;
+  /*height: 300px !important;*/
   box-shadow: none !important;
 }
 
@@ -33,7 +33,7 @@
   right: 0;
   height: 0.8em;
   top: 45px;
-  background: linear-gradient( to top, rgba(0, 0, 0, 0), rgba(255, 255, 255) 70%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(255, 255, 255) 70%);
   z-index: 1;
 }
 
@@ -118,7 +118,6 @@
 }
 
 .adminPagePerformancePollResult {
-  max-height: 300px !important;
   font-size: 0.7em !important;
   font-family: "Montserrat", sans-serif;
 }
@@ -202,12 +201,12 @@
   width: auto !important;
   margin: 10px;
 }
+
 .input-container {
-  margin: 10px;
   align-items: center;
 }
 
-.input-container p{
+.input-container p {
   border-radius: 9px;
   background-color: var(--red);
   padding: 10px;
@@ -216,9 +215,9 @@
   font-weight: bold;
   width: 100px !important;
 }
-.input-container p:hover{
+
+.input-container p:hover {
   cursor: pointer;
   position: relative;
-  left: 1px;
-  bottom: 1px;
+  top: 1px;
 }
