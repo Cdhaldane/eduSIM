@@ -49,13 +49,14 @@ const StyledLink = styled.a`
     margin-left: 12px;
   }
   .special{
-    width: auto;
+    width: 10px !important;
     padding-left: 0px;
-    overflow-x: scroll;
+    text-overflow: ellipsis !important;
   }
   span {
     padding-left: 14px;
     line-height: 19px;
+    text-overflow: ellipsis !important;
     white-space: nowrap;
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
@@ -66,6 +67,7 @@ const StyledLink = styled.a`
     line-height: .9em;
     opacity: ${(p) => p.textopacity};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
+    text-overflow: ellipsis;
   }
   img{
     position: relative;

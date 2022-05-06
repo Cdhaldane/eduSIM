@@ -345,6 +345,11 @@ select#imgoptions option[value="img3"] {
   align-items: center;
 }
 
+.create-fix {
+  fill: var(--dark) !important;
+  margin-left: 10px;
+}
+
 #plus {
   position: relative;
   margin-left: 10px;

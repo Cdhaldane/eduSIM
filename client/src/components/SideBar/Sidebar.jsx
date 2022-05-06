@@ -331,23 +331,6 @@ const Sidebar = (props) => {
         )}
 
 
-          {!props.game && (
-            <Disabled disabled={props.disabled}>
-              <Pencil
-                id="4"
-                psize="2"
-                type="nav"
-                title=""
-                hidden={!expanded}
-                submenu={submenuVisible}
-                mvisible={handleMvisible}
-                avisible={handleAvisible}
-                pavisible={handlePavisible}
-                svisible={handleSvisible}
-                pevisible={handlePevisible}
-              />
-            </Disabled>
-          )}
 
         </StyledNav>
       </div>
@@ -372,3 +355,22 @@ const Sidebar = (props) => {
   );
 }
 export default Sidebar;
+
+
+  // {!props.game && (
+  //   <Disabled disabled={props.disabled}>
+  //     <Pencil
+  //       id="4"
+  //       psize="2"
+  //       type="nav"
+  //       title=""
+  //       hidden={!expanded}
+  //       submenu={submenuVisible}
+  //       mvisible={handleMvisible}
+  //       avisible={handleAvisible}
+  //       pavisible={handlePavisible}
+  //       svisible={handleSvisible}
+  //       pevisible={handlePevisible}
+  //     />
+  //   </Disabled>
+  // )}

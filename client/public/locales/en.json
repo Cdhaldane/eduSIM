@@ -163,6 +163,8 @@
     },
     "edit": {
       "editMode": "Edit Mode",
+      "ifStatement": "If statement",
+      "random": "* Random = Rational # 0-1",
       "instructions": "Instructions",
       "overview": "Overview",
       "overviewExplanation": "Edit Mode allows you to create and edit simulations. Simulations have two main components: the group area (with the grid background), and the personal area (located at the bottom of the screen). To toggle opening/closing the personal area use the red arrow button at the top right of the personal area. The group area will be shared by all the users in a simulation while the personal area contents are determined by the user's role and are only visible to the user. To create/edit roles use the role picker located in the top left of the personal area.",

@@ -873,12 +873,12 @@ const DropdownEditObject = (props) => {
                 <div className="radio-dropdown">
                   <div className="radio-conditional">
                     <input type="checkbox" checked={!!objState?.conditional} onChange={() => handleProperty(!objState?.conditional, 'conditional')} />
-                    <p>If statement</p>
+                      <p>{t("edit.ifStatement")}</p>
                   </div>
                 <p>{t("edit.variableNameToSet")}</p>
                 <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
 
-              {objState?.conditional ? (<div></div>) : (<div><h1>* Random = Rational # 0-1</h1></div>) }
+              {objState?.conditional ? (<div></div>) : (<div><h1>{t("edit.random")}</h1></div>) }
               {objState?.conditional ? (<div className="radio-conditional">
                 <input className="margin-bottom" type="text" value={objState?.conditionAmount} placeholder={1} onChange={e => handleButtonCondition(e.target.value)} maxlength="1" />
                   {populateConditions()}
@@ -922,7 +922,7 @@ const DropdownEditObject = (props) => {
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (
                 <>
-                  <div>
+                  <div className="color-buttons">
                     <button
                       className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
                       onClick={() => newTabInputSettings("fill")}
@@ -936,7 +936,7 @@ const DropdownEditObject = (props) => {
                       {t("edit.colorStroke")}
                     </button>
                     <button
-                      className={`${inputCurrentOptions === "text" ? "editInputOptionSelected simple" : "simple"}`}
+                      className={`${inputCurrentOptions === "text" ? navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "editInputOptionSelected simple" : "editInputOptionSelected notSimple" : navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "simple" :"notSimple"}`}
                       onClick={() => newTabInputSettings("text")}
                     >
                       {t("edit.shape.simpleText")}
