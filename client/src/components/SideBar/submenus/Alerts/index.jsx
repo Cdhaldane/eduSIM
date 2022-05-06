@@ -59,16 +59,15 @@ const AddAlert = styled.div`
   font-size: .8em;
   justify-content: center;
   border: 2px dashed black;
-  opacity: 0.4;
-  background-color: lightgray;
+  opacity: 0.5;
+  background-color: #ededed;
   cursor: pointer;
-  transition: 0.2s opacity;
   & > i {
     margin-right: 8px;
     font-size: 1.5em;
   }
   &:hover {
-    opacity: 0.6;
+    opacity: 1;
   }
   ${p => p.hidden && 'display: none;'}
 `;

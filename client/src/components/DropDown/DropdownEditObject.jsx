@@ -1,4 +1,4 @@
- import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { TwitterPicker } from 'react-color';
 import Slider from 'rc-slider';
@@ -35,8 +35,8 @@ const DropdownEditObject = (props) => {
   const [vTexts, setVTexts] = useState(objState.varName ? objState.varName : [])
 
   const [vTextsV, setVTextsV] = useState(objState.varValue ? objState.varValue : [])
-  const [varOne, setVarOne] = useState(objState.varOne ? objState.varOne: "")
-  const [varTwo, setVarTwo] = useState(objState.varTwo ? objState.varTwo: "")
+  const [varOne, setVarOne] = useState(objState.varOne ? objState.varOne : "")
+  const [varTwo, setVarTwo] = useState(objState.varTwo ? objState.varTwo : "")
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -57,7 +57,7 @@ const DropdownEditObject = (props) => {
   const [topOffset, setTopOffset] = useState(calcTopOffset());
 
   useEffect(() => {
-    if (!objState.volume){
+    if (!objState.volume) {
       props.updateObjState({ volume: 1 });
       setObjState(prev => ({
         ...prev,
@@ -86,7 +86,7 @@ const DropdownEditObject = (props) => {
   }, []);
 
   useEffect(() => {
-      // setTexts([])
+    // setTexts([])
   }, [activeMenu])
 
   // Slider Styles
@@ -287,10 +287,10 @@ const DropdownEditObject = (props) => {
     const list = [];
     let value = 0;
     for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
-        list.push(
-          <div>
+      list.push(
+        <div>
           <input type="text" onChange={e => handleRadioText(e.target)} value={objState?.radioText ? objState?.radioText[i] : texts[i]} id={i} key={i} placeholder={t("edit.radioText")} />
-          </div>
+        </div>
       );
     }
     return list
@@ -299,9 +299,9 @@ const DropdownEditObject = (props) => {
   const handleRadioText = (e) => {
     let arr = []
     for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
-        if(e.id != i){
-          arr[i] = objState?.radioText ? objState?.radioText[i] : texts[i]
-        }
+      if (e.id != i) {
+        arr[i] = objState?.radioText ? objState?.radioText[i] : texts[i]
+      }
     }
     arr[e.id] = e.value;
     props.updateObjState({ radioText: arr });
@@ -316,10 +316,11 @@ const DropdownEditObject = (props) => {
   const populateVariable = () => {
     const list = [];
     let value = 0;
-    if(objState?.variableAmount < 1){
-      let value = 1;
-    } else {value = objState?.variableAmount}
+    if (objState?.variableAmount >= 1) {
+      value = objState?.variableAmount
+    }
     for (let i = 0; i < value; i++) {
+<<<<<<< HEAD
         list.push(
 
           <div className = "button-vars">
@@ -345,9 +346,29 @@ const DropdownEditObject = (props) => {
           <h1>=</h1>
           <input className="float-righty" type="text" onChange={e => handleConEquals(e.target)}  id={i} value={objState.conEquals ? objState.conEquals[i] : ""} />
           </div>
+=======
+      list.push(
+        <div  key={i} className="button-vars">
+          <input
+            className="float-left"
+            type="text"
+            onChange={e => handleVars(e.target)}
+            id={i}
+            value={objState.varName ? objState.varName[i] : ""}
+            placeholder="variable" />
+          <h1>=</h1>
+          <input
+            className="float-righty"
+            type="text"
+            onChange={e => handleVarValue(e.target)}
+            id={i}
+            value={objState.varValue ? objState.varValue[i] : ""}
+            placeholder="value" />
+        </div>
+>>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
       );
     }
-    return list
+    return list;
   }
 
   const handleVarConditions = (e) => {
@@ -376,8 +397,9 @@ const DropdownEditObject = (props) => {
 
   const handleVars = (e) => {
     let value = 0;
-    if(objState?.variableAmount < 1){
+    if (objState?.variableAmount < 1) {
       let value = 1;
+<<<<<<< HEAD
     } else {value = objState?.variableAmount}
     let arr = []
     if( objState?.varName ){
@@ -385,6 +407,14 @@ const DropdownEditObject = (props) => {
           if(e.id != i){
             arr[i] = objState?.varName[i]
           }
+=======
+    } else { value = objState?.variableAmount }
+
+    let arr = []
+    for (let i = 0; i < value; i++) {
+      if (e.id != i) {
+        arr[i] = objState?.varName[i]
+>>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
       }
     }
     arr[e.id] = e.value;
@@ -399,22 +429,28 @@ const DropdownEditObject = (props) => {
 
   const handleVarValue = (e) => {
     let val;
-    if(isNaN(val)){
+    if (isNaN(val)) {
       val = e.value;
     } else {
       val = parseInt(e.value)
     }
     let value = 0;
-    if(objState?.variableAmount < 1){
+    if (objState?.variableAmount < 1) {
       let value = 1;
-    } else {value = objState?.variableAmount}
+    } else { value = objState?.variableAmount }
 
     let arr = []
+<<<<<<< HEAD
     if(objState?.varValue){
       for (let i = 0; i < value; i++) {
           if(e.id != i){
             arr[i] = objState?.varValue[i]
           }
+=======
+    for (let i = 0; i < value; i++) {
+      if (e.id != i) {
+        arr[i] = objState?.varValue[i]
+>>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
       }
     }
     arr[e.id] = val;
@@ -428,11 +464,11 @@ const DropdownEditObject = (props) => {
 
   const handleMathOne = (e) => {
     let value = e.value;
-    if(parseInt(e.value)){
+    if (parseInt(e.value)) {
       value = parseInt(e.value)
     }
     props.updateObjState({ varOne: value });
-    debounceObjState({ varOne: value});
+    debounceObjState({ varOne: value });
     setObjState(prev => ({
       ...prev,
       varOne: value
@@ -468,11 +504,11 @@ const DropdownEditObject = (props) => {
   }
   const handleMathTwo = (e) => {
     let value = e.value;
-    if(parseInt(e.value)){
+    if (parseInt(e.value)) {
       value = parseInt(e.value)
     }
     props.updateObjState({ varTwo: value });
-    debounceObjState({ varTwo: value});
+    debounceObjState({ varTwo: value });
     setObjState(prev => ({
       ...prev,
       varTwo: value
@@ -480,7 +516,7 @@ const DropdownEditObject = (props) => {
   }
   const handleMath = (e) => {
     props.updateObjState({ math: e });
-    debounceObjState({ math: e});
+    debounceObjState({ math: e });
     setObjState(prev => ({
       ...prev,
       math: e
@@ -512,95 +548,95 @@ const DropdownEditObject = (props) => {
             unmountOnExit>
             <div className="menuedit">
               <h1>{t("edit.shapeEdit")}</h1>
-            {!((objState?.id).includes("videos") || (objState?.id).includes("audios"))  && (
-              <>
-            {!props.selectedShapeName.includes("lines") && (
+              {!((objState?.id).includes("videos") || (objState?.id).includes("audios")) && (
                 <>
+                  {!props.selectedShapeName.includes("lines") && (
+                    <>
+                      <b>
+                        {t("edit.colorFill")}
+                        <TwitterPicker
+                          colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
+                          color={fillColor}
+                          triangle="hide"
+                          width={350}
+                          onChangeComplete={handleChangeF} />
+                      </b>
+                      <br />
+                    </>
+                  )}
                   <b>
-                    {t("edit.colorFill")}
+                    {t("edit.colorStroke")}
                     <TwitterPicker
                       colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                      color={fillColor}
+                      color={strokeColor}
                       triangle="hide"
                       width={350}
-                      onChangeComplete={handleChangeF} />
+                      onChangeComplete={handleChangeS} />
+                  </b>
+                  <br />
+                  <b>
+                    {t("edit.strokeWidth")}
+                    <Slider
+                      min={0}
+                      max={100}
+                      step={0.01}
+                      className="slider"
+                      value={strokeWidth}
+                      onChange={onSliderChange}
+                      railStyle={railStyle}
+                      handleStyle={handleStyle}
+                      trackStyle={trackStyle}
+                    />
+                  </b>
+                  <br />
+                  <b>
+                    {t("edit.opacity")}
+                    <Slider
+                      className="slider"
+                      value={opacity}
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      onChange={onSliderChangeO}
+                      railStyle={railStyle}
+                      handleStyle={handleStyle}
+                      trackStyle={trackStyle}
+                    />
                   </b>
                   <br />
                 </>
               )}
-              <b>
-                {t("edit.colorStroke")}
-                <TwitterPicker
-                  colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                  color={strokeColor}
-                  triangle="hide"
-                  width={350}
-                  onChangeComplete={handleChangeS} />
-              </b>
-              <br />
-              <b>
-                {t("edit.strokeWidth")}
-                <Slider
-                  min={0}
-                  max={100}
-                  step={0.01}
-                  className="slider"
-                  value={strokeWidth}
-                  onChange={onSliderChange}
-                  railStyle={railStyle}
-                  handleStyle={handleStyle}
-                  trackStyle={trackStyle}
-                />
-              </b>
-              <br />
-              <b>
-                {t("edit.opacity")}
-                <Slider
-                  className="slider"
-                  value={opacity}
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  onChange={onSliderChangeO}
-                  railStyle={railStyle}
-                  handleStyle={handleStyle}
-                  trackStyle={trackStyle}
-                />
-              </b>
-              <br />
-            </>
-            )}
-            {(objState?.id).includes("videos") || (objState?.id).includes("audios") ? (
-              <div>
-              <div>
+              {(objState?.id).includes("videos") || (objState?.id).includes("audios") ? (
+                <div>
+                  <div>
 
-              <b>
-                {t("edit.volume")}
-                <Slider
-                  className="slider"
-                  value={objState?.volume}
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  onChange={onSliderChangeV}
-                  railStyle={railStyle}
-                  handleStyle={handleStyle}
-                  trackStyle={trackStyle}
-                />
-              </b>
-              <br />
-              </div>
-              <div className="dropdowncheckbox">
-                <input type="checkbox" checked={!!objState?.autoStart} onChange={() => handleProperty(!objState?.autoStart, 'autoStart')} />
-                <p>{t("edit.autoStart")}</p>
-              </div>
-              <div className="dropdowncheckbox">
-                <input type="checkbox" checked={!!objState?.loop} onChange={() => handleProperty(!objState?.loop, 'loop')} />
-              <p>{t("edit.loop")}</p>
-              </div>
-              </div>
+                    <b>
+                      {t("edit.volume")}
+                      <Slider
+                        className="slider"
+                        value={objState?.volume}
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        onChange={onSliderChangeV}
+                        railStyle={railStyle}
+                        handleStyle={handleStyle}
+                        trackStyle={trackStyle}
+                      />
+                    </b>
+                    <br />
+                  </div>
+                  <div className="dropdowncheckbox">
+                    <input type="checkbox" checked={!!objState?.autoStart} onChange={() => handleProperty(!objState?.autoStart, 'autoStart')} />
+                    <p>{t("edit.autoStart")}</p>
+                  </div>
+                  <div className="dropdowncheckbox">
+                    <input type="checkbox" checked={!!objState?.loop} onChange={() => handleProperty(!objState?.loop, 'loop')} />
+                    <p>{t("edit.loop")}</p>
+                  </div>
+                </div>
               ) :
-              (<div> </div>)
+                (<div> </div>)
               }
               <div className="dropdowncheckbox">
                 <input type="checkbox" checked={!!objState?.draggable} onChange={() => handleProperty(!objState?.draggable, 'draggable')} />
@@ -840,37 +876,22 @@ const DropdownEditObject = (props) => {
                 <p>{t("edit.variableSync")}</p>
               </div>
 
-                {objState?.varType === "radio" ? (
-                  <div className="radio-dropdown">
+              {objState?.varType === "radio" ? (
+                <div className="radio-dropdown">
                   <p>{t("edit.radioAmount")}</p>
-                    <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)}  maxlength="1"/>
-                    <p>{t("edit.variableNameToSet")}</p>
-                    <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                  <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} maxLength="1" />
+                  <p>{t("edit.variableNameToSet")}</p>
+                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
 
-                    <p>{t("edit.radioText")}</p>
-                    {populateRadio()}
-                  </div>
-                ) :
+                  <p>{t("edit.radioText")}</p>
+                  {populateRadio()}
+                </div>
+              ) :
                 (<div> </div>)
               }
-            {objState?.varType === "text" ? (
-              <div className="radio-dropdown">
-              <p>{t("edit.variableNameToSet")}</p>
-              <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-              </div>
-            ) :
-            (<div> </div>)
-          }
-            {objState?.varType === "checkbox" ? (
-              <div className="radio-dropdown">
-              <p>{t("edit.variableNameToSet")}</p>
-              <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-              </div>
-            ) :
-            (<div> </div>)
-          }
-              {objState?.varType === "variable" ? (
+              {objState?.varType === "text" ? (
                 <div className="radio-dropdown">
+<<<<<<< HEAD
                   <div className="radio-conditional">
                     <input type="checkbox" checked={!!objState?.conditional} onChange={() => handleProperty(!objState?.conditional, 'conditional')} />
                     <p>If statement</p>
@@ -893,31 +914,63 @@ const DropdownEditObject = (props) => {
                 </select>
                 <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
                 </div>) }
+=======
+                  <p>{t("edit.variableNameToSet")}</p>
+                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+>>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
                 </div>
               ) :
-              (<div> </div>)
-            }
+                (<div> </div>)
+              }
+              {objState?.varType === "checkbox" ? (
+                <div className="radio-dropdown">
+                  <p>{t("edit.variableNameToSet")}</p>
+                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                </div>
+              ) :
+                (<div> </div>)
+              }
+              {objState?.varType === "variable" ? (
+                <div className="radio-dropdown">
+                  <p>{t("edit.variableNameToSet")}</p>
+                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                  <div className="button-vars">
+                    <input className="float-left math" type="text" onChange={e => handleMathOne(e.target)} value={objState?.varOne} placeholder={t("edit.input.varVal")} />
+                    <select id="math" className="float-left math-drop" value={objState?.math} onChange={e => handleMath(e.target.value)}>
+                      <option value="">select option</option>
+                      <option value="add">Add</option>
+                      <option value="subtract">Subtract</option>
+                      <option value="multiply">Multiply</option>
+                      <option value="divide">Divide</option>
+                    </select>
+                    <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo} placeholder={t("edit.input.varVal")} />
+                  </div>
+                  <h1>* Random = Rational # 0-10</h1>
+                </div>
+              ) :
+                (<div> </div>)
+              }
               {objState?.varType === "button" ? (
                 <div className="radio-dropdown">
-                <div className="htmliframeinput">
-                  <input type="checkbox" checked={!!objState?.incr} onChange={() => handleProperty(!objState?.incr, 'incr')} />
-                  <p>Incremental button</p>
-                </div>
-                {!objState?.incr ? (
-                  <div>
-                <p>{t("edit.buttonAmount")}</p>
-                <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxlength="1" />
+                  <div className="htmliframeinput">
+                    <input type="checkbox" checked={!!objState?.incr} onChange={() => handleProperty(!objState?.incr, 'incr')} />
+                    <p>Incremental button</p>
+                  </div>
+                  {!objState?.incr ? (
+                    <div>
+                      <p>{t("edit.buttonAmount")}</p>
+                      <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxLength="1" />
 
-                  {populateVariable()}
-                </div>
-              ) : (
-              <div><p>{t("edit.variableNameToSet")}</p>
-              <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>
-            )
-            } </div>
+                      {populateVariable()}
+                    </div>
+                  ) : (
+                    <div><p>{t("edit.variableNameToSet")}</p>
+                      <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>
+                  )
+                  } </div>
               ) :
-              (<div> </div>)
-            }
+                (<div> </div>)
+              }
               <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (

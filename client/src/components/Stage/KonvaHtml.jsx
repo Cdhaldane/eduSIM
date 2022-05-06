@@ -130,7 +130,7 @@ const KonvaHtml = ({
   return (
     <Group
       id={refName}
-      draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : true}
+      draggable={defaultProps.isDraggable !== undefined ? (defaultProps.isDraggable) : editMode}
       onDragMove={(e) => {
         // objectSnapping(groupRef.current, e);
         // onDragMove(e);
@@ -139,7 +139,6 @@ const KonvaHtml = ({
       x={defaultProps.x}
       y={defaultProps.y}
       visible={visible}
-      rotation={defaultProps.rotation}
       offsetX={0}
       offsetY={0}
       skewX={0}
@@ -150,30 +149,21 @@ const KonvaHtml = ({
       <Rect
         id={refName}
         ref={groupRef}
+        name={"customObj"}
         visible={true}
+        draggable={false}
         opacity={1}
         width={rectWidth}
         height={rectHeight}
         x={0}
         y={0}
         customProps={defaultProps.custom}
-        /*onClick={defaultProps.onClick}*/
+        //onClick={defaultProps.onClick}
         onTransformStart={defaultProps.onTransformStart}
         onTransformEnd={defaultProps.onTransformEnd}
         scaleX={defaultProps.scaleX}
         scaleY={defaultProps.scaleY}
-        name={"customObj"}
-      /*currentId={this.state.customRect[0].currentId}
-      width={this.state.customRect[0].width}
-      height={this.state.customRect[0].height}
-      x={this.state.customRect[0].x}
-      y={this.state.customRect[0].y}
-      onClick={() => this.onObjectClick(this.state.customRect[0])}
-      onTransformStart={this.onObjectTransformStart}
-      onTransformEnd={() => this.onObjectTransformEnd(this.state.customRect[0])}
-      onDragMove={(e) => this.onObjectDragMove(this.state.customRect[0], e)}
-      onDragEnd={(e) => this.handleDragEnd(e, this.getObjType(this.state.customRect[0].id), this.state.customRect[0].ref)}
-      onContextMenu={this.onObjectContextMenu}*/
+        rotation={defaultProps.rotation}
       />
     </Group>
   );

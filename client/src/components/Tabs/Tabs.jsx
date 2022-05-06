@@ -325,7 +325,7 @@ const Tabs = (props) => {
         params: {
           id: tabs[x][2],
         }
-      }).catch((error) => {console.log(error)});
+      }).catch((error) => {console.error(error)});
       setRoomInfo(roomData);
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
         params: {
