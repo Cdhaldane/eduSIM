@@ -320,9 +320,7 @@ const DropdownEditObject = (props) => {
       value = objState?.variableAmount
     }
     for (let i = 0; i < value; i++) {
-<<<<<<< HEAD
         list.push(
-
           <div className = "button-vars">
           <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState.varName ? objState.varName[i] : ""} placeholder="variable"/>
           <h1>=</h1>
@@ -340,13 +338,6 @@ const DropdownEditObject = (props) => {
       let value = 1;
     } else {value = objState?.conditionAmount}
     for (let i = 0; i < value; i++) {
-        list.push(
-          <div className="button-vars">
-          <input className="float-left " type="text" onChange={e => handleVarConditions(e.target)} id={i} value={objState.varCon ? objState.varCon[i] : ""} placeholder={"variable"}/>
-          <h1>=</h1>
-          <input className="float-righty" type="text" onChange={e => handleConEquals(e.target)}  id={i} value={objState.conEquals ? objState.conEquals[i] : ""} />
-          </div>
-=======
       list.push(
         <div  key={i} className="button-vars">
           <input
@@ -365,7 +356,6 @@ const DropdownEditObject = (props) => {
             value={objState.varValue ? objState.varValue[i] : ""}
             placeholder="value" />
         </div>
->>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
       );
     }
     return list;
@@ -399,7 +389,6 @@ const DropdownEditObject = (props) => {
     let value = 0;
     if (objState?.variableAmount < 1) {
       let value = 1;
-<<<<<<< HEAD
     } else {value = objState?.variableAmount}
     let arr = []
     if( objState?.varName ){
@@ -407,14 +396,6 @@ const DropdownEditObject = (props) => {
           if(e.id != i){
             arr[i] = objState?.varName[i]
           }
-=======
-    } else { value = objState?.variableAmount }
-
-    let arr = []
-    for (let i = 0; i < value; i++) {
-      if (e.id != i) {
-        arr[i] = objState?.varName[i]
->>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
       }
     }
     arr[e.id] = e.value;
@@ -440,17 +421,13 @@ const DropdownEditObject = (props) => {
     } else { value = objState?.variableAmount }
 
     let arr = []
-<<<<<<< HEAD
+
     if(objState?.varValue){
       for (let i = 0; i < value; i++) {
           if(e.id != i){
             arr[i] = objState?.varValue[i]
           }
-=======
-    for (let i = 0; i < value; i++) {
-      if (e.id != i) {
-        arr[i] = objState?.varValue[i]
->>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
+
       }
     }
     arr[e.id] = val;
@@ -890,38 +867,13 @@ const DropdownEditObject = (props) => {
                 (<div> </div>)
               }
               {objState?.varType === "text" ? (
-                <div className="radio-dropdown">
-<<<<<<< HEAD
-                  <div className="radio-conditional">
-                    <input type="checkbox" checked={!!objState?.conditional} onChange={() => handleProperty(!objState?.conditional, 'conditional')} />
-                    <p>If statement</p>
-                  </div>
-                <p>{t("edit.variableNameToSet")}</p>
-                <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-
-              {objState?.conditional ? (<div></div>) : (<div><h1>* Random = Rational # 0-1</h1></div>) }
-              {objState?.conditional ? (<div className="radio-conditional">
-                <input className="margin-bottom" type="text" value={objState?.conditionAmount} placeholder={1} onChange={e => handleButtonCondition(e.target.value)} maxlength="1" />
-                  {populateConditions()}
-                </div>) : (<div className = "button-vars">
-                <input className="float-left math" type="text" onChange={e => handleMathOne(e.target)} value={objState?.varOne} placeholder={t("edit.input.varVal")}/>
-                <select id="math" className="float-left math-drop" value={objState?.math} onChange={e => handleMath(e.target.value)}>
-                  <option value="">select option</option>
-                  <option value="add">Add</option>
-                  <option value="subtract">Subtract</option>
-                  <option value="multiply">Multiply</option>
-                  <option value="divide">Divide</option>
-                </select>
-                <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
-                </div>) }
-=======
-                  <p>{t("edit.variableNameToSet")}</p>
-                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
->>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
-                </div>
-              ) :
-                (<div> </div>)
-              }
+               <div className="radio-dropdown">
+               <p>{t("edit.variableNameToSet")}</p>
+               <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+               </div>
+             ) :
+             (<div> </div>)
+           }
               {objState?.varType === "checkbox" ? (
                 <div className="radio-dropdown">
                   <p>{t("edit.variableNameToSet")}</p>
@@ -931,25 +883,33 @@ const DropdownEditObject = (props) => {
                 (<div> </div>)
               }
               {objState?.varType === "variable" ? (
-                <div className="radio-dropdown">
-                  <p>{t("edit.variableNameToSet")}</p>
-                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-                  <div className="button-vars">
-                    <input className="float-left math" type="text" onChange={e => handleMathOne(e.target)} value={objState?.varOne} placeholder={t("edit.input.varVal")} />
-                    <select id="math" className="float-left math-drop" value={objState?.math} onChange={e => handleMath(e.target.value)}>
-                      <option value="">select option</option>
-                      <option value="add">Add</option>
-                      <option value="subtract">Subtract</option>
-                      <option value="multiply">Multiply</option>
-                      <option value="divide">Divide</option>
-                    </select>
-                    <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo} placeholder={t("edit.input.varVal")} />
-                  </div>
-                  <h1>* Random = Rational # 0-10</h1>
-                </div>
-              ) :
-                (<div> </div>)
-              }
+                 <div className="radio-dropdown">
+                   <div className="radio-conditional">
+                     <input type="checkbox" checked={!!objState?.conditional} onChange={() => handleProperty(!objState?.conditional, 'conditional')} />
+                       <p>{t("edit.ifStatement")}</p>
+                   </div>
+                 <p>{t("edit.variableNameToSet")}</p>
+                 <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+
+               {objState?.conditional ? (<div></div>) : (<div><h1>{t("edit.random")}</h1></div>) }
+               {objState?.conditional ? (<div className="radio-conditional">
+                 <input className="margin-bottom" type="text" value={objState?.conditionAmount} placeholder={1} onChange={e => handleButtonCondition(e.target.value)} maxlength="1" />
+                   {populateConditions()}
+                 </div>) : (<div className = "button-vars">
+                 <input className="float-left math" type="text" onChange={e => handleMathOne(e.target)} value={objState?.varOne} placeholder={t("edit.input.varVal")}/>
+                 <select id="math" className="float-left math-drop" value={objState?.math} onChange={e => handleMath(e.target.value)}>
+                   <option value="">select option</option>
+                   <option value="add">Add</option>
+                   <option value="subtract">Subtract</option>
+                   <option value="multiply">Multiply</option>
+                   <option value="divide">Divide</option>
+                 </select>
+                 <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
+                 </div>) }
+                 </div>
+               ) :
+               (<div> </div>)
+             }
               {objState?.varType === "button" ? (
                 <div className="radio-dropdown">
                   <div className="htmliframeinput">

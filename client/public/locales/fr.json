@@ -158,6 +158,8 @@
     "edit": {
       "editMode": "Mode création",
       "instructions": "Instructions",
+      "ifStatement": "Si déclaration",
+      "random": "* Aléatoire = rationnel #0-1",
       "overview": "Aperçu",
       "overviewExplanation": "Le mode création vous permet de créer et modifier les simulations. Les simulations ont deux composantes principales : l'espace de groupe (avec le fond en grillage) et l'espace personnel (située au bas de l'écran). Pour basculer entre l'ouverture et la fermeture de l'espace personnel, utilisez le bouton en flèche rouge à droite de l'espace personnel. L'espace de groupe sera partagé par tous les utilisateurs dans une simulation, tandis que le contenu de l'espace personnel est déterminé par le rôle de l'utilisateur et n'est visible que par l'utilisateur. Pour créer/modifier les rôles, utilisez le sélecteur de rôle situé en haut à gauche de l'espace personnel.",
       "shortcuts": "Raccourcis",

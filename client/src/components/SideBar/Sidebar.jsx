@@ -321,12 +321,12 @@ const Sidebar = (props) => {
           />
         {expanded && !submenuVisible ? (
           <div>
-              <Image className="game-logo-big" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1642397684/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")}/>
+              <Image className="game-logo-big" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1652056889/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")}/>
           </div>
 
         ) : (
           <div>
-              <Image className="game-logo" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1642397684/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")} />
+              <Image className="game-logo" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1652056889/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")} />
           </div>
         )}
 

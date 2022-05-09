@@ -219,7 +219,6 @@
 .input-container p:hover {
   cursor: pointer;
   position: relative;
-<<<<<<< HEAD
   left: 1px;
   bottom: 1px;
 }
@@ -229,7 +228,3 @@
 .radio-conditional input{
   float: left;
 }
-=======
-  top: 1px;
-}
->>>>>>> 87b0e0bba050dcf83a6ba11e6d3259e9bcde315a
