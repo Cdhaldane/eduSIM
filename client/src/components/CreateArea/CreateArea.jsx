@@ -10,7 +10,7 @@ import Plus from "../../../public/icons/plus.svg"
 
 const CreateArea = (props) => {
   const [note, setNote] = useState([]);
-  const [img, setImg] = useState("https://res.cloudinary.com/uottawaedusim/image/upload/v1630036729/images/ujjtehlwjgsfqngxesnd.jpg");
+  const [img, setImg] = useState("https://res.cloudinary.com/uottawaedusim/image/upload/v1651267180/images/ujjtehlwjgsfqngxesnd.jpg");
   const [files, setFiles] = useState("");
   const [moreImages, setMoreImages] = useState(false);
   const [title, setTitle] = useState("");
@@ -103,8 +103,9 @@ const CreateArea = (props) => {
               });
             }
           }
+
           var temp = JSON.parse(localStorage.getItem("order"));
-          temp.unshift(res.data)
+          temp?.unshift(res.data)
           localStorage.setItem("order", JSON.stringify(temp))
           props.onAdd();
         }).catch(error => {
@@ -151,7 +152,10 @@ const CreateArea = (props) => {
   }
 
   const handleCopySim = (event) => {
-    setCopy(1);
+    setCopy(0);
+    setData(props.gamedata[event.target.value].game_parameters)
+    setImg(props.gamedata[event.target.value].gameinstance_photo_path)
+    setImageSelected(props.gamedata[event.target.value].gameinstance_photo_path)
     setTitle(props.gamedata[event.target.value].gameinstance_name + " - copy");
     setFilename(props.gamedata[event.target.value].gameinstance_photo_path);
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
@@ -221,7 +225,7 @@ const CreateArea = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon create-icon"/></i>
+            <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon create-icon create-fix"/></i>
           </div>
           <div className="form-imgpreview">
 

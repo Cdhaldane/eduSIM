@@ -157,6 +157,8 @@
     },
     "edit": {
       "editMode": "Mode création",
+      "ifStatement": "Si déclaration",
+      "random": "* Aléatoire = rationnel #0-1",
       "instructions": "Instructions",
       "ifStatement": "Si déclaration",
       "random": "* Aléatoire = rationnel #0-1",

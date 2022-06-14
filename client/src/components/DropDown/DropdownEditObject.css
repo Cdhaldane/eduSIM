@@ -181,6 +181,11 @@ ul {
 }
 .simple {
   position: relative;
+  top: -7px;
+  margin-top: 10px !important;
+}
+.notSimple {
+  position: relative;
   top: 9px;
   margin-top: 10px !important;
 }
