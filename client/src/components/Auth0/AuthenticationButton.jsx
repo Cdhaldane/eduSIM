@@ -20,6 +20,10 @@ const AuthenticationButton = (props) => {
     }).then((res) => {
       const allData = res.data;
       localStorage.setItem('adminid', allData.adminid);
+      if(!localStorage.loginCount){
+        localStorage.setItem("loginCount", 0)
+      }
+      localStorage.setItem("loginCount", parseInt(localStorage.loginCount) + 1)
     }).catch(error => {
       console.error(error);
     });

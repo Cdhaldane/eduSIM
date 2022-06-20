@@ -7,6 +7,8 @@ const Home = (props) => {
   const { t } = useTranslation();
   const { loginWithRedirect } = useAuth0();
 
+
+
   return (
   <div className="welcome-container">
     <div className='row'>

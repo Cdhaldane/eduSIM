@@ -111,6 +111,8 @@ const DropdownRoles = (props) => {
     calcHeight(menuElem.current?.firstChild);
   }, [roles]);
 
+
+
   const calcHeight = (el) => {
     let height = el.offsetHeight;
     setMenuHeight(height);

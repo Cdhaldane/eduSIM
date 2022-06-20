@@ -110,6 +110,7 @@ const Game = (props) => {
         }
       });
       client.on("connectStatus", ({ players, chatlog, notelog, ...status }) => {
+        console.log(notelog)
         setPlayers(players);
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);

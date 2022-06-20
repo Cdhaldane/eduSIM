@@ -88,8 +88,8 @@ const CreateRole = (props) => {
             editMode={false}
             rolesTaken={rolesTaken}
             initRole={role}
-            disabled={props.roleSelection !== "student"}
-            random={props.roleSelection.startsWith("random")}
+            disabled={props?.roleSelection !== "student"}
+            random={props?.roleSelection?.startsWith("random")}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">
