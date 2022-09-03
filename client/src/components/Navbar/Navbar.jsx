@@ -89,7 +89,7 @@ const NavBar = (props) => {
 
 
             <ButtonLink
-              className="nav-links"
+              className={menuOpen ? "nav-links-icons1" : ""}
               href="/dashboard"
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
@@ -98,7 +98,7 @@ const NavBar = (props) => {
               {t("navbar.home")}
             </ButtonLink>
             <ButtonLink
-              className="nav-links"
+              className={menuOpen ? "nav-links-icons2" : ""}
               href="/about"
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
@@ -106,7 +106,7 @@ const NavBar = (props) => {
               <Info className="icon information navbar-icons"/>
               {t("navbar.about")}
             </ButtonLink>
-          <button onClick={switchLanguage} className="lang-button">
+          <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons3 lang-button" : "lang-button"}>
             {i18n.language === 'en' ? 'fr' : 'en'}
           </button>
 

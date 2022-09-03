@@ -45,7 +45,6 @@ const konvaObjects = [
 ];
 
 const CanvasPage = (props) => {
-
   const { settings: localSettings } = useContext(SettingsContext);
 
   /*------------------------------------------------------------------------------/
@@ -148,6 +147,28 @@ const CanvasPage = (props) => {
       return;
     }
 
+    let defaultPagesTemp = new Array(6);
+    defaultPagesTemp.fill({
+      primaryColor: "#8f001a",
+      groupColor: "#FFF",
+      personalColor: "#FFF",
+      groupPositionRect: {h: 1080, scaleX: 1, scaleY: 1, w: 1920, x:0,y:0},
+      personalPositionRect: {h: 1080, scaleX: 1, scaleY: 1, w: 1920, x:0,y:0},
+      overlayColor: "#FFF",
+      overlays: [],
+      groupLayers: [],
+      personalLayers: []
+    });
+    const defaultPages = defaultPagesTemp.map((page, index) => {
+      return {
+        ...page,
+        name: "Page " + (index + 1)
+      };
+    });
+    if((canvas.state.pages).length === 0){
+      canvas.state.pages = defaultPages;
+      console.log(canvas.state.pages)
+    }
     const areaString = canvas.state.overlayOpen ? "overlay" :
       (canvas.state.personalAreaOpen ? "personal" : "group");
 
@@ -180,8 +201,8 @@ const CanvasPage = (props) => {
       const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
       const availableW = isPersonalArea ? personalArea.width : screenW - sideMenuW;
 
-      const newScale = availableW / (positionRect.w * positionRect.scaleX);
-      const newHeight = (positionRect.h + topMenuH) * positionRect.scaleY * newScale;
+      const newScale = availableW / (positionRect?.w * positionRect?.scaleX);
+      const newHeight = (positionRect?.h + topMenuH) * positionRect?.scaleY * newScale;
       setPlayModeCanvasHeights({
         overlay: areaString === "overlay" ? newHeight : 0,
         personal: areaString === "personal" ? newHeight : 0,
@@ -189,8 +210,8 @@ const CanvasPage = (props) => {
       });
 
       canvas.setState({
-        [`${areaString}LayerX`]: -positionRect.x * newScale,
-        [`${areaString}LayerY`]: -positionRect.y * newScale,
+        [`${areaString}LayerX`]: -positionRect?.x * newScale,
+        [`${areaString}LayerY`]: -positionRect?.y * newScale,
         [`${areaString}LayerScale`]: newScale,
         canvasLoading: false
       });
@@ -201,8 +222,8 @@ const CanvasPage = (props) => {
     if (canvas.getLayers().length === 0 && positionRect) {
       // Reset to default position and scale
       canvas.setState({
-        [`${areaString}LayerX`]: -positionRect.x,
-        [`${areaString}LayerY`]: -positionRect.y,
+        [`${areaString}LayerX`]: -positionRect?.x,
+        [`${areaString}LayerY`]: -positionRect?.y,
         [`${areaString}LayerScale`]: 1,
         canvasLoading: false
       });

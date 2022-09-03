@@ -26,11 +26,11 @@ const gameinstances = db.define('gameinstances', {
     allowNull: false
   },
   status: {
-    type: Sequelize.ENUM('created', 'started', 'ended', 'deleted')
+    type: Sequelize.STRING(250)
   }
 });
 
-gameinstances.sync().then(() => {
+gameinstances.sync({ alter: true }).then(() => {
   console.log('GameInstances table created');
 });
 

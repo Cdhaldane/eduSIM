@@ -1,6 +1,6 @@
 const { Pool } = require('pg');
 
-const CONNECTION_STRING = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/simulatordb';
+const CONNECTION_STRING = process.env.DATABASE_URL || 'postgresql://postgres:somePassword@localhost:5432/simulatordb';
 const SSL = process.env.NODE_ENV === 'production';
 
 class Database {

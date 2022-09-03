@@ -24,7 +24,7 @@ const adminaccounts = db.define('adminaccounts', {
   }
 });
 
-adminaccounts.sync().then(() => {
+adminaccounts.sync({ alter: true }).then(() => {
   console.log('AdminAccounts table created');
 });
 

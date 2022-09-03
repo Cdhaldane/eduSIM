@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import Backdrop from "../../ui/Backdrop";
 import NavLinksGroup from "./NavLinksGroup";
 import NavToggle from "./NavToggle";
@@ -261,7 +262,7 @@ const Sidebar = (props) => {
       icon: "control",
       id: "variables",
       label: t("sidebar.variables"),
-      visible: props.game ? false : false,
+      visible: props.game ? true : true,
       submenu: (
         <Variables
           editpage={!props.game}
@@ -321,12 +322,16 @@ const Sidebar = (props) => {
           />
         {expanded && !submenuVisible ? (
           <div>
+            <Link to={{pathname: "/dashboard"}}>
               <Image className="game-logo-big" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1652056889/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")}/>
+            </Link>
           </div>
 
         ) : (
           <div>
+            <Link to={{pathname: "/dashboard"}}>
               <Image className="game-logo" cloudName="uottawaedusim" publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/v1652056889/images/06_eduSIM_vertical_tnvn9p.jpg"}   alt={t("alt.sim")} />
+            </Link>
           </div>
         )}
 

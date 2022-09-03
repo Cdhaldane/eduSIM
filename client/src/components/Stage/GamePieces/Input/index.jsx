@@ -20,6 +20,7 @@ const Input = forwardRef((props, ref) => {
 
   const handleChangeValue = (value) => {
     if (props.sync && props.updateVariable) {
+
       props.updateVariable(varName, value)
     } else {
       let vars = {};
@@ -33,6 +34,10 @@ const Input = forwardRef((props, ref) => {
       props.refresh();
     }
   }
+  const delay = time =>
+  new Promise(resolve => {
+    setTimeout(resolve, time);
+  });
 
   const handleChangeValueButton = () => {
     if (props.sync && props.updateVariable) {
@@ -43,6 +48,8 @@ const Input = forwardRef((props, ref) => {
           value = parseInt(props.varValue[i])
         }
         props.updateVariable(name, value)
+
+        props.refresh();
       }
     } else {
       let vars = {};
@@ -159,17 +166,26 @@ const Input = forwardRef((props, ref) => {
       let arr = [];
       let numberArray = [];
       for(let i = 0; i < props.conditionAmount; i++){
-        if(props.sync){
+        if(props.sync && props.varCon){
           arr.push(props.variables[props.varCon[i]])
         }
       }
-      for (var i = 0; i < props.conEquals.length; i++){
-        numberArray.push(props.conEquals[i]);
+      for (var i = 0; i < props.conEquals?.length; i++){
+        if((props.conEquals[i]).includes("}")){
+          let fix = props.conEquals[i];
+          fix.slice(1, -1)
+          console.log(fix)
+          numberArray.push(props.variables[fix.slice(1, -1)]);
+        } else {
+          numberArray.push(props.conEquals[i]);
+        }
       }
       arr = arr.map(String)
       numberArray = numberArray.map(String)
+
       let check = _.isEqual(arr, numberArray)
       if(check){
+        console.log(props.variables)
         setStat("True")
         con = "True"
       } else {
@@ -182,6 +198,7 @@ const Input = forwardRef((props, ref) => {
     } else {
       if(num!==number){
         if(num.isInteger) {num = Math.round(num * 100) / 100}
+
         setNum(num)
         if(props.variables[props.varName] !== num && props.varName && num){
           handleChangeValue(num)
@@ -231,7 +248,7 @@ const sameMembers = (arr1, arr2) => {
               }}
               placeholder={props.label}
               value={getValue()}
-              onChange={(e) => (props.visible ? handleChangeValue(e.target.value) : false)}
+              onChange={(e) => (props.visible ? handleChangeValue((e.target.value).toLowerCase()) : false)}
             />
           ),
           checkbox: (

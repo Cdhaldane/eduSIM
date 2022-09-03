@@ -24,7 +24,7 @@ const collaborators = db.define('collaborators', {
   }
 });
 
-collaborators.sync().then(() => {
+collaborators.sync({ alter: true }).then(() => {
   console.log('Collaborators table created');
 });
 

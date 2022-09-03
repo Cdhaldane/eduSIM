@@ -18,7 +18,7 @@ const gamerooms = db.define('gamerooms', {
   },
 });
 
-gamerooms.sync().then(() => {
+gamerooms.sync({ alter: true }).then(() => {
   console.log('GameRooms table created');
 });
 
