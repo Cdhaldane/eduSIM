@@ -28,7 +28,7 @@ const gameplayers = db.define('gameplayers', {
   },
 });
 
-gameplayers.sync().then(() => {
+gameplayers.sync({ alter: true }).then(() => {
   console.log('GamePlayers table created');
 });
 

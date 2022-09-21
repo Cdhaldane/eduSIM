@@ -23,7 +23,7 @@ const gameactions = db.define('gameactions', {
   }
 });
 
-gameactions.sync().then(() => {
+gameactions.sync({ alter: true }).then(() => {
   console.log('GameActions table created');
 });
 

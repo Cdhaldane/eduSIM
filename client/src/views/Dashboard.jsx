@@ -6,7 +6,6 @@ import Modal from "react-modal";
 import axios from "axios";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
-import DraggableList from "react-draggable-lists";
 import clamp from 'lodash-es/clamp'
 import swap from 'lodash-move'
 import { useDrag } from 'react-use-gesture'
@@ -47,7 +46,7 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-          if(localStorage.order)
+          if(localStorage.order !== "null")
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData);
@@ -164,9 +163,10 @@ const Dashboard = (props) => {
       }
     })
     return (
-      <div>
+      <div cancel=".notesim">
         {springs.map(({ zIndex, shadow, y, scale }, i) => (
           <animated.div
+
             {...bind(i)}
             key={i}
             style={{
@@ -193,7 +193,7 @@ const Dashboard = (props) => {
 
   return (
     <div className="dashboard-wrapper" style={{
-      height: gamedata.length * 190 + 250,
+      height: gamedata?.length * 190 + 250,
     }}>
     <div className="dashboard disable-dbl-tap-zoom">
       <div className="page-margin">

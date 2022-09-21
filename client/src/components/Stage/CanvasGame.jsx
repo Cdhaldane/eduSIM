@@ -790,7 +790,7 @@ class Graphics extends Component {
               id="personalInfoContainer"
               className={"info" + this.state.personalAreaOpen + " personalAreaAnimOn"}
               style={{
-                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1].personalColor : "transparent"
+                backgroundColor: this.state.personalAreaOpen ? this.state.pages[this.state.level - 1]?.personalColor : "transparent"
               }}
             >
               <div id="playModeRoleLabel">{this.state.rolelevel}</div>

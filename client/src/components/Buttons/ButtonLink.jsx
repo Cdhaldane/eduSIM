@@ -24,14 +24,15 @@ const Button = ({
     type,
     href,
     buttonStyle,
-    buttonSize
+    buttonSize,
+    className
 }) => {
     const checkButtonStyle = STYLES.includes(buttonStyle) ? buttonStyle : STYLES[0];
     const checkButtonSize = SIZES.includes(buttonSize) ? buttonSize : SIZES[0];
     return (
-        <a className={`btn ${checkButtonStyle} ${checkButtonSize}`} href={href}>
-            {children}
-        </a>
+      <a className={`btn ${checkButtonStyle} ${checkButtonSize} ${className}`} href={href}>
+         {children}
+     </a>
     );
 }
 

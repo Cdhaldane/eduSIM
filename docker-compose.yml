@@ -9,7 +9,7 @@ services:
       dockerfile: ./Dockerfile
     image: "simapp"
     ports:
-      - "5050:5050"
+      - "8080:8080"
   frontend:
     build:
       context: ./client
