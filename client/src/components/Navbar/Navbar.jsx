@@ -13,6 +13,7 @@ import Info from "../../../public/icons/info.svg"
 import "./Navbar.css";
 
 const NavBar = (props) => {
+  console.log(user)
   const { isAuthenticated } = useAuth0();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;

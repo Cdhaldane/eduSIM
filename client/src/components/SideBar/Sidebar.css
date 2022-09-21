@@ -168,6 +168,11 @@
   display: flex;
   justify-content: space-between !important;
 }
+.variable-hold input{
+  font-size: 1.0em;
+  opacity: 0.7;
+  padding: 3px !important;
+}
 .variable-adding button{
   margin-top: 10px;
   width: 138px;
@@ -175,9 +180,23 @@
   color: white;
   background-color: var(--primary) !important;
   padding: 6px 0px;
-  font-size: 1.0em;
+  font-size: 1.0em !important;
   font-weight:1 !important;
   border-radius: 6px;
+}
+
+.variable-choose{
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1em;
+}
+.variable-choose select{
+  height: auto;
+  width: 130px;
+  padding: 1px;
+  font-size: 0.95em;
+  border: 1px solid var(--primary);
+  opacity: 0.8;
 }
 
 .greenMain {

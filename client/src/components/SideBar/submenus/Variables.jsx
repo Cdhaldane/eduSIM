@@ -40,6 +40,8 @@ const SettingRow = styled.div`
 `;
 
 const Variables = (props) => {
+
+  console.log(props)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -48,6 +50,7 @@ const Variables = (props) => {
   const [data, setData] = useState()
   const [varName, setVarName] = useState()
   const [varValue, setVarValue] = useState()
+  const [varType, setVarType] = useState()
   const [sessionText, setSessionText] = useState([])
   const [gameText, setGameText] = useState([])
   const [isShown, setIsShown] = useState(false);
@@ -227,7 +230,7 @@ const Variables = (props) => {
 
   const addVar = () => {
     setShowAdd(false)
-    let data = { [varName]: varValue }
+    let data = { [varName]: varValue, varType }
     props.setVars(data);
   }
 
@@ -236,6 +239,10 @@ const Variables = (props) => {
     vars.splice(i, 1);
     props.delVars(vars)
     setUpdater(updater + 1)
+  }
+
+  const handleVarType = (e) => {
+    setVarType(e.target.value)
   }
 
   return (
@@ -264,15 +271,23 @@ const Variables = (props) => {
     )}
       {showAdd && (
         <div className="variable-adding">
-          <div className="variable-hold">
-            <h1>Variable Name</h1>
-            <h1>Variable Value</h1>
+        <div className="variable-choose">
+          <label for="var-type">Variable Type</label>
+        <select name="var-type" id="var-type" onChange={() => handleVarType(e)} value={varType}>
+              <option value="integer">Integer</option>
+              <option value="string">String</option>
+              <option value="array">Array</option>
+            <option value="array">{varType}</option>
+            </select>
         </div>
           <div className="variable-hold">
-            <input type="text" value={varName} placeholder={"Some Name"} onChange={(e) => setVarName(e.target.value)}/>
-            <h2> = </h2>
-          <input type="text" value={varValue} placeholder={"Some Value"} onChange={(e) => setVarValue(e.target.value)}/>
-      </div>
+            <h1>Variable Name</h1>
+            <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)}/>
+          </div>
+          <div className="variable-hold">
+            <h1>Variable Value</h1>
+            <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)}/>
+        </div>
           <div className="variable-hold">
           <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
           <button onClick={() => addVar()}>{t("common.add")}</button>
