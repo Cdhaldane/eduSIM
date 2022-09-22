@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import Slider from 'rc-slider';
 import { SettingsContext } from "../../../App";
 import { useTranslation } from "react-i18next";
+import Draggable from 'react-draggable'
 
 
 
@@ -40,8 +41,6 @@ const SettingRow = styled.div`
 `;
 
 const Variables = (props) => {
-
-  console.log(props)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -50,13 +49,47 @@ const Variables = (props) => {
   const [data, setData] = useState()
   const [varName, setVarName] = useState()
   const [varValue, setVarValue] = useState()
-  const [varType, setVarType] = useState()
+  const [varType, setVarType] = useState("integer")
   const [sessionText, setSessionText] = useState([])
   const [gameText, setGameText] = useState([])
   const [isShown, setIsShown] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [showDis, setShowDis] = useState(false);
+  const [showCons, setShowCons] = useState(false);
   const [current, setCurrent] = useState();
+  const [currentCon, setCurrentCon] = useState();
   const [updater, setUpdater] = useState(0);
+  const lt = "<"
+  const [employeeData, setEmployeeData] = React.useState(tester)
+
+  const tester = [
+  {
+    id: 0,
+    name: 'Cost',
+    tval: '10',
+    ttype: 'Integer',
+  },
+  {
+    id: 1,
+    name: 'Place',
+    tval: 'Montreal',
+    ttype: 'String',
+  },
+  {
+    id: 2,
+    name: 'Deck',
+    tval: '[A,2,3,4,5,6,7,8,9,10,J,Q,K,A]',
+    ttype: 'Array',
+  },
+]
+
+
+
+  useEffect(() => {
+    if(props.expanded === false){
+      setShowDis(!showDis)
+    }
+  },[props.expanded])
 
   const populateSessionVars = () => {
     let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
@@ -156,7 +189,7 @@ const Variables = (props) => {
          list.push(
            !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
            <div className="variable-inputs" key={i}>
-             <i  onClick={() => deleteVar(i)}><Trash className="icon"/></i>
+             <i  onClick={() => deleteVar(i)}><Trash className="icon white-icon"/></i>
            <div className="variable-main" key={i}>
              <h1
                onClick={() => {
@@ -229,8 +262,29 @@ const Variables = (props) => {
   }
 
   const addVar = () => {
+    let value;
+    let arrayVal;
+    if(varType === "string")
+      value = String(varValue)
+    if(varType === "integer")
+      value = parseInt(varValue)
+    if(varType === "arrayString"){
+      arrayVal = varValue.replace(/\s/g, '')
+      arrayVal = arrayVal.split(',')
+      console.log(arrayVal)
+      value = (arrayVal)
+    }
+    if(varType === "arrayInt"){
+      arrayVal = varValue.replace(/\s/g, '')
+      arrayVal = arrayVal.split(',')
+      for(let i = 0; i < arrayVal.length; i++){
+        arrayVal[i] = parseInt(arrayVal[i])
+      }
+      console.log(arrayVal)
+      value = (arrayVal)
+    }
     setShowAdd(false)
-    let data = { [varName]: varValue, varType }
+    let data = { [varName]: value }
     props.setVars(data);
   }
 
@@ -242,12 +296,20 @@ const Variables = (props) => {
   }
 
   const handleVarType = (e) => {
-    setVarType(e.target.value)
+    setVarType(e)
   }
+
+  const handleConditionSelect = (e) => {
+    console.log(e)
+    setShowCons(!showCons)
+    setCurrentCon(e)
+  }
+
 
   return (
     <div className="variable-container">
       <h2>{t("sidebar.variables")}</h2>
+      {props.editpage ? (<div></div>) : ( <>
       <SettingRow>
         <i className="settings-icons"><User className="icon setting-icon"/></i>
         <b>{t("sidebar.session")}</b>
@@ -255,10 +317,13 @@ const Variables = (props) => {
       <div className="variable-box">
         {populateSessionVars()}
       </div>
+      </>
+    )}
       <SettingRow>
-        <i className="settings-icons"><Users className="icon setting-icon"/></i>
+        <i onClick={() => setShowDis(!showDis)} className="settings-icons"><Users className="icon setting-icon"/></i>
         <b>{t("sidebar.game")}</b>
       </SettingRow>
+
       <div className="variable-box" key={updater}>
         {populateGameVars()}
       </div>
@@ -271,15 +336,17 @@ const Variables = (props) => {
     )}
       {showAdd && (
         <div className="variable-adding">
-        <div className="variable-choose">
-          <label for="var-type">Variable Type</label>
-        <select name="var-type" id="var-type" onChange={() => handleVarType(e)} value={varType}>
-              <option value="integer">Integer</option>
-              <option value="string">String</option>
-              <option value="array">Array</option>
-            <option value="array">{varType}</option>
-            </select>
-        </div>
+
+          <div className="variable-choose">
+            <label for="var-type">Variable Type</label>
+          <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
+                <option value="integer">Integer</option>
+                <option value="string">String</option>
+                <option value="arrayString">String Array</option>
+                <option value="arrayInt">Integer Array</option>
+              </select>
+          </div>
+
           <div className="variable-hold">
             <h1>Variable Name</h1>
             <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)}/>
@@ -295,8 +362,128 @@ const Variables = (props) => {
         </div>
       )}
     </SettingRow>
+    {showDis && (
+      <Draggable>
+        <div className="variable-dis">
+          {showCons ? (
+            <>
+            <h1 className="variable-title">Condition Wizard</h1>
+            <div className="variable-cons">
+              <button className="con-back" onClick={() => setShowCons(!showCons)}><i class="fa fa-solid fa-backward"></i></button>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>If</th>
+                      <th>Variable</th>
+                      <th>Equals</th>
+                      <th>Variable</th>
+                      <th>Set Variable</th>
+                      <th>To</th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <select >
+                          <option value="integer">If</option>
+                          <option value="string">When</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select >
+                          <option value="integer">{tester[0].name}</option>
+                          <option value="string">{tester[1].name}</option>
+                          <option value="arrayString">{tester[2].name}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select >
+                          <option value="integer">=</option>
+                          <option value="string">!=</option>
+                          <option value="arrayString"> {lt} </option>
+                          <option value="arrayInt"> > </option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          name="name"
+                          type="text"
+                          placeholder="value"
+                        />
+                      </td>
+                      <td>
+                        <select>
+                          <option value="integer">{tester[0].name}</option>
+                          <option value="string">{tester[1].name}</option>
+                          <option value="arrayString">{tester[2].name}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          name="name"
+                          type="text"
+                          placeholder="value"
+                        />
+                      </td>
+                    </tr>
+                  </thead>
+                </table>
+            </div>
+            </>
+        ) : (<div className="variable-wiz">
+          <h1 className="variable-title">Variable Wizard</h1>
+          <button className="con" onClick={() => handleConditionSelect(tester)}><i class="fa fa-solid fa-code"></i></button>
+          <table>
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Value</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tester.map(({ id, name, tval, ttype }) => (
+                <tr key={id}>
+                  <td>
+                    <input
+                      name="name"
+                      value={name}
+                      type="text"
+                      onChange={(e) => onChange(e, id)}
+                      placeholder="Type Name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      name="email"
+                      value={tval}
+                      type="email"
+                      onChange={(e) => onChange(e, id)}
+                      placeholder="Type Email"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      name="position"
+                      type="text"
+                      value={ttype}
+                      onChange={(e) => onChange(e, id)}
+                      placeholder="Type Position"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>)}
+        </div>
+      </Draggable>
+    )}
     </div>
   );
 }
 
 export default Variables;
+
+// <div className="variable-dis-buttons">
+//   <button>Variables</button>
+//   <button>Conditions</button>
+// </div>

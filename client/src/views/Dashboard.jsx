@@ -46,7 +46,7 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-          if(localStorage.order !== "null")
+          if(localStorage.order)
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData);

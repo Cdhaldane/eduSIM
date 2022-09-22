@@ -15,7 +15,7 @@
   scrollbar-color: var(--primary) var(--white) !important;
   scrollbar-width: thin !important;
   min-height: 60px;
-  max-height: 300px;
+  max-height: 800px;
 }
 
 .variable-box::-webkit-scrollbar {
@@ -60,15 +60,15 @@
 .variable-inputs h1{
   font-weight: 200 !important;
   float: left;
-  margin-left: 0px !important;
-  max-width: 65px;
-  overflow-x:hidden;
+  margin-left: -5px !important;
+  margin-top: 5px;
+  width: 40%;
+  font-size: 1.5em;
+  text-overflow: hidden;
 }
 .variable-inputs h2{
   font-weight: 200 !important;
-  float: right;
-  text-align: right;
-  margin-right: 10px;
+  margin-right: 16px;
   margin-top: 2px;
   font-size: 2.0em;
 }
@@ -103,7 +103,7 @@
   margin-right: 2px;
   margin-top: 1px;
   opacity: 100%;
-  width: 60%;
+  width: 40%;
   background-color: white !important;
 }
 
@@ -172,6 +172,8 @@
   font-size: 1.0em;
   opacity: 0.7;
   padding: 3px !important;
+  width: 50%;
+  margin-bottom: 3px;
 }
 .variable-adding button{
   margin-top: 10px;
@@ -192,12 +194,15 @@
 }
 .variable-choose select{
   height: auto;
-  width: 130px;
+  width: 50%;
   padding: 1px;
   font-size: 0.95em;
   border: 1px solid var(--primary);
-  opacity: 0.8;
+  opacity: 9;
+  margin-bottom: 3px;
 }
+
+
 
 .greenMain {
   background-color: rgb(101, 159, 69) !important;
@@ -382,4 +387,207 @@
 /* Optional: show position indicator in red */
 .notes-textarea::-webkit-scrollbar-thumb {
   background: #FF0000;
+}
+
+.white-icon{
+  fill: white !important;
+  position: relative;
+  bottom: 3px;
+}
+
+.variable-dis{
+  position: absolute;
+  left: 600px;
+  top: 300px;
+  width: 600px;
+  height: 400px;
+  background-color: white;
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  overflow-y: scroll;
+}
+
+.variable-dis-buttons button{
+  padding: 10px 100px;
+  width: 50%;
+  border-bottom: 2px solid var(--primary);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 9px 0px 0px 0px;
+}
+.variable-dis-buttons button:nth-child(2){
+  padding: 10px 100px;
+  width: 50%;
+  border-radius: 0px 9px 0px 0px;
+}
+.variable-dis-buttons button:hover{
+  background-color: var(--primary);
+  color: white;
+}
+
+.variable-title {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.variable-wiz table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.variable-wiz tr th {
+  font-size: 18px;
+  padding: 12px;
+  border: 1px solid #eeeeee;
+  text-align: left;
+  background-color: rgba(217, 221, 146, 0.2);
+}
+
+.variable-wiz tr td {
+  border: 1px solid #eeeeee;
+  text-align: left;
+  width: 33%;
+}
+
+.variable-wiz td:nth-child(3)  {
+  width: 100%;
+  display: flex;
+}
+
+.variable-wiz td:nth-child(3) button {
+  float: right;
+  height: auto;
+  width: 50%;
+  top: 10px;
+  font-size: 2em;
+  border: none;
+  background-color: white;
+}
+
+.variable-wiz td:nth-child(3) input {
+  float: left;
+}
+
+.variable-wiz input {
+  font-size: 16px;
+  background-color: transparent;
+  border: none;
+  width: 91%;
+  padding: 12px 12px;
+}
+
+.variable-wiz input:hover {
+  background-color: #fffaf3;
+}
+
+.variable-wiz input:focus {
+  outline: 1px solid #ccc;
+  border: 1px solid #ccc;
+}
+
+.variable-cons table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed
+}
+
+.variable-cons tr th {
+  font-size: 18px;
+  padding: 12px;
+  border: 1px solid #eeeeee;
+  text-align: left;
+  background-color: rgba(217, 221, 146, 0.2);
+  width: 13px !important;
+}
+
+.variable-cons tr td {
+  border: 1px solid #eeeeee;
+  text-align: left;
+  width: 13px !important;
+}
+
+.variable-cons input {
+  padding: 2px;
+  border-radius: 3px;
+  border: 1px solid black;
+  width: 100%;
+  height: 100%;
+  font-size: 1.4em;
+  font-weight: lighter;
+}
+
+.variable-cons select {
+  padding: 2px;
+  border-radius: 3px;
+  border: 1px solid black;
+  width: 100%;
+  height: 100%;
+  font-size: 1.2em;
+  font-weight: lighter;
+}
+
+.con-back {
+  border: none;
+  background-color: white;
+  position: absolute;
+  top: 10px;
+  font-size: 2em;
+  left: 10px;
+
+
+}
+
+.con {
+  border: none;
+  background-color: white;
+  position: absolute;
+  top: 10px;
+  font-size: 2em;
+  left: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.variable-dis::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+  border-radius: 12px;
+}
+
+.variable-dis::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+  border-radius: 12px;
+}
+
+.variable-dis::-webkit-scrollbar-thumb
+{
+	background-color: var(--text-color);
+	background-image: -webkit-linear-gradient(45deg,
+	                                          rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
 }

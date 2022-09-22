@@ -271,6 +271,7 @@ const Sidebar = (props) => {
           setVars={props.setVars}
           editVars={props.editVars}
           delVars={props.delVars}
+          expanded={submenuVisible}
         />
       )
     },
