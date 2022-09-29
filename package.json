@@ -34,8 +34,10 @@
     "@draft-js-plugins/text-alignment": "^1.0.0",
     "draft-js": "^0.11.7",
     "gifler": "^0.1.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "jsx-runtime": "^1.2.0",
+    "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dom": "^18.2.0",
     "usehooks-ts": "^2.4.0"
   }
 }

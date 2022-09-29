@@ -1,18 +1,19 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import Slider from 'rc-slider';
-import { SettingsContext } from "../../../App";
+import { SettingsContext } from "../../../../App";
 import { useTranslation } from "react-i18next";
 import Draggable from 'react-draggable'
 
 
 
-import "../Sidebar.css";
 
-import Trash from "../../../../public/icons/trash-can-alt-2.svg"
-import User from "../../../../public/icons/user.svg"
-import Users from "../../../../public/icons/users-2.svg"
-import Plus from "../../../../public/icons/circle-plus.svg"
+import "../../Sidebar.css";
+
+import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
+import User from "../../../../../public/icons/user.svg"
+import Users from "../../../../../public/icons/users-2.svg"
+import Plus from "../../../../../public/icons/circle-plus.svg"
 
 
 const SettingRow = styled.div`
@@ -41,6 +42,7 @@ const SettingRow = styled.div`
 `;
 
 const Variables = (props) => {
+  console.log(props.gameVars)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -54,13 +56,23 @@ const Variables = (props) => {
   const [gameText, setGameText] = useState([])
   const [isShown, setIsShown] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [showConAdd, setShowConAdd] = useState(false);
   const [showDis, setShowDis] = useState(false);
   const [showCons, setShowCons] = useState(false);
   const [current, setCurrent] = useState();
   const [currentCon, setCurrentCon] = useState();
   const [updater, setUpdater] = useState(0);
-  const lt = "<"
+  const [tabs, setTabs] = useState("global");
   const [employeeData, setEmployeeData] = React.useState(tester)
+  const [conditions, setConditions] = useState([])
+  const [boxes] = useState([
+    { name: 'Bottle', type: ''},
+    { name: 'Banana', type: ''},
+    { name: 'Magazine', type: ''},
+  ])
+  const condition = ["if", "var", "=", "2", "var", "3"]
+  const duplicate = [1,2,3,4,5,6]
+  const lt = "<"
 
   const tester = [
   {
@@ -87,7 +99,7 @@ const Variables = (props) => {
 
   useEffect(() => {
     if(props.expanded === false){
-      setShowDis(!showDis)
+      setShowDis(false)
     }
   },[props.expanded])
 
@@ -305,6 +317,57 @@ const Variables = (props) => {
     setCurrentCon(e)
   }
 
+  const handleConAdd = () => {
+    console.log(condition)
+    setConditions(prevState => [...prevState, condition] )
+    console.log(conditions)
+  }
+
+  const populateTab = () => {
+    let vars = props ? props.vars : 0;
+    const list = []
+    if(tabs === "global")
+      return (
+        <div>
+          <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
+            <Plus className="icon plus"/>
+            {t("sidebar.addNewVar")}
+          </div>
+
+        </div>
+      )
+    if(tabs === "session")
+      return (
+        <div>
+          <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
+            <Plus className="icon plus"/>
+            {t("sidebar.addNewVar")}
+          </div>
+        </div>
+      )
+    if(tabs === "conditions")
+      return (
+        <div>
+
+
+
+          <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
+            <Plus className="icon plus"/>
+            ADD NEW CONDITION
+          </div>
+        </div>
+    )
+  }
+
+  const onStart = () => {
+
+  };
+
+  const onStop = () => {
+
+  };
+
+  const dragHandlers = {onStart: onStart, onStop: onStop};
 
   return (
     <div className="variable-container">
@@ -334,37 +397,12 @@ const Variables = (props) => {
       {t("sidebar.addNewVar")}
       </div>
     )}
-      {showAdd && (
-        <div className="variable-adding">
 
-          <div className="variable-choose">
-            <label for="var-type">Variable Type</label>
-          <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
-                <option value="integer">Integer</option>
-                <option value="string">String</option>
-                <option value="arrayString">String Array</option>
-                <option value="arrayInt">Integer Array</option>
-              </select>
-          </div>
-
-          <div className="variable-hold">
-            <h1>Variable Name</h1>
-            <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)}/>
-          </div>
-          <div className="variable-hold">
-            <h1>Variable Value</h1>
-            <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)}/>
-        </div>
-          <div className="variable-hold">
-          <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
-          <button onClick={() => addVar()}>{t("common.add")}</button>
-      </div>
-        </div>
-      )}
     </SettingRow>
     {showDis && (
-      <Draggable>
+      <Draggable handle="h1" {...dragHandlers}>
         <div className="variable-dis">
+
           {showCons ? (
             <>
             <h1 className="variable-title">Condition Wizard</h1>
@@ -379,101 +417,156 @@ const Variables = (props) => {
                       <th>Variable</th>
                       <th>Set Variable</th>
                       <th>To</th>
+                      <th></th>
                     </tr>
                     <tr>
                       <td>
-                        <select >
-                          <option value="integer">If</option>
-                          <option value="string">When</option>
+                        <select onChange={(e) => { condition[0] = e.target.value}}>
+                          <option value="if">If</option>
+                        <option value="while">While</option>
                         </select>
                       </td>
                       <td>
-                        <select >
+                        <select onChange={(e) => { condition[1] = e.target.value}}>
+                          <option value="c">{tester[0].name}</option>
+                          <option value="c">{tester[1].name}</option>
+                          <option value="c">{tester[2].name}</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select onChange={(e) => { condition[2] = e.target.value}}>
+                          <option value="e">=</option>
+                          <option value="ne">!=</option>
+                          <option value="lt"> {lt} </option>
+                          <option value="gt"> > </option>
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          onChange={(e) => { condition[3] = e.target.value}}
+                          type="text"
+                          placeholder="value"
+                        />
+                      </td>
+                      <td>
+                        <select onChange={(e) => { condition[4] = e.target.value}}>
                           <option value="integer">{tester[0].name}</option>
                           <option value="string">{tester[1].name}</option>
                           <option value="arrayString">{tester[2].name}</option>
                         </select>
                       </td>
                       <td>
-                        <select >
-                          <option value="integer">=</option>
-                          <option value="string">!=</option>
-                          <option value="arrayString"> {lt} </option>
-                          <option value="arrayInt"> > </option>
-                        </select>
-                      </td>
-                      <td>
                         <input
-                          name="name"
                           type="text"
                           placeholder="value"
+                          onChange={(e) => { condition[5] = e.target.value}}
                         />
                       </td>
                       <td>
-                        <select>
-                          <option value="integer">{tester[0].name}</option>
-                          <option value="string">{tester[1].name}</option>
-                          <option value="arrayString">{tester[2].name}</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          name="name"
-                          type="text"
-                          placeholder="value"
-                        />
+                        <button className="con-button" onClick={() => handleConAdd()}>Add</button>
                       </td>
                     </tr>
                   </thead>
                 </table>
+
             </div>
             </>
         ) : (<div className="variable-wiz">
           <h1 className="variable-title">Variable Wizard</h1>
           <button className="con" onClick={() => handleConditionSelect(tester)}><i class="fa fa-solid fa-code"></i></button>
-          <table>
-            <thead>
-              <tr>
-                <th>Variable</th>
-                <th>Value</th>
-                <th>Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tester.map(({ id, name, tval, ttype }) => (
-                <tr key={id}>
-                  <td>
-                    <input
-                      name="name"
-                      value={name}
-                      type="text"
-                      onChange={(e) => onChange(e, id)}
-                      placeholder="Type Name"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="email"
-                      value={tval}
-                      type="email"
-                      onChange={(e) => onChange(e, id)}
-                      placeholder="Type Email"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      name="position"
-                      type="text"
-                      value={ttype}
-                      onChange={(e) => onChange(e, id)}
-                      placeholder="Type Position"
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="con-container">
+            <button className="con-tabs" onClick={() => setTabs("global")}>Global</button>
+            <button className="con-tabs" onClick={() => setTabs("session")}>Session</button>
+            <button className="con-tabs" onClick={() => setTabs("conditions")}>Conditions</button>
+          </div>
+          {populateTab()}
         </div>)}
+        {showAdd && (
+          <div className="variable-adding">
+
+            <div className="variable-choose">
+              <label for="var-type">Variable Type</label>
+            <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
+                  <option value="integer">Integer</option>
+                <option value="arrayInt">Integer Array</option>
+                  <option value="string">String</option>
+                  <option value="arrayString">String Array</option>
+
+                </select>
+            </div>
+
+            <div className="variable-hold">
+              <h1>Variable Name</h1>
+              <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)}/>
+            </div>
+            <div className="variable-hold">
+              <h1>Variable Value</h1>
+              <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)}/>
+          </div>
+            <div className="variable-hold">
+            <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
+            <button onClick={() => addVar()}>{t("common.add")}</button>
+        </div>
+          </div>
+        )}
+        {showConAdd && (
+          <div>
+          <div className="variable-con-adding">
+
+          <div className="input-area">
+            <h2>IF</h2>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+
+          </div>
+
+          <div className="input-area">
+            <h2 className="smaller-text">SET</h2>
+            <div className="box"></div>
+            <div className="box"></div>
+            <div className="box"></div>
+          </div>
+
+          {duplicate.map((i) => (
+            <Draggable>
+              <div className="e">
+              <select onChange={(e) => { condition[2] = e.target.value}}>
+                <option value="e">=</option>
+                <option value="ne">!=</option>
+                <option value="lt"> {lt} </option>
+                <option value="gt"> > </option>
+              </select>
+              </div>
+            </Draggable>
+            ))}
+            {duplicate.map((i) => (
+            <Draggable>
+              <div className="i">
+              <select onChange={(e) => { condition[1] = e.target.value}}>
+                <option value="c">{tester[0].name}</option>
+                <option value="c">{tester[1].name}</option>
+                <option value="c">{tester[2].name}</option>
+              </select>
+              </div>
+            </Draggable>
+            ))}
+            {duplicate.map((i) => (
+            <Draggable>
+              <div className="v">
+              <input
+                onChange={(e) => { condition[3] = e.target.value}}
+                type="text"
+                placeholder="value"
+              />
+              </div>
+            </Draggable>
+            ))}
+          </div>
+            <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
+            <button className="con-add-b" onClick={() => addVar()}>{t("common.add")}</button>
+          </div>
+        )}
         </div>
       </Draggable>
     )}

@@ -8,7 +8,7 @@ import "./i18n.js";
 ReactDOM.render(
   <Router>
     <Auth0ProviderWithHistory>
-      <App />
+        <App />
     </Auth0ProviderWithHistory>
   </Router>,
   document.getElementById("root")

@@ -148,8 +148,9 @@
   padding: 10px;
   border: 2px solid darkgray;
   border-radius: 8px;
-  width: 99%;
+  width: 80%;
   margin-top: 0px;
+  margin-left: 10%;
 }
 .variable-adding h1{
   font-size: 1.05em;
@@ -397,14 +398,15 @@
 
 .variable-dis{
   position: absolute;
-  left: 600px;
+  left: 500px;
   top: 300px;
-  width: 600px;
-  height: 400px;
+  width: 700px;
+  height: 500px;
   background-color: white;
   border: 2px solid var(--primary);
   border-radius: 12px;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 .variable-dis-buttons button{
@@ -449,7 +451,7 @@
 .variable-wiz tr td {
   border: 1px solid #eeeeee;
   text-align: left;
-  width: 33%;
+  width: 33.33%;
 }
 
 .variable-wiz td:nth-child(3)  {
@@ -548,9 +550,144 @@
   font-size: 2em;
   left: 10px;
 }
+.con-button {
+  width: 100%;
+  height: 100%;
+  font-size: 1.5em;
+}
 
+.con-container{
 
+}
 
+.con-tabs{
+  width: 33.33%;
+  border-radius: 0px;
+  border: none;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.con-tabs:focus{
+  background-color: var(--primary);
+  color: var(--white);
+}
+.con-tabs:active{
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.drag-here{
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 200px;
+  background-color: red;
+  z-index: 100px;
+}
+.tester {
+  width: 90% !important;
+  margin-left: 5%;
+  position: absolute !important;
+  bottom: 20px;
+}
+
+.e {
+  position: absolute;
+  top: 350px;
+  left: 10%;
+  width: 100px;
+  height: 70px;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  background-color: rgb(185, 53, 53);
+  color: var(--white);
+  padding: 10px;
+
+}
+.i {
+  position: absolute;
+  top: 350px;
+  left: 40%;
+  width: 100px;
+  height: 70px;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  background-color: rgb(185, 53, 53);
+  color: var(--white);
+  padding: 10px;
+
+}
+.v {
+  position: absolute;
+  top: 350px;
+  left: 70%;
+  width: 100px;
+  height: 70px;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  background-color: rgb(185, 53, 53);
+  color: var(--white);
+}
+
+.con-add-b {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  justify-content: space-between;
+  padding: 8px 50px;
+  background-color: var(--green);
+  border: 1px solid var(--success);
+  border-radius: 9px;
+  color: white;
+}
+
+.con-can-b {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 50px;
+  background-color: var(--red);
+  border: 1px solid var(--primary);
+  border-radius: 9px;
+  color: white;
+}
+
+.variable-con-adding select{
+  font-size: 1.0em;
+}
+
+.variable-con-adding input{
+  font-size: 1.0em;
+  width: 80px;
+  position: absolute;
+  top: 30%;
+  left: 7%;
+}
+
+.box{
+  width: 100px;
+  height: 70px;
+  margin-left: 20px;
+  border: 1px dashed var(--text-color);
+  border-radius: 9px;
+}
+
+.input-area{
+  display: flex;
+  margin-top: 30px;
+}
+
+.input-area h2{
+  position: relative;
+  top: 20px;
+  margin-left: 90px;
+  margin-right: 80px;
+}
+
+.smaller-text {
+  margin-right:57px !important;
+}
 
 
 

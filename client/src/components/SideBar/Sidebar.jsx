@@ -7,7 +7,7 @@ import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
-import Variables from "./submenus/Variables";
+import Variables from "./submenus/Variables/Variables";
 import Notes from "./submenus/Notes";
 import Alerts from "./submenus/Alerts";
 import Players from "./submenus/Players";
