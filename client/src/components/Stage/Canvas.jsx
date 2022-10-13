@@ -318,6 +318,10 @@ class Graphics extends Component {
         if (this.props.setVars) {
           this.props.setVars(objects.variables || {});
         }
+        if (this.props.setCons) {
+          this.props.setCons(objects.cons || {});
+        }
+        console.log(objects)
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }
@@ -427,6 +431,7 @@ class Graphics extends Component {
   }
 
   setCustomGroupPos = (state, layer) => {
+    console.log(this.savedState)
     if (!this.refs[layer]) return;
     const groups = this.refs[`${layer}.objects`].find('Group');
     let group = null;
@@ -669,6 +674,7 @@ class Graphics extends Component {
     }
     storedObj.tasks = this.props.tasks;
     storedObj.variables = this.props.variables;
+    storedObj.cons = this.props.cons;
     storedObj.notes = this.props.notes;
     this.setState({
       saved: storedObj

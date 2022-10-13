@@ -256,6 +256,7 @@ const Game = (props) => {
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
             variables={roomStatus.variables || {}}
+            cons={roomStatus.cons || {}}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}

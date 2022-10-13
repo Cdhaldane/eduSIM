@@ -267,8 +267,10 @@ const Sidebar = (props) => {
         <Variables
           editpage={!props.game}
           vars={props.customObjs ? props.customObjs.inputs : []}
+          cons={props.cons ? props.cons : []}
           gameVars={props.variables ? props.variables : []}
           setVars={props.setVars}
+          setCons={props.setCons}
           editVars={props.editVars}
           delVars={props.delVars}
           expanded={submenuVisible}

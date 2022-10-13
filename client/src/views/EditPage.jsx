@@ -48,6 +48,7 @@ const EditPage = (props) => {
 
   const [tasks, setTasks] = useState({});
   const [vars, setVars] = useState([]);
+  const [cons, setCons] = useState([]);
   const [page, setPage] = useState(1);
 
 
@@ -99,6 +100,10 @@ const EditPage = (props) => {
     setVars(data)
   }
 
+  const handleSetCons = (data) => {
+      setCons(old => [...old, data])
+  }
+
   return (
     <div className="editpage">
       <div className="editpage-container">
@@ -111,9 +116,11 @@ const EditPage = (props) => {
               visible={showNav}
               close={toggle}
               variables={vars || {}}
+              cons={cons || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
               setVars={handleSetVars}
+              setCons={handleSetCons}
               editVars={handleEditVars}
               delVars={handleDeleteVars}
               alertProps={{
@@ -143,6 +150,7 @@ const EditPage = (props) => {
                 adminid={localStorage.adminid}
                 gameinstance={localStorage.gameinstance}
                 variables={vars || {}}
+                cons={cons || {}}
                 tasks={tasks || {}}
                 setTasks={setTasks}
                 setVars={setVars}

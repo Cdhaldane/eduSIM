@@ -14,6 +14,7 @@ import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import User from "../../../../../public/icons/user.svg"
 import Users from "../../../../../public/icons/users-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
+import Line from "../../../../../public/icons/minus.svg"
 
 
 const SettingRow = styled.div`
@@ -42,7 +43,7 @@ const SettingRow = styled.div`
 `;
 
 const Variables = (props) => {
-  console.log(props.gameVars)
+
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -59,18 +60,42 @@ const Variables = (props) => {
   const [showConAdd, setShowConAdd] = useState(false);
   const [showDis, setShowDis] = useState(false);
   const [showCons, setShowCons] = useState(false);
+  const [showAddition, setShowAddition] = useState(false);
+  const [showAddition2, setShowAddition2] = useState(false);
   const [current, setCurrent] = useState();
   const [currentCon, setCurrentCon] = useState();
   const [updater, setUpdater] = useState(0);
   const [tabs, setTabs] = useState("global");
+  const [box, setBox] = useState([
+    {
+      id: 0,
+      state: 'var'
+    },
+    {
+      id: 1,
+      state: 'var'
+    },
+    {
+      id: 2,
+      state: 'var'
+    },
+    {
+      id: 3,
+      state: 'var'
+    },
+    {
+      id: 4,
+      state: 'var'
+    },
+    {
+      id: 5,
+      state: 'var'
+    }
+  ]);
   const [employeeData, setEmployeeData] = React.useState(tester)
   const [conditions, setConditions] = useState([])
-  const [boxes] = useState([
-    { name: 'Bottle', type: ''},
-    { name: 'Banana', type: ''},
-    { name: 'Magazine', type: ''},
-  ])
-  const condition = ["if", "var", "=", "2", "var", "3"]
+
+  const condition = ['Cost', '=', 'Cost', 'Cost', '=', 'Cost']
   const duplicate = [1,2,3,4,5,6]
   const lt = "<"
 
@@ -179,7 +204,7 @@ const Variables = (props) => {
    let vars = props ? props.vars : 0;
    let data = props.gameVars
    let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-   let list = props.editpage ? [<div className="variable-inputs green" key={-1}><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green" key={-1}><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
+   let list = props.editpage ? [<div className="variable-inputs" key={-1}><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green" key={-1}><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
    let variable;
    let length;
    let items = [];
@@ -202,22 +227,15 @@ const Variables = (props) => {
            !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
            <div className="variable-inputs" key={i}>
              <i  onClick={() => deleteVar(i)}><Trash className="icon white-icon"/></i>
-           <div className="variable-main" key={i}>
-             <h1
-               onClick={() => {
-                 setIsShown(true)
-                 setCurrent(i)
-               }}
-               onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
-             <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
-             <h2>=</h2>
+                 <h1
+                   onClick={() => {
+                     setIsShown(true)
+                     setCurrent(i)
+                   }}
+                   onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
+                  <h2>=</h2>
+                   <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
 
-           {(isShown && current === i) && (
-             <div className="variable-hover" key={i}>
-               {populateNames(check[i])}
-             </div>
-           )}
-           </div>
          </div>
          )
        }
@@ -225,25 +243,18 @@ const Variables = (props) => {
    return list
  }
 
-  const populateNames = (a) => {
-    let vars = props ? props.vars : 0;
-    let names = [];
-    let counts = {};
-    let actual = [];
-    let out = [];
-    for (let i = 0; i < (vars ? vars.length : 0); i++) {
-      if (vars[i].sync) {
-        names.push([vars[i].varName])
-        if (vars[i].varName == a) {
-          actual.push([vars[i].label])
-        }
-      }
+  const populateConditions = () => {
+    let cons = props ? props.cons : 0;
+    console.log(cons)
+    let list = []
+    for(let i  = 0; i < cons.length; i++){
+      list.push(<div className="condition-inputs">
+        <h1>If</h1><h2>{cons[i][0]}</h2><h3>{cons[i][1]}</h3><h2>{cons[i][2]}</h2><h1>Then</h1><h2>{cons[i][3]}</h2><h3>{cons[i][4]}</h3><h2>{cons[i][5]}</h2>
+      </div>)
     }
-    for (let i = 0; i < actual.length; i++) {
-      out.push(<div key={i}>{actual[i]}</div>)
-    }
-    return out
+    return list
   }
+
   const uniq = (a) => {
     var prims = { "boolean": {}, "number": {}, "string": {} }, objs = [];
     return a.filter(function (item) {
@@ -283,7 +294,7 @@ const Variables = (props) => {
     if(varType === "arrayString"){
       arrayVal = varValue.replace(/\s/g, '')
       arrayVal = arrayVal.split(',')
-      console.log(arrayVal)
+
       value = (arrayVal)
     }
     if(varType === "arrayInt"){
@@ -317,10 +328,10 @@ const Variables = (props) => {
     setCurrentCon(e)
   }
 
-  const handleConAdd = () => {
-    console.log(condition)
+  const addCon = () => {
     setConditions(prevState => [...prevState, condition] )
-    console.log(conditions)
+    setShowConAdd(!showConAdd)
+    props.setCons(condition);
   }
 
   const populateTab = () => {
@@ -329,16 +340,21 @@ const Variables = (props) => {
     if(tabs === "global")
       return (
         <div>
+          {!showAdd && (
+            <>
+              {populateGameVars()}
+            </>
+          )}
           <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
             <Plus className="icon plus"/>
             {t("sidebar.addNewVar")}
           </div>
-
         </div>
       )
     if(tabs === "session")
       return (
         <div>
+          {populateSessionVars()}
           <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
             <Plus className="icon plus"/>
             {t("sidebar.addNewVar")}
@@ -348,9 +364,11 @@ const Variables = (props) => {
     if(tabs === "conditions")
       return (
         <div>
-
-
-
+          {!showConAdd && (
+            <>
+              {populateConditions()}
+            </>
+          )}
           <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
             <Plus className="icon plus"/>
             ADD NEW CONDITION
@@ -359,15 +377,45 @@ const Variables = (props) => {
     )
   }
 
-  const onStart = () => {
+  const updateState = (n, i) => {
+    const newState = box.map(obj => {
+      if (obj.id === i) {
+        return {...obj, state: n};
+      }
+      return obj;
+    });
 
+    setBox(newState);
   };
 
-  const onStop = () => {
+  const getSpecialBox = (i, n) => {
+    let list = []
 
-  };
+    list.push(
+      <div className='var-box'>
+          <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var'  ? 'white' : "black"}} onClick={() => updateState('var', i)}>Var</button>
+          <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val'  ? 'white' : "black"}} onClick={() => updateState('val', i)}>Val</button>
+          <div className="box">
+            {box[i].state === 'var'  ? (
+              <select onChange={(e) => { condition[n] = e.target.value}}>
+                <option value={tester[0].name}>{tester[0].name}</option>
+                <option value={tester[1].name}>{tester[1].name}</option>
+                <option value={tester[2].name}>{tester[2].name}</option>
+              </select>
+            ) : (
+              <input
+                onChange={(e) => { condition[n] = e.target.value}}
+                type="text"
+                placeholder="value"
+              />
+            )}
 
-  const dragHandlers = {onStart: onStart, onStop: onStop};
+          </div>
+      </div>
+    )
+    return list
+  }
+
 
   return (
     <div className="variable-container">
@@ -378,7 +426,7 @@ const Variables = (props) => {
         <b>{t("sidebar.session")}</b>
       </SettingRow>
       <div className="variable-box">
-        {populateSessionVars()}
+
       </div>
       </>
     )}
@@ -387,8 +435,8 @@ const Variables = (props) => {
         <b>{t("sidebar.game")}</b>
       </SettingRow>
 
-      <div className="variable-box" key={updater}>
-        {populateGameVars()}
+      <div className="variable-box " key={updater}>
+
       </div>
       <SettingRow>
       {props.editpage && (
@@ -400,88 +448,19 @@ const Variables = (props) => {
 
     </SettingRow>
     {showDis && (
-      <Draggable handle="h1" {...dragHandlers}>
+      <Draggable>
         <div className="variable-dis">
-
-          {showCons ? (
-            <>
-            <h1 className="variable-title">Condition Wizard</h1>
-            <div className="variable-cons">
-              <button className="con-back" onClick={() => setShowCons(!showCons)}><i class="fa fa-solid fa-backward"></i></button>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>If</th>
-                      <th>Variable</th>
-                      <th>Equals</th>
-                      <th>Variable</th>
-                      <th>Set Variable</th>
-                      <th>To</th>
-                      <th></th>
-                    </tr>
-                    <tr>
-                      <td>
-                        <select onChange={(e) => { condition[0] = e.target.value}}>
-                          <option value="if">If</option>
-                        <option value="while">While</option>
-                        </select>
-                      </td>
-                      <td>
-                        <select onChange={(e) => { condition[1] = e.target.value}}>
-                          <option value="c">{tester[0].name}</option>
-                          <option value="c">{tester[1].name}</option>
-                          <option value="c">{tester[2].name}</option>
-                        </select>
-                      </td>
-                      <td>
-                        <select onChange={(e) => { condition[2] = e.target.value}}>
-                          <option value="e">=</option>
-                          <option value="ne">!=</option>
-                          <option value="lt"> {lt} </option>
-                          <option value="gt"> > </option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          onChange={(e) => { condition[3] = e.target.value}}
-                          type="text"
-                          placeholder="value"
-                        />
-                      </td>
-                      <td>
-                        <select onChange={(e) => { condition[4] = e.target.value}}>
-                          <option value="integer">{tester[0].name}</option>
-                          <option value="string">{tester[1].name}</option>
-                          <option value="arrayString">{tester[2].name}</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          placeholder="value"
-                          onChange={(e) => { condition[5] = e.target.value}}
-                        />
-                      </td>
-                      <td>
-                        <button className="con-button" onClick={() => handleConAdd()}>Add</button>
-                      </td>
-                    </tr>
-                  </thead>
-                </table>
-
-            </div>
-            </>
-        ) : (<div className="variable-wiz">
+          <div className="variable-wiz">
           <h1 className="variable-title">Variable Wizard</h1>
           <button className="con" onClick={() => handleConditionSelect(tester)}><i class="fa fa-solid fa-code"></i></button>
           <div className="con-container">
-            <button className="con-tabs" onClick={() => setTabs("global")}>Global</button>
-            <button className="con-tabs" onClick={() => setTabs("session")}>Session</button>
-            <button className="con-tabs" onClick={() => setTabs("conditions")}>Conditions</button>
+            <button className="con-tabs" style={{ backgroundColor: tabs === 'global' ? 'var(--primary)' : "#eeeeee", color: tabs === 'global' ? 'white' : "black"}} onClick={() => setTabs("global")}>Global</button>
+            <button className="con-tabs" style={{ backgroundColor: tabs === 'session' ? 'var(--primary)' : "#eeeeee", color: tabs === 'session' ? 'white' : "black"}} onClick={() => setTabs("session")}>Session</button>
+            <button className="con-tabs" style={{ backgroundColor: tabs === 'conditions' ? 'var(--primary)' : "#eeeeee", color: tabs === 'conditions' ? 'white' : "black"}} onClick={() => setTabs("conditions")}>Conditions</button>
           </div>
           {populateTab()}
-        </div>)}
-        {showAdd && (
+        </div>
+        {showAdd && (tabs === 'global' || tabs === 'session') && (
           <div className="variable-adding">
 
             <div className="variable-choose">
@@ -506,65 +485,112 @@ const Variables = (props) => {
             <div className="variable-hold">
             <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
             <button onClick={() => addVar()}>{t("common.add")}</button>
-        </div>
+          </div>
           </div>
         )}
-        {showConAdd && (
+        {showConAdd && tabs==="conditions" && (
           <div>
           <div className="variable-con-adding">
 
           <div className="input-area">
             <h2>IF</h2>
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="box"></div>
 
+          <div>
+            {getSpecialBox(0, 0)}
           </div>
 
-          <div className="input-area">
-            <h2 className="smaller-text">SET</h2>
-            <div className="box"></div>
-            <div className="box"></div>
-            <div className="box"></div>
-          </div>
-
-          {duplicate.map((i) => (
-            <Draggable>
-              <div className="e">
-              <select onChange={(e) => { condition[2] = e.target.value}}>
+            <div className="box select">
+              <select onChange={(e) => { condition[1] = e.target.value}}>
                 <option value="e">=</option>
                 <option value="ne">!=</option>
                 <option value="lt"> {lt} </option>
                 <option value="gt"> > </option>
               </select>
+            </div>
+
+            <div>
+              {getSpecialBox(1, 2)}
+            </div>
+            <div className="fixer" >
+              {showAddition && (
+                <div className="fixer" >
+                <div className="box select">
+                  <select onChange={(e) => { condition[2] = e.target.value}}>
+                    <option value="e">=</option>
+                    <option value="ne">!=</option>
+                    <option value="lt"> {lt} </option>
+                    <option value="gt"> > </option>
+                  </select>
+                </div>
+
+                <div>
+                  {getSpecialBox(4)}
+                </div>
               </div>
-            </Draggable>
-            ))}
-            {duplicate.map((i) => (
-            <Draggable>
-              <div className="i">
-              <select onChange={(e) => { condition[1] = e.target.value}}>
-                <option value="c">{tester[0].name}</option>
-                <option value="c">{tester[1].name}</option>
-                <option value="c">{tester[2].name}</option>
-              </select>
+            )}
+              <button  className="nob" onClick={() => setShowAddition(!showAddition)}>
+                {!showAddition ? (
+                  <Plus className="icon plus special"/>
+                ) : (
+                  <Line className="icon plus specialer"/>
+                )}
+
+              </button>
+
+
+            </div>
+          </div>
+
+          <div className="input-area">
+            <h2 className="smaller-text">THEN</h2>
+            <div>
+              {getSpecialBox(2, 3)}
+            </div>
+
+              <div className="box select">
+                <select onChange={(e) => { condition[4] = e.target.value}}>
+                  <option value="e">=</option>
+                  <option value="ne">!=</option>
+                  <option value="lt"> {lt} </option>
+                  <option value="gt"> > </option>
+                </select>
               </div>
-            </Draggable>
-            ))}
-            {duplicate.map((i) => (
-            <Draggable>
-              <div className="v">
-              <input
-                onChange={(e) => { condition[3] = e.target.value}}
-                type="text"
-                placeholder="value"
-              />
+
+              <div>
+                {getSpecialBox(3, 5)}
               </div>
-            </Draggable>
-            ))}
+              <div className="fixer" >
+                {showAddition2 && (
+                  <div className="fixer" >
+                  <div className="box select">
+                    <select onChange={(e) => { condition[2] = e.target.value}}>
+                      <option value="e">=</option>
+                      <option value="ne">!=</option>
+                      <option value="lt"> {lt} </option>
+                      <option value="gt"> > </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    {getSpecialBox(5)}
+                  </div>
+                </div>
+              )}
+                <button  className="nob" onClick={() => setShowAddition2(!showAddition2)}>
+                  {!showAddition2 ? (
+                    <Plus className="icon plus special"/>
+                  ) : (
+                    <Line className="icon plus specialer"/>
+                  )}
+
+                </button>
+              </div>
+          </div>
+
+
           </div>
             <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
-            <button className="con-add-b" onClick={() => addVar()}>{t("common.add")}</button>
+          <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
           </div>
         )}
         </div>

@@ -15,7 +15,7 @@
   scrollbar-color: var(--primary) var(--white) !important;
   scrollbar-width: thin !important;
   min-height: 60px;
-  max-height: 800px;
+  max-height: 500px;
 }
 
 .variable-box::-webkit-scrollbar {
@@ -31,15 +31,16 @@
   margin-left: 0px;
   font-size: 0.6em;
   text-align: left;
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  background-color: rgb(185, 53, 53);
-  margin-top: 10px;
+  background-color: var(--red);
+  margin-top: 0px;
   height: 40px;
+  display: flex;
+  justify-content: center;
 }
 .gameVar h1 {
   max-width: 500px !important;
   padding: 3px 10px;;
+
 }
 
 .variable-inputs i{
@@ -52,25 +53,21 @@
 .variable-inputs i:hover{
   cursor: pointer;
 }
-.variable-main{
-  float: none;
-  margin-top: 4px;
-  text-align: left;
-}
 .variable-inputs h1{
   font-weight: 200 !important;
-  float: left;
-  margin-left: -5px !important;
-  margin-top: 5px;
-  width: 40%;
-  font-size: 1.5em;
-  text-overflow: hidden;
+  font-size: 2.0em;
+  position: relative;
+  top: 3px;
+  width: 100px;
+  color: white;
 }
 .variable-inputs h2{
-  font-weight: 200 !important;
-  margin-right: 16px;
-  margin-top: 2px;
+  position: relative;
+  top: 3px;
   font-size: 2.0em;
+  color: white;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 .variable-inputs h3{
   font-weight: 200 !important;
@@ -79,6 +76,7 @@
   margin-left:5px;
   margin-top: 0px;
   font-size: 2.0em;
+  color: white;
 }
 
 .variable-inputs h3:first-child {
@@ -96,14 +94,14 @@
   width: 98%;
 }
 .variable-inputs input{
-  float: right;
+  display: flex;
   border-radius: 5px;
   border: none;
   padding: 5px 3px;
   margin-right: 2px;
   margin-top: 1px;
   opacity: 100%;
-  width: 40%;
+  width: 30% !important;
   background-color: white !important;
 }
 
@@ -205,13 +203,11 @@
 
 
 
-.greenMain {
-  background-color: rgb(101, 159, 69) !important;
-  border: 1px solid var(--green);
-}
+
 
 .green h3 {
   margin-top: 4px;
+  border: none;
 }
 .sidebar-icons {
   fill: var(--primary);
@@ -556,26 +552,15 @@
   font-size: 1.5em;
 }
 
-.con-container{
-
-}
-
 .con-tabs{
   width: 33.33%;
   border-radius: 0px;
   border: none;
   height: 40px;
   margin-bottom: 10px;
+
 }
 
-.con-tabs:focus{
-  background-color: var(--primary);
-  color: var(--white);
-}
-.con-tabs:active{
-  background-color: var(--primary);
-  color: var(--white);
-}
 
 .drag-here{
   width: 100px;
@@ -653,10 +638,12 @@
   color: white;
 }
 
+.variable-con-adding{
+  margin-top: 60px;
+}
 .variable-con-adding select{
   font-size: 1.0em;
 }
-
 .variable-con-adding input{
   font-size: 1.0em;
   width: 80px;
@@ -665,30 +652,121 @@
   left: 7%;
 }
 
+.nob{
+  background: none;
+  border: none;
+  position: relative;
+  width: 0px;
+  height: 0px;
+}
+.special {
+  position: relative;
+  top: 15px !important;
+  left: 10px;
+  width: 40px !important;
+  height: 40px !important;
+  fill: var(--success) !important;
+}
+.specialer {
+  position: relative;
+  top: 15px !important;
+  left: 10px;
+  width: 40px !important;
+  height: 40px !important;
+  fill: var(--red) !important;
+  border-radius: 100px;
+  padding: 0px 5px 0px 5px;
+  border: 1px solid var(--red);
+}
 .box{
   width: 100px;
   height: 70px;
   margin-left: 20px;
   border: 1px dashed var(--text-color);
   border-radius: 9px;
+  padding: 5px;
+}
+.select{
+  width: 60px;
+}
+
+.box input {
+  position: relative;
+  top: 40%;
+  left: 5%;
+  width: 90%;
+}
+.var-box {
+  position: relative;
+  top: -20px;
+}
+.var-box button{
+  position: relative;
+  width: 50px;
+  top: 17px;
+  left: 20px;
+  border-radius: 9px 0px 0px 0px;
+  border: 1px solid black;
+}
+
+.var-box button:nth-child(2){
+  border-radius: 0px 9px 0px 0px;
+  border-left: none;
 }
 
 .input-area{
   display: flex;
   margin-top: 30px;
+  justify-content: center;
 }
 
 .input-area h2{
   position: relative;
   top: 20px;
-  margin-left: 90px;
-  margin-right: 80px;
+  margin-left: -70px;
+  margin-right: 50px;
 }
 
 .smaller-text {
-  margin-right:57px !important;
+  margin-right:30px !important;
+}
+.fixer{
+  display: flex;
 }
 
+
+.condition-inputs{
+  display: flex;
+  justify-content: space-around;
+  vertical-align: middle;
+  background-color: var(--almostwhite);
+  height: 40px;
+  margin-top: 10px;
+  border-radius: 9px;
+  border: 1px solid gray;
+  margin: 3px;
+  text-align: left !important;
+}
+
+.condition-inputs h1{
+  color: var(--red);
+  font-size: 1.5em;
+  position: relative;
+  top: 5px;
+}
+.condition-inputs h2{
+  position: relative;
+  top: 5px;
+  color: var(--warning);
+  font-size: 1.5em;
+}
+.condition-inputs h3{
+  font-size: 1.5em;
+  position: relative;
+  top: 5px;
+  color: var(--success);
+  margin-left: 0px;
+}
 
 
 
