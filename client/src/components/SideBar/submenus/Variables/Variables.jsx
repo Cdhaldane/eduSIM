@@ -15,7 +15,7 @@ import User from "../../../../../public/icons/user.svg"
 import Users from "../../../../../public/icons/users-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
-
+import Close from "../../../../../public/icons/close.svg"
 
 const SettingRow = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const SettingRow = styled.div`
 `;
 
 const Variables = (props) => {
-
+  console.log(props)
   const { t } = useTranslation();
   const { updateSetting, settings } = useContext(SettingsContext);
   const [personal, setPersonal] = useState([])
@@ -58,7 +58,7 @@ const Variables = (props) => {
   const [isShown, setIsShown] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showConAdd, setShowConAdd] = useState(false);
-  const [showDis, setShowDis] = useState(false);
+  const [showDis, setShowDis] = useState(true);
   const [showCons, setShowCons] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
   const [showAddition2, setShowAddition2] = useState(false);
@@ -90,12 +90,16 @@ const Variables = (props) => {
     {
       id: 5,
       state: 'var'
-    }
+    },
+    {
+      id: 6,
+      state: 'var'
+    },
   ]);
   const [employeeData, setEmployeeData] = React.useState(tester)
   const [conditions, setConditions] = useState([])
 
-  const condition = ['Cost', '=', 'Cost', 'Cost', '=', 'Cost']
+  const condition = ['Cost', '=', 'Cost', '', '', 'Cost', '=', 'Cost', '', '']
   const duplicate = [1,2,3,4,5,6]
   const lt = "<"
 
@@ -120,13 +124,16 @@ const Variables = (props) => {
   },
 ]
 
-
-
   useEffect(() => {
-    if(props.expanded === false){
-      setShowDis(false)
+    if(showAddition && condition[3] === ''){
+      condition[3] = '+'
+      condition[4] = 'Cost'
     }
-  },[props.expanded])
+    if(showAddition2 && condition[8] === ''){
+      condition[8] = '+'
+      condition[9] = 'Cost'
+    }
+  })
 
   const populateSessionVars = () => {
     let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
@@ -201,55 +208,44 @@ const Variables = (props) => {
   }
 
   const populateGameVars = () => {
-   let vars = props ? props.vars : 0;
    let data = props.gameVars
-   let sessionVars = sessionStorage.gameVars ? JSON.parse(sessionStorage.gameVars) : [];
-   let list = props.editpage ? [<div className="variable-inputs" key={-1}><h3>Page</h3> <h3>=</h3> <h3>{sessionVars["Page"]}</h3></div>] : [<div className="variable-inputs green" key={-1}><h3>Page ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{sessionVars["Page"]}</h3></div>]
-   let variable;
-   let length;
-   let items = [];
-   let inputs = [];
-   let check;
-   for(let i = 0; i < (vars ? vars.length : 0); i++){
-     if(vars[i].sync){
-       variable = vars[i].varName
-       items.push(variable)
-     }
-   }
-   for(let i = 0; i < data.length; i++){
-     let keyArr = Object.keys(data[i]);
-     items.push(keyArr)
-   }
-   check = uniq(items)
-     for(let i = 0; i < (check ? check.length : 0); i++){
-       if(check){
-         list.push(
-           !props.editpage ? <div className="variable-inputs gameVar" key={i}><h1>{check[i]}‏‏‏‎ ‎‏‏‎‎= ‎‏‏‎ ‎‏‏‎ ‎‏{props.gameVars[vars[i].varName]}</h1></div> :
-           <div className="variable-inputs" key={i}>
-             <i  onClick={() => deleteVar(i)}><Trash className="icon white-icon"/></i>
-                 <h1
-                   onClick={() => {
-                     setIsShown(true)
-                     setCurrent(i)
-                   }}
-                   onMouseLeave={() => setIsShown(false)}>{check[i]}</h1>
-                  <h2>=</h2>
-                   <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, variable, i)}/>
-
-         </div>
-         )
-       }
+   let list = []
+   console.log(data)
+     for(let i = 0; i < data.length; i++){
+       list.push(<div className="condition-inputs vars">
+         <i onClick={() => deleteVar(i) }><Trash className="icon var-trash"/></i>
+            <h1>{Object.keys(data[i])}</h1>
+            <h2> = </h2>
+            <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value,  Object.keys(data[i]), i)}/>
+       </div>
+      )
      }
    return list
  }
 
+ const handleGame = (e, varName, i) => {
+   setGameText(e)
+   let vars = props ? props.gameVars : 0;
+   let key = Object.keys(vars[i])
+   vars[i][key] = e;
+   props.editVars(vars);
+ }
+
   const populateConditions = () => {
     let cons = props ? props.cons : 0;
-    console.log(cons)
+
     let list = []
     for(let i  = 0; i < cons.length; i++){
       list.push(<div className="condition-inputs">
-        <h1>If</h1><h2>{cons[i][0]}</h2><h3>{cons[i][1]}</h3><h2>{cons[i][2]}</h2><h1>Then</h1><h2>{cons[i][3]}</h2><h3>{cons[i][4]}</h3><h2>{cons[i][5]}</h2>
+        <i onClick={() => deleteCon(i) }><Trash className="icon var-trash"/></i>
+        <div className={"if"}>
+          <h1>If</h1><h2>{cons[i][0]}</h2><h3>{cons[i][1]}</h3><h2>{cons[i][2]}
+          </h2><h3>{cons[i][3]}</h3><h2>{cons[i][4]}</h2>
+        </div>
+        <div className={"then"}>
+          <h1>Then</h1><h2>{cons[i][5]}</h2><h3>{cons[i][6]}</h3><h2>{cons[i][7]}</h2>
+          <h3>{cons[i][8]}</h3><h2>{cons[i][9]}</h2>
+        </div>
       </div>)
     }
     return list
@@ -276,13 +272,7 @@ const Variables = (props) => {
     return items;
   }
 
-  const handleGame = (e, varName, i) => {
-    setGameText(e)
-    let vars = props ? props.gameVars : 0;
-    let key = Object.keys(vars[i])
-    vars[i][key] = e;
-    props.editVars(vars);
-  }
+
 
   const addVar = () => {
     let value;
@@ -294,7 +284,6 @@ const Variables = (props) => {
     if(varType === "arrayString"){
       arrayVal = varValue.replace(/\s/g, '')
       arrayVal = arrayVal.split(',')
-
       value = (arrayVal)
     }
     if(varType === "arrayInt"){
@@ -303,7 +292,6 @@ const Variables = (props) => {
       for(let i = 0; i < arrayVal.length; i++){
         arrayVal[i] = parseInt(arrayVal[i])
       }
-      console.log(arrayVal)
       value = (arrayVal)
     }
     setShowAdd(false)
@@ -318,12 +306,18 @@ const Variables = (props) => {
     setUpdater(updater + 1)
   }
 
+  const deleteCon = (i) => {
+    let cons = props ? props.cons : 0;
+    cons.splice(i, 1);
+    props.delCons(cons)
+    setUpdater(updater + 1)
+  }
+
   const handleVarType = (e) => {
     setVarType(e)
   }
 
   const handleConditionSelect = (e) => {
-    console.log(e)
     setShowCons(!showCons)
     setCurrentCon(e)
   }
@@ -341,9 +335,9 @@ const Variables = (props) => {
       return (
         <div>
           {!showAdd && (
-            <>
+            <div className="condition-input-container">
               {populateGameVars()}
-            </>
+            </div>
           )}
           <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
             <Plus className="icon plus"/>
@@ -365,9 +359,9 @@ const Variables = (props) => {
       return (
         <div>
           {!showConAdd && (
-            <>
+            <div className="condition-input-container">
               {populateConditions()}
-            </>
+            </div>
           )}
           <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
             <Plus className="icon plus"/>
@@ -417,42 +411,21 @@ const Variables = (props) => {
   }
 
 
+  const handle1 = () => {
+    setShowAddition(!showAddition)
+  }
+
+  const handle2 = () => {
+    setShowAddition2(!showAddition2)
+  }
+
   return (
     <div className="variable-container">
-      <h2>{t("sidebar.variables")}</h2>
-      {props.editpage ? (<div></div>) : ( <>
-      <SettingRow>
-        <i className="settings-icons"><User className="icon setting-icon"/></i>
-        <b>{t("sidebar.session")}</b>
-      </SettingRow>
-      <div className="variable-box">
-
-      </div>
-      </>
-    )}
-      <SettingRow>
-        <i onClick={() => setShowDis(!showDis)} className="settings-icons"><Users className="icon setting-icon"/></i>
-        <b>{t("sidebar.game")}</b>
-      </SettingRow>
-
-      <div className="variable-box " key={updater}>
-
-      </div>
-      <SettingRow>
-      {props.editpage && (
-      <div className="variable-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
-        <Plus className="icon plus"/>
-      {t("sidebar.addNewVar")}
-      </div>
-    )}
-
-    </SettingRow>
-    {showDis && (
       <Draggable>
         <div className="variable-dis">
           <div className="variable-wiz">
           <h1 className="variable-title">Variable Wizard</h1>
-          <button className="con" onClick={() => handleConditionSelect(tester)}><i class="fa fa-solid fa-code"></i></button>
+          <button className="con" onClick={() => props.close()}><Close className="icon close-var"/></button>
           <div className="con-container">
             <button className="con-tabs" style={{ backgroundColor: tabs === 'global' ? 'var(--primary)' : "#eeeeee", color: tabs === 'global' ? 'white' : "black"}} onClick={() => setTabs("global")}>Global</button>
             <button className="con-tabs" style={{ backgroundColor: tabs === 'session' ? 'var(--primary)' : "#eeeeee", color: tabs === 'session' ? 'white' : "black"}} onClick={() => setTabs("session")}>Session</button>
@@ -483,8 +456,8 @@ const Variables = (props) => {
               <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)}/>
           </div>
             <div className="variable-hold">
-            <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
             <button onClick={() => addVar()}>{t("common.add")}</button>
+            <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
           </div>
           </div>
         )}
@@ -501,10 +474,10 @@ const Variables = (props) => {
 
             <div className="box select">
               <select onChange={(e) => { condition[1] = e.target.value}}>
-                <option value="e">=</option>
-                <option value="ne">!=</option>
-                <option value="lt"> {lt} </option>
-                <option value="gt"> > </option>
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value={lt}> {lt} </option>
+                <option value=">"> > </option>
               </select>
             </div>
 
@@ -515,20 +488,20 @@ const Variables = (props) => {
               {showAddition && (
                 <div className="fixer" >
                 <div className="box select">
-                  <select onChange={(e) => { condition[2] = e.target.value}}>
-                    <option value="e">=</option>
-                    <option value="ne">!=</option>
-                    <option value="lt"> {lt} </option>
-                    <option value="gt"> > </option>
+                  <select onChange={(e) => { condition[3] = e.target.value}}>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="x"> x </option>
+                    <option value="/"> / </option>
                   </select>
                 </div>
 
                 <div>
-                  {getSpecialBox(4)}
+                  {getSpecialBox(2, 4)}
                 </div>
               </div>
             )}
-              <button  className="nob" onClick={() => setShowAddition(!showAddition)}>
+              <button  className="nob" onClick={() => handle1()}>
                 {!showAddition ? (
                   <Plus className="icon plus special"/>
                 ) : (
@@ -544,39 +517,39 @@ const Variables = (props) => {
           <div className="input-area">
             <h2 className="smaller-text">THEN</h2>
             <div>
-              {getSpecialBox(2, 3)}
+              {getSpecialBox(3, 5)}
             </div>
 
               <div className="box select">
-                <select onChange={(e) => { condition[4] = e.target.value}}>
-                  <option value="e">=</option>
-                  <option value="ne">!=</option>
-                  <option value="lt"> {lt} </option>
-                  <option value="gt"> > </option>
+                <select onChange={(e) => { condition[6] = e.target.value}}>
+                  <option value="=">=</option>
+                  <option value="!=">!=</option>
+                  <option value={lt}> {lt} </option>
+                  <option value=">"> > </option>
                 </select>
               </div>
 
               <div>
-                {getSpecialBox(3, 5)}
+                {getSpecialBox(4, 7)}
               </div>
               <div className="fixer" >
                 {showAddition2 && (
                   <div className="fixer" >
                   <div className="box select">
-                    <select onChange={(e) => { condition[2] = e.target.value}}>
-                      <option value="e">=</option>
-                      <option value="ne">!=</option>
-                      <option value="lt"> {lt} </option>
-                      <option value="gt"> > </option>
+                    <select onChange={(e) => { condition[8] = e.target.value}}>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                      <option value="x"> x </option>
+                      <option value="/"> / </option>
                     </select>
                   </div>
 
                   <div>
-                    {getSpecialBox(5)}
+                    {getSpecialBox(5,9)}
                   </div>
                 </div>
               )}
-                <button  className="nob" onClick={() => setShowAddition2(!showAddition2)}>
+                <button  className="nob" onClick={() => handle2()}>
                   {!showAddition2 ? (
                     <Plus className="icon plus special"/>
                   ) : (
@@ -590,12 +563,11 @@ const Variables = (props) => {
 
           </div>
             <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
-          <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
+            <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
           </div>
         )}
         </div>
       </Draggable>
-    )}
     </div>
   );
 }

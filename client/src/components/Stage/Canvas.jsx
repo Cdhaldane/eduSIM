@@ -321,7 +321,6 @@ class Graphics extends Component {
         if (this.props.setCons) {
           this.props.setCons(objects.cons || {});
         }
-        console.log(objects)
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }

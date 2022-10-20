@@ -78,7 +78,7 @@ class Graphics extends Component {
 
   constructor(props) {
     super(props);
-
+    console.log(props)
     this.setState = this.setState.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
 

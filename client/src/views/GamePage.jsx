@@ -177,6 +177,7 @@ const Game = (props) => {
   }, [players, roles, actualLevel]);
 
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
+  const cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
 
   useEffect(() => {
     setDisableNext(false)
@@ -256,7 +257,7 @@ const Game = (props) => {
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
             variables={roomStatus.variables || {}}
-            cons={roomStatus.cons || {}}
+            cons={cons || []}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}

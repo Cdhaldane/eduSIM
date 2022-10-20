@@ -96,8 +96,10 @@ const Sidebar = (props) => {
   const [pevisible, setPevisible] = useState("false");
 
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
+  const [showVariables, setShowVariables] = useState(false);
   const performanceModal = new useRef();
   const performanceBtn = new useRef();
+
   const { t } = useTranslation();
 
   const handleMvisible = (e) => {
@@ -134,6 +136,11 @@ const Sidebar = (props) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  const closePerformance = () => {
+    setShowVariables(false)
+    console.log(2)
+  }
+
   const onNavClick = (nav) => {
     if (links.find(({ id }) => id === nav).submenu && !props.disabled) {
       if (submenu != nav || !submenuVisible) {
@@ -150,7 +157,11 @@ const Sidebar = (props) => {
       case "performance":
         setTimeout(setShowPerformanceModal(true));
         break;
+      case "variables":
+        setTimeout(setShowVariables(!showVariables));
+        break;
     }
+
   };
 
   useEffect(() => {
@@ -259,23 +270,11 @@ const Sidebar = (props) => {
       )
     },
     {
+      to: '/variables',
       icon: "control",
       id: "variables",
       label: t("sidebar.variables"),
-      visible: props.game ? true : true,
-      submenu: (
-        <Variables
-          editpage={!props.game}
-          vars={props.customObjs ? props.customObjs.inputs : []}
-          cons={props.cons ? props.cons : []}
-          gameVars={props.variables ? props.variables : []}
-          setVars={props.setVars}
-          setCons={props.setCons}
-          editVars={props.editVars}
-          delVars={props.delVars}
-          expanded={submenuVisible}
-        />
-      )
+      visible: props.game ? false : true
     },
     {
       icon: "notes",
@@ -359,6 +358,22 @@ const Sidebar = (props) => {
           variables={props.variables}
         />
       </Modal>
+      {showVariables && (
+        <div className="variable-containers">
+        <Variables
+          editpage={!props.game}
+          cons={props.cons ? props.cons : []}
+          gameVars={props.variables ? props.variables : []}
+          setVars={props.setVars}
+          setCons={props.setCons}
+          editVars={props.editVars}
+          delVars={props.delVars}
+          delCons={props.delCons}
+          close={() => closePerformance()}
+        />
+        </div>
+      )}
+
     </>
   );
 }

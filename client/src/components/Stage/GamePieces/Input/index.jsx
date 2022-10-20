@@ -42,7 +42,7 @@ const Input = forwardRef((props, ref) => {
 
   const handleChangeValueButton = () => {
     if (props.sync && props.updateVariable) {
-      for (let i = 0; i < props.varName.length; i++) {
+      for (let i = 0; i < props.varName?.length; i++) {
         let name = varName[i];
         let value = props.varValue[i];
         if(!isNaN(value)){
@@ -54,7 +54,7 @@ const Input = forwardRef((props, ref) => {
       }
     } else {
       let vars = {};
-      for (let i = 0; i < props.varName.length; i++) {
+      for (let i = 0; i < props.varName?.length; i++) {
         if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
         let name = varName[i];
         let value;

@@ -97,7 +97,11 @@ const EditPage = (props) => {
   }
 
   const handleDeleteVars = (data) => {
-    setVars(data)
+      setVars(data)
+  }
+
+  const handleDeleteCons = (data) => {
+      setCons(data)
   }
 
   const handleSetCons = (data) => {
@@ -123,6 +127,7 @@ const EditPage = (props) => {
               setCons={handleSetCons}
               editVars={handleEditVars}
               delVars={handleDeleteVars}
+              delCons={handleDeleteCons}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks
@@ -154,6 +159,7 @@ const EditPage = (props) => {
                 tasks={tasks || {}}
                 setTasks={setTasks}
                 setVars={setVars}
+                setCons={setCons}
                 handleLevel={handlePage}
               />
             ) : null}
