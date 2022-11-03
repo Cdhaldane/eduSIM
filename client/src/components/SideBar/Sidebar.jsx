@@ -138,7 +138,6 @@ const Sidebar = (props) => {
 
   const closePerformance = () => {
     setShowVariables(false)
-    console.log(2)
   }
 
   const onNavClick = (nav) => {

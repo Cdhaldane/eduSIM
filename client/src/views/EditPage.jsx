@@ -106,6 +106,8 @@ const EditPage = (props) => {
 
   const handleSetCons = (data) => {
       setCons(old => [...old, data])
+      console.log(data)
+      console.log(cons)
   }
 
   return (

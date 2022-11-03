@@ -10,7 +10,6 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-
   const { settings } = useContext(SettingsContext);
   const [radios, setRadios] = useState(3)
   const varName = props.varName || props.id;

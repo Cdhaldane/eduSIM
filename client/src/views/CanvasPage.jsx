@@ -167,7 +167,6 @@ const CanvasPage = (props) => {
     });
     if((canvas.state.pages).length === 0){
       canvas.state.pages = defaultPages;
-      console.log(canvas.state.pages)
     }
     const areaString = canvas.state.overlayOpen ? "overlay" :
       (canvas.state.personalAreaOpen ? "personal" : "group");

@@ -178,7 +178,26 @@ const Game = (props) => {
 
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
   const cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
+  let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
+  variables.push(roomStatus.variables)
 
+  const flattenObject = (obj) => {
+    const flattened = {}
+
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key]
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(flattened, flattenObject(value))
+      } else {
+        flattened[key] = value
+      }
+    })
+
+    return flattened
+  }
+
+  variables = flattenObject(variables)
   useEffect(() => {
     setDisableNext(false)
     let curr = tasks[actualLevel];
@@ -256,7 +275,7 @@ const Game = (props) => {
             level={actualLevel}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
-            variables={roomStatus.variables || {}}
+            variables={variables || {}}
             cons={cons || []}
             setNotes={setNotes}
             notes={notes || []}

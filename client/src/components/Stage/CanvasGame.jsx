@@ -78,7 +78,6 @@ class Graphics extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props)
     this.setState = this.setState.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
 
@@ -602,6 +601,16 @@ class Graphics extends Component {
     variables: this.props.variables
   });
 
+  handleVariable = (name, value) => {
+    console.log(this.props.variables)
+    console.log(name)
+    if(this.props.variables[name] !== value){
+      this.props.socket.emit("varChange", {
+        name, value
+      })
+    }
+  }
+
   handleLevel = (e) => {
     this.props.socket.emit("goToPage", {
       level: e
@@ -770,6 +779,7 @@ class Graphics extends Component {
             overlay={this.state.overlayOpen}
             variables={this.props.variables}
             alerts={this.props.alerts}
+            cons={this.props.cons}
             page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}
@@ -777,7 +787,7 @@ class Graphics extends Component {
             handleLevel={this.props.handleLevel}
             realLevel={this.props.realLevel}
             gamepage
-            updateVariable={this.updateVariable}
+            updateVariable={this.handleVariable}
             levelVal={this.state.level}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}

@@ -430,7 +430,6 @@ class Graphics extends Component {
   }
 
   setCustomGroupPos = (state, layer) => {
-    console.log(this.savedState)
     if (!this.refs[layer]) return;
     const groups = this.refs[`${layer}.objects`].find('Group');
     let group = null;

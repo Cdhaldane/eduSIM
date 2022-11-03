@@ -98,7 +98,6 @@ const Level = (props) => {
 
   useEffect(() => {
     for (let i = 0; i < (props.alerts ? props.alerts.length : 0); i++) {
-      console.log(1)
       if (checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)) {
         handleLevel(count + 1)
       }
@@ -110,6 +109,90 @@ const Level = (props) => {
       setCount(props.levelVal);
     }
   }, [props.levelVal]);
+
+  useEffect(() => {
+    let data = props.cons
+    let post, value, operator;
+    for(let i = 0; i < (data ? data.length : 0); i++){
+      data[i] = data[i].filter(function(e){return e})
+      if(data[i].length === 6){
+        operator = data[i][1]
+        post = props.variables[data[i][0]]
+        if(!data[i][2].includes('"')) value = props.variables[data[i][2]]
+        else value = parseInt(data[i][2].slice(1, -1))
+        let out = compare(post, operator, value)
+        if(out){
+          let n, t;
+          if(!data[i][3].includes('"')) t = data[i][3]
+          else t = parseInt(data[i][3].slice(1, -1))
+          if(!data[i][5].includes('"')) n = props.variables[data[i][5]]
+          else n = parseInt(data[i][5].slice(1, -1))
+          props.updateVariable(t, n)
+        }
+      }
+      if(data[i].length === 8){
+        let one, two;
+        operator = data[i][1]
+        post = props.variables[data[i][0]]
+        if(!data[i][2].includes('"')) one = props.variables[data[i][2]]
+        else one = parseInt(data[i][2].slice(1, -1))
+        if(!data[i][4].includes('"')) two = props.variables[data[i][4]]
+        else two = parseInt(data[i][4].slice(1, -1))
+        value = math(one,  data[i][3], two)
+        let out = compare(post, operator, value)
+        if(out){
+          let n, t;
+          if(!data[i][5].includes('"')) t = data[i][5]
+          else t = parseInt(data[i][5].slice(1, -1))
+          if(!data[i][7].includes('"')) n = props.variables[data[i][7]]
+          else n = parseInt(data[i][7].slice(1, -1))
+          props.updateVariable(t, n)
+        }
+      }
+      if(data[i].length === 10){
+        let one, two;
+        operator = data[i][1]
+        post = props.variables[data[i][0]]
+        if(!data[i][2].includes('"')) one = props.variables[data[i][2]]
+        else one = parseInt(data[i][2].slice(1, -1))
+        if(!data[i][4].includes('"')) two = props.variables[data[i][4]]
+        else two = parseInt(data[i][4].slice(1, -1))
+        value = math(one,  data[i][3], two)
+        let out = compare(post, operator, value)
+        if(out){
+          let n, t, one, two;
+          if(!data[i][5].includes('"')) t = data[i][5]
+          else t = parseInt(data[i][5].slice(1, -1))
+          if(!data[i][7].includes('"')) one = props.variables[data[i][7]]
+          else one = parseInt(data[i][7].slice(1, -1))
+          if(!data[i][9].includes('"')) two = props.variables[data[i][9]]
+          else two = parseInt(data[i][9].slice(1, -1))
+          n = math(one, data[i][8], two)
+          props.updateVariable(t, n)
+        }
+      }
+    }
+  },[props.variables]);
+
+  function compare(post, operator, value) {
+    switch (operator) {
+      case '>':   return post > value;
+      case '<':   return post < value;
+      case '=':  return post == value;
+      case '!=':  return post != value;
+    }
+  }
+
+  function math(post, operator, value) {
+    switch (operator) {
+      case '-':   return post - value;
+      case '+':   return post + value;
+      case '/':  return post / value;
+      case 'x':  return post * value;
+    }
+  }
+
+
 
   useEffect(() => {
     let varName = "Page"
