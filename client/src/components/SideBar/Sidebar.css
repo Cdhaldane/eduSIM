@@ -151,7 +151,7 @@
   border: 2px solid darkgray;
   border-radius: 8px;
   width: 80%;
-  margin-top: 0px;
+  margin-bottom: 0px;
   margin-left: 10%;
 }
 .variable-adding h1{
@@ -172,13 +172,18 @@
   justify-content: space-between !important;
 }
 .variable-hold input{
-  font-size: 1.0em;
-  opacity: 0.7;
+  font-size: 1.0em !important;
+  opacity: 0.7 !important;
   padding: 3px !important;
-  width: 50%;
-  margin-bottom: 3px;
+  width: 50% !important;
+  margin-bottom: 3px !important;
+  border: 1px solid var(--primary) !important;
+  background-color: white !important;
 }
 .variable-adding button{
+
+}
+.variable-hold button:nth-child(1){
   margin-top: 10px;
   width: 138px;
   border: none;
@@ -190,10 +195,17 @@
   font-weight:1 !important;
   border-radius: 6px;
 }
-
 .variable-hold button:nth-child(2){
+  padding: 6px 0px;
+  font-size: 1.0em !important;
+  font-weight:1 !important;
+  border-radius: 6px;
   background-color: var(--red) !important;
   border: 1px solid var(--primary);
+  margin-top: 10px;
+  width: 138px;
+  border: none;
+  color: white;
 }
 
 
@@ -411,7 +423,8 @@
   height: 500px;
   background-color: white;
   border: 2px solid var(--primary);
-  border-radius: 12px;
+  resize:both;
+  border-radius: 20px 20px 0px 20px;
   overflow-y: hidden;
   overflow-x: hidden;
 }
@@ -440,6 +453,8 @@
   font-size: 26px;
   margin-bottom: 20px;
   margin-top: 10px;
+  position: relative;
+  left: 80px;
 }
 .variable-title:hover {
   cursor: grab;
@@ -588,6 +603,7 @@
   border: none;
   height: 40px;
   margin-bottom: 10px;
+  font-weight: bold;
 
 }
 
@@ -782,6 +798,7 @@
   word-wrap: break-word;
   display: flex;
   flex-wrap: wrap;
+  overflow-x: hidden;
 }
 .condition-inputs{
   display: flex;
@@ -794,7 +811,12 @@
   border: 1px solid gray;
   margin: 3px;
   text-align: left !important;
+  font-size: 0.8em !important;
 }
+.condition-inputs i{
+  font-size: 1.4em !important;
+}
+
 .condition-inputs div{
   display: flex;
 }
@@ -810,14 +832,14 @@
   color: var(--red);
   font-size: 1.5em;
   position: relative;
-  top: 5px;
+  top: 7px;
   margin-right: 10px;
 }
 
 .condition-inputs h2{
   margin-right: 10px;
   position: relative;
-  top: 5px;
+  top: 7px;
   color: var(--warning);
   font-size: 1.5em;
 }
@@ -825,7 +847,7 @@
   margin-right: 10px;
   font-size: 1.5em;
   position: relative;
-  top: 5px;
+  top: 7px;
   color: var(--success);
   margin-left: 0px;
 }
@@ -845,13 +867,14 @@
   border-radius: 0px 9px 9px 0px;
   border-left: 1px solid var(--dark);
   font-size: 1.5em;
-  width: 40%;
+  width: 50%;
 }
 .tooltips{
   border: none;
   background: none;
   position: absolute;
-  left: 20px;
+  left: 10px;
+  top: 10px;
 }
 
 .info-var{
@@ -868,12 +891,70 @@
   border-radius: 5px;
   text-align: left;
   padding: 20px 5px;
-}
-
-.jequal{
 
 }
 
+.variable-header{
+  display: flex;
+  margin: auto;
+  width: 100%;
+  justify-content: center !important;
+}
+.switch-container{
+  position: relative;
+  top: 5px;
+  left: 15%;
+  display: flex;
+  border-radius: 9px;
+  padding: 5px;
+  height: 80%;
+  overflow: hidden;
+}
+.switch-container h1{
+  font-size: 1.5em;
+  margin-left: 5px;
+  text-transform: capitalize;
+}
+.ints-container{
+  display: flex;
+}
+.ints-checks{
+  display: flex;
+  margin-bottom: 30px;
+}
+.ints-checks input{
+  position: relative !important;
+}
+.ints-con{
+  display: flex;
+}
+.ints-con h2{
+  position: relative;
+  top: 20px;
+  margin-right: 40px !important;
+  margin-left: 30px;
+}
+.ints-name{
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+.ints-name h1 {
+
+}
+.ints-name select {
+  height: auto;
+  width: 50%;
+  padding: 1px;
+  font-size: 0.95em;
+  border: 1px solid var(--primary);
+  opacity: 9;
+  margin-bottom: 3px;
+}
+.ints-area{
+  font-size: 1.0em !important;
+}
 
 
 

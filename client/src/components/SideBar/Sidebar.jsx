@@ -362,13 +362,21 @@ const Sidebar = (props) => {
         <Variables
           editpage={!props.game}
           cons={props.cons ? props.cons : []}
+          ints={props.ints ? props.ints : []}
           gameVars={props.variables ? props.variables : []}
           setVars={props.setVars}
           setCons={props.setCons}
           editVars={props.editVars}
           delVars={props.delVars}
           delCons={props.delCons}
+          setInts={props.setInts}
+          random={props.random}
+          delInts={props.delInts}
+          shapes={props.shapes}
           close={() => closePerformance()}
+          customObjects={props.customObjects}
+          savedObjects={props.savedObjects}
+          loadObjects={props.loadObjects}
         />
         </div>
       )}

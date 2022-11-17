@@ -18,7 +18,8 @@ const Dashboard = (props) => {
   const [showNote, setShowNote] = useState(false);
   const [gamedata, getGamedata] = useState();
   const [uploadedImages, setUploadedImages] = useState(null);
-  const [deletionId, setDeletionId] = useState(null);
+  const [updater, setUpdate] = useState(0)
+  const [deletionId, setDeletionId] = useState(0);
   const { t } = useTranslation();
   const [confirmationVisible, setConfirmationVisible] = useState(false);
 
@@ -46,7 +47,7 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-          if(localStorage.order)
+          if(localStorage.order.length > 5)
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData);
@@ -75,6 +76,7 @@ const Dashboard = (props) => {
 
   const addNote = (newgamedata) => {
     // window.location.reload();
+    setUpdater(updater + 1)
   }
 
   const deleteNote = (id) => {
@@ -97,6 +99,7 @@ const Dashboard = (props) => {
   }
 
   const getConfirmMessage = () => {
+    console.log(deletionId)
     // if (gamedata[deletionId]) {
     //   if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
     return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
@@ -203,7 +206,7 @@ const Dashboard = (props) => {
       </div>
       <div className="page-margin">
         <h2>{t("admin.mySimulations")}</h2>
-        <div className="dashsim">
+        <div className="dashsim" index={updater}>
               <DraggableList items={gamedata}/>
         </div>
         <Modal

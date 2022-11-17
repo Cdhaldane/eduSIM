@@ -43,6 +43,7 @@ const PauseCover = styled.div`
 `;
 
 const Game = (props) => {
+  console.log(props)
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
@@ -179,7 +180,10 @@ const Game = (props) => {
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
   const cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
-  variables.push(roomStatus.variables)
+
+  if(roomStatus.variables)
+    variables.push(roomStatus.variables)
+
 
   const flattenObject = (obj) => {
     const flattened = {}
@@ -225,7 +229,21 @@ const Game = (props) => {
   const handleDelNotes = (data) => {
     setNotes(data)
   }
-
+  useEffect(() => {
+      console.log(Object.keys(variables).length)
+      Object.keys(variables).forEach(function(key) {
+        console.log(variables[key])
+        console.log(key)
+        if (typeof variables[key] === 'string' && variables[key].includes('Random')) {
+          let n = variables[key].replace(/[^0-9]/g, '')
+            if(n === 0){
+              out = Math.floor(Math.random(10))
+            } else
+              out = Math.floor(Math.random() * n)
+          variables[key] = out;
+        }
+      })
+  }, [room])
   return (
     !isLoading ? (
       <div className="editpage">
@@ -241,7 +259,7 @@ const Game = (props) => {
           subtitle={room.gameroom_name || ""}
           socket={socket}
           handleLevel={handleLevel}
-          variables={roomStatus.variables || {}}
+          variables={variables || {}}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
           game

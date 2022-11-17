@@ -602,8 +602,6 @@ class Graphics extends Component {
   });
 
   handleVariable = (name, value) => {
-    console.log(this.props.variables)
-    console.log(name)
     if(this.props.variables[name] !== value){
       this.props.socket.emit("varChange", {
         name, value

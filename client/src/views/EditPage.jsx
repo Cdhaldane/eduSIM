@@ -49,7 +49,9 @@ const EditPage = (props) => {
   const [tasks, setTasks] = useState({});
   const [vars, setVars] = useState([]);
   const [cons, setCons] = useState([]);
+  const [ints, setInts] = useState([]);
   const [page, setPage] = useState(1);
+  const [shapes, setShapes] = useState([])
 
 
   if (props.location.img) {
@@ -106,8 +108,16 @@ const EditPage = (props) => {
 
   const handleSetCons = (data) => {
       setCons(old => [...old, data])
-      console.log(data)
-      console.log(cons)
+  }
+
+  const handleDeleteInts = (data) => {
+      setInts(data)
+  }
+  const handleSetInts = (data) => {
+      setInts(old => [...old, data])
+  }
+  const handleSetShapes = (data) => {
+      setShapes(data.inputs)
   }
 
   return (
@@ -123,13 +133,21 @@ const EditPage = (props) => {
               close={toggle}
               variables={vars || {}}
               cons={cons || {}}
+              ints={ints || {}}
+              shapes={shapes || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
               setVars={handleSetVars}
               setCons={handleSetCons}
+              setInts={handleSetInts}
               editVars={handleEditVars}
               delVars={handleDeleteVars}
               delCons={handleDeleteCons}
+              delInts={handleDeleteInts}
+              random = {props.random}
+              customObjects={props.customObjects}
+              savedObjects={props.savedObjects}
+              loadObjects={props.loadObjects}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks
@@ -158,8 +176,10 @@ const EditPage = (props) => {
                 gameinstance={localStorage.gameinstance}
                 variables={vars || {}}
                 cons={cons || {}}
+                ints={ints || {}}
                 tasks={tasks || {}}
                 setTasks={setTasks}
+                setShapes={handleSetShapes}
                 setVars={setVars}
                 setCons={setCons}
                 handleLevel={handlePage}

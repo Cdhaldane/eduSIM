@@ -286,7 +286,7 @@ const DropdownEditObject = (props) => {
   const populateRadio = () => {
     const list = [];
     let value = 0;
-    for (let i = 0; i < (objState?.amount ? objState?.amount : 0); i++) {
+    for (let i = 0; i < (objState?.amount ? objState?.amount : 3); i++) {
       list.push(
         <div>
           <input type="text" onChange={e => handleRadioText(e.target)} value={objState?.radioText ? objState?.radioText[i] : texts[i]} id={i} key={i} placeholder={t("edit.radioText")} />
@@ -852,8 +852,13 @@ const DropdownEditObject = (props) => {
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
-
-              {objState?.varType === "radio" ? (
+                {objState?.varType === "button" && (
+                <>
+                  <p>Button name to set</p>
+                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                </>
+            )}
+            {objState?.varType === "radio" ? (
                 <div className="radio-dropdown">
                   <p>{t("edit.radioAmount")}</p>
                   <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} maxLength="1" />
@@ -910,27 +915,7 @@ const DropdownEditObject = (props) => {
                ) :
                (<div> </div>)
              }
-              {objState?.varType === "button" ? (
-                <div className="radio-dropdown">
-                  <div className="htmliframeinput">
-                    <input type="checkbox" checked={!!objState?.incr} onChange={() => handleProperty(!objState?.incr, 'incr')} />
-                    <p>Incremental button</p>
-                  </div>
-                  {!objState?.incr ? (
-                    <div>
-                      <p>{t("edit.buttonAmount")}</p>
-                      <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxLength="1" />
 
-                      {populateVariable()}
-                    </div>
-                  ) : (
-                    <div><p>{t("edit.variableNameToSet")}</p>
-                      <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>
-                  )
-                  } </div>
-              ) :
-                (<div> </div>)
-              }
               <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (
@@ -1020,3 +1005,25 @@ const DropdownEditObject = (props) => {
 }
 
 export default DropdownEditObject;
+
+// {objState?.varType === "button" ? (
+//   <div className="radio-dropdown">
+//     <div className="htmliframeinput">
+//       <input type="checkbox" checked={!!objState?.incr} onChange={() => handleProperty(!objState?.incr, 'incr')} />
+//       <p>Incremental button</p>
+//     </div>
+//     {!objState?.incr ? (
+//       <div>
+//         <p>{t("edit.buttonAmount")}</p>
+//         <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxLength="1" />
+//
+//         {populateVariable()}
+//       </div>
+//     ) : (
+//       <div><p>{t("edit.variableNameToSet")}</p>
+//         <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>
+//     )
+//     } </div>
+// ) :
+//   (<div> </div>)
+// }

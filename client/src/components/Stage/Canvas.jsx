@@ -325,6 +325,7 @@ class Graphics extends Component {
           this.props.setNotes(objects.notes || {});
         }
 
+
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
           // Add backwards compatability for the new centering system
@@ -545,6 +546,7 @@ class Graphics extends Component {
             customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
           }
           this.props.setCustomObjs(customObjs);
+          this.props.setShapes(customObjs)
           break;
         }
       }
