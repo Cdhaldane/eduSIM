@@ -917,22 +917,33 @@
 }
 .ints-container{
   display: flex;
+
+  width: 1000px !important;
 }
 .ints-checks{
+  position: relative !important;
   display: flex;
   margin-bottom: 30px;
 }
 .ints-checks input{
   position: relative !important;
+  width: 20px;
+  margin-right: 3%;
+  margin-left: 20%;
 }
+
 .ints-con{
   display: flex;
+  margin: auto;
+  justify-content: center;
+  position: relative;
+  left: -30px;
 }
 .ints-con h2{
   position: relative;
   top: 20px;
-  margin-right: 40px !important;
-  margin-left: 30px;
+  margin-right: 10px !important;
+  margin-left: 0px;
 }
 .ints-name{
   display: flex;
@@ -954,6 +965,11 @@
 }
 .ints-area{
   font-size: 1.0em !important;
+}
+.ints-fix{
+  width: 100% !important;
+  margin: 20px !important;
+  margin-top: 10px !important;
 }
 
 

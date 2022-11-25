@@ -114,7 +114,7 @@ const EditPage = (props) => {
       setInts(data)
   }
   const handleSetInts = (data) => {
-      setInts(old => [...old, data])
+      setInts(data)
   }
   const handleSetShapes = (data) => {
       setShapes(data.inputs)
@@ -180,6 +180,7 @@ const EditPage = (props) => {
                 tasks={tasks || {}}
                 setTasks={setTasks}
                 setShapes={handleSetShapes}
+                setInts={setInts}
                 setVars={setVars}
                 setCons={setCons}
                 handleLevel={handlePage}

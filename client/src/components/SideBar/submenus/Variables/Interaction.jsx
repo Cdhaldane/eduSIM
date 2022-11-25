@@ -21,7 +21,15 @@ const Interaction = (props) => {
 console.log(props)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
+  const [showAddition, setShowAddition] = useState(false);
+  const [check, setCheck] = useState();
+  const [isCheck, setIsCheck] = useState(false);
+  const [isVCheck, setIsVCheck] = useState(false);
   const [updater, setUpdater] = useState(0);
+  const start = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
+  const [interaction, setInteraction] = useState([props.shapes[0].varName, start, '=', start, '', ''])
+  const [listI, setList] = useState([])
+  const [input, setInput] = useState(props.shapes[0])
   const [box, setBox] = useState([
     {
       id: 0,
@@ -35,33 +43,36 @@ console.log(props)
       id: 2,
       state: 'var'
     },
-    {
-      id: 3,
-      state: 'var'
-    },
-    {
-      id: 4,
-      state: 'var'
-    },
-    {
-      id: 5,
-      state: 'var'
-    },
-    {
-      id: 6,
-      state: 'var'
-    },
   ]);
 
+  if(!localStorage.interactions){
+    var a = [];
+    localStorage.setItem('interactions', JSON.stringify(a));
+  }
+
+  useEffect(() => {
+    if(showAddition && interaction[3] === ''){
+      interaction[3] = '+'
+      interaction[4] = start
+    }
+  })
+
+
   const populateGlobal = () => {
-    let ints = props.ints ? props.ints : 0
+    let ints = props.ints
     let shapes = props.shapes
     let list = []
     for(let i  = 0; i < ints.length; i++){
-      list.push(<div className="interaction-inputs">
+      list.push(<div className="condition-inputs">
         <i onClick={() => deleteCon(i) }><Trash className="icon var-trash"/></i>
-        <div className={"ints-container"}>
-
+        <div className="ints-container">
+          <div className={"if"}>
+            <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
+          </div>
+          <div className={"then"}>
+            <h1>Set</h1><h2>{ints[i][1]}</h2><h3>{ints[i][2]}</h3><h2>{ints[i][3]}</h2>
+            <h3>{ints[i][4]}</h3><h2>{ints[i][5]}</h2>
+          </div>
         </div>
       </div>)
     }
@@ -81,28 +92,50 @@ console.log(props)
     return list
   }
 
-  const deleteCon = (i) => {
-    props.cons.splice(i, 1);
-    props.delCons(props.cons)
-    setUpdater(updater + 1)
-  }
   const handleConditionSelect = (e) => {
     setShowCons(!showCons)
     setCurrentCon(e)
   }
   const addCon = () => {
-    let temp = condition
-    props.setCons(temp);
-    setShowConAdd(!showConAdd)
-    setUpdater(updater + 1)
+    let a = [];
+    a = JSON.parse(localStorage.getItem('interactions')) || [];
+    a.push(interaction);
+    localStorage.setItem('interactions', JSON.stringify(a));
+    props.setInts(a)
   }
-
+  const deleteCon = (i) => {
+    let a = [];
+    a = JSON.parse(localStorage.getItem('interactions')) || [];
+    a.splice(i, 1);
+    console.log(a)
+    localStorage.setItem('interactions', JSON.stringify(a));
+    props.setInts(a)
+  }
+  const handle1 = () => {
+    setShowAddition(!showAddition)
+  }
+  const handleCheck = (e) => {
+    setCheck(e)
+    if(e === "incr")
+      setIsCheck(!isCheck)
+    if(e === "var")
+      setIsVCheck(!isVCheck)
+  }
   const handleOut = () => {
     if(props.current === 'global')
       return(populateGlobal())
     if(props.current === 'session')
       return(populateSession())
   }
+  const updateState = (n, i) => {
+    const newState = box.map(obj => {
+      if (obj.id === i) {
+        return {...obj, state: n};
+      }
+      return obj;
+    });
+    setBox(newState);
+  };
   const getSpecialBox = (i, n) => {
     let list = []
     list.push(
@@ -111,7 +144,7 @@ console.log(props)
           <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val'  ? 'white' : "black"}} onClick={() => updateState('val', i)}>Val</button>
           <div className="box">
             {box[i].state === 'var'  ? (
-              <select onChange={(e) => { condition[n] = e.target.value}}>
+              <select onChange={(e) => handleInteraction(n, e)}>
                 {(props.gameVars).map((data) => {
                     return (
                       <option value={Object.keys(data)}>
@@ -122,7 +155,7 @@ console.log(props)
               </select>
             ) : (
               <input
-                onChange={(e) => { condition[n] = '"' + e.target.value + '"'}}
+                onChange={(e) => handleInteraction(n, e)}
                 type="text"
                 placeholder="value"
               />
@@ -134,6 +167,13 @@ console.log(props)
     return list
   }
 
+  const handleInteraction = (n, e) => {
+    let out = e.target.value
+    let input = interaction
+    input[n] = out
+    setInteraction(input)
+
+  }
 
   return (
     <>
@@ -148,14 +188,14 @@ console.log(props)
       </div>
 
       {showConAdd && (
-        <div className="variable-adding">
+        <div className="variable-adding ints-fix">
           <div className="ints-area">
             <div className="ints-name">
               <h1>Input to Set</h1>
-              <select onChange={''}>
+              <select onChange={(e) => handleInteraction(0, e)}>
                 {(props.shapes).map((data) => {
                     return (
-                      <option value={Object.keys(data)}>
+                      <option value={data.varName}>
                         {data.varName}
                       </option>
                     );
@@ -163,17 +203,15 @@ console.log(props)
               </select>
             </div>
               <div className='ints-checks'>
-                <input type="checkbox" name="checkbox" />
+                <input type="checkbox" name="checkbox" value="incr" onChange={(e) => handleCheck(e.target.value)} disabled={isVCheck} checked={isCheck}/>
                 <h1>Incremental</h1>
-                <input type="checkbox" name="checkbox" />
-                <h1></h1>
-                <input type="checkbox" name="checkbox" />
-                <h1>Checkbox</h1>
+                <input type="checkbox" name="checkbox" value="var" onChange={(e) => handleCheck(e.target.value)} disabled={isCheck} checked={isVCheck}/>
+                <h1>Variable</h1>
               </div>
-              <div className='ints-con'>
+              <div className={'ints-con ' + isVCheck}>
                 <h2 className="smaller-text">SET</h2>
                 <div className="box">
-                  <select onChange={(e) => { condition[5] = e.target.value}}>
+                  <select onChange={(e) => handleInteraction(1, e)}>
                     {(props.gameVars).map((data) => {
                         return (
                           <option value={Object.keys(data)}>
@@ -187,7 +225,32 @@ console.log(props)
                   <h1>=</h1>
                 </div>
                 <div>
-                  {getSpecialBox(4, 7)}
+                  {getSpecialBox(1, 3)}
+                </div>
+                <div className="fixer">
+                  {showAddition && (
+                    <div className="fixer" >
+                    <div className="box select">
+                      <select onChange={(e) => handleInteraction(4, e)}>
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                        <option value="x"> x </option>
+                        <option value="/"> / </option>
+                      </select>
+                    </div>
+                    <div>
+                      {getSpecialBox(2, 5)}
+                    </div>
+                  </div>
+                )}
+                <button  className="nob" onClick={() => handle1()}>
+                  {!showAddition ? (
+                    <Plus className="icon plus special"/>
+                  ) : (
+                    <Line className="icon plus specialer"/>
+                  )}
+
+                </button>
                 </div>
               </div>
           </div>

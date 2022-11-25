@@ -24,7 +24,7 @@ const Condition = (props) => {
   const [showAddition2, setShowAddition2] = useState(false);
   const [updater, setUpdater] = useState(0);
   const lt = "<"
-  const [start] = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
+  const start = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
   let condition = [start, '=', start, '', '', start, '=', start, '', '']
   const [box, setBox] = useState([
     {
