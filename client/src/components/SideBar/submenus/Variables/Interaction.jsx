@@ -18,7 +18,6 @@ import Close from "../../../../../public/icons/close.svg"
 import Info from "../../../../../public/icons/info.svg"
 
 const Interaction = (props) => {
-console.log(props)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
@@ -44,20 +43,16 @@ console.log(props)
       state: 'var'
     },
   ]);
-
   if(!localStorage.interactions){
     var a = [];
     localStorage.setItem('interactions', JSON.stringify(a));
   }
-
   useEffect(() => {
     if(showAddition && interaction[3] === ''){
       interaction[3] = '+'
       interaction[4] = start
     }
   })
-
-
   const populateGlobal = () => {
     let ints = props.ints
     let shapes = props.shapes
@@ -102,6 +97,7 @@ console.log(props)
     a.push(interaction);
     localStorage.setItem('interactions', JSON.stringify(a));
     props.setInts(a)
+    setShowConAdd(!showConAdd)
   }
   const deleteCon = (i) => {
     let a = [];

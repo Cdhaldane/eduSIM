@@ -728,8 +728,8 @@
   position: relative;
   top: 15px !important;
   left: 10px;
-  width: 40px !important;
-  height: 40px !important;
+  width: 35px !important;
+  height: 35px !important;
   fill: var(--red) !important;
   border-radius: 100px;
   padding: 0px 5px 0px 5px;
