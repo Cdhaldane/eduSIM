@@ -47,7 +47,7 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-          if(localStorage.order.length > 5)
+          if(localStorage?.order?.length > 5)
             getGamedata(JSON.parse(localStorage.order));
           else
             getGamedata(allData);
@@ -62,7 +62,8 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     getAllGamedata()
-
+    if(localStorage.getItem('order') === 'null')
+      localStorage.removeItem('order')
   }, [localStorage.order]);
 
   useEffect(() => {
@@ -99,7 +100,6 @@ const Dashboard = (props) => {
   }
 
   const getConfirmMessage = () => {
-    console.log(deletionId)
     // if (gamedata[deletionId]) {
     //   if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
     return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });

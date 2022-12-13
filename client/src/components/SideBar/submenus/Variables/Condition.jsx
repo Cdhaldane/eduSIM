@@ -23,9 +23,16 @@ const Condition = (props) => {
   const [showAddition, setShowAddition] = useState(false);
   const [showAddition2, setShowAddition2] = useState(false);
   const [updater, setUpdater] = useState(0);
+  const [ifs, setIfs] = useState(1)
   const lt = "<"
+  const gt = ">"
   const start = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
-  let condition = [start, '=', start, '', '', start, '=', start, '', '']
+  let condition = {
+    0: [start, '=', start, '', '', start, '=', start, '', ''],
+    1: [start, '=', start, '', '', start, '=', start, '', ''],
+    2: [start, '=', start, '', '', start, '=', start, '', ''],
+    3: [start, '=', start, '', '', start, '=', start, '', '']
+  }
   const [box, setBox] = useState([
     {
       id: 0,
@@ -110,22 +117,24 @@ const Condition = (props) => {
       return(populateConditions())
   }
 
-  const updateState = (n, i) => {
+  const updateState = (n, i, x) => {
     const newState = box.map(obj => {
-      if (obj.id === i) {
-        return {...obj, state: n};
+      console.log(obj)
+      if (obj[x].id === i) {
+        return {...obj[x], state: n};
       }
-      return obj;
+      return obj[x];
     });
+    console.log(newState)
     setBox(newState);
   };
 
-  const getSpecialBox = (i, n) => {
+  const getSpecialBox = (i, n, x) => {
     let list = []
     list.push(
       <div className='var-box'>
-          <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var'  ? 'white' : "black"}} onClick={() => updateState('var', i)}>Var</button>
-          <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val'  ? 'white' : "black"}} onClick={() => updateState('val', i)}>Val</button>
+          <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var'  ? 'white' : "black"}} onClick={() => updateState('var', i, x)}>Var</button>
+          <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val'  ? 'white' : "black"}} onClick={() => updateState('val', i, x)}>Val</button>
           <div className="box">
             {box[i].state === 'var'  ? (
               <select onChange={(e) => { condition[n] = e.target.value}}>
@@ -151,6 +160,70 @@ const Condition = (props) => {
     return list
   }
 
+  const handleIfStatements = () => {
+    let list = []
+    console.log(ifs)
+    for(let i = 0; i < ifs; i++){
+      list.push(
+        <>
+          <div className="input-area">
+            <h2>IF</h2>
+              <div>
+                <div className="box">
+                  <select onChange={(e) => { condition[0] = e.target.value}}>
+                    {(props.gameVars).map((data) => {
+                        return (
+                          <option value={Object.keys(data)} id={i}>
+                            {Object.keys(data)}
+                          </option>
+                        );
+                    })}
+                  </select>
+                </div>
+              </div>
+            <div className="box select">
+              <select onChange={(e) => { condition[1] = e.target.value}}>
+                <option value="=">=</option>
+                <option value="!=">!=</option>
+                <option value={lt}> {lt} </option>
+                <option value={gt}> {gt} </option>
+              </select>
+            </div>
+            <div>
+              {getSpecialBox(1, 2, i)}
+            </div>
+            <div className="fixer" >
+              {showAddition && (
+                <div className="fixer" >
+                  <div className="box select">
+                    <select onChange={(e) => { condition[3] = e.target.value}}>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                      <option value="x"> x </option>
+                      <option value="/"> / </option>
+                    </select>
+                  </div>
+                  <div>
+                    {getSpecialBox(2, 4, i)}
+                  </div>
+                </div>
+              )}
+              <button  className="nob" onClick={() => handle1()}>
+                {!showAddition ? (
+                  <Plus className="icon plus special"/>
+                ) : (
+                  <Line className="icon plus specialer"/>
+                )}
+
+              </button>
+            </div>
+          </div>
+        </>
+        )
+      }
+    return list
+  }
+
   const handle1 = () => {
     setShowAddition(!showAddition)
   }
@@ -158,7 +231,9 @@ const Condition = (props) => {
   const handle2 = () => {
     setShowAddition2(!showAddition2)
   }
-
+  const handleIfs = (e) => {
+    setIfs(parseInt(e.target.value))
+  }
 
   return (
     <>
@@ -174,109 +249,65 @@ const Condition = (props) => {
 
       {showConAdd && (
         <div className="variable-con-adding">
+          <div className="con-ifs">
+            <h1>Set Number of If Statements</h1>
+            <input
+                onChange={(e) => handleIfs(e)}
+                type="number"
+                placeholder="value"
+                max='4'
+              />
+          </div>
+          {handleIfStatements()}
           <div className="input-area">
-            <h2>IF</h2>
-              <div>
-                <div className="box">
-                  <select onChange={(e) => { condition[0] = e.target.value}}>
-                    {(props.gameVars).map((data) => {
-                        return (
-                          <option value={Object.keys(data)}>
-                            {Object.keys(data)}
-                          </option>
-                        );
-                    })}
-                  </select>
-                </div>
-              </div>
-          <div className="box select">
-            <select onChange={(e) => { condition[1] = e.target.value}}>
-              <option value="=">=</option>
-              <option value="!=">!=</option>
-              <option value={lt}> {lt} </option>
-              <option value=">"> > </option>
-            </select>
-          </div>
-          <div>
-            {getSpecialBox(1, 2)}
-          </div>
-          <div className="fixer" >
-            {showAddition && (
-              <div className="fixer" >
-              <div className="box select">
-                <select onChange={(e) => { condition[3] = e.target.value}}>
-                  <option value="+">+</option>
-                  <option value="-">-</option>
-                  <option value="x"> x </option>
-                  <option value="/"> / </option>
+            <h2 className="smaller-text">THEN</h2>
+              <div className="box">
+                <select onChange={(e) => { condition[5] = e.target.value}}>
+                  {(props.gameVars).map((data) => {
+                      return (
+                        <option value={Object.keys(data)}>
+                          {Object.keys(data)}
+                        </option>
+                      );
+                  })}
                 </select>
               </div>
+              <div className="box select jequal">
+                <h1>=</h1>
+              </div>
               <div>
-                {getSpecialBox(2, 4)}
+                {getSpecialBox(4, 7)}
               </div>
-            </div>
-          )}
-            <button  className="nob" onClick={() => handle1()}>
-              {!showAddition ? (
-                <Plus className="icon plus special"/>
-              ) : (
-                <Line className="icon plus specialer"/>
+              <div className="fixer" >
+                {showAddition2 && (
+                  <div className="fixer" >
+                  <div className="box select">
+                    <select onChange={(e) => { condition[8] = e.target.value}}>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                      <option value="x"> x </option>
+                      <option value="/"> / </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    {getSpecialBox(5,9)}
+                  </div>
+                </div>
               )}
-
-            </button>
-
-
-          </div>
-        </div>
-        <div className="input-area">
-          <h2 className="smaller-text">THEN</h2>
-            <div className="box">
-              <select onChange={(e) => { condition[5] = e.target.value}}>
-                {(props.gameVars).map((data) => {
-                    return (
-                      <option value={Object.keys(data)}>
-                        {Object.keys(data)}
-                      </option>
-                    );
-                })}
-              </select>
-            </div>
-            <div className="box select jequal">
-              <h1>=</h1>
-            </div>
-            <div>
-              {getSpecialBox(4, 7)}
-            </div>
-            <div className="fixer" >
-              {showAddition2 && (
-                <div className="fixer" >
-                <div className="box select">
-                  <select onChange={(e) => { condition[8] = e.target.value}}>
-                    <option value="+">+</option>
-                    <option value="-">-</option>
-                    <option value="x"> x </option>
-                    <option value="/"> / </option>
-                  </select>
-                </div>
-
-                <div>
-                  {getSpecialBox(5,9)}
-                </div>
+                <button  className="nob" onClick={() => handle2()}>
+                  {!showAddition2 ? (
+                    <Plus className="icon plus special"/>
+                  ) : (
+                    <Line className="icon plus specialer"/>
+                  )}
+                </button>
               </div>
-            )}
-              <button  className="nob" onClick={() => handle2()}>
-                {!showAddition2 ? (
-                  <Plus className="icon plus special"/>
-                ) : (
-                  <Line className="icon plus specialer"/>
-                )}
-              </button>
             </div>
-          </div>
-          <div className="con-hold">
-            <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
-            <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
-          </div>
+            <div className="con-hold">
+              <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
+              <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
+            </div>
         </div>
       )}
     </>

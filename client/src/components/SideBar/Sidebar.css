@@ -660,6 +660,28 @@
   background-color: rgb(185, 53, 53);
   color: var(--white);
 }
+.con-ifs{
+  display: flex !important;
+  width: 100% !important;
+  height: 30px !important;
+  position: relative;
+  left: -25px;
+  justify-content: center !important;
+}
+.con-ifs h1{
+  font-size: 1.2em;
+  float: left;
+ 
+}
+.con-ifs input{
+  position: relative !important;
+  top: -3px !important;
+  font-size: 1.2em !important;
+  width: 20% !important;
+  border: 1px solid var(--primary);
+  border-radius: 9px;
+  padding: 5px;
+}
 
 .con-hold{
   display: flex;
@@ -749,9 +771,11 @@
 
 .box input {
   position: relative;
-  top: 40%;
-  left: 5%;
-  width: 90%;
+  top: 15px;
+  left: 3px;
+  border: 1px solid var(--primary);
+  border-radius: 9px;
+  
 }
 .var-box {
   position: relative;
@@ -765,7 +789,23 @@
   border-radius: 9px 0px 0px 0px;
   border: 1px solid black;
 }
-
+.int-box{
+  position: relative;
+  top: 13px !important;
+  height: 80%;
+  color: black;
+  opacity: 100 !important;
+}
+.incr {
+  margin-right: 20px !important;
+}
+.int-special select{
+  font-size: 1em !important;
+}
+.int-special input{
+  font-size: 1em !important;
+  padding-left: 10px !important;
+}
 .var-box button:nth-child(2){
   border-radius: 0px 9px 0px 0px;
   border-left: none;

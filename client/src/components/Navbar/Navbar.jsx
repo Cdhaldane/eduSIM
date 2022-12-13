@@ -13,7 +13,6 @@ import Info from "../../../public/icons/info.svg"
 import "./Navbar.css";
 
 const NavBar = (props) => {
-  console.log(user)
   const { isAuthenticated } = useAuth0();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
@@ -21,7 +20,8 @@ const NavBar = (props) => {
   const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-
+  console.log(user)
+  
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
     if (!menuOpen === true) {
