@@ -3612,10 +3612,11 @@ class Graphics extends Component {
                 });
               }}
               renameRoleRect={(oldName, newName) => {
-
+                console.log(oldName, newName)
                 const pages = JSON.parse(JSON.stringify(this.state.pages));
                 for (let i = 0; i < this.state.pages.length; i++) {
                   const page = pages[i];
+                  console.log(page)
                   page.personalPositionRect[newName] = JSON.parse(JSON.stringify(page.personalPositionRect[oldName]));
                   delete page.personalPositionRect[oldName];
                   pages[i] = page;

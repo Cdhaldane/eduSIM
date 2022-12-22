@@ -1,21 +1,12 @@
-import React, { useCallback, useContext, useState, useEffect, useMemo } from "react";
-import styled from "styled-components";
-import Slider from 'rc-slider';
-import { useAlertContext } from "../../../Alerts/AlertContext";
-import { SettingsContext } from "../../../../App";
+import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } from "react";
+import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
-import Draggable from 'react-draggable'
-import ReactTooltip from "react-tooltip";
-import Switch from "react-switch";
+
 
 import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
-import User from "../../../../../public/icons/user.svg"
-import Users from "../../../../../public/icons/users-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
-import Line from "../../../../../public/icons/minus.svg"
-import Close from "../../../../../public/icons/close.svg"
-import Info from "../../../../../public/icons/info.svg"
+
 
 const Variable = (props) => {
   console.log(props)
@@ -26,6 +17,13 @@ const Variable = (props) => {
   const [varType, setVarType] = useState("integer")
   const [gameText, setGameText] = useState([])
   const [updater, setUpdater] = useState(0);
+  const [deleteIndex, setDeleteIndex] = useState(0);
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const confirmationVisibleRef = useRef(confirmationVisible);
+  const setConfirmationModal = (data) => {
+    setConfirmationVisible(data);
+    setTimeout(() => { confirmationVisibleRef.current = data }, 250);
+  }
 
 
   const addVar = () => {
@@ -87,7 +85,6 @@ const Variable = (props) => {
       setUpdater(updater + 1)
     } else {
       let vars = JSON.parse(sessionStorage.gameVars);
-
       if(Object.keys(vars)[i] !== 'Page')
         delete vars[Object.keys(vars)[i]]
       sessionStorage.setItem("gameVars", JSON.stringify(vars))
@@ -100,7 +97,7 @@ const Variable = (props) => {
    let list = []
      for(let i = 0; i < data.length; i++){
        list.push(<div className="condition-inputs vars">
-         <i onClick={() => deleteVar(i) }><Trash className="icon var-trash"/></i>
+         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
             <h1>{Object.keys(data[i])}</h1>
             <h2> = </h2>
             <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value,  Object.keys(data[i]), i)}/>
@@ -121,7 +118,7 @@ const Variable = (props) => {
     let list = []
       for(let i = 0; i < Object.keys(data).length; i++){
         list.push(<div className="condition-inputs vars">
-          <i onClick={() => deleteVar(i) }><Trash className="icon var-trash"/></i>
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
              <h1>{Object.keys(data)[i]}</h1>
              <h2> = </h2>
              <input type="text" placeholder={data ? Object.values(data)[i] : "Some Value"} onChange={e => handleSession(e.target.value,  Object.keys(data)[i], i)}/>
@@ -181,6 +178,13 @@ const Variable = (props) => {
         </div>
         </div>
       )}
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => deleteVar(deleteIndex)}
+        confirmMessage={"Yes"}
+        message={"Are you sure you want to delete this variable? This action cannot be undone."}
+      />
     </>
   );
 }

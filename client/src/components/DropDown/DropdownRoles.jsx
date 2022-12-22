@@ -136,6 +136,7 @@ const DropdownRoles = (props) => {
   }
 
   const handleSubmitModification = async () => {
+    console.log(roles, roleDesc, selected)
     await props.handleEditRole({
       id: roles[selected].id,
       roleName,
@@ -331,7 +332,7 @@ const DropdownRoles = (props) => {
       gameinstanceid: props.gameid,
       gamerole: roleName.trim(),
       numspots: parseInt(roleNum),
-      roleDesc: "temp"
+      roleDesc: roleDesc.trim()
     };
 
     props.addNewRoleRect(data.gamerole);
@@ -340,6 +341,7 @@ const DropdownRoles = (props) => {
       updateRolesData();
       setRoleName("");
       setRoleNum("");
+      setRoleDesc("");
     }).catch(error => {
       console.error(error);
     });

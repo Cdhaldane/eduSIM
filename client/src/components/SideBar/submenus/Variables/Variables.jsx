@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState, useEffect, useMemo } from "react";
+import React, { useLayoutEffect, useContext, useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import Slider from 'rc-slider';
 import { useAlertContext } from "../../../Alerts/AlertContext";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import Draggable from 'react-draggable'
 import ReactTooltip from "react-tooltip";
 import Switch from "react-switch";
+
 
 import Variable from "./Variable.jsx"
 import Condition from "./Condition.jsx"
@@ -20,6 +21,7 @@ import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import Close from "../../../../../public/icons/close.svg"
 import Info from "../../../../../public/icons/info.svg"
+import { update } from "immutable";
 
 const SettingRow = styled.div`
   display: flex;
@@ -55,25 +57,40 @@ const Variables = (props) => {
   const [current, setCurrent] = useState();
   const [updater, setUpdater] = useState(0);
   const [tabs, setTabs] = useState("variable");
+  const ref = useRef(null);
+  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const element = ref.current;
+    element.addEventListener('resize', () => {});
+    function checkResize(mutations) {
+        const event = new CustomEvent('resize', { detail: { width: element.clientWidth, height: element.clientHeight } });
+        element.dispatchEvent(event);
+        setHeight(element.clientHeight)
+    }
+    const observer = new MutationObserver(checkResize);
+    observer.observe(element, { attributes: true, attributeOldValue: true, attributeFilter: ['style'] });
+  }, []);
 
   const populateTab = () => {
     let vars = props ? props.vars : 0;
     const list = []
     if(tabs === "variable"){
       return (
-        <div className="condition-input-container" index={tabsEnviroment}>
+        <div className="condition-input-container" index={tabsEnviroment} style={{maxHeight: height - 130}} id={update}>
           <Variable current={tabsEnviroment} {...props} />
         </div>
       )}
     if(tabs === "condition")
     return (
-        <div className="condition-input-container">
+        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
           <Condition current={tabsEnviroment} {...props} update={handleUpdate} />
         </div>
   )
     if(tabs === "interaction")
       return (
-        <div className="condition-input-container">
+        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
           <Interaction current={tabsEnviroment} {...props} />
         </div>
     )
@@ -97,7 +114,7 @@ const Variables = (props) => {
   return (
     <div className="variable-container" index={updater}>
       <Draggable handle="strong">
-        <div className="variable-dis">
+        <div className="variable-dis" ref={ref}>
           <div className="variable-wiz">
             <div className="variable-header">
             <button className="tooltips" data-tip data-for="infoTip"><Info className="icon info-var"/></button>

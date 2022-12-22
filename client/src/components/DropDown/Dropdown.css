@@ -365,9 +365,7 @@ a {
   cursor: pointer;
 }
 .menu-item h1 {
-  max-width: 200px !important;
-  margin-left: -10px !important;
-  overflow: hidden !important;
+ 
 }
 
 .loadingMediaAlert {

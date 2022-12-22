@@ -421,6 +421,7 @@
   top: 300px;
   width: 700px;
   height: 500px;
+  min-width: 700px;
   background-color: white;
   border: 2px solid var(--primary);
   resize:both;
@@ -738,7 +739,7 @@
   width: 0px;
   height: 0px;
 }
-.special {
+.specialt {
   position: relative;
   top: 15px !important;
   left: 10px;
@@ -832,82 +833,105 @@
 }
 
 .condition-input-container{
-  width: 100%;
-  max-height: 300px !important;
   overflow-y: scroll;
-  word-wrap: break-word;
-  display: flex;
+  display: flex !important;
   flex-wrap: wrap;
   overflow-x: hidden;
+  flex-basis:auto!important;
 }
+
 .condition-inputs{
-  display: flex;
-  vertical-align: middle;
   background-color: var(--almostwhite);
-  height: 40px;
-  width: 100%;
+  height: auto;
+  width: auto;
+  min-width: 49%;
+  transition:all .5s;
+  vertical-align: middle;
   margin-top: 10px;
   border-radius: 9px;
   border: 1px solid gray;
   margin: 3px;
-  text-align: left !important;
+  padding: 10px;
   font-size: 0.8em !important;
-}
-.condition-inputs i{
-  font-size: 1.4em !important;
+  
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.condition-inputs div{
-  display: flex;
+.condition-inputs i{
+  font-size: 1.4em !important;
+  position: sticky;
+  margin-right: -27px;
+  transform: translate(-10px, -8px);
 }
+.cons-condition{
+
+}
+
 .if{
+  display: flex;
+  overflow-wrap: break-word;
   margin-left: 10px;
 }
 .then{
-  position: sticky;
-  left: 330px;
+  display: flex;
+  overflow-wrap: break-word;
+  margin-left: 10px;
 }
 
 .condition-inputs h1{
   color: var(--red);
   font-size: 1.5em;
-  position: relative;
-  top: 7px;
   margin-right: 10px;
+  margin-left: 10px;
+  font-style:oblique;
 }
-
+.andfix{
+  margin-right: 0px!important;
+}
 .condition-inputs h2{
-  margin-right: 10px;
-  position: relative;
-  top: 7px;
   color: var(--warning);
   font-size: 1.5em;
+  position: relative;
 }
 .condition-inputs h3{
-  margin-right: 10px;
   font-size: 1.5em;
-  position: relative;
-  top: 7px;
   color: var(--success);
-  margin-left: 0px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .vars{
   width: 49% !important;
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 0%;
+  height: 40px;
 }
 .vars h1{
   width: 40%;
   text-align: right;
+  font-style: normal;
+  align-self: center;
+  
+}
+.vars h2{
+  margin-right: 5px;
+  align-self: center;
+  
 }
 .vars i{
   margin-right: 10px;
+  position: relative;
+  transform: translate(0px, 0px);
+  
 }
 .vars input{
   background-color: var(--green);
   border-radius: 0px 9px 9px 0px;
   border-left: 1px solid var(--dark);
   font-size: 1.5em;
-  width: 50%;
+  width: 60%;
 }
 .tooltips{
   border: none;
@@ -955,11 +979,7 @@
   margin-left: 5px;
   text-transform: capitalize;
 }
-.ints-container{
-  display: flex;
 
-  width: 1000px !important;
-}
 .ints-checks{
   position: relative !important;
   display: flex;
@@ -1031,6 +1051,33 @@
 }
 
 .condition-input-container::-webkit-scrollbar-thumb
+{
+	background-color: var(--red);
+	background-image: -webkit-linear-gradient(45deg,
+	                                         var(--success) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											 var(--success) 50%,
+											 var(--success) 75%,
+											  transparent 75%,
+											  transparent)
+}
+.condition-input-container-con::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+  border-radius: 12px;
+}
+
+.condition-input-container-con::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F5;
+  border-radius: 12px;
+}
+
+.condition-input-container-con::-webkit-scrollbar-thumb
 {
 	background-color: var(--red);
 	background-image: -webkit-linear-gradient(45deg,

@@ -1,21 +1,13 @@
-import React, { useCallback, useContext, useState, useEffect, useMemo } from "react";
-import styled from "styled-components";
-import Slider from 'rc-slider';
-import { useAlertContext } from "../../../Alerts/AlertContext";
-import { SettingsContext } from "../../../../App";
+import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } from "react";
+import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
-import Draggable from 'react-draggable'
-import ReactTooltip from "react-tooltip";
-import Switch from "react-switch";
+
 
 import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
-import User from "../../../../../public/icons/user.svg"
-import Users from "../../../../../public/icons/users-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
-import Close from "../../../../../public/icons/close.svg"
-import Info from "../../../../../public/icons/info.svg"
+
 
 const Interaction = (props) => {
   const { t } = useTranslation();
@@ -24,12 +16,16 @@ const Interaction = (props) => {
   const [check, setCheck] = useState('');
   const [isCheck, setIsCheck] = useState(false);
   const [isVCheck, setIsVCheck] = useState(false);
-  const [updater, setUpdater] = useState(0);
   const [shapes, setShapes] = useState()
   const start = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
-  const [listI, setList] = useState([])
-  const [input, setInput] = useState(props.shapes[0])
+  const [deleteIndex, setDeleteIndex] = useState(0);
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const confirmationVisibleRef = useRef(confirmationVisible);
+  const setConfirmationModal = (data) => {
+    setConfirmationVisible(data);
+    setTimeout(() => { confirmationVisibleRef.current = data }, 250);
+  }
   const [box, setBox] = useState([
     {
       id: 0,
@@ -58,21 +54,20 @@ const Interaction = (props) => {
   }, [props.shapes])
 
   useEffect(() => {
-    if(showAddition && interaction[3] === ''){
-      interaction[3] = '+'
-      interaction[4] = start
+    if(showAddition && interaction[4] === ''){
+      interaction[4] = '+'
+      interaction[5] = start
     }
     
   })
   const populateGlobal = () => {
     let ints = props.ints
-    let shapes = props.shapes
     let list = []
     console.log(ints)
     for(let i  = 0; i < ints.length; i++){
       if(ints[i][6] === 'var'){
         list.push(<div className="condition-inputs">
-          <i onClick={() => deleteCon(i) }><Trash className="icon var-trash"/></i>
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
           <div className="ints-container">
             <div className={"if"}>
               <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
@@ -85,7 +80,7 @@ const Interaction = (props) => {
         </div>)}
         else {
           list.push(<div className="condition-inputs">
-          <i onClick={() => deleteCon(i) }><Trash className="icon var-trash"/></i>
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
           <div className="ints-container">
             <div className={"if"}>
               <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
@@ -99,38 +94,68 @@ const Interaction = (props) => {
     return list
   }
   const populateSession = () => {
-    let ints = props.ints ? props.ints : 0
+    let ints = JSON.parse(localStorage.getItem('sessionInts')) || [];
     let list = []
     for(let i  = 0; i < ints.length; i++){
-      list.push(<div className="condition-inputs">
-        <i onClick={() => deleteCon(i) }><Trash className="icon var-trash"/></i>
-        <div className={""}>
-
-        </div>
-      </div>)
+      if(ints[i][6] === 'var'){
+        list.push(<div className="condition-inputs">
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
+          <div className="ints-container">
+            <div className={"if"}>
+              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
+            </div>
+            <div className={"then"}>
+              <h1>Set</h1><h2>{ints[i][1]}</h2><h3>{ints[i][2]}</h3><h2>{ints[i][3]}</h2>
+              <h3>{ints[i][4]}</h3><h2>{ints[i][5]}</h2>
+            </div>
+          </div>
+        </div>)}
+        else {
+          list.push(<div className="condition-inputs">
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
+          <div className="ints-container">
+            <div className={"if"}>
+              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
+            </div>
+            <div className={"then"}>
+              <h1>Increment</h1><h2>{ints[i][1]}</h2><h1>By</h1><h3>{ints[i][3]}</h3>
+            </div>
+          </div>
+        </div>)}
     }
     return list
   }
 
-  const handleConditionSelect = (e) => {
-    setShowCons(!showCons)
-    setCurrentCon(e)
-  }
   const addCon = () => {
     let a = [];
-    a = JSON.parse(localStorage.getItem('interactions')) || [];
-    a.push(interaction);
-    localStorage.setItem('interactions', JSON.stringify(a));
-    props.setInts(a)
+    if (props.current === 'session'){
+      a = JSON.parse(localStorage.getItem('sessionInts')) || [];
+      a.push(interaction);
+      localStorage.setItem('sessionInts', JSON.stringify(a));
+    }
+    else if (props.current === 'global'){
+      a = JSON.parse(localStorage.getItem('interactions')) || [];
+      a.push(interaction);
+      localStorage.setItem('interactions', JSON.stringify(a));
+      props.setInts(a)
+    }
     setShowConAdd(!showConAdd)
+    setInteraction([props.shapes[0]?.varName, start, '=', start, '', '', check])
   }
   const deleteCon = (i) => {
     let a = [];
-    a = JSON.parse(localStorage.getItem('interactions')) || [];
-    a.splice(i, 1);
-    console.log(a)
-    localStorage.setItem('interactions', JSON.stringify(a));
-    props.setInts(a)
+    if (props.current === 'session'){
+      a = JSON.parse(localStorage.getItem('sessionInts')) || [];
+      a.splice(i, 1);
+      localStorage.setItem('sessionInts', JSON.stringify(a));
+    }
+    else if (props.current === 'global'){
+      a = JSON.parse(localStorage.getItem('interactions')) || [];
+      a.splice(i, 1);
+      console.log(a)
+      localStorage.setItem('interactions', JSON.stringify(a));
+      props.setInts(a)
+    }
   }
   const handle1 = () => {
     setShowAddition(!showAddition)
@@ -198,8 +223,8 @@ const Interaction = (props) => {
     let out = e.target.value
     let input = interaction
     input[n] = out
+    console.log(out)
     setInteraction(input)
-
   }
 
   return (
@@ -273,7 +298,7 @@ const Interaction = (props) => {
                 )}
                 <button  className="nob" onClick={() => handle1()}>
                   {!showAddition ? (
-                    <Plus className="icon plus special"/>
+                    <Plus className="icon plus specialt"/>
                   ) : (
                     <Line className="icon plus specialer"/>
                   )}
@@ -309,6 +334,13 @@ const Interaction = (props) => {
           </div>
         </div>
       )}
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => deleteCon(deleteIndex)}
+        confirmMessage={"Yes"}
+        message={"Are you sure you want to delete this interaction? This action cannot be undone."}
+      />
     </>
   );
   }
