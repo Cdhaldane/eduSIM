@@ -425,11 +425,10 @@ const Tabs = (props) => {
         <ul className="selected-tab">
 
           <li
-             className="tab-overview"
             onClick={() => {
               toggleTab(0)
             }}
-            className={toggleState === 0 ? "selected" : ""}
+            className={toggleState === 0 ? "selected" : "tab-overview"}
           >
             <span className="tab-text">{t("admin.overview")}</span>
           </li>
@@ -438,13 +437,16 @@ const Tabs = (props) => {
 
             <li
               key={i}
+              className={toggleState === i + 1 ? "tab-container selected" : "tab-container"}
+            >
+              <span 
+              className="tab-text"
               onClick={() => {
                 toggleTab(i + 1)
                 connectChat(i)
               }}
-              className={toggleState === i + 1 ? "selected" : ""}
-            >
-              <span className="tab-text">{tab[0]}</span>
+              >{tab[0]}</span>
+              <i onClick={() => handleDeleteGroup(tab)}><Trash className="icon var-trash" /></i>
             </li>
           ))}
           <button
@@ -537,7 +539,7 @@ const Tabs = (props) => {
                       />{" "}
                       {t("admin.students")}
                     </div>
-                    <div>
+                    {/* <div>
                       <input
                         type="radio"
                         checked={displayRole() === "random"}
@@ -556,7 +558,7 @@ const Tabs = (props) => {
                         disabled={tabs.length === 0}
                       />{" "}
                       {t("admin.randomPerLevel")}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="groupcontainer overview">
@@ -619,12 +621,6 @@ const Tabs = (props) => {
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                   {t("admin.joinRoom")}
                 </a>
-                <button
-                  onClick={() => handleDeleteGroup(tab)}
-                  className="deletegroup"
-                >
-                  {t("admin.deleteGroup")}
-                </button>
               </div>
               <hr />
               <div className="groupcontainer">

@@ -107,7 +107,6 @@ const Variable = (props) => {
    return list
  }
   const handleGame = (e, varName, i) => {
-    setGameText(e)
     let vars = props ? props.gameVars : 0;
     let key = Object.keys(vars[i])
     vars[i][key] = e;

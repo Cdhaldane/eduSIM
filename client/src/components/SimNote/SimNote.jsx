@@ -88,8 +88,6 @@ const SimNote = (props) => {
             <>
             <i><Calendar className="icon sim-icon" /><h1>{currDate}</h1></i>
             <i className="notesim-icon" onClick={() => downloadFile()} ><Download className="icon sim-icon" /><h1>{t("admin.download")}</h1></i>
-
-
             <Link
               to={{
                 pathname: "/editpage",
@@ -99,7 +97,7 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <i><Pencil className="icon sim-icon"/><h1>{t("admin.simedit")}</h1></i>
+              <Pencil className="icon sim-icon"/><h1>{t("admin.simedit")}</h1>
             </Link>
             <i id="add-user" onClick={() => setModalOpen(true)}><Mail className="icon sim-icon"/><h1>{t("admin.siminvite")}</h1></i>
             <i
@@ -120,11 +118,9 @@ const SimNote = (props) => {
             gameinstance: props.gameid,
             adminid: props.adminid,
           }}
-        >
-          <i
-            id="play"
-            onClick={() => localStorage.setItem("gameid", props.gameid)}
-          ><Play className="icon sim-icon"/><h1>{t("admin.simrun")}</h1></i>
+          onClick={() => localStorage.setItem("gameid", props.gameid)}
+        > 
+          <Play className="icon sim-icon"/><h1>{t("admin.simrun")}</h1>
         </Link>
       </div>
       <Modal

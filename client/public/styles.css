@@ -377,7 +377,7 @@ a {
 
 .welcome-join>input[type="submit"] {
   padding: 0.8em;
-  border-radius: 100px;
+  border-radius: 9px;
   width: 200px;
   border: none;
   background-color: var(--primary);
@@ -442,7 +442,7 @@ a {
 
 .w-button {
   background-color: var(--primary);
-  border-radius: 100px;
+  border-radius: 9px;
   border-style: none;
   box-shadow: var(--box-shadow);
   box-sizing: border-box;
@@ -575,7 +575,7 @@ a {
 
 
 .textbox {
-  border-radius: 100px;
+  border-radius: 9px;
   border: none;
   margin-right: 20px;
   padding: 0.8em;
@@ -677,7 +677,7 @@ hr {
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 100px
+  border-radius: 9px
 }
 
 .addbutton:hover {
@@ -688,6 +688,7 @@ hr {
 .join-wrapper {
   height: auto;
   background-color: var(--almostwhite);
+  margin-top: 0px !important;
 }
 
 .join {
@@ -703,7 +704,6 @@ hr {
   min-height: auto;
   height: max-content;
   margin-bottom: 100px;
-  margin-top: 5vw;
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 
@@ -727,7 +727,7 @@ hr {
   color: var(--primary) !important;
   padding: 8px;
   padding-bottom: 12px;
-  border-radius: 100px;
+  border-radius: 9px;
   cursor: pointer;
   font-size: 1.0em !important;
 }

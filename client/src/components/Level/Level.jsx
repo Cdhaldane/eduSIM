@@ -31,38 +31,8 @@ const Level = (props) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  const checkObjConditions = (varName, condition, check, checkAlt) => {
-    if (!varName) return true;
-    let vars = {};
-    let variables = props.variables;
-    if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-    if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
-    if (Object.keys(variables).length > 0) vars = { ...vars, ...variables };
-
-    let trueValue = isNaN(check) ? check : parseInt(check);
-    let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
-
-    let val = vars[varName];
-    let varLen = isNaN(val) ? (val || "").length : val;
-
-    switch (condition) {
-      case "isequal":
-        return val == trueValue;
-      case "isgreater":
-        return varLen > trueValue;
-      case "isless":
-        return varLen < trueValue;
-      case "between":
-        return varLen <= trueValueAlt && varLen >= trueValue;
-      case "negative":
-        return !val;
-      case "onchange":
-        return sessionStorage.lastSetVar === varName
-      default: return !!val;
-    }
-  }
-
   const handleLevel = (e) => {
+    console.log(e)
     let closeOverlay = null;
     if (props?.page?.overlays) {
       for (let i = 0; i < props.page.overlays.length; i++) {
@@ -97,104 +67,6 @@ const Level = (props) => {
   }
 
   useEffect(() => {
-    for (let i = 0; i < (props.alerts ? props.alerts.length : 0); i++) {
-      if (checkObjConditions(props.alerts[i].varName, props.alerts[i].varCondition, props.alerts[i].varCheck, props.alerts[i].varCheckAlt)) {
-        handleLevel(count + 1)
-      }
-    }
-  }, [props.variables])
-
-  useEffect(() => {
-    if (props.levelVal) {
-      setCount(props.levelVal);
-    }
-  }, [props.levelVal]);
-
-  useEffect(() => {
-    let data = props.cons
-    let post, value, operator;
-    for(let i = 0; i < (data ? data.length : 0); i++){
-      data[i] = data[i].filter(function(e){return e})
-      if(data[i].length === 6){
-        operator = data[i][1]
-        post = props.variables[data[i][0]]
-        if(!data[i][2].includes('"')) value = props.variables[data[i][2]]
-        else value = parseInt(data[i][2].slice(1, -1))
-        let out = compare(post, operator, value)
-        if(out){
-          let n, t;
-          if(!data[i][3].includes('"')) t = data[i][3]
-          else t = parseInt(data[i][3].slice(1, -1))
-          if(!data[i][5].includes('"')) n = props.variables[data[i][5]]
-          else n = parseInt(data[i][5].slice(1, -1))
-          props.updateVariable(t, n)
-        }
-      }
-      if(data[i].length === 8){
-        let one, two;
-        operator = data[i][1]
-        post = props.variables[data[i][0]]
-        if(!data[i][2].includes('"')) one = props.variables[data[i][2]]
-        else one = parseInt(data[i][2].slice(1, -1))
-        if(!data[i][4].includes('"')) two = props.variables[data[i][4]]
-        else two = parseInt(data[i][4].slice(1, -1))
-        value = math(one,  data[i][3], two)
-        let out = compare(post, operator, value)
-        if(out){
-          let n, t;
-          if(!data[i][5].includes('"')) t = data[i][5]
-          else t = parseInt(data[i][5].slice(1, -1))
-          if(!data[i][7].includes('"')) n = props.variables[data[i][7]]
-          else n = parseInt(data[i][7].slice(1, -1))
-          props.updateVariable(t, n)
-        }
-      }
-      if(data[i].length === 10){
-        let one, two;
-        operator = data[i][1]
-        post = props.variables[data[i][0]]
-        if(!data[i][2].includes('"')) one = props.variables[data[i][2]]
-        else one = parseInt(data[i][2].slice(1, -1))
-        if(!data[i][4].includes('"')) two = props.variables[data[i][4]]
-        else two = parseInt(data[i][4].slice(1, -1))
-        value = math(one,  data[i][3], two)
-        let out = compare(post, operator, value)
-        if(out){
-          let n, t, one, two;
-          if(!data[i][5].includes('"')) t = data[i][5]
-          else t = parseInt(data[i][5].slice(1, -1))
-          if(!data[i][7].includes('"')) one = props.variables[data[i][7]]
-          else one = parseInt(data[i][7].slice(1, -1))
-          if(!data[i][9].includes('"')) two = props.variables[data[i][9]]
-          else two = parseInt(data[i][9].slice(1, -1))
-          n = math(one, data[i][8], two)
-          props.updateVariable(t, n)
-        }
-      }
-    }
-  },[props.variables]);
-
-  function compare(post, operator, value) {
-    switch (operator) {
-      case '>':   return post > value;
-      case '<':   return post < value;
-      case '=':  return post == value;
-      case '!=':  return post != value;
-    }
-  }
-
-  function math(post, operator, value) {
-    switch (operator) {
-      case '-':   return post - value;
-      case '+':   return post + value;
-      case '/':  return post / value;
-      case 'x':  return post * value;
-    }
-  }
-
-
-
-  useEffect(() => {
     let varName = "Page"
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -205,63 +77,11 @@ const Level = (props) => {
     sessionStorage.setItem('lastSetVar', varName);
   }, [count]);
 
-  const firstUpdate = useRef(true);
-  useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    } else {
-      handleLevel(props.realLevel);
-    }
-  }, [props.realLevel]);
-
-  const createSelectItems = () => {
-    // Replace empty names with Untitled#
-    let pages = [...props.pages];
-    let untitledNum = 1;
-    for (let i = 0; i < pages.length; i++) {
-      if (pages[i].name === "") {
-        pages[i].name = t("edit.untitledX", { index: untitledNum });
-        untitledNum++;
-      }
-    }
-    for (let i = 0; i < props.numOfPages; i++) {
-      if (pages[i]) {
-        items.push(
-          <option key={i} value={i + 1}>
-            {pages[i].name}
-          </option>
-        );
-      }
-    }
-    return items;
-  }
-
-  const handleChange = (event) => {
-    setCount(parseInt(event.target.value));
-    handleLevel(parseInt(event.target.value));
-  }
-
   const saveOnClose = () => {
     document.querySelector(':root').style.setProperty('--primary', "#8f001a");
     props.clearCanvasData();
     props.saveGame();
     props.removeJSGIFS();
-  }
-
-  const handleChangeValue = (value) => {
-    if (props.sync && props.updateVariable) {
-      props.updateVariable(varName, value);
-    } else {
-      let vars = {};
-      if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-      sessionStorage.setItem('gameVars', JSON.stringify({
-        ...vars,
-        [varName]: value
-      }));
-      sessionStorage.setItem('lastSetVar', varName);
-      props.refresh();
-    }
   }
 
   return (
@@ -352,7 +172,7 @@ const Level = (props) => {
                     ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
                   `} onClick={() => {
-                    if(!props.freeAdvance){
+                    if(props.freeAdvance){
                       handleLevel(num + 1)
                     }
                   }

@@ -138,7 +138,7 @@ const Condition = (props) => {
     let cons = JSON.parse(localStorage.getItem('sessionCons')) || [];
     let list = []
     for (let i = 0; i < cons.length; i++) {
-      list.push(<div className="condition-inputs">
+      list.push(<div className="condition-inputs cons-condition">
         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
         {cons[i].map(data => {
           if (cons[i][cons[i].length - 1] !== data) {

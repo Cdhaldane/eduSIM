@@ -105,7 +105,6 @@ const EditPage = (props) => {
   const handleDeleteCons = (data) => {
       setCons(data)
   }
-
   const handleSetCons = (data) => {
       setCons(data)
   }

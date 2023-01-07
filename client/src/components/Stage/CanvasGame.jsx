@@ -77,6 +77,7 @@ class Graphics extends Component {
   ];
 
   constructor(props) {
+    console.log(props)
     super(props);
     this.setState = this.setState.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
@@ -598,7 +599,8 @@ class Graphics extends Component {
         name, value, increment
       })
     },
-    variables: this.props.variables
+    variables: this.props.variables,
+    ints: this.props.ints
   });
 
   handleVariable = (name, value) => {
@@ -778,6 +780,7 @@ class Graphics extends Component {
             variables={this.props.variables}
             alerts={this.props.alerts}
             cons={this.props.cons}
+            ints={this.props.ints}
             page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}

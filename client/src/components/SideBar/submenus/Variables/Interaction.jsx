@@ -17,8 +17,9 @@ const Interaction = (props) => {
   const [isCheck, setIsCheck] = useState(false);
   const [isVCheck, setIsVCheck] = useState(false);
   const [shapes, setShapes] = useState()
-  const start = useState(Object.keys(props.gameVars[0] ? props.gameVars[0] : ''))
+  const start = props.gameVars[0] ? (Object.keys(props.gameVars[0])).toString() : ''
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
+  console.log(start)
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);

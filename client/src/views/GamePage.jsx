@@ -43,7 +43,6 @@ const PauseCover = styled.div`
 `;
 
 const Game = (props) => {
-  console.log(props)
   const { roomid } = useParams();
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
@@ -101,7 +100,6 @@ const Game = (props) => {
           }
         }).then((res) => {
           setQueryUser(res.data);
-          consoe.log(res.data)
         });
       }
 
@@ -180,6 +178,7 @@ const Game = (props) => {
   const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
   const cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
+  let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
 
   if(roomStatus.variables)
     variables.push(roomStatus.variables)
@@ -230,10 +229,7 @@ const Game = (props) => {
     setNotes(data)
   }
   useEffect(() => {
-      console.log(Object.keys(variables).length)
       Object.keys(variables).forEach(function(key) {
-        console.log(variables[key])
-        console.log(key)
         if (typeof variables[key] === 'string' && variables[key].includes('Random')) {
           let n = variables[key].replace(/[^0-9]/g, '')
             if(n === 0){
@@ -254,8 +250,8 @@ const Game = (props) => {
           className="grid-sidebar game"
           visible={showNav}
           close={toggle}
-          img={room.gameinstance.gameinstance_photo_path  || ""}
-          title={room.gameinstance.gameinstance_name || ""}
+          img={room.gameinstance?.gameinstance_photo_path  || ""}
+          title={room.gameinstance?.gameinstance_name || ""}
           subtitle={room.gameroom_name || ""}
           socket={socket}
           handleLevel={handleLevel}
@@ -295,6 +291,7 @@ const Game = (props) => {
             gamepieceStatus={roomStatus.gamepieces || {}}
             variables={variables || {}}
             cons={cons || []}
+            ints={ints || []}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}

@@ -43,7 +43,7 @@
   font-weight: bold;
   height: min-content;
   padding: 8px 12px;
-  border-radius: 100px;
+  border-radius: 9px;
   margin-left: -40px;
   margin-top: 0px;
   cursor: pointer;
@@ -206,7 +206,7 @@
 .content-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  height: 100%;
 }
 
 .content-header > div {
@@ -241,7 +241,7 @@
   align-self: center;
   color: var(--primary);
   padding: 8px;
-  border-radius: 100px;
+  border-radius: 9px;
   margin-left: 10px;
   cursor: pointer;
   font-size: 1.5vw;
@@ -261,19 +261,19 @@
   padding: 4px;
 }
 .content-roomlink {
-  align-self:auto;
-  margin-left: auto;
+  display: flex !important;
+  align-items:center;
+  justify-content:center;
   margin-right: 20px;
-  font-family:  "Montserrat", sans-serif;
   padding: 10px 30px;
-  font-size: 1vw;
+  font-size: 1.2vw;
+  margin-top: 5px;
   color: white;
+  height: 50% !important;
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: none;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 100px;
+  border-radius: 9px;
+  vertical-align: 20% !important;
 }
 .content-roomlink:hover {
   cursor: pointer;
@@ -356,7 +356,7 @@ input[type='radio']:after {
   vertical-align: text-top;
   position: relative;
   top: -30px;
-  border-radius: 100px;
+  border-radius: 9px;
   display: inline;
   float: right;
 }
@@ -374,7 +374,7 @@ input[type='radio']:after {
   border: none;
   text-align: center;
   vertical-align: middle;
-  border-radius: 100px;
+  border-radius: 9px;
   padding: 10px 20px;
   color: white;
   background-color: var(--primary);
@@ -394,7 +394,7 @@ input[type='radio']:after {
   background-color: var(--primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: none;
-  border-radius: 100px;
+  border-radius: 9px;
   align-self: flex-end;
 }
 
@@ -564,6 +564,14 @@ input[type='radio']:after {
   position: relative;
   top: 250px;
   left: -500px;
+}
+
+.tab-container{
+  display: flex !important;
+  justify-content: space-around !important;
+}
+.tab-container i{
+  margin-left: 0px !important;
 }
 
 @media screen and (orientation: portrait) {

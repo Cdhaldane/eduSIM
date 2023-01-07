@@ -149,11 +149,11 @@ const Notes = (props) => {
           />
         </div>
         <div className="notes-buttons">
-          {!(editMode && index === i) ? <i onClick={() => editNote(i)}><Pencil className="icon note-icon"/></i>
-        : <i className="greenMain"  onClick={() => handleEdit(i)}><Check className="icon white"/></i>
+          {!(editMode && index === i) ? <i onClick={() => editNote(i)}><Pencil /></i>
+        : <i className="greenMain"  onClick={() => handleEdit(i)}><Check /></i>
           }
-          {!(editMode && index === i) ? <i  onClick={() => deleteNote(i)} ><Trash className="icon note-icon"/></i>
-        : <i className="red" onClick={() => setEditMode(false)} ><Close className="icon white"/></i>}
+          {!(editMode && index === i) ? <i  onClick={() => deleteNote(i)} ><Trash /></i>
+        : <i className="redMain" onClick={() => setEditMode(false)} ><Close /></i>}
         </div>
       </div>
       )
@@ -173,12 +173,12 @@ const Notes = (props) => {
        <div className="notes-main" >
          {calculateNotes()}
        </div>
-       <div className="variable-add top-note" onClick={() => setShowAdd(true)} hidden={showAdd}>
+       <div className="top-note-add" onClick={() => setShowAdd(true)} hidden={showAdd}>
          <Plus className="icon small-icon"/>
          {t("sidebar.addNewNote")}
        </div>
        {showAdd && (
-         <div className="variable-adding top-note">
+         <div className="top-note">
            <div className="variable-hold">
              <input type="text"
                className="notes-text"

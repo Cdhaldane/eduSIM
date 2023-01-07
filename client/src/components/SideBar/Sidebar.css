@@ -249,7 +249,7 @@
   margin-left: 10px;
   margin-top: 30px;
   font-size: 1.3em;
-  width: 98%;
+  width: 94%;
   overflow-y: scroll;
   height: 95%;
   scrollbar-width: thin;
@@ -324,9 +324,22 @@
   opacity: 1;
 }
 .top-note {
-  width: 97%;
-  margin-top: 10px !important;
-  margin-right: 10px !important;
+  border: 1px solid var(--primary);
+  background-color: var(--almostwhite);
+  padding: 10px;
+  border-radius: 9px;
+}
+.top-note-add {
+  font-size: 0.9em;
+  background-color: lightgray;
+  padding: 10px;
+  border: 2px dashed var(--dark);
+  border-radius: 8px;
+  text-align: center;
+  opacity: 0.4;
+  width: 99%;
+  transition: 0.2s opacity;
+  margin-top: 10px;
 }
 .notes-text{
   width: 50% !important;
@@ -385,15 +398,23 @@
   border-radius: 8px;
   margin-left: 10px;
 }
-.notes-buttons i{
-  background-color: var(--primary);
-  padding: 2px;
-  border: 3px solid var(--white);
+
+.notes-buttons svg{
+  position: relative;
+  bottom: 5px;
+  fill: var(--red) !important;
+  background-color: var(--almostwhite);
+  border: 1px solid var(--red) !important;
   border-radius: 8px;
-  margin-left: 2px;
-  border: 0px !important;
-  font-size: 1.4em !important;
-  color: var(--white);
+  margin: 3px;
+  padding: 2px;
+  width: 40px;
+  height: 40px;
+}
+
+.greenMain svg{
+  fill: var(--green) !important;
+  font-weight: bold;
 }
 
 .notes-buttons:hover {
@@ -407,12 +428,6 @@
 /* Optional: show position indicator in red */
 .notes-textarea::-webkit-scrollbar-thumb {
   background: #FF0000;
-}
-
-.white-icon{
-  fill: white !important;
-  position: relative;
-  bottom: 3px;
 }
 
 .variable-dis{
@@ -754,7 +769,7 @@
   width: 35px !important;
   height: 35px !important;
   fill: var(--red) !important;
-  border-radius: 100px;
+  border-radius: 9px;
   padding: 0px 5px 0px 5px;
   border: 1px solid var(--red);
 }
@@ -844,7 +859,7 @@
   background-color: var(--almostwhite);
   height: auto;
   width: auto;
-  min-width: 49%;
+  min-width: 32%;
   transition:all .5s;
   vertical-align: middle;
   margin-top: 10px;
@@ -853,7 +868,7 @@
   margin: 3px;
   padding: 10px;
   font-size: 0.8em !important;
-  
+  flex-grow: 1;
   display: flex;
   flex-wrap: wrap;
 }
@@ -863,9 +878,6 @@
   position: sticky;
   margin-right: -27px;
   transform: translate(-10px, -8px);
-}
-.cons-condition{
-
 }
 
 .if{

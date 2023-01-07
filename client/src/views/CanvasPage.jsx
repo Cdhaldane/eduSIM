@@ -45,6 +45,7 @@ const konvaObjects = [
 ];
 
 const CanvasPage = (props) => {
+
   const { settings: localSettings } = useContext(SettingsContext);
 
   /*------------------------------------------------------------------------------/
@@ -902,8 +903,7 @@ const CanvasPage = (props) => {
     refresh: canvas.refresh,
     label: obj.label,
     sync: obj.sync,
-    conditional: obj.conditional
-
+    conditional: obj.conditional,
   })
 
   const timerProps = (obj, canvas, editMode) => ({

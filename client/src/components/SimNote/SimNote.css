@@ -8,7 +8,7 @@
   box-shadow: 0 2px 10px #ccc;
   padding: 10px;
   margin: 0 10px 10px 0;
-  width: 85vw;
+  width: 86vw;
   height: 120px;
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
@@ -66,8 +66,7 @@
   text-align: left;
   color: var(--dark);
 }
-.notesim-thumbnail h1:hover {
-}
+
 
 .notesim-thumbnail img {
   width: 120px;
@@ -82,21 +81,28 @@
   width: 85%;
   text-align: center;
   align-self: center;
+  display: flex;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .notesim-icons i {
   font-size: 2vw;
-  margin-top: 0.0vw;
-  margin-left: 2.0vw;
-  color: var(--primary);
+  margin: 0px 2vw 0px 0px;
+}
+.notesim-icons a {
+  font-size: 2vw;
+  margin: 0px 2vw 0px 0px;
 }
 .notesim-icons h1 {
   color: var(--dark);
   font-family:  "Montserrat", sans-serif;
   display: inline;
-  vertical-align: 30%;
-  margin-left: 0.3vw;
+  vertical-align: middle;
   font-weight: normal;
+  margin-left: 6px;
 }
 #garbage{
   font-size: 2vw;
@@ -120,7 +126,7 @@
   margin-right: 3px;
 }
 
-@media screen and (max-width: 1556px){
+/* @media screen and (max-width: 1556px){
   .notesim-icons {
     margin-left: 60px;
     bottom: 0px;
@@ -133,16 +139,16 @@
   }
   .notesim-icons i {
     margin-left: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
   }
-}
+} */
 
 @media screen and (max-width: 796px){
 
   .notesim-icons {
-    margin-left: 60px;
+    flex-grow: 3;
   }
-  .notesim-thumbnail h1 {
+  /* .notesim-thumbnail h1 {
 
   }
   .notesim-icons i {
@@ -155,9 +161,9 @@
   }
   .notesim-icons h1{
     vertical-align: middle;
-  }
+  } */
 }
-@media screen and (max-width: 556px){
+/* @media screen and (max-width: 556px){
   .notesim-icons {
     margin-left: 60px;
 
@@ -174,4 +180,4 @@
     left: 130px;
   }
 
-}
+} */

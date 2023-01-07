@@ -190,7 +190,7 @@
   position: absolute;
   top: 10px;
   left: 15px;
-  border-radius: 100px;
+  border-radius: 9px;
   text-shadow: -1px 1px 0 white;
   border: 1px solid var(--primary);
   padding: 5px;

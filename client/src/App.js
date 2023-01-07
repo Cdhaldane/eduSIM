@@ -41,7 +41,6 @@ const customObjects = [
 ];
 
 const App = (props) => {
-
   const [localSettings, setLocalSettings] = useState(JSON.parse(localStorage.userSettings || '{}'));
   const [cookiesPopupVisible, setCookiesPopupVisible] = useState(true);
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -76,7 +75,6 @@ const App = (props) => {
 
   const { isLoading } = props.auth0;
   if (isLoading) return <Loading />;
-
   return (
     <div className="full-page-wrapper" data-theme={theme}>
       <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>
