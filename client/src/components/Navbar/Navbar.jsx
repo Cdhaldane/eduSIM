@@ -20,20 +20,16 @@ const NavBar = (props) => {
   const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  console.log(user)
   
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
-    if (!menuOpen === true) {
-      document.addEventListener('click', handleClickOutside);
-    } else {
-      document.removeEventListener('click', handleClickOutside);
-    }
+    document.addEventListener('click', handleClickOutside);
   }
 
   const handleClickOutside = e => {
+    console.log(2)
     if (profileDropdown.current && !profileDropdown.current.contains(e.target)) {
-      setMenuOpen(false);
+      // setMenuOpen(false);
       document.removeEventListener('click', handleClickOutside);
     }
   };
@@ -48,9 +44,7 @@ const NavBar = (props) => {
     }
   };
 
-  useEffect(() => {
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  
 
   return (
     <nav className="NavbarItems">
@@ -114,7 +108,7 @@ const NavBar = (props) => {
 
         {isAuthenticated ? (
           <img
-            className="nav-pic"
+            className={menuOpen ? "nav-pic square" : "nav-pic"}
             src={user.picture}
             alt={t("alt.profile")}
             onClick={toggleContextMenu}

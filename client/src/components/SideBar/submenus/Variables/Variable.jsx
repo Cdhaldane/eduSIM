@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } from "react";
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import { useAlertContext } from "../../../Alerts/AlertContext";
 
 
 import "../../Sidebar.css";
@@ -9,7 +10,6 @@ import Plus from "../../../../../public/icons/circle-plus.svg"
 
 
 const Variable = (props) => {
-  console.log(props)
   const { t } = useTranslation();
   const [showAdd, setShowAdd] = useState(false);
   const [varName, setVarName] = useState('')
@@ -24,6 +24,7 @@ const Variable = (props) => {
     setConfirmationVisible(data);
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
+  const alertContext = useAlertContext();
 
 
   const addVar = () => {

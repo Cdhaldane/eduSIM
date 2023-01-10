@@ -53,6 +53,7 @@ const Game = (props) => {
   const [level, setLevel] = useState(1);
   const [roles, setRoles] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const [isL, setL] = useState(true);
   const [customObjs, setCustomObjs] = useState();
   const alertContext = useAlertContext();
   const [notes, setNotes] = useState();
@@ -175,29 +176,23 @@ const Game = (props) => {
     return newPlayers;
   }, [players, roles, actualLevel]);
 
-  const tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
-  const cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
+  let tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
+  let cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
   let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
-
   if(roomStatus.variables)
     variables.push(roomStatus.variables)
-
-
-  const flattenObject = (obj) => {
-    const flattened = {}
-
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key]
-
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-        Object.assign(flattened, flattenObject(value))
-      } else {
-        flattened[key] = value
-      }
-    })
-
-    return flattened
+    const flattenObject = (obj) => {
+      const flattened = {}
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key]
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          Object.assign(flattened, flattenObject(value))
+        } else {
+          flattened[key] = value
+        }
+      })
+      return flattened
   }
 
   variables = flattenObject(variables)
@@ -229,19 +224,25 @@ const Game = (props) => {
     setNotes(data)
   }
   useEffect(() => {
-      Object.keys(variables).forEach(function(key) {
-        if (typeof variables[key] === 'string' && variables[key].includes('Random')) {
-          let n = variables[key].replace(/[^0-9]/g, '')
-            if(n === 0){
-              out = Math.floor(Math.random(10))
-            } else
-              out = Math.floor(Math.random() * n)
-          variables[key] = out;
+    let x, y, s, t;
+    Object.keys(variables).forEach(function(key) {
+      s = variables[key]
+      if (typeof s === 'string' &&  s.includes('Random')) {
+        for(let i = 0; i < s.length; i++){
+            if(s[i] == '(')
+                x=i
+            if(s[i] == ')')
+                y=i
         }
-      })
-  }, [room])
+        s=s.substring(x+1,y).split(',')
+        t=s[2].replace('.', '').split('').reverse().join('')
+        variables[key] = Math.round((Math.random() * (s[1] - s[0]) + s[0]) *  t) / t ;
+      }
+    })
+    setL(false)
+  }, [variables])
   return (
-    !isLoading ? (
+    !isLoading && !isL ? (
       <div className="editpage">
         <Sidebar
           userId={userId}

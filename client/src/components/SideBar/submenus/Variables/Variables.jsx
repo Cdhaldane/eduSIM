@@ -119,7 +119,7 @@ const Variables = (props) => {
             <div className="variable-header">
             <button className="tooltips" data-tip data-for="infoTip"><Info className="icon info-var"/></button>
               <ReactTooltip id="infoTip" place="right" effect="solid">
-                  Random = Random(max)
+                  Random = Random(min, max, step)
               </ReactTooltip>
               <strong><h1 className="variable-title">Variable Wizard</h1></strong>
             <div className="switch-container" style={{  border: tabsEnviroment==='global' ? '1px solid var(--red)' : '1px solid var(--green)' }}>

@@ -95,6 +95,9 @@
   border-radius: 4px;
   transition: all 0.2s ease-out;
 }
+.square {
+  border-radius: 3px !important;
+}
 
 .nav-picbutton {
   align-content: center;
@@ -389,49 +392,56 @@
 }
 
 
-@media screen and (orientation: landscape) {
-  .profilevist {
-    box-shadow: var(--box-shadow);
-    font-family: "Montserrat", sans-serif;
-    display: flex;
-    flex-direction: column;
-    padding: 15px 20px;
-    z-index: 1;
-    text-align: center;
-    align-items: center;
-    font-size: 1rem;
-    position: absolute;
-    right: 10px;
-    top: 70px;
-    border-radius: 3px;
-    color: #181818;
-    background: white;
-    transition: all 0.3s;
-
-  }
-
-  .profilevist h2 {
-    color: #181818;
-    text-align: center;
-    font-size: 1.5rem;
-    padding: 10px;
-  }
-
-  .profilevist-closed {
-    right: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: none;
-  }
-
-  .nav-home-mobile {
-    display: none;
-  }
-
-  .nav-link {
-    color: var(--white);
-  }
+.profilevist {
+  box-shadow: var(--box-shadow);
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 20px;
+  z-index: 1;
+  text-align: center;
+  align-items: center;
+  font-size: 1rem;
+  position: absolute;
+  right: 10px;
+  top: 3.55vw;
+  border-radius: 3px;
+  color: white;
+  background: var(--primary);
+  transition: all 0.3s;
+  border-radius: 9px;
+  border: 1px solid white;
 }
+.profilevist-open button{
+  background-color: var(--white) !important;
+  color: var(--primary) !important;
+}
+.profilevist-open a{
+  background-color: var(--white) !important;
+  color: var(--primary) !important;
+}
+
+.profilevist h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+.profilevist-closed {
+  right: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.nav-home-mobile {
+  display: none;
+}
+
+.nav-link {
+  color: var(--white);
+}
+
 
 
 @media screen and (orientation: portrait) {
@@ -487,6 +497,7 @@
     width: 100%;
     display: table;
   }
+ 
 
   .menu-icon {
     display: inline-flex;
