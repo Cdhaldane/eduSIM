@@ -3499,6 +3499,7 @@ class Graphics extends Component {
                   handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
+                  variables={this.props.variables}
                   setCustomObjData={this.setCustomObjData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}

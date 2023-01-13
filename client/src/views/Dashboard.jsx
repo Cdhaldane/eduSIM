@@ -74,12 +74,6 @@ const Dashboard = (props) => {
     return <div className="App"></div>;
   }
 
-
-  const addNote = (newgamedata) => {
-    // window.location.reload();
-    setUpdater(updater + 1)
-  }
-
   const deleteNote = (id) => {
     getGamedata((prevgamedata) => {
       return prevgamedata.filter((noteItem, index) => {
@@ -100,18 +94,11 @@ const Dashboard = (props) => {
   }
 
   const getConfirmMessage = () => {
-    // if (gamedata[deletionId]) {
-    //   if (gamedata[deletionId].createdby_adminid === localStorage.adminid) {
     return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
-    //   } else {
-    //     return t("admin.revokeSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
-    //   }
-    // }
   }
 
   const confirmAction = () => {
     if (deletionId) {
-
       deleteNote(deletionId);
       var body = {
         id: deletionId
@@ -125,16 +112,6 @@ const Dashboard = (props) => {
       }).catch(error => {
         console.error(error);
       });
-      // else {
-      //    deleteNote(deletionId);
-      //
-      //    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/revokeGameInstanceAccess', {
-      //      gameinstanceid: gamedata[deletionId].gameinstanceid,
-      //      adminid: localStorage.adminid
-      //    }).catch(error => {
-      //      console.error(error);
-      //    });
-      //  }
     }
   }
 
@@ -220,7 +197,6 @@ const Dashboard = (props) => {
           ariaHideApp={false}
         >
           <CreateArea
-            onAdd={addNote}
             gamedata={gamedata}
             isOpen={showNote}
             close={toggleModal}

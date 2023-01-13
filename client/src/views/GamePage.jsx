@@ -180,6 +180,7 @@ const Game = (props) => {
   let cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
   let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
+  console.log(variables)
   if(roomStatus.variables)
     variables.push(roomStatus.variables)
     const flattenObject = (obj) => {

@@ -18,6 +18,7 @@ import Left from "../../../public/icons/arrow-left.svg"
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
+  console.log(props)
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -320,12 +321,12 @@ const DropdownEditObject = (props) => {
       value = objState?.variableAmount
     }
     for (let i = 0; i < value; i++) {
-        list.push(
-          <div className = "button-vars">
-          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState.varName ? objState.varName[i] : ""} placeholder="variable"/>
+      list.push(
+        <div className="button-vars">
+          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState.varName ? objState.varName[i] : ""} placeholder="variable" />
           <h1>=</h1>
-        <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState.varValue ? objState.varValue[i] : ""}  placeholder="value"/>
-          </div>
+          <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState.varValue ? objState.varValue[i] : ""} placeholder="value" />
+        </div>
       );
     }
     return list
@@ -334,12 +335,12 @@ const DropdownEditObject = (props) => {
   const populateConditions = () => {
     const list = [];
     let value = 0;
-    if(objState?.conditionAmount < 1){
+    if (objState?.conditionAmount < 1) {
       let value = 1;
-    } else {value = objState?.conditionAmount}
+    } else { value = objState?.conditionAmount }
     for (let i = 0; i < value; i++) {
       list.push(
-        <div  key={i} className="button-vars">
+        <div key={i} className="button-vars">
           <input
             className="float-left"
             type="text"
@@ -363,16 +364,16 @@ const DropdownEditObject = (props) => {
 
   const handleVarConditions = (e) => {
     let value = 0;
-    if(objState?.conditionAmount < 1){
+    if (objState?.conditionAmount < 1) {
       let value = 1;
-    } else {value = objState?.conditionAmount}
+    } else { value = objState?.conditionAmount }
 
     let arr = []
-    if(  objState?.varCon){
+    if (objState?.varCon) {
       for (let i = 0; i < value; i++) {
-          if(e.id != i){
-            arr[i] = objState?.varCon[i]
-          }
+        if (e.id != i) {
+          arr[i] = objState?.varCon[i]
+        }
       }
     }
     arr[e.id] = e.value;
@@ -389,13 +390,13 @@ const DropdownEditObject = (props) => {
     let value = 0;
     if (objState?.variableAmount < 1) {
       let value = 1;
-    } else {value = objState?.variableAmount}
+    } else { value = objState?.variableAmount }
     let arr = []
-    if( objState?.varName ){
+    if (objState?.varName) {
       for (let i = 0; i < value; i++) {
-          if(e.id != i){
-            arr[i] = objState?.varName[i]
-          }
+        if (e.id != i) {
+          arr[i] = objState?.varName[i]
+        }
       }
     }
     arr[e.id] = e.value;
@@ -422,11 +423,11 @@ const DropdownEditObject = (props) => {
 
     let arr = []
 
-    if(objState?.varValue){
+    if (objState?.varValue) {
       for (let i = 0; i < value; i++) {
-          if(e.id != i){
-            arr[i] = objState?.varValue[i]
-          }
+        if (e.id != i) {
+          arr[i] = objState?.varValue[i]
+        }
 
       }
     }
@@ -453,22 +454,22 @@ const DropdownEditObject = (props) => {
   }
   const handleConEquals = (e) => {
     let val;
-    if(isNaN(val)){
+    if (isNaN(val)) {
       val = e.value;
     } else {
       val = parseInt(e.value)
     }
     let value = 0;
-    if(objState?.conditionAmount < 1){
+    if (objState?.conditionAmount < 1) {
       let value = 1;
-    } else {value = objState?.conditionAmount}
+    } else { value = objState?.conditionAmount }
 
     let arr = []
-    if( objState?.conEquals ) {
+    if (objState?.conEquals) {
       for (let i = 0; i < value; i++) {
-          if(e.id != i){
-            arr[i] = objState?.conEquals[i]
-          }
+        if (e.id != i) {
+          arr[i] = objState?.conEquals[i]
+        }
       }
     }
     arr[e.id] = val;
@@ -852,70 +853,38 @@ const DropdownEditObject = (props) => {
                 <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
-                {objState?.varType === "button" && (
+              {objState?.varType === "button" ? (
                 <>
                   <p>Button name to set</p>
-                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />  
                 </>
-            )}
-            {objState?.varType === "radio" ? (
+              ) : <>
+                <p>{t("edit.variableNameToSet")}</p>
+                <select onChange={e => handleVarName(e.target.value)}>
+                {(objState?.sync ? props.variables : Object.entries(JSON.parse(sessionStorage.gameVars)).map((e) => ({ [e[0]]: e[1] }))).map((data) => {
+                  console.log(Object.entries(JSON.parse(sessionStorage.gameVars)).map((e) => ({ [e[0]]: e[1] })), props.variables)
+                  return (
+                    <option value={Object.keys(data)}>
+                      {Object.keys(data)}
+                    </option>
+                  );
+                })}
+              </select>
+              </>}
+              {objState?.varType === "radio" && (
                 <div className="radio-dropdown">
                   <p>{t("edit.radioAmount")}</p>
                   <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} maxLength="1" />
-                  <p>{t("edit.variableNameToSet")}</p>
-                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-
                   <p>{t("edit.radioText")}</p>
                   {populateRadio()}
                 </div>
-              ) :
-                (<div> </div>)
-              }
-              {objState?.varType === "text" ? (
-               <div className="radio-dropdown">
-               <p>{t("edit.variableNameToSet")}</p>
-               <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-               </div>
-             ) :
-             (<div> </div>)
-           }
-           {objState?.varType === "checkbox" ? (
-             <div className="radio-dropdown">
-             <p>{t("edit.variableNameToSet")}</p>
-             <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-             </div>
-           ) :
-           (<div> </div>)
-         }
-              {objState?.varType === "variable" ? (
-                 <div className="radio-dropdown">
-                   <div className="radio-conditional">
-                     <input type="checkbox" checked={!!objState?.conditional} onChange={() => handleProperty(!objState?.conditional, 'conditional')} />
-                       <p>{t("edit.ifStatement")}</p>
-                   </div>
-                 <p>{t("edit.variableNameToSet")}</p>
-                 <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-
-               {objState?.conditional ? (<div></div>) : (<div><h1>{t("edit.random")}</h1></div>) }
-               {objState?.conditional ? (<div className="radio-conditional">
-                 <input className="margin-bottom" type="text" value={objState?.conditionAmount} placeholder={1} onChange={e => handleButtonCondition(e.target.value)} maxlength="1" />
-                   {populateConditions()}
-                 </div>) : (<div className = "button-vars">
-                 <input className="float-left math" type="text" onChange={e => handleMathOne(e.target)} value={objState?.varOne} placeholder={t("edit.input.varVal")}/>
-                 <select id="math" className="float-left math-drop" value={objState?.math} onChange={e => handleMath(e.target.value)}>
-                   <option value="">select option</option>
-                   <option value="add">Add</option>
-                   <option value="subtract">Subtract</option>
-                   <option value="multiply">Multiply</option>
-                   <option value="divide">Divide</option>
-                 </select>
-                 <input className="float-righty mathy" type="text" onChange={e => handleMathTwo(e.target)} value={objState?.varTwo}  placeholder={t("edit.input.varVal")}/>
-                 </div>) }
-                 </div>
-               ) :
-               (<div> </div>)
-             }
-
+              )}
+              {objState?.varType === "checkbox" && (
+                <div className="radio-dropdown">
+                  <p>{t("edit.variableNameToSet")}</p>
+                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                </div>
+              )}
               <p>{t("edit.label")}</p>
               <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
               {objState.varType !== "checkbox" && (
@@ -934,7 +903,7 @@ const DropdownEditObject = (props) => {
                       {t("edit.colorStroke")}
                     </button>
                     <button
-                      className={`${inputCurrentOptions === "text" ? navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "editInputOptionSelected simple" : "editInputOptionSelected notSimple" : navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "simple" :"notSimple"}`}
+                      className={`${inputCurrentOptions === "text" ? navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "editInputOptionSelected simple" : "editInputOptionSelected notSimple" : navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "simple" : "notSimple"}`}
                       onClick={() => newTabInputSettings("text")}
                     >
                       {t("edit.shape.simpleText")}
@@ -1006,24 +975,3 @@ const DropdownEditObject = (props) => {
 
 export default DropdownEditObject;
 
-// {objState?.varType === "button" ? (
-//   <div className="radio-dropdown">
-//     <div className="htmliframeinput">
-//       <input type="checkbox" checked={!!objState?.incr} onChange={() => handleProperty(!objState?.incr, 'incr')} />
-//       <p>Incremental button</p>
-//     </div>
-//     {!objState?.incr ? (
-//       <div>
-//         <p>{t("edit.buttonAmount")}</p>
-//         <input className="margin-bottom" type="text" value={objState?.variableAmount} placeholder={1} onChange={e => handleButtonVariable(e.target.value)} maxLength="1" />
-//
-//         {populateVariable()}
-//       </div>
-//     ) : (
-//       <div><p>{t("edit.variableNameToSet")}</p>
-//         <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} /></div>
-//     )
-//     } </div>
-// ) :
-//   (<div> </div>)
-// }

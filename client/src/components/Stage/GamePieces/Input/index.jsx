@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-  console.log(props)
+
   const { settings } = useContext(SettingsContext);
   const varName = props.varName || props.id;
   const [number, setNum] = useState('NA')

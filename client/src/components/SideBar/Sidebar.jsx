@@ -81,7 +81,6 @@ const Disabled = styled.div`
 `;
 
 const Sidebar = (props) => {
-  console.log(props)
   const sidebarRef = useRef();
   const backdropRef = useRef();
   const [expanded, setExpanded] = useState(false);

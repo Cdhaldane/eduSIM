@@ -74,8 +74,6 @@ const Variables = (props) => {
   }, []);
 
   const populateTab = () => {
-    let vars = props ? props.vars : 0;
-    const list = []
     if(tabs === "variable"){
       return (
         <div className="condition-input-container" index={tabsEnviroment} style={{maxHeight: height - 130}} id={update}>
@@ -95,7 +93,6 @@ const Variables = (props) => {
         </div>
     )
   }
-
 
   const handleSwitchChange = () => {
     setEnviroment(!enviroment)
