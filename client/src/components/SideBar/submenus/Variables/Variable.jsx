@@ -65,7 +65,7 @@ const Variable = (props) => {
         [varName]: value
       }));
     } else {
-      if(value !== value){
+      if(value !== value || value === NaN){
         alertContext.showAlert(t("Value Not Valid"), "warning");
       }
       else {
@@ -158,7 +158,7 @@ const Variable = (props) => {
             <label for="var-type">Variable Type</label>
           <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
                 <option value="integer">Integer</option>
-              <option value="arrayInt">Integer Array</option>
+                <option value="arrayInt">Integer Array</option>
                 <option value="string">String</option>
                 <option value="arrayString">String Array</option>
 

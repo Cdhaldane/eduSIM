@@ -600,7 +600,8 @@ class Graphics extends Component {
       })
     },
     variables: this.props.variables,
-    ints: this.props.ints
+    interactions: this.props.ints,
+    conditions: this.props.cons
   });
 
   handleVariable = (name, value) => {

@@ -28,13 +28,13 @@ const Condition = (props) => {
   const [ifs, setIfs] = useState(0)
   const lt = "<"
   const gt = ">"
-  const start = Object.keys(props.gameVars[0] ? props.gameVars[0] : '')
+  const start = Object.keys(props.gameVars[0] ? props.gameVars[0] : '').toString()
   const [condition, setCondition] = useState([
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', '']
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', '']
   ])
   const [box, setBox] = useState([
     {
@@ -85,25 +85,35 @@ const Condition = (props) => {
 
   useEffect(() => {
     let temp = condition
-    if (showAddition && temp[0][4] === '') {
-      temp[0][3] = '+'
+    if (showAddition) {
+      temp[temp.length - 1][4] = start
+    }
+    if (showAddition0) {
       temp[0][4] = start
     }
-    if (showAddition0 && temp[1][4] === '') {
-      temp[1][3] = '+'
+    if (showAddition1) {
       temp[1][4] = start
     }
-    if (showAddition1 && temp[2][4] === '') {
-      temp[2][3] = '+'
+    if (showAddition2) {
       temp[2][4] = start
     }
-    if (showAddition2 && temp[3][4] === '') {
-      temp[3][3] = '+'
+    if (showAddition3) {
       temp[3][4] = start
     }
-    if (showAddition3 && temp[4][4] === '') {
-      temp[4][3] = '+'
-      temp[4][4] = start
+    if (!showAddition) {
+      temp[temp.length - 1][4] = ''
+    }
+    if (!showAddition0) {
+      temp[0][4] = ''
+    }
+    if (!showAddition1) {
+      temp[1][4] = ''
+    }
+    if (!showAddition2) {
+      temp[2][4] = ''
+    }
+    if (!showAddition3) {
+      temp[3][4] = ''
     }
   })
   
@@ -116,17 +126,18 @@ const Condition = (props) => {
         <div className="ints-container">
         {cons[i].map(data => {
           if (cons[i][cons[i].length - 1] !== data) {
+            console.log(cons, data, cons[i][cons[i].length - 1][4])
             return (
               <div className={"if"}>
                 {(cons[i][0] !== data) && (<h1 className="andfix">and</h1>)}<h1>If</h1><h2>{data[0]}</h2><h3>{data[1]}</h3><h2>{data[2]}</h2>
-                {(data[3]) && (<><h3>{data[3]}</h3><h2>{data[4]}</h2></>)}
+                {(data[4]) && (<><h3>{data[3]}</h3><h2>{data[4]}</h2></>)}
               </div>
             )
           }
         })}
         <div className={"then"}>
           <h1>Then</h1><h2>{cons[i][cons[i].length - 1][0]}</h2><h3>{cons[i][cons[i].length - 1][1]}</h3><h2>{cons[i][cons[i].length - 1][2]}</h2>
-          {(cons[i][cons[i].length - 1][3]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
+          {(cons[i][cons[i].length - 1][4]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
         </div>
         </div>
       </div>)
@@ -182,11 +193,11 @@ const Condition = (props) => {
     
     setShowConAdd(!showConAdd)
     setCondition([
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', '']
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', '']
     ])
     setShowAddition(false)
     setShowAddition0(false)

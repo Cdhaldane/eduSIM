@@ -902,7 +902,7 @@ const CanvasPage = (props) => {
     radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
-    sync: obj.sync,
+    sync: obj.sync || true,
     conditional: obj.conditional,
   })
 
