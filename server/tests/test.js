@@ -4,7 +4,7 @@ const gameinstances = require("../models/GameInstances");
 
 const app = express();
 
-let server = supertest.agent("http://localhost:8080");
+let server = supertest.agent("http://localhost:5050");
 
 //==================== user API test ====================
 

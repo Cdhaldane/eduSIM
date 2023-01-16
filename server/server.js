@@ -12,7 +12,7 @@ const fileUpload = require('express-fileupload');
 let cors = require('cors')
 
 const ENV = process.env.NODE_ENV  //Tells us if we're working in development or production
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5050;
 
 //Initialising express and registering the basic middleware
 const app = express();
