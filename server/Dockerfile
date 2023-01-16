@@ -10,6 +10,6 @@ COPY package-lock.json ./
 RUN npm install
 COPY . .
 
-EXPOSE 8080
+EXPOSE 5050
 
 CMD ["npm", "run","server"]
