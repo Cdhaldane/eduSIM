@@ -21,6 +21,10 @@ const gameinstances = db.define('gameinstances', {
   game_parameters: {
     type: Sequelize.JSON
   },
+  downloads: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
   createdby_adminid: {
     type: Sequelize.UUID,
     allowNull: false

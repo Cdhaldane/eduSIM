@@ -16,23 +16,27 @@ const NavBar = (props) => {
   const { isAuthenticated } = useAuth0();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = props.auth0;
-  const profileDropdown = useRef();
+  const profileDropdown = useRef(null);
   const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
-    document.addEventListener('click', handleClickOutside);
   }
 
-  const handleClickOutside = e => {
-    console.log(2)
-    if (profileDropdown.current && !profileDropdown.current.contains(e.target)) {
-      // setMenuOpen(false);
-      document.removeEventListener('click', handleClickOutside);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileDropdown.current && !profileDropdown.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
     }
-  };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdown]);
 
   const switchLanguage = () => {
     if (i18n.language === 'en') {
@@ -58,7 +62,7 @@ const NavBar = (props) => {
       <div className="menu-icon" onClick={toggleContextMenu}>
         <i className={menuOpen ? "menu-close fas fa-times" : "menu-close fas fa-bars"}></i>
       </div>
-      <div className={menuOpen ? "nav-menu active" : "nav-menu"}>
+      <div className={menuOpen ? "nav-menu active" : "nav-menu"} ref={profileDropdown}>
         {isAuthenticated && (
           <div
             ref={profileDropdown}
@@ -84,7 +88,7 @@ const NavBar = (props) => {
 
 
             <ButtonLink
-              className={menuOpen ? "nav-links-icons1" : ""}
+              className={menuOpen ? "nav-links-icons" : ""}
               href="/dashboard"
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
@@ -93,7 +97,7 @@ const NavBar = (props) => {
               {t("navbar.home")}
             </ButtonLink>
             <ButtonLink
-              className={menuOpen ? "nav-links-icons2" : ""}
+              className={menuOpen ? "nav-links-icons" : ""}
               href="/about"
               buttonStyle="btn--danger--solid"
               buttonSize="button--medium"
@@ -101,7 +105,7 @@ const NavBar = (props) => {
               <Info className="icon information navbar-icons"/>
               {t("navbar.about")}
             </ButtonLink>
-          <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons3 lang-button" : "lang-button"}>
+          <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons lang-button" : "lang-button"}>
             {i18n.language === 'en' ? 'fr' : 'en'}
           </button>
 

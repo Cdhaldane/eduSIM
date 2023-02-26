@@ -1,94 +1,216 @@
 
-import React from "react";
-import { withAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from "react";
+import { User, withAuth0 } from "@auth0/auth0-react";
+import SimulationTable from "../components/Simulations/SimulationTable";
+import Modal from "react-modal";
+import axios from "axios";
+import UserSearch from "../components/Simulations/UserSearch";
+import Button from "../components/Buttons/Button";
 
 const Card_component = (props) => {
+  const [imageSelected, setImageSelected] = useState("v1677271353/images/yavagre0lvkt8vtegdvv.jpg")
+  function handleContextMenu(e) {
+    e.preventDefault();
+    // TODO: show custom context menu
+  }
+  const openWidget = (event) => {
+    var myWidget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "uottawaedusim",
+        uploadPreset: "bb8lewrh"
+      },
+      (error, result) => {
+        if (!error && result && result.event === "success") {
+          setImageSelected(result.info.public_id);
+          myWidget.close();
+        }
+      }
+    );
+    myWidget.open();
+  }
 
   return (
-  <div className="card">
-   <header className="card-header">
-     <div className="hello">
-       <img src={props.user.picture}  alt="" />
-     <div className="heading-box">
-       <h1>{props.user.name}</h1>
-     <h3>{props.user.email}</h3>
-     </div>
-     </div>
-     <div className="button-box">
-       <a  style={props.btnStyle} className="follow-btn" href="#" ><i class={props.icon} onClick={props.follow}></i></a>
-     </div>
-   </header>
-   <main className="card-main">
-     <div className="activity">
-       <i class="lni lni-users"></i>
-       <span className="activity-name">Followers</span>
-     <span className="index">{props.friends}</span>
-     </div>
-     <div className="activity">
-       <i class="lni lni-timer"></i>
-       <span className="activity-name">Activity</span>
-     <span className="index">{localStorage.loginCount}</span>
-     </div>
-     <div className="activity" onClick={props.openSims}>
-       <i class="lni lni-bookmark-alt"></i>
-     <span className="activity-name">Simulations</span>
-       <span className="index">146</span>
-     </div>
-   </main>
- </div>
+    <div className="card">
+      <img className="card-background" src={"https://res.cloudinary.com/uottawaedusim/image/upload/" + imageSelected} onContextMenu={handleContextMenu}/>
+      <button className="card-banner" onClick={() => openWidget()}>Banner</button>
+      <UserSearch setUser={props.setUser}/>
+      <header className="card-header">
+        <div className="hello">
+          <img src={props.user.picture} alt="" />
+          <div className="heading-box">
+            <h1>{props.user.name}</h1>
+            <h3>{props.user.email}</h3>
+          </div>
+        </div>
+        <div className="button-box">
+          <a style={props.btnStyle} className="follow-btn" href="#" ><i class={props.icon} onClick={props.follow}></i></a>
+        </div>
+      </header>
+      <main className="card-main">
+        <div className="activity">
+          <i class="lni lni-users"></i>
+          <span className="activity-name">Followers</span>
+          <span className="index">{props.user.followers}</span>
+        </div>
+        <div className="activity sepcial">
+          <i class="lni lni-timer"></i>
+          <span className="activity-name">Activity</span>
+          <span className="index">{props.user.updatedAt?.split("T")[0]}</span>
+        </div>
+        <div className="activity" onClick={props.openSims}>
+          <i class="lni lni-bookmark-alt"></i>
+          <span className="activity-name">Simulations</span>
+          <span className="index">{props.data && Object.keys(props.data).length}</span>
+        </div>
+      </main>
+    </div>
 
-);
+  );
 }
 
-class Profile extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      friends: 10,
-      icon: 'lni lni-circle-plus',
-      text: 'Follow',
-      btnStyle: {
-        borderRadius: '50%',
-        color: 'limegreen',
-        cursor: 'pointer'
-      }
+const Profile = ({ auth0 }) => {
+  const [friends, setFriends] = useState(10);
+  const [icon, setIcon] = useState('lni lni-circle-plus');
+  const [text, setText] = useState('Follow');
+  const [showTable, setShowTable] = useState(false);
+  const [gamedata, getGamedata] = useState();
+  const [btnStyle, setBtnStyle] = useState({
+    borderRadius: '50%',
+    color: 'limegreen',
+    cursor: 'pointer'
+  });
+
+  
+  const { user } = auth0;
+  const { name, picture, email, logins_count } = user;
+  const [users, setUsers] = useState(user)
+
+  useEffect(() => {
+    getAllGamedata()
+  }, [users]);
+
+  useEffect(() => {
+    updateProfile()
+  }, []);
+
+  const updateProfile = () => {
+    try {
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getProfile/:email', {params: {email: email}})
+        .then((res) => {
+          setUsers(res.data)
+        })
+    } catch (error) {
+      console.error(error);
     }
   }
 
-  follow(e){
-    e.preventDefault()
-    let currentIcon = this.state.icon
-    let currentText = this.state.text
-    let currentFriends = this.state.friends
-    if (currentIcon === 'lni lni-circle-plus' && currentText === 'Follow')
-      this.setState({friends: currentFriends + 1, icon: 'lni lni-cross-circle', text: 'Unfollow', btnStyle: {
-        color: 'maroon', cursor: 'normal', animation: 'spin 200ms ease-in-out'
-      }})
-    else
-      this.setState({friends: currentFriends - 1, icon: 'lni lni-circle-plus', text: 'Follow', btnStyle: {
-        color: 'limegreen', cursor: 'pointer', animation: 'spinBack 200ms ease-in-out'
-      }})
+  const getAllGamedata = async (email, name) => {
+    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+      params: {
+        email: users.email,
+        name: users.name
+      }
+    }).then((res) => {
+      const allData = res.data;
+      localStorage.setItem('adminid', allData.adminid)
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
+        {
+          params: {
+            id: allData.adminid
+          }
+        }).then((res) => {
+          getGamedata(res.data);
+        }).catch(error => {
+          console.error(error);
+        });
+    }).catch(error => {
+      console.error(error);
+    });
   }
 
-  openSims(){
-    console.log(2)
+  const follow = (e) => {
+    e.preventDefault();
+    if (icon === 'lni lni-circle-plus' && text === 'Follow') {
+      let body = {
+        email: users.email,
+        followers: users.followers + 1
+      }
+      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
+      .then(response => {
+        // Update the local state with the new download count
+        const updatedUser = () => {
+            return { ...users, followers: response.data.adminaccount.followers };
+        };
+        setUsers(updatedUser);
+      })
+      .catch(error => {
+        console.error('Error updating download count:', error);
+      });
+      setIcon('lni lni-cross-circle');
+      setText('Unfollow');
+      setBtnStyle({
+        color: 'maroon',
+        cursor: 'normal',
+        animation: 'spin 200ms ease-in-out'
+      });
+    } else {
+      let body = {
+        email: users.email,
+        followers: users.followers - 1
+      }
+      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
+      .then(response => {
+        // Update the local state with the new download count
+        const updatedUser = () => {
+            return { ...users, followers: response.data.adminaccount.followers };
+        };
+        setUsers(updatedUser);
+      })
+      .catch(error => {
+        console.error('Error updating download count:', error);
+      });
+      setIcon('lni lni-circle-plus');
+      setText('Follow');
+      setBtnStyle({
+        color: 'limegreen',
+        cursor: 'pointer',
+        animation: 'spinBack 200ms ease-in-out'
+      });
+    }
+  };
+
+  const openSims = () => {
+    setShowTable(!showTable)
+  };
+
+  const setUser = (data) => {
+    setUsers(data)
   }
 
-  render(){
-    const { user } = this.props.auth0;
-    const { name, picture, email, logins_count } = user;
-    return (
+  return (
+    <>
       <Card_component
-        btnStyle={this.state.btnStyle}
-        icon={this.state.icon}
-        text={this.state.text}
-        follow={this.follow.bind(this)}
-        friends={this.state.friends}
-        user={user}
-        openSims={this.openSims}
+        btnStyle={btnStyle}
+        icon={icon}
+        text={text}
+        follow={follow}
+        user={users}
+        openSims={openSims}
+        setUser={(e) => setUser(e)}
+        data={gamedata}
       />
-    )
-  }
-}
+      <Modal
+        isOpen={showTable}
+        onRequestClose={() => setShowTable(false)}
+        className="tablemodal"
+        overlayClassName="tableoverlay"
+        closeTimeoutMS={250}
+        ariaHideApp={false}
+      >
+        <SimulationTable data={gamedata} />
+      </Modal>
+    </>
+  );
+};
 
 export default withAuth0(Profile);

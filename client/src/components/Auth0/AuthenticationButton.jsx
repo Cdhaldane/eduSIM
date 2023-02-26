@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../Buttons/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
@@ -10,19 +10,24 @@ const AuthenticationButton = (props) => {
   const { user } = useAuth0();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    if(user)
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+        params: {
+          email: user.email,
+          name: user.name,
+          picture: user.picture
+        }
+      }).then((res) => {
+        const allData = res.data;
+        localStorage.setItem('adminid', allData.adminid);
+      }).catch(error => {
+        console.error(error);
+      });
+  }, [user])
+
   const handleClick = () => {
     loginWithRedirect({ redirectUri: window.location.origin, prompt: "select_account" });
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/adminaccounts/getAdminbyEmail/:email/:name', {
-      params: {
-        email: user.email,
-        name: user.name
-      }
-    }).then((res) => {
-      const allData = res.data;
-      localStorage.setItem('adminid', allData.adminid);
-    }).catch(error => {
-      console.error(error);
-    });
   }
 
   const handleLogout = () => {

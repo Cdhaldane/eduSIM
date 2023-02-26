@@ -15,12 +15,16 @@ const adminaccounts = db.define('adminaccounts', {
   name: {
     type: Sequelize.STRING(50)
   },
-  picturePath: {
+  picture: {
     type: Sequelize.STRING(250)
   },
   issuperadmin: {
     type: Sequelize.BOOLEAN,
     defaultValue: true
+  },
+  followers: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   }
 });
 

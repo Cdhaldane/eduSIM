@@ -84,8 +84,8 @@ exports.createGameInstance = async (req, res) => {
 
 // Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { id, gameinstance_name, gameinstance_photo_path, game_parameters, invite_url } = req.body;
-
+  const { id, gameinstance_name, gameinstance_photo_path, game_parameters, invite_url, downloads } = req.body;
+ 
   const gameinstance = await GameInstance.findOne({
     where: {
       gameinstanceid: id
@@ -115,8 +115,13 @@ exports.updateGameInstance = async (req, res) => {
       gameinstance.invite_url = invite_url;
     }
 
+    if (downloads) {
+      gameinstance.downloads = downloads;
+    }
+
     gameinstance.save();
     return res.send({
+      gameinstance: gameinstance,
       message: `Game Instance ${id} has been updated!`,
     });
   } catch (err) {
@@ -246,6 +251,8 @@ exports.getCollaborators = async (req, res) => {
     });
   }
 };
+
+
 
 /*
 exports.deleteGameInstance = async (req, res) => {

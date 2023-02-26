@@ -1,0 +1,185 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 1.1em;
+  }
+  
+  th,
+  td {
+    padding: 0.75rem;
+    text-align: left;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  /* Styling for the like button */
+  button.like-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--red);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    outline: none;
+    width: 80px;
+    padding: 0.5rem 1rem;
+    margin-bottom: 2px;
+    transition: background-color 0.2s ease-in-out;
+  
+    &:hover {
+      background-color: #e9ecef;
+    }
+  
+    & > svg {
+      margin-right: 0.5rem;
+    }
+  }
+  
+  /* Styling for the download button */
+  button.download-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    width: 80px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    outline: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease-in-out;
+  
+    &:hover {
+      background-color: #0069d9;
+    }
+  
+    & > svg {
+      margin-right: 0.5rem;
+    }
+  }
+  
+  /* Styling for odd table rows */
+  tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+  
+  /* Styling for even table rows */
+  tbody tr:nth-of-type(even) {
+    background-color: #fff;
+  }
+  
+  /* Styling for the like button when it's active */
+  tbody button.like-button.active {
+    background-color: #28a745;
+    color: #fff;
+  
+    &:hover {
+      background-color: #218838;
+    }
+  }
+
+.tablemodal {
+    margin: 0 auto;
+    width: 90%;
+}
+.tableoverlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+.table-img {
+    width: 60px;
+    height: 60px;
+    border: 1px solid var(--primary);
+    border-radius: 9px;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+.card-background  {
+    width: 100% !important;
+    height: 60% !important;
+    border-radius: 0px !important;
+    margin-top: 0px !important;
+    position: absolute;
+    top: 0px;
+
+}
+
+.usersearch-container {
+  position: absolute;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem;
+  z-index: 10000;
+}
+.card-banner {
+  position: absolute;
+  right: 20px;
+  translate: 0px -60px;
+}
+
+.input-container {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+input[type='text'] {
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+  flex: 1;
+  margin-right: 1rem;
+}
+input::placeholder {
+  font-size: 1.5rem;
+  opacity: 0.5;
+}
+
+
+
+button {
+  font-size: 1.5rem;
+  background-color: var(--red);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color:var(--green);
+}
+
+.profile-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.activity.sepcial .index {
+  width: 100px !important;
+}
+
