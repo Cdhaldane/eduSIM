@@ -115,8 +115,9 @@ const Variables = (props) => {
           <div className="variable-wiz">
             <div className="variable-header">
             <button className="tooltips" data-tip data-for="infoTip"><Info className="icon info-var"/></button>
-              <ReactTooltip id="infoTip" place="right" effect="solid">
-                  Random = Random(min, max, step)
+              <ReactTooltip id="infoTip" place="right" effect="solid" multiline={true}>
+                  Random = Random(min, max, step) <br />
+                  Seperate values in array with ','
               </ReactTooltip>
               <strong><h1 className="variable-title">Variable Wizard</h1></strong>
             <div className="switch-container" style={{  border: tabsEnviroment==='global' ? '1px solid var(--red)' : '1px solid var(--green)' }}>
@@ -127,9 +128,9 @@ const Variables = (props) => {
             <button className="con" onClick={() => props.close()}><Close className="icon close-var"/></button>
             </div>
           <div className="con-container">
-            <button className="con-tabs" style={{ backgroundColor: tabs === 'variable' ? tabsEnviroment === 'global' ? 'var(--red)' : 'var(--green)' : "#eeeeee", color: tabs === 'variable' ? 'white' : "black", 'textShadow': tabs==='variable' && tabsEnviroment !== 'global' ? '0.07em 0 black, 0 0.07em black, -0.07em 0 black,  0 -0.07em black' : '' }} onClick={() => setTabs("variable")}>Variables</button>
-            <button className="con-tabs" style={{ backgroundColor: tabs === 'condition' ? tabsEnviroment === 'global' ? 'var(--red)' : 'var(--green)' : "#eeeeee", color: tabs === 'condition' ? 'white' : "black", 'textShadow': tabs==='condition' && tabsEnviroment !== 'global' ? '0.04em 0 black, 0 0.04em black, -0.04em 0 black,  0 -0.04em black' : '' }} onClick={() => setTabs("condition")}>Conditions</button>
-            <button className="con-tabs" style={{ backgroundColor: tabs === 'interaction' ? tabsEnviroment === 'global' ? 'var(--red)' : 'var(--green)' : "#eeeeee", color: tabs === 'interaction' ? 'white' : "black", 'textShadow': tabs==='interaction' && tabsEnviroment !== 'global' ? '0.04em 0 black, 0 0.04em black, -0.04em 0 black,  0 -0.04em black' : '' }} onClick={() => setTabs("interaction")}>Interactions</button>
+            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("variable")}>Variables</button>
+            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("condition")}>Conditions</button>
+            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("interaction")}>Interactions</button>
           </div>
           {populateTab()}
         </div>
@@ -140,8 +141,3 @@ const Variables = (props) => {
 }
 
 export default Variables;
-
-// <div className="variable-dis-buttons">
-//   <button>Variables</button>
-//   <button>Conditions</button>
-// </div>

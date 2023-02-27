@@ -32,7 +32,8 @@ import Plus from "../../../public/icons/plus.svg"
 import Check from "../../../public/icons/checkmark.svg"
 import Radio from "../../../public/icons/radio-button.svg"
 import Left from "../../../public/icons/arrow-left.svg"
-
+import Club from "../../../public/icons/club.svg"
+import Dice from "../../../public/icons/dice.svg"
 const DEFAULT_STROKE = 2;
 
 const DropdownAddObjects = (props) => {
@@ -43,11 +44,7 @@ const DropdownAddObjects = (props) => {
   const [imageUploaded, setImageUploaded] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [imageUploading, setImageUploading] = useState(false);
-  const [videoUploaded, setVideoUploaded] = useState(false);
-  const [videoUploading, setVideoUploading] = useState(false);
   const [audioUploaded, setAudioUploaded] = useState(false);
-  const [fixX, setFixX] = useState(0);
-  const [fixY, setFixY] = useState(0);
 
   const [validImgURL, setValidImgURL] = useState(false);
   const [validVideoURL, setValidVideoURL] = useState(false);
@@ -55,10 +52,7 @@ const DropdownAddObjects = (props) => {
   const [imgsrc, setImgsrc] = useState("");
   const [vidsrc, setVidsrc] = useState("");
   const [audiosrc, setAudiosrc] = useState("");
-  const [docfile, setFile] = useState("");
   const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
-
-  const alertContext = useAlertContext();
   const { t } = useTranslation();
 
   const calcOutOfBounds = (x, y) => {
@@ -123,24 +117,6 @@ const DropdownAddObjects = (props) => {
   }
 
 
-  const filesubmitNote = async event => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", "pdfs");
-    formData.append("uploader", localStorage.adminid);
-
-    try {
-      await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/image/upload', formData)
-        .then((res) => {
-          const allData = res.data.public_id;
-          const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + allData + ".pdf";
-          props.handleDocument(name);
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   const uploadFile = async (file, type, isGIF) => {
     try {
@@ -181,43 +157,6 @@ const DropdownAddObjects = (props) => {
 
   }
 
-  const handleImgFromComputer = () => {
-    const file = document.getElementById("filePickerImageEdit").files[0];
-    if ((file.size / 1000000) > 10) {
-      alertContext.showAlert(t("alert.imageTooLarge"), "warning");
-      return;
-    }
-    if (!file.type.toString().includes("image")) {
-      alertContext.showAlert(t("alert.fileNotImage"), "error");
-      return;
-    }
-
-    uploadFile(file, "image", file.type.includes("gif"));
-  }
-
-  const handleVideoFromComputer = () => {
-    const file = document.getElementById("filePickerVideoEdit").files[0];
-    if (!file.type.toString().includes("video")) {
-      alertContext.showAlert(t("alert.fileNotVideo"), "error");
-      return;
-    }
-
-    uploadFile(file, "video");
-  }
-
-  const handleAudioFromComputer = () => {
-    const file = document.getElementById("filePickerAudioEdit").files[0];
-    if (!file.type.toString().includes("audio")) {
-      alertContext.showAlert(t("alert.fileNotAudio"), "error");
-      return;
-    }
-
-    uploadFile(file, "audio");
-  }
-
-  const handleFile = (event) => {
-    setFile(event.target.files[0]);
-  }
 
   // Adding Objects
   const addObjectToLayer = (objectName, objectParameters) => {
@@ -525,6 +464,19 @@ const DropdownAddObjects = (props) => {
       "tics", {}
     );
   }
+
+  const addDeck = () => {
+    addObjectToLayer(
+      "decks", {}
+    );
+  }
+
+  const addDice = () => {
+    addObjectToLayer(
+      "dice", {}
+    );
+  }
+
 
   const addInput = (varType) => {
     addObjectToLayer(
@@ -958,6 +910,14 @@ const DropdownAddObjects = (props) => {
 
               onClick={addTicTacToe}><i><Cross className="icon add-icons"/></i></i>}>
             {t("edit.game.tic")}</DropdownItem>
+          <DropdownItem
+            onClick={addDeck}
+            leftIcon={<i onClick={addDeck}><i><Club className="icon add-icons"/></i></i>}>
+            {t("edit.game.deck")}</DropdownItem>
+          <DropdownItem
+          onClick={addDice}
+          leftIcon={<i onClick={addDice}><i><Dice className="icon add-icons"/></i></i>}>
+          {t("edit.game.dice")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
 

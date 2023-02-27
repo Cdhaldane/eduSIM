@@ -38,6 +38,8 @@ const customObjects = [
   "videos",
   "audios",
   "roles",
+  "decks",
+  "dice"
 ];
 
 const App = (props) => {

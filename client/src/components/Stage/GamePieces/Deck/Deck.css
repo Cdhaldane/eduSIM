@@ -1,0 +1,55 @@
+.card-container-red {
+    width: 100px;
+    height: 140px;
+    border: 2px solid #f25f5c;
+    border-radius: 9px;
+    color: #f25f5c;
+    fill: #f25f5c;
+    box-shadow: 5px 5px;
+    background-color: white;
+}
+.card-container {
+    border-radius: 9px;
+    width: 100px;
+    height: 140px;
+    border: 2px solid black;
+    color: black;
+    fill: black;
+    background-color: white;
+    box-shadow: 5px 5px;
+}
+.card-top{
+    display: grid;
+    padding: 5px;
+    height: 40px;
+}
+.card-top svg{
+    width: 10px;
+    height: 10px;
+}
+.card-mid{
+    display: flex;
+    margin-top: -40px;
+    margin-bottom: -40px;
+    height: 140px;
+    width: 100%;
+    align-content: center;
+
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+.card-mid svg{
+    width: 25px;
+}
+.card-bot{
+    display: grid;
+    transform: rotate(180deg);
+    padding: 5px;
+    height: 40px;
+}
+.card-bot svg{
+    width: 10px;
+    height: 10px;
+}

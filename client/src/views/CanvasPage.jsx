@@ -7,6 +7,8 @@ import TransformerComponent from "../components/Stage/TransformerComponent";
 import URLVideo from "../components/Stage/URLVideos";
 import URLImage from "../components/Stage/URLImage";
 import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
+import Deck from "../components/Stage/GamePieces/Deck/Deck";
+import Dice from "../components/Stage/GamePieces/Dice/Dice";
 import Connect4 from "../components/Stage/GamePieces/Connect4/Board";
 import RichText from "../components/Stage/GamePieces/RichText/RichText";
 import Poll from "../components/Stage/GamePieces/Poll/Poll";
@@ -902,7 +904,7 @@ const CanvasPage = (props) => {
     radioText: obj.radioText,
     refresh: canvas.refresh,
     label: obj.label,
-    sync: obj.sync,
+    sync: obj.sync || true,
     conditional: obj.conditional,
   })
 
@@ -1119,6 +1121,20 @@ const CanvasPage = (props) => {
         />;
       case "tics":
         return <TicTacToe
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
+        />;
+      case "decks":
+        return <Deck
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getInteractiveProps(obj.id)}
+          {...(editMode ? customObjProps(obj, canvas) : {})}
+        />;
+      case "dice":
+        return <Dice
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}

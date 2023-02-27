@@ -603,7 +603,7 @@
   margin-left: 0px !important;
   position: relative;
   left: 0px;
-  top: 6px;
+  top: 0px;
 }
 .var-trash:hover{
   cursor: pointer;
@@ -622,6 +622,34 @@
   font-weight: bold;
 
 }
+.con-tabs:hover{
+  background-color: var(--red);
+  color: white;
+}
+.con-tabs:focus{
+  background-color: var(--red);
+  color: white;
+}
+
+.con-tabs-session{
+  width: 33.33%;
+  border-radius: 0px;
+  border: none;
+  height: 40px;
+  margin-bottom: 10px;
+  font-weight: bold;
+
+}
+.con-tabs-session:hover{
+  background-color: var(--green);
+  color: white;
+}
+.con-tabs-session:focus{
+  background-color: var(--green);
+  color: white;
+}
+
+
 
 
 .drag-here{
@@ -787,15 +815,25 @@
 
 .box input {
   position: relative;
-  top: 15px;
-  left: 3px;
+  top: 0px;
+  left: 0px;
   border: 1px solid var(--primary);
   border-radius: 9px;
-  
 }
 .var-box {
   position: relative;
   top: -20px;
+}
+.var-val{
+  position: relative;
+  top: 0px !important;
+  left: 0px !important;
+  height: 60px !important;
+  background-color: white !important;
+  width: 90px !important;
+  border-radius: 3px !important;
+  border: 1px solid lightgrey !important;
+  color: grey !important;
 }
 .var-box button{
   position: relative;
@@ -804,6 +842,7 @@
   left: 20px;
   border-radius: 9px 0px 0px 0px;
   border: 1px solid black;
+  z-index: 9999999 !important;
 }
 .int-box{
   position: relative;
@@ -811,6 +850,7 @@
   height: 80%;
   color: black;
   opacity: 100 !important;
+  z-index: 999999 !important;
 }
 .incr {
   margin-right: 20px !important;
@@ -935,7 +975,7 @@
 .vars i{
   margin-right: 10px;
   position: relative;
-  transform: translate(0px, 0px);
+  transform: translate(0px, 5px);
   
 }
 .vars input{
@@ -1023,9 +1063,6 @@
   font-size: 1.1em;
   margin-bottom: 20px;
 }
-.ints-name h1 {
-
-}
 .ints-name select {
   height: auto;
   width: 50%;
@@ -1043,8 +1080,35 @@
   margin: 20px !important;
   margin-top: 10px !important;
 }
-
-
+.array-index {
+  width: 30px;
+  height: 70px;
+  margin-left: 0px;
+  border: 1px dashed var(--text-color);
+  border-left: None;
+  border-radius: 9px;
+  padding: 5px;
+}
+.array-index input{
+  position: relative;
+  top: 0px;
+  width: 20px;
+  height: 60px;
+  margin-left: -3px;
+  padding: 0px 5px;
+  border: 1px solid gray;
+  border-radius: 9px;
+  background-color: white;
+}
+.multi-container {
+  position: absolute;
+  width: 90px;
+  z-index: 10000;
+  font-size: 0.7em;
+}
+.multi-container input {
+  background-color: red;
+}
 
 
 .condition-input-container::-webkit-scrollbar-track

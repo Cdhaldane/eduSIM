@@ -18,7 +18,6 @@ import Left from "../../../public/icons/arrow-left.svg"
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
-  console.log(props)
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -817,7 +816,7 @@ const DropdownEditObject = (props) => {
                 <p>{t("edit.sendAtIntervals")}</p>
               </div>
               <div className="htmliframeinput">
-                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} value={true} />
                 <p>{t("edit.variableSync")}</p>
               </div>
             </div>
@@ -849,8 +848,9 @@ const DropdownEditObject = (props) => {
                 <option value="variable">{t("edit.input.variable")}</option>
               </select>
 
+              {/* TODO MAKE LOCALSTORAGE WORK FOR INTERACTIONS AND CONDITIONS */}
               <div className="htmliframeinput">
-                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <input type="checkbox"  onChange={() => handleProperty(!objState?.sync, 'sync')} /> 
                 <p>{t("edit.variableSync")}</p>
               </div>
               {objState?.varType === "button" ? (
@@ -860,9 +860,8 @@ const DropdownEditObject = (props) => {
                 </>
               ) : <>
                 <p>{t("edit.variableNameToSet")}</p>
-                <select onChange={e => handleVarName(e.target.value)}>
+                <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
                 {(objState?.sync ? props.variables : Object.entries(JSON.parse(sessionStorage.gameVars)).map((e) => ({ [e[0]]: e[1] }))).map((data) => {
-                  console.log(Object.entries(JSON.parse(sessionStorage.gameVars)).map((e) => ({ [e[0]]: e[1] })), props.variables)
                   return (
                     <option value={Object.keys(data)}>
                       {Object.keys(data)}
