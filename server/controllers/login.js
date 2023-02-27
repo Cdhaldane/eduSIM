@@ -6,7 +6,6 @@ const AdminAccount = require("../models/AdminAccounts");
 exports.getAdminbyEmail = async (req, res) => {
   const email = req.query.email;
   const name = req.query.name;
-  const picture = req.query.picture
 
   const admin = await AdminAccount.findOne({
     where: {
@@ -18,7 +17,6 @@ exports.getAdminbyEmail = async (req, res) => {
       let newAdmin = await AdminAccount.create({
         email,
         name,
-        picture
       });
       return res.send(newAdmin);
     }
@@ -55,8 +53,8 @@ exports.getProfile = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { email, followers, picture } = req.body;
-  console.log(picture)
+  const { email, followers, picture, bannerPath, likedSims, downloadedSims } = req.body;
+
   let adminaccount = await AdminAccount.findOne({
     where: {
       email: email,
@@ -76,7 +74,15 @@ exports.updateProfile = async (req, res) => {
     if (picture) {
       adminaccount.picture = picture;
     }
-
+    if (bannerPath) {
+      adminaccount.bannerPath = bannerPath;
+    }
+    if (likedSims) {
+      adminaccount.likedSims = likedSims;
+    }
+    if (downloadedSims) {
+      adminaccount.downloadedSims = downloadedSims;
+    }
     adminaccount.save();
     return res.send({
       adminaccount: adminaccount,

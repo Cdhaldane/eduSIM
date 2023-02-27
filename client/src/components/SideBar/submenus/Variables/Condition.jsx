@@ -7,6 +7,7 @@ import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
+import Multilevel from "../../../Dropdown/Multilevel";
 
 const Condition = (props) => {
   const { t } = useTranslation();
@@ -28,13 +29,13 @@ const Condition = (props) => {
   const [ifs, setIfs] = useState(0)
   const lt = "<"
   const gt = ">"
-  const start = Object.keys(props.gameVars[0] ? props.gameVars[0] : '')
+  const start = Object.keys(props.gameVars[0] ? props.gameVars[0] : '').toString()
   const [condition, setCondition] = useState([
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', ''],
-    [start, '=', start, '', '']
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', ''],
+    [start, '=', start, '+', '']
   ])
   const [box, setBox] = useState([
     {
@@ -85,28 +86,38 @@ const Condition = (props) => {
 
   useEffect(() => {
     let temp = condition
-    if (showAddition && temp[0][4] === '') {
-      temp[0][3] = '+'
+    if (showAddition) {
+      temp[temp.length - 1][4] = start
+    }
+    if (showAddition0) {
       temp[0][4] = start
     }
-    if (showAddition0 && temp[1][4] === '') {
-      temp[1][3] = '+'
+    if (showAddition1) {
       temp[1][4] = start
     }
-    if (showAddition1 && temp[2][4] === '') {
-      temp[2][3] = '+'
+    if (showAddition2) {
       temp[2][4] = start
     }
-    if (showAddition2 && temp[3][4] === '') {
-      temp[3][3] = '+'
+    if (showAddition3) {
       temp[3][4] = start
     }
-    if (showAddition3 && temp[4][4] === '') {
-      temp[4][3] = '+'
-      temp[4][4] = start
+    if (!showAddition) {
+      temp[temp.length - 1][4] = ''
+    }
+    if (!showAddition0) {
+      temp[0][4] = ''
+    }
+    if (!showAddition1) {
+      temp[1][4] = ''
+    }
+    if (!showAddition2) {
+      temp[2][4] = ''
+    }
+    if (!showAddition3) {
+      temp[3][4] = ''
     }
   })
-  
+
   const populateConditions = () => {
     let cons = props.cons ? props.cons : 0
     let list = []
@@ -114,20 +125,20 @@ const Condition = (props) => {
       list.push(<div className="condition-inputs cons-condition">
         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
         <div className="ints-container">
-        {cons[i].map(data => {
-          if (cons[i][cons[i].length - 1] !== data) {
-            return (
-              <div className={"if"}>
-                {(cons[i][0] !== data) && (<h1 className="andfix">and</h1>)}<h1>If</h1><h2>{data[0]}</h2><h3>{data[1]}</h3><h2>{data[2]}</h2>
-                {(data[3]) && (<><h3>{data[3]}</h3><h2>{data[4]}</h2></>)}
-              </div>
-            )
-          }
-        })}
-        <div className={"then"}>
-          <h1>Then</h1><h2>{cons[i][cons[i].length - 1][0]}</h2><h3>{cons[i][cons[i].length - 1][1]}</h3><h2>{cons[i][cons[i].length - 1][2]}</h2>
-          {(cons[i][cons[i].length - 1][3]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
-        </div>
+          {cons[i].map(data => {
+            if (cons[i][cons[i].length - 1] !== data) {
+              return (
+                <div className={"if"}>
+                  {(cons[i][0] !== data) && (<h1 className="andfix">and</h1>)}<h1>If</h1><h2>{data[0]}</h2><h3>{data[1]}</h3><h2>{data[2]}</h2>
+                  {(data[4]) && (<><h3>{data[3]}</h3><h2>{data[4]}</h2></>)}
+                </div>
+              )
+            }
+          })}
+          <div className={"then"}>
+            <h1>Then</h1><h2>{cons[i][cons[i].length - 1][0]}</h2><h3>{cons[i][cons[i].length - 1][1]}</h3><h2>{cons[i][cons[i].length - 1][2]}</h2>
+            {(cons[i][cons[i].length - 1][4]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
+          </div>
         </div>
       </div>)
     }
@@ -168,25 +179,25 @@ const Condition = (props) => {
     let a = [];
     let temp = condition
     temp.splice(ifs, 4 - ifs)
-    if (props.current === 'session'){
+    if (props.current === 'session') {
       a = JSON.parse(localStorage.getItem('sessionCons')) || [];
       a.push(temp);
       localStorage.setItem('sessionCons', JSON.stringify(a));
     }
-    else if (props.current === 'global'){
+    else if (props.current === 'global') {
       a = JSON.parse(localStorage.getItem('conditions')) || [];
       a.push(temp);
       localStorage.setItem('conditions', JSON.stringify(a));
       props.setCons(a)
     }
-    
+
     setShowConAdd(!showConAdd)
     setCondition([
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', ''],
-      [start, '=', start, '', '']
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', ''],
+      [start, '=', start, '+', '']
     ])
     setShowAddition(false)
     setShowAddition0(false)
@@ -197,12 +208,12 @@ const Condition = (props) => {
   }
   const deleteCon = (i) => {
     let a = [];
-    if (props.current === 'session'){
+    if (props.current === 'session') {
       a = JSON.parse(localStorage.getItem('sessionCons')) || [];
       a.splice(i, 1);
       localStorage.setItem('sessionCons', JSON.stringify(a));
     }
-    else if (props.current === 'global'){
+    else if (props.current === 'global') {
       a = JSON.parse(localStorage.getItem('conditions')) || [];
       a.splice(i, 1);
       localStorage.setItem('conditions', JSON.stringify(a));
@@ -234,20 +245,13 @@ const Condition = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box">
           {box[i].state === 'var' ? (
-            <select onChange={(e) => { condition[x][n] = e.target.value }}>
-              {(props.gameVars).map((data) => {
-                return (
-                  <option value={Object.keys(data)}>
-                    {Object.keys(data)}
-                  </option>
-                );
-              })}
-            </select>
+            <Multilevel data={props.gameVars} handleChange={handleChange} x={x} y={n}/>
           ) : (
             <input
               onChange={(e) => { condition[x][n] = e.target.value }}
               type="text"
               placeholder="value"
+              className="var-val"
             />
           )}
 
@@ -266,16 +270,8 @@ const Condition = (props) => {
           <div className="input-area">
             <h2>IF</h2>
             <div>
-              <div className="box">
-                <select onChange={(e) => { condition[i][0] = e.target.value }}>
-                  {(props.gameVars).map((data) => {
-                    return (
-                      <option value={Object.keys(data)} id={i}>
-                        {Object.keys(data)}
-                      </option>
-                    );
-                  })}
-                </select>
+              <div className="box">       
+                <Multilevel data={props.gameVars} handleChange={handleChange} x={i} y={0}/>   
               </div>
             </div>
             <div className="box select">
@@ -342,7 +338,12 @@ const Condition = (props) => {
     else
       alertContext.showAlert("If value must be less than 5.", "warning");
   }
-  
+
+  const handleChange = (value, x, y) => {
+    console.log(value, x, y)
+    condition[x][y] = value.label
+  }
+
 
   return (
     <>
@@ -370,16 +371,9 @@ const Condition = (props) => {
           <div className="input-area">
             <h2 className="smaller-text">THEN</h2>
             <div className="box">
-              <select onChange={(e) => { condition[4][0] = e.target.value }}>
-                {(props.gameVars).map((data) => {
-                  return (
-                    <option value={Object.keys(data)}>
-                      {Object.keys(data)}
-                    </option>
-                  );
-                })}
-              </select>
+              <Multilevel data={props.gameVars} handleChange={handleChange} x={4} y={0}/>
             </div>
+
             <div className="box select jequal">
               <h1>=</h1>
             </div>

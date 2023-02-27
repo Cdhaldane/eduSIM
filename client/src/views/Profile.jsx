@@ -6,13 +6,15 @@ import Modal from "react-modal";
 import axios from "axios";
 import UserSearch from "../components/Simulations/UserSearch";
 import Button from "../components/Buttons/Button";
+import Loading from "../components/Loading/Loading";
 
 const Card_component = (props) => {
-  const [imageSelected, setImageSelected] = useState("v1677271353/images/yavagre0lvkt8vtegdvv.jpg")
-  function handleContextMenu(e) {
-    e.preventDefault();
-    // TODO: show custom context menu
-  }
+  const [imageSelected, setImageSelected] = useState("")
+
+  useEffect(() => {
+    setImageSelected(props.user.bannerPath)
+  }, [props])
+  
   const openWidget = (event) => {
     var myWidget = window.cloudinary.createUploadWidget(
       {
@@ -22,6 +24,13 @@ const Card_component = (props) => {
       (error, result) => {
         if (!error && result && result.event === "success") {
           setImageSelected(result.info.public_id);
+          let body = {
+            email: props.user.email,
+            bannerPath: result.info.public_id,
+          }
+          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body).then((res) => {
+            console.log(res.data)
+          })
           myWidget.close();
         }
       }
@@ -31,7 +40,7 @@ const Card_component = (props) => {
 
   return (
     <div className="card">
-      <img className="card-background" src={"https://res.cloudinary.com/uottawaedusim/image/upload/" + imageSelected} onContextMenu={handleContextMenu}/>
+      <img className="card-background" src={"https://res.cloudinary.com/uottawaedusim/image/upload/" + imageSelected} />
       {props.user.adminid === localStorage.adminid && <button className="card-banner" onClick={() => openWidget()}>Banner</button>}
       <UserSearch setUser={props.setUser}/>
       <header className="card-header">
@@ -70,7 +79,7 @@ const Card_component = (props) => {
 }
 
 const Profile = ({ auth0 }) => {
-  const [friends, setFriends] = useState(10);
+  const [loading, setLoading] = useState(true);
   const [icon, setIcon] = useState('lni lni-circle-plus');
   const [text, setText] = useState('Follow');
   const [showTable, setShowTable] = useState(false);
@@ -92,13 +101,15 @@ const Profile = ({ auth0 }) => {
 
   useEffect(() => {
     updateProfile()
-  }, []);
+  },[]);
 
   const updateProfile = () => {
     try {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getProfile/:email', {params: {email: email}})
         .then((res) => {
+          console.log(res.data)
           setUsers(res.data)
+          setLoading(false);
         })
     } catch (error) {
       console.error(error);
@@ -113,7 +124,7 @@ const Profile = ({ auth0 }) => {
       }
     }).then((res) => {
       const allData = res.data;
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id',
         {
           params: {
             id: allData.adminid
@@ -187,6 +198,10 @@ const Profile = ({ auth0 }) => {
     setUsers(data)
   }
 
+  if (loading){
+    return <><Loading /></>
+  }
+
   return (
     <>
       <Card_component
@@ -201,13 +216,13 @@ const Profile = ({ auth0 }) => {
       />
       <Modal
         isOpen={showTable}
-        onRequestClose={() => setShowTable(false)}
+        onRequestClose={() => {setShowTable(false), updateProfile()}}
         className="tablemodal"
         overlayClassName="tableoverlay"
         closeTimeoutMS={250}
         ariaHideApp={false}
       >
-        <SimulationTable data={gamedata} />
+        <SimulationTable data={gamedata} user={user} />
       </Modal>
     </>
   );

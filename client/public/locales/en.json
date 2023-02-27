@@ -243,7 +243,9 @@
       "addGame": "Add Game",
       "game": {
         "tic": "Tic-Tac-Toe",
-        "connect4": "Connect 4"
+        "connect4": "Connect 4",
+        "deck": "Deck of Cards",
+        "dice": "Dice"
       },
       "exit": "Exit",
       "textEdit": "Edit Text",

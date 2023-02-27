@@ -1,18 +1,19 @@
 import { Router } from 'express';
 const gameinstance = require('../controllers/gamepage');
 const gameroom = require('../controllers/joinpage');
-
 const router = Router();
 
 // Routes go here
 
 // API Path to get all the game instances that a specific admin has created
 // Request should have an admin id
-router.get('/:id', gameinstance.getGameInstances);
+router.get('/getGameInstances/:id', gameinstance.getGameInstances);
 
 // API path to get a specific game instance that an admin has created
 // Request should have an admin and a gameinstance id
 router.get('/getGameInstance/:adminid/:gameid', gameinstance.getGameInstance);
+
+router.get('/getAllGameInstances', gameinstance.getAllGameInstances);
 
 // API Path to create a new game instance
 router.post('/createGameInstance', gameinstance.createGameInstance);

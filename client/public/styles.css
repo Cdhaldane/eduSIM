@@ -610,6 +610,11 @@ a {
   /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
 
+.dashboard-buttons {
+  display: flex;
+  justify-content: space-between !important;
+}
+
 hr {
   margin: 10px 0;
   border-width: 1px;

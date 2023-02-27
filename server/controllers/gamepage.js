@@ -41,6 +41,25 @@ exports.getGameInstances = async (req, res) => {
   }
 };
 
+
+exports.getAllGameInstances = async (req, res) => {
+  console.log(2)
+  try {
+    let gameInstances = await GameInstance.findAll();
+    let activeInstances = [];
+    for (let i = 0; i < gameInstances.length; i++) {
+      if (gameInstances[i].status === 'created' || gameInstances[i].status === 'started' || gameInstances[i].status === 'ended') {
+        activeInstances.push(gameInstances[i]);
+      }
+    }
+    return res.json(activeInstances);
+  } catch (err) {
+    return res.status(400).send({
+      message: `Failed to retrieve game instances: ${err}`,
+    });
+  }
+};
+
 // Get a specific game instance that an admin has created
 // Request has an admin and a gameinstance id
 exports.getGameInstance = async (req, res) => {
@@ -84,7 +103,7 @@ exports.createGameInstance = async (req, res) => {
 
 // Update a game instance
 exports.updateGameInstance = async (req, res) => {
-  const { id, gameinstance_name, gameinstance_photo_path, game_parameters, invite_url, downloads } = req.body;
+  const { id, gameinstance_name, gameinstance_photo_path, game_parameters, invite_url, downloads, likes } = req.body;
  
   const gameinstance = await GameInstance.findOne({
     where: {
@@ -117,6 +136,10 @@ exports.updateGameInstance = async (req, res) => {
 
     if (downloads) {
       gameinstance.downloads = downloads;
+    }
+
+    if (likes) {
+      gameinstance.likes = likes;
     }
 
     gameinstance.save();

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 
+
 const About = (props) => {
   const { t } = useTranslation();
 

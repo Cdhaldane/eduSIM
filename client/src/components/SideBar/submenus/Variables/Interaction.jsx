@@ -7,6 +7,7 @@ import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
+import MultiLevel from "../../../Dropdown/Multilevel";
 
 
 const Interaction = (props) => {
@@ -19,7 +20,6 @@ const Interaction = (props) => {
   const [shapes, setShapes] = useState()
   const start = props.gameVars[0] ? (Object.keys(props.gameVars[0])).toString() : ''
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
-  console.log(start)
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -64,7 +64,6 @@ const Interaction = (props) => {
   const populateGlobal = () => {
     let ints = props.ints
     let list = []
-    console.log(ints)
     for(let i  = 0; i < ints.length; i++){
       if(ints[i][6] === 'var'){
         list.push(<div className="condition-inputs">
@@ -153,7 +152,6 @@ const Interaction = (props) => {
     else if (props.current === 'global'){
       a = JSON.parse(localStorage.getItem('interactions')) || [];
       a.splice(i, 1);
-      console.log(a)
       localStorage.setItem('interactions', JSON.stringify(a));
       props.setInts(a)
     }
@@ -196,15 +194,7 @@ const Interaction = (props) => {
           <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val'  ? 'white' : "black"}} onClick={() => updateState('val', i)}>Val</button>
           <div className="box int-special">
             {box[i].state === 'var'  ? (
-              <select onChange={(e) => handleInteraction(n, e)}>
-                {(props.gameVars).map((data) => {
-                    return (
-                      <option value={Object.keys(data)}>
-                        {Object.keys(data)}
-                      </option>
-                    );
-                })}
-              </select>
+               <MultiLevel data={props.gameVars} handleChange={handleChange} x={n}/> 
             ) : (
               <input
                 className="int-box"
@@ -224,8 +214,12 @@ const Interaction = (props) => {
     let out = e.target.value
     let input = interaction
     input[n] = out
-    console.log(out)
     setInteraction(input)
+  }
+
+  const handleChange = (value, x) => {
+    console.log(value, x)
+    interaction[x]= value.label
   }
 
   return (
@@ -265,15 +259,7 @@ const Interaction = (props) => {
                 <div className={'ints-con'}>
                 <h2 className="smaller-text">SET</h2>
                 <div className="box int-special">
-                  <select onChange={(e) => handleInteraction(1, e)}>
-                    {(props.gameVars).map((data) => {
-                        return (
-                          <option value={Object.keys(data)}>
-                            {Object.keys(data)}
-                          </option>
-                        );
-                    })}
-                  </select>
+                  <MultiLevel data={props.gameVars} handleChange={handleChange} x={1}/> 
                 </div>
                 <div className="box select jequal">
                   <h1>=</h1>
@@ -312,15 +298,7 @@ const Interaction = (props) => {
                 <div className={'ints-con'}>
                 <h2 className="smaller-text">INCREMENT</h2>
                 <div className="box int-special incr">
-                  <select onChange={(e) => handleInteraction(1, e)}>
-                    {(props.gameVars).map((data) => {
-                        return (
-                          <option value={Object.keys(data)}>
-                            {Object.keys(data)}
-                          </option>
-                        );
-                    })}
-                  </select>
+                  <MultiLevel data={props.gameVars} handleChange={handleChange} x={1}/>   
                 </div>
                 <h2 className="smaller-text">BY</h2>
                 <div>

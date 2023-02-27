@@ -20,6 +20,7 @@ const AuthenticationButton = (props) => {
       }).then((res) => {
         const allData = res.data;
         localStorage.setItem('adminid', allData.adminid);
+        localStorage.setItem('adminEmail', allData.email);
         let body = {
           email: user.email,
           picture: user.picture,

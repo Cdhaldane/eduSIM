@@ -25,6 +25,10 @@ const gameinstances = db.define('gameinstances', {
     type: Sequelize.INTEGER,
     defaultValue: 0,
   },
+  likes: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
   createdby_adminid: {
     type: Sequelize.UUID,
     allowNull: false

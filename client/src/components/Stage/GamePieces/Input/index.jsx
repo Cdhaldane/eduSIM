@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-
+  console.log(props.variables)
   const { settings } = useContext(SettingsContext);
   const varName = props.varName || props.id;
   const [number, setNum] = useState('NA')
@@ -91,16 +91,139 @@ const Input = forwardRef((props, ref) => {
 
   const handleButton = () => {
     let value;
-    for(let i = 0; i < props.ints.length; i++)
-      if(props.ints[i][0] === props.varName){
-        if(props.ints[i][6] === 'incr')
-          value = parseInt(props.variables[props.ints[i][1]]) + parseInt(props.ints[i][3])
-        else {
-          value = props.ints[i][3]
+    for(let i = 0; i < props.interactions.length; i++)
+      if(props.interactions[i][0] === props.varName){
+        if(props.interactions[i][6] === 'incr'){
+          if(parseInt(props.interactions[i][3]))
+            value = parseInt(props.variables[props.interactions[i][1]]) + parseInt(props.interactions[i][3])
+          else value = parseInt(props.variables[props.interactions[i][1]]) + parseInt(props.variables[props.interactions[i][3]])
+          handleChangeValue(value, props.interactions[i][1])
+        } else {
+          value = hanldeInteractionValue()
         }
-        handleChangeValue(value, props.ints[i][1])
       }
   }
+
+  const hanldeInteractionValue = () => {
+    let interactions = props.interactions
+    let ints;
+    if(!props.editMode){
+      for(let i = 0; i < interactions.length; i++){
+        if(props.varName === interactions[i][0]){
+          ints = interactions[i]
+          let operator = ints[4];
+          let value;
+          let result = true;
+          let value2 = ints[5]
+          if(props.variables[ints[3]])
+            value = props.variables[ints[3]]
+          else value = ints[3]
+          console.log(ints, Number(value), Number(value2), operator)
+          switch (operator) {
+            case '+':
+              value = Number(value) + Number(value2);
+              break;
+            case '-':
+              value = Number(value) - Number(value2);
+              break;
+            case '*':
+              value = Number(value) * Number(value2);
+              break;
+            case '/':
+              value = Number(value) / Number(value2);
+              break;
+            default:
+              result = false;
+          }
+          console.log(value)
+          handleChangeValue(value, ints[1])
+        }
+      }
+    }
+  }
+
+  useEffect(()=> {
+    if(!props.editMode)
+    for(let i = 0; i < props.conditions.length; i++){
+      let if_statement = props.conditions[i][0];
+      let then_statement = props.conditions[i][1];
+      let variable = parseInt(props.variables[if_statement[0]]);
+      let operator = if_statement[1];
+      let value = if_statement[2];
+      if(isNaN(value) && props.variables[value]) value = props.variables[value];
+      let t_variable = then_statement[0];
+      let t_value = then_statement[2];
+      if(isNaN(t_value) && props.variables[t_value]) t_value = props.variables[t_value];
+      let result = true;
+      for (let i = 3; i < if_statement.length; i += 2) {
+        let operator2 = if_statement[i];
+        let value2 = if_statement[i + 1];
+        if(isNaN(value2) && props.variables[value2]) value2 = props.variables[value2];
+        switch (operator2) {
+          case '+':
+            value = Number(value) + Number(value2);
+            break;
+          case '-':
+            value = Number(value) - Number(value2);
+            break;
+          case '*':
+            value = Number(value) * Number(value2);
+            break;
+          case '/':
+            value = Number(value) / Number(value2);
+            break;
+          default:
+            result = false;
+        }
+      }      
+      switch (operator) {
+          case '=':
+            result = result && (variable == value);
+            break;
+          case '>':
+            result = result && (Number(variable) > Number(value));
+            break;
+          case '<':
+            result = result && (Number(variable) < Number(value));
+            break
+            case '>=':
+              result = result && (Number(variable) >= Number(value));
+              break;
+            case '<=':
+              result = result && (Number(variable) <= Number(value));
+              break;
+            default:
+              result = false;
+        }  
+        if(result){
+          for (let i = 3; i < then_statement.length; i += 2) {
+            const t_operator = then_statement[i];
+            let t_value2 = then_statement[i + 1];
+            if(isNaN(t_value2) && props.variables[t_value2]) t_value2 = props.variables[t_value2];     
+            switch (t_operator) {
+              case '+':
+                t_value += t_value2;
+                break;
+              case '-':
+                t_value -= t_value2;
+                break;
+              case '*':
+                t_value *= t_value2;
+                break;
+              case '/':
+                t_value /= t_value2;
+                break;
+              default:
+                console.log("Invalid operator");
+            }
+          }
+          if(props.variables[t_variable] !== t_value)
+            handleChangeValue(t_value, t_variable)
+        }
+      }
+      
+    
+  }, [props.variables])
 
   return (
     <CustomWrapper {...props} ref={ref}>

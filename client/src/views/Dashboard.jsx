@@ -10,16 +10,21 @@ import clamp from 'lodash-es/clamp'
 import swap from 'lodash-move'
 import { useDrag } from 'react-use-gesture'
 import { useSprings, animated } from 'react-spring'
+import SimulationTable from "../components/Simulations/SimulationTable";
 
 
 const Dashboard = (props) => {
   const { user } = useAuth0();
   const [isLoading, setLoading] = useState(true);
   const [showNote, setShowNote] = useState(false);
+  const [showTable, setShowTable] = useState(false);
   const [gamedata, getGamedata] = useState();
+  const [fulldata, getFullGamedata] = useState();
   const [uploadedImages, setUploadedImages] = useState(null);
   const [updater, setUpdate] = useState(0)
   const [deletionId, setDeletionId] = useState(0);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [users, setUsers] = useState();
   const { t } = useTranslation();
   const [confirmationVisible, setConfirmationVisible] = useState(false);
 
@@ -39,18 +44,21 @@ const Dashboard = (props) => {
       }
     }).then((res) => {
       const allData = res.data;
-      localStorage.setItem('adminid', allData.adminid)
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id',
         {
           params: {
             id: allData.adminid
           }
         }).then((res) => {
           let allData = res.data;
-          if(localStorage?.order?.length > 5)
+        
+          if(localStorage?.order?.length > 5){
+           
             getGamedata(JSON.parse(localStorage.order));
-          else
+          }
+          else{
             getGamedata(allData);
+          }
           setLoading(false);
         }).catch(error => {
           console.error(error);
@@ -62,15 +70,36 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     getAllGamedata()
-    if(localStorage.getItem('order') === 'null')
+      .then(() => {
+        setIsDataLoaded(true);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    if (localStorage.getItem('order') === 'null')
       localStorage.removeItem('order')
   }, [localStorage.order]);
 
   useEffect(() => {
+    try {
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getAllGameInstances')
+      .then((res) => {
+          getFullGamedata(res.data)
+        }).catch(error => {
+          console.error(error);
+        });
+    
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getProfile/:email', {params: {email: user.email}})
+        .then((res) => {
+          setUsers(res.data)
+          setLoading(false);
+        })
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
-  }, [gamedata]);
-
-  if (isLoading) {
+  if (!isDataLoaded || isLoading) {
     return <div className="App"></div>;
   }
 
@@ -94,7 +123,7 @@ const Dashboard = (props) => {
   }
 
   const getConfirmMessage = () => {
-    return t("admin.deleteSimConfirmExplanation", { name: gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
+    return t("admin.deleteSimConfirmExplanation", { name: gamedata && gamedata[deletionId] ? gamedata[deletionId].gameinstance_name : "" });
   }
 
   const confirmAction = () => {
@@ -176,15 +205,18 @@ const Dashboard = (props) => {
       height: gamedata?.length * 190 + 250,
     }}>
     <div className="dashboard disable-dbl-tap-zoom">
-      <div className="page-margin">
+      <div className="page-margin dashboard-buttons">
         <button className="w-button auto" onClick={toggleModal}>
           {t("admin.addNewSimulation")}
+        </button>
+        <button className="w-button auto" onClick={() => setShowTable(!showTable)}>
+          User created simulations
         </button>
       </div>
       <div className="page-margin">
         <h2>{t("admin.mySimulations")}</h2>
         <div className="dashsim" index={updater}>
-              <DraggableList items={gamedata}/>
+              <DraggableList items={gamedata ? gamedata : []}/>
         </div>
         <Modal
           isOpen={showNote}
@@ -203,6 +235,17 @@ const Dashboard = (props) => {
             previewImages={uploadedImages}
           />
         </Modal>
+
+        <Modal
+        isOpen={showTable}
+        onRequestClose={() => setShowTable(false)}
+        className="tablemodal"
+        overlayClassName="tableoverlay"
+        closeTimeoutMS={250}
+        ariaHideApp={false}
+      >
+        <SimulationTable data={fulldata} user={users} />
+      </Modal>
 
         <ConfirmationModal
           visible={confirmationVisible}
