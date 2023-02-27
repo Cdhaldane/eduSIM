@@ -32,7 +32,7 @@ const Card_component = (props) => {
   return (
     <div className="card">
       <img className="card-background" src={"https://res.cloudinary.com/uottawaedusim/image/upload/" + imageSelected} onContextMenu={handleContextMenu}/>
-      <button className="card-banner" onClick={() => openWidget()}>Banner</button>
+      {props.user.adminid === localStorage.adminid && <button className="card-banner" onClick={() => openWidget()}>Banner</button>}
       <UserSearch setUser={props.setUser}/>
       <header className="card-header">
         <div className="hello">
@@ -42,9 +42,10 @@ const Card_component = (props) => {
             <h3>{props.user.email}</h3>
           </div>
         </div>
+        {props.user.adminid !== localStorage.adminid &&
         <div className="button-box">
           <a style={props.btnStyle} className="follow-btn" href="#" ><i class={props.icon} onClick={props.follow}></i></a>
-        </div>
+        </div>}
       </header>
       <main className="card-main">
         <div className="activity">
@@ -112,7 +113,6 @@ const Profile = ({ auth0 }) => {
       }
     }).then((res) => {
       const allData = res.data;
-      localStorage.setItem('adminid', allData.adminid)
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/',
         {
           params: {
@@ -133,7 +133,7 @@ const Profile = ({ auth0 }) => {
     if (icon === 'lni lni-circle-plus' && text === 'Follow') {
       let body = {
         email: users.email,
-        followers: users.followers + 1
+        followers: users.followers + 1,
       }
       axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
       .then(response => {

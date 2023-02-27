@@ -7,7 +7,7 @@ exports.getAdminbyEmail = async (req, res) => {
   const email = req.query.email;
   const name = req.query.name;
   const picture = req.query.picture
-  console.log(picture)
+
   const admin = await AdminAccount.findOne({
     where: {
       email: email,
@@ -55,8 +55,8 @@ exports.getProfile = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { email, followers } = req.body;
- 
+  const { email, followers, picture } = req.body;
+  console.log(picture)
   let adminaccount = await AdminAccount.findOne({
     where: {
       email: email,
@@ -72,6 +72,9 @@ exports.updateProfile = async (req, res) => {
   try {
     if (followers) {
       adminaccount.followers = followers;
+    }
+    if (picture) {
+      adminaccount.picture = picture;
     }
 
     adminaccount.save();

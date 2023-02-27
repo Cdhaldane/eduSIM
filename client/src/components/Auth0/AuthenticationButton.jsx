@@ -16,11 +16,17 @@ const AuthenticationButton = (props) => {
         params: {
           email: user.email,
           name: user.name,
-          picture: user.picture
         }
       }).then((res) => {
         const allData = res.data;
         localStorage.setItem('adminid', allData.adminid);
+        let body = {
+          email: user.email,
+          picture: user.picture,
+        }
+        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body).then((res) => {
+          console.log(res.data)
+        })
       }).catch(error => {
         console.error(error);
       });
