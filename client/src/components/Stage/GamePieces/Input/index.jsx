@@ -10,7 +10,6 @@ const Wrapper = styled.div`
 `;
 
 const Input = forwardRef((props, ref) => {
-  console.log(props.variables)
   const { settings } = useContext(SettingsContext);
   const varName = props.varName || props.id;
   const [number, setNum] = useState('NA')
@@ -32,18 +31,33 @@ const Input = forwardRef((props, ref) => {
   }, [props.variables])
 
   const handleChangeValue = (value, bName) => {
-    let variable = props.varName
-    if(bName)
+    console.log(props.variables)
+    let values = value
+    let variable;
+    let newArray;
+    try{
+      variable = bName.split("_")[0]
+    } catch {
       variable = bName
+    }
+
+    if(Array.isArray(props.variables[variable])) {
+      let currentArray = props.variables[bName.split('_')[0]]
+      let replaceString = bName.split('_')[1]
+      values = currentArray.map(str => str ===  replaceString ? value : str);
+      variable = bName.split('_')[0]
+      console.log(currentArray, replaceString, value, variable)
+    } else {
+      variable = bName
+    }
     if (props.sync && props.updateVariable) {
-      props.updateVariable(variable, value)
+      props.updateVariable(variable, values)
     } else {
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-
       sessionStorage.setItem('gameVars', JSON.stringify({
         ...vars,
-        [variable]: value
+        [variable]: values
       }));
       sessionStorage.setItem('lastSetVar', variable);
       props.refresh();
@@ -115,6 +129,7 @@ const Input = forwardRef((props, ref) => {
           let value;
           let result = true;
           let value2 = ints[5]
+          let vName = ints[1]
           if(props.variables[ints[3]])
             value = props.variables[ints[3]]
           else value = ints[3]
@@ -135,8 +150,7 @@ const Input = forwardRef((props, ref) => {
             default:
               result = false;
           }
-          console.log(value)
-          handleChangeValue(value, ints[1])
+          handleChangeValue(value, vName)
         }
       }
     }

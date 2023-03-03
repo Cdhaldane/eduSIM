@@ -42,6 +42,7 @@ const MultiLevel = (props) => {
     };
 
     const groupedOptions = (data) => {
+        console.log(data)
         let list = []
         let out = []
         Object.keys(data).forEach(function (key) {
@@ -49,7 +50,7 @@ const MultiLevel = (props) => {
                 out = []
                 {
                     Object.values(data[key]).flat().map((sub) => {
-                        out.push({ value: Object.keys(data[key]) + sub, label: Object.keys(data[key]) + sub })
+                        out.push({ value: Object.keys(data[key]) + sub, label: Object.keys(data[key]) + "_" + sub })
                     })
                 }
                 list.push({

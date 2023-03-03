@@ -595,6 +595,7 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
+      console.log(name, value, increment)
       this.props.socket.emit("varChange", {
         name, value, increment
       })

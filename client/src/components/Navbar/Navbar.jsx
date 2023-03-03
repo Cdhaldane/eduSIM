@@ -20,6 +20,7 @@ const NavBar = (props) => {
   const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+  console.log(user)
   
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
