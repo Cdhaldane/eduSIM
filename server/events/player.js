@@ -259,6 +259,18 @@ export default async (server, client, event, args) => {
         status: newStatus
       });
     }
+
+    case "deck-reset": {
+      const { cards, id} = args;
+
+      server.to(room).emit("deck-state" + id, {cards});
+    }
+  
+    case "card-dragged": {
+      const { cards, index, id } = args;
+
+      server.to(room).emit("deck-state:" + id, {cards, index});
+    }
   }
 
   updateRoomTimeout(room, server);

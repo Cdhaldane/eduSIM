@@ -31,6 +31,9 @@
   display: inline;
   font-weight: normal;
 }
+#editModeTitle.play-mode {
+  color: var(--green);
+}
 
 #levelInfoButton {
   position: relative;

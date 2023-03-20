@@ -1,55 +1,105 @@
 .card-container-red {
-    width: 100px;
-    height: 140px;
-    border: 2px solid #f25f5c;
-    border-radius: 9px;
+    width: 98px;
+    height: 144px;
+    border: 1.5px solid #f25f5c;
     color: #f25f5c;
     fill: #f25f5c;
-    box-shadow: 5px 5px;
     background-color: white;
+    top: -0px;
 }
+
 .card-container {
-    border-radius: 9px;
-    width: 100px;
-    height: 140px;
-    border: 2px solid black;
+    width: 98px;
+    height: 144px;
+    border: 1.5px solid #f25f5c;
     color: black;
     fill: black;
     background-color: white;
+    top: -0px;
+    
+}
+
+.deck-container {
+    color: rgb(107, 107, 107);
+    position: relative;
+    width: 100px;
+    height: 140px !important;
     box-shadow: 5px 5px;
 }
-.card-top{
-    display: grid;
-    padding: 5px;
-    height: 40px;
-}
-.card-top svg{
-    width: 10px;
-    height: 10px;
-}
-.card-mid{
-    display: flex;
-    margin-top: -40px;
-    margin-bottom: -40px;
-    height: 140px;
-    width: 100%;
-    align-content: center;
 
-    justify-content: center;
-    flex-direction: column;
-    padding: 10px;
-    flex-wrap: wrap;
+.card-back {
+    position: relative;
+    left: -36px;
+    top: -30px;
+    width: 167px;
+    height: 200px;
+    padding: -30px !important;
+    color: #f25f5c;
+    fill: #f25f5c;
 }
-.card-mid svg{
-    width: 25px;
+
+.shuffle-button {
+    background-color: white;
+    color: black;
+    border-radius: 9px;
+    padding: 6px;
+    position: relative;
+    top: 100px;
+    z-index: 1000;
 }
-.card-bot{
-    display: grid;
-    transform: rotate(180deg);
-    padding: 5px;
-    height: 40px;
+
+.deck-red {
+    font-size: 9.9em;
+    position: relative;
+    top: -44px;
+    left: -4.5px;
 }
-.card-bot svg{
-    width: 10px;
-    height: 10px;
+
+.deck-black {
+    font-size: 9.9em;
+    position: relative;
+    top: -44px;
+    left: -4.5px;
+}
+
+.context-menu {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    z-index: 1000;
+    animation-duration: 0.3s;
+    animation-name: slidein;
+    position: relative;
+    top: -30px;
+    left: 100px;
+    
+}
+
+.context-menu button {
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 2px;
+    width: 100%;
+    text-align: left;
+    
+}
+
+.context-menu button:hover {
+    background-color: #eee;
+}
+
+@keyframes slidein {
+    from {
+        margin-top: 20%;
+        opacity: 0;
+    }
+
+    to {
+        margin-bottom: 0%;
+        opacity: 1;
+    }
 }

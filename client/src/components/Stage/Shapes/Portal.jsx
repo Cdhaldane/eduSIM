@@ -26,7 +26,7 @@ export default class Portal extends React.Component {
     }
 
     let children = this.props.children;
-    // https://gist.github.com/jimfb/d99e0678e9da715ccf6454961ef04d1b
+
     if (typeof children.type === "function") {
       children = React.cloneElement(children);
     }

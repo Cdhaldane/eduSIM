@@ -49,7 +49,6 @@ const Variable = (props) => {
       }
       value = (arrayVal)
     }
-    setShowAdd(false)
     if(props.current=='session'){
       let vars = {};
       if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -57,13 +56,17 @@ const Variable = (props) => {
         ...vars,
         [varName]: value
       }));
+      setShowAdd(false)
     } else {
-      if(value !== value || value === NaN){
+      if(value !== value || value === NaN)
         alertContext.showAlert(t("Value Not Valid"), "warning");
-      }
+      
+      if(varName.toLocaleLowerCase() === 'page' || varName.toLocaleLowerCase() === 'deck')
+        alertContext.showAlert(t("VarName cannot be a system Variable, change the name :)"), "warning");
       else {
         let data = { [varName]: value }
         props.setVars(data);
+        setShowAdd(false)
       }
     }
   }
@@ -74,13 +77,17 @@ const Variable = (props) => {
   const deleteVar = (i) => {
     if(props.current === 'global'){
       let vars = props ? props.gameVars : 0;
+      console.log(vars.splice(i, 1))
       vars.splice(i, 1);
       props.delVars(vars)
       setUpdater(updater + 1)
     } else {
       let vars = JSON.parse(sessionStorage.gameVars);
-      if(Object.keys(vars)[i] !== 'Page')
+      if(Object.keys(vars)[i] === 'Page')
+        alertContext.showAlert(t("Page variable cannot be deleted."), "warning");
+      else
         delete vars[Object.keys(vars)[i]]
+      
       sessionStorage.setItem("gameVars", JSON.stringify(vars))
       setUpdater(updater + 1)
     }
@@ -111,7 +118,7 @@ const Variable = (props) => {
     let list = []
       for(let i = 0; i < Object.keys(data).length; i++){
         list.push(<div className="condition-inputs vars">
-          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash"/></i>
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}>{Object.keys(data)[i] !== 'Page' && <Trash className="icon var-trash"/>}</i>
              <h1>{Object.keys(data)[i]}</h1>
              <h2> = </h2>
              <input type="text" placeholder={data ? Object.values(data)[i] : "Some Value"} onChange={e => handleSession(e.target.value,  Object.keys(data)[i], i)}/>
@@ -149,12 +156,11 @@ const Variable = (props) => {
         <div className="variable-adding">
           <div className="variable-choose">
             <label for="var-type">Variable Type</label>
-          <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
+              <select name="var-type" id="var-type" onChange={(e) => handleVarType(e.target.value)} value={varType}>
                 <option value="integer">Integer</option>
                 <option value="arrayInt">Integer Array</option>
                 <option value="string">String</option>
                 <option value="arrayString">String Array</option>
-
               </select>
           </div>
           <div className="variable-hold">

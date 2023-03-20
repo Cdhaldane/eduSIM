@@ -43,7 +43,6 @@ exports.getGameInstances = async (req, res) => {
 
 
 exports.getAllGameInstances = async (req, res) => {
-  console.log(2)
   try {
     let gameInstances = await GameInstance.findAll();
     let activeInstances = [];

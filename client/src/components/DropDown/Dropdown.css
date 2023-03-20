@@ -1087,3 +1087,19 @@ a {
   fill: var(--dark) !important;
   margin-left: 10px !important;
 }
+
+
+.group-heading-wrapper {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.group-heading-wrapper .indicator {
+  margin-left: 8px;
+}
+
+.group-heading-wrapper.collapsed + div {
+  display: none;
+}

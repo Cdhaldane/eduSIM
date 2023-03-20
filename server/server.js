@@ -48,9 +48,7 @@ const io = require("socket.io")(httpServer, {
 
 io.on("connection", (socket) => events(io, socket));
 
-
 httpServer.listen(PORT, () => {
-
   console.log(`Server listening on portt ${PORT}!`);
 });
 

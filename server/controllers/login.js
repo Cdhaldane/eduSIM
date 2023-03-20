@@ -37,7 +37,6 @@ exports.getAdminbyEmail = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   const email = req.query.email;
-  console.log(req.query)
   try {
       let adminaccount = await AdminAccount.findOne({
         where: {
@@ -51,6 +50,23 @@ exports.getProfile = async (req, res) => {
     });
   }
 };
+
+exports.getName = async (req, res) => {
+  const adminid = req.query.adminid;
+  try {
+      let adminaccount = await AdminAccount.findOne({
+        where: {
+          adminid: adminid,
+        },
+      });
+      return res.send(adminaccount);
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
 
 exports.updateProfile = async (req, res) => {
   const { email, followers, picture, bannerPath, likedSims, downloadedSims } = req.body;

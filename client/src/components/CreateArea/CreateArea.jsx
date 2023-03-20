@@ -123,8 +123,8 @@ const CreateArea = (props) => {
     fileReader.readAsText(e.target.files[0], "UTF-8");
     fileReader.onload = e => {
       setFiles(JSON.parse(e.target.result));
-      let parsedJson = (JSON.parse(e.target.result).data);
-      parsedJson.createdby_adminid = localStorage.adminid;
+      let parsedJson = (JSON.parse(e.target.result));
+      console.log(e)
       setTitle(parsedJson.gameinstance_name + " - copy");
       setData(parsedJson.game_parameters)
       setImageSelected(parsedJson.gameinstance_photo_path);

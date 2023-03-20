@@ -155,12 +155,14 @@ class Graphics extends Component {
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
       overlayImage: -1,
+     
 
       // Context Menu
       selectedContextMenu: null,
       objectContext: 0,
 
       // The Text Editor (<textarea/>) & other text properties
+      textInput: "",
       textX: 0,
       textY: 0,
       textEditVisible: false,
@@ -578,6 +580,7 @@ class Graphics extends Component {
           handleTextDblClick: this.handleTextDblClick,
           onDragEndArrow: this.onDragEndArrow,
           onDocClick: this.onDocClick,
+          handleShapeDoubleClick: this.handleShapeDoubleClick,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
           objectSnapping: this.objectSnapping,
@@ -2789,6 +2792,77 @@ class Graphics extends Component {
     });
   }
 
+  handleShapeDoubleClick = (event) => {
+    // Get the Konva shape node
+    const shape = event.target;
+    // Get the position of the shape
+    const { x, y } = shape.getClientRect();
+  
+    // Create a new Konva Rect component at the center of the shape
+    const rectNode = new Konva.Rect({
+      x: x + shape.width() / 2,
+      y: y + shape.height() / 2,
+      width: shape.width(),
+      height: shape.height(),
+      fill: "#f0f0f0",
+      stroke: "black",
+      strokeWidth: 1,
+    });
+  
+    // Create a new Konva Text component inside the Rect
+    const textNode = new Konva.Text({
+      x: x + shape.width() / 2,
+      y: y + shape.height() / 2,
+      text: this.state.textInput,
+      fontSize: 18,
+      fontFamily: "Calibri",
+      fill: "black",
+      width: shape.width(),
+      align: "center",
+      verticalAlign: "middle",
+    });
+  
+    // Add the Rect and Text components to the Konva layer
+    const layer = shape.getLayer();
+    layer.add(rectNode);
+    layer.add(textNode);
+  
+    // Listen for changes to the text input value
+    textNode.on("dblclick", (event) => {
+      // Prevent the event from bubbling up to the shape
+      event.cancelBubble = true;
+  
+      // Remove the Rect and Text components from the layer
+      rectNode.destroy();
+      textNode.destroy();
+    });
+  
+    // Listen for changes to the text input value
+    this.setState({textInput: ""});
+    const inputNode = document.createElement("input");
+    inputNode.style.position = "absolute";
+    inputNode.style.top = `${rectNode.y()}px`;
+    inputNode.style.left = `${rectNode.x()}px`;
+    inputNode.style.width = `${rectNode.width()}px`;
+    inputNode.style.height = `${rectNode.height()}px`;
+    inputNode.style.border = "none";
+    inputNode.style.padding = "0px";
+    inputNode.style.margin = "0px";
+    inputNode.style.fontSize = "18px";
+    inputNode.style.fontFamily = "Calibri";
+    inputNode.style.textAlign = "center";
+    inputNode.value = this.state.textInput;
+    inputNode.addEventListener("blur", () => {
+      this.setState({textInput: inputNode.value});
+      textNode.text(inputNode.value);
+      inputNode.remove();
+    });
+    document.body.appendChild(inputNode);
+    inputNode.focus();
+  };
+
+
+
   setCustomObjData = (customObj, type, data, id) => {
     this.setState(prevState => ({
       [customObj]: prevState[customObj].map(obj =>
@@ -3142,6 +3216,11 @@ class Graphics extends Component {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas)
   }
 
+  
+
+
+  
+
   render() {
     if (!this.state.savedStateLoaded) return null;
     return (
@@ -3171,6 +3250,7 @@ class Graphics extends Component {
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}
+          loadObjects={this.props.loadObjects}
         />
 
         {/* The edit text area that appears when double clicking a Text object */}
@@ -3374,6 +3454,7 @@ class Graphics extends Component {
           id={"editMainContainer"}
         >
           {/* The right click menu for the group area */}
+          <input value={this.state.textInput} onChange={(event) => this.setState({textInput: event.target.value})} />
           {this.state.groupAreaContextMenuVisible
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (
@@ -3499,6 +3580,7 @@ class Graphics extends Component {
                   handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
+                  handleShapeDoubleClick={this.handleShapeDoubleClick}
                   variables={this.props.variables}
                   setCustomObjData={this.setCustomObjData}
                   layerUp={this.layerUp}

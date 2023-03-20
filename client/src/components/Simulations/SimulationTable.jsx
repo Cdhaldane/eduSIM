@@ -3,12 +3,14 @@ import "./SimulationTable.css"
 import { Image } from "cloudinary-react";
 import axios from "axios";
 import { useAlertContext } from "../Alerts/AlertContext";
+import { useHistory } from 'react-router-dom';
 
 const SimulationTable = (props) => {
-  console.log(props)
   const [simulations, setSimulations] = useState(props.data)
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
+  const [createdBy, setcreatedBy] = useState('');
+  const [loading, setLoading] = useState(true);
   const alertContext = useAlertContext();
 
   const handleAction = (simulation, type) => {
@@ -50,7 +52,7 @@ const SimulationTable = (props) => {
         }
         axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
 
-        const blob = new Blob([JSON.stringify(simulation.game_parameters)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(simulation)], { type: 'application/json' });
         const href =  URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = href;
@@ -89,6 +91,33 @@ const SimulationTable = (props) => {
     }
   };
 
+
+  const history = useHistory();
+
+  function handleTdClick() {
+    history.push('/profile');
+  }
+
+  useEffect(() => {
+    const promises = simulations.map((simulation) => {
+      return axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getName/:adminid', {
+        params: {
+          adminid: simulation.createdby_adminid
+        }
+      }).then((res) => {
+          simulation.name = res.data.name;
+        })
+        .catch(error => {
+          console.error('Error updating action count:', error);
+        });
+    });
+
+    Promise.all(promises)
+      .then(() => setLoading(false))
+      .catch((error) => console.error('Error updating simulation names:', error));
+  }, [simulations]);
+
+  if (loading) return (<div></div>);
   return (
     <div className="simtable-container">
       <table>
@@ -113,7 +142,7 @@ const SimulationTable = (props) => {
               }
               />{simulation.gameinstance_name}</td>
               <td>{simulation.createdAt.split("T")[0]}</td>
-              <td>{props.user?.name}</td>
+              <td onClick={handleTdClick}>{simulation.name}</td>
               <td>{simulation.downloads || 0} </td>
               <td>{simulation.likes || 0}</td>
               <td>

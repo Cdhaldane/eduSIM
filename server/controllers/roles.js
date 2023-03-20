@@ -6,9 +6,6 @@ const db = require('../databaseConnection');
 exports.getGameRoles = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
 
-  console.log("HELLO");
-  console.log(gameinstanceid);
-
   try {
     let gamerole = await GameRole.findAll({
       where: {
@@ -74,7 +71,6 @@ exports.deleteRole = async (req, res) => {
 
 exports.copyRole = async (req, res) => {
   const gameroleid = req.body.gameroleid;
-  console.log("TESTING:", gameroleid);
 
   const {
     gamerole,

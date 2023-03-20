@@ -5,5 +5,3 @@ client/node_modules
 server/node_modules
 .env
 Assets/images
-simapp
-reactapp

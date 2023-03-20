@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Button from "../Buttons/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";

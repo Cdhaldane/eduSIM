@@ -30,7 +30,7 @@ const SimNote = (props) => {
           gameid: props.gameid
         }
       }).then((res) => {
-        setJson(JSON.stringify(res));
+        setJson(JSON.stringify(res.data));
         let str = res.data.updatedAt.slice(0, -14);
         setDate(str)
         setSimName(res.data.gameinstance_name)
@@ -51,15 +51,13 @@ const SimNote = (props) => {
         }
       }).then((res) => {
         let jsonCopy = JSON.parse(json);
-        let jsonGame = JSON.parse(jsonCopy.data.game_parameters)
-        jsonGame.roles = (res.data)
-        jsonCopy.data.game_parameters = JSON.stringify(jsonGame)
-        const fileName = simName;
+        console.log(json)
+        jsonCopy.roles = (res.data)
         const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
         const href =  URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = href;
-        link.download = fileName + ".json";
+        link.download = simName + ".json";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

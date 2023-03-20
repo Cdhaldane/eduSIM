@@ -115,6 +115,7 @@ class Graphics extends Component {
       nextLevel: 2,
       pageNumber: 6,
       pages: [],
+      end: false,
 
       gameroles: [],
       state: false,
@@ -551,17 +552,15 @@ class Graphics extends Component {
     })
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
-
       this.setState({
         pageNumber: objects.numberOfPages
       })
-
-      this.savedObjects.forEach((object) => {
-        this.setState({
-          [object]: objects[object] || []
+        this.savedObjects.forEach((object) => {
+              this.setState({
+                [object]: objects[object] || []
+              });   
         });
-      });
-    } catch (e) { };
+    } catch (e) {console.log(e)};
 
     if (localStorage.userInfo) {
       if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
@@ -595,7 +594,6 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
-      console.log(name, value, increment)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -614,9 +612,24 @@ class Graphics extends Component {
   }
 
   handleLevel = (e) => {
+    console.log(e)
     this.props.socket.emit("goToPage", {
       level: e
     });
+  }
+  handleEnd = (e) => {
+    this.setState({
+      end: true
+    })
+  }
+  handleRestart = () => {
+    this.props.socket.emit("goToPage", {
+      level: 1
+    });
+    this.setState({
+      end: false
+    })
+   
   }
 
   toggleModal = () => {
@@ -792,6 +805,7 @@ class Graphics extends Component {
             gamepage
             updateVariable={this.handleVariable}
             levelVal={this.state.level}
+            end={this.handleEnd}
             freeAdvance={this.props.freeAdvance}
             disableNext={this.props.disableNext}
             countdown={this.props.countdown}
@@ -838,10 +852,11 @@ class Graphics extends Component {
             </div>
           </div>
         </div>
-        <EndScreen open={this.state.level > this.state.pageNumber}>
+
+        <EndScreen open={this.state.end}>
           <p>{this.props.t("game.thanksForJoining")}</p>
-          {this.props.freeAdvance && (
-            <button onClick={() => this.handleLevel(1)}>{this.props.t("game.resetSimulation")}</button>
+          {this.props.freeAdvance &&  (
+            <button onClick={() => this.handleRestart()}>{this.props.t("game.resetSimulation")}</button>
           )}
         </EndScreen>
       </React.Fragment>

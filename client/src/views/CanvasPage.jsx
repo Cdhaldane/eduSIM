@@ -32,6 +32,7 @@ import {
   Layer,
   Transformer
 } from "react-konva";
+import { Socket } from "socket.io-client";
 
 const konvaObjects = [
   "rectangles",
@@ -647,14 +648,17 @@ const CanvasPage = (props) => {
     }
   }
 
-  const rectProps = (obj) => {
+
+  const rectProps = (obj, canvas, editMode) => {
     return {
       width: obj.width,
       height: obj.height,
       fillPatternImage: obj.fillPatternImage,
-      image: obj.image
+      image: obj.image,
+      onDblClick: (obj) => canvas.handleShapeDoubleClick(obj)
     }
   }
+
 
   const ellipseProps = (obj) => {
     return {
@@ -1058,7 +1062,7 @@ const CanvasPage = (props) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
-        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj)} {...canvas.getDragProps(obj.id)} />;
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
       case "ellipses":
         return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
@@ -1129,9 +1133,11 @@ const CanvasPage = (props) => {
       case "decks":
         return <Deck
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...canvas.getDragProps(obj.id)}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
+          {...canvas.getVariableProps()}
         />;
       case "dice":
         return <Dice
@@ -1369,6 +1375,7 @@ const CanvasPage = (props) => {
                   <Text
                     {...positionRectProps(canvas, stage).label}
                   />
+                 
                   <Transformer
                     nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ?
                       [positionRectPersonalRef.current] :

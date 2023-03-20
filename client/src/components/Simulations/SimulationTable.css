@@ -17,15 +17,15 @@
     font-size: 1.1em;
   }
   
-  th,
-  td {
+  .simtable-container th,
+  .simtable-container td {
     padding: 0.75rem;
     text-align: left;
     vertical-align: middle;
     border-top: 1px solid #dee2e6;
   }
   
-  th {
+  .simtable-container th {
     background-color: #f8f9fa;
     font-weight: 600;
     text-transform: uppercase;
@@ -83,17 +83,17 @@
   }
   
   /* Styling for odd table rows */
-  tbody tr:nth-of-type(odd) {
+  .simtable-container tbody tr:nth-of-type(odd) {
     background-color: #f8f9fa;
   }
   
   /* Styling for even table rows */
-  tbody tr:nth-of-type(even) {
+  .simtable-container tbody tr:nth-of-type(even) {
     background-color: #fff;
   }
   
   /* Styling for the like button when it's active */
-  tbody button.like-button.active {
+  .simtable-container tbody button.like-button.active {
     background-color: #28a745;
     color: #fff;
   
@@ -193,7 +193,7 @@
 }
 
 .activity.sepcial .index {
-  width: 100px !important;
+  min-width: 120px !important;
 }
 
 #table-sort{

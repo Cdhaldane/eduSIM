@@ -14,6 +14,7 @@ const Level = (props) => {
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
+  const [mode, setMode] = useState(false);
   const infoPopup = new useRef();
   const infoBtn = new useRef();
   let items = [];
@@ -32,7 +33,6 @@ const Level = (props) => {
   }, []);
 
   const handleLevel = (e) => {
-    console.log(e)
     let closeOverlay = null;
     if (props?.page?.overlays) {
       for (let i = 0; i < props.page.overlays.length; i++) {
@@ -57,6 +57,10 @@ const Level = (props) => {
       }
       if (!props.freeAdvance) {
         return;
+      }
+      if (e > props.number){
+        props.end()
+        return
       }
       props.level(e);
       setCount(e)
@@ -84,14 +88,19 @@ const Level = (props) => {
     props.removeJSGIFS();
   }
 
+  const setPlayMode = () => {
+   setMode(!mode)
+   props.loadObjects("group", "play", false)
+  }
+
   return (
     <div id="levelContainer">
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
         {!props.gamepage && (
           <>
-            <div className="editModeTitleContainer" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
+            <div className="editModeTitleContainer" onClick={() => setPlayMode()} ref={infoBtn}>
               <h1 id="editModeTitle">
-                {t("edit.editMode")}
+                {mode ? "Play Mode" : t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
                 <i className="fa fa-info" />
