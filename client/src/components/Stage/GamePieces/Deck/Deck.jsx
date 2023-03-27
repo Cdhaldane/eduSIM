@@ -6,6 +6,7 @@ import Spade from "../../../../../public/icons/spade.svg"
 import Diamond from "../../../../../public/icons/diamond.svg"
 import Heart from "../../../../../public/icons/heart-sign.svg"
 import Back from "../../../../../public/icons/card_backing.svg"
+import { Image } from "cloudinary-react";
 import Draggable from 'react-draggable';
 import io from "socket.io-client";
 
@@ -70,27 +71,44 @@ cardIcons.set("Jclubs", "🃛");
 cardIcons.set("Qclubs", "🃝");
 cardIcons.set("Kclubs", "🃞");
 
-const Card = forwardRef(({ value, suit, style, onMouseDown, onMouseMove, onMouseUp, flipped, onContextMenu }) => {
+const Card = forwardRef(({ image, text, value, suit, style, onMouseDown, onMouseMove, onMouseUp, flipped, onContextMenu, isFlipping }) => {
   const icon = cardIcons.get(value + suit);
 
   const cardContent = (
-    <div className={suit === "hearts" || suit === "diamonds" ? "deck-red" : "deck-black"}>
-      {icon}
+    <div
+      className={`${suit === "hearts" || suit === "diamonds" ? "deck-red" : "deck-black"
+        } ${!isFlipping ? "flip-animation" : ""}`}
+    >
+      {image ? <div className='card-preview'>
+        <Image
+          id="deck-preview-game"
+          cloudName="uottawaedusim"
+          publicId={image}
+        />
+        <p>{text}</p>
+      </div> : icon}
     </div>
   );
 
+  const cardInnerStyle = flipped ? { transform: 'rotateY(180deg)' } : {};
+
   return (
     <div
-      className={suit === "hearts" || suit === "diamonds" ? "card-container-red" : "card-container"}
+      className={suit === "hearts" || suit === "diamonds" ? "card-container red" : "card-container"}
       style={{ ...style, position: 'absolute' }}
     >
       <div
+        className="card-inner"
+        style={cardInnerStyle}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onContextMenu={onContextMenu}
-        >
-        {flipped ? <Back className="card-back" /> : cardContent}
+      >
+        <div className="card-front">
+          {cardContent}
+        </div>
+        <Back className="card-back" />
       </div>
     </div>
   );
@@ -121,7 +139,8 @@ const Deck = forwardRef((props, ref) => {
   const [flipped, setFlipped] = useState(true);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const socketRef = useRef(null);
-  
+  const [isFlipping, setIsFlipping] = useState(false);
+
 
   useEffect(() => {
     socketRef.current = io(process.env.REACT_APP_API_ORIGIN);
@@ -137,15 +156,22 @@ const Deck = forwardRef((props, ref) => {
 
   useEffect(() => {
     const newCards = shuffleDeck(createDeck());
-    socketRef.current.emit("card-dragged", { index: 0, cards: newCards, id: props.id});
+    console.log(newCards)
+    socketRef.current.emit("card-dragged", { index: 0, cards: newCards, id: props.id });
   }, [])
 
   const createDeck = () => {
     const newDeck = [];
-    let position = {x: 0, y: 0}
-    for (const suit in suits) {
-      for (const value of values) {
-        newDeck.push({ value, suit, flipped, position });
+    let position = { x: 0, y: 0 }
+    if (props.deck.length > 0) {
+      props.deck.forEach((card) => {
+        newDeck.push({ ...card, flipped, position });
+      });
+    } else {
+      for (const suit in suits) {
+        for (const value of values) {
+          newDeck.push({ value, suit, flipped, position });
+        }
       }
     }
     return newDeck;
@@ -160,13 +186,38 @@ const Deck = forwardRef((props, ref) => {
     return shuffledDeck;
   }
 
+
+
+
   const resetDeck = () => {
     const newCards = shuffleDeck(createDeck());
-    setCards(newCards);
-    setTopCardIndex(0);
-    props.updateVariable('Deck', [])
-
-    socketRef.current.emit("card-dragged", { index: 0, cards: newCards, id: props.id});
+  
+    const cardsContainer = document.querySelector('.deck-container');
+    const cardElems = cardsContainer.querySelectorAll('.card-container');
+  
+    cardElems.forEach((cardElem, index) => {  
+      // Animate the card to the new position
+      cardElem.style.transform = `translate(0px, 0px)`;
+      cardElem.style.transition = 'transform 1s ease-in-out';
+  
+      // Reset the card position after the animation finishes
+      setTimeout(() => {
+        cardElem.style.transform = '';
+        cardElem.style.transition = '';
+  
+        // If this is the last card, update the top card index and deck state
+        if (index === cardElems.length - 1) {
+          setCards(newCards);
+          setTopCardIndex(0);
+          props.updateVariable('Deck', []);
+          socketRef.current.emit('card-dragged', {
+            index: 0,
+            cards: newCards,
+            id: props.id,
+          });
+        }
+      }, 1000);
+    });
   };
 
   const handleDragStop = (index, position) => {
@@ -180,9 +231,11 @@ const Deck = forwardRef((props, ref) => {
       current.push(newCard[index])
       props.updateVariable('Deck', current)
     }
+
     if (!isDragging) {
+      setIsFlipping(true);
       newCard[index].flipped = !newCard[index].flipped;
-    } 
+    }
     setCards(newCard)
     setIsDragging(false)
     socketRef.current.emit("card-dragged", { index: nextIndex, cards: newCard, id: props.id });
@@ -206,7 +259,7 @@ const Deck = forwardRef((props, ref) => {
         closeContextMenu();
       }
     };
-  
+
     window.addEventListener('click', handleGlobalClick);
     return () => {
       window.removeEventListener('click', handleGlobalClick);
@@ -219,40 +272,51 @@ const Deck = forwardRef((props, ref) => {
     const isTopCard = index === 0;
     const zIndex = isTopCard ? cards.length : cards.length - index - 1;
     const style = { position: 'relative', zIndex, ...position };
-    if (index < topCardIndex + 2) {  
+    if (index < topCardIndex + 2) {
       return (
         <Draggable
           key={index}
           position={cards[index].position}
           onDrag={() => setIsDragging(true)}
-          onStop={(e, data) => handleDragStop(index, { x: data.x, y: data.y })}
+          onStop={(e, data) =>
+            handleDragStop(index, { x: data.x, y: data.y })
+          }
         >
-          <Card {...card} style={style} flipped={cards[index].flipped} onContextMenu={index === topCardIndex ? handleRightClick : null}/>
+          <Card
+            {...card}
+            style={style}
+            flipped={cards[index].flipped}
+            isFlipping={isFlipping}
+            onContextMenu={index === topCardIndex ? handleRightClick : null}
+          />
         </Draggable>
       );
     }
   });
 
- 
 
- // Update the return statement to include the context menu
- return (
-  <CustomWrapper {...props} ref={ref} >
-    <div
-      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px', height: '140px' }}
-      className='deck-container'
-      onClick={closeContextMenu}
-    >
-      {remainingCards}
-      {contextMenuVisible && (
-        <ContextMenu
-          onClose={closeContextMenu}
-          onReset={resetDeck}
-        />
-      )}
-    </div>
-  </CustomWrapper>
-);
+  // Update the return statement to include the context menu
+  return (
+    <CustomWrapper {...props} ref={ref} >
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px', height: '140px' }}
+        className='deck-container'
+        onClick={closeContextMenu}
+      >
+        {props.editMode ? <Back className="card-back-edit" /> : (
+          <>
+            {remainingCards}
+            {contextMenuVisible && (
+              <ContextMenu
+                onClose={closeContextMenu}
+                onReset={resetDeck}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </CustomWrapper>
+  );
 });
 
 export default Deck;

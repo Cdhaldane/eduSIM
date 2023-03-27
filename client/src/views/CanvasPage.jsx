@@ -679,6 +679,13 @@ const CanvasPage = (props) => {
     }
   }
 
+  const deckProps = (obj, layer) => {
+    return {
+      src: obj.imgsrc,
+      deck: obj.deck
+    }
+  }
+
   const videoProps = (obj, layer) => {
     return {
       type: "video",
@@ -1134,6 +1141,7 @@ const CanvasPage = (props) => {
         return <Deck
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...canvas.getDragProps(obj.id)}
+          {...deckProps(obj, canvas)}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(obj, canvas) : {})}

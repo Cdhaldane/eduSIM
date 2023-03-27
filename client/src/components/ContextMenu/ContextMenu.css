@@ -98,3 +98,126 @@
   font-size: .75em !important;
   margin-top: 5px;
 }
+
+.deckModal {
+  min-width: 300px;
+  max-width: 500px;
+  background-color: white;
+  margin: 0 auto;
+  margin-top: 15vh;
+  border: 2px solid rgb(145, 145, 145);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--box-shadow);
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  z-index: 220000;
+}
+
+.custom-deck-modal-overlay{
+
+}
+
+.custom-deck-modal-card-preview{
+  display: flex;
+  position: relative;
+  text-align: center !important;
+}
+
+.custom-deck-modal-cards{
+  position: relative;
+}
+
+.custom-deck-modal-cards-text{
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 40%);
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: white;
+  background-color: black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.custom-deck-modal-warning{
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 40%);
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: red;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.custom-deck-modal-card-image button{
+  margin-top: 30px;
+  position: relative;
+  width: 30%;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -10%);
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: white;
+  background-color: black;
+  border-radius: 5px;
+  padding: 5px;
+  border: None;
+}
+
+.custom-deck-modal-card-text input {
+  position: relative;
+  top: 0%;
+  left: 50%;
+  width: 30%;
+  transform: translate(-50%, 0%);
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: black;
+  border: 1px solid black;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.custom-deck-modal-footer{
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-deck-modal-add-card{
+  width: 30%;
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: white;
+  background-color: black;
+  border-radius: 5px;
+  padding: 5px;
+  border: None;
+  background-color: var(--green);
+}
+
+.custom-deck-modal-save{
+  width: 30%;
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: white;
+  background-color: var(--red);
+  border-radius: 5px;
+  padding: 5px;
+  border: None;
+}
+
+#deck-preview{
+  width: 150px !important;
+  height: 170px !important;
+  margin: 0 auto;
+  background-color: aqua !important;
+  
+  z-index: 1;
+}

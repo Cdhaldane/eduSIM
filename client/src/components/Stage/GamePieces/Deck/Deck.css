@@ -1,4 +1,11 @@
+.card-container,
 .card-container-red {
+    transition: top 0.5s;
+    left: 3px;
+    
+}   
+
+.red {
     width: 98px;
     height: 144px;
     border: 1.5px solid #f25f5c;
@@ -6,6 +13,7 @@
     fill: #f25f5c;
     background-color: white;
     top: -0px;
+ 
 }
 
 .card-container {
@@ -16,7 +24,7 @@
     fill: black;
     background-color: white;
     top: -0px;
-    
+ 
 }
 
 .deck-container {
@@ -25,14 +33,25 @@
     width: 100px;
     height: 140px !important;
     box-shadow: 5px 5px;
+    transition: top 0.5s;
 }
 
 .card-back {
     position: relative;
-    left: -36px;
-    top: -30px;
+    left: -36px !important;
+    top: -30px !important;
     width: 167px;
     height: 200px;
+    padding: -30px !important;
+    color: #f25f5c;
+    fill: #f25f5c;
+}
+
+.card-back-edit {
+    position: relative;
+    left: 2px;
+    top: 2px;
+    transform: scale(1.65);
     padding: -30px !important;
     color: #f25f5c;
     fill: #f25f5c;
@@ -73,7 +92,7 @@
     position: relative;
     top: -30px;
     left: 100px;
-    
+
 }
 
 .context-menu button {
@@ -85,11 +104,54 @@
     padding: 2px 2px;
     width: 100%;
     text-align: left;
-    
+
 }
 
 .context-menu button:hover {
     background-color: #eee;
+}
+
+.card-preview p {
+    position: relative;
+    width: 50%;
+    top: -140px;
+    left: 30px;
+    color: white;
+    background-color: #333;
+    border-radius: 5px;
+    padding: 2px;
+    text-align: center;
+    font-size: 0.1em !important;
+
+}
+
+#deck-preview-game {
+    position: relative;
+    top: 31px;
+    left: 4.5px;
+    width: 105px;
+    height: 140px;
+    background-color: white;
+    pointer-events: none;
+    cursor: default;
+}
+
+.card-inner {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.card-front,
+.card-back {
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card-back {
+    transform: rotateY(180deg);
 }
 
 @keyframes slidein {

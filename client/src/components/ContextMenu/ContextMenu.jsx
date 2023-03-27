@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import debounce from 'lodash.debounce';
 import DropdownEditObject from "../Dropdown/DropdownEditObject";
+import DeckCreator from "./DeckCreator";
+import Modal from "react-modal";
 import { useTranslation } from "react-i18next";
 
 import "./ContextMenu.css"
@@ -8,10 +10,12 @@ import "./ContextMenu.css"
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
 
+
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
   const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
   const [conditionsVisible, setConditionsVisible] = useState(false);
+  const [showDeck, setShowDeck] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [updater, setUpdater] = useState(false);
   const [editTitle, setEditTitle] = useState("");
@@ -76,21 +80,23 @@ const ContextMenu = (props) => {
 
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
-    document.addEventListener('contextmenu', handleRightClick);
-    const offset = calcOutOfBounds(props.position.x, props.position.y);
-    setOffsetX(-offset.x);
-    setOffsetY(-offset.y);
-    setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
-    if (!props.selectedShapeName == "") {
-      setContextMenuTitle();
-    }
+    if (!showDeck) {
+      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('contextmenu', handleRightClick);
+      const offset = calcOutOfBounds(props.position.x, props.position.y);
+      setOffsetX(-offset.x);
+      setOffsetY(-offset.y);
+      setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
+      if (!props.selectedShapeName == "") {
+        setContextMenuTitle();
+      }
 
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-      document.removeEventListener('contextmenu', handleRightClick);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('touchstart', handleClickOutside);
+        document.removeEventListener('contextmenu', handleRightClick);
+      }
     }
   }, [props.selectedShapeName]);
 
@@ -162,143 +168,178 @@ const ContextMenu = (props) => {
     });
   }
 
-  return (
-    <div
-      ref={menu}
-      key={props.position.x}
-      className="cmenu"
-      style={{
-        width: "155px",
-        left: props.position.x + offsetX,
-        top: props.position.y + offsetY
-      }}
-    >
-      <ul>
-        <li onClick={props.cut}>{t("common.cut")}</li>
-        <li onClick={props.copy}>{t("common.copy")}</li>
-        <li onClick={props.delete}>{t("common.delete")}</li>
-        {!props.addGroup && !props.unGroup && (
-          <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
-        )}
-        {!props.addGroup && !props.unGroup &&
-          !props.selectedShapeName.includes("richText") && (
-            <li onClick={handleEdit}>{t(`edit.${editTitle}Edit`)}</li>
-          )}
-        {props.addGroup && (
-          <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>
-        )}
-        {props.unGroup && (
-          <li onClick={handleUngrouping}>{t("edit.ungroupObjects")}</li>
-        )}
-        <div className="layerLbl">
-          {t("edit.layer")}
-        </div>
-        <div className="layerBtns">
-          <li
-            onClick={() => props.layerUp(props.selectedShapeName)}
-            className={`${props.getObjState()?.onTop !== undefined ?
-              (props.getObjState().onTop ? "disabled" : "") :
-              (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}`}
-          >
-            <i><Up className="icon alert-icon"/></i>
-          </li>
-        </div>
-        <div className="layerBtns">
-          <li
-            onClick={() => props.layerDown(props.selectedShapeName)}
-            className={`${props.getObjState()?.onTop !== undefined ?
-              (!props.getObjState().onTop ? "disabled" : "") :
-              (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
-          >
-            <i><Down className="icon alert-icon"/></i>
-          </li>
-        </div>
-      </ul>
+  const handleDeck = () => {
+    setShowDeck(true)
+    setOffsetX(1000)
+  }
 
-      {drop && (
-        <div className="drop">
-          <DropdownEditObject
-            setCustomObjData={props.setCustomObjData}
-            top={menu.current.offsetTop}
-            title={editTitle}
-            handleFillColor={props.handleFillColor}
-            handleStrokeColor={props.handleStrokeColor}
-            handleWidth={props.handleWidth}
-            handleOpacity={props.handleOpacity}
-            handleSize={props.handleSize}
-            handleFont={props.handleFont}
-            font={props.selectedFont}
-            left={editModalLeft}
-            close={props.close}
-            selectedShapeName={props.selectedShapeName}
-            getObj={props.getObj}
-            getObjState={props.getObjState}
-            updateObjState={props.updateObjState}
-            variables={props.variables}
-          />
-        </div>
-      )}
-      {conditionsVisible && (
-        <div className="drop">
-          <div
-            className="dropdownedit conditionsedit fixed-anim"
-            style={{
-              ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
-            }}
-          >
-            <p>{t("edit.onlyDisplayThisIf")}</p>
-            <input
-              type="text"
-              placeholder={t("edit.variableName")}
-              value={conditions?.varName || ""}
-              onChange={(e) => handleUpdateConditions("varName", e.target.value)}
-            />
-            <select
-              name="inputtype"
-              value={conditions?.condition}
-              onChange={(e) => handleUpdateConditions("condition", e.target.value)}
+  const onSave = (cards) => {
+    props.updateObjState({
+      deck: cards
+    });
+    setShowDeck(false);
+  }
+
+  return (
+    <>
+      <div
+        ref={menu}
+        key={props.position.x}
+        className="cmenu"
+        style={{
+          width: "155px",
+          left: props.position.x + offsetX,
+          top: props.position.y + offsetY
+        }}
+      >
+        <ul>
+          <li onClick={props.cut}>{t("common.cut")}</li>
+          <li onClick={props.copy}>{t("common.copy")}</li>
+          <li onClick={props.delete}>{t("common.delete")}</li>
+          {!props.addGroup && !props.unGroup && (
+            <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
+          )}
+          {!props.addGroup && !props.unGroup &&
+            !props.selectedShapeName.includes("richText") && (
+              <li onClick={handleEdit}>{t(`edit.${editTitle}Edit`)}</li>
+            )}
+          {props.addGroup && (
+            <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>
+          )}
+          {props.unGroup && (
+            <li onClick={handleUngrouping}>{t("edit.ungroupObjects")}</li>
+          )}
+          {props.selectedShapeName.includes("decks") && (
+            <li onClick={handleDeck}>Edit Deck</li>
+          )}
+          <div className="layerLbl">
+            {t("edit.layer")}
+          </div>
+          <div className="layerBtns">
+            <li
+              onClick={() => props.layerUp(props.selectedShapeName)}
+              className={`${props.getObjState()?.onTop !== undefined ?
+                (props.getObjState().onTop ? "disabled" : "") :
+                (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}`}
             >
-              {[
-                "positive",
-                "negative",
-                "isgreater",
-                "isless",
-                "isequal",
-                "between",
-                "onchange"
-              ].map(val => (
-                <option value={val} key={val}>{t(`edit.cond.${val}`)}</option>
-              ))}
-            </select>
-            {conditions?.condition?.startsWith('is') && (
+              <i><Up className="icon alert-icon" /></i>
+            </li>
+          </div>
+          <div className="layerBtns">
+            <li
+              onClick={() => props.layerDown(props.selectedShapeName)}
+              className={`${props.getObjState()?.onTop !== undefined ?
+                (!props.getObjState().onTop ? "disabled" : "") :
+                (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
+            >
+              <i><Down className="icon alert-icon" /></i>
+            </li>
+          </div>
+
+        </ul>
+
+
+
+
+        {drop && (
+          <div className="drop">
+            <DropdownEditObject
+              setCustomObjData={props.setCustomObjData}
+              top={menu.current.offsetTop}
+              title={editTitle}
+              handleFillColor={props.handleFillColor}
+              handleStrokeColor={props.handleStrokeColor}
+              handleWidth={props.handleWidth}
+              handleOpacity={props.handleOpacity}
+              handleSize={props.handleSize}
+              handleFont={props.handleFont}
+              font={props.selectedFont}
+              left={editModalLeft}
+              close={props.close}
+              selectedShapeName={props.selectedShapeName}
+              getObj={props.getObj}
+              getObjState={props.getObjState}
+              updateObjState={props.updateObjState}
+              variables={props.variables}
+            />
+          </div>
+        )}
+        {conditionsVisible && (
+          <div className="drop">
+            <div
+              className="dropdownedit conditionsedit fixed-anim"
+              style={{
+                ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
+              }}
+            >
+              <p>{t("edit.onlyDisplayThisIf")}</p>
               <input
                 type="text"
-                placeholder={t("edit.valueToCheckAgainst")}
-                value={conditions?.trueValue || ""}
-                onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
+                placeholder={t("edit.variableName")}
+                value={conditions?.varName || ""}
+                onChange={(e) => handleUpdateConditions("varName", e.target.value)}
               />
-            )}
-            {conditions?.condition == 'between' && (
-              <div className="conditionsbetween">
+              <select
+                name="inputtype"
+                value={conditions?.condition}
+                onChange={(e) => handleUpdateConditions("condition", e.target.value)}
+              >
+                {[
+                  "positive",
+                  "negative",
+                  "isgreater",
+                  "isless",
+                  "isequal",
+                  "between",
+                  "onchange"
+                ].map(val => (
+                  <option value={val} key={val}>{t(`edit.cond.${val}`)}</option>
+                ))}
+              </select>
+              {conditions?.condition?.startsWith('is') && (
                 <input
                   type="text"
-                  placeholder={t("edit.minimum")}
+                  placeholder={t("edit.valueToCheckAgainst")}
                   value={conditions?.trueValue || ""}
                   onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
                 />
-                <p>{t("common.and")}</p>
-                <input
-                  type="text"
-                  placeholder={t("edit.maximum")}
-                  value={conditions?.trueValueAlt || ""}
-                  onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
-                />
-              </div>
-            )}
+              )}
+              {conditions?.condition == 'between' && (
+                <div className="conditionsbetween">
+                  <input
+                    type="text"
+                    placeholder={t("edit.minimum")}
+                    value={conditions?.trueValue || ""}
+                    onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
+                  />
+                  <p>{t("common.and")}</p>
+                  <input
+                    type="text"
+                    placeholder={t("edit.maximum")}
+                    value={conditions?.trueValueAlt || ""}
+                    onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
           </div>
+        )}
+      </div>
+
+      <Modal
+        isOpen={showDeck}
+        onRequestClose={() => setShowDeck(false)}
+        className="deckModal"
+        overlayClassName="myoverlay"
+        ariaHideApp={false}
+        closeTimeoutMS={250}
+      >
+        <div onClick={(e) => e.stopPropagation()}>
+          <DeckCreator onSave={onSave} getObj={props.getObjState()}/>
         </div>
-      )}
-    </div>
+      </Modal>
+    </>
+
   );
 };
 
