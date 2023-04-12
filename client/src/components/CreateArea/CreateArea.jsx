@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Switch from "react-switch";
 import axios from "axios";
 import { useAlertContext } from "../Alerts/AlertContext";
@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import "./CreateArea.css";
 
-import Plus from "../../../public/icons/plus.svg"
+import Plus from "../../../public/icons/plus.svg";
 
 const CreateArea = (props) => {
   const [note, setNote] = useState([]);
@@ -23,23 +23,33 @@ const CreateArea = (props) => {
   const [willUpload, setWillUpload] = useState(false);
   const [gameData, setData] = useState("");
   const { t } = useTranslation();
-  const detailsArea = new useRef();
-  const imageArea = new useRef();
-  const fileInputRef= new useRef();
+  const detailsArea = useRef();
+  const imageArea = useRef();
+  const fileInputRef = useRef();
   const alertContext = useAlertContext();
-  const handleClickOutside = e => {
-    if (detailsArea.current &&
-      !(detailsArea.current.contains(e.target) || (imageArea.current && imageArea.current.contains(e.target)))) {
-      props.close();
-    }
-  };
+
+  const handleClickOutside = useCallback(
+    (e) => {
+      if (
+        detailsArea.current &&
+        !(
+          detailsArea.current.contains(e.target) ||
+          (imageArea.current && imageArea.current.contains(e.target))
+        )
+      ) {
+        props.close();
+      }
+    },
+    [props]
+  );
 
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [handleClickOutside]);
 
-  const uploadImage = async event => {
+  const uploadImage = async (event) => {
+    event.preventDefault();
     // Check if name is empty or a duplicate
     if (title.trim() === "") {
       alertContext.showAlert(t("alert.simNameRequired"), "warning");
@@ -107,7 +117,6 @@ const CreateArea = (props) => {
           var temp = JSON.parse(localStorage.getItem("order"));
           temp?.unshift(res.data)
           localStorage.setItem("order", JSON.stringify(temp))
-          props.onAdd();
         }).catch(error => {
           console.error(error);
         })
@@ -118,40 +127,33 @@ const CreateArea = (props) => {
     props.close();
   };
 
-  const uploadSim = (e) => {
+  const uploadSim = useCallback((e) => {
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
-    fileReader.onload = e => {
+    fileReader.onload = (e) => {
       setFiles(JSON.parse(e.target.result));
-      let parsedJson = (JSON.parse(e.target.result));
-      console.log(e)
-      setTitle(parsedJson.gameinstance_name + " - copy");
-      setData(parsedJson.game_parameters)
+      const parsedJson = JSON.parse(e.target.result);
+      setTitle(`${parsedJson.gameinstance_name} - copy`);
+      setData(parsedJson.game_parameters);
       setImageSelected(parsedJson.gameinstance_photo_path);
     };
+  }, []);
 
-
-  }
-  const handleSimUpload = (e) => {
-    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', JSON.parse(e));
-  }
-
-  // Handle input and adds title and img to notes array
-  const handleChange = (event) => {
+  const handleChange = useCallback((event) => {
     setTitle(event.target.value);
-  }
+  }, []);
 
-  const createSelectItems = () => {
-    let items = [(<option value="">Select a previous sim</option>)];
+  const createSelectItems = useCallback(() => {
+    let items = [<option value="">Select a previous sim</option>];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
-      // Here I will be creating my options dynamically based on
-      items.push(<option value={i}>{props.gamedata[i].gameinstance_name}</option>);
-      // What props are currently passed to the parent component
+      items.push(
+        <option value={i}>{props.gamedata[i].gameinstance_name}</option>
+      );
     }
     return items;
-  }
+  }, [props.gamedata]);
 
-  const handleCopySim = (event) => {
+  const handleCopySim = useCallback((event) => {
     setCopy(0);
     setData(props.gamedata[event.target.value].game_parameters)
     setImg(props.gamedata[event.target.value].gameinstance_photo_path)
@@ -159,9 +161,9 @@ const CreateArea = (props) => {
     setTitle(props.gamedata[event.target.value].gameinstance_name + " - copy");
     setFilename(props.gamedata[event.target.value].gameinstance_photo_path);
     setCopiedParams(props.gamedata[event.target.value].game_parameters);
-  }
+  }, [props.gamedata]);
 
-  const openWidget = (event) => {
+  const openWidget = useCallback((event) => {
     var myWidget = window.cloudinary.createUploadWidget(
       {
         cloudName: "uottawaedusim",
@@ -177,12 +179,12 @@ const CreateArea = (props) => {
       }
     );
     myWidget.open();
-  }
+  }, []);
 
   return (
     <div className="area">
       <form ref={detailsArea} className="form-input">
-        <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
+      <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
         <div>
           {t("modal.chooseGame")}
           <select id="games">
@@ -255,10 +257,10 @@ const CreateArea = (props) => {
             <input onChange={uploadSim} multiple={false} ref={fileInputRef} type='file' hidden />
           </div>
           <div className="button-col right-ca">
-            <button type="button" className="green left-ca" onClick={uploadImage}>
+            <button type="button" className="modal-button green" onClick={uploadImage}>
               {t("common.add")}
             </button>
-            <button type="button" className="red" onClick={props.close}>
+            <button type="button" className="modal-button red" onClick={props.close}>
               {t("common.cancel")}
             </button>
           </div>
@@ -266,32 +268,29 @@ const CreateArea = (props) => {
       </form>
       {moreImages && (
         <form ref={imageArea} className="form-imgs">
-        {prevImages ? (
-        <div>
-        {JSON.parse(prevImages).map((image, index) => (
-            <Image
-              key={index}
-              cloudName="uottawaedusim"
-              publicId={image}
-              onClick={() => {
-                setImageSelected(image);
-                setImg(image);
-              }}
-              alt={t("alt.sim")}
-            />
-          ))}
-          </div>
-        ) : (
-          <div></div>
-        )}
-          <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
+          {prevImages && 
+            <div>
+              {JSON.parse(prevImages).map((image, index) => (
+                <Image
+                  key={index}
+                  cloudName="uottawaedusim"
+                  publicId={image}
+                  onClick={() => {
+                    setImageSelected(image);
+                    setImg(image);
+                  }}
+                  alt={t("alt.sim")}
+                />
+              ))}
+            </div>}
+          <button type="button" className="modal-button green" onClick={openWidget}>
             {t("modal.imageFromFile")}
           </button>
-
         </form>
       )}
     </div>
   );
-}
+};
 
 export default CreateArea;
+

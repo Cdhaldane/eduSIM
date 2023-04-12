@@ -853,7 +853,7 @@ class Graphics extends Component {
           </div>
         </div>
 
-        <EndScreen open={this.state.end}>
+        <EndScreen open={this.state.end || this.props.isEnd}>
           <p>{this.props.t("game.thanksForJoining")}</p>
           {this.props.freeAdvance &&  (
             <button onClick={() => this.handleRestart()}>{this.props.t("game.resetSimulation")}</button>

@@ -19,38 +19,25 @@ const ContextMenu = (props) => {
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [updater, setUpdater] = useState(false);
   const [editTitle, setEditTitle] = useState("");
-  const menu = useRef();
+  const menuRef = useRef();
   const { t } = useTranslation();
 
   const setContextMenuTitle = () => {
-    let set = false;
-    [
-      "text",
-      "poll",
-      "connect4",
-      "tic",
-      "html",
-      "input",
-      "timer",
-    ].forEach((key) => {
-      if (props.selectedShapeName.startsWith(key)) {
-        set = true;
-        setEditTitle(key);
-      }
-    })
-    if (!set) setEditTitle("shape");
+    const editTitleOptions = ["text", "poll", "connect4", "tic", "html", "input", "timer"];
+    const selectedShapeName = props.selectedShapeName;
+    const title = editTitleOptions.find(key => selectedShapeName.startsWith(key)) || "shape";
+    setEditTitle(title);
   }
 
   const handleClickOutside = e => {
-
-    if (menu.current && !menu.current.contains(e.target)) {
+    if (menuRef.current && !menuRef.current.contains(e.target)) {
       props.close();
     }
   };
 
   const calcOutOfBounds = (x, y) => {
-    const dropHeight = menu.current ? menu.current.clientHeight : 235;
-    const dropWidth = menu.current ? menu.current.clientWidth : 155;
+    const dropHeight = menuRef.current ? menuRef.current.clientHeight : 235;
+    const dropWidth = menuRef.current ? menuRef.current.clientWidth : 155;
     const editModalWidth = 400;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
@@ -65,7 +52,7 @@ const ContextMenu = (props) => {
       transformY = 0;
     }
     let left = false;
-    if (screenW - (x + dropWidth + editModalWidth) < 0 && menu.current) {
+    if (screenW - (x + dropWidth + editModalWidth) < 0 && menuRef.current) {
       left = true;
     }
 
@@ -77,28 +64,6 @@ const ContextMenu = (props) => {
   }
   const [offsetX, setOffsetX] = useState(-calcOutOfBounds(props.position.x, props.position.y).x);
   const [offsetY, setOffsetY] = useState(-calcOutOfBounds(props.position.x, props.position.y).y);
-
-
-  useEffect(() => {
-    if (!showDeck) {
-      document.addEventListener('click', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-      document.addEventListener('contextmenu', handleRightClick);
-      const offset = calcOutOfBounds(props.position.x, props.position.y);
-      setOffsetX(-offset.x);
-      setOffsetY(-offset.y);
-      setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
-      if (!props.selectedShapeName == "") {
-        setContextMenuTitle();
-      }
-
-      return () => {
-        document.removeEventListener('click', handleClickOutside);
-        document.removeEventListener('touchstart', handleClickOutside);
-        document.removeEventListener('contextmenu', handleRightClick);
-      }
-    }
-  }, [props.selectedShapeName]);
 
   const handleRightClick = (e) => {
     setDrop(false);
@@ -118,6 +83,7 @@ const ContextMenu = (props) => {
     }
     setConditionsVisible(false);
   }
+
   const handleConditionsVisible = () => {
     setDrop(false);
     if (conditionsVisible) {
@@ -155,23 +121,30 @@ const ContextMenu = (props) => {
       }
     });
   }
-  const handleUpdateVar = (key, value) => {
-    setConditions(old => ({
-      ...old,
-      [key]: value ? value : undefined
-    }))
-    debounceObjState({
-      conditions: {
-        ...conditions,
-        [key]: value ? value : undefined
-      }
-    });
-  }
-
   const handleDeck = () => {
     setShowDeck(true)
     setOffsetX(1000)
   }
+
+  useEffect(() => {
+    if (!showDeck) {
+      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('contextmenu', handleRightClick);
+      const offset = calcOutOfBounds(props.position.x, props.position.y);
+      setOffsetX(-offset.x);
+      setOffsetY(-offset.y);
+      setEditModalLeft(calcOutOfBounds(props.position.x, props.position.y).left);
+      if (props.selectedShapeName) {
+        setContextMenuTitle();
+      }
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('touchstart', handleClickOutside);
+        document.removeEventListener('contextmenu', handleRightClick);
+      }
+    }
+  }, [props.selectedShapeName, showDeck]);
 
   const onSave = (cards) => {
     props.updateObjState({
@@ -183,7 +156,7 @@ const ContextMenu = (props) => {
   return (
     <>
       <div
-        ref={menu}
+        ref={menuRef}
         key={props.position.x}
         className="cmenu"
         style={{
@@ -218,9 +191,7 @@ const ContextMenu = (props) => {
           <div className="layerBtns">
             <li
               onClick={() => props.layerUp(props.selectedShapeName)}
-              className={`${props.getObjState()?.onTop !== undefined ?
-                (props.getObjState().onTop ? "disabled" : "") :
-                (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}`}
+              className={props.getObjState()?.onTop !== undefined ? (props.getObjState().onTop ? "disabled" : "") : (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}
             >
               <i><Up className="icon alert-icon" /></i>
             </li>
@@ -235,96 +206,96 @@ const ContextMenu = (props) => {
               <i><Down className="icon alert-icon" /></i>
             </li>
           </div>
-
         </ul>
-
-
-
-
-        {drop && (
-          <div className="drop">
-            <DropdownEditObject
-              setCustomObjData={props.setCustomObjData}
-              top={menu.current.offsetTop}
-              title={editTitle}
-              handleFillColor={props.handleFillColor}
-              handleStrokeColor={props.handleStrokeColor}
-              handleWidth={props.handleWidth}
-              handleOpacity={props.handleOpacity}
-              handleSize={props.handleSize}
-              handleFont={props.handleFont}
-              font={props.selectedFont}
-              left={editModalLeft}
-              close={props.close}
-              selectedShapeName={props.selectedShapeName}
-              getObj={props.getObj}
-              getObjState={props.getObjState}
-              updateObjState={props.updateObjState}
-              variables={props.variables}
-            />
-          </div>
-        )}
-        {conditionsVisible && (
-          <div className="drop">
-            <div
-              className="dropdownedit conditionsedit fixed-anim"
-              style={{
-                ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
-              }}
-            >
-              <p>{t("edit.onlyDisplayThisIf")}</p>
-              <input
-                type="text"
-                placeholder={t("edit.variableName")}
-                value={conditions?.varName || ""}
-                onChange={(e) => handleUpdateConditions("varName", e.target.value)}
+        
+        {
+          drop && (
+            <div className="drop">
+              <DropdownEditObject
+                setCustomObjData={props.setCustomObjData}
+                top={menuRef.current.offsetTop}
+                title={editTitle}
+                handleFillColor={props.handleFillColor}
+                handleStrokeColor={props.handleStrokeColor}
+                handleWidth={props.handleWidth}
+                handleOpacity={props.handleOpacity}
+                handleSize={props.handleSize}
+                handleFont={props.handleFont}
+                font={props.selectedFont}
+                left={editModalLeft}
+                close={props.close}
+                selectedShapeName={props.selectedShapeName}
+                getObj={props.getObj}
+                getObjState={props.getObjState}
+                updateObjState={props.updateObjState}
+                variables={props.variables}
               />
-              <select
-                name="inputtype"
-                value={conditions?.condition}
-                onChange={(e) => handleUpdateConditions("condition", e.target.value)}
+            </div>
+          )
+        }
+        {
+          conditionsVisible && (
+            <div className="drop">
+              <div
+                className="dropdownedit conditionsedit fixed-anim"
+                style={{
+                  ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
+                }}
               >
-                {[
-                  "positive",
-                  "negative",
-                  "isgreater",
-                  "isless",
-                  "isequal",
-                  "between",
-                  "onchange"
-                ].map(val => (
-                  <option value={val} key={val}>{t(`edit.cond.${val}`)}</option>
-                ))}
-              </select>
-              {conditions?.condition?.startsWith('is') && (
+                <p>{t("edit.onlyDisplayThisIf")}</p>
                 <input
                   type="text"
-                  placeholder={t("edit.valueToCheckAgainst")}
-                  value={conditions?.trueValue || ""}
-                  onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
+                  placeholder={t("edit.variableName")}
+                  value={conditions?.varName || ""}
+                  onChange={(e) => handleUpdateConditions("varName", e.target.value)}
                 />
-              )}
-              {conditions?.condition == 'between' && (
-                <div className="conditionsbetween">
+                <select
+                  name="inputtype"
+                  value={conditions?.condition}
+                  onChange={(e) => handleUpdateConditions("condition", e.target.value)}
+                >
+                  {[
+                    "positive",
+                    "negative",
+                    "isgreater",
+                    "isless",
+                    "isequal",
+                    "between",
+                    "onchange"
+                  ].map(val => (
+                    <option value={val} key={val}>{t(`edit.cond.${val}`)}</option>
+                  ))}
+                </select>
+                {conditions?.condition?.startsWith('is') && (
                   <input
                     type="text"
-                    placeholder={t("edit.minimum")}
+                    placeholder={t("edit.valueToCheckAgainst")}
                     value={conditions?.trueValue || ""}
                     onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
                   />
-                  <p>{t("common.and")}</p>
-                  <input
-                    type="text"
-                    placeholder={t("edit.maximum")}
-                    value={conditions?.trueValueAlt || ""}
-                    onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
-                  />
-                </div>
-              )}
+                )}
+                {conditions?.condition == 'between' && (
+                  <div className="conditionsbetween">
+                    <input
+                      type="text"
+                      placeholder={t("edit.minimum")}
+                      value={conditions?.trueValue || ""}
+                      onChange={(e) => handleUpdateConditions("trueValue", e.target.value)}
+                    />
+                    <p>{t("common.and")}</p>
+                    <input
+                      type="text"
+                      placeholder={t("edit.maximum")}
+                      value={conditions?.trueValueAlt || ""}
+                      onChange={(e) => handleUpdateConditions("trueValueAlt", e.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )
+        }
+      </div >
 
       <Modal
         isOpen={showDeck}
@@ -335,11 +306,10 @@ const ContextMenu = (props) => {
         closeTimeoutMS={250}
       >
         <div onClick={(e) => e.stopPropagation()}>
-          <DeckCreator onSave={onSave} getObj={props.getObjState()}/>
+          <DeckCreator onSave={onSave} getObj={props.getObjState()} />
         </div>
       </Modal>
     </>
-
   );
 };
 

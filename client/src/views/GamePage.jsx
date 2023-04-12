@@ -50,11 +50,12 @@ const Game = (props) => {
   const [showNav, setShowNav] = useState(false);
   const [players, setPlayers] = useState({});
   const [messageBacklog, setMessageBacklog] = useState([]);
-  const [level, setLevel] = useState(1);
+  const [isEnd, setIsEnd] = useState(false);
   const [roles, setRoles] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [isL, setL] = useState(true);
   const [customObjs, setCustomObjs] = useState();
+  const [level, setLevel] = useState(0);
   const alertContext = useAlertContext();
   const [notes, setNotes] = useState();
   const [userId, setUserId] = useState();
@@ -158,7 +159,18 @@ const Game = (props) => {
     const count = (roomStatus.settings?.advanceMode || 1) * 60000;
     return (count - timeFromNow()) - Math.floor((count - timeFromNow()) / count) * count
   };
-  let actualLevel = roomStatus.level || level;
+
+  useEffect(() => {
+    if (room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).pages.length < roomStatus.level) {
+      setIsEnd(true);
+    }
+    if (room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).pages.length >= roomStatus.level) {
+      setLevel(roomStatus.level);
+    }
+
+  }, [roomStatus.level]);
+
+
   // Parse seeded roles
   const parsedPlayers = useMemo(() => {
     let newPlayers = {};
@@ -169,55 +181,55 @@ const Game = (props) => {
         if (p.role === -1) {
           newPlayers[id].role = roles[parseInt(p.dbid, 16) % roles.length].roleName;
         } else if (p.role === -2) {
-          newPlayers[id].role = roles[(actualLevel ** actualLevel + parseInt(p.dbid, 16)) % roles.length].roleName;
+          newPlayers[id].role = roles[(level ** level + parseInt(p.dbid, 16)) % roles.length].roleName;
         }
       }
     }
     return newPlayers;
-  }, [players, roles, actualLevel]);
+  }, [players, roles, level]);
 
   let tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
   let cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
   let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
-  if(roomStatus.variables)
+  if (roomStatus.variables)
     variables.push(roomStatus.variables)
-    const flattenObject = (obj) => {
-      const flattened = {}
-      Object.keys(obj).forEach((key) => {
-        const value = obj[key]
-        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          Object.assign(flattened, flattenObject(value))
-        } else {
-          flattened[key] = value
-        }
-      })
-      return flattened
+  const flattenObject = (obj) => {
+    const flattened = {}
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key]
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(flattened, flattenObject(value))
+      } else {
+        flattened[key] = value
+      }
+    })
+    return flattened
   }
 
   variables = flattenObject(variables)
   useEffect(() => {
     setDisableNext(false)
-    let curr = tasks[actualLevel];
-    if(curr){
-    for(let i = 0; i < curr.length; i++){
-      if(curr[i].advance === false){
-        setDisableNext(true)
+    let curr = tasks[level];
+    if (curr) {
+      for (let i = 0; i < curr.length; i++) {
+        if (curr[i].advance === false) {
+          setDisableNext(true)
+        }
       }
     }
-  }
-  }),[roomStatus.level]
+  }), [roomStatus.level]
 
   const handleLevel = () => {
-      setLevel(roomStatus.level + 1);
+    setLevel(roomStatus.level + 1);
   }
 
   const handleSetNotes = (data) => {
-      setNotes(data)
+    setNotes(data)
   }
 
   const handleEditNotes = (data) => {
-      setNotes(data)
+    setNotes(data)
   }
 
   const handleDelNotes = (data) => {
@@ -225,18 +237,18 @@ const Game = (props) => {
   }
   useEffect(() => {
     let x, y, s, t;
-    Object.keys(variables).forEach(function(key) {
+    Object.keys(variables).forEach(function (key) {
       s = variables[key]
-      if (typeof s === 'string' &&  s.includes('Random')) {
-        for(let i = 0; i < s.length; i++){
-            if(s[i] == '(')
-                x=i
-            if(s[i] == ')')
-                y=i
+      if (typeof s === 'string' && s.includes('Random')) {
+        for (let i = 0; i < s.length; i++) {
+          if (s[i] == '(')
+            x = i
+          if (s[i] == ')')
+            y = i
         }
-        s=s.substring(x+1,y).split(',')
-        t=s[2].replace('.', '').split('').reverse().join('')
-        variables[key] = Math.round((Math.random() * (s[1] - s[0]) + s[0]) *  t) / t ;
+        s = s.substring(x + 1, y).split(',')
+        t = s[2].replace('.', '').split('').reverse().join('')
+        variables[key] = Math.round((Math.random() * (s[1] - s[0]) + s[0]) * t) / t;
       }
     })
     setL(false)
@@ -251,7 +263,7 @@ const Game = (props) => {
           className="grid-sidebar game"
           visible={showNav}
           close={toggle}
-          img={room.gameinstance?.gameinstance_photo_path  || ""}
+          img={room.gameinstance?.gameinstance_photo_path || ""}
           title={room.gameinstance?.gameinstance_name || ""}
           subtitle={room.gameroom_name || ""}
           socket={socket}
@@ -262,7 +274,7 @@ const Game = (props) => {
           game
           disabled={!roomStatus.running}
           alertProps={{
-            alerts: tasks[actualLevel] || []
+            alerts: tasks[level] || []
           }}
           notes={{ notes }}
           setNotes={handleSetNotes}
@@ -284,10 +296,11 @@ const Game = (props) => {
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
-            alerts={tasks[actualLevel] || []}
+            alerts={tasks[level] || []}
             players={parsedPlayers}
             handleLevel={handleLevel}
-            level={actualLevel}
+            isEnd={isEnd}
+            level={level || 0}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
             variables={variables || {}}

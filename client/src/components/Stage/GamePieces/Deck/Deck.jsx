@@ -156,7 +156,6 @@ const Deck = forwardRef((props, ref) => {
 
   useEffect(() => {
     const newCards = shuffleDeck(createDeck());
-    console.log(newCards)
     socketRef.current.emit("card-dragged", { index: 0, cards: newCards, id: props.id });
   }, [])
 
@@ -287,7 +286,7 @@ const Deck = forwardRef((props, ref) => {
             style={style}
             flipped={cards[index].flipped}
             isFlipping={isFlipping}
-            onContextMenu={index === topCardIndex ? handleRightClick : null}
+            
           />
         </Draggable>
       );
@@ -302,6 +301,7 @@ const Deck = forwardRef((props, ref) => {
         style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px', height: '140px' }}
         className='deck-container'
         onClick={closeContextMenu}
+        onContextMenu={handleRightClick}
       >
         {props.editMode ? <Back className="card-back-edit" /> : (
           <>

@@ -11,6 +11,7 @@ import "./Level.css";
 import "../Stage/Info.css";
 
 const Level = (props) => {
+  console.log(props)
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
@@ -31,6 +32,14 @@ const Level = (props) => {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (props.levelVal > props.number){
+      props.end()
+    } else {
+      setCount(props.levelVal)
+    }
+  }, [props.levelVal])
 
   const handleLevel = (e) => {
     let closeOverlay = null;

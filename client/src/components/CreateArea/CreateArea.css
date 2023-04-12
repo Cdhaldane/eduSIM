@@ -1,3 +1,4 @@
+/* General styles */
 .area {
   display: flex;
   align-items: center;
@@ -12,48 +13,16 @@
   border: none;
 }
 
-.area > form:after {
-  --borderWidth: 3px;
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--borderWidth));
-  left: calc(-1 * var(--borderWidth));
-  height: calc(100% + var(--borderWidth) * 2);
-  width: calc(100% + var(--borderWidth) * 2);
-  border-radius: calc(2 * var(--borderWidth));
-  z-index: -1;
-  animation: animatedgradient 3s ease alternate infinite;
-  background-size: 300% 300%;
-}
-
-@keyframes animatedgradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* .area p {
-  text-align: left;
-  font-size: 2rem;
-  padding: 30px;
-  font-weight: 700;
-} */
-
+/* Form styles */
 .area > form {
-
   position: relative;
   background: #fff;
   width: 60%;
   max-width: 900px;
   text-align: center;
   border-radius: 0px;
-  border: solid 2px var(--text-color);
+  border: solid 7px grey;
+  border-radius: 9px;
 }
 
 .form-input {
@@ -63,6 +32,7 @@
   align-items: flex-start;
   animation: none !important;
 }
+
 .form-input > div {
   margin: 10px 0;
   width: 100%;
@@ -72,19 +42,20 @@
   text-align: left;
 }
 
-.button-container{
+.button-container {
   border-top: 1px dashed rgb(145, 145, 145);
-  vertical-align: center;
-  height: 50px;
+  margin-bottom: -15px !important;
+  height: 100%;
   width: 100%;
-  margin-top: 10px;
   display: flex;
-  justify-content:space-between;
 }
-.button-container button {
+
+.button-container button,
+.modal-button {
   font-family: "Montserrat", sans-serif;
-  height: 100% !important;
+  height: 50px !important;
   width: auto !important;
+  min-width: 100px;
   font-size: 1.5rem;
   margin-top: 18px;
   margin-right: 5px;
@@ -94,66 +65,30 @@
   border-radius: 5px;
   display: inline-block;
 }
-.modal-button{
-  font-family: "Montserrat", sans-serif;
-  font-size: 1.5rem;
-  margin: 10px;
-  margin-top: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  display: inline-block;
-  width: auto;
-}
-.green{
+
+.green {
   border: 2px outset rgb(136, 136, 136);
   --color: rgb(161, 255, 148);
   background-color: var(--color);
   border-color: var(--color);
   margin-right: 0px;
 }
+
 .red {
   border: 2px outset rgb(136, 136, 136);
   --color: #ff9898;
   background-color: var(--color);
   border-color: var(--color);
 }
-.primary{
+
+.primary {
   font-size: 1.2vw;
   color: var(--white);
   border: 2px outset rgb(136, 136, 136);
   background-color: var(--primary);
   border-color: var(--primary);
 }
-.left-ca{
-  margin-left: 0px !important;
-  width: auto;
-}
-.right-ca{
-  width: auto;
-}
-.button-col {
-  text-align: right;
-  margin-top: 40px;
-}
-.top {
-  margin-top: 40px !important;
-}
 
-
-#add {
-  color: white;
-  z-index: 2000;
-  font-size: 1.5rem;
-  position: absolute;
-  bottom: 40px;
-  left: 832px;
-  border-radius: 5%;
-  width: 100px;
-  height: 50px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  background-color: var(--primary);
-}
 
 .area input[type="file"] {
   position: relative;
@@ -179,44 +114,8 @@
   font-family: inherit;
 }
 
-::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: black;
-  opacity: 1;
-  /* Firefox */
-}
 
-.gradientborder {
-  --borderWidth: 1px;
-  background: #1d1f20;
-  position: relative;
-  border-radius: var(--borderWidth);
-}
-
-
-.gradientborder:after {
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--borderWidth));
-  left: calc(-1 * var(--borderWidth));
-  height: calc(100% + var(--borderWidth) * 2);
-  width: calc(100% + var(--borderWidth) * 2);
-  background: white;
-  border-radius: calc(2 * var(--borderWidth));
-  z-index: -1;
-  animation: animatedgradient 10s ease alternate infinite;
-  background-size: 300% 300%;
-}
-
-.createmodal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 4px;
-  overflow: hidden;
-  border: none;
-}
+/* Modal styles */
 
 .createmodalarea {
   display: flex;
@@ -252,73 +151,20 @@
   }
 }
 
-#prevgames {
-  top: 0px;
-  left: 0px;
-  border-radius: 30px;
-}
-
-#imgoptions {
-  position: relative;
-  top: 0px;
-  left: -0px;
-  border: solid white 3px;
-  width: 120px;
-  height: 80px;
-}
-
-#imgoptionst {
-  position: relative;
-  top: 0px;
-  left: -30px;
-  color: white;
-  font-size: 2.2rem;
-}
-
-select#imgoptions option[value="img2"] {
-  background-image: "temp.png";
-}
-
-select#imgoptions option[value="img3"] {
-  background-image: "temp.png";
-}
-
-#file {
-  position: absolute;
-  bottom: 70px;
-  height: 0px;
-  width: 0px;
-  color: white;
-  font-family: "Raleway";
-  font-size: 2rem;
-}
-
-#imgbutton {
-  position: relative;
-  left: -40px;
-  font-family: "Raleway";
-  font-size: 2rem;
-  font-weight: 700;
-  color: black;
-  border: none;
-  width: 300px;
-  height: 100px;
-  cursor: pointer;
-  outline: none;
-  background-color: white;
-}
-
 .form-imgs {
   background-color: white;
   overflow: hidden;
-  transition-duration: 0.3s !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   border-radius: 0%;
   margin-top: 10px;
   padding: 10px;
   min-height: 80px;
-  display: inline-block;
+  display: flex;
   overflow-y: hidden;
+  align-items: center; 
+}
+.form-imgs button {
+  position: absolute;
+  right: 20px;
 }
 .form-imgs img {
   height: 100px;
@@ -333,13 +179,6 @@ select#imgoptions option[value="img3"] {
 }
 .form-imgs img:hover {
   border-radius: 0;
-}
-.form-imgsubmit {
-  text-align: right;
-  white-space: nowrap;
-  position: absolute;
-  right: 11px;
-  bottom: 6px;
 }
 .form-imgpreview {
   display: flex;
@@ -371,17 +210,12 @@ select#imgoptions option[value="img3"] {
   margin-left: 10px;
 }
 
-#games {
-  position: relative;
-  left: 0px;
-  top: 0px;
-  border-radius: 30px;
-}
+
 
 #namei {
-  border: solid var(--text-color) 2px;
-  width: 200px;
-  border-radius: 30px;
+  border: solid var(--text-color) 1px;
+  width: 228px;
+  border-radius: 2px;
 }
 
 @media screen and (orientation: portrait) {
@@ -402,25 +236,6 @@ select#imgoptions option[value="img3"] {
     opacity: 1;
     /* Firefox */
   }
-  .gradientborder {
-    --borderWidth: 1px;
-    background: #1D1F20;
-    position: relative;
-    border-radius: var(--borderWidth);
-  }
-  .gradientborder:after {
-    content: '';
-    position: absolute;
-    top: calc(-1 * var(--borderWidth));
-    left: calc(-1 * var(--borderWidth));
-    height: calc(100% + var(--borderWidth) * 2);
-    width: calc(100% + var(--borderWidth) * 2);
-    background: white;
-    border-radius: calc(2 * var(--borderWidth));
-    z-index: -1;
-    animation: animatedgradient 10s ease alternate infinite;
-    background-size: 300% 300%;
-  }
   .myoverlay {
     position: fixed;
     top: 0;
@@ -437,19 +252,7 @@ select#imgoptions option[value="img3"] {
     width: 100%;
     margin-top: 10px;
   }
-  @keyframes animatedgradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
 
-  #imgs label {
-    width: 10px;
-  }
+
+ 
 }
