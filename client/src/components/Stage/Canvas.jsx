@@ -214,6 +214,7 @@ class Graphics extends Component {
       strokeWidth: 3.75,
       opacity: 1,
       lastFill: null,
+      lock: false,
 
       // The blue selection rectangle / click location
       // And info about the selection
@@ -580,7 +581,6 @@ class Graphics extends Component {
           handleTextDblClick: this.handleTextDblClick,
           onDragEndArrow: this.onDragEndArrow,
           onDocClick: this.onDocClick,
-          handleShapeDoubleClick: this.handleShapeDoubleClick,
           handleMouseUp: this.handleMouseUp,
           handleMouseOver: this.handleMouseOver,
           objectSnapping: this.objectSnapping,
@@ -1453,7 +1453,7 @@ class Graphics extends Component {
 
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
-    const type = this.getObjType(this.state.selectedShapeName);
+    const type = this.getObjType(this.state.selectedShapeName);   
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
 
@@ -1770,6 +1770,23 @@ class Graphics extends Component {
     }
   }
 
+  handleLock = () => {
+    const type = this.getObjType(this.state.selectedShapeName);
+    this.setState(prevState => ({
+      [type]: prevState[type].map(obj =>
+        obj.id === this.state.selectedShapeName
+          ? {
+            ...obj,
+            lock: !obj.lock
+          }
+          : obj
+      )
+    }));
+    this.setState({
+      selectedContextMenu: null
+    });
+  }
+
   getStateObjectById = (obj) => {
     if (obj.attrs) {
       const id = obj.attrs.id;
@@ -1820,6 +1837,8 @@ class Graphics extends Component {
         stateItems.push(stateObj);
       }
     }
+
+    
 
     // Get group item ids
     const groupCopiedIds = [];
@@ -2064,6 +2083,8 @@ class Graphics extends Component {
       )
     }));
   }
+
+  
 
   // Stroke Color
   handleStrokeColor = (e) => {
@@ -3131,6 +3152,33 @@ class Graphics extends Component {
     }
   }
 
+  layerToBottom = (id) => {
+    const isCustom = this.customObjects.includes(this.getObjType(id));
+    if (isCustom) {
+      this.setState(prevState => ({
+        [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+                ...obj,
+                onTop: false
+              }
+            : obj
+        )
+      }));
+      this.setState({
+        customRenderRequested: true
+      });
+    } else {
+      const newLayers = [...this.getLayers()];
+      const i = newLayers.indexOf(id);
+      if (i > 0) {
+        const obj = newLayers.splice(i, 1)[0];
+        newLayers.unshift(obj);
+      }
+      this.setLayers(newLayers);
+    }
+  }
+
   handleOverlayIcon = (img) => {
     this.setState({
       overlayImage: img
@@ -3506,14 +3554,15 @@ class Graphics extends Component {
                   copy={this.handleCopy}
                   cut={this.handleCut}
                   paste={this.handlePaste}
+                  lock={this.handleLock}
                   handleLevel={this.handleLevel}
                   delete={this.handleDelete}
                   onDocClick={this.onDocClick}
-                  handleShapeDoubleClick={this.handleShapeDoubleClick}
                   variables={this.props.variables}
                   setCustomObjData={this.setCustomObjData}
                   layerUp={this.layerUp}
                   layerDown={this.layerDown}
+                  layerToBottom={this.layerToBottom}
                   layers={this.getLayers()}
                   customCount={() => {
                     const layers = this.getLayers();

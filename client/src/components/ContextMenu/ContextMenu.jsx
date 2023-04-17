@@ -5,11 +5,35 @@ import DeckCreator from "./DeckCreator";
 import Modal from "react-modal";
 import { useTranslation } from "react-i18next";
 
+
 import "./ContextMenu.css"
 
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
 
+const CustomAlert = ({ message, showAlert, setShowAlert }) => {
+  const [timer, setTimer] = useState(null);
+
+  useEffect(() => {
+    if (showAlert) {
+      setTimer(
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 1000)
+      );
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [showAlert, setShowAlert]);
+
+  return (
+    <div className={`custom-alert ${showAlert ? 'visible' : 'hidden'}`}>
+      {message}
+    </div>
+  );
+};
 
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
@@ -18,7 +42,11 @@ const ContextMenu = (props) => {
   const [showDeck, setShowDeck] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [updater, setUpdater] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [editTitle, setEditTitle] = useState("");
+  const [alertText, setAlertText] = useState("");
+  const [isContentInvisible, setIsContentInvisible] = useState(false);
+
   const menuRef = useRef();
   const { t } = useTranslation();
 
@@ -153,12 +181,50 @@ const ContextMenu = (props) => {
     setShowDeck(false);
   }
 
+  const handleLock = () => {
+    setAlertText(props.selectedShapeName + props.getObjState()?.lock ? "Unlock" : "Lock")
+    setShowAlert(true)
+    setIsContentInvisible(true);
+    setTimeout(() => {
+      props.layerToBottom(props.selectedShapeName);
+      props.lock();
+      setIsContentInvisible(false);
+    }, 1000); // You can adjust the delay as needed
+
+  }
+
+  const handleLayer = (layer) => {
+    if (layer == "up")
+      props.layerUp(props.selectedShapeName)
+    else
+      props.layerDown(props.selectedShapeName)
+
+    setAlertText("Layer " + layer)
+    setShowAlert(true)
+  }
+
+  const handleUtil = (util) => {
+    setIsContentInvisible(true);
+    setAlertText(util.charAt(0).toUpperCase() + util.slice(1))
+    setShowAlert(true)
+    setTimeout(() => {
+      if (util == "cut")
+        props.cut()
+      else if (util == "copy")
+        props.copy()
+      else if (util == "delete")
+        props.delete()
+      setIsContentInvisible(false);
+    }, 1000); // You can adjust the delay as needed
+    
+  }
+
   return (
     <>
       <div
         ref={menuRef}
         key={props.position.x}
-        className="cmenu"
+        className={`cmenu ${isContentInvisible ? 'invisible' : ''}`}
         style={{
           width: "155px",
           left: props.position.x + offsetX,
@@ -166,9 +232,10 @@ const ContextMenu = (props) => {
         }}
       >
         <ul>
-          <li onClick={props.cut}>{t("common.cut")}</li>
-          <li onClick={props.copy}>{t("common.copy")}</li>
-          <li onClick={props.delete}>{t("common.delete")}</li>
+          <li onClick={() => handleUtil('cut')}>{t("common.cut")}</li>
+          <li onClick={() => handleUtil('copy')}>{t("common.copy")}</li>
+          <li onClick={() => handleUtil('delete')}>{t("common.delete")}</li>
+          <li onClick={handleLock}>{props.getObjState()?.lock ? "Unlock" : "Lock"}</li>
           {!props.addGroup && !props.unGroup && (
             <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
           )}
@@ -190,7 +257,7 @@ const ContextMenu = (props) => {
           </div>
           <div className="layerBtns">
             <li
-              onClick={() => props.layerUp(props.selectedShapeName)}
+              onClick={() => handleLayer("up")}
               className={props.getObjState()?.onTop !== undefined ? (props.getObjState().onTop ? "disabled" : "") : (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}
             >
               <i><Up className="icon alert-icon" /></i>
@@ -198,7 +265,7 @@ const ContextMenu = (props) => {
           </div>
           <div className="layerBtns">
             <li
-              onClick={() => props.layerDown(props.selectedShapeName)}
+              onClick={() => handleLayer("down")}
               className={`${props.getObjState()?.onTop !== undefined ?
                 (!props.getObjState().onTop ? "disabled" : "") :
                 (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
@@ -207,7 +274,7 @@ const ContextMenu = (props) => {
             </li>
           </div>
         </ul>
-        
+
         {
           drop && (
             <div className="drop">
@@ -296,6 +363,12 @@ const ContextMenu = (props) => {
           )
         }
       </div >
+
+      <CustomAlert
+        message={alertText}
+        showAlert={showAlert}
+        setShowAlert={setShowAlert}
+      />
 
       <Modal
         isOpen={showDeck}

@@ -595,6 +595,7 @@ const CanvasPage = (props) => {
       id: obj.id,
       x: obj.x,
       y: obj.y,
+      lock: false,
       scaleX: obj.scaleX,
       scaleY: obj.scaleY,
       stroke: obj.stroke,
@@ -602,7 +603,7 @@ const CanvasPage = (props) => {
       infolevel: obj.infolevel,
       overlay: obj.overlay,
       strokeScaleEnabled: true,
-      draggable: editMode ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
+      draggable: editMode && !obj.lock ? !(canvas.state.layerDraggable || canvas.state.drawMode) : obj.draggable,
       editMode: editMode,
       onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       ...(editMode ?
@@ -655,7 +656,6 @@ const CanvasPage = (props) => {
       height: obj.height,
       fillPatternImage: obj.fillPatternImage,
       image: obj.image,
-      onDblClick: (obj) => canvas.handleShapeDoubleClick(obj)
     }
   }
 

@@ -11,7 +11,6 @@ import "./Level.css";
 import "../Stage/Info.css";
 
 const Level = (props) => {
-  console.log(props)
   const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);

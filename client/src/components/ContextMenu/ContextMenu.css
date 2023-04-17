@@ -23,6 +23,12 @@
   }
 }
 
+.invisible {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s;
+}
+
 .cmenu ul, li {
   padding: 0;
   margin: 0;
@@ -220,4 +226,29 @@
   background-color: aqua !important;
   
   z-index: 1;
+}
+
+.custom-alert {
+  z-index: 1000000;
+  position: absolute;
+  right: 2%;
+  top: 2%;
+  border: 2px solid;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.25) 4px 4px 4px 0px;
+  font-weight: bold;
+  min-width: 150px;
+  max-width: 30%;
+  text-align: start;
+  visibility: hidden;
+  background-color: rgb(189, 230, 176);
+  border-color: rgb(16, 133, 22);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  text-align: center;
+}
+
+.custom-alert.visible {
+  opacity: 1;
+  visibility: visible;
 }
