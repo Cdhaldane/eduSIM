@@ -1772,20 +1772,31 @@ class Graphics extends Component {
 
   handleLock = () => {
     const type = this.getObjType(this.state.selectedShapeName);
-    this.setState(prevState => ({
-      [type]: prevState[type].map(obj =>
-        obj.id === this.state.selectedShapeName
-          ? {
-            ...obj,
-            lock: !obj.lock
-          }
-          : obj
-      )
-    }));
+  
+    this.setState(
+      prevState => ({
+        [type]: prevState[type]?.map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+                ...obj,
+                lock: !obj.lock,
+              }
+            : obj
+        ),
+      }),
+      () => {
+        const lockedObj = this.state[type]?.find(
+          obj => obj.id === this.state.selectedShapeName
+        );
+        this.props.showAlert(`Object is ${lockedObj.lock ? "locked" : "unlocked"}`, "info");
+      }
+    );
+  
     this.setState({
-      selectedContextMenu: null
+      selectedContextMenu: null,
     });
-  }
+  };
+  
 
   getStateObjectById = (obj) => {
     if (obj.attrs) {
@@ -3192,11 +3203,6 @@ class Graphics extends Component {
   renderAllObjects = () => {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas)
   }
-
-  
-
-
-  
 
   render() {
     if (!this.state.savedStateLoaded) return null;

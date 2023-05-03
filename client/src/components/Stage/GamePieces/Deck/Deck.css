@@ -5,7 +5,7 @@
     
 }   
 
-.red {
+.decks-red {
     width: 98px;
     height: 144px;
     border: 1.5px solid #f25f5c;
@@ -17,7 +17,7 @@
 }
 
 .card-container {
-    width: 90px;
+    width: 100px;
     height: 144px;
     border: 1.5px solid #f25f5c;
     color: black;
@@ -40,7 +40,7 @@
 
 .card-back {
     position: relative;
-    left: -36px !important;
+    left: -35px !important;
     top: -30px !important;
     width: 167px;
     height: 200px;

@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import AutoUpdate from "../AutoUpdate";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Level.css";
 import "../Stage/Info.css";
@@ -17,6 +18,7 @@ const Level = (props) => {
   const [mode, setMode] = useState(false);
   const infoPopup = new useRef();
   const infoBtn = new useRef();
+  const alertContext = useAlertContext();
   let items = [];
 
   const handleClickOutside = e => {
@@ -57,7 +59,8 @@ const Level = (props) => {
       return;
     }
     if (props.gamepage) {
-      if (e > count + 1 && props.disableNext) {
+      if (props.disableNext) {
+        alertContext.showAlert("Must complete a task to advance!", "info");
         return
       };
       if (e > count + 1) {
@@ -189,7 +192,7 @@ const Level = (props) => {
                     ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
                   `} onClick={() => {
-                    if(props.freeAdvance){
+                    if(props.freeAdvance || !props.gamepage){
                       handleLevel(num + 1)
                     }
                   }

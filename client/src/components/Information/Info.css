@@ -19,7 +19,7 @@
 
 .info1 {
   width: calc(100% - 130px);
-  height: calc(100% - 60px);
+  height: calc(100% - 400px);
   text-align: center;
   position: fixed;
   left: 100px;

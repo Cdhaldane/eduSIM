@@ -20,8 +20,7 @@ const NavBar = (props) => {
   const { t, i18n } = useTranslation();
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  console.log(user)
-  
+
   const toggleContextMenu = () => {
     setMenuOpen(!menuOpen);
   }
@@ -49,8 +48,6 @@ const NavBar = (props) => {
     }
   };
 
-  
-
   return (
     <nav className="NavbarItems">
       <a href="/">
@@ -70,45 +67,33 @@ const NavBar = (props) => {
             className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
-            <Link to="/profile" className="w-button " type="button">{t("navbar.profile")}</Link>
-
-            <AuthenticationButton />
+            <div className="profilevist-container">
+              <Link to="/profile" className="authen-button navbar-w-button" type="button">{t("navbar.profile")}</Link>
+              <AuthenticationButton className={"authen-button navbar-w-button"} />
+            </div>
           </div>
         )}
-
-        {/* <div className="util-box">
-          <button onClick={props.switchTheme} className="darkmode-button">
-            {theme === 'light' ? 'en' : 'fr'}
-          </button>
-          <button onClick={props.switchTheme} className="darkmode-button">
-            <i className={theme === 'light' ? 'fas fa-sun' : 'fas fa-moon'}></i>
-          {theme === 'light' ? 'Dark' : 'Light'}
-          </button>
-        </div> */}
-
-
-
-            <ButtonLink
-              className={menuOpen ? "nav-links-icons" : ""}
-              href="/dashboard"
-              buttonStyle="btn--danger--solid"
-              buttonSize="button--medium"
-            >
-              <Home className="icon navbar-icons custom-icons" alt={t("alt.home")}/>
-              {t("navbar.home")}
-            </ButtonLink>
-            <ButtonLink
-              className={menuOpen ? "nav-links-icons" : ""}
-              href="/about"
-              buttonStyle="btn--danger--solid"
-              buttonSize="button--medium"
-            >
-              <Info className="icon information navbar-icons"/>
-              {t("navbar.about")}
-            </ButtonLink>
-          <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons lang-button" : "lang-button"}>
-            {i18n.language === 'en' ? 'fr' : 'en'}
-          </button>
+        <ButtonLink
+          className={"nav-links-icons"}
+          href="/dashboard"
+          buttonStyle="btn--danger--solid"
+          buttonSize="button--medium"
+        >
+          <Home className="icon navbar-icons custom-icons" alt={t("alt.home")} />
+          {t("navbar.home")}
+        </ButtonLink>
+        <ButtonLink
+          className={"nav-links-icons"}
+          href="/about"
+          buttonStyle="btn--danger--solid"
+          buttonSize="button--medium"
+        >
+          <Info className="icon information navbar-icons" />
+          {t("navbar.about")}
+        </ButtonLink>
+        <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons lang-button" : "lang-button"}>
+          {i18n.language === 'en' ? 'fr' : 'en'}
+        </button>
 
 
         {isAuthenticated ? (
@@ -119,7 +104,7 @@ const NavBar = (props) => {
             onClick={toggleContextMenu}
           />
         ) : (
-          <AuthenticationButton />
+          <AuthenticationButton className={"authen-button"}/>
         )}
       </div>
     </nav>

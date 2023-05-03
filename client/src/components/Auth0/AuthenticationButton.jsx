@@ -47,7 +47,7 @@ const AuthenticationButton = (props) => {
     <button
       onClick={handleLogout}
       type="button"
-      className="w-button"
+      className={props.className}
     >
       {t("navbar.logout")}
     </button>
@@ -55,7 +55,7 @@ const AuthenticationButton = (props) => {
     <button
       onClick={handleClick}
       type="button"
-      className="w-button small"
+      className={props.className}
     >
       {t("navbar.login")}
     </button>

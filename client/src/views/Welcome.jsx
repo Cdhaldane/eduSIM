@@ -67,20 +67,3 @@ const Welcome = (props) => {
 
 export default Welcome;
 
-// <form onSubmit={joinGame} className="welcome-join">
-//   <input type="text" className="textbox" placeholder={t("home.roomCode")} value={code} onChange={(e) => setCode(e.target.value)} />
-//   <input type="submit" value={t("home.join")} />
-// </form>
-// <p>
-//   <Trans i18nKey="home.getCodeOrCreateSim">
-//     If not, get one from your teacher/facilitator, or
-//     <button
-//       id="link"
-//       onClick={() => loginWithRedirect({
-//         redirectUri: window.location.origin + "/dashboard",
-//         prompt: "select_account"
-//       })}>
-//       create your own simulation.
-//     </button>
-//   </Trans>
-// </p>

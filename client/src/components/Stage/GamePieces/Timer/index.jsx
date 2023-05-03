@@ -49,7 +49,6 @@ const TimerContainer = styled.div`
 `;
 
 const Timer = forwardRef((props, ref) => {
-  console.log(props)
   const limit = props.timeLimit;
 
   const [running, setRunning] = useState(false);

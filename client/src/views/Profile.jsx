@@ -8,6 +8,8 @@ import UserSearch from "../components/Simulations/UserSearch";
 import Button from "../components/Buttons/Button";
 import Loading from "../components/Loading/Loading";
 
+import "./Styles/Profile.css";
+
 const Card_component = (props) => {
   const [imageSelected, setImageSelected] = useState("")
 

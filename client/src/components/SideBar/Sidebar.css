@@ -599,11 +599,8 @@
   font-size: 1.5em;
 }
 .var-trash{
-  margin-right: 0px !important;
-  margin-left: 0px !important;
-  position: relative;
-  left: 0px;
-  top: 0px;
+  margin-right: 1000px !important;
+  margin-left: 20px !important;
 }
 .var-trash:hover{
   cursor: pointer;

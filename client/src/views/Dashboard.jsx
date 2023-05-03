@@ -12,6 +12,8 @@ import { useDrag } from 'react-use-gesture'
 import { useSprings, animated } from 'react-spring'
 import SimulationTable from "../components/Simulations/SimulationTable";
 
+import "./Styles/Dashboard.css";
+
 
 const Dashboard = (props) => {
   const { user } = useAuth0();
@@ -206,10 +208,10 @@ const Dashboard = (props) => {
     }}>
     <div className="dashboard disable-dbl-tap-zoom">
       <div className="page-margin dashboard-buttons">
-        <button className="w-button auto" onClick={toggleModal}>
+        <button className="d-button" onClick={toggleModal}>
           {t("admin.addNewSimulation")}
         </button>
-        <button className="w-button auto" onClick={() => setShowTable(!showTable)}>
+        <button className="d-button" onClick={() => setShowTable(!showTable)}>
           User created simulations
         </button>
       </div>

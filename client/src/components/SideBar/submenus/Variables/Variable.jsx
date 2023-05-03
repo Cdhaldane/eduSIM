@@ -125,6 +125,7 @@ const Variable = (props) => {
         </div>
        )
       }
+    console.log(list)
     return list
   }
   const handleSession = (e, varName) => {

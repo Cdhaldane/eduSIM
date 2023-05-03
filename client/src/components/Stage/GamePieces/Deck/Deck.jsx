@@ -94,7 +94,7 @@ const Card = forwardRef(({ image, text, value, suit, style, onMouseDown, onMouse
 
   return (
     <div
-      className={suit === "hearts" || suit === "diamonds" ? "card-container red" : "card-container"}
+      className={suit === "hearts" || suit === "diamonds" ? "card-container decks-red" : "card-container"}
       style={{ ...style, position: 'absolute' }}
     >
       <div

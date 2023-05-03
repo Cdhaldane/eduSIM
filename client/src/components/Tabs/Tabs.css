@@ -73,7 +73,8 @@
   cursor: pointer;
 
 }
-.tabs{
+
+.tabs {
   margin: 0 auto;
   margin-top: 0vw;
   text-align: center;
@@ -92,12 +93,16 @@
 
 
 
-.selected-tab li.selected:before, .selected-tab li.selected:after {
+.selected-tab li.selected:before,
+.selected-tab li.selected:after {
   background: #FFF;
   border-bottom: 3px solid #ffffff;
 }
 
-.tabs .tab [type="radio"]:hover:checked+.tab-label, .tabs .tab-label:hover, .tabs .tab-label:hover:before, .tabs .tab-label:hover:after {
+.tabs .tab [type="radio"]:hover:checked+.tab-label,
+.tabs .tab-label:hover,
+.tabs .tab-label:hover:before,
+.tabs .tab-label:hover:after {
   background-color: #636363;
   color: black;
   cursor: pointer;
@@ -188,7 +193,8 @@
   position: relative;
   color: var(--primary);
 }
-.content > h3 {
+
+.content>h3 {
   margin-top: 10px;
 }
 
@@ -197,6 +203,7 @@
   height: 100%;
   padding: 5px 10px;
 }
+
 .content-row {
   display: flex;
   justify-content: space-between;
@@ -209,18 +216,21 @@
   height: 100%;
 }
 
-.content-header > div {
+.content-header>div {
   display: flex;
 }
+
 .content-settings {
   display: inline;
   flex-direction: column;
   width: 100%;
 }
+
 .content-settings h3 {
   color: var(--primary);
   font-weight: bold;
 }
+
 .content-timeinput {
   display: inline;
   width: 6vw;
@@ -228,11 +238,13 @@
   border-radius: 10px;
   padding-left: 10px;
 }
+
 .content-radiobuttons {
   display: inline;
   margin: 2px 20px;
   flex: 1;
 }
+
 .content-radiobuttons input {
   margin-top: 3px;
 }
@@ -246,24 +258,27 @@
   cursor: pointer;
   font-size: 1.5vw;
 }
+
 .content-editname h1 {
   color: var(--text-color);
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.2vw;
   font-weight: normal;
   display: inline;
   vertical-align: middle;
   margin-left: 10px;
 }
+
 .content-inputname {
   font-size: 1.3em;
   font-family: inherit;
   padding: 4px;
 }
+
 .content-roomlink {
   display: flex !important;
-  align-items:center;
-  justify-content:center;
+  align-items: center;
+  justify-content: center;
   margin-right: 20px;
   padding: 10px 30px;
   font-size: 1.2vw;
@@ -275,6 +290,7 @@
   border-radius: 9px;
   vertical-align: 20% !important;
 }
+
 .content-roomlink:hover {
   cursor: pointer;
   box-shadow: 0 5px 10px grey;
@@ -300,53 +316,65 @@
   margin: 10px 20px;
   width: 50%;
 }
-.simadv-inline{
+
+.simadv-inline {
   margin-left: 73px;
 }
-.simadv-row{
+
+.simadv-row {
   position: relative;
   width: 100%;
   border: 1px solid black;
   border-radius: 20px;
 }
-.overview{
+
+.overview {
   margin-top: 20px;
 }
 
 input[type='radio']:after {
-      width: 15px;
-      height: 15px;
-      border-radius: 15px;
+  width: 15px;
+  height: 15px;
+  border-radius: 15px;
 
-      top: -2px;
-      left: -4px;
-      position: relative;
-      background-color: var(--bg);
-      content: '';
-      display: inline-block;
-      visibility: visible;
-      border: 2px solid var(--text-color);
-  }
+  top: -2px;
+  left: -4px;
+  position: relative;
+  background-color: var(--bg);
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 2px solid var(--text-color);
+}
 
-  input[type='radio']:checked:after {
-      display: block;
-      background-color: #ff9898;
-      border: 2px solid var(--primary);
-  }
+input[type='radio']:checked:after {
+  display: block;
+  background-color: #ff9898;
+  border: 2px solid var(--primary);
+}
 
+.tab-container {
+  display: flex !important;
+  width: 100%;
+  height: 100%;
+  max-height: inherit;
+}
+
+.tab-container i {
+  width: 20%;
+
+}
 
 .tab-text {
-  width: calc(100% - 16px);
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: 100%;
 }
 
 .studentbuttonemail {
   padding: 10px 20px;
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1vw;
   color: white;
   background-color: var(--primary);
@@ -367,7 +395,7 @@ input[type='radio']:after {
 }
 
 .deletegroup {
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1vw;
   color: white;
   background-color: var(--primary);
@@ -387,7 +415,7 @@ input[type='radio']:after {
 }
 
 .addgroup {
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   padding: 10px 20px;
   font-size: 1vw;
   color: white;
@@ -408,7 +436,8 @@ input[type='radio']:after {
   border: 1px solid black;
   border-radius: 10px;
 }
-.groupcontainer h3{
+
+.groupcontainer h3 {
   position: relative;
   top: 10px;
   z-index: 10;
@@ -416,28 +445,35 @@ input[type='radio']:after {
   width: auto;
   color: var(--text-color);
 }
+
 .group-column {
   flex: 1;
   min-width: 0;
 }
+
 .group-table {
   padding-bottom: 20px;
 }
+
 .group-chatlog {
   font-size: .7em;
   height: 300px;
 }
-.group-chatlog > div {
+
+.group-chatlog>div {
   height: 100%;
   padding: 10px;
   overflow-y: auto;
 }
+
 .group-chatlog p {
   height: unset;
 }
-.Admin{
+
+.Admin {
   color: var(--primary) !important;
 }
+
 .tab-add-group {
   z-index: 2;
 }
@@ -467,10 +503,12 @@ input[type='radio']:after {
   font-size: 1rem;
   position: relative;
 }
-.chart[disabled] > div {
+
+.chart[disabled]>div {
   opacity: 0.5;
 }
-.chart > p {
+
+.chart>p {
   position: absolute;
   display: flex;
   align-items: center;
@@ -497,6 +535,7 @@ input[type='radio']:after {
   z-index: 1;
   transition: opacity .3s;
 }
+
 .logs[hidden] {
   text-align: right;
   align-self: flex-end;
@@ -511,11 +550,13 @@ input[type='radio']:after {
   align-items: center;
   margin-top: 0px;
 }
+
 .logrow[hidden] {
   position: absolute;
   opacity: 0;
   z-index: -1;
 }
+
 .logrow-info {
   background-color: var(--text-color);
   padding: 10px 15px;
@@ -524,18 +565,22 @@ input[type='radio']:after {
   align-items: center;
   opacity: 0.9;
 }
-.logrow-info > i {
+
+.logrow-info>i {
   padding-right: 10px;
 }
-.logrow-info > p {
+
+.logrow-info>p {
   font-size: .9em;
   padding: 0;
 }
+
 .logrow-buttons {
   display: flex;
   margin-left: 5px;
 }
-.logrow-buttons > button {
+
+.logrow-buttons>button {
   color: white;
   background-color: var(--primary);
   padding: 10px;
@@ -550,30 +595,34 @@ input[type='radio']:after {
   justify-content: center;
   cursor: pointer;
 }
-.temp{
+
+.temp {
   color: var(--primary);
   font-size: 2.0rem;
 }
-.bold1{
+
+.bold1 {
   color: var(--dark);
 }
-.Admin{
+
+.Admin {
   color: var(--primary);
 }
+
 #roomh3 {
   position: relative;
   top: 250px;
   left: -500px;
 }
 
-.tab-container{
-  display: flex !important;
-  justify-content: space-around !important;
-}
-.tab-container i{
-  margin-left: 0px !important;
+.var-trash {
+  color: var(--primary);
+  font-size: 1.0rem;
+  position: relative;
+  left: -20px;
 }
 
-@media screen and (orientation: portrait) {
 
-}
+
+
+@media screen and (orientation: portrait) {}

@@ -1,47 +1,119 @@
-.note {
-  background: #fff;
-  border-radius: 7px;
-  box-shadow: 0 2px 5px #ccc;
-  float: left;
-  font-family: "Montserrat", sans-serif;
-  text-align: center;
-  min-width: 50vw;
-  height: 100px;
-}
-
-.note h1 {
-  color: #181818;
-  font-family: "Montserrat", sans-serif;
-  font-size: 2.0rem;
-  margin-top: 0px;
-  margin-left: 0px;
-  text-align: center;
-  padding: 10px;
-}
-
-.note p {
-  font-size: 1.0em;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.note img {
-  height: 50%;
-  margin-top: 5px;
-  padding: 30px;
-}
-
-.note input {
+.welcome-navbutton {
   position: relative;
-  left: -110px;
-  top: -39px;
-  padding: 8px 20px;
-  border-radius: 10px;
-  outline: none;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px #ccc;
+  width: 21vw;
+  height: 30vw;
+  margin-left: 4vw;
+}
+
+.welcome-navbutton h1 {
+  font-size: 1.6vw;
+  text-align: center !important;
+  color: var(--dark);
+  margin-bottom: 10px;
+  width: 20vw;
+  text-overflow: hidden;
+  white-space: nowrap;
+}
+
+.welcome-navbutton h2 {
+  font-size: 1.2vw;
+  font-weight: lighter;
+  color: var(--dark);
+  padding: 0 9%;
+}
+
+.welcome-navbutton img {
+  margin-top: 40px;
+  width: 80%;
+  object-fit: contain;
+}
+
+.w-button {
+  position: relative;
+  display: inline-block;
+  padding: 1vw 2vw;
+  background: var(--primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.0vw;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: all .3s;
   border: none;
   cursor: pointer;
-  background-color: white;
-  font-size: 1.2rem;
-  transition: transform 0.5s ease;
+  width: 13vw;
+  height: 3vw;
+  border-radius: 2px;
+  margin-block: auto 2vw;
+  box-shadow: var(--dark) 5px 5px;
+  border-radius: 0 10px 10px 10px;
+}
+
+
+.w-button:before {
+  content: "";
+  position: absolute;
+  height: 150px;
+  width: 50px;
+  background: #fff;
+  left: -70px;
+  top: -40px;
+  transform: rotate(37deg);
+  transition: all .3s;
+  opacity: 0.3;
+}
+
+.w-button:hover:before {
+  left: 102%;
+}
+
+.w-button:hover {
+  border-radius: 10px 10px 0px 10px;
+}
+
+@media screen and (orientation: portrait) {
+  .welcome-navbutton {
+    margin-top: 0px;
+    width: 50vw;
+    height: 70vw;
+    text-align: center;
+  }
+
+  .welcome-navbutton h1 {
+    font-size: 1.9em;
+    margin-bottom: 10px;
+    width: 39vw;
+
+  }
+
+  .welcome-navbutton h2 {
+    font-size: 1.7em;
+    font-weight: lighter;
+    color: var(--dark);
+    width: 39vw;
+  }
+
+  .welcome-navbutton img {
+    margin-top: 40px;
+    width: 700px;
+    object-fit: contain;
+  }
+
+  .w-button {
+    padding: 1vw 2vw;
+    font-size: 2.0em;
+    width: 32vw;
+    height: 6vw;
+    border-radius: 2px;
+    margin-block: auto 2vw;
+    box-shadow: var(--dark) 5px 5px;
+    border-radius: 0 10px 10px 10px;
+  }
 }

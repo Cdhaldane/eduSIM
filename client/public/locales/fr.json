@@ -2,8 +2,8 @@
   "translation": {
     "home": {
       "welcome": "Bienvenue!",
-      "isStudent": "Étudiant(e)/participant(e)?",
-      "isTeacher": "Enseignant(e)/animateur(trice)?",
+      "isStudent": "Étudiant/participant?",
+      "isTeacher": "Enseignant/animateur?",
       "title": "Nous fournissons les outils pour construire des simulations éducatives en ligne",
       "sub-title": "Les modèles d'interaction simulés éducatifs (eduSIM) sont des simulations conçues et testées pour être utilisées par les enseignants et les animateurs pour améliorer l'engagement et l'apprentissage dans leurs salles de classe ou leurs ateliers.",
       "welcomeText": "Choisissez parmi une sélection de simulations existantes à utiliser avec vos étudiant(e)s / participant(e)s ou créez vos propres.",

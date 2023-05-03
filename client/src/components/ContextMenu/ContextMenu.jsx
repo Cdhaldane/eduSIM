@@ -11,29 +11,6 @@ import "./ContextMenu.css"
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
 
-const CustomAlert = ({ message, showAlert, setShowAlert }) => {
-  const [timer, setTimer] = useState(null);
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimer(
-        setTimeout(() => {
-          setShowAlert(false);
-        }, 1000)
-      );
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [showAlert, setShowAlert]);
-
-  return (
-    <div className={`custom-alert ${showAlert ? 'visible' : 'hidden'}`}>
-      {message}
-    </div>
-  );
-};
 
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
@@ -42,10 +19,8 @@ const ContextMenu = (props) => {
   const [showDeck, setShowDeck] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [updater, setUpdater] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
   const [editTitle, setEditTitle] = useState("");
-  const [alertText, setAlertText] = useState("");
-  const [isContentInvisible, setIsContentInvisible] = useState(false);
+
 
   const menuRef = useRef();
   const { t } = useTranslation();
@@ -182,15 +157,7 @@ const ContextMenu = (props) => {
   }
 
   const handleLock = () => {
-    setAlertText(props.selectedShapeName + props.getObjState()?.lock ? "Unlock" : "Lock")
-    setShowAlert(true)
-    setIsContentInvisible(true);
-    setTimeout(() => {
-      props.layerToBottom(props.selectedShapeName);
-      props.lock();
-      setIsContentInvisible(false);
-    }, 1000); // You can adjust the delay as needed
-
+    props.lock();
   }
 
   const handleLayer = (layer) => {
@@ -198,25 +165,15 @@ const ContextMenu = (props) => {
       props.layerUp(props.selectedShapeName)
     else
       props.layerDown(props.selectedShapeName)
-
-    setAlertText("Layer " + layer)
-    setShowAlert(true)
   }
 
   const handleUtil = (util) => {
-    setIsContentInvisible(true);
-    setAlertText(util.charAt(0).toUpperCase() + util.slice(1))
-    setShowAlert(true)
-    setTimeout(() => {
-      if (util == "cut")
-        props.cut()
-      else if (util == "copy")
-        props.copy()
-      else if (util == "delete")
-        props.delete()
-      setIsContentInvisible(false);
-    }, 1000); // You can adjust the delay as needed
-    
+    if (util == "cut")
+      props.cut()
+    else if (util == "copy")
+      props.copy()
+    else if (util == "delete")
+      props.delete()
   }
 
   return (
@@ -224,7 +181,7 @@ const ContextMenu = (props) => {
       <div
         ref={menuRef}
         key={props.position.x}
-        className={`cmenu ${isContentInvisible ? 'invisible' : ''}`}
+        className={`cmenu `}
         style={{
           width: "155px",
           left: props.position.x + offsetX,
@@ -363,12 +320,6 @@ const ContextMenu = (props) => {
           )
         }
       </div >
-
-      <CustomAlert
-        message={alertText}
-        showAlert={showAlert}
-        setShowAlert={setShowAlert}
-      />
 
       <Modal
         isOpen={showDeck}
