@@ -52,8 +52,9 @@
   height: 3vw;
   border-radius: 2px;
   margin-block: auto 2vw;
-  box-shadow: var(--dark) 5px 5px;
-  border-radius: 0 10px 10px 10px;
+  /* box-shadow: var(--dark) 5px 5px; */
+  box-shadow: var(--box-shadow);
+  border-radius: 10px 10px 10px 10px;
 }
 
 
@@ -75,7 +76,6 @@
 }
 
 .w-button:hover {
-  border-radius: 10px 10px 0px 10px;
 }
 
 @media screen and (orientation: portrait) {

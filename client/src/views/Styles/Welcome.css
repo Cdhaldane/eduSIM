@@ -1,0 +1,115 @@
+.welcome-container-welcome {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5em;
+    color: var(--primary);
+    background-color: var(--almostwhite);
+    align-items: center;
+    min-height: 100vh;
+    margin-top: -70px;
+}
+
+.welcome-container-welcome form {
+    margin-top: 4vw;
+}
+
+.welcome-img {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+    margin-left: -10vw;
+}
+
+.welcome-join {
+    display: flex;
+    align-items: center;
+    margin-top: 0px;
+}
+
+.welcome-text {
+    text-align: left;
+    width: auto;
+    font-size: 1.3vw;
+    padding: 0 0vw 0 14vw;
+}
+
+.welcome-text h1 {
+    width: 80%;
+    font-weight: bold;
+    font-size: 3vw;
+    margin-bottom: 1.5vw
+}
+
+.welcome-join>input[type="submit"] {
+    padding: 0.6em;
+    border-radius: 9px;
+    width: 13vw;
+    border: none;
+    background-color: var(--primary);
+    color: white;
+    font-family: inherit;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.welcome-join>input[type="submit"]:hover {
+    box-shadow: var(--box-shadow);
+}
+
+.welcome input::placeholder {
+    color: grey;
+    opacity: 0.8;
+    border: none;
+    width: 13vw;
+}
+
+.textbox {
+    border-radius: 9px;
+    border: none;
+    margin-right: 20px;
+    padding: 0.8em;
+    color: #181818;
+    font-size: 0.7em;
+    font-family: inherit;
+    padding-left: 1.5em;
+    outline: none;
+    box-shadow: 0 2px 10px #ccc;
+  }
+
+@media screen and (orientation: portrait) {
+    .welcome-container-welcome {
+        flex-direction: column;
+        margin-top: 30px;
+    }
+
+    .welcome-img {
+        width: 80%;
+        height: 80%;
+        object-fit: contain;
+        margin-left: 0vw;
+    }
+
+    .welcome-text {
+        text-align: center;
+        width: 100%;
+        font-size: 1.0em;
+        padding: 0 0vw 0 0vw;
+    }
+
+    .welcome-text h1 {
+        width: 100%;
+        font-size: 2.0em;
+        margin-bottom: 1.5vw
+    }
+
+    .welcome-join {
+        margin-left: 6vw;
+    }
+    .welcome-join>input[type="submit"] {
+        width: 300px;
+    }
+    .textbox {
+        width: 300px;
+      }
+}

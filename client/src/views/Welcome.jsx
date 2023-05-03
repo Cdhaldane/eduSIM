@@ -5,6 +5,8 @@ import axios from "axios";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useHistory } from "react-router-dom";
 
+import "./Styles/Welcome.css";
+
 const Welcome = (props) => {
   const { t } = useTranslation();
   const { loginWithRedirect } = useAuth0();
@@ -33,8 +35,6 @@ const Welcome = (props) => {
 
   return (
     <div className="welcome-container-welcome">
-    <div className='row'>
-      <div className='column left'>
         <div className='welcome-text'>
         <h1>{t("home.alreadyHaveRoomCode")}</h1>
           <Trans i18nKey="home.getCodeOrCreateSim">
@@ -53,14 +53,10 @@ const Welcome = (props) => {
               <input type="submit" value={t("home.join")} />
             </form>
         </div>
-      </div>
-      <div className='column right'>
          <div className='welcome-img'>
             <img src="03_Illustrations LogoIn.png" alt={t("alt.team")}></img>
         </div>
       </div>
-    </div>
-  </div>
 
   );
 }

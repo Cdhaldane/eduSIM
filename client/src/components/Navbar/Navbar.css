@@ -87,6 +87,7 @@
   font-size: 1.3em;
   padding: 4px;
   border: none;
+  top: -50px !important;
 }
 
 .navbar-icons {
@@ -325,7 +326,6 @@
   
   .lang-button{
     background-color: var(--white);
-    top: 67px;
   }
 
 }
