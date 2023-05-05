@@ -26,6 +26,10 @@ const adminaccounts = db.define('adminaccounts', {
     type: Sequelize.INTEGER,
     defaultValue: 0
   },
+  following: {
+    type: Sequelize.ARRAY( Sequelize.STRING ),
+    defaultValue: []
+  },
   bannerPath: {
     type: Sequelize.STRING(250),
     defaultValue: 'v1677271353/images/yavagre0lvkt8vtegdvv.jpg'
@@ -33,7 +37,6 @@ const adminaccounts = db.define('adminaccounts', {
   likedSims: {
     type: Sequelize.ARRAY( Sequelize.STRING ),
     defaultValue: []
-
   },
   downloadedSims: {
     type: Sequelize.ARRAY( Sequelize.STRING ),

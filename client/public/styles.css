@@ -16,8 +16,9 @@
   --border: 1px solid #181818;
   --border-radius: 20px;
   --speed: 500ms;
-  --box-shadow: rgba(0,0,0,0.25) 5px 5px 4px 0px;
+  --box-shadow: rgba(0, 0, 0, 0.25) 5px 5px 4px 0px;
 }
+
 [data-theme='dark'] {
   --white: black;
   --background: black;
@@ -79,7 +80,7 @@ img {
   background: #e4e4e4;
 }
 
-.full-page-wrapper{
+.full-page-wrapper {
   min-height: 100%;
   flex-direction: column;
   justify-content: space-between;
@@ -88,30 +89,27 @@ img {
   scrollbar-width: thin;
 }
 
-.full-page-wrapper::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background-color: #F5F5F5;
+.full-page-wrapper::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
 }
 
-.full-page-wrapper::-webkit-scrollbar
-{
-	width: 10px;
-	background-color: #F5F5F5;
+.full-page-wrapper::-webkit-scrollbar {
+  width: 10px;
+  background-color: #F5F5F5;
 }
 
-.full-page-wrapper::-webkit-scrollbar-thumb
-{
-	background-color: var(--text-color);
-	background-image: -webkit-linear-gradient(45deg,
-	                                          rgba(255, 255, 255, .2) 25%,
-											  transparent 25%,
-											  transparent 50%,
-											  rgba(255, 255, 255, .2) 50%,
-											  rgba(255, 255, 255, .2) 75%,
-											  transparent 75%,
-											  transparent)
+.full-page-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--text-color);
+  background-image: -webkit-linear-gradient(45deg,
+      rgba(255, 255, 255, .2) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, .2) 50%,
+      rgba(255, 255, 255, .2) 75%,
+      transparent 75%,
+      transparent)
 }
 
 
@@ -120,8 +118,10 @@ img {
   position: relative;
   overflow-y: hidden;
   overflow-x: hidden;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 
@@ -150,6 +150,7 @@ img {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 465px;
@@ -157,6 +158,7 @@ img {
     z-index: 10000;
   }
 }
+
 @keyframes slidePoll {
   from {
     margin-left: -20px;
@@ -165,6 +167,7 @@ img {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 260px;
@@ -172,6 +175,7 @@ img {
     z-index: 10000;
   }
 }
+
 @keyframes slideinleft {
   from {
     margin-left: -20px;
@@ -180,6 +184,7 @@ img {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 120px;
@@ -190,22 +195,24 @@ img {
 
 @keyframes OpenTop {
   from {
-   opacity: 0;
-   transform: scale(0);
- }
- to {
-   opacity: 1;
-   transform: scale(1);
- }
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
+
 @keyframes slideDown {
   from {
     height: 0px
+  }
 
- }
- to {
+  to {
     height: 230px;
- }
+  }
 }
 
 
@@ -295,37 +302,43 @@ a {
   margin: auto;
   font-size: 0.9em;
   padding-left: 10vw;
-  padding-right:10vw;
+  padding-right: 10vw;
   width: 100%;
   margin-bottom: 50px;
 }
-.terms{
+
+.terms {
   text-align: left;
   margin: 10px;
   width: 80% !important;
 }
+
 .privacy-container a {
   color: var(--primary);
   text-decoration: underline;
 }
+
 .privacy-container ul {
   margin-left: 20px;
 }
-.privacy-container > p {
+
+.privacy-container>p {
   color: black !important;
   margin: 10px 0;
   padding: 2px;
 }
-.privacy-container > h3 {
+
+.privacy-container>h3 {
   margin: 10px 0;
   color: black !important;
 }
-.privacy-container > h1 {
+
+.privacy-container>h1 {
   color: black !important;
 }
 
 
-.homebody{
+.homebody {
   margin-top: 7%;
 }
 
@@ -340,12 +353,14 @@ a {
   display: flex;
   justify-content: center;
 }
-.about-logos > a {
+
+.about-logos>a {
   height: 50px;
   display: block;
   margin: 10px;
 }
-.about-logos > a > img {
+
+.about-logos>a>img {
   height: 100%;
 }
 
@@ -362,11 +377,13 @@ a {
   vertical-align: -20% !important;
   margin-right: 0px !important;
 }
+
 .control-icon {
   margin-left: 9px !important;
   width: 1.2em !important;
   height: 1.2em !important;
 }
+
 .edit-icon {
   position: relative;
   top: -5px;
@@ -375,10 +392,12 @@ a {
   vertical-align: -20% !important;
   margin-right: 0px !important;
 }
-.bigger-icon{
+
+.bigger-icon {
   font-size: 2.5rem !important;
 }
-.bigger-icon:hover{
+
+.bigger-icon:hover {
 
   cursor: pointer;
 }
@@ -501,7 +520,7 @@ a {
   margin: auto 0 auto 10px;
 }
 
-.joinboard-edit{
+.joinboard-edit {
   vertical-align: middle;
   align-self: center;
   color: var(--primary) !important;
@@ -511,9 +530,10 @@ a {
   cursor: pointer;
   font-size: 1.0em !important;
 }
-.joinboard-edit h1{
+
+.joinboard-edit h1 {
   color: var(--text-color);
-  font-family:  "Montserrat", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 0.6em;
   font-weight: normal;
   display: inline;
@@ -623,6 +643,7 @@ a {
   background-color: #e5e5e5;
   overflow-y: hidden !important;
 }
+
 .gamepage-container {
   position: fixed;
   top: 0;
@@ -646,12 +667,14 @@ a {
   overflow: hidden;
   align-content: center;
 }
+
 .editpage-container {
   position: absolute;
   bottom: 0px !important;
   left: 0px !important;
   right: 0px !important;
   top: 0px !important;
+  font-family: "Montserrat", sans-serif !important;
 }
 
 .game-logo {
@@ -687,38 +710,6 @@ a {
   font-family: inherit;
   border-radius: 10px;
 }
-
-#editmode {
-  opacity: 0.7;
-  transform: rotate(45deg);
-  position: absolute;
-  top: -720px;
-  left: 1660px;
-  font-family: 'Cedarville Cursive', cursive;
-}
-
-#save {
-  position: relative;
-  top: -1000px;
-  left: 840px;
-  width: 100px;
-  height: 50px;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1.5rem;
-  color: white;
-  background-color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: none;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 10px
-}
-
-#save:hover {
-  cursor: pointer;
-  box-shadow: 0 5px 10px grey;
-}
-
 
 .saved {
   position: fixed;
@@ -759,10 +750,7 @@ a {
   cursor: pointer;
 }
 
-#authbutton {
-  position: relative;
-  left: -200px;
-}
+
 
 .bimgjoin {
   position: absolute;
@@ -791,28 +779,34 @@ a {
   position: absolute;
   top: 1000px;
 }
+
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
 }
-.input-radiotrue{
+
+.input-radiotrue {
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
 }
-.radio-inputs:hover{
+
+.radio-inputs:hover {
   cursor: pointer !important;
 }
-.radio-inputs label:hover{
+
+.radio-inputs label:hover {
   cursor: pointer !important;
 }
-.input-vartrue{
+
+.input-vartrue {
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
   border-radius: 10px;
   padding: 10px !important;
 }
-.input-radiofalse{
+
+.input-radiofalse {
   text-align: left !important;
   margin: 0px 0px;
   flex: 1;
@@ -820,15 +814,17 @@ a {
   padding: 2px !important;
   border-radius: 10px;
 }
-.inputradiofalse{
+
+.inputradiofalse {
   margin-left: 5px;
 }
-.inputradiofalse:hover{
+
+.inputradiofalse:hover {
   cursor: pointer !important;
 }
 
 
-.input-radiotrue label{
+.input-radiotrue label {
   margin-left: 1px !important;
   position: relative;
   bottom: 2.5px;
@@ -852,6 +848,7 @@ a {
   bottom: 0px;
   padding: 0px !important;
 }
+
 .exit {
   width: 30px !important;
   height: 30px !important;
@@ -894,26 +891,25 @@ a {
   }
 
 
-  
 
-  .fr h1{
+
+  .fr h1 {
     font-size: 3.5vw !important;
   }
 
-
-  .main-content{
-    min-height: 100vw;
-  }
   .join-wrapper {
     min-height: 100vh;
   }
-  .fix{
-    padding-top:10px !important;
+
+  .fix {
+    padding-top: 10px !important;
   }
-  .dashboard-wrapper{
+
+  .dashboard-wrapper {
     height: auto;
   }
-  .joinboard-edit{
+
+  .joinboard-edit {
     bottom: -6px;
   }
 

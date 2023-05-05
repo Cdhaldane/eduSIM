@@ -227,20 +227,18 @@ const CreateArea = (props) => {
         <div className="gradient-border">
           <div>
             {t("modal.chooseImage")}
-            <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon create-icon create-fix"/></i>
+            <i onClick={() => setMoreImages(!moreImages)}><Plus className="icon create-icon create-fix"/></i>
           </div>
           <div className="form-imgpreview">
 
             {img ? (
               <Image
-                id="preview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
                 alt={t("alt.sim")}
               />
             ) : (
               <Image
-                id="nopreview"
                 cloudName="uottawaedusim"
                 publicId={imageSelected}
                 alt={t("alt.sim")}
@@ -266,28 +264,28 @@ const CreateArea = (props) => {
           </div>
         </div>
       </form>
-      {moreImages && (
-        <form ref={imageArea} className="form-imgs">
-          {prevImages && 
-            <div>
-              {JSON.parse(prevImages).map((image, index) => (
-                <Image
-                  key={index}
-                  cloudName="uottawaedusim"
-                  publicId={image}
-                  onClick={() => {
-                    setImageSelected(image);
-                    setImg(image);
-                  }}
-                  alt={t("alt.sim")}
-                />
-              ))}
-            </div>}
-          <button type="button" className="modal-button green" onClick={openWidget}>
-            {t("modal.imageFromFile")}
-          </button>
-        </form>
-      )}
+
+      <form ref={imageArea} className={`form-imgs ${moreImages ? 'visible' : ''}`}>
+        {prevImages && 
+          <div>
+            {JSON.parse(prevImages).map((image, index) => (
+              <Image
+                key={index}
+                cloudName="uottawaedusim"
+                publicId={image}
+                onClick={() => {
+                  setImageSelected(image);
+                  setImg(image);
+                }}
+                alt={t("alt.sim")}
+              />
+            ))}
+          </div>}
+        <button type="button" className="modal-button green" onClick={openWidget}>
+          {t("modal.imageFromFile")}
+        </button>
+      </form>
+
     </div>
   );
 };

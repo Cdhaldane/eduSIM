@@ -52,7 +52,7 @@ const NavBar = (props) => {
     <nav className="NavbarItems">
       <a href="/">
         <div className="logo-container">
-          <img src="03_eduSIM_horizontal.png" className="navbar-logo" alt={t("alt.navbar")}></img>
+          <img src="/assets/03_eduSIM_horizontal.png" className="navbar-logo" alt={t("alt.navbar")}></img>
           <div className="vl"></div>
           <h1 className="title">{t("navbar.title")}</h1>
         </div>
@@ -64,12 +64,12 @@ const NavBar = (props) => {
         {isAuthenticated && (
           <div
             ref={profileDropdown}
-            className={`profilevist ${menuOpen ? "profilevist-open" : "profilevist-closed"}`}
+            className={`profilevist ${menuOpen ? "" : "profilevist-closed"}`}
           >
             <h2>{user.name}</h2>
             <div className="profilevist-container">
-              <Link to="/profile" className="authen-button navbar-w-button" type="button">{t("navbar.profile")}</Link>
-              <AuthenticationButton className={"authen-button navbar-w-button"} />
+              <Link onClick={() => setMenuOpen(false)} to={`/profile/${localStorage.adminid}`} className="authen-button navbar-w-button" type="button">{t("navbar.profile")}</Link>
+              <AuthenticationButton onClick={() => setMenuOpen(false)} className={"authen-button navbar-w-button"} />
             </div>
           </div>
         )}
@@ -91,7 +91,7 @@ const NavBar = (props) => {
           <Info className="icon information navbar-icons" />
           {t("navbar.about")}
         </ButtonLink>
-        <button onClick={switchLanguage} className={menuOpen ? "nav-links-icons lang-button" : "lang-button"}>
+        <button onClick={switchLanguage} className={menuOpen ? "lang-button" : "lang-button"}>
           {i18n.language === 'en' ? 'fr' : 'en'}
         </button>
 

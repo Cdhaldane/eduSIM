@@ -92,6 +92,12 @@ const Variables = (props) => {
           <Interaction current={tabsEnviroment} {...props} />
         </div>
     )
+    if(tabs === "trigger")
+      return (
+        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
+          <Triggers current={tabsEnviroment} {...props} />
+        </div>
+    )
   }
 
   const handleSwitchChange = () => {
@@ -128,9 +134,10 @@ const Variables = (props) => {
             <button className="con" onClick={() => props.close()}><Close className="icon close-var"/></button>
             </div>
           <div className="con-container">
-            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("variable")}>Variables</button>
-            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("condition")}>Conditions</button>
-            <button className={tabsEnviroment === 'global' ? "con-tabs" : "con-tabs-session"} onClick={() => setTabs("interaction")}>Interactions</button>
+            <button className={tabsEnviroment==='global'?'con-tabs':'con-tabs-session'} onClick={() => setTabs("variable")}>Variables</button>
+            <button className={tabsEnviroment==='global'?'con-tabs':'con-tabs-session'} onClick={() => setTabs("condition")}>Conditions</button>
+            <button className={tabsEnviroment==='global'?'con-tabs':'con-tabs-session'} onClick={() => setTabs("interaction")}>Interactions</button>
+            <button className={tabsEnviroment==='global'?'con-tabs':'con-tabs-session'} onClick={() => setTabs("trigger")}>Triggers</button>
           </div>
           {populateTab()}
         </div>

@@ -437,6 +437,7 @@
   width: 700px;
   height: 500px;
   min-width: 700px;
+  min-height: 400px;
   background-color: white;
   border: 2px solid var(--primary);
   resize:both;
@@ -609,15 +610,19 @@
   fill: black;
   font-size: 3.0em;
 }
-
+.con-container{
+  display: flex;
+  flex-direction: row;
+}
 .con-tabs{
-  width: 33.33%;
+  width: 100%;
   border-radius: 0px;
   border: none;
   height: 40px;
   margin-bottom: 10px;
-  font-weight: bold;
-
+  text-transform: uppercase;
+  font-size: 0.8em;
+  font-family: "Montserrat", sans-serif;
 }
 .con-tabs:hover{
   background-color: var(--red);
@@ -634,7 +639,9 @@
   border: none;
   height: 40px;
   margin-bottom: 10px;
-  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  font-family: "Montserrat", sans-serif;
 
 }
 .con-tabs-session:hover{

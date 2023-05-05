@@ -57,8 +57,8 @@ hr {
     cursor: pointer;
     padding: 18px 40px;
     border: 1px solid transparent;
-    box-shadow: var(--dark) 5px 5px;
-    border-radius: 2px 10px 10px 10px;
+    box-shadow: var(--box-shadow);
+    border-radius: 3px 10px 10px 10px;
 }
 
 
@@ -83,5 +83,5 @@ hr {
     background-color: white;
     border: 1px solid var(--primary);
     color: var(--primary);
-    border-radius: 10px 10px 2px 10px;
+    border-radius: 10px 10px 3px 10px;
 }

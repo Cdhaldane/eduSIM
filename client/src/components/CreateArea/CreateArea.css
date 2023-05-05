@@ -6,7 +6,6 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  font-family: "Raleway";
   font-size: 1.5rem;
   position: relative;
   z-index: 2;
@@ -22,6 +21,7 @@
   text-align: center;
   border-radius: 0px;
   border: solid 7px grey;
+  box-shadow: var(--box-shadow);
   border-radius: 9px;
 }
 
@@ -40,6 +40,7 @@
   align-items: center;
   justify-content: space-between;
   text-align: left;
+  font-weight: 200;
 }
 
 .button-container {
@@ -161,16 +162,25 @@
   display: flex;
   overflow-y: hidden;
   align-items: center; 
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease-in-out;
+
+}
+.form-imgs.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 .form-imgs button {
   position: absolute;
   right: 20px;
+  margin-bottom: 20px;
 }
 .form-imgs img {
   height: 100px;
   width: 100px;
+  max-width: 100px !important;
   border: solid 1px black;
-  overflow: scroll;
   direction: rtl;
   border-radius: 10%;
   cursor: pointer;
@@ -178,44 +188,38 @@
   object-fit: cover;
 }
 .form-imgs img:hover {
-  border-radius: 0;
+  border-radius: 9px;
 }
-.form-imgpreview {
+.form-imgpreview img{
   display: flex;
   align-items: center;
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+  border-radius: 10%;
+  overflow: hidden;
 }
 
 .create-fix {
-  fill: var(--dark) !important;
-  margin-left: 10px;
-}
-
-#plus {
   position: relative;
-  margin-left: 10px;
-  vertical-align: middle;
-  width: 40px;
-  text-align: left;
+  left: 20px;
+  fill: var(--red) !important;
+  font-size: 1.1em;
+  transition: all .3s;
+  padding: 5px;
+  border: 1px solid var(--red);
+  border-radius:20px;
 }
 
-#plus:hover {
-  cursor: pointer;
+.create-fix:hover:before {
+  left: 102%;
 }
 
-#preview, #previewno {
-  border: solid black 1px;
-  width: 90px;
-  height: 90px;
-  border-radius: 10%;
-  margin-left: 10px;
-}
-
-
-
-#namei {
-  border: solid var(--text-color) 1px;
-  width: 228px;
-  border-radius: 2px;
+.create-fix:hover {
+  background-color: white;
+  border: 1px solid var(--red);
+  color: var(--red);
+  border-radius: 10px 10px 3px 10px;
 }
 
 @media screen and (orientation: portrait) {

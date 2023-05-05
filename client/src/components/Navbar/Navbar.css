@@ -47,7 +47,8 @@
   justify-content: flex-end;
   align-items: center;
   display: flex;
-  margin-right: 70px;
+  padding-right: 70px;
+  position: sticky;
 }
 .nav-menu a {
   display: flex;
@@ -60,6 +61,7 @@
   left: 20px;
   align-content: center;
   width: 60px;
+  height: 60px;
   border-radius: 30px;
   position: relative;
   cursor: pointer;
@@ -81,13 +83,14 @@
 }
 
 .lang-button {
+  position: relative;
   text-transform: uppercase;
   background: none;
   color: var(--primary);
   font-size: 1.3em;
   padding: 4px;
   border: none;
-  top: -50px !important;
+  top: 0px !important;
 }
 
 .navbar-icons {
@@ -143,6 +146,7 @@
 
 
 .profilevist {
+  position: absolute;
   box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
@@ -150,13 +154,27 @@
   z-index: 1;
   align-items: center;
   position: absolute;
-  right: 10px;
-  top: 3.55vw;
+  right: 20px;
+  top: 80px;
   color: white;
   background: var(--primary);
   transition: all 0.3s;
   border-radius: 9px;
   border: 1px solid white;
+  margin-right: 0px !important;
+}
+
+.profilevist:before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: #fff;
+  border: 3px solid;
+  border-radius: 0px 0px 30px 0px;
+  opacity: 0.4;
+  width: 20px;
+  height: 20px;
 }
 
 .profilevist h2 {
@@ -164,10 +182,9 @@
   padding: 10px;
 }
 .profilevist-closed {
-  right: 0;
+  top: 70px;
   opacity: 0;
   pointer-events: none;
-  transition: none;
 }
 .navbar-w-button{
   left:0px !important;
@@ -193,10 +210,10 @@
   transition: all .3s;
   border: none;
   cursor: pointer;
-  width: 190px;
-  height: 50px;
-  box-shadow: var(--dark) 5px 5px;
-  border-radius: 0 10px 10px 10px;
+  width: 11vw;
+  height: 2.7vw;
+  box-shadow: var(--box-shadow);
+  border-radius: 3px 10px 10px 10px;
 }
 
 
@@ -221,7 +238,7 @@
   background-color: white;
   border: 1px solid var(--primary);
   color: var(--primary);
-  border-radius: 10px 10px 0px 10px;
+  border-radius: 10px 10px 3px 10px;
 }
 
 
@@ -237,7 +254,8 @@
     border-bottom: 1px solid var(--primary);
     position: absolute;
     top: 80px;
-    z-index: 1000;
+    left: 0px;
+    z-index: 100 !important;
     transform: translateX(-20px);
     opacity: 0;
     padding: 20px 0;
@@ -316,8 +334,8 @@
   }
 
   .menu-close {
-    color: var(--primary);
-    font-size: 2rem;
+    color: var(--primary) !important;
+    font-size: 3rem;
   }
 
   .nav-home {

@@ -36,14 +36,34 @@ exports.getAdminbyEmail = async (req, res) => {
 };
 
 exports.getProfile = async (req, res) => {
-  const email = req.query.email;
+  const idType = req.params.param;
+  const id = req.params.value;
+
   try {
-      let adminaccount = await AdminAccount.findOne({
+    let adminaccount;
+    if (idType === 'email') {
+      adminaccount = await AdminAccount.findOne({
         where: {
-          email: email,
+          email: id,
         },
       });
-      return res.send(adminaccount);
+    } else if (idType === 'adminid') {
+      adminaccount = await AdminAccount.findOne({
+        where: {
+          adminid: id,
+        },
+      });
+    } else {
+      return res.status(400).send({
+        message: `Invalid id type: ${idType}`,
+      });
+    }
+    if (!adminaccount) {
+      return res.status(404).send({
+        message: `Admin account with ${idType} '${id}' not found`,
+      });
+    }
+    return res.send(adminaccount);
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,
@@ -69,7 +89,7 @@ exports.getName = async (req, res) => {
 
 
 exports.updateProfile = async (req, res) => {
-  const { email, followers, picture, bannerPath, likedSims, downloadedSims } = req.body;
+  const { email, followers, picture, bannerPath, likedSims, downloadedSims, following } = req.body;
 
   let adminaccount = await AdminAccount.findOne({
     where: {
@@ -98,6 +118,9 @@ exports.updateProfile = async (req, res) => {
     }
     if (downloadedSims) {
       adminaccount.downloadedSims = downloadedSims;
+    }
+    if (following) {
+      adminaccount.following = following;
     }
     adminaccount.save();
     return res.send({

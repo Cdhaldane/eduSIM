@@ -93,9 +93,9 @@ const SimulationTable = (props) => {
 
 
   const history = useHistory();
-
-  function handleTdClick() {
-    history.push('/profile');
+  function handleTdClick(simulation) {
+    console.log(simulation)
+    history.push('/profile/' + simulation.createdby_adminid);
   }
 
   useEffect(() => {
@@ -142,7 +142,7 @@ const SimulationTable = (props) => {
               }
               />{simulation.gameinstance_name}</td>
               <td>{simulation.createdAt.split("T")[0]}</td>
-              <td onClick={handleTdClick}>{simulation.name}</td>
+              <td onClick={() => handleTdClick(simulation)}>{simulation.name}</td>
               <td>{simulation.downloads || 0} </td>
               <td>{simulation.likes || 0}</td>
               <td>

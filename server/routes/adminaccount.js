@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/getAdminbyEmail/:email/:name', adminaccount.getAdminbyEmail);
 
-router.get('/getProfile/:email', adminaccount.getProfile);
+router.get('/getProfile/:param(email|adminid)?/:value', adminaccount.getProfile);
 
 router.get('/getName/:adminid', adminaccount.getName);
 

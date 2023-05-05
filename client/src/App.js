@@ -104,7 +104,7 @@ const App = (props) => {
                 <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
                 <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
                 <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
-                <ProtectedRoute path="/profile" render={(props) => <Profile {...props} />} />
+                <ProtectedRoute path="/profile/:adminid" render={(props) => <Profile {...props} />} />
                 <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
                 <ProtectedRoute path="/join" render={(props) =>
                   <Join

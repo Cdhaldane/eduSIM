@@ -7,7 +7,6 @@
   justify-content: center;
   width: 60%;
   max-width: 900px;
-  font-family: 'Raleway';
   font-size: 1rem;
   position: relative;
   z-index: 20000;
@@ -81,7 +80,6 @@
 
 .modal-title {
   font-size: 2rem;
-  font-weight: bold;
   text-align: left;
   width: 100%;
 }
@@ -184,7 +182,6 @@
   width: 700px;
   height: 100px;
   color: black;
-  font-family: 'Raleway';
   font-size: 2.0rem;
 }
 
@@ -199,7 +196,6 @@
   border: none;
   padding: 4px;
   outline: none;
-  font-family: 'Raleway';
   font-size: 2.0rem;
   border: solid 2px black;
 }
@@ -306,7 +302,7 @@
     width: 700px;
     height: 100px;
     color: black;
-    font-family: 'Raleway';
+
     font-size: 1.3rem;
   }
   #boxtabs input, #boxtabs textarea {
@@ -320,7 +316,7 @@
     border: none;
     padding: 4px;
     outline: none;
-    font-family: 'Raleway';
+
     font-size: 1.3rem;
     border: solid 2px black;
   }

@@ -50,7 +50,7 @@ const Welcome = (props) => {
             </Trans>
             <form onSubmit={joinGame} className="welcome-join">
               <input type="text" className="textbox" placeholder={t("home.roomCode")} value={code} onChange={(e) => setCode(e.target.value)} />
-              <input type="submit" value={t("home.join")} />
+              <input type="submit" className="welcome-submit" value={t("home.join")} />
             </form>
         </div>
          <div className='welcome-img'>

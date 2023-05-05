@@ -1,6 +1,7 @@
 .simtable-container{
   max-height: 70vh;
   overflow-y: scroll;
+  transition: all 1s ease-in-out;
 }
 .simtable-container::-webkit-scrollbar {
   width: 3px;  /* Remove scrollbar space */
@@ -23,6 +24,11 @@
     text-align: left;
     vertical-align: middle;
     border-top: 1px solid #dee2e6;
+  }
+
+  .simtable-container td:nth-child(3):hover {
+    cursor: pointer;
+    font-weight: 600;
   }
   
   .simtable-container th {
@@ -49,7 +55,7 @@
     transition: background-color 0.2s ease-in-out;
   
     &:hover {
-      background-color: #e9ecef;
+      background-color: #862020;
     }
   
     & > svg {
@@ -74,7 +80,7 @@
     transition: background-color 0.2s ease-in-out;
   
     &:hover {
-      background-color: #0069d9;
+      background-color: #0452a7;
     }
   
     & > svg {
@@ -126,15 +132,6 @@
     vertical-align: middle;
     margin-right: 6px;
 }
-.card-background  {
-    width: 100% !important;
-    height: 60% !important;
-    border-radius: 0px !important;
-    margin-top: 0px !important;
-    position: absolute;
-    top: 0px;
-
-}
 
 .usersearch-container {
   position: absolute;
@@ -143,7 +140,7 @@
   flex-direction: column;
   align-items: center;
   margin: 2rem;
-  z-index: 10000;
+  z-index: 0;
 }
 .card-banner {
   position: absolute;
@@ -171,29 +168,10 @@
 
 
 
-.card button {
-  font-size: 1.5rem;
-  background-color: var(--red);
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.card button:hover {
-  background-color:var(--green);
-}
-
 .profile-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-}
-
-.activity.sepcial .index {
-  min-width: 120px !important;
 }
 
 #table-sort{

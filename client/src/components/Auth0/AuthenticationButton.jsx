@@ -24,9 +24,7 @@ const AuthenticationButton = (props) => {
           email: user.email,
           picture: user.picture,
         }
-        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body).then((res) => {
-          console.log(res.data)
-        })
+        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
       }).catch(error => {
         console.error(error);
       });

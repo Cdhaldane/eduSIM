@@ -32,7 +32,7 @@ function UserSearch(props) {
       <div className="usersearch-container">
         <div className="input-container">
           <input type="text" value={searchTerm} onChange={handleInputChange} placeholder="Users' Email" />
-          <button onClick={handleSearch}>Search</button>
+          <button style={props.style} onClick={handleSearch}>Search</button>
         </div>
         {loading && <p>Loading...</p>}
       </div>
