@@ -231,7 +231,7 @@ const Interaction = (props) => {
       )}
       <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
         <Plus className="icon plus"/>
-        ADD NEW CONDITION
+        ADD NEW INTERACTION
       </div>
 
       {showConAdd && (

@@ -372,6 +372,7 @@ const Sidebar = (props) => {
           random={props.random}
           delInts={props.delInts}
           shapes={props.shapes}
+          allShapes={props.allShapes}
           close={() => closePerformance()}
           customObjects={props.customObjects}
           savedObjects={props.savedObjects}

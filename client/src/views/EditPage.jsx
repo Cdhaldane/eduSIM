@@ -52,6 +52,7 @@ const EditPage = (props) => {
   const [ints, setInts] = useState([]);
   const [page, setPage] = useState(1);
   const [shapes, setShapes] = useState([])
+  const [allShapes, setAllShapes] = useState([])
 
 
   if (props.location.img) {
@@ -117,6 +118,9 @@ const EditPage = (props) => {
   const handleSetShapes = (data) => {
       setShapes(data.inputs)
   }
+  const handleSetAllShapes = (data) => {
+    setAllShapes(data)
+  }
 
   return (
     <div className="editpage">
@@ -133,6 +137,7 @@ const EditPage = (props) => {
               cons={cons || {}}
               ints={ints || {}}
               shapes={shapes || {}}
+              allShapes={allShapes || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
               setVars={handleSetVars}
@@ -178,6 +183,7 @@ const EditPage = (props) => {
                 tasks={tasks || {}}
                 setTasks={setTasks}
                 setShapes={handleSetShapes}
+                setAllShapes={handleSetAllShapes}
                 setInts={setInts}
                 setVars={setVars}
                 setCons={setCons}

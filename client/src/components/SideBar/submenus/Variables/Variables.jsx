@@ -12,6 +12,7 @@ import Switch from "react-switch";
 import Variable from "./Variable.jsx"
 import Condition from "./Condition.jsx"
 import Interaction from "./Interaction.jsx"
+import Trigger  from "./Trigger.jsx";
 
 import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
@@ -95,7 +96,7 @@ const Variables = (props) => {
     if(tabs === "trigger")
       return (
         <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
-          <Triggers current={tabsEnviroment} {...props} />
+          <Trigger current={tabsEnviroment} {...props} />
         </div>
     )
   }

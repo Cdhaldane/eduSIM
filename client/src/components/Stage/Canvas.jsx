@@ -520,14 +520,18 @@ class Graphics extends Component {
     if (this.state.savedStateLoaded) {
       const prevMainShapes = [];
       const currentMainShapes = [];
+      let allShapes = [];
       for (let i = 0; i < this.savedObjects.length; i++) {
         const type = this.savedObjects[i];
         prevMainShapes.push(prevState[type]);
         currentMainShapes.push(this.state[type]);
+        allShapes = allShapes.concat(this.state[type]);
       }
+      
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
+            this.props.setAllShapes(allShapes);
             // If text shouldn't update, don't append to history
             if (this.state.shouldTextUpdate) {
 

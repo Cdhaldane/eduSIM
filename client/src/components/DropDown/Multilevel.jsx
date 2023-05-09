@@ -122,7 +122,7 @@ const MultiLevel = (props) => {
     };
 
     return (
-        <div className="multi-container">
+        <div className={props.className ? props.className : "multi-container"}>
             <Select
                 maxMenuHeight={1050}
                 styles={customStyles}

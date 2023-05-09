@@ -980,7 +980,7 @@
   margin-right: 10px;
   position: relative;
   transform: translate(0px, 5px);
-  
+  width: 50px !important;
 }
 .vars input{
   background-color: var(--green);
@@ -1054,6 +1054,7 @@
   justify-content: center;
   position: relative;
   left: -30px;
+  margin-bottom: 50px;
 }
 .ints-con h2{
   position: relative;
@@ -1112,6 +1113,36 @@
 }
 .multi-container input {
   background-color: red;
+}
+
+.trigger-name{
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+.trigger-name h1{
+  margin-right: 10px !important;
+  margin-left: 0px;
+  padding: 20px 0px;
+}
+
+.trigger-multi {
+  height: auto;
+  width: 50%;
+  padding: 0px;
+  font-size: 0.95em;
+  border: 1px solid var(--primary);
+  opacity: 9;
+  margin-bottom: 3px;
+  border-radius: 5px;
+}
+
+.trigger-touch {
+  vertical-align: bottom !important;
+  margin-left: 20px;
+  padding: 20px 0px;
 }
 
 

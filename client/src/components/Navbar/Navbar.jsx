@@ -98,8 +98,9 @@ const NavBar = (props) => {
 
         {isAuthenticated ? (
           <img
+            referrerpolicy="no-referrer"
             className={menuOpen ? "nav-pic square" : "nav-pic"}
-            src={user.picture}
+            src={user ? user.picture : ""}
             alt={t("alt.profile")}
             onClick={toggleContextMenu}
           />
