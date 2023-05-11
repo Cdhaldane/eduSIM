@@ -28,25 +28,7 @@ const CreateArea = (props) => {
   const fileInputRef = useRef();
   const alertContext = useAlertContext();
 
-  const handleClickOutside = useCallback(
-    (e) => {
-      if (
-        detailsArea.current &&
-        !(
-          detailsArea.current.contains(e.target) ||
-          (imageArea.current && imageArea.current.contains(e.target))
-        )
-      ) {
-        props.close();
-      }
-    },
-    [props]
-  );
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [handleClickOutside]);
+  
 
   const uploadImage = async (event) => {
     event.preventDefault();
@@ -182,8 +164,8 @@ const CreateArea = (props) => {
   }, []);
 
   return (
-    <div className="area">
-      <form ref={detailsArea} className="form-input">
+    <div className="area" onClick={() => props.close()}>
+      <form ref={detailsArea} className="form-input" onClick={e => e.stopPropagation()}>
       <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
         <div>
           {t("modal.chooseGame")}
@@ -265,7 +247,7 @@ const CreateArea = (props) => {
         </div>
       </form>
 
-      <form ref={imageArea} className={`form-imgs ${moreImages ? 'visible' : ''}`}>
+      <form ref={imageArea} className={`form-imgs ${moreImages ? 'visible' : ''}`} onClick={e => e.stopPropagation()}>
         {prevImages && 
           <div>
             {JSON.parse(prevImages).map((image, index) => (

@@ -8,7 +8,7 @@
   width: 100%;
   font-size: 1.5rem;
   position: relative;
-  z-index: 2;
+  z-index: 1;
   border: none;
 }
 
@@ -165,11 +165,14 @@
   opacity: 0;
   transform: translateY(-20px);
   transition: all 0.3s ease-in-out;
-
+  position: absolute;
+  top: -120px;
 }
 .form-imgs.visible {
   opacity: 1;
   transform: translateY(0);
+  position: relative;
+  top: 0px;
 }
 .form-imgs button {
   position: absolute;

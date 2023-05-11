@@ -98,7 +98,7 @@ const NavBar = (props) => {
 
         {isAuthenticated ? (
           <img
-            referrerpolicy="no-referrer"
+            referrerPolicy="no-referrer"
             className={menuOpen ? "nav-pic square" : "nav-pic"}
             src={user ? user.picture : ""}
             alt={t("alt.profile")}

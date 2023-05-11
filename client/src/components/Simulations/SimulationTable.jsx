@@ -133,7 +133,7 @@ const SimulationTable = (props) => {
         </thead>
         <tbody>
           {simulations.sort(sortSimulations).map((simulation) => (
-            <tr key={simulation.id}>
+            <tr key={simulation.gameinstance_name}>
               <td><Image
               cloudName="uottawaedusim"
               className="table-img"

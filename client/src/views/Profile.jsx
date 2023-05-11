@@ -57,7 +57,7 @@ const Card_component = (props) => {
 
   useEffect(() => {
     setImageSelected(props.user.bannerPath)
-  }, [props])
+  }, [props.user.bannerPath])
 
   const openWidget = (event) => {
     var myWidget = window.cloudinary.createUploadWidget(

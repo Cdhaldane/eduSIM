@@ -71,7 +71,7 @@ cardIcons.set("Jclubs", "🃛");
 cardIcons.set("Qclubs", "🃝");
 cardIcons.set("Kclubs", "🃞");
 
-const Card = forwardRef(({ image, text, value, suit, style, onMouseDown, onMouseMove, onMouseUp, flipped, onContextMenu, isFlipping }) => {
+const Card = forwardRef(({ image, text, value, suit, style, onMouseDown, onMouseMove, onMouseUp, flipped, onContextMenu, isFlipping }, ref) => {
   const icon = cardIcons.get(value + suit);
 
   const cardContent = (

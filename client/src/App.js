@@ -80,7 +80,7 @@ const App = (props) => {
 
   const { isLoading } = props.auth0;
   if (isLoading) return <Loading />;
-  console.log(window.location.pathname)
+
   return (
     <div className="full-page-wrapper" data-theme={theme}>
       <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>

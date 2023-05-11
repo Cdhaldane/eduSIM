@@ -91,7 +91,7 @@ const Dashboard = (props) => {
           console.error(error);
         });
     
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getProfile/:email', {params: {email: user.email}})
+      axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${user.email}`)
         .then((res) => {
           setUsers(res.data)
           setLoading(false);
@@ -205,9 +205,7 @@ const Dashboard = (props) => {
   }
 
   return (
-    <div className="dashboard-wrapper" style={{
-      height: gamedata?.length * 190 + 250,
-    }}>
+    <div className="dashboard-wrapper">
     <div className="dashboard disable-dbl-tap-zoom">
       <div className="page-margin dashboard-buttons">
         <button className="d-button" onClick={toggleModal}>
@@ -224,7 +222,6 @@ const Dashboard = (props) => {
         </div>
         <Modal
           isOpen={showNote}
-          hide={() => setShowNote(false)}
           onRequestClose={toggleModal}
           contentLabel="My dialog"
           className="createmodalarea"

@@ -146,6 +146,7 @@
   position: absolute;
   right: 20px;
   translate: 0px -60px;
+  z-index: 1;
 }
 
 .input-container {

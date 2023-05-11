@@ -77,25 +77,25 @@ const Variables = (props) => {
   const populateTab = () => {
     if(tabs === "variable"){
       return (
-        <div className="condition-input-container" index={tabsEnviroment} style={{maxHeight: height - 130}} id={update}>
+        <div className="condition-input-container" index={tabsEnviroment} style={{maxHeight: height - 130}}>
           <Variable current={tabsEnviroment} {...props} />
         </div>
       )}
     if(tabs === "condition")
     return (
-        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
+        <div className="condition-input-container" style={{maxHeight: height - 130}}>
           <Condition current={tabsEnviroment} {...props} update={handleUpdate} />
         </div>
   )
     if(tabs === "interaction")
       return (
-        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
+        <div className="condition-input-container" style={{maxHeight: height - 130}}>
           <Interaction current={tabsEnviroment} {...props} />
         </div>
     )
     if(tabs === "trigger")
       return (
-        <div className="condition-input-container" style={{maxHeight: height - 130}} id={update}>
+        <div className="condition-input-container" style={{maxHeight: height - 130}}>
           <Trigger current={tabsEnviroment} {...props} />
         </div>
     )
