@@ -156,6 +156,48 @@ const Input = forwardRef((props, ref) => {
     }
   }
 
+  const handleTriggers = () => {
+    if(!props.editMode){
+      if(props.triggers){
+        for(let i = 0; i < props.triggers.length; i++){
+          if(props.triggers[i][0] === props.varName){
+            let value = props.triggers[i][1]
+            let operator = props.triggers[i][2]
+            let value2 = props.triggers[i][3]
+            let result = true;
+            switch (operator) {
+              case '==':
+                if(value !== value2) result = false;
+                break;
+              case '!=':
+                if(value === value2) result = false;
+                break;
+              case '>':
+                if(value <= value2) result = false;
+                break;
+              case '<':
+                if(value >= value2) result = false;
+                break;
+              case '>=':
+                if(value < value2) result = false;
+                break;
+              case '<=':
+                if(value > value2) result = false;
+                break;
+              default:
+                result = false;
+            }
+            if(result){
+              let variable = props.triggers[i][4]
+              let value = props.triggers[i][5]
+              handleChangeValue(value, variable)
+            }
+          }
+        }
+      }
+    }
+  }
+
   useEffect(()=> {
     if(!props.editMode)
     for(let i = 0; i < props.conditions.length; i++){

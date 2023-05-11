@@ -1,5 +1,5 @@
 import React, { Suspense, createContext, useState, useEffect } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useLocation } from "react-router-dom";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
 import FooterBar from "./components/Footer";
@@ -48,6 +48,7 @@ const App = (props) => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   //const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   const [theme, setTheme] = useLocalStorage('light');
+  let location = useLocation();
 
 
   const updateSetting = (key, val) => {
@@ -75,8 +76,11 @@ const App = (props) => {
     document.documentElement.className = localSettings.notransition ? 'notransition' : '';
   }, [localSettings]);
 
+
+
   const { isLoading } = props.auth0;
   if (isLoading) return <Loading />;
+  console.log(window.location.pathname)
   return (
     <div className="full-page-wrapper" data-theme={theme}>
       <SettingsContext.Provider value={{ updateSetting, settings: localSettings || {} }}>

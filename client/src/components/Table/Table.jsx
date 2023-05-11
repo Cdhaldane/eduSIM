@@ -116,7 +116,7 @@ const Table = (props) => {
     }).catch(error => {
       console.error(error);
     });
-  }, [props]);
+  }, [props.gameid]);
 
   // Add change
   const handleAddFormChange = (event) => {

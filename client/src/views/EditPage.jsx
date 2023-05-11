@@ -50,6 +50,7 @@ const EditPage = (props) => {
   const [vars, setVars] = useState([]);
   const [cons, setCons] = useState([]);
   const [ints, setInts] = useState([]);
+  const [trigs, setTrigs] = useState([]);
   const [page, setPage] = useState(1);
   const [shapes, setShapes] = useState([])
   const [allShapes, setAllShapes] = useState([])
@@ -78,13 +79,13 @@ const EditPage = (props) => {
   const handleSetTasks = (f) => {
     if (typeof f === 'function') {
       setTasks(old => {
-        let n = {...old};
+        let n = { ...old };
         n[page] = f(n[page] || []);
         return n;
       });
     } else {
       setTasks(old => {
-        let n = {...old};
+        let n = { ...old };
         n[page] = f;
         return n;
       });
@@ -92,31 +93,35 @@ const EditPage = (props) => {
   }
 
   const handleSetVars = (data) => {
-      setVars(old => [...old, data])
+    setVars(old => [...old, data])
   }
 
   const handleEditVars = (data) => {
-      setVars(data)
+    setVars(data)
   }
 
   const handleDeleteVars = (data) => {
-      setVars(data)
+    setVars(data)
   }
 
   const handleDeleteCons = (data) => {
-      setCons(data)
+    setCons(data)
   }
   const handleSetCons = (data) => {
-      setCons(data)
+    setCons(data)
   }
   const handleDeleteInts = (data) => {
-      setInts(data)
+    setInts(data)
   }
   const handleSetInts = (data) => {
-      setInts(data)
+    setInts(data)
+  }
+  const handleSetTrigs = (data) => {
+    console.log(data)
+    setTrigs(data)
   }
   const handleSetShapes = (data) => {
-      setShapes(data.inputs)
+    setShapes(data.inputs)
   }
   const handleSetAllShapes = (data) => {
     setAllShapes(data)
@@ -136,18 +141,20 @@ const EditPage = (props) => {
               variables={vars || {}}
               cons={cons || {}}
               ints={ints || {}}
+              trigs={trigs || {}}
               shapes={shapes || {}}
               allShapes={allShapes || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
               setVars={handleSetVars}
+              setTrigs={handleSetTrigs}
               setCons={handleSetCons}
               setInts={handleSetInts}
               editVars={handleEditVars}
               delVars={handleDeleteVars}
               delCons={handleDeleteCons}
               delInts={handleDeleteInts}
-              random = {props.random}
+              random={props.random}
               customObjects={props.customObjects}
               savedObjects={props.savedObjects}
               loadObjects={props.loadObjects}
@@ -181,7 +188,9 @@ const EditPage = (props) => {
                 cons={cons || {}}
                 ints={ints || {}}
                 tasks={tasks || {}}
+                trigs={trigs || {}}
                 setTasks={setTasks}
+                setTrigs={setTrigs}
                 setShapes={handleSetShapes}
                 setAllShapes={handleSetAllShapes}
                 setInts={setInts}

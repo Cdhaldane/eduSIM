@@ -780,24 +780,19 @@
 }
 
 .nob{
+  width: auto;
+  height: auto;
   background: none;
   border: none;
   position: relative;
-  width: 0px;
-  height: 0px;
 }
 .specialt {
   position: relative;
-  top: 15px !important;
-  left: 10px;
   width: 40px !important;
   height: 40px !important;
   fill: var(--success) !important;
 }
 .specialer {
-  position: relative;
-  top: 15px !important;
-  left: 10px;
   width: 35px !important;
   height: 35px !important;
   fill: var(--red) !important;
@@ -808,13 +803,24 @@
 .box{
   width: 100px;
   height: 70px;
-  margin-left: 20px;
   border: 1px dashed var(--text-color);
   border-radius: 9px;
   padding: 5px;
 }
+
 .select{
   width: 60px;
+}
+.select select{
+  position: relative;
+  font-size: 1.0em !important;
+  font-weight: lighter;
+  border: 1px solid var(--dark);
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  text-align: left;
+  padding: 20px 5px;
 }
 
 .box input {
@@ -823,10 +829,6 @@
   left: 0px;
   border: 1px solid var(--primary);
   border-radius: 9px;
-}
-.var-box {
-  position: relative;
-  top: -20px;
 }
 .var-val{
   position: relative;
@@ -839,11 +841,15 @@
   border: 1px solid lightgrey !important;
   color: grey !important;
 }
+.var-box {
+  width: 110px;
+  height: 100%;
+  padding-bottom: 20px;
+}
 .var-box button{
   position: relative;
   width: 50px;
   top: 17px;
-  left: 20px;
   border-radius: 9px 0px 0px 0px;
   border: 1px solid black;
   z-index: 9999999 !important;
@@ -857,7 +863,10 @@
   z-index: 999999 !important;
 }
 .incr {
-  margin-right: 20px !important;
+
+}
+.int-special {
+  padding: auto;
 }
 .int-special select{
   font-size: 1em !important;
@@ -885,10 +894,11 @@
 }
 
 .smaller-text {
-  margin-right:-10px !important;
+
 }
 .fixer{
   display: flex;
+  flex-direction: row;
 }
 
 .condition-input-container{
@@ -918,11 +928,19 @@
 }
 
 .condition-inputs i{
+  width: 20px;
   font-size: 1.4em !important;
-  position: sticky;
-  margin-right: -27px;
-  transform: translate(-10px, -8px);
+  transform: translate(-20px, 0px);
 }
+
+.cons-condition{
+  display: flex;
+  overflow-wrap: break-word;
+  margin-left: 10px;
+  margin-right: 10px;
+
+}
+
 
 .if{
   display: flex;
@@ -1051,31 +1069,32 @@
 .ints-con{
   display: flex;
   margin: auto;
-  justify-content: center;
+  justify-content: space-evenly;
   position: relative;
-  left: -30px;
   margin-bottom: 50px;
+
+ 
+  align-items: center;
 }
 .ints-con h2{
-  position: relative;
-  top: 20px;
-  margin-right: 10px !important;
-  margin-left: 0px;
+  padding: 0px 10px;
 }
 .ints-name{
   display: flex;
   justify-content: space-around;
   font-size: 1.1em;
   margin-bottom: 20px;
+  align-items: center;
 }
 .ints-name select {
-  height: auto;
+  height: 50px;
   width: 50%;
   padding: 1px;
   font-size: 0.95em;
   border: 1px solid var(--primary);
   opacity: 9;
   margin-bottom: 3px;
+  border-radius: 5px;
 }
 .ints-area{
   font-size: 1.0em !important;
@@ -1115,6 +1134,25 @@
   background-color: red;
 }
 
+.trigger-container{
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 10px;
+  align-items: center;
+}
+
+.trigger-box select{
+  font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  font-size: 15px;
+  width: max-content;
+  height:100%;
+  top: 0 !important;
+  left: 0 !important;
+  padding: 20px 0px;
+  margin: 5px;
+}
+
 .trigger-name{
   display: flex;
   justify-content: space-around;
@@ -1140,9 +1178,9 @@
 }
 
 .trigger-touch {
-  vertical-align: bottom !important;
-  margin-left: 20px;
-  padding: 20px 0px;
+  /* vertical-align: bottom !important; */
+  /* margin-left: 20px;
+  padding: 20px 0px; */
 }
 
 

@@ -27,7 +27,7 @@
   height: 35px;
 }
 
-.editPollQuestionBox td>input, select {
+.editPollQuestionBox select {
   font-family: "Montserrat", sans-serif;
   border-radius: 5px;
   font-size: 20px;
@@ -36,6 +36,17 @@
   top: 0 !important;
   left: 0 !important;
 }
+
+.pollEditQuestionInput {
+  font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 100%;
+  height:100%;
+  top: 0 !important;
+  left: 0 !important;
+}
+
 
 .editPollQuestionBox td>input::placeholder {
   color: rgb(136, 136, 136);
@@ -71,9 +82,11 @@
   text-align: left;
 }
 
-.pollsEditorRequiredCheck {
+.pollsEditorRequiredCheck input {
   transform: translateY(2px);
-  width: 35px;
+  width: 30px;
+  height: 30px;
+
 }
 
 .editPollStar {

@@ -327,6 +327,9 @@ class Graphics extends Component {
         if (this.props.setInts) {
           this.props.setInts(objects.ints || {});
         }
+        if (this.props.setTrigs) {
+          this.props.setTrigs(objects.trigs || {});
+        }
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }
@@ -686,6 +689,7 @@ class Graphics extends Component {
     storedObj.variables = this.props.variables;
     storedObj.cons = this.props.cons;
     storedObj.ints = this.props.ints;
+    storedObj.trigs = this.props.trigs;
     storedObj.notes = this.props.notes;
     this.setState({
       saved: storedObj

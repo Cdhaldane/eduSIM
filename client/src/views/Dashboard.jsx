@@ -95,11 +95,13 @@ const Dashboard = (props) => {
         .then((res) => {
           setUsers(res.data)
           setLoading(false);
-        })
+        }).catch(error => {
+          console.error(error);
+        });
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [user]);
 
   if (!isDataLoaded || isLoading) {
     return <div className="App"></div>;

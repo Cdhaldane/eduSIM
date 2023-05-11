@@ -198,7 +198,7 @@ const ContextMenu = (props) => {
           )}
           {!props.addGroup && !props.unGroup &&
             !props.selectedShapeName.includes("richText") && (
-              <li onClick={handleEdit}>{t(`edit.${editTitle}Edit`)}</li>
+              <li onClick={handleEdit}>{"Edit " + props.selectedShapeName}</li>
             )}
           {props.addGroup && (
             <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>

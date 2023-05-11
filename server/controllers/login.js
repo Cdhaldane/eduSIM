@@ -36,8 +36,8 @@ exports.getAdminbyEmail = async (req, res) => {
 };
 
 exports.getProfile = async (req, res) => {
-  const idType = req.params.param;
-  const id = req.params.value;
+  const idType = Object.keys(req.query).toString();
+  const id = Object.values(req.query).toString();
 
   try {
     let adminaccount;

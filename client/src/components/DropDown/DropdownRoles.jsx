@@ -105,7 +105,7 @@ const DropdownRoles = (props) => {
   useEffect(() => {
     updateRolesData();
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [props.gameid]);
 
   useEffect(() => {
     calcHeight(menuElem.current?.firstChild);

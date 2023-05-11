@@ -49,7 +49,7 @@ const DropdownEditObject = (props) => {
   const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
 
   const calcTopOffset = () => {
-    const thresholdPx = props.title === "Edit Shape" ? 215 : 165;
+    const thresholdPx = props.title === "Edit Shap" ? 215 : 165;
     if (props.top < thresholdPx) {
       return thresholdPx - props.top;
     }
@@ -524,7 +524,7 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{t("edit.shapeEdit")}</h1>
+              <h1>{objState?.id}</h1>
               {!((objState?.id).includes("videos") || (objState?.id).includes("audios")) && (
                 <>
                   {!props.selectedShapeName.includes("lines") && (

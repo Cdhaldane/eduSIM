@@ -8,6 +8,7 @@ import { OrderedSet } from "immutable";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
+
 import {
   EditorState,
   SelectionState,
@@ -548,19 +549,19 @@ class Graphics extends Component {
       selectrole: true
     })
     this.setState({
-      nextLevel: this.state.level+1
+      nextLevel: this.state.level + 1
     })
     try {
       const objects = JSON.parse(this.props.gameinstance.game_parameters);
       this.setState({
         pageNumber: objects.numberOfPages
       })
-        this.savedObjects.forEach((object) => {
-              this.setState({
-                [object]: objects[object] || []
-              });   
+      this.savedObjects.forEach((object) => {
+        this.setState({
+          [object]: objects[object] || []
         });
-    } catch (e) {console.log(e)};
+      });
+    } catch (e) { console.log(e) };
 
     if (localStorage.userInfo) {
       if (JSON.parse(localStorage.userInfo).gameid == localStorage.gameid) {
@@ -604,7 +605,7 @@ class Graphics extends Component {
   });
 
   handleVariable = (name, value) => {
-    if(this.props.variables[name] !== value){
+    if (this.props.variables[name] !== value) {
       this.props.socket.emit("varChange", {
         name, value
       })
@@ -629,7 +630,7 @@ class Graphics extends Component {
     this.setState({
       end: false
     })
-   
+
   }
 
   toggleModal = () => {
@@ -653,6 +654,41 @@ class Graphics extends Component {
       overlayOpenIndex: index
     });
   }
+
+  handleCollisions = () => {
+    this.props.trigs.map((trigger) => {
+      let shapeName1 = trigger[0];
+      let shapeName2 = trigger[1];
+      let variable = trigger[2];
+      let shape1, shape2;
+      let shapes = this.refs.graphicStage.getStage().children[0].children.map(child => child);
+      shapes.map(shape => {
+        if (shape.attrs.id === shapeName1) {
+          shape1 = shape;
+        } else if (shape.attrs.id === shapeName2) {
+          shape2 = shape;
+        }
+      });
+      if (shape1 && shape2) {
+        let shape1Bounds = shape1.getClientRect();
+        let shape2Bounds = shape2.getClientRect();
+
+        if (
+          shape1Bounds.x + shape1Bounds.width >= shape2Bounds.x &&
+          shape1Bounds.x <= shape2Bounds.x + shape2Bounds.width &&
+          shape1Bounds.y + shape1Bounds.height >= shape2Bounds.y &&
+          shape1Bounds.y <= shape2Bounds.y + shape2Bounds.height
+        ) {
+          this.props.socket.emit("varChange", {
+            name: variable, value: true
+          })
+        }
+      }
+
+      return false;
+    })
+  }
+
 
   contextMenuEventShortcuts = (event) => {
     const x = 88,
@@ -723,7 +759,7 @@ class Graphics extends Component {
                     }}
                   >
                     {!this.state.overlayImage.length ? (
-                      <i><Layers className="icon overlay-icon"/></i>
+                      <i><Layers className="icon overlay-icon" /></i>
                     ) : (
                       <Image
                         className="overlayIcons"
@@ -772,6 +808,7 @@ class Graphics extends Component {
             height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
+            onDragMove={this.handleCollisions}
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>
@@ -841,12 +878,12 @@ class Graphics extends Component {
                 ? <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 1 })}>
-                <i><Up className="icon chevrons"/></i>
+                  <i><Up className="icon chevrons" /></i>
                 </button>
                 : <button
                   className="personalAreaToggle"
                   onClick={() => this.setState({ personalAreaOpen: 0 })}>
-                <i><Down className="icon chevrons"/></i>
+                  <i><Down className="icon chevrons" /></i>
                 </button>
               }
             </div>
@@ -855,7 +892,7 @@ class Graphics extends Component {
 
         <EndScreen open={this.state.end || this.props.isEnd}>
           <p>{this.props.t("game.thanksForJoining")}</p>
-          {this.props.freeAdvance &&  (
+          {this.props.freeAdvance && (
             <button onClick={() => this.handleRestart()}>{this.props.t("game.resetSimulation")}</button>
           )}
         </EndScreen>

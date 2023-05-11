@@ -118,7 +118,7 @@ const Sidebar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if ((!sidebarRef.current.contains(e.target) || backdropRef.current.contains(e.target)) &&
+    if ((!sidebarRef.current?.contains(e.target) || backdropRef.current.contains(e.target)) &&
       !e.target.className.toString().includes('remove-whisper')) {
       // setExpanded(false);
       // setSubmenuVisible(false);
@@ -362,9 +362,11 @@ const Sidebar = (props) => {
           editpage={!props.game}
           cons={props.cons ? props.cons : []}
           ints={props.ints ? props.ints : []}
+          trigs={props.trigs ? props.trigs : []}
           gameVars={props.variables ? props.variables : []}
           setVars={props.setVars}
           setCons={props.setCons}
+          setTrigs={props.setTrigs}
           editVars={props.editVars}
           delVars={props.delVars}
           delCons={props.delCons}

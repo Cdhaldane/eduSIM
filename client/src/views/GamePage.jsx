@@ -192,6 +192,7 @@ const Game = (props) => {
   let cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
   let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
+  let trigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).trigs || [];
   if (roomStatus.variables)
     variables.push(roomStatus.variables)
   const flattenObject = (obj) => {
@@ -306,6 +307,7 @@ const Game = (props) => {
             variables={variables || {}}
             cons={cons || []}
             ints={ints || []}
+            trigs={trigs || []}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}
