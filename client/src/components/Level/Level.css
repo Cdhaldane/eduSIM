@@ -11,6 +11,11 @@
   z-index: 5;
 }
 
+.testerx {
+  position: absolute
+}
+
+
 .editModeTitleContainer {
   border-radius: 6px;
   margin-left: 1vw;

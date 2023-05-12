@@ -72,8 +72,8 @@ const EditPage = (props) => {
     document.body.style.zoom = "100%";
   }, [updater]);
 
-  const handlePage = (l) => {
-    setPage(l);
+  const handlePage = (level) => {
+    setPage(level);
   }
 
   const handleSetTasks = (f) => {
@@ -189,6 +189,7 @@ const EditPage = (props) => {
                 ints={ints || {}}
                 tasks={tasks || {}}
                 trigs={trigs || {}}
+                page={page}
                 setTasks={setTasks}
                 setTrigs={setTrigs}
                 setShapes={handleSetShapes}

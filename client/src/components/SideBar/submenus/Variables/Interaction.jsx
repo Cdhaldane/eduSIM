@@ -8,15 +8,18 @@ import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import MultiLevel from "../../../Dropdown/Multilevel";
+import { set } from "immutable";
 
 
 const Interaction = (props) => {
+  console.log(props)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
   const [check, setCheck] = useState('');
   const [isCheck, setIsCheck] = useState(false);
   const [isVCheck, setIsVCheck] = useState(false);
+  const [isPCheck, setIsPCheck] = useState(false);
   const [shapes, setShapes] = useState()
   const start = props.gameVars[0] ? (Object.keys(props.gameVars[0])).toString() : ''
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
@@ -79,6 +82,19 @@ const Interaction = (props) => {
           </div>
         </div>)
       }
+      if(ints[i][6] === 'page'){
+        list.push(<div className="condition-inputs">
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
+          <div className="ints-container">
+            <div className={"if"}>
+              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
+            </div>
+            <div className={"then"}>
+              <h1>Go to page</h1><h2>{ints[i][5]}</h2>
+            </div>
+          </div>
+        </div>)
+      }
       else {
         list.push(<div className="condition-inputs">
           <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
@@ -109,6 +125,19 @@ const Interaction = (props) => {
             <div className={"then"}>
               <h1>Set</h1><h2>{ints[i][1]}</h2><h3>{ints[i][2]}</h3><h2>{ints[i][3]}</h2>
               <h3>{ints[i][4]}</h3><h2>{ints[i][5]}</h2>
+            </div>
+          </div>
+        </div>)
+      }
+      if(ints[i][6] === 'page'){
+        list.push(<div className="condition-inputs">
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
+          <div className="ints-container">
+            <div className={"if"}>
+              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
+            </div>
+            <div className={"then"}>
+              <h1>Go to page</h1><h2>{ints[i][5]}</h2>
             </div>
           </div>
         </div>)
@@ -168,10 +197,17 @@ const Interaction = (props) => {
     if (e.target.value === "incr") {
       setIsCheck(!isCheck)
       setIsVCheck(false)
+      setIsPCheck(false)
     }
     if (e.target.value === "var") {
       setIsVCheck(!isVCheck)
       setIsCheck(false)
+      setIsPCheck(false)
+    }
+    if (e.target.value === "page") {
+      setIsPCheck(!isPCheck)
+      setIsCheck(false)
+      setIsVCheck(false)
     }
     handleInteraction(6, e)
   }
@@ -218,6 +254,8 @@ const Interaction = (props) => {
     let out = e.target.value
     let input = interaction
     input[n] = out
+    console.log(input)
+    console.log(out)
     setInteraction(input)
   }
 
@@ -256,6 +294,8 @@ const Interaction = (props) => {
               <h1>Incremental</h1>
               <input type="checkbox" name="checkbox" value="var" onChange={(e) => handleCheck(e)} checked={isVCheck} />
               <h1>Variable</h1>
+              <input type="checkbox" name="checkbox" value="page" onChange={(e) => handleCheck(e)} checked={isPCheck} />
+              <h1>Page</h1>
             </div>
             {check === 'var' && (
               <div className={'ints-con'}>
@@ -304,6 +344,14 @@ const Interaction = (props) => {
 
                 {getSpecialBox(1, 3)}
 
+              </div>
+            )}
+            {check === 'page' && (
+              <div className={'ints-con'}>
+                <div className="int-page-con">
+                <h2 className="smaller-text">Go to page </h2>
+                <input className="int-page-box" onChange={(e) => handleInteraction(5, e)} type="text" placeholder="page" />
+                </div>
               </div>
             )}
           </div>

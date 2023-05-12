@@ -57,7 +57,7 @@
 }
 
 .notesim h1 {
-  text-align: center;
+
   font-size: 1.2rem;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -65,23 +65,20 @@
 
 .notesim-thumbnail {
   width: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .notesim-thumbnail h1 {
-  position: relative;
-  width: 60%;
-  top: 40px;
-  left: 140px;
-  text-align: left;
-  color: var(--dark);
+  padding-left: 10px;
+  width: 50%;
 }
-
 
 .notesim-thumbnail img {
   width: 120px;
   height: 100px;
   border-radius: 10px;
   object-fit: cover;
-  position: absolute;
   margin-left: .3vw;
   border: 1px solid var(--primary);
 }

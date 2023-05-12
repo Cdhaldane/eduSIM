@@ -234,6 +234,8 @@ const Sidebar = (props) => {
           refresh={props.refresh}
           variables={props.variables}
           handleLevel={props.handleLevel}
+          socket={props.socket}
+          level={props.level}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />

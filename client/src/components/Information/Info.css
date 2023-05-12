@@ -31,6 +31,7 @@
   border: 1px solid var(--primary);
   border-radius: 15px 15px 0px 0px;
   z-index: 2;
+  overflow: hidden !important;
   transition: none;
   background-image:
     repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
@@ -115,11 +116,13 @@
   position: absolute;
   left: 0px;
   top: 0px;
+  overflow: hidden !important;
 }
 
 #personalGameContainer {
   width: 100%;
   height: 100%;
+  border-radius: 15px;
 }
 
 @media screen and (orientation: portrait) {

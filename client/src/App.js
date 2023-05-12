@@ -1,5 +1,5 @@
 import React, { Suspense, createContext, useState, useEffect } from "react";
-import { Route, Switch, useLocation } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
 import FooterBar from "./components/Footer";
@@ -48,8 +48,6 @@ const App = (props) => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   //const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   const [theme, setTheme] = useLocalStorage('light');
-  let location = useLocation();
-
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');

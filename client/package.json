@@ -38,7 +38,7 @@
     "react-draggable-lists": "^1.0.1",
     "react-gravatar": "^2.6.3",
     "react-i18next": "^11.14.3",
-    "react-konva": "18.2.8",
+    "react-konva": "17.0.2-4",
     "react-modal": "^3.14.3",
     "react-player": "^2.10.0",
     "react-router-dom": "^5.2.0",

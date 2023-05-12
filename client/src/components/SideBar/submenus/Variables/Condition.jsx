@@ -243,7 +243,7 @@ const Condition = (props) => {
       <div className='var-box'>
         <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var' ? 'white' : "black" }} onClick={() => updateState('var', i)}>Var</button>
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
-        <div className="box">
+        <div className="box int-special">
           {box[i].state === 'var' ? (
             <Multilevel data={props.gameVars} handleChange={handleChange} x={x} y={n}/>
           ) : (
@@ -251,7 +251,7 @@ const Condition = (props) => {
               onChange={(e) => { condition[x][n] = e.target.value }}
               type="text"
               placeholder="value"
-              className="var-val"
+              className="int-box"
             />
           )}
 
@@ -274,7 +274,7 @@ const Condition = (props) => {
                 <Multilevel data={props.gameVars} handleChange={handleChange} x={i} y={0}/>   
               </div>
             </div>
-            <div className="box select">
+            <div className="box jequal select">
               <select onChange={(e) => { condition[i][1] = e.target.value }}>
                 <option value="=">=</option>
                 <option value="!=">!=</option>
@@ -288,7 +288,7 @@ const Condition = (props) => {
             <div className="fixer" >
               {eval("showAddition" + i) && (
                 <div className="fixer" >
-                  <div className="box select">
+                  <div className="box jequal select">
                     <select onChange={(e) => { condition[i][3] = e.target.value }}>
                       <option value="+">+</option>
                       <option value="-">-</option>
@@ -380,10 +380,10 @@ const Condition = (props) => {
             <div>
               {getSpecialBox(8, 2, 4)}
             </div>
-            <div className="fixer" >
+           
               {showAddition && (
-                <div className="fixer" >
-                  <div className="box select">
+                 <>
+                  <div className="box jequal select">
                     <select onChange={(e) => { condition[4][3] = e.target.value }}>
                       <option value="+">+</option>
                       <option value="-">-</option>
@@ -395,7 +395,7 @@ const Condition = (props) => {
                   <div>
                     {getSpecialBox(9, 4, 4)}
                   </div>
-                </div>
+                </>
               )}
               <button className="nob" onClick={() => handle2()}>
                 {!showAddition ? (
@@ -404,7 +404,7 @@ const Condition = (props) => {
                   <Line className="icon plus specialer" />
                 )}
               </button>
-            </div>
+         
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>

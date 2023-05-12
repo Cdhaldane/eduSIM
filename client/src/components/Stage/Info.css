@@ -9,6 +9,7 @@
   position: fixed;
   left: 100px;
   bottom: 75px;
+  overflow: hidden;
   transform: translate(0%, 100%);
   padding: 10px;
   background-color: rgba(110, 25, 25, 0);
@@ -20,6 +21,7 @@
 .info1 {
   width: calc(100% - 130px);
   height: calc(100% - 60px);
+  overflow: hidden;
   text-align: center;
   position: fixed;
   left: 100px;
@@ -27,7 +29,7 @@
   transform: translate(0%, 0%);
   padding: 10px;
   background-color: white;
-  box-shadow: 0 0 15px 0px rgba(0, 0, 0, 0.4);
+
   border: 1px solid var(--primary);
   border-radius: 15px 15px 0px 0px;
   z-index: 2;

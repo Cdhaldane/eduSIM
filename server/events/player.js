@@ -249,15 +249,23 @@ export default async (server, client, event, args) => {
       // player advanced a page in the simulation
       // update room state with new page index
       const { level } = args;
+      console.log(5)
+   
+      server.to(room).emit("userLevelUpdate", {
+        level
+      });
+    }
 
+    case "oneToPageSingle": {
+      // player advanced a page in the simulation
+      // update room state with new page index
+      const { level, id } = args;
+      console.log(args)
       const newStatus = await updateRoomStatus(room, {
         level
       });
 
-      server.to(room).emit("roomStatusUpdate", {
-        room,
-        status: newStatus
-      });
+      server.to(client.id).emit('userLevelUpdate', { userId: client.id, level });
     }
 
     case "deck-reset": {

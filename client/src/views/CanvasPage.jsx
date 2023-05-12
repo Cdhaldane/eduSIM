@@ -156,8 +156,8 @@ const CanvasPage = (props) => {
       primaryColor: "#8f001a",
       groupColor: "#FFF",
       personalColor: "#FFF",
-      groupPositionRect: {h: 1080, scaleX: 1, scaleY: 1, w: 1920, x:0,y:0},
-      personalPositionRect: {h: 1080, scaleX: 1, scaleY: 1, w: 1920, x:0,y:0},
+      groupPositionRect: { h: 1080, scaleX: 1, scaleY: 1, w: 1920, x: 0, y: 0 },
+      personalPositionRect: { h: 1080, scaleX: 1, scaleY: 1, w: 1920, x: 0, y: 0 },
       overlayColor: "#FFF",
       overlays: [],
       groupLayers: [],
@@ -169,12 +169,11 @@ const CanvasPage = (props) => {
         name: "Page " + (index + 1)
       };
     });
-    if((canvas.state.pages).length === 0){
+    if ((canvas.state.pages).length === 0) {
       canvas.state.pages = defaultPages;
     }
     const areaString = canvas.state.overlayOpen ? "overlay" :
       (canvas.state.personalAreaOpen ? "personal" : "group");
-
     const page = canvas.state.pages[canvas.state.level - 1];
     const group = page.groupPositionRect;
     const personal = page.personalPositionRect[canvas.state.rolelevel];
@@ -1176,6 +1175,7 @@ const CanvasPage = (props) => {
           {...defaultObjProps(obj, canvas, editMode)}
           {...inputProps(obj, canvas)}
           {...canvas.getVariableProps()}
+          {...canvas.getPageProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       default:
@@ -1364,7 +1364,7 @@ const CanvasPage = (props) => {
                     sceneFunc={(ctx) => {
                       // Make background
                       ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-                      ctx.fillRect(canvasX+100000, canvasY, canvasH, canvasW);
+                      ctx.fillRect(canvasX + 100000, canvasY, canvasH, canvasW);
 
                       // Make the hole
                       ctx.clearRect(
@@ -1383,7 +1383,7 @@ const CanvasPage = (props) => {
                   <Text
                     {...positionRectProps(canvas, stage).label}
                   />
-                 
+
                   <Transformer
                     nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ?
                       [positionRectPersonalRef.current] :

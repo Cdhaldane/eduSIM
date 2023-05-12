@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { times } from "lodash";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 import Pencil from "../Pencils/Pencil";
 import Modal from "react-modal";
 import AutoUpdate from "../AutoUpdate";
@@ -10,9 +11,11 @@ import { useAlertContext } from "../Alerts/AlertContext";
 
 import "./Level.css";
 import "../Stage/Info.css";
+import { set } from "immutable";
 
 const Level = (props) => {
   const { t } = useTranslation();
+  const { roomid } = useParams();
   const [count, setCount] = useState(1);
   const [showInfoPopup, setShowInfoPopup] = useState(false);
   const [mode, setMode] = useState(false);
@@ -35,7 +38,7 @@ const Level = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.levelVal > props.number){
+    if (props.levelVal > props.number) {
       props.end()
     } else {
       setCount(props.levelVal)
@@ -69,17 +72,26 @@ const Level = (props) => {
       if (!props.freeAdvance) {
         return;
       }
-      if (e > props.number){
+      if (e > props.number) {
         props.end()
         return
       }
-      props.level(e);
-      setCount(e)
+      props.socket.emit("oneToPageSingle", {
+        level: e
+      });
     } else {
-      props.level(e);
-      setCount(e);
+      props.handleLevel(e)
+      setCount(e)
     }
   }
+
+  useEffect(() => {
+    if (props.gamepage) {
+      props.socket.on("userLevelUpdate", (data) => {
+        setCount(data.level)
+      })
+    }
+  }, [])
 
   useEffect(() => {
     let varName = "Page"
@@ -100,13 +112,16 @@ const Level = (props) => {
   }
 
   const setPlayMode = () => {
-   setMode(!mode)
-   props.loadObjects("group", "play", false)
+    setMode(!mode)
+    props.loadObjects("group", "play", false)
   }
+
+
 
   return (
     <div id="levelContainer">
       <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
+
         {!props.gamepage && (
           <>
             <div className="editModeTitleContainer" onClick={() => setPlayMode()} ref={infoBtn}>
@@ -117,6 +132,7 @@ const Level = (props) => {
                 <i className="fa fa-info" />
               </button>
             </div>
+
             <Modal
               isOpen={showInfoPopup}
               onRequestClose={() => setShowInfoPopup(false)}
@@ -192,11 +208,11 @@ const Level = (props) => {
                     ${(count - 1 > num && props.freeAdvance) || (count - 1 != num && !props.gamepage) ? 'level-bar-dot-clickable' : ''}
                     ${count == num && props.freeAdvance && !props.disableNext ? 'level-bar-dot-clickable level-bar-dot-glow' : ''}
                   `} onClick={() => {
-                    if(props.freeAdvance || !props.gamepage){
-                      handleLevel(num + 1)
+                      if (props.freeAdvance || !props.gamepage) {
+                        handleLevel(num + 1)
+                      }
                     }
-                  }
-                  }>
+                    }>
                     {props.number > num ? (
                       <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
                     ) : <i className="lni lni-checkmark-circle"></i>}

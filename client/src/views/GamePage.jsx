@@ -13,6 +13,7 @@ import { useAlertContext } from "../components/Alerts/AlertContext";
 import "../components/Stage/Info.css";
 import "../components/Tabs/Tabs.css";
 import '../components/Stage/Stage.css';
+import { set } from "immutable";
 
 const Main = styled.main`
   grid-area: main;
@@ -55,7 +56,7 @@ const Game = (props) => {
   const [isLoading, setLoading] = useState(true);
   const [isL, setL] = useState(true);
   const [customObjs, setCustomObjs] = useState();
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(1);
   const alertContext = useAlertContext();
   const [notes, setNotes] = useState();
   const [userId, setUserId] = useState();
@@ -63,6 +64,7 @@ const Game = (props) => {
   const [canvasLoading, setCanvasLoading] = useState(false);
   const [invalidateSidebar, setInvalidateSidebar] = useState(0);
   const [disableNext, setDisableNext] = useState(false);
+  const [playerLevels, setPlayerLevels] = useState({});
   const { t } = useTranslation();
 
   const toggle = () => setShowNav(!showNav);
@@ -125,6 +127,8 @@ const Game = (props) => {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
+        if(status.level)
+          setLevel(status.level)
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
@@ -142,6 +146,11 @@ const Game = (props) => {
       client.on("errorLog", ({ key, params = {} }) => {
         alertContext.showAlert(t(key, params), "error");
       });
+      client.on("userLevelUpdate", (data) => {
+        console.log(data)
+        setLevel(data.level)
+      })
+      
       setSocketInfo(client);
       setLoading(false);
       return () => client.disconnect();
@@ -164,11 +173,7 @@ const Game = (props) => {
     if (room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).pages.length < roomStatus.level) {
       setIsEnd(true);
     }
-    if (room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).pages.length >= roomStatus.level) {
-      setLevel(roomStatus.level);
-    }
-
-  }, [roomStatus.level]);
+  }, []);
 
 
   // Parse seeded roles
@@ -193,6 +198,7 @@ const Game = (props) => {
   let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
   let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
   let trigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).trigs || [];
+
   if (roomStatus.variables)
     variables.push(roomStatus.variables)
   const flattenObject = (obj) => {
@@ -209,6 +215,7 @@ const Game = (props) => {
   }
 
   variables = flattenObject(variables)
+  
   useEffect(() => {
     setDisableNext(false)
     let curr = tasks[level];
@@ -219,10 +226,22 @@ const Game = (props) => {
         }
       }
     }
-  }), [roomStatus.level]
+  }), [level]
 
-  const handleLevel = () => {
-    setLevel(roomStatus.level + 1);
+  const handleLevel = (type, id) => {
+    let x = level
+    if(type === 'global') {
+      socket.emit("oneToPageSingle", {
+        level: x + 1,
+        id: socket.id
+      });
+    } if (type === 'edit')
+      setLevel(id)
+    else {
+      socket.emit("goToPage", {
+        level: x + 1
+      });
+    }
   }
 
   const handleSetNotes = (data) => {
@@ -264,12 +283,13 @@ const Game = (props) => {
           className="grid-sidebar game"
           visible={showNav}
           close={toggle}
+          socket={socket}
           img={room.gameinstance?.gameinstance_photo_path || ""}
           title={room.gameinstance?.gameinstance_name || ""}
           subtitle={room.gameroom_name || ""}
-          socket={socket}
           handleLevel={handleLevel}
           variables={variables || {}}
+          level={level}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
           game

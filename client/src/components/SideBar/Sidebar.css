@@ -163,7 +163,6 @@
 .variable-adding input{
   width: 130px;
   border-radius: 6px;
-  padding: 5px 3px !important;
   border: 1px solid var(--primary);
   opacity: 0.8;
 }
@@ -774,9 +773,7 @@
 .variable-con-adding input{
   font-size: 1.0em;
   width: 80px;
-  position: absolute;
-  top: 30%;
-  left: 7%;
+  margin-left: 10px;
 }
 
 .nob{
@@ -802,10 +799,12 @@
 }
 .box{
   width: 100px;
-  height: 70px;
+  height: auto;
   border: 1px dashed var(--text-color);
   border-radius: 9px;
   padding: 5px;
+  align-items: center;
+  justify-content: center;
 }
 
 .select{
@@ -820,31 +819,11 @@
   height: 100%;
   border-radius: 5px;
   text-align: left;
-  padding: 20px 5px;
+  padding: 10px 5px;
 }
 
-.box input {
-  position: relative;
-  top: 0px;
-  left: 0px;
-  border: 1px solid var(--primary);
-  border-radius: 9px;
-}
-.var-val{
-  position: relative;
-  top: 0px !important;
-  left: 0px !important;
-  height: 60px !important;
-  background-color: white !important;
-  width: 90px !important;
-  border-radius: 3px !important;
-  border: 1px solid lightgrey !important;
-  color: grey !important;
-}
 .var-box {
-  width: 110px;
-  height: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 20px; 
 }
 .var-box button{
   position: relative;
@@ -855,12 +834,17 @@
   z-index: 9999999 !important;
 }
 .int-box{
-  position: relative;
-  top: 13px !important;
-  height: 80%;
-  color: black;
-  opacity: 100 !important;
-  z-index: 999999 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 1px solid lightgrey !important;
+  color: grey !important;
+  border-radius: 5px !important;
+  padding: 10px 10px !important;
+  min-height: 40px !important;
+  margin-left: 0px !important;
+}
+.alert-green {
+  fill: var(--success) !important;
 }
 .incr {
 
@@ -882,18 +866,18 @@
 
 .input-area{
   display: flex;
-  margin-top: 10px;
-  justify-content: center;
+  margin: auto;
+  justify-content: space-evenly;
+  position: relative;
+  margin-bottom: 50px;
+  align-items: center;
 }
 
 .input-area h2{
-  position: relative;
-  top: 20px;
-  margin-left: -50px;
-  margin-right: 30px;
+
 }
 
-.smaller-text {
+. {
 
 }
 .fixer{
@@ -1028,7 +1012,7 @@
   height: 100%;
   border-radius: 5px;
   text-align: left;
-  padding: 20px 5px;
+  padding: 10px 10px;
 
 }
 
@@ -1055,26 +1039,42 @@
 }
 
 .ints-checks{
-  position: relative !important;
   display: flex;
-  margin-bottom: 30px;
+  justify-content: space-around;
+  padding: 30px 30px;
+  font-size: 1.0em !important;
 }
 .ints-checks input{
-  position: relative !important;
-  width: 20px;
-  margin-right: 3%;
-  margin-left: 20%;
+  width: 30px;
+  margin-right: -60px;
+  padding-right: 0px;
 }
-
+.int-page-box{
+  width: 26%!important;
+  height: 90% !important;
+  background-color: white !important;
+  border: 1px solid grey !important;
+  padding: 15px 10px !important;
+  color: lightgrey !important;
+}
+.int-page-box input{
+  
+}
+.int-page-con {
+  display: flex;
+  justify-content: space-around;
+  padding: 0px 25%;
+  align-items: center;
+}
+.int-page-con h2{
+  vertical-align: middle !important;
+}
 .ints-con{
   display: flex;
-  margin: auto;
-  justify-content: space-evenly;
-  position: relative;
-  margin-bottom: 50px;
-
- 
+  justify-content: space-around;
+  margin: 10px 10px;
   align-items: center;
+  height: auto;
 }
 .ints-con h2{
   padding: 0px 10px;
@@ -1125,11 +1125,30 @@
   background-color: white;
 }
 .multi-container {
-  position: absolute;
-  width: 90px;
-  z-index: 10000;
-  font-size: 0.7em;
+  vertical-align: middle;
+  
 }
+
+.multi-container div {
+  height: 50px;
+  align-items: center;
+  text-align: center;
+  vertical-align: middle !important;
+  line-height: 40px;
+} 
+
+
+.alert-multi{
+  height: auto;
+  width: 98%;
+  margin-left: 3px;
+  margin-bottom: 7px;
+  font-size: 0.95em;
+  border: 1px solid var(--dark);
+  opacity: 9;
+  border-radius: 5px;
+}
+
 .multi-container input {
   background-color: red;
 }
@@ -1167,14 +1186,15 @@
 }
 
 .trigger-multi {
-  height: auto;
+  height: max-content;
   width: 50%;
   padding: 0px;
   font-size: 0.95em;
   border: 1px solid var(--primary);
   opacity: 9;
-  margin-bottom: 3px;
+  margin-bottom: 0px;
   border-radius: 5px;
+  margin-top: 5px;
 }
 
 .trigger-touch {

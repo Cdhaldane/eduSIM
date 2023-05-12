@@ -8,7 +8,6 @@ const MultiLevel = (props) => {
     const customStyles = {
         control: (base) => ({
             ...base,
-            height: 60,
             padding: "0px",
         }),
         dropdownIndicator: base => ({
@@ -49,6 +48,7 @@ const MultiLevel = (props) => {
     const groupedOptions = (data) => {
         let list = []
         let out = []
+        if(!data) return []
         Object.keys(data).forEach(function (key, index) {
             if (Object.values(data[key]).flat().length > 2) {
                 out = []

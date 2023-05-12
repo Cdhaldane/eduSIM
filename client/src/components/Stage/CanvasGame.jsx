@@ -354,6 +354,7 @@ class Graphics extends Component {
             }
 
           }
+          
         }
       }
     }
@@ -388,6 +389,7 @@ class Graphics extends Component {
         userId: userId,
         getInteractiveProps: this.getInteractiveProps,
         getVariableProps: this.getVariableProps,
+        getPageProps: this.getPageProps,
         checkObjConditions: this.checkObjConditions,
         formatTextMacros: this.formatTextMacros,
         getDragProps: this.getDragProps,
@@ -604,6 +606,14 @@ class Graphics extends Component {
     conditions: this.props.cons
   });
 
+  getPageProps = () => ({
+    handleButtonPage: (e) => {
+      this.props.socket.emit("oneToPageSingle", {
+        level: e,
+      });
+    },
+  });
+
   handleVariable = (name, value) => {
     if (this.props.variables[name] !== value) {
       this.props.socket.emit("varChange", {
@@ -613,7 +623,6 @@ class Graphics extends Component {
   }
 
   handleLevel = (e) => {
-    console.log(e)
     this.props.socket.emit("goToPage", {
       level: e
     });
@@ -828,6 +837,7 @@ class Graphics extends Component {
                 overlayOpenIndex: index
               });
             }}
+            socket={this.props.socket}
             overlay={this.state.overlayOpen}
             variables={this.props.variables}
             alerts={this.props.alerts}

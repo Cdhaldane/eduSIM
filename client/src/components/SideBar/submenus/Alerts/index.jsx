@@ -41,8 +41,8 @@ const Alert = styled.div`
     opacity: 0.9;
     background-color: white;
     color: ${p => p.done ? 'rgb(45, 85, 23)' : (
-      p.optional ? 'rgb(138, 76, 21)' : 'rgb(138, 21, 21)'
-    )};
+    p.optional ? 'rgb(138, 76, 21)' : 'rgb(138, 21, 21)'
+  )};
     font-size: .9em;
     word-break: break-word;
     padding: 10px;
@@ -95,7 +95,7 @@ const EditButtons = styled.div`
   }
 `;
 
-const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker, refresh, variables={} }) => {
+const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, setTicker, refresh, variables = {} }) => {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const { t } = useTranslation();
@@ -119,7 +119,7 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   const handleRemoveAlert = (index) => {
     setAlerts(old => {
       let n = [...old];
-      n.splice(index,1);
+      n.splice(index, 1);
       return n;
     });
   };
@@ -127,8 +127,8 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   const handleMoveUp = (index) => {
     setAlerts(old => {
       let n = [...old];
-      let el = n.splice(index,1)[0];
-      n.splice(index-1,0,el);
+      let el = n.splice(index, 1)[0];
+      n.splice(index - 1, 0, el);
       return n;
     });
   };
@@ -136,13 +136,14 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   const handleMoveDown = (index) => {
     setAlerts(old => {
       let n = [...old];
-      let el = n.splice(index,1)[0];
-      n.splice(index+1,0,el);
+      let el = n.splice(index, 1)[0];
+      n.splice(index + 1, 0, el);
       return n;
     });
   };
 
   const checkObjConditions = (varName, condition, check, checkAlt) => {
+
     if (!varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
@@ -166,32 +167,34 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
         return varLen <= trueValueAlt && varLen >= trueValue;
       case "negative":
         return !val;
+      case "positive":
+        return !!val;
       case "onchange":
         return sessionStorage.lastSetVar === varName
       default: return !!val;
     }
   }
 
-  const taskTrueCount = alerts.reduce((a,data) =>
-    !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a+1 : a
-  , 0)
+  const taskTrueCount = alerts.reduce((a, data) =>
+    !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a + 1 : a
+    , 0)
 
   const checkAdvance = () => {
     let advance = false;
     let numRequired = 0;
     let curr = 0;
-    for(let i = 0; i < alerts.length; i++){
-      if(!alerts[i].optional){
+    for (let i = 0; i < alerts.length; i++) {
+      if (!alerts[i].optional) {
         numRequired += 1;
       }
     }
-    for(let i = 0; i < alerts.length; i++){
+    for (let i = 0; i < alerts.length; i++) {
       let done = checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)
-      if(!alerts[i].optional && done){
-        curr +=1;
+      if (!alerts[i].optional && done) {
+        curr += 1;
       }
     }
-    if(curr === numRequired){
+    if (curr === numRequired) {
       return true
     } else {
       return false
@@ -205,14 +208,14 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
   }, [taskTrueCount, refresh]);
 
   useEffect(() => {
-    for(let i = 0; i < alerts.length; i++){
-      if(checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)){
-        if(!alerts[i].advance){
-          if(checkAdvance() && firstLoad===true){
-
+    for (let i = 0; i < alerts.length; i++) {
+      if (checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)) {
+        if (!alerts[i].advance) {
+          if (checkAdvance() && firstLoad === true) {
+            handleLevel('global')
           }
         }
-    }
+      }
     }
     setFirstLoad(true)
   }), []
@@ -224,44 +227,45 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
       {alerts.map((data, index) => {
         const done = checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt);
         return (
-        <React.Fragment key={index}>
-          {editingIndex === index ? (
-            <EditAlert
-              onEdit={handleEditAlert}
-              onCancel={() => setTimeout(() => setEditingIndex(-1), 10)}
-              init={data}
-            />
-          ) : (
-            <>
-              <Alert done={done} optional={data.optional}>
-                {done ? <i><Check className="icon"/></i> : (
-                  data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
-                )}
-                <div>
-                  <p>{done ? t("sidebar.taskComplete") : t("sidebar.taskNotComplete", { context: data.optional ? "optional" : "required" })}</p>
-                  <div>{done ? data.onLabel : data.offLabel}</div>
-                </div>
-              </Alert>
-              {editpage &&
-                <EditButtons>
-                  <button onClick={() => setTimeout(() => handleMoveUp(index), 10)}>
-                    <i className="fas fa-angle-up" />
-                  </button>
-                  <button onClick={() => setTimeout(() => handleMoveDown(index), 10)}>
-                    <i className="fas fa-angle-down" />
-                  </button>
-                  <button onClick={() => setTimeout(() => setEditingIndex(index), 10)}>
-                    <i className="fas fa-pen" />
-                  </button>
-                  <button onClick={() => setTimeout(() => handleRemoveAlert(index), 10)}>
-                    <i className="fas fa-trash" />
-                  </button>
-                </EditButtons>
-              }
-            </>
-          )}
-        </React.Fragment>
-      )})}
+          <React.Fragment key={index}>
+            {editingIndex === index ? (
+              <EditAlert
+                onEdit={handleEditAlert}
+                onCancel={() => setTimeout(() => setEditingIndex(-1), 10)}
+                init={data}
+              />
+            ) : (
+              <>
+                <Alert done={done} optional={data.optional}>
+                  {done ? <i><Check className="icon alert-green" /></i> : (
+                    data.optional ? <i className="fas fa-question-circle" /> : <i className="fas fa-times-circle" />
+                  )}
+                  <div>
+                    <p>{done ? t("sidebar.taskComplete") : t("sidebar.taskNotComplete", { context: data.optional ? "optional" : "required" })}</p>
+                    <div>{done ? data.onLabel : data.offLabel}</div>
+                  </div>
+                </Alert>
+                {editpage &&
+                  <EditButtons>
+                    <button onClick={() => setTimeout(() => handleMoveUp(index), 10)}>
+                      <i className="fas fa-angle-up" />
+                    </button>
+                    <button onClick={() => setTimeout(() => handleMoveDown(index), 10)}>
+                      <i className="fas fa-angle-down" />
+                    </button>
+                    <button onClick={() => setTimeout(() => setEditingIndex(index), 10)}>
+                      <i className="fas fa-pen" />
+                    </button>
+                    <button onClick={() => setTimeout(() => handleRemoveAlert(index), 10)}>
+                      <i className="fas fa-trash" />
+                    </button>
+                  </EditButtons>
+                }
+              </>
+            )}
+          </React.Fragment>
+        )
+      })}
       {editpage ? (
         <>
           <EditAlert
@@ -269,18 +273,19 @@ const Alerts = ({ handleLevel, editpage = true, alerts=[], setAlerts, setTicker,
             adding
             onCancel={() => setAdding(false)}
             hidden={!adding}
-            init={{}}
+            init={{ advance: false, global: true, optional: false, varName: "", varCondition: "isgreater", varCheck: 0, varCheckAlt: 0, onLabel: "", offLabel: "" }}
+            variables={variables}
           />
           <AddAlert
             onClick={() => setAdding(true)}
             hidden={adding}
           >
-            <Plus className="icon plus"/>
+            <Plus className="icon plus" />
             {t("sidebar.addNewTask")}
           </AddAlert>
         </>
       ) : alerts.length == 0 && (
-        <div style={{opacity: 0.5}}>
+        <div style={{ opacity: 0.5 }}>
           {t("sidebar.noTasks")}
         </div>
       )}

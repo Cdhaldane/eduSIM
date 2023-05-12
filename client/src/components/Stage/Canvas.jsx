@@ -155,7 +155,7 @@ class Graphics extends Component {
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
       overlayImage: -1,
-
+     
 
       // Context Menu
       selectedContextMenu: null,
@@ -467,34 +467,6 @@ class Graphics extends Component {
   saveInterval = null;
   drawInterval = null;
   componentDidMount = async () => {
-    this.props.setGameEditProps({
-      setState: this.setState,
-      state: this.state,
-      refs: this.refs,
-      customRect: el => { this.refs.customRect = el },
-      onObjectClick: this.onObjectClick,
-      onObjectTransformStart: this.onObjectTransformStart,
-      onObjectDragMove: this.onObjectDragMove,
-      onObjectContextMenu: this.onObjectContextMenu,
-      onObjectTransformEnd: this.onObjectTransformEnd,
-      handleDragEnd: this.handleDragEnd,
-      handleTextTransform: this.handleTextTransform,
-      handleTextDblClick: this.handleTextDblClick,
-      onDragEndArrow: this.onDragEndArrow,
-      onDocClick: this.onDocClick,
-      handleMouseUp: this.handleMouseUp,
-      handleMouseOver: this.handleMouseOver,
-      objectSnapping: this.objectSnapping,
-      onMouseDown: this.onMouseDown,
-      getKonvaObj: this.getKonvaObj,
-      getObjType: this.getObjType,
-      setCustomObjData: this.setCustomObjData,
-      getInteractiveProps: this.getInteractiveProps,
-      getVariableProps: () => { },
-      getDragProps: () => { },
-      dragLayer: this.dragLayer,
-      getLayers: this.getLayers
-    });
     const MINUTE_MS = 1000 * 60;
 
     this.removeJSGIFS();
@@ -533,7 +505,6 @@ class Graphics extends Component {
   componentWillUnmount = () => {
     clearInterval(this.saveInterval);
     clearInterval(this.drawInterval);
-    clearInterval(this.interval);
   }
 
   // Return current selectedShapeName if input is customRect or ContainerRect
@@ -559,7 +530,7 @@ class Graphics extends Component {
         currentMainShapes.push(this.state[type]);
         allShapes = allShapes.concat(this.state[type]);
       }
-
+      
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
@@ -597,42 +568,40 @@ class Graphics extends Component {
         this.props.setCanvasLoading(this.state.canvasLoading);
       }
 
-
       // This passes info all the way up to the App component so that it can be used in functions
       // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
       if (prevState !== this.state) {
+        this.props.setGameEditProps({
+          setState: this.setState,
+          state: this.state,
+          refs: this.refs,
 
-        this.interval = setInterval(() => {
-          this.props.setGameEditProps({
-            setState: this.setState,
-            state: this.state,
-            refs: this.refs,
-            customRect: el => { this.refs.customRect = el },
-            onObjectClick: this.onObjectClick,
-            onObjectTransformStart: this.onObjectTransformStart,
-            onObjectDragMove: this.onObjectDragMove,
-            onObjectContextMenu: this.onObjectContextMenu,
-            onObjectTransformEnd: this.onObjectTransformEnd,
-            handleDragEnd: this.handleDragEnd,
-            handleTextTransform: this.handleTextTransform,
-            handleTextDblClick: this.handleTextDblClick,
-            onDragEndArrow: this.onDragEndArrow,
-            onDocClick: this.onDocClick,
-            handleMouseUp: this.handleMouseUp,
-            handleMouseOver: this.handleMouseOver,
-            objectSnapping: this.objectSnapping,
-            onMouseDown: this.onMouseDown,
-            getKonvaObj: this.getKonvaObj,
-            getObjType: this.getObjType,
-            setCustomObjData: this.setCustomObjData,
-            getInteractiveProps: this.getInteractiveProps,
-            getVariableProps: () => { },
-            getDragProps: () => { },
-            dragLayer: this.dragLayer,
-            getLayers: this.getLayers
-          });
-        }, 100); // 5000 milliseconds = 5 seconds
-
+          // These are functions used for manipulating objects that are directly used in object props
+          customRect: el => { this.refs.customRect = el },
+          onObjectClick: this.onObjectClick,
+          onObjectTransformStart: this.onObjectTransformStart,
+          onObjectDragMove: this.onObjectDragMove,
+          onObjectContextMenu: this.onObjectContextMenu,
+          onObjectTransformEnd: this.onObjectTransformEnd,
+          handleDragEnd: this.handleDragEnd,
+          handleTextTransform: this.handleTextTransform,
+          handleTextDblClick: this.handleTextDblClick,
+          onDragEndArrow: this.onDragEndArrow,
+          onDocClick: this.onDocClick,
+          handleMouseUp: this.handleMouseUp,
+          handleMouseOver: this.handleMouseOver,
+          objectSnapping: this.objectSnapping,
+          onMouseDown: this.onMouseDown,
+          getKonvaObj: this.getKonvaObj,
+          getObjType: this.getObjType,
+          setCustomObjData: this.setCustomObjData,
+          getInteractiveProps: this.getInteractiveProps,
+          getVariableProps: () => { },
+          getPageProps: () => { },
+          getDragProps: () => { },
+          dragLayer: this.dragLayer,
+          getLayers: this.getLayers
+        });
 
         // Recenter if the canvas has changed
         // This includes opening/closing personal and overlay areas and changing levels
@@ -1493,7 +1462,7 @@ class Graphics extends Component {
 
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
-    const type = this.getObjType(this.state.selectedShapeName);
+    const type = this.getObjType(this.state.selectedShapeName);   
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
 
@@ -1812,15 +1781,15 @@ class Graphics extends Component {
 
   handleLock = () => {
     const type = this.getObjType(this.state.selectedShapeName);
-
+  
     this.setState(
       prevState => ({
         [type]: prevState[type]?.map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-              ...obj,
-              lock: !obj.lock,
-            }
+                ...obj,
+                lock: !obj.lock,
+              }
             : obj
         ),
       }),
@@ -1831,12 +1800,12 @@ class Graphics extends Component {
         this.props.showAlert(`Object is ${lockedObj.lock ? "locked" : "unlocked"}`, "info");
       }
     );
-
+  
     this.setState({
       selectedContextMenu: null,
     });
   };
-
+  
 
   getStateObjectById = (obj) => {
     if (obj.attrs) {
@@ -1889,7 +1858,7 @@ class Graphics extends Component {
       }
     }
 
-
+    
 
     // Get group item ids
     const groupCopiedIds = [];
@@ -2135,7 +2104,7 @@ class Graphics extends Component {
     }));
   }
 
-
+  
 
   // Stroke Color
   handleStrokeColor = (e) => {
@@ -3210,9 +3179,9 @@ class Graphics extends Component {
         [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-              ...obj,
-              onTop: false
-            }
+                ...obj,
+                onTop: false
+              }
             : obj
         )
       }));
@@ -3269,7 +3238,7 @@ class Graphics extends Component {
           removeJSGIFS={() => this.removeJSGIFS()}
           saveGame={this.handleSave}
           pages={this.state.pages}
-          level={this.handleLevel}
+          handleLevel={this.handleLevel}
           handlePageTitle={this.handlePageTitle}
           handlePageNum={this.handleNumOfPagesChange}
           numOfPages={this.state.numberOfPages}
@@ -3477,7 +3446,7 @@ class Graphics extends Component {
           id={"editMainContainer"}
         >
           {/* The right click menu for the group area */}
-          <input value={this.state.textInput} onChange={(event) => this.setState({ textInput: event.target.value })} />
+          <input value={this.state.textInput} onChange={(event) => this.setState({textInput: event.target.value})} />
           {this.state.groupAreaContextMenuVisible
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (

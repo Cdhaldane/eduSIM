@@ -57,8 +57,8 @@ const StyledLink = styled.a`
     padding-left: 14px;
     line-height: 19px;
     text-overflow: ellipsis !important;
-    white-space: nowrap;
     opacity: ${(p) => p.textopacity};
+    display: ${(p) => p.textopacity === 0 ? 'none' : 'inline'};
     transition: opacity 0.3s cubic-bezier(0.4, 0, 1, 1);
   }
   p {
@@ -79,6 +79,7 @@ const StyledLink = styled.a`
     min-width: 40px;
     border-radius: 10px;
     font-size: 1.5rem;
+    object-fit: cover;
   }
   ${(p) => !p.disabled && `
     &:hover {
