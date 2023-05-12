@@ -691,7 +691,14 @@ class Graphics extends Component {
           this.props.socket.emit("varChange", {
             name: variable, value: true
           })
+        } else {
+          if(this.props.variables[variable]){
+            this.props.socket.emit("varChange", {
+              name: variable, value: false
+            })
+          }
         }
+        
       }
 
       return false;

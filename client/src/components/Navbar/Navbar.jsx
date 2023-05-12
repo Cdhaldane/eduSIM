@@ -3,14 +3,16 @@ import { MenuItems } from "./MenuItems";
 import AuthenticationButton from "../Auth0/AuthenticationButton";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import ButtonLink from "../Buttons/ButtonLink";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from 'usehooks-ts'
+import ProfileDropdown from "./ProfileDropdown";
 
 import Home from "../../../public/icons/house.svg"
 import Info from "../../../public/icons/info.svg"
 
 import "./Navbar.css";
+import Profile from "../../views/Profile";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const NavBar = (props) => {
   const { isAuthenticated } = useAuth0();
@@ -51,49 +53,29 @@ const NavBar = (props) => {
   return (
     <nav className="NavbarItems">
       <a href="/">
-        <div className="logo-container">
           <img src="/assets/03_eduSIM_horizontal.png" className="navbar-logo" alt={t("alt.navbar")}></img>
           <div className="vl"></div>
           <h1 className="title">{t("navbar.title")}</h1>
-        </div>
       </a>
       <div className="menu-icon" onClick={toggleContextMenu}>
         <i className={menuOpen ? "menu-close fas fa-times" : "menu-close fas fa-bars"}></i>
       </div>
-      <div className={menuOpen ? "nav-menu active" : "nav-menu"} ref={profileDropdown}>
-        {isAuthenticated && (
-          <div
-            ref={profileDropdown}
-            className={`profilevist ${menuOpen ? "" : "profilevist-closed"}`}
-          >
-            <h2>{user.name}</h2>
-            <div className="profilevist-container">
-              <Link onClick={() => setMenuOpen(false)} to={`/profile/${localStorage.adminid}`} className="authen-button navbar-w-button" type="button">{t("navbar.profile")}</Link>
-              <AuthenticationButton onClick={() => setMenuOpen(false)} className={"authen-button navbar-w-button"} />
-            </div>
-          </div>
-        )}
-        <ButtonLink
-          className={"nav-links-icons"}
-          href="/dashboard"
-          buttonStyle="btn--danger--solid"
-          buttonSize="button--medium"
-        >
-          <Home className="icon navbar-icons custom-icons" alt={t("alt.home")} />
+      <ul className={menuOpen ? "nav-menu active" : "nav-menu"}>
+     
+        <Link to="/dashboard" className="nav-links">
+          <Home  alt={t("alt.home")} />
           {t("navbar.home")}
-        </ButtonLink>
-        <ButtonLink
-          className={"nav-links-icons"}
-          href="/about"
-          buttonStyle="btn--danger--solid"
-          buttonSize="button--medium"
-        >
-          <Info className="icon information navbar-icons" />
+        </Link>
+
+        <Link to="/about" className="nav-links">
+          <Info  />
           {t("navbar.about")}
-        </ButtonLink>
-        <button onClick={switchLanguage} className={menuOpen ? "lang-button" : "lang-button"}>
+        </Link>
+        <a onClick={switchLanguage} className="lang-button">
           {i18n.language === 'en' ? 'fr' : 'en'}
-        </button>
+        </a>
+        <div className="dot"></div>
+        
 
 
         {isAuthenticated ? (
@@ -104,10 +86,18 @@ const NavBar = (props) => {
             alt={t("alt.profile")}
             onClick={toggleContextMenu}
           />
+
         ) : (
-          <AuthenticationButton className={"authen-button"}/>
+          <AuthenticationButton className={"authen-button"} />
         )}
-      </div>
+
+        {isAuthenticated && menuOpen && (
+          <div ref={profileDropdown}>
+          <ProfileDropdown user={user} open={menuOpen} />
+          </div>
+        )}
+      </ul>
+
     </nav>
   );
 }

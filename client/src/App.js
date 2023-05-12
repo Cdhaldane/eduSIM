@@ -1,5 +1,5 @@
 import React, { Suspense, createContext, useState, useEffect } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useLocation } from "react-router-dom";
 import Loading from "./components/Loading/Loading";
 import Navbar from "./components/Navbar/Navbar";
 import FooterBar from "./components/Footer";
@@ -48,6 +48,7 @@ const App = (props) => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   //const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   const [theme, setTheme] = useLocalStorage('light');
+  const location = useLocation();
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -74,8 +75,6 @@ const App = (props) => {
     document.documentElement.className = localSettings.notransition ? 'notransition' : '';
   }, [localSettings]);
 
-
-
   const { isLoading } = props.auth0;
   if (isLoading) return <Loading />;
 
@@ -85,7 +84,7 @@ const App = (props) => {
         <AlertContextProvider>
 
           <AlertPopup />
-          {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+          {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
             <Navbar switchTheme={switchTheme} />
           )}
           <div className="main-content">
@@ -96,7 +95,7 @@ const App = (props) => {
                 <Route exact path="/" >
                   <Home />
                 </Route>
-                {!(window.location.pathname.startsWith("/gamepage") || window.location.pathname === "/editpage") && (
+                {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
                   <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
                 )}
                 <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
