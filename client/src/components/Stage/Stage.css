@@ -55,7 +55,9 @@
   cursor: pointer;
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
 }
-
+.overlayCanvas {
+  height: 100%;
+}
 .overlayCanvas>.fa-times {
   position: absolute;
   font-size: 2em;

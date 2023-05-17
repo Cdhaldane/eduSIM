@@ -192,7 +192,7 @@ const Level = (props) => {
           </>
         )}
         <div className="level-nav">
-          <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 66 + 'px' }}>
+          <div className={`level-bar ${!props.gamepage ? 'level-bar-edit' : ''}`} style={{ minWidth: (props.number) * 45 + 'px' }}>
             <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
             <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
@@ -232,7 +232,9 @@ const Level = (props) => {
             </div>
           )}
 
-          {props.handlePageNum && (
+          
+        </div>
+        {props.handlePageNum && (
             <div className="pencil-container">
               <Pencil
                 positionRect={props.positionRect}
@@ -252,8 +254,6 @@ const Level = (props) => {
               />
             </div>
           )}
-        </div>
-
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
             <i className="lni lni-exit"></i>

@@ -128,7 +128,7 @@
   box-shadow: var(--box-shadow) !important;
   transition: all 0.3s ease-in;
   border-radius: 9px;
-  border: 1px solid var(--primary);
+  border: 1px solid grey;
   overflow: hidden;
   animation-duration: 0.3s, 0.5s;
   animation-name: animate-pop, pulse-animation;

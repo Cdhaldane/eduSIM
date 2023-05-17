@@ -4,22 +4,13 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
   font-size: 1.5rem;
-  position: relative;
-  z-index: 1;
-  border: none;
 }
 
 /* Form styles */
-.area > form {
-  position: relative;
+.area>form {
   background: #fff;
-  width: 60%;
-  max-width: 900px;
-  text-align: center;
-  border-radius: 0px;
+  width: 100% !important;
   border: solid 7px grey;
   box-shadow: var(--box-shadow);
   border-radius: 9px;
@@ -31,9 +22,10 @@
   padding: 30px;
   align-items: flex-start;
   animation: none !important;
+  z-index: 1;
 }
 
-.form-input > div {
+.form-input>div {
   margin: 10px 0;
   width: 100%;
   display: flex;
@@ -113,21 +105,19 @@
   color: black;
   text-align: left;
   font-family: inherit;
+  width: 50%;
+  border: 1px solid rgb(145, 145, 145);
+  border-radius: 5px;
+  height: 50px !important;
 }
 
 
 /* Modal styles */
 
 .createmodalarea {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  border-radius: 4px;
-  overflow: hidden;
-  border: none;
-  outline: none;
-  animation: none !important;
+  margin: 10% 25% !important;
+  width: 50% !important;
+  height: max-content !important;
 }
 
 .myoverlay {
@@ -144,9 +134,11 @@
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -161,24 +153,27 @@
   min-height: 80px;
   display: flex;
   overflow-y: hidden;
-  align-items: center; 
+  align-items: center;
   opacity: 0;
   transform: translateY(-20px);
   transition: all 0.3s ease-in-out;
-  position: absolute;
+  position: relative;
   top: -120px;
 }
+
 .form-imgs.visible {
   opacity: 1;
   transform: translateY(0);
   position: relative;
   top: 0px;
 }
+
 .form-imgs button {
   position: absolute;
   right: 20px;
   margin-bottom: 20px;
 }
+
 .form-imgs img {
   height: 100px;
   width: 100px;
@@ -190,10 +185,12 @@
   margin: 5px;
   object-fit: cover;
 }
+
 .form-imgs img:hover {
   border-radius: 9px;
 }
-.form-imgpreview img{
+
+.form-imgpreview img {
   display: flex;
   align-items: center;
   width: 80px;
@@ -201,6 +198,7 @@
   border: 1px solid black;
   border-radius: 10%;
   overflow: hidden;
+  object-fit: cover;
 }
 
 .create-fix {
@@ -211,7 +209,7 @@
   transition: all .3s;
   padding: 5px;
   border: 1px solid var(--red);
-  border-radius:20px;
+  border-radius: 20px;
 }
 
 .create-fix:hover:before {
@@ -231,18 +229,21 @@
     font-size: 1.2rem;
   }
 
-  .form-input > div {
+  .form-input>div {
     flex-direction: column;
   }
-  .form-input > div > * {
+
+  .form-input>div>* {
     margin-top: 10px;
   }
+
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: black;
     opacity: 1;
     /* Firefox */
   }
+
   .myoverlay {
     position: fixed;
     top: 0;
@@ -251,7 +252,8 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.75);
   }
-  .button-container{
+
+  .button-container {
     border-top: 1px dashed rgb(145, 145, 145);
     text-align: center;
     vertical-align: center;
@@ -261,5 +263,5 @@
   }
 
 
- 
+
 }

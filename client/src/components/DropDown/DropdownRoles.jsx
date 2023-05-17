@@ -287,7 +287,7 @@ const DropdownRoles = (props) => {
 
   const handleRoleSelected = (e, roleName, roleNum,index) => {
     const className = e.target.className.baseVal ? e.target.className.baseVal : e.target.className;
-    if (!className.startsWith("icon")) {
+    if (!className?.startsWith("icon")) {
       setSelected(index)
       setSelectedRole(roleName);
       setRoleName(roleName);

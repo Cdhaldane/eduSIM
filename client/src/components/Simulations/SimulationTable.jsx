@@ -140,7 +140,7 @@ const SimulationTable = (props) => {
               publicId={
                 "https://res.cloudinary.com/uottawaedusim/image/upload/" + simulation.gameinstance_photo_path
               }
-              />{simulation.gameinstance_name}</td>
+              /><h1>{simulation.gameinstance_name}</h1></td>
               <td>{simulation.createdAt.split("T")[0]}</td>
               <td onClick={() => handleTdClick(simulation)}>{simulation.name}</td>
               <td>{simulation.downloads || 0} </td>

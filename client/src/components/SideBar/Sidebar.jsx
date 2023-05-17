@@ -212,7 +212,7 @@ const Sidebar = (props) => {
     {
       icon: "chat",
       label: t("sidebar.messaging"),
-      visible: mvisible,
+      visible: props.game ? true : false,
       id: "messaging",
       submenu: (
         <Messages
@@ -245,7 +245,7 @@ const Sidebar = (props) => {
       icon: "users",
       id: "userlist",
       label: t("sidebar.users"),
-      visible: true,
+      visible: props.game ? true : false,
       submenu: (
         <Players
           players={props.players}

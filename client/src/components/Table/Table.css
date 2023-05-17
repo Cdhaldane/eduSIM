@@ -13,77 +13,48 @@
   width: 100%;
 }
 
-.app-container th, .app-container td {
-  border: 1px solid #ffffff;
+.app-container th,
+.app-container td {
+  /* border: 1px solid #ffffff; */
   text-align: left;
-  font-size: 1vw;
+  font-size: 1.5vw;
+  min-width: 100px;
+  
 }
-.app-container th:not(.table-checkrow), .app-container td:not(.table-checkrow) {
+
+.app-container th:not(.table-checkrow),
+.app-container td:not(.table-checkrow) {
   padding: 2px;
   padding-left: 0px;
 
 }
-.app-container th:nth-child(1){
-  width: 7% !important;
-}
-.app-container th:nth-child(2){
-  width: 17.75% !important;
-}
-.app-container th:nth-child(3){
-  width: 17% !important;
-}
-.app-container th:nth-child(4){
-  width: 22% !important;
-}
-.app-container th:nth-child(5){
-  width: 17.5% !important;
+
+.app-container input[type="text"] {
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid var(--text-color);
+  color: var(--dark);
+  opacity: 0.7;
+  width: 98%;
+  margin: 3px;
 }
 
-.app-container th {
-  border-bottom: 1px solid var(--text-color);
-  opacity: 0.9;
-}
 
-.app-container td:first-child{
-  text-align: right;
-  padding-right: 1.4vw;
-  vertical-align: bottom;
-}
 
-.app-container img{
-  border: 2px solid var(--primary);
-  border-radius: 100%;
-}
-#fix1{
-  width: 14%;
-}
-#fix2{
-  padding-left: 1.3%;
-  width: 15.6%;
-}
-#fix3{
-  padding-left: 1.3%;
-  width: 22%;
-}
-#fix4{
-  padding-left: 1.3%;
-  padding-right: 0%;
-  width: 17%;
-  padding-right: 0%;
-}
-#fix5{
-  padding-left: 0%;
-  margin-left: 0%;
+.app-container img {
+  border: 1px solid lightgrey;
+  border-radius: 30px;
 }
 
 .app-container td {
   background-color: white;
 }
 
-.app-container .user-online > td {
+.app-container .user-online>td {
   background-color: #a4db7f;
 }
-.app-container .user-online > td > span {
+
+.app-container .user-online>td>span {
   color: #3e7d14;
 }
 
@@ -91,122 +62,77 @@
   display: flex;
 }
 
-.app-container form td:last-child {
-  padding: 4px 2px;
+.app-container form td:last-child>div {
+
 }
-.app-container form td:last-child > div {
-  display: flex;
-  justify-content: space-evenly;
-  margin-left: 0px;
-  width: 100%;
-  height: 100%;
-}
-.app-container form td:last-child > div > button {
+
+.app-container form td:last-child>div>button {
   flex: 1;
-  margin: 10 2px;
-  font-family: inherit;
+}
+
+.app-container form td {
+  width: 20% !important;
 }
 
 .app-container form * {
   font-size: 1vw;
 }
 
-.app-container input[type="text"] {
-  width: 110%;
+.input-box {
+  border-radius: 10px;
+  border: 1px solid var(--text-color);
+  color: var(--dark);
+  opacity: 0.7;
   padding: 5px;
-  border-radius: 10px;
-  border: 1px solid var(--text-color);
-  color: var(--dark);
-  opacity: 0.7;
-}
-
-.addstudent{
-  position: relative;
-  top: 0px;
-  color: var(--dark);
-}
-
-.input-box{
-  border-radius: 10px;
-  width: 60% !important;
-  border: 1px solid var(--text-color);
-  color: var(--dark);
-  opacity: 0.7;
-}
-.email{
-  width: 90% !important;
-}
-
-.addstudent h2 {
-  color: var(--dark);
 }
 
 .addstudent-form {
-
+  display: grid;
+  color: var(--dark);
+  width: 100%;
+  align-items: center;
+  justify-content: space-evenly;
 }
-.addstudent-form > * {
-  position: relative;
-  margin: 2px;
-  margin-right: 0vw;
+.addstudent-form button {
+  width: 19.7% !important;
+  margin-right: 5px;
+  margin-top: 0px !important;
+}
 
-  padding: 2px;
+.addstudent-form>* {
   font-family: inherit;
-  height: 90% !important;
-}
-
-.add-student-b{
-  width: 80% !important;
-  padding: 4px;
-  margin-right: 10px;
-}
-#addstudent {
-  position: relative;
-  width: 80%;
   height: 40px;
-  font-family:  "Montserrat", sans-serif;
-  font-size: 1.1vw;
-  color: white;
-  background-color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: none;
-  text-align: center;
-  cursor: pointer;
-  vertical-align: middle;
-  border-radius: 100px
 }
 
-#emailstudent {
-  color: white;
-  z-index: 2000000;
-  font-size: 1.0rem;
-  position: sticky;
-  bottom: 310px;
-  left: 130px;
-  border-radius: 9px;
-  width: 500px;
-  height: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  background-color: var(--primary);
+
+.addstudent-form button {
+  margin-top: 0px !important;
 }
+
+.addstudent-form>* {
+  width: 20% !important;
+}
+
+
+
+
+
 
 #roledropdown {
   position: relative;
   width: 60%;
-  top: 0px;
   padding: 5px;
-  left: 0px;
   border-radius: 10px;
   border: 1px solid var(--text-color);
-  height: 85%;
+  height: 40px;
   opacity: 0.6;
 }
 
 #roledropdownadd {
-  width: 100%;
+  width: 100% !important;
   top: 0px;
   padding-top: 5px;
-  padding-bottom:5px;
+  padding-bottom: 5px;
   left: .5vw !important;
   border-radius: 10px;
   border: 1px solid var(--text-color);
@@ -219,6 +145,7 @@
   height: 100%;
   color: var(--text-color);
 }
+
 .tabel-el thead {
   width: 0px;
 }
@@ -240,15 +167,35 @@
   min-width: 30px;
   vertical-align: middle !important;
 }
-.table-checkrow > input {
+
+.table-checkrow>input {
   padding: 100px;
   width: 80%;
   height: 20px;
   color: var(--text-color);
 }
 
+.app-container form td:nth-child(1) a {
+  align-items: center !important;
+  display: flex !important;
+}
 
-@media screen and (max-width: 960px){
+.app-container form td:nth-child(1) h1 {
+  font-weight: 400;
+  margin-left: 10px;
+}
+
+.table-button-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-evenly !important;
+}
+
+.table-button-container button {
+  margin-top: 0px !important;
+}
+
+@media screen and (max-width: 960px) {
   .app-container {
     position: relative;
     top: 0px;

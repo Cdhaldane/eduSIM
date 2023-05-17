@@ -21,15 +21,14 @@ const ReadOnlyRow = ({
           <input type="checkbox" onClick={onCheck} checked={checked} />
         </td>
       )}
-      <td><Gravatar email={contact.email} /></td>
-      <td>{contact.firstName} {online && <span>(ingame)</span>}</td>
+      <td><a><Gravatar email={contact.email} /> <h1>{contact.firstName}</h1></a> {online && <span>(ingame)</span>}</td>
       <td>{contact.lastName}</td>
       <td>{contact.email}</td>
       {useGroup
       ? <td>{groupList.some(([val]) => val === contact.group) ? contact.group : "N/A"}</td>
       : <td>{contact.gamerole}</td>}
       <td>
-        <div>
+        <div className="table-button-container">
           <button
             type="button"
             className="modal-button green"

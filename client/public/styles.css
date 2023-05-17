@@ -688,17 +688,13 @@ a {
 .game-logo-big {
   position: absolute;
   top: 20px;
-  left: 55px;
-  width: 8vw;
-  height: 10vw;
+  left: 60px;
+  width: 135px;
+
   margin-bottom: 10px;
 }
 
-.eheader {
-  position: absolute;
-  top: 800px;
-  width: 100vw;
-}
+
 
 #levels input {
   position: relative;

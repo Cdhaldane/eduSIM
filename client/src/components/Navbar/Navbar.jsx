@@ -93,7 +93,7 @@ const NavBar = (props) => {
 
         {isAuthenticated && menuOpen && (
           <div ref={profileDropdown}>
-          <ProfileDropdown user={user} open={menuOpen} />
+          <ProfileDropdown user={user} open={menuOpen} close={toggleContextMenu} />
           </div>
         )}
       </ul>

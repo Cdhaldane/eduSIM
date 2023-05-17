@@ -21,6 +21,7 @@ const CreateArea = (props) => {
   const [prevImages] = useState(localStorage.getItem("images"));
   const [copiedParams, setCopiedParams] = useState();
   const [willUpload, setWillUpload] = useState(false);
+  const [gameSelected, setGameSelected] = useState("blank");
   const [gameData, setData] = useState("");
   const { t } = useTranslation();
   const detailsArea = useRef();
@@ -126,7 +127,7 @@ const CreateArea = (props) => {
   }, []);
 
   const createSelectItems = useCallback(() => {
-    let items = [<option value="">Select a previous sim</option>];
+    let items = [<option value="">Select a previous simulation</option>];
     for (let i = 0; i <= props.gamedata.length - 1; i++) {
       items.push(
         <option value={i}>{props.gamedata[i].gameinstance_name}</option>
@@ -163,15 +164,21 @@ const CreateArea = (props) => {
     myWidget.open();
   }, []);
 
+  const handleGameSelection = (e) => {
+    setGameSelected(e.target.value);
+    setImageSelected('images/cep2wsc5zbjxifbf3acn.jpg');
+    setTitle("Team Leadership Simulation")
+  }
+
   return (
-    <div className="area" onClick={() => props.close()}>
-      <form ref={detailsArea} className="form-input" onClick={e => e.stopPropagation()}>
+    <div className="area">
+      <form ref={detailsArea} className="form-input">
       <p className="gradient-border modal-title">{t("modal.addNewSimulation")}</p>
         <div>
           {t("modal.chooseGame")}
-          <select id="games">
-            <option value="Team Leadership">Team Leadership</option>
+          <select id="games" onChange={e => handleGameSelection(e)}>
             <option value="blank">Create a blank simulation</option>
+            <option value="team-leadership">Team Leadership</option>
           </select>
         </div>
         {props.gamedata.length !== 0 && (

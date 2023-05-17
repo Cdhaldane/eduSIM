@@ -24,9 +24,8 @@ const EditableRow = ({
           <input type="checkbox" onClick={onCheck} checked={checked} />
         </td>
       )}
-
-      <td><Gravatar email={contact.email}  /></td>
-      <td id="fix1">
+      <td><a>
+        <Gravatar email={contact.email}  />
         <input
           type="text"
           required="required"
@@ -35,8 +34,9 @@ const EditableRow = ({
           onChange={handleEditFormChange}
           size="1"
         ></input>
+        </a>
       </td>
-      <td id="fix2">
+      <td>
         <input
           type="text"
           required="required"
@@ -46,7 +46,7 @@ const EditableRow = ({
           size="1"
         ></input>
       </td>
-      <td id="fix3">
+      <td>
         <input
           type="text"
           required="required"
@@ -56,7 +56,7 @@ const EditableRow = ({
           size="1"
         ></input>
       </td>
-      <td id="fix4">
+      <td>
         {useGroup ? (
           <select name="group" type="text" required="required" id="roledropdownadd" onChange={handleEditFormChange}>
             <option key={-1} value="">{t("admin.selectAGroup")}</option>)];
@@ -71,7 +71,7 @@ const EditableRow = ({
         )}
       </td>
       <td>
-        <div id="fix5">
+        <div className="table-button-container">
 
           <button className="modal-button green" type="submit" >{t("common.save")}</button>
           <button className="modal-button red" type="button" onClick={handleCancelClick}>

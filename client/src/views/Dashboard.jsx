@@ -53,12 +53,12 @@ const Dashboard = (props) => {
           }
         }).then((res) => {
           let allData = res.data;
-        
-          if(localStorage?.order?.length > 5){
-           
+
+          if (localStorage?.order?.length > 5) {
+
             getGamedata(JSON.parse(localStorage.order));
           }
-          else{
+          else {
             getGamedata(allData);
           }
           setLoading(false);
@@ -85,12 +85,12 @@ const Dashboard = (props) => {
   useEffect(() => {
     try {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getAllGameInstances')
-      .then((res) => {
+        .then((res) => {
           getFullGamedata(res.data)
         }).catch(error => {
           console.error(error);
         });
-    
+
       axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${user.email}`)
         .then((res) => {
           setUsers(res.data)
@@ -118,6 +118,7 @@ const Dashboard = (props) => {
   }
 
   const toggleModal = () => {
+    console.log(2)
     if (!uploadedImages) {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/image/getImagesFrom/' + localStorage.adminid).then((res) => {
         setUploadedImages(res.data.resources);
@@ -206,58 +207,58 @@ const Dashboard = (props) => {
 
   return (
     <div className="dashboard-wrapper">
-    <div className="dashboard disable-dbl-tap-zoom">
-      <div className="page-margin dashboard-buttons">
-        <button className="d-button" onClick={toggleModal}>
-          {t("admin.addNewSimulation")}
-        </button>
-        <button className="d-button" onClick={() => setShowTable(!showTable)}>
-          User created simulations
-        </button>
-      </div>
-      <div className="page-margin">
-        <h2>{t("admin.mySimulations")}</h2>
-        <div className="dashsim" index={updater}>
-              <DraggableList items={gamedata ? gamedata : []}/>
+      <div className="dashboard disable-dbl-tap-zoom">
+        <div className="page-margin dashboard-buttons">
+          <button className="d-button" onClick={toggleModal}>
+            {t("admin.addNewSimulation")}
+          </button>
+          <button className="d-button" onClick={() => setShowTable(!showTable)}>
+            User created simulations
+          </button>
         </div>
-        <Modal
-          isOpen={showNote}
-          onRequestClose={toggleModal}
-          contentLabel="My dialog"
-          className="createmodalarea"
-          overlayClassName="myoverlay"
-          closeTimeoutMS={250}
-          ariaHideApp={false}
-        >
-          <CreateArea
-            gamedata={gamedata}
+        <div className="page-margin">
+          <h2>{t("admin.mySimulations")}</h2>
+          <div className="dashsim" index={updater}>
+            <DraggableList items={gamedata ? gamedata : []} />
+          </div>
+          <Modal
             isOpen={showNote}
-            close={toggleModal}
-            previewImages={uploadedImages}
+            onRequestClose={() => setShowNote(false)}
+            contentLabel="My dialog"
+            className="createmodalarea"
+            overlayClassName="myoverlay"
+            closeTimeoutMS={250}
+            ariaHideApp={false}
+          >
+            <CreateArea
+              gamedata={gamedata}
+              isOpen={showNote}
+              close={toggleModal}
+              previewImages={uploadedImages}
+            />
+          </Modal>
+
+          <Modal
+            isOpen={showTable}
+            onRequestClose={() => setShowTable(false)}
+            className="tablemodal"
+            overlayClassName="tableoverlay"
+            closeTimeoutMS={250}
+            ariaHideApp={false}
+          >
+            <SimulationTable data={fulldata} user={users} />
+          </Modal>
+
+          <ConfirmationModal
+            visible={confirmationVisible}
+            hide={() => setConfirmationModal(false)}
+            confirmFunction={confirmAction}
+            confirmMessage={t("admin.deleteSimConfirm")}
+            message={getConfirmMessage()}
           />
-        </Modal>
-
-        <Modal
-        isOpen={showTable}
-        onRequestClose={() => setShowTable(false)}
-        className="tablemodal"
-        overlayClassName="tableoverlay"
-        closeTimeoutMS={250}
-        ariaHideApp={false}
-      >
-        <SimulationTable data={fulldata} user={users} />
-      </Modal>
-
-        <ConfirmationModal
-          visible={confirmationVisible}
-          hide={() => setConfirmationModal(false)}
-          confirmFunction={confirmAction}
-          confirmMessage={t("admin.deleteSimConfirm")}
-          message={getConfirmMessage()}
-        />
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

@@ -29,7 +29,7 @@ const ProfileDropdown = (props) => {
                         <span>
                             <User />
                             <Link
-                                onClick={() => { }}
+                                onClick={() => {props.close()}}
                                 to={`/profile/${localStorage.adminid}`}
                                 className="profile-dropdown-link"
                                 type="button">
@@ -38,7 +38,7 @@ const ProfileDropdown = (props) => {
                         </span>
                         <span>
                             <Exit />
-                            <AuthenticationButton onClick={() => { }} className="profile-dropdown-link" />
+                            <AuthenticationButton onClick={() => {props.close()}} className="profile-dropdown-link" />
                         </span>
 
                     </div>

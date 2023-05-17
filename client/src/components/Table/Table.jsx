@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react"
 import "./Table.css"
-import ReadOnlyRow from "../ReadOnlyRow";
-import EditableRow from "../EditableRow"
+import ReadOnlyRow from "./ReadOnlyRow";
+import EditableRow from "./EditableRow"
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAlertContext } from '../Alerts/AlertContext';
 import { parse } from "papaparse";
@@ -311,7 +311,6 @@ const Table = (props) => {
                   <input type="checkbox" onClick={handleCheckAll} checked={excludedEmails.length === 0} />
                 </th>
               )}
-              <th></th>
               <th>{t("admin.firstName")}</th>
               <th>{t("admin.lastName")}</th>
               <th>{t("admin.emailAddress")}</th>
@@ -359,7 +358,6 @@ const Table = (props) => {
         ? (<div className="addstudent">
           {/*<h2>Add a student</h2>*/}
           <form onSubmit={handleAddFormSubmit} className="addstudent-form">
-            <div className="invisible"></div>
             <input
               placeholder={t("admin.firstName")}
               id="firstname"

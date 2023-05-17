@@ -32,7 +32,7 @@ const DropdownTimelineBar = (props) => {
   const { t } = useTranslation();
 
   const UNTITLED_PAGE = t("edit.untitledPage");
-  const MAX_PAGE_NUM = 10;
+  const MAX_PAGE_NUM = 100;
   const MAX_OVERLAY_NUM = 6;
 
   const [copy, setCopy] = useState(-1);
