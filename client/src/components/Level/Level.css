@@ -381,10 +381,6 @@
     padding-right: 20px;
   }
 
-  .level-gamepage .level-nav {
-  
-  }
-
   .level-gamepage .level-close {
     margin-top: 15px;
   }
@@ -399,5 +395,3 @@
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
   }
 }
-
-@media screen

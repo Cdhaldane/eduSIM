@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth0, withAuth0 } from "@auth0/auth0-react";
 import SimulationTable from "../components/Simulations/SimulationTable";
@@ -147,7 +146,8 @@ const Profile = ({ auth0 }) => {
 
 
   useEffect(() => {
-    updateProfile('adminid', adminid)
+    if(adminid)
+      updateProfile('adminid', adminid)
   }, []);
 
   const updateProfile = (idType, id) => {

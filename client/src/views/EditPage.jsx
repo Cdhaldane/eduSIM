@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
 import { Container } from "react-bootstrap";
+import ErrorBoundary from "../components/Loading/ErrorBoundary";
 import Loading from "../components/Loading/Loading";
 
 const Grid = styled.div`
@@ -166,6 +167,7 @@ const EditPage = (props) => {
           </GridNav>
           <GridMain color={pageColor}>
             {updater % 2 === 0 ? (
+            <ErrorBoundary>
               <Canvas
                 setPageColor={setPageColor}
                 setCanvasLoading={setCanvasLoading}
@@ -197,8 +199,10 @@ const EditPage = (props) => {
                 setInts={setInts}
                 setVars={setVars}
                 setCons={setCons}
+                setEditState={props.setEditState}
                 handleLevel={handlePage}
               />
+              </ErrorBoundary>
             ) : null}
           </GridMain>
         </Grid>

@@ -141,7 +141,8 @@
   margin-top: 0px !important;
   position: absolute;
   top: 0px;
-  object-fit: cover;
+  object-fit:scale-down;
+  background-color: lightgrey;
 }
 
 .card-banner{

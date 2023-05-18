@@ -8,6 +8,7 @@ import { OrderedSet } from "immutable";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
+import { throttle, debounce } from 'lodash';
 
 import {
   EditorState,
@@ -354,7 +355,7 @@ class Graphics extends Component {
             }
 
           }
-          
+
         }
       }
     }
@@ -472,9 +473,9 @@ class Graphics extends Component {
             });
 
             // What is this?
-            this.setState({
-              dragTick: (this.state.dragTick + 1) % 4
-            });
+            // this.setState({
+            //   dragTick: (this.state.dragTick + 1) % 4
+            // });
             if (this.state.dragTick == 0) {
               // The drag ticking ensures that this does not run too often
               // Update object with latest drag position
@@ -664,6 +665,7 @@ class Graphics extends Component {
     });
   }
 
+
   handleCollisions = () => {
     this.props.trigs.map((trigger) => {
       let shapeName1 = trigger[0];
@@ -673,36 +675,37 @@ class Graphics extends Component {
       let shapes = this.refs.graphicStage.getStage().children[0].children.map(child => child);
       shapes.map(shape => {
         if (shape.attrs.id === shapeName1) {
-          shape1 = shape;
+          shape1 = shape.attrs;
         } else if (shape.attrs.id === shapeName2) {
-          shape2 = shape;
+          shape2 = shape.attrs;
         }
       });
       if (shape1 && shape2) {
-        let shape1Bounds = shape1.getClientRect();
-        let shape2Bounds = shape2.getClientRect();
+        let sX = shape2.x;
+        let sY = shape2.y;
+        let sW = this.realWidth({ width: shape2.width, radiusX: shape2.radiusX });
+        let sH = this.realHeight({ height: shape2.height, radiusY: shape2.radiusY });
 
-        if (
-          shape1Bounds.x + shape1Bounds.width >= shape2Bounds.x &&
-          shape1Bounds.x <= shape2Bounds.x + shape2Bounds.width &&
-          shape1Bounds.y + shape1Bounds.height >= shape2Bounds.y &&
-          shape1Bounds.y <= shape2Bounds.y + shape2Bounds.height
-        ) {
+        const xDist = Math.abs(
+          (shape1.x + this.originCenter(shape1.width / 2, shape1.id)) -
+          (sX + this.originCenter(sW / 2, shape2.id))
+        );
+        const yDist = Math.abs(
+          (shape1.y + this.originCenter(shape1.height / 2, shape1.id)) -
+          (sY + this.originCenter(sH / 2, shape2.id))
+        );
+        if(isNaN(xDist) || isNaN(yDist)) return false;
+      
+        if (xDist < sW / 2 && yDist < sH / 2) {
           this.props.socket.emit("varChange", {
-            name: variable, value: true
+            name: variable, value: !this.props.variables[variable]
           })
-        } else {
-          if(this.props.variables[variable]){
-            this.props.socket.emit("varChange", {
-              name: variable, value: false
-            })
-          }
-        }
+        } 
         
-      }
+        }
 
-      return false;
-    })
+        return false;
+      })
   }
 
 
