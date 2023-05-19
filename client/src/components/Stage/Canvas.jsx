@@ -1088,7 +1088,6 @@ class Graphics extends Component {
         visible: false
       }
     });
-    console.log(this.state.selection);
     const event = e.evt ? e.evt : e;
     this.setState({ redoing: false })
     const shape = this.getTopObjAtPos({
@@ -1661,7 +1660,7 @@ class Graphics extends Component {
     if (!this.customObjects.includes(objectsName)) {
       shape.moveTo(this.refs[`${layer}.objects`]);
       // Add one to zIndex go over ContainerRect
-      shape.setZIndex(this.getLayers().indexOf(ref) + 1);
+      shape.setZIndex(this.getLayers().indexOf(ref) + 1 > 6 ? 6 : this.getLayers().indexOf(ref) + 1);
     }
 
 
@@ -2955,6 +2954,11 @@ class Graphics extends Component {
         };
         break;
       case "images":
+        transformOptions = {
+          width: object.width(),
+          height: object.height()
+        };
+        break;
       case "videos":
       case "audios":
         transformOptions = {
@@ -2976,6 +2980,8 @@ class Graphics extends Component {
         scaleY: object.scaleY()
       };
     }
+
+    console.log(obj)
 
     this.setState(
       prevState => ({
@@ -3636,7 +3642,7 @@ class Graphics extends Component {
             >
               {this.state.personalAreaOpen === 1 && !this.state.overlayOpen && (
                 <>
-                  {this.props.loadObjects("personal", "edit", this.state.movingCanvas)}
+                  {this.props.loadObjects("personal", "edit", this.state.movingCanvas, this)}
                 </>
               )}
             </Stage>

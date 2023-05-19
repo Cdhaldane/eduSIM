@@ -672,8 +672,7 @@ const CanvasPage = (props) => {
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
+    
       width: obj.width,
       height: obj.height
     }
@@ -1075,7 +1074,7 @@ const CanvasPage = (props) => {
       case "pencils":
         return <Line {...pencilProps(obj, index, canvas, editMode)} />;
       case "images":
-        return layer ? <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} /> : null;
+        return <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} />;
       case "videos":
         return <URLVideo
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}

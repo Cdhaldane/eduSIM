@@ -42,14 +42,8 @@ const URLImage = forwardRef((props, ref) => {
   useEffect(() => {
     setImage(loadImage());
 
-    const layer = props.layer.getStage();
-    const anim = new Konva.Animation(() => { }, layer);
-    anim.start();
-    return () => {
-      anim.stop();
-    };
+    
   }, [ref]);
-
   return (
     <Image
       draggable={props.draggable}
