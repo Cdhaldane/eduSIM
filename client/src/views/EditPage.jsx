@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/SideBar/Sidebar";
 import Canvas from "../components/Stage/Canvas";
+import CanvasFunctional from "../components/Stage/CanvasFunctional";
 import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
@@ -166,8 +167,6 @@ const EditPage = (props) => {
             />
           </GridNav>
           <GridMain color={pageColor}>
-            {updater % 2 === 0 ? (
-            <ErrorBoundary>
               <Canvas
                 setPageColor={setPageColor}
                 setCanvasLoading={setCanvasLoading}
@@ -202,8 +201,6 @@ const EditPage = (props) => {
                 setEditState={props.setEditState}
                 handleLevel={handlePage}
               />
-              </ErrorBoundary>
-            ) : null}
           </GridMain>
         </Grid>
       </div>

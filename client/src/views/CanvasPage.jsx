@@ -16,6 +16,7 @@ import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
 
+
 const EditPage = React.lazy(() => import("./EditPage"));
 const GamePage = React.lazy(() => import("./GamePage"));
 
@@ -1183,9 +1184,12 @@ const CanvasPage = (props) => {
     }
   }
 
-  const loadObjects = (stage, mode, moving) => {
+  const loadObjects = (stage, mode, moving, editState) => {
+    
     const editMode = mode === "edit";
-    const canvas = getUpdatedCanvasState(mode);
+    let canvas = getUpdatedCanvasState(mode);
+    if(editMode)canvas.state = editState.state
+    
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !canvas.state || !canvas.refs) {
       return (
@@ -1264,9 +1268,9 @@ const CanvasPage = (props) => {
                 height={canvasH}
                 width={canvasW}
               // Canvas Drag Rect Outline - FOR DEBUGGING
-              //stroke={"red"}
-              //strokeWidth={2}
-              //strokeScaleEnabled={false}
+              // stroke={"red"}
+              // strokeWidth={2}
+              // strokeScaleEnabled={false}
               />
             </>
           )}

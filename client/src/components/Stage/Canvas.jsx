@@ -7,6 +7,8 @@ import DrawModal from "../DrawModal/DrawModal";
 import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
+import { flushSync } from 'react-dom'; // Note: react-dom, not react
+
 
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
@@ -112,7 +114,7 @@ class Graphics extends Component {
         name: this.props.t("admin.pageX", { page: (index + 1) })
       };
     });
-
+    this.renderCounter = 11;
 
     this.state = {
       // Objects and Delete Counts
@@ -155,7 +157,8 @@ class Graphics extends Component {
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
       overlayImage: -1,
-     
+
+
 
       // Context Menu
       selectedContextMenu: null,
@@ -488,18 +491,48 @@ class Graphics extends Component {
 
     // Reposition / scale objects on screen resize
     let resizeTimeout;
-    window.onresize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        this.props.reCenter("edit");
-      }, 100);
-    };
+
 
     history.push(this.state);
 
     this.props.setPerformanceFunctions({
       setCustomObjData: this.setCustomObjData
     });
+
+    this.props.setGameEditProps({
+      setState: this.setState,
+      state: this.state,
+      refs: this.refs,
+
+      // These are functions used for manipulating objects that are directly used in object props
+      customRect: el => { this.refs.customRect = el },
+      onObjectClick: this.onObjectClick,
+      onObjectTransformStart: this.onObjectTransformStart,
+      onObjectDragMove: this.onObjectDragMove,
+      onObjectContextMenu: this.onObjectContextMenu,
+      onObjectTransformEnd: this.onObjectTransformEnd,
+      handleDragEnd: this.handleDragEnd,
+      handleTextTransform: this.handleTextTransform,
+      handleTextDblClick: this.handleTextDblClick,
+      onDragEndArrow: this.onDragEndArrow,
+      onDocClick: this.onDocClick,
+      handleMouseUp: this.handleMouseUp,
+      handleMouseOver: this.handleMouseOver,
+      objectSnapping: this.objectSnapping,
+      onMouseDown: this.onMouseDown,
+      getKonvaObj: this.getKonvaObj,
+      getObjType: this.getObjType,
+      setCustomObjData: this.setCustomObjData,
+      getInteractiveProps: this.getInteractiveProps,
+      getVariableProps: () => { },
+      getPageProps: () => { },
+      getDragProps: () => { },
+      dragLayer: this.dragLayer,
+      getLayers: this.getLayers
+
+    });
+
+    this.setState({ canvasLoading: false })
   }
 
   componentWillUnmount = () => {
@@ -530,7 +563,9 @@ class Graphics extends Component {
         currentMainShapes.push(this.state[type]);
         allShapes = allShapes.concat(this.state[type]);
       }
-      
+
+      this.renderCounter++;
+
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
@@ -571,37 +606,39 @@ class Graphics extends Component {
       // This passes info all the way up to the App component so that it can be used in functions
       // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
       if (prevState !== this.state) {
-        this.props.setGameEditProps({
-          setState: this.setState,
-          state: this.state,
-          refs: this.refs,
 
-          // These are functions used for manipulating objects that are directly used in object props
-          customRect: el => { this.refs.customRect = el },
-          onObjectClick: this.onObjectClick,
-          onObjectTransformStart: this.onObjectTransformStart,
-          onObjectDragMove: this.onObjectDragMove,
-          onObjectContextMenu: this.onObjectContextMenu,
-          onObjectTransformEnd: this.onObjectTransformEnd,
-          handleDragEnd: this.handleDragEnd,
-          handleTextTransform: this.handleTextTransform,
-          handleTextDblClick: this.handleTextDblClick,
-          onDragEndArrow: this.onDragEndArrow,
-          onDocClick: this.onDocClick,
-          handleMouseUp: this.handleMouseUp,
-          handleMouseOver: this.handleMouseOver,
-          objectSnapping: this.objectSnapping,
-          onMouseDown: this.onMouseDown,
-          getKonvaObj: this.getKonvaObj,
-          getObjType: this.getObjType,
-          setCustomObjData: this.setCustomObjData,
-          getInteractiveProps: this.getInteractiveProps,
-          getVariableProps: () => { },
-          getPageProps: () => { },
-          getDragProps: () => { },
-          dragLayer: this.dragLayer,
-          getLayers: this.getLayers
-        });
+        // this.props.setGameEditProps({
+        //   setState: this.setState,
+        //   state: this.state,
+        //   refs: this.refs,
+    
+        //   // These are functions used for manipulating objects that are directly used in object props
+        //   customRect: el => { this.refs.customRect = el },
+        //   onObjectClick: this.onObjectClick,
+        //   onObjectTransformStart: this.onObjectTransformStart,
+        //   onObjectDragMove: this.onObjectDragMove,
+        //   onObjectContextMenu: this.onObjectContextMenu,
+        //   onObjectTransformEnd: this.onObjectTransformEnd,
+        //   handleDragEnd: this.handleDragEnd,
+        //   handleTextTransform: this.handleTextTransform,
+        //   handleTextDblClick: this.handleTextDblClick,
+        //   onDragEndArrow: this.onDragEndArrow,
+        //   onDocClick: this.onDocClick,
+        //   handleMouseUp: this.handleMouseUp,
+        //   handleMouseOver: this.handleMouseOver,
+        //   objectSnapping: this.objectSnapping,
+        //   onMouseDown: this.onMouseDown,
+        //   getKonvaObj: this.getKonvaObj,
+        //   getObjType: this.getObjType,
+        //   setCustomObjData: this.setCustomObjData,
+        //   getInteractiveProps: this.getInteractiveProps,
+        //   getVariableProps: () => { },
+        //   getPageProps: () => { },
+        //   getDragProps: () => { },
+        //   dragLayer: this.dragLayer,
+        //   getLayers: this.getLayers
+    
+        // });
 
         // Recenter if the canvas has changed
         // This includes opening/closing personal and overlay areas and changing levels
@@ -931,21 +968,12 @@ class Graphics extends Component {
         layerDraggable: false
       });
     }
-    let fixX = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-    let fixY = 0;
-    if (this.state.personalAreaOpen) {
-      fixX = window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
-      fixY = window.matchMedia("(orientation: portrait)").matches ? 110 : 60;
-    }
-    if (this.state.overlayOpen) {
-      fixX = window.matchMedia("(orientation: portrait)").matches ? 30 : 100;
-      fixY = 30;
-    }
+
     let pos = null;
     if (event.layerX) {
       pos = {
-        x: event.clientX - fixX,
-        y: event.clientY - fixY
+        x: event.clientX,
+        y: event.clientY
       };
     } else {
       let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
@@ -1054,6 +1082,13 @@ class Graphics extends Component {
   }
 
   handleMouseUp = (e, personalArea) => {
+    this.setState({
+      selection: {
+        ...this.state.selection,
+        visible: false
+      }
+    });
+    console.log(this.state.selection);
     const event = e.evt ? e.evt : e;
     this.setState({ redoing: false })
     const shape = this.getTopObjAtPos({
@@ -1431,11 +1466,13 @@ class Graphics extends Component {
         }
       }
 
-      this.setState({
-        selection: {
-          ...this.state.selection,
-          visible: false
-        }
+      flushSync(() => {
+        this.setState({
+          selection: {
+            ...this.state.selection,
+            visible: false
+          }
+        });
       });
 
       // Disable click event
@@ -1462,7 +1499,7 @@ class Graphics extends Component {
 
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
-    const type = this.getObjType(this.state.selectedShapeName);   
+    const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
 
@@ -1627,17 +1664,7 @@ class Graphics extends Component {
       shape.setZIndex(this.getLayers().indexOf(ref) + 1);
     }
 
-    this.setState(prevState => ({
-      [objectsName]: prevState[objectsName].map(eachObj =>
-        eachObj.id === shape.attrs.id
-          ? {
-            ...eachObj,
-            x: e.target.x(),
-            y: e.target.y()
-          }
-          : eachObj
-      )
-    }));
+
 
     this.setState({
       selectedShapeName: this.state.groupSelection.length ? "" : this.state.selectedShapeName,
@@ -1651,17 +1678,15 @@ class Graphics extends Component {
   }
 
   handleWheel = (e, personalArea) => {
-    e.evt.preventDefault();
-
     const scaleBy = 1.2;
     const stage = this.state.overlayOpen ? "overlay" : (personalArea ? "personal" : "group");
-    const layer = this.refs[`${stage}AreaLayer.objects`];
 
+    const layer = this.refs[`${stage}AreaLayer.objects`];
     const oldScale = layer.scaleX();
     let newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-    const s = layer.getStage();
-    const pointer = s.getPointerPosition();
+    const stageArea = layer.getStage();
+    const pointer = stageArea.getPointerPosition();
     const mousePos = {
       x: (pointer.x - this.state[`${stage}LayerX`]) / oldScale,
       y: (pointer.y - this.state[`${stage}LayerY`]) / oldScale,
@@ -1689,10 +1714,11 @@ class Graphics extends Component {
     const layerScale = `${stage}LayerScale`;
 
 
-    this.setState({
+    flushSync(() => {this.setState({
       [layerScale]: newScale,
       [`${stage}LayerX`]: newPos.x,
       [`${stage}LayerY`]: newPos.y,
+    });
     });
   }
 
@@ -1701,8 +1727,8 @@ class Graphics extends Component {
       (this.state.personalAreaOpen ? "personal" : "group");
     if (this.state.layerDraggable) {
       this.setState({
-        [type + "LayerX"]: this.state[type + "LayerX"] + e.evt.movementX,
-        [type + "LayerY"]: this.state[type + "LayerY"] + e.evt.movementY
+        [`${type}LayerX`]: e.target.x(),
+        [`${type}LayerY`]: e.target.y(),
       });
     }
   }
@@ -1781,15 +1807,15 @@ class Graphics extends Component {
 
   handleLock = () => {
     const type = this.getObjType(this.state.selectedShapeName);
-  
+
     this.setState(
       prevState => ({
         [type]: prevState[type]?.map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-                ...obj,
-                lock: !obj.lock,
-              }
+              ...obj,
+              lock: !obj.lock,
+            }
             : obj
         ),
       }),
@@ -1800,12 +1826,12 @@ class Graphics extends Component {
         this.props.showAlert(`Object is ${lockedObj.lock ? "locked" : "unlocked"}`, "info");
       }
     );
-  
+
     this.setState({
       selectedContextMenu: null,
     });
   };
-  
+
 
   getStateObjectById = (obj) => {
     if (obj.attrs) {
@@ -1858,7 +1884,7 @@ class Graphics extends Component {
       }
     }
 
-    
+
 
     // Get group item ids
     const groupCopiedIds = [];
@@ -2104,7 +2130,7 @@ class Graphics extends Component {
     }));
   }
 
-  
+
 
   // Stroke Color
   handleStrokeColor = (e) => {
@@ -3179,9 +3205,9 @@ class Graphics extends Component {
         [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-                ...obj,
-                onTop: false
-              }
+              ...obj,
+              onTop: false
+            }
             : obj
         )
       }));
@@ -3210,7 +3236,7 @@ class Graphics extends Component {
   }
 
   renderAllObjects = () => {
-    return this.props.loadObjects("group", "edit", this.state.movingCanvas)
+    return this.props.loadObjects("group", "edit", this.state.movingCanvas, this)
   }
 
   render() {
@@ -3446,7 +3472,7 @@ class Graphics extends Component {
           id={"editMainContainer"}
         >
           {/* The right click menu for the group area */}
-          <input value={this.state.textInput} onChange={(event) => this.setState({textInput: event.target.value})} />
+          <input value={this.state.textInput} onChange={(event) => this.setState({ textInput: event.target.value })} />
           {this.state.groupAreaContextMenuVisible
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (

@@ -101,7 +101,7 @@ const KonvaHtml = ({
     return () => {
       var _a;
       group.off('absoluteTransformChange', handleTransform);
-      ReactDOM.unmountComponentAtNode(div);
+      // ReactDOM.unmountComponentAtNode(div);
       (_a = div.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(div);
     };
   }, [shouldTransform]);
@@ -114,7 +114,7 @@ const KonvaHtml = ({
     if (container.current) {
       setRectWidth(container.current.clientWidth);
       setRectHeight(container.current.clientHeight);
-      ReactDOM.render(children, container.current);
+      // ReactDOM.render(children, container.current);
     }
   });
 
