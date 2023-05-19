@@ -671,8 +671,6 @@ const CanvasPage = (props) => {
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
       width: obj.width,
       height: obj.height
     }

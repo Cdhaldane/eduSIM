@@ -2928,11 +2928,7 @@ class Graphics extends Component {
           outerRadius: object.outerRadius() * object.scaleY()
         };
         break;
-      case "images":
-        transformOptions = {
-          width: object.width(),
-          height: object.height()
-        };
+    
       case "videos":
       case "audios":
         transformOptions = {
@@ -2976,7 +2972,7 @@ class Graphics extends Component {
       object.y(0);
     }
 
-    if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
+    if (!( type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
     }
