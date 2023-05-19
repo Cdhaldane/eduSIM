@@ -457,6 +457,7 @@ class Graphics extends Component {
                 sX = this.props.gamepieceStatus[id].x;
                 sY = this.props.gamepieceStatus[id].y;
               }
+              console.log(obj)
               let sW = this.realWidth({ width, radiusX }), sH = this.realHeight({ height, radiusY });
               const xDist = Math.abs(
                 (e.target.x() + this.originCenter(this.realWidth(obj) / 2, obj.id)) -

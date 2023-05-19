@@ -11,6 +11,7 @@ const URLImage = forwardRef((props, ref) => {
     img.src = url;
     img.onload = () => {
       // this.width, this.height
+     
       callback();
     }
   }
@@ -49,6 +50,8 @@ const URLImage = forwardRef((props, ref) => {
       anim.stop();
     };
   }, [ref]);
+
+  console.log(props);
 
   return (
     <Image

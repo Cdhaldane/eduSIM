@@ -2929,6 +2929,10 @@ class Graphics extends Component {
         };
         break;
       case "images":
+        transformOptions = {
+          width: object.width(),
+          height: object.height()
+        };
       case "videos":
       case "audios":
         transformOptions = {
