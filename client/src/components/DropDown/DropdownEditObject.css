@@ -156,9 +156,13 @@ ul {
   left: 0 !important;
 }
 
-.menuedit h1 {
-  padding-bottom: 1rem;
+.menuedit-title {
   font-size: 1.5rem;
+  width: 100% !important;
+  display: flex;
+  border-radius: 9px;
+  padding: 2px;
+  border:1px solid var(--primary);
 }
 
 .menuedit input {

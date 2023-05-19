@@ -524,7 +524,7 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{objState?.id}</h1>
+              <input className="menuedit-title" type='text' value={objState?.id} />
               {!((objState?.id).includes("videos") || (objState?.id).includes("audios")) && (
                 <>
                   {!props.selectedShapeName.includes("lines") && (
