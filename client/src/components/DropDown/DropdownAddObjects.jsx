@@ -118,29 +118,29 @@ const DropdownAddObjects = (props) => {
 
 
 
-  const uploadFile = async (file, type, isGIF) => {
+  const uploadFile = async (info, type) => {
     try {
       if (type === "image") {
         setImageUploading(true);
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".jpg";
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + info.public_id + "." + info.format;
         setImageUploaded(true);
         setImageUploading(false);
-        addImage(name)
+        addImage(name, info)
         props.handleImage(name);
       } else if (type === "video") {
         setVideoUploading(true);
-        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp4";
+        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + info.file + "." + info.format;
         setVideoUploaded(true);
         setVideoUploading(false);
         addVideo(name)
         props.handleVideo(name);
       } else if (type === "audio") {
-        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + file + ".mp3";
+        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + info.file + "." + info.format;
         setAudioUploaded(true);
         addAudio(name)
         props.handleAudio(name);
       } else if (type === "pdf") {
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + file + ".pdf";
+        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + info.file + "." + info.format;
         addDocument(name)
         props.handleDocument(name);
       }
@@ -324,7 +324,8 @@ const DropdownAddObjects = (props) => {
     }
   }
 
-  const addImage = (img) => {
+  const addImage = (img, info) => {
+    console.log(info)
         addObjectToLayer(
           "images",
           {
@@ -333,8 +334,8 @@ const DropdownAddObjects = (props) => {
             stroke: 'black',
             strokeWidth: 0,
             opacity: 1,
-            width: img.clientWidth,
-            height: img.clientHeight
+            width: info.width,
+            height: info.height
           }
         );
   }
@@ -582,7 +583,8 @@ const DropdownAddObjects = (props) => {
           } else if (preset == "mfcgzpkg") {
             type == "pdf"
           }
-          uploadFile(result.info.public_id, type);
+          console.log(result.info)
+          uploadFile(result.info, type);
           myWidget.close();
         }
       }

@@ -20,6 +20,7 @@
     "immutable": "^4.0.0",
     "js-file-download": "^0.4.12",
     "konva": "^8.0.4",
+    "libgif": "^0.0.3",
     "lodash-es": "^4.17.21",
     "lodash-move": "^1.1.1",
     "moment": "^2.29.1",
