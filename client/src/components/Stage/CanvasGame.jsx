@@ -699,9 +699,13 @@ class Graphics extends Component {
       
         if (xDist < sW / 2 && yDist < sH / 2) {
           this.props.socket.emit("varChange", {
-            name: variable, value: !this.props.variables[variable]
+            name: variable, value: true
           })
-        } 
+        }  else {
+          this.props.socket.emit("varChange", {
+            name: variable, value: false
+          })
+        }
         
         }
 

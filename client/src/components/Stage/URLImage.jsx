@@ -51,8 +51,6 @@ const URLImage = forwardRef((props, ref) => {
     };
   }, [ref]);
 
-  console.log(props);
-
   return (
     <Image
       draggable={props.draggable}

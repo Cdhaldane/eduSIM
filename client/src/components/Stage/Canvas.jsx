@@ -155,7 +155,7 @@ class Graphics extends Component {
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
       overlayImage: -1,
-     
+
 
       // Context Menu
       selectedContextMenu: null,
@@ -530,7 +530,7 @@ class Graphics extends Component {
         currentMainShapes.push(this.state[type]);
         allShapes = allShapes.concat(this.state[type]);
       }
-      
+
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
           if (JSON.stringify(prevMainShapes) !== JSON.stringify(currentMainShapes)) {
@@ -1462,7 +1462,7 @@ class Graphics extends Component {
 
   // Put the Transform around the selected object / group
   handleObjectSelection = () => {
-    const type = this.getObjType(this.state.selectedShapeName);   
+    const type = this.getObjType(this.state.selectedShapeName);
     const transformer = this.state.personalAreaOpen ? "personalTransformer" :
       (this.state.overlayOpen ? "overlayTransformer" : "groupTransformer");
 
@@ -1781,15 +1781,15 @@ class Graphics extends Component {
 
   handleLock = () => {
     const type = this.getObjType(this.state.selectedShapeName);
-  
+
     this.setState(
       prevState => ({
         [type]: prevState[type]?.map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-                ...obj,
-                lock: !obj.lock,
-              }
+              ...obj,
+              lock: !obj.lock,
+            }
             : obj
         ),
       }),
@@ -1800,12 +1800,12 @@ class Graphics extends Component {
         this.props.showAlert(`Object is ${lockedObj.lock ? "locked" : "unlocked"}`, "info");
       }
     );
-  
+
     this.setState({
       selectedContextMenu: null,
     });
   };
-  
+
 
   getStateObjectById = (obj) => {
     if (obj.attrs) {
@@ -1858,7 +1858,7 @@ class Graphics extends Component {
       }
     }
 
-    
+
 
     // Get group item ids
     const groupCopiedIds = [];
@@ -2104,7 +2104,7 @@ class Graphics extends Component {
     }));
   }
 
-  
+
 
   // Stroke Color
   handleStrokeColor = (e) => {
@@ -2268,7 +2268,7 @@ class Graphics extends Component {
 
   // Returns the group a shape is part of or null if it isn't in a group
   getShapeGroup = (shape) => {
-    const shapeId = shape.attrs ? shape.id() : shape;
+    const shapeId = shape?.attrs ? shape.id() : shape;
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
@@ -2928,7 +2928,7 @@ class Graphics extends Component {
           outerRadius: object.outerRadius() * object.scaleY()
         };
         break;
-    
+
       case "videos":
       case "audios":
         transformOptions = {
@@ -2950,7 +2950,7 @@ class Graphics extends Component {
         scaleY: object.scaleY()
       };
     }
-
+    console.log(transformOptions)
     this.setState(
       prevState => ({
         [type]: prevState[type].map(o =>
@@ -2972,7 +2972,7 @@ class Graphics extends Component {
       object.y(0);
     }
 
-    if (!( type === "videos" || type === "audios" || this.customObjects.includes(type))) {
+    if (!(type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
     }
@@ -3179,9 +3179,9 @@ class Graphics extends Component {
         [this.getObjType(id)]: prevState[this.getObjType(id)].map(obj =>
           obj.id === this.state.selectedShapeName
             ? {
-                ...obj,
-                onTop: false
-              }
+              ...obj,
+              onTop: false
+            }
             : obj
         )
       }));
@@ -3446,7 +3446,7 @@ class Graphics extends Component {
           id={"editMainContainer"}
         >
           {/* The right click menu for the group area */}
-          <input value={this.state.textInput} onChange={(event) => this.setState({textInput: event.target.value})} />
+          <input value={this.state.textInput} onChange={(event) => this.setState({ textInput: event.target.value })} />
           {this.state.groupAreaContextMenuVisible
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (

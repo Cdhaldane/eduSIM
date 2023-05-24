@@ -590,7 +590,7 @@ const CanvasPage = (props) => {
       ref: obj.ref,
       fill: obj.fill,
       opacity: obj.opacity,
-      name: "shape",
+      name: obj.name,
       id: obj.id,
       x: obj.x,
       y: obj.y,
@@ -1182,8 +1182,10 @@ const CanvasPage = (props) => {
   }
 
   const loadObjects = (stage, mode, moving) => {
+
     const editMode = mode === "edit";
     const canvas = getUpdatedCanvasState(mode);
+
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !canvas.state || !canvas.refs) {
       return (

@@ -190,7 +190,7 @@ const DropdownAddObjects = (props) => {
       x: objX,
       y: objY,
       id: name,
-      name: numOfObj,
+      name: objectName + numOfObj,
       type: objectName,
       ref: name,
       ...objectParameters,
