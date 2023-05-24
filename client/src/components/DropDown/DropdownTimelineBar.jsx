@@ -61,7 +61,9 @@ const DropdownTimelineBar = (props) => {
   }
 
   const handleClickOutside = e => {
-    if (dropdown.current &&
+    console.log(props.pencilRef)
+    if (dropdown.current && props.pencilRef.current 
+      && props.pencilRef.current.contains(e.target) && 
       e.target.id !== "confirmModalConfirmButton" &&
       !dropdown.current.contains(e.target) &&
       !confirmationVisibleRef.current &&
@@ -69,6 +71,12 @@ const DropdownTimelineBar = (props) => {
       props.close();
     }
   }
+  useEffect(() => {
+    setMenuHeight(document.getElementById("existingPagesSection").clientHeight);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const handleVarName = (val) => {
     debounceObjState({ varName: val });
     setObjState(prev => ({
@@ -77,11 +85,7 @@ const DropdownTimelineBar = (props) => {
     }));
   }
 
-  useEffect(() => {
-    setMenuHeight(document.getElementById("existingPagesSection").clientHeight);
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  
 
   useEffect(() => {
     props.handlePageNum(numOfPages);

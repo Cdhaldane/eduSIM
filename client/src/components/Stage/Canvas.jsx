@@ -524,9 +524,9 @@ class Graphics extends Component {
       getObjType: this.getObjType,
       setCustomObjData: this.setCustomObjData,
       getInteractiveProps: this.getInteractiveProps,
-      getVariableProps: () => { },
-      getPageProps: () => { },
-      getDragProps: () => { },
+      getVariableProps: this.getVariableProps,
+      getPageProps: this.getPageProps,
+      getDragProps: this.getDragProps,
       dragLayer: this.dragLayer,
       getLayers: this.getLayers
 
@@ -752,7 +752,6 @@ class Graphics extends Component {
   };
 
   handleCopyRole = async (gameroleid) => {
-    this.props.setGameEditProps(undefined);
     await this.handleSave();
     return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
       gameroleid
@@ -957,7 +956,6 @@ class Graphics extends Component {
   }
 
   onMouseDown = (e, personalArea) => {
-
     const event = e.evt ? e.evt : e;
     const shape = this.getTopObjAtPos({
       x: event.clientX,
@@ -972,11 +970,11 @@ class Graphics extends Component {
     let pos = null;
     if (event.layerX) {
       pos = {
-        x: event.clientX,
-        y: event.clientY
+        x: event.clientX - 70,
+        y: event.clientY - (personalArea ? 50 : 20)
       };
     } else {
-      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
+      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 100;
       if (sidebarPx > 0 && personalArea) {
         sidebarPx = 100;
       }
@@ -990,15 +988,7 @@ class Graphics extends Component {
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
-    if (this.state.overlayOpen) {
-      scale = this.state.overlayLayerScale;
-      xOffset = -this.state.overlayLayerX;
-      yOffset = -this.state.overlayLayerY;
-    } else if (personalArea) {
-      scale = this.state.personalLayerScale;
-      xOffset = -this.state.personalLayerX;
-      yOffset = -this.state.personalLayerY;
-    }
+ 
 
     if (this.state.drawMode === true) {
       this.setState({
@@ -1102,13 +1092,9 @@ class Graphics extends Component {
       document.body.style.cursor = "auto";
     }
 
-    let layerX = event.clientX - 60;
-    let layerY = event.clientY;
+    let layerX = event.clientX - (personalArea ? 100 : 70);
+    let layerY = event.clientY - (personalArea ? 70 : this.state.overlayOpen ? 0 : 20);
 
-    if (this.state.personalAreaOpen) {
-      layerX = event.clientX - 135;
-      layerY = event.clientY - 65;
-    }
 
     // Determine how long screen has been clicked (if on mobile)
     if (this.state.touchTime && this.state.touchEvent) {
@@ -1119,13 +1105,6 @@ class Graphics extends Component {
         event.button = 0;
       }
 
-      let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-      if (this.state.personalAreaOpen) {
-        sidebarPx += 20;
-      }
-      const topbarPx = this.state.personalAreaOpen ? 80 : 0;
-      layerX = event.changedTouches[0].clientX - sidebarPx;
-      layerY = event.changedTouches[0].clientY - topbarPx;
 
       this.setState({
         touchTime: null,
@@ -1147,6 +1126,8 @@ class Graphics extends Component {
       }
 
       const clickShapeGroup = shape ? this.getShapeGroup(shape.custom ? shape.id : this.refs[shape.id]) : null;
+
+    
 
       if (event.button === 0) {
         // LEFT CLICK
@@ -1441,17 +1422,13 @@ class Graphics extends Component {
             contextMenuX = "groupAreaContextMenuX";
             contextMenuY = "groupAreaContextMenuY";
           }
-          let sidebarPx = window.matchMedia("(orientation: portrait)").matches ? 0 : 70;
-          if (sidebarPx > 0 && !this.state.overlayOpen && this.state.personalAreaOpen) {
-            sidebarPx = 100;
-          }
-
+          
           const rel = this.refs[`${areaClicked}AreaLayer.objects`].getRelativePointerPosition();
           this.setState({
             selectedContextMenu: {
               type: type,
               position: {
-                x: layerX + sidebarPx,
+                x: layerX,
                 y: layerY,
                 relX: rel.x,
                 relY: rel.y
@@ -1459,7 +1436,7 @@ class Graphics extends Component {
             },
             [notVisible]: false,
             [visible]: true,
-            [contextMenuX]: layerX + sidebarPx,
+            [contextMenuX]: layerX,
             [contextMenuY]: layerY,
           });
         }
@@ -1592,6 +1569,7 @@ class Graphics extends Component {
           if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
+     
             if (shapeGroup) {
               this.setState({
                 selectedShapeName: "",
@@ -1663,7 +1641,17 @@ class Graphics extends Component {
       shape.setZIndex(this.getLayers().indexOf(ref) + 1 > 6 ? 6 : this.getLayers().indexOf(ref) + 1);
     }
 
-
+    this.setState(prevState => ({
+      [objectsName]: prevState[objectsName].map(eachObj =>
+        eachObj.id === shape.attrs.id
+          ? {
+            ...eachObj,
+            x: e.target.x(),
+            y: e.target.y()
+          }
+          : eachObj
+      )
+    }));
 
     this.setState({
       selectedShapeName: this.state.groupSelection.length ? "" : this.state.selectedShapeName,
@@ -2293,6 +2281,7 @@ class Graphics extends Component {
 
   // Returns the group a shape is part of or null if it isn't in a group
   getShapeGroup = (shape) => {
+    if(!shape) return null;
     const shapeId = shape.attrs ? shape.id() : shape;
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
@@ -2359,9 +2348,9 @@ class Graphics extends Component {
       }
       let topPx = 0;
       if (layer === this.refs[`personalAreaLayer.objects`]) {
-        topPx = 50;
+        topPx = 57;
       } else if (layer === this.refs[`overlayAreaLayer.objects`]) {
-        topPx = 30;
+        topPx = 57;
       }
       const scaleVal = layer === this.refs[`personalAreaLayer.objects`] ?
         this.state.personalLayerScale :
@@ -2953,12 +2942,7 @@ class Graphics extends Component {
           outerRadius: object.outerRadius() * object.scaleY()
         };
         break;
-      case "images":
-        transformOptions = {
-          width: object.width(),
-          height: object.height()
-        };
-        break;
+
       case "videos":
       case "audios":
         transformOptions = {
@@ -3004,7 +2988,7 @@ class Graphics extends Component {
       object.y(0);
     }
 
-    if (!(type === "images" || type === "videos" || type === "audios" || this.customObjects.includes(type))) {
+    if (!( type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
     }
@@ -3241,6 +3225,10 @@ class Graphics extends Component {
     }))
   }
 
+  getDragProps = () => {}
+  getPageProps = () => {}
+  getVariableProps = () => {}
+
   renderAllObjects = () => {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas, this)
   }
@@ -3462,6 +3450,7 @@ class Graphics extends Component {
               onDragMove={this.dragLayer}
               onKeyDown={this.contextMenuEventShortcuts}
               onKeyUp={this.keyUp}
+              canvasState={this}
               setRefs={(type, ref) => {
                 this.refs[type] = ref;
               }}
@@ -3695,6 +3684,7 @@ class Graphics extends Component {
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}
               handleEditRole={this.handleEditRole}
+              roleRef={"rolesdrop"}
               savedRoles={this.state.roles}
               editMode={true}
               addNewRoleRect={(name) => {
@@ -3725,7 +3715,7 @@ class Graphics extends Component {
                 for (let i = 0; i < this.state.pages.length; i++) {
                   const page = pages[i];
                   console.log(page)
-                  page.personalPositionRect[newName] = JSON.parse(JSON.stringify(page.personalPositionRect[oldName]));
+                  page.personalPositionRect[newName] = page.personalPositionRect[oldName];
                   delete page.personalPositionRect[oldName];
                   pages[i] = page;
                 }

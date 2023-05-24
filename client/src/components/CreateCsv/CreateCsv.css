@@ -208,30 +208,26 @@
   position: relative;
 }
 
-#rolesdrops {
+.rolesdrops {
   display: flex;
   position: relative;
   width: 300px;
   margin-top: 20px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   vertical-align: middle;
 }
-#rolesdrops i {
-  position: relative;
-  bottom: 4px !important;
-  right: 2
+.rolesdrops i {
+
 }
 .role-title{
   position: relative;
   top: 6px;
+  left: -60px;
 }
 
 .modal-role-select {
   align-items: center;
   justify-content: space-between;
-
-}
-.modal-role-select > #rolesdrops {
 
 }
 .modal-role-select > #rolesdrops > span {

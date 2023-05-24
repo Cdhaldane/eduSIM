@@ -379,7 +379,6 @@ a {
 }
 
 .control-icon {
-  margin-left: 9px !important;
   width: 1.2em !important;
   height: 1.2em !important;
 }
@@ -406,8 +405,6 @@ a {
   fill: var(--primary) !important;
   height: 1.5em;
   width: 1.5em;
-  vertical-align: -30%;
-  margin-right: 10px;
 }
 
 
@@ -840,7 +837,7 @@ a {
   width: 30px !important;
   height: 30px !important;
   position: relative;
-  left: 5px;
+  left: 0px;
   bottom: 0px;
   padding: 0px !important;
 }

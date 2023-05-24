@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DropdownRoles from "../Dropdown/DropdownRoles";
 import styled from "styled-components";
 import { useAlertContext } from '../Alerts/AlertContext';
@@ -39,6 +39,8 @@ const CreateRole = (props) => {
   const [name, setName] = useState("");
   const alertContext = useAlertContext();
   const { t } = useTranslation();
+  const roleRef = useRef(null);
+
 
   const rolesTaken = Object.values(props.players).reduce((roles, {role}) => {
     const roleCount = roles[role] || 0;
@@ -80,7 +82,7 @@ const CreateRole = (props) => {
           <h2>{t("game.welcomeToTheSimulation")}</h2>
           <p>{userExists ? t("game.joiningAsX", { name: `${props.initialUserInfo.fname} ${props.initialUserInfo.lname}` }) : t("game.inputName")}</p>
         </div>
-        <div id="rolesdrops">
+        <div className="rolesdrops" ref={roleRef}>
           <span className="role-title">{t("common.role")}</span>
           <DropdownRoles
             gameid={props.gameid}
@@ -90,6 +92,7 @@ const CreateRole = (props) => {
             initRole={role}
             disabled={props?.roleSelection !== "student"}
             random={props?.roleSelection?.startsWith("random")}
+            roleRef={roleRef}
           />
         </div>
         <form onSubmit={handleSubmit} action="#">

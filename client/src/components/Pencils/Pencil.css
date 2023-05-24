@@ -63,7 +63,10 @@
   position: relative;
   top: -150px;
 }
-
+.dropTimeline {
+  width: auto !important;
+  height: auto !important;
+}
 .drop3 {
   position: fixed;
   top: 150px;

@@ -74,10 +74,7 @@ const NavBar = (props) => {
         <a onClick={switchLanguage} className="lang-button">
           {i18n.language === 'en' ? 'fr' : 'en'}
         </a>
-        <div className="dot"></div>
-        
-
-
+  
         {isAuthenticated ? (
           <img
             referrerPolicy="no-referrer"

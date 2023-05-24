@@ -15,6 +15,7 @@ import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
+import { flushSync } from 'react-dom'; // Note: react-dom, not react
 
 
 const EditPage = React.lazy(() => import("./EditPage"));
@@ -34,6 +35,8 @@ import {
   Transformer
 } from "react-konva";
 import { Socket } from "socket.io-client";
+import { is } from "immutable";
+import { to } from "react-spring";
 
 const konvaObjects = [
   "rectangles",
@@ -72,8 +75,9 @@ const CanvasPage = (props) => {
     ...savedObjects.map(name => `${name}DeleteCount`)
   ];
 
-  const positionRectRef = useRef();
-  const positionRectPersonalRef = useRef();
+  const positionRectRef = useRef(null);
+  const positionRectPersonalRef = useRef(null);
+  const positionRectOverlayRef = useRef(null);
 
   const [gameEditProps, _setGameEditProps] = useState();
   const gameEditPropsRef = useRef();
@@ -102,8 +106,9 @@ const CanvasPage = (props) => {
     personal: null
   });
 
-  const getUpdatedCanvasState = (mode) => {
+  const getUpdatedCanvasState = (mode, editState) => {
     if (mode === "edit") {
+
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;
@@ -152,6 +157,13 @@ const CanvasPage = (props) => {
       return;
     }
 
+    const topBar = document.getElementById("levelContainer")?.childNodes[0].getBoundingClientRect();
+    const sidebar = document.getElementsByClassName("grid-sidebar")[0]?.getBoundingClientRect();
+    const personalArea = document.getElementById("editPersonalContainer")?.getBoundingClientRect();
+    const overlayArea = document.getElementById("overlayGameContainer")?.getBoundingClientRect();
+    let clientRect = {width: window.innerWidth, height: window.innerHeight};
+    
+
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
       primaryColor: "#8f001a",
@@ -185,19 +197,20 @@ const CanvasPage = (props) => {
     let positionRect = null;
     if (areaString === "overlay") {
       positionRect = overlay;
+      clientRect = overlayArea;
     } else if (areaString === "personal") {
       positionRect = personal;
+      clientRect = personalArea;
     } else {
       positionRect = group;
+      
     }
-
     if (mode === "play") {
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
       const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
       const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
-      const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
-      const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
+
       const personalArea = document.getElementById(personalId).getBoundingClientRect();
       const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
       const screenW = window.innerWidth;
@@ -218,243 +231,51 @@ const CanvasPage = (props) => {
         [`${areaString}LayerScale`]: newScale,
         canvasLoading: false
       });
+      console.log("recentering play mode");
       return;
     }
 
     // Edit mode centering with no objects
-    if (canvas.getLayers().length === 0 && positionRect) {
-      // Reset to default position and scale
+    if (canvas.getLayers().length >= 0 && positionRect && clientRect && topBar && sidebar ) {
+
+      positionRect.x = 0;
+      positionRect.y = 0;
+      const positionWidth = (positionRect.w * positionRect.scaleX);
+      const positionHeight = (positionRect.h * positionRect.scaleY);
+      const isPersonalArea = areaString === "personal";
+      const overlay = areaString === "overlay";
+
+
+      const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
+      const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
+
+      // Account for sidebar and topBar in calculations
+      const viewableWidth = clientRect.width - sideBarPadding;
+      const viewableHeight = clientRect.height - topBarPadding;
+      const padding = 10;
+
+      let scaleX = viewableWidth / (positionWidth + 2 * padding);
+      let scaleY = viewableHeight / (positionHeight + 2 * padding);
+      
+      const scale = Math.min(scaleX, scaleY) / 1.1;
+
+      // Calculate the center position relative to the viewable area
+      const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
+      const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
+
+      
+      
+
+      // Log information for debugging
+
       canvas.setState({
-        [`${areaString}LayerX`]: -positionRect?.x,
-        [`${areaString}LayerY`]: -positionRect?.y,
-        [`${areaString}LayerScale`]: 1,
+        [`${areaString}LayerX`]: centerPositionX,
+        [`${areaString}LayerY`]: centerPositionY,
+        [`${areaString}LayerScale`]: scale,
         canvasLoading: false
       });
+
       return;
-    }
-
-    // Runs for personal and group area
-    const _reCenterObjects = (isPersonalArea, mode, overlay) => {
-
-      if (
-        mode === "play" &&
-        zoomSettings &&
-        zoomSettings[areaString].x &&
-        zoomSettings[areaString].y &&
-        zoomSettings[areaString].scale &&
-        !zoomSettings[areaString].resize &&
-        from !== "resize"
-      ) {
-        canvas.setState({
-          [`${areaString}LayerX`]: zoomSettings[areaString].x,
-          [`${areaString}LayerY`]: zoomSettings[areaString].y,
-          [`${areaString}LayerScale`]: zoomSettings[areaString].scale,
-          canvasLoading: false
-        });
-        if (document.getElementById(`${areaString}GameContainer`)) {
-          document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
-        }
-        setPlayModeCanvasHeights({
-          overlay: areaString === "overlay" ? zoomSettings[areaString].newHeight : 0,
-          personal: areaString === "personal" ? zoomSettings[areaString].newHeight : 0,
-          group: areaString === "group" ? zoomSettings[areaString].newHeight : 0,
-        });
-        return;
-      }
-      if (
-        !(canvas &&
-          canvas.setState &&
-          canvas.state &&
-          canvas.refs)
-      ) {
-        return;
-      }
-      if (mode === "play" && document.getElementById(`${areaString}GameContainer`)) {
-        document.getElementById(`${areaString}GameContainer`).scrollTop = 0;
-      }
-
-      // Reset to default position and scale
-      canvas.setState({
-        [`${areaString}LayerX`]: 0,
-        [`${areaString}LayerY`]: 0,
-        [`${areaString}LayerScale`]: 1
-      }, () => setTimeout(() => {
-        canvas = getUpdatedCanvasState(mode);
-
-        const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
-        const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
-        const sidebar = document.getElementsByClassName("grid-sidebar")[0].getBoundingClientRect();
-        const personalArea = document.getElementById(personalId).getBoundingClientRect();
-        const topBar = document.getElementById("levelContainer").childNodes[0].getBoundingClientRect();
-        const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-        const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
-        const padding = 80;
-        const doublePad = 2 * padding;
-        const screenW = window.innerWidth;
-        const screenH = window.innerHeight;
-        const availableW = isPersonalArea ? personalArea.width - doublePad : screenW - sideMenuW - doublePad;
-        const availableH = isPersonalArea ? personalArea.height - topMenuH - doublePad : screenH - topMenuH - doublePad;
-        const availableRatio = availableW / availableH;
-        const level = canvas.state.level;
-
-        let { minX, maxX, minY, maxY } = recalculateMaxMin(isPersonalArea, overlay, sideMenuW, canvas, personalId, level);
-        if (!minX && !maxX && !minY && !maxY) {
-          minX = maxX = minY = maxY = 1;
-        }
-        if (minX && maxX && minY && maxY) {
-          let x = null;
-          let y = null;
-          let scale = null;
-          const contentW = maxX - minX;
-          const contentH = maxY - minY;
-          const contentRatio = contentW / contentH;
-          if (availableRatio > contentRatio && mode !== "play") {
-            // Content proportionally taller
-            scale = availableH / contentH;
-          } else {
-            // Content proportionally wider
-            scale = availableW / contentW;
-          }
-          x = -minX * scale;
-          y = -minY * scale;
-          const scaleDown = 0.85;
-          if (scale === Infinity) {
-            // There is nothing on the canvas
-            x = 0;
-            y = 0;
-            scale = 1;
-          }
-          let newHeight;
-          // Scale and fit to top leftR
-          canvas.setState({
-            [`${areaString}LayerX`]: x,
-            [`${areaString}LayerY`]: y + topMenuH,
-            [`${areaString}LayerScale`]: scale
-          }, () => setTimeout(() => {
-            canvas = getUpdatedCanvasState(mode);
-
-            if (mode === "play") {
-              // Adjust the canvas container height (scroll-y will automatically appear if needed)
-              const canvasH = Math.max((contentH * scale) + (topMenuH * 2) + padding, window.innerHeight);
-
-              // Run this after a timeout so the DOM is fully loaded when checking lengths
-              setTimeout(() => {
-                // If group area scroll bar, move overlay buttons left
-                const overlayButtons = [].slice.call(document.getElementsByClassName("overlayButton"));
-                const groupArea = document.getElementById("groupGameContainer");
-                if (
-                  groupArea &&
-                  groupArea.clientHeight < groupArea.scrollHeight
-                ) {
-                  overlayButtons.map(btn => {
-                    btn.style.right = `20px`;
-                  });
-                } else if (groupArea) {
-                  overlayButtons.map(btn => {
-                    btn.style.right = `5px`;
-                  });
-                }
-
-                // If personal area scroll bar, move personal toggle left
-                const personalToggle = document.getElementById("personalInfoContainer");
-                const personalArea = document.getElementById("personalGameContainer");
-                if (
-                  personalToggle && personalArea &&
-                  personalArea.clientHeight < personalArea.scrollHeight &&
-                  canvas.state.personalAreaOpen
-                ) {
-                  personalToggle.style.paddingRight = "25px";
-                } else if (personalToggle) {
-                  personalToggle.style.paddingRight = "10px";
-                }
-
-                // If overlay area scroll bar, move overlay exit icon left
-                const overlayCloseBtn = document.getElementById("overlayCloseButton");
-                const overlayArea = document.getElementById("overlayGameContainer");
-                if (
-                  overlayArea && overlayCloseBtn &&
-                  overlayArea.clientHeight < overlayArea.scrollHeight &&
-                  canvas.state.overlayOpen
-                ) {
-                  overlayCloseBtn.style.right = "25px";
-                } else if (overlayCloseBtn) {
-                  overlayCloseBtn.style.right = "10px";
-                }
-              }, 0);
-
-              newHeight = availableRatio * scaleDown > contentRatio ? canvasH : null;
-              setPlayModeCanvasHeights({
-                overlay: areaString === "overlay" ? newHeight : 0,
-                personal: areaString === "personal" ? newHeight : 0,
-                group: areaString === "group" ? newHeight : 0,
-              });
-            }
-
-            const leftPadding = contentW * scale * (100 / window.innerWidth);
-
-            // Center contents
-            if (availableRatio > contentRatio) {
-              y = 40;
-              x = mode === "play" ? leftPadding : sideMenuW + (availableW - (contentW * scale)) / 2;
-            } else {
-              y = (availableH - (contentH * scale)) / 2;
-              x = leftPadding;
-            }
-            const newX = canvas.state[`${areaString}LayerX`] + x;
-            const newY = canvas.state[`${areaString}LayerY`] + y;
-            if (mode === "play") {
-              const newCanvZoomSettings = {
-                x: newX,
-                y: newY,
-                scale: scale,
-                newHeight: newHeight,
-                resize: false
-              };
-              let zoomSettingsRest = null;
-              if (from === "resize") {
-                const otherCanvs = ["group", "personal", "overlay"].filter(canv => canv !== areaString);
-                zoomSettingsRest = {
-                  [otherCanvs[0]]: {
-                    ...zoomSettings[otherCanvs[0]],
-                    resize: true
-                  },
-                  [otherCanvs[1]]: {
-                    ...zoomSettings[otherCanvs[1]],
-                    resize: true
-                  }
-                }
-              } else {
-                zoomSettingsRest = {
-                  ...zoomSettings
-                }
-              }
-              setZoomSettings({
-                ...zoomSettingsRest,
-                [areaString]: newCanvZoomSettings
-              });
-            }
-            canvas.setState({
-              [`${areaString}LayerX`]: newX,
-              [`${areaString}LayerY`]: newY,
-              canvasLoading: false
-            });
-          }, 0));
-        } else {
-          canvas.setState({
-            canvasLoading: false,
-          });
-        }
-      }, 0));
-    }
-
-    if ((!layer || layer === "group") && !canvas.state.overlayOpen && !canvas.state.personalAreaOpen) {
-      _reCenterObjects(false, mode, false);
-    }
-    if ((!layer || layer === "overlay") && canvas.state.overlayOpen) {
-      _reCenterObjects(false, mode, true);
-    }
-    if ((!layer || layer === "personal") && !canvas.state.overlayOpen && canvas.state.personalAreaOpen) {
-      _reCenterObjects(true, mode, false);
     }
   }
 
@@ -672,7 +493,7 @@ const CanvasPage = (props) => {
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
-    
+
       width: obj.width,
       height: obj.height
     }
@@ -768,11 +589,12 @@ const CanvasPage = (props) => {
       ...(editMode ?
         {
           onTransform: canvas.handleTextTransform,
-          onDblClick: () => canvas.handleTextDblClick(
+          onDblClick: () => {
+            canvas.handleTextDblClick(
             canvas.refs[obj.ref],
             obj.infolevel ? canvas.refs[`personalAreaLayer.objects`] :
               (obj.overlay ? canvas.refs[`overlayAreaLayer.objects`] : canvas.refs[`groupAreaLayer.objects`])
-          ),
+          )},
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
             canvas.setState({
@@ -969,6 +791,7 @@ const CanvasPage = (props) => {
       overlay.id === canvas.state.overlayOpenIndex
     ) : null;
     const overlay = overlayI !== null ? page.overlays[overlayI].positionRect : null;
+
     let positionRect = null;
     if (stage === "group") {
       positionRect = group;
@@ -978,6 +801,7 @@ const CanvasPage = (props) => {
       positionRect = overlay;
     }
     if (positionRect === undefined) return {};
+    
     return {
       label: {
         text: `${Math.round(positionRect.w * positionRect.scaleX)} x ${Math.round(positionRect.h * positionRect.scaleY)}`,
@@ -1005,7 +829,7 @@ const CanvasPage = (props) => {
           x: x,
           y: y,
           scaleX: scaleX,
-          scaleY: scaleY
+          scaleY: scaleY,
         };
         if (stage === "group") {
           newPage.groupPositionRect = newRect;
@@ -1184,11 +1008,13 @@ const CanvasPage = (props) => {
   }
 
   const loadObjects = (stage, mode, moving, editState) => {
-    
     const editMode = mode === "edit";
-    let canvas = getUpdatedCanvasState(mode);
-    if(editMode)canvas.state = editState.state
-    
+    let canvas = getUpdatedCanvasState(mode, editState);
+    if (editMode){
+      canvas.state = editState.state
+      canvas.refs = editState.refs
+    } 
+
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !canvas.state || !canvas.refs) {
       return (
@@ -1380,7 +1206,9 @@ const CanvasPage = (props) => {
                     listening={false}
                   />
                   <Rect
-                    ref={canvas.state.personalAreaOpen ? positionRectPersonalRef : positionRectRef}
+                    ref={
+                      canvas.state.personalAreaOpen ? positionRectPersonalRef : (canvas.state.overlayOpen ? positionRectOverlayRef : positionRectRef)
+                    }
                     {...positionRectProps(canvas, stage)}
                   />
                   <Text
@@ -1388,9 +1216,11 @@ const CanvasPage = (props) => {
                   />
 
                   <Transformer
-                    nodes={(canvas.state.personalAreaOpen && positionRectPersonalRef.current) ?
-                      [positionRectPersonalRef.current] :
-                      (positionRectRef.current ? [positionRectRef.current] : [])}
+                    nodes={
+                      (positionRectRef.current ? [positionRectRef.current] : positionRectOverlayRef.current ? 
+                        [positionRectOverlayRef.current] : positionRectPersonalRef.current && canvas.state.personalAreaOpen ? 
+                        [positionRectPersonalRef.current]  : [])
+                    }
                     name="transformer"
                     keepRatio={false}
                     rotateEnabled={false}
@@ -1419,7 +1249,7 @@ const CanvasPage = (props) => {
         id.startsWith(obj)
       )
     ).length == 0 && newLayers) setPrevLayers(objectIdsNoPencils);
-
+  
     return returnValue;*/
   }
   return (

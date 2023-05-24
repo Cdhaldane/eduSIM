@@ -79,7 +79,7 @@ class Overlay extends Component {
                   }
                 )}
               >
-                {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit", this.props.state.movingCanvas)}
+                {this.props.propsIn.loadObjects("overlay", this.props.playMode ? "play" : "edit", this.props.state.movingCanvas, this.props.canvasState)}
               </Stage>
             </div>
           </div>

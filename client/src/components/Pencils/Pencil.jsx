@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import DropdownTimelineBar from "../Dropdown/DropdownTimelineBar";
 import DropdownNavigationBar from "../Dropdown/DropdownNavigationBar";
 import { useTranslation } from "react-i18next";
@@ -10,19 +10,10 @@ import PencilIcon from "../../../public/icons/pencil.svg"
 const Pencil = (props) => {
   const { t } = useTranslation();
   const [drop, setDrop] = useState(false);
-
-  const handleClose = () => {
-    setDrop(!drop);
-  }
+  const pencilRef = useRef(null);
 
   const handleDrop = () => {
     setDrop(!drop);
-    if (props.editModeToggle === true) {
-      props.editMode();
-    }
-    if (props.editModeToggle === false) {
-      props.editMode();
-    }
   }
 
   return (
@@ -41,7 +32,7 @@ const Pencil = (props) => {
         )}
       </div>
       {drop && (
-        <div className={"drop" + props.id + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}>
+        <div className={"drop" + props.id + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")} ref={pencilRef}>
           {props.type === "info" && (
             <DropdownTimelineBar
               positionRect={props.positionRect}
@@ -53,9 +44,10 @@ const Pencil = (props) => {
               numOfPages={props.numOfPages}
               updateObjState={props.updateObjState}
               handleCopyPage={props.handleCopyPage}
-              close={handleClose}
-              getObjState={props.getObjState} />
-
+              close={handleDrop}
+              getObjState={props.getObjState} 
+              pencilRef={pencilRef}
+              />
           )}
           {props.type === "nav" && (
             <DropdownNavigationBar

@@ -53,11 +53,9 @@ a {
   background-color: var(--white);
   border-radius: 50%;
   border: 1px solid var(--primary);
-  padding: 5px;
-  margin: 5px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  vertical-align: middle !important;
   transition: filter 300ms;
 }
 
@@ -67,10 +65,9 @@ a {
 
 .icon-button svg {
   position: relative;
-  bottom: -3px;
   fill: var(--primary);
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
 }
 
 .icons-right {
@@ -155,6 +152,10 @@ a {
   white-space: normal;
   padding: 10px;
   text-align: center;
+}
+
+#pageSettingsDropdown span {
+  margin-left: 10px;
 }
 
 #pageSettingsDropdown>div {
@@ -300,6 +301,7 @@ a {
 .dropdown {
   position: absolute;
   width: 300px;
+  min-height: 42px;
   z-index: 200000;
   white-space: nowrap;
   background-color: var(--white);
@@ -355,6 +357,7 @@ a {
 
 .menu-item {
   text-align: left;
+  width: 100% !important;
   height: 45px;
   display: flex;
   color: #636363;
@@ -363,9 +366,14 @@ a {
   transition: background var(--speed);
   margin-bottom: 0px;
   cursor: pointer;
+  padding: 9px;
 }
-.menu-item h1 {
- 
+.menu-item-container {
+  height: 100%;
+  width: 80%;
+  display: flex;
+  text-align: left !important;
+  align-items: center;
 }
 
 .loadingMediaAlert {
@@ -405,6 +413,10 @@ a {
 .menu-item h2 {
   font-size: 1.5rem;
 }
+.menu-item h1 {
+  overflow: hidden;
+  max-width: 60%;
+}
 
 .menu-item[disabled] {
   pointer-events: none;
@@ -437,7 +449,7 @@ a {
   margin-right: 6px;
   border-radius: 0 !important;
   color: var(--primary) !important;
-  z-index: 2000;
+  z-index: 3000;
 }
 
 .role-deselect-icon i {
@@ -445,6 +457,7 @@ a {
   width: 20px !important;
   height: 20px !important;
   position: relative;
+  right: 16px;
 }
 
 .gamemode i {
@@ -461,6 +474,8 @@ a {
   opacity: 0.5;
   transform: translateX(-110%);
 }
+
+
 
 .menu-primary-enter-active {
   opacity: 1;
@@ -506,6 +521,11 @@ a {
   color: var(--primary);
   fill: var(--primary) !important;
   font-size: 1.1rem;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  top: 3px;
+  left: 8px;
 }
 
 #dswitch {
@@ -842,19 +862,22 @@ a {
 }
 
 #roleNameAdd {
-  width: 60%;
+  width: 70%;
+  padding: 15x;
+  height: 100%;
 }
 
 #roleNumAdd {
   width: 15%;
-  margin-left: 10px;
+  padding: 15x;
+  height: 100%;
 }
 
 .add-dropdown-item-input {
   border-radius: 0.5em;
 
   border: solid 1px grey;
-
+  padding: 15px;
   font-size: 0.9em;
   padding-left: 0.5em;
   width: 82%;
@@ -978,15 +1001,18 @@ a {
 
 /* Role description  */
 
+
+
 .dropdown-desc {
   position: absolute;
-  right: 5px;
-  top: -8px;
-  width: 20px !important;
+  right: -5px;
+  align-items: center !important;
 }
 .dropdown-desc svg{
   width: 30px !important;
   height: 30px !important;
+  left: 10px;
+  bottom: 0px !important;
 }
 .role-desc{
   width: 90%;
@@ -1012,15 +1038,15 @@ a {
 
 .add-icons {
   position: relative;
-  left: 5px !important;
-  bottom: 3px !important;
+  left: 2px !important;
+  bottom: -2px !important;
   fill: var(--primary) !important;
 }
 .roles-icons{
   fill: var(--primary) !important;
   position: relative !important;
-  margin-right: 0 !important;
-  bottom: 3px !important;
+  left: 2px !important;
+  bottom: -1px !important;
 }
 .card {
   width: 10px !important;
@@ -1033,20 +1059,19 @@ a {
 }
 .timeline-roles{
   position: relative;
-  left: 5px !important;
-  bottom: 3px !important;
+  left: 2px !important;
+  bottom: -2px !important;
 }
 .chevron {
   position: relative;
-  left: 0px !important;
-  bottom: 6px !important;
+  left: 2px !important;
+  bottom: 0px !important;
 }
 .pencil {
   width: 30px !important;
   height: 30px !important;
   position: relative;
-  bottom: 3px;
-  margin-right: 0px;
+  top: 3px;
 }
 .setting-icon {
   width: 50px !important;

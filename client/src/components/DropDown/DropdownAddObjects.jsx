@@ -52,7 +52,7 @@ const DropdownAddObjects = (props) => {
   const [imgsrc, setImgsrc] = useState("");
   const [vidsrc, setVidsrc] = useState("");
   const [audiosrc, setAudiosrc] = useState("");
-  const [sidebarWidth, setSidebarWidth] = useState(window.matchMedia("(orientation: portrait)").matches ? 0 : 70);
+
   const { t } = useTranslation();
 
   const calcOutOfBounds = (x, y) => {
@@ -173,10 +173,10 @@ const DropdownAddObjects = (props) => {
     const screenH = window.innerHeight - paddingPx;
     const screenW = window.innerWidth - paddingPx;
 
-    if(objX > screenW) {
+    if (objX > screenW) {
       objX = objX - 200;
     }
-    if(objY > screenH) {
+    if (objY > screenH) {
       objY = objY - 200;
     }
 
@@ -201,7 +201,7 @@ const DropdownAddObjects = (props) => {
     };
 
     let newPages = [...props.state.pages];
-    const thisPage = {...newPages[props.state.level - 1]};
+    const thisPage = { ...newPages[props.state.level - 1] };
     if (props.layer.attrs.name === "group") {
       const groupLayers = [...thisPage.groupLayers];
       isCustom ? groupLayers.unshift(name) : groupLayers.push(name);
@@ -325,18 +325,18 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = (img) => {
-        addObjectToLayer(
-          "images",
-          {
-            temporary: false,
-            imgsrc: img,
-            stroke: 'black',
-            strokeWidth: 0,
-            opacity: 1,
-            width: img.clientWidth,
-            height: img.clientHeight
-          }
-        );
+    addObjectToLayer(
+      "images",
+      {
+        temporary: false,
+        imgsrc: img,
+        stroke: 'black',
+        strokeWidth: 0,
+        opacity: 1,
+        width: img.clientWidth,
+        height: img.clientHeight
+      }
+    );
   }
 
   const addVideo = (video) => {
@@ -568,7 +568,7 @@ const DropdownAddObjects = (props) => {
       {
         cloudName: "uottawaedusim",
         uploadPreset: preset,
-        singleUploadAutoClose:true
+        singleUploadAutoClose: true
       },
       (error, result) => {
         if (!error && result && result.event === "success") {
@@ -597,8 +597,8 @@ const DropdownAddObjects = (props) => {
       className="dropdown"
       style={{
         height: menuHeight,
-        transform: `translateX(${props.xPos - sidebarWidth + offsetX}px)
-                    translateY(${props.yPos + offsetY}px)`,
+        transform: `translateX(${props.xPos + offsetX}px)
+        translateY(${props.yPos + offsetY}px)`,
       }}
       ref={dropdownRef}
       onContextMenu={(e) => {
@@ -613,27 +613,27 @@ const DropdownAddObjects = (props) => {
         <div className="menu" style={{ textAlign: "left" }}>
           <h1>{props.title}</h1>
           <DropdownItem
-            leftIcon={<i><Star className="icon add-icons"/></i>}
+            leftIcon={<i><Star className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("shapes")}>
             {t("edit.addShape")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Image className="icon add-icons"/></i>}
+            leftIcon={<i><Image className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("media")}>
             {t("edit.addMedia")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Hand className="icon add-icons"/></i>}
+            leftIcon={<i><Hand className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("pieces")}>
             {t("edit.addInteractive")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Question className="icon add-icons"/></i>}
+            leftIcon={<i><Question className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("inputs")}>
             {t("edit.addInput")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Game className="icon add-icons"/></i>}
+            leftIcon={<i><Game className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("games")}>
             {t("edit.addGames")}
           </DropdownItem>
@@ -648,26 +648,26 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addShape")}</h2>
           </DropdownItem>
 
           <DropdownItem
             onClick={addText}
-            leftIcon={<i><Text className="icon add-icons"/></i>}>
+            leftIcon={<i><Text className="icon add-icons" /></i>}>
             {t("edit.shape.simpleText")}
           </DropdownItem>
 
           <DropdownItem
             onClick={addNewText}
-            leftIcon={<i><TextAlt className="icon add-icons"/></i>}>
+            leftIcon={<i><TextAlt className="icon add-icons" /></i>}>
             {t("edit.shape.richText")}
           </DropdownItem>
-          <DropdownItem onClick={addRectangle} leftIcon={<i onClick={addRectangle} ><i><Square className="icon add-icons"/></i></i>}>{t("edit.shape.square")}</DropdownItem>
-        <DropdownItem onClick={addCircle} leftIcon={<i  onClick={addCircle}><i><Circle className="icon add-icons"/></i></i>}>{t("edit.shape.circle")}</DropdownItem>
-      <DropdownItem onClick={addTriangle} leftIcon={<i  onClick={addTriangle}><i><Triangle className="icon add-icons"/></i></i>}>{t("edit.shape.triangle")}</DropdownItem>
-    <DropdownItem onClick={addStar} leftIcon={<i  onClick={addStar}><i><Star className="icon add-icons"/></i></i>}>{t("edit.shape.star")}</DropdownItem>
+          <DropdownItem onClick={addRectangle} leftIcon={<i onClick={addRectangle} ><i><Square className="icon add-icons" /></i></i>}>{t("edit.shape.square")}</DropdownItem>
+          <DropdownItem onClick={addCircle} leftIcon={<i onClick={addCircle}><i><Circle className="icon add-icons" /></i></i>}>{t("edit.shape.circle")}</DropdownItem>
+          <DropdownItem onClick={addTriangle} leftIcon={<i onClick={addTriangle}><i><Triangle className="icon add-icons" /></i></i>}>{t("edit.shape.triangle")}</DropdownItem>
+          <DropdownItem onClick={addStar} leftIcon={<i onClick={addStar}><i><Star className="icon add-icons" /></i></i>}>{t("edit.shape.star")}</DropdownItem>
           <DropdownItem
             onClick={addLine}
             leftIcon={<i className="icons" onClick={addLine} style={{
@@ -679,14 +679,14 @@ const DropdownAddObjects = (props) => {
             {t("edit.shape.line")}
           </DropdownItem>
 
-          <DropdownItem
+          {/* <DropdownItem
             leftIcon={<i><Draw className="icon add-icons"/></i>}
             onClick={() => {
               props.setDrawMode(true);
               props.close();
             }}>
             {t("edit.shape.drawMode")}
-          </DropdownItem>
+          </DropdownItem> */}
 
         </div>
       </CSSTransition>
@@ -699,27 +699,27 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addMedia")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Image className="icon add-icons"/></i>}
+            leftIcon={<i><Image className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("image")}>
             {t("edit.media.imageOrGif")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Video className="icon add-icons"/></i>}
+            leftIcon={<i><Video className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("video")}>
             {t("edit.media.video")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Audio className="icon add-icons"/></i>}
+            leftIcon={<i><Audio className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("audio")}>
             {t("edit.media.audio")}
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i><Document className="icon add-icons"/></i>}
+            leftIcon={<i><Document className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("docs")}>
             {t("edit.media.document")}
           </DropdownItem>
@@ -733,7 +733,7 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addImage")}</h2>
           </DropdownItem>
@@ -745,7 +745,7 @@ const DropdownAddObjects = (props) => {
                     if (imageUploaded) {
                       addImage(e);
                     }
-                  }} ><i><Plus className="icon add-icons"/></i></i>
+                  }} ><i><Plus className="icon add-icons" /></i></i>
                 ) : (
                   <div className="loadingMediaAddMenuContainer">
                     <Loading />
@@ -765,7 +765,7 @@ const DropdownAddObjects = (props) => {
                 if (validImgURL) {
                   addImage(e);
                 }
-              }}><i><Plus className="icon add-icons"/></i></i>}>
+              }}><i><Plus className="icon add-icons" /></i></i>}>
               <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.imageURL")} onChange={handleImage} value={imgsrc} />
             </DropdownItem>
           </div>
@@ -779,7 +779,7 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addVideo")}</h2>
           </DropdownItem>
@@ -792,7 +792,7 @@ const DropdownAddObjects = (props) => {
                 if (validVideoURL) {
                   addVideo(vidsrc);
                 }
-              }}><i><Plus className="icon add-icons"/></i></i>}>
+              }}><i><Plus className="icon add-icons" /></i></i>}>
               <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.videoURL")} onChange={handleVideo} value={vidsrc} />
             </DropdownItem>
           </div>
@@ -806,18 +806,18 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addAudio")}</h2>
           </DropdownItem>
 
           <div className={`${audioUploaded ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i  onClick={(e) => {
+              leftIcon={<i onClick={(e) => {
                 if (audioUploaded) {
                   addAudio(e);
                 }
-              }}><i><Plus className="icon add-icons"/></i></i>}>
+              }}><i><Plus className="icon add-icons" /></i></i>}>
               <button type="button" className="add-media-button" onClick={() => openWidget("du7sbfat")}>
                 {t("modal.imageFromFile")}
               </button>
@@ -826,11 +826,11 @@ const DropdownAddObjects = (props) => {
 
           <div className={`${validAudioURL ? "" : "dropdown-add-disabled"}`}>
             <DropdownItem
-              leftIcon={<i  onClick={(e) => {
+              leftIcon={<i onClick={(e) => {
                 if (validAudioURL) {
                   addAudio(e);
                 }
-              }}><i><Plus className="icon add-icons"/></i></i>}>
+              }}><i><Plus className="icon add-icons" /></i></i>}>
               <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.audioURL")} onChange={handleAudio} value={audiosrc} />
             </DropdownItem>
           </div>
@@ -845,12 +845,12 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("media")}>
             <h2>{t("edit.media.addDocument")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i onClick={(e) => addDocument(e)}><i><Plus className="icon add-icons"/></i></i>}>
+            leftIcon={<i onClick={(e) => addDocument(e)}><i><Plus className="icon add-icons" /></i></i>}>
             <button type="button" className="add-media-button" onClick={() => openWidget("mfcgzpkg")}>
               {t("modal.imageFromFile")}
             </button>
@@ -866,25 +866,25 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addInteractive")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={addPoll}
             leftIcon={<i
-              onClick={addPoll}><i><Graph className="icon add-icons"/></i></i>}>
+              onClick={addPoll}><i><Graph className="icon add-icons" /></i></i>}>
             {t("edit.interactive.poll")}</DropdownItem>
           <DropdownItem
             onClick={addHTMLFrame}
             leftIcon={<i
-              onClick={addHTMLFrame}><i><Code className="icon add-icons"/></i></i>}>
+              onClick={addHTMLFrame}><i><Code className="icon add-icons" /></i></i>}>
             {t("edit.interactive.html")}</DropdownItem>
 
           <DropdownItem
             onClick={addTimer}
             leftIcon={<i
-              onClick={addTimer}><i><Timer className="icon add-icons"/></i></i>}>
+              onClick={addTimer}><i><Timer className="icon add-icons" /></i></i>}>
             {t("edit.interactive.timer")}</DropdownItem>
         </div>
       </CSSTransition>
@@ -898,7 +898,7 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
 
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addGames")}</h2>
@@ -908,22 +908,22 @@ const DropdownAddObjects = (props) => {
 
             leftIcon={<i
 
-              onClick={addTicTacToe}><i><Cross className="icon add-icons"/></i></i>}>
+              onClick={addTicTacToe}><i><Cross className="icon add-icons" /></i></i>}>
             {t("edit.game.tic")}</DropdownItem>
           <DropdownItem
             onClick={addDeck}
-            leftIcon={<i onClick={addDeck}><i><Club className="icon add-icons"/></i></i>}>
+            leftIcon={<i onClick={addDeck}><i><Club className="icon add-icons" /></i></i>}>
             {t("edit.game.deck")}</DropdownItem>
           <DropdownItem
-          onClick={addDice}
-          leftIcon={<i onClick={addDice}><i><Dice className="icon add-icons"/></i></i>}>
-          {t("edit.game.dice")}</DropdownItem>
+            onClick={addDice}
+            leftIcon={<i onClick={addDice}><i><Dice className="icon add-icons" /></i></i>}>
+            {t("edit.game.dice")}</DropdownItem>
           <DropdownItem
             onClick={addConnect4}
 
             leftIcon={<i
 
-              onClick={addConnect4}><i><Connect4 className="icon add-icons"/></i></i>}>
+              onClick={addConnect4}><i><Connect4 className="icon add-icons" /></i></i>}>
             {t("edit.game.connect4")}</DropdownItem>
         </div>
       </CSSTransition>
@@ -936,36 +936,36 @@ const DropdownAddObjects = (props) => {
         onEnter={calcHeight}>
         <div className="menu">
           <DropdownItem
-            leftIcon={<i><Left className="icon add-icons"/></i>}
+            leftIcon={<i><Left className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addInput")}</h2>
           </DropdownItem>
           <DropdownItem
             onClick={() => addInput("button")}
             leftIcon={<i
-              onClick={() => addInput("button")}><i><Hand className="icon add-icons"/></i></i>}>
+              onClick={() => addInput("button")}><i><Hand className="icon add-icons" /></i></i>}>
             {t("edit.input.button")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("text")}
             leftIcon={<i
-              onClick={() => addInput("text")}><i><Text className="icon add-icons"/></i></i>}>
+              onClick={() => addInput("text")}><i><Text className="icon add-icons" /></i></i>}>
             {t("edit.input.textbox")}</DropdownItem>
           <DropdownItem
             onClick={() => addInput("checkbox")}
             leftIcon={<i
-              onClick={() => addInput("checkbox")}><i><Check className="icon add-icons"/></i></i>}>
+              onClick={() => addInput("checkbox")}><i><Check className="icon add-icons" /></i></i>}>
             {t("edit.input.checkbox")}</DropdownItem>
-            <DropdownItem
-              onClick={() => addInput("radio")}
-              leftIcon={<i
-                onClick={() => addInput("radio")}><i><Radio className="icon add-icons"/></i></i>}>
-              {t("edit.input.radio")}</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("radio")}
+            leftIcon={<i
+              onClick={() => addInput("radio")}><i><Radio className="icon add-icons" /></i></i>}>
+            {t("edit.input.radio")}</DropdownItem>
 
-              <DropdownItem
-                onClick={() => addInput("variable")}
-                leftIcon={<i
-                  onClick={() => addInput("variable")}><i><Question className="icon add-icons"/></i></i>}>
-                Variable</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("variable")}
+            leftIcon={<i
+              onClick={() => addInput("variable")}><i><Question className="icon add-icons" /></i></i>}>
+            Variable</DropdownItem>
         </div>
       </CSSTransition>
 
