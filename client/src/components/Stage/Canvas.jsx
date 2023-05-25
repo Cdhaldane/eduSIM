@@ -160,6 +160,7 @@ class Graphics extends Component {
 
 
 
+
       // Context Menu
       selectedContextMenu: null,
       objectContext: 0,
@@ -564,7 +565,7 @@ class Graphics extends Component {
         allShapes = allShapes.concat(this.state[type]);
       }
 
-      this.renderCounter++;
+ 
 
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
@@ -2282,7 +2283,7 @@ class Graphics extends Component {
   // Returns the group a shape is part of or null if it isn't in a group
   getShapeGroup = (shape) => {
     if(!shape) return null;
-    const shapeId = shape.attrs ? shape.id() : shape;
+    const shapeId = shape?.attrs ? shape.id() : shape;
     if (shape && !Array.isArray(shape)) {
       for (let i = 0; i < this.state.savedGroups.length; i++) {
         for (let j = 0; j < this.state.savedGroups[i].length; j++) {
@@ -2964,9 +2965,7 @@ class Graphics extends Component {
         scaleY: object.scaleY()
       };
     }
-
-    console.log(obj)
-
+    console.log(transformOptions)
     this.setState(
       prevState => ({
         [type]: prevState[type].map(o =>
@@ -2988,7 +2987,7 @@ class Graphics extends Component {
       object.y(0);
     }
 
-    if (!( type === "videos" || type === "audios" || this.customObjects.includes(type))) {
+    if (!(type === "videos" || type === "audios" || this.customObjects.includes(type))) {
       object.setAttr("scaleX", 1);
       object.setAttr("scaleY", 1);
     }

@@ -12,6 +12,7 @@ import { useAlertContext } from "../../../Alerts/AlertContext";
 
 
 const Trigger = (props) => {
+  console.log(props.allShapes)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
   const [shapes, setShapes] = useState()
@@ -68,7 +69,6 @@ const Trigger = (props) => {
     }
     setShowConAdd(!showConAdd)
   }
-
   const deleteCon = (i) => {
     if (props.current === 'global') {
       let temp = props.trigs

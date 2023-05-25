@@ -18,6 +18,7 @@ import Left from "../../../public/icons/arrow-left.svg"
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
+  console.log(props.getObjState())
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -313,190 +314,12 @@ const DropdownEditObject = (props) => {
 
   }
 
-  const populateVariable = () => {
-    const list = [];
-    let value = 0;
-    if (objState?.variableAmount >= 1) {
-      value = objState?.variableAmount
-    }
-    for (let i = 0; i < value; i++) {
-      list.push(
-        <div className="button-vars">
-          <input className="float-left" type="text" onChange={e => handleVars(e.target)} id={i} value={objState.varName ? objState.varName[i] : ""} placeholder="variable" />
-          <h1>=</h1>
-          <input className="float-righty" type="text" onChange={e => handleVarValue(e.target)} id={i} value={objState.varValue ? objState.varValue[i] : ""} placeholder="value" />
-        </div>
-      );
-    }
-    return list
-  }
-
-  const populateConditions = () => {
-    const list = [];
-    let value = 0;
-    if (objState?.conditionAmount < 1) {
-      let value = 1;
-    } else { value = objState?.conditionAmount }
-    for (let i = 0; i < value; i++) {
-      list.push(
-        <div key={i} className="button-vars">
-          <input
-            className="float-left"
-            type="text"
-            onChange={e => handleVars(e.target)}
-            id={i}
-            value={objState.varName ? objState.varName[i] : ""}
-            placeholder="variable" />
-          <h1>=</h1>
-          <input
-            className="float-righty"
-            type="text"
-            onChange={e => handleVarValue(e.target)}
-            id={i}
-            value={objState.varValue ? objState.varValue[i] : ""}
-            placeholder="value" />
-        </div>
-      );
-    }
-    return list;
-  }
-
-  const handleVarConditions = (e) => {
-    let value = 0;
-    if (objState?.conditionAmount < 1) {
-      let value = 1;
-    } else { value = objState?.conditionAmount }
-
-    let arr = []
-    if (objState?.varCon) {
-      for (let i = 0; i < value; i++) {
-        if (e.id != i) {
-          arr[i] = objState?.varCon[i]
-        }
-      }
-    }
-    arr[e.id] = e.value;
-    props.updateObjState({ varCon: arr });
-    debounceObjState({ varCon: arr });
+  const handleObjectName = (val) => {
+    props.updateObjState({ name: val });
+    debounceObjState({ name: val });
     setObjState(prev => ({
       ...prev,
-      varCon: arr
-    }));
-  }
-
-
-  const handleVars = (e) => {
-    let value = 0;
-    if (objState?.variableAmount < 1) {
-      let value = 1;
-    } else { value = objState?.variableAmount }
-    let arr = []
-    if (objState?.varName) {
-      for (let i = 0; i < value; i++) {
-        if (e.id != i) {
-          arr[i] = objState?.varName[i]
-        }
-      }
-    }
-    arr[e.id] = e.value;
-    props.updateObjState({ varName: arr });
-    debounceObjState({ varName: arr });
-    setObjState(prev => ({
-      ...prev,
-      varName: arr
-    }));
-  }
-
-
-  const handleVarValue = (e) => {
-    let val;
-    if (isNaN(val)) {
-      val = e.value;
-    } else {
-      val = parseInt(e.value)
-    }
-    let value = 0;
-    if (objState?.variableAmount < 1) {
-      let value = 1;
-    } else { value = objState?.variableAmount }
-
-    let arr = []
-
-    if (objState?.varValue) {
-      for (let i = 0; i < value; i++) {
-        if (e.id != i) {
-          arr[i] = objState?.varValue[i]
-        }
-
-      }
-    }
-    arr[e.id] = val;
-    props.updateObjState({ varValue: arr });
-    debounceObjState({ varValue: arr });
-    setObjState(prev => ({
-      ...prev,
-      varValue: arr
-    }));
-  }
-
-  const handleMathOne = (e) => {
-    let value = e.value;
-    if (parseInt(e.value)) {
-      value = parseInt(e.value)
-    }
-    props.updateObjState({ varOne: value });
-    debounceObjState({ varOne: value });
-    setObjState(prev => ({
-      ...prev,
-      varOne: value
-    }));
-  }
-  const handleConEquals = (e) => {
-    let val;
-    if (isNaN(val)) {
-      val = e.value;
-    } else {
-      val = parseInt(e.value)
-    }
-    let value = 0;
-    if (objState?.conditionAmount < 1) {
-      let value = 1;
-    } else { value = objState?.conditionAmount }
-
-    let arr = []
-    if (objState?.conEquals) {
-      for (let i = 0; i < value; i++) {
-        if (e.id != i) {
-          arr[i] = objState?.conEquals[i]
-        }
-      }
-    }
-    arr[e.id] = val;
-    props.updateObjState({ conEquals: arr });
-    debounceObjState({ conEquals: arr });
-    setObjState(prev => ({
-      ...prev,
-      conEquals: arr
-    }));
-  }
-  const handleMathTwo = (e) => {
-    let value = e.value;
-    if (parseInt(e.value)) {
-      value = parseInt(e.value)
-    }
-    props.updateObjState({ varTwo: value });
-    debounceObjState({ varTwo: value });
-    setObjState(prev => ({
-      ...prev,
-      varTwo: value
-    }));
-  }
-  const handleMath = (e) => {
-    props.updateObjState({ math: e });
-    debounceObjState({ math: e });
-    setObjState(prev => ({
-      ...prev,
-      math: e
+      name: val
     }));
   }
 
@@ -524,7 +347,8 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <input className="menuedit-title" type='text' value={objState?.id} />
+              <input id="menuedit-name" type="text" onChange={e => handleObjectName(e.target.value)} value={objState?.name} placeholder={objState?.id} />
+              <br />
               {!((objState?.id).includes("videos") || (objState?.id).includes("audios")) && (
                 <>
                   {!props.selectedShapeName.includes("lines") && (
@@ -757,7 +581,7 @@ const DropdownEditObject = (props) => {
                 <p>{t("edit.timerCountDown")}</p>
               </div>
               <div className="htmliframeinput">
-                <input type="checkbox" checked={!!objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                <input type="checkbox" checked={objState?.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
               {!!objState?.timeLimit && (
@@ -850,7 +674,7 @@ const DropdownEditObject = (props) => {
 
               {/* TODO MAKE LOCALSTORAGE WORK FOR INTERACTIONS AND CONDITIONS */}
               <div className="htmliframeinput">
-                <input type="checkbox"  onChange={() => handleProperty(!objState?.sync, 'sync')} /> 
+                <input type="checkbox" checked={!!objState.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} /> 
                 <p>{t("edit.variableSync")}</p>
               </div>
               {objState?.varType === "button" ? (

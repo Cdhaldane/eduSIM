@@ -5,6 +5,7 @@
   padding: 20px;
   scrollbar-color: var(--primary) var(--white) !important;
   scrollbar-width: thin !important;
+  justify-content: space-between !important;
 }
 .variable-containers{
   position: absolute;
@@ -470,7 +471,7 @@
   margin-bottom: 20px;
   margin-top: 10px;
   position: relative;
-  left: 80px;
+  left: 70px;
 }
 .variable-title:hover {
   cursor: grab;
@@ -591,7 +592,7 @@
   top: 10px;
   font-size: 0.3em;
   right: 5px;
-  z-index: 1;
+  z-index: 1000;
 }
 .con-button {
   width: 100%;
@@ -806,6 +807,8 @@
   align-items: center;
   justify-content: center;
 }
+
+
 
 .select{
   width: 60px;
@@ -1022,6 +1025,16 @@
   width: 100%;
   justify-content: center !important;
 }
+.level-dropdown {
+  position: relative;
+  top: 13px;
+  display: flex;
+  border-radius: 9px;
+  padding: 5px;
+  height: 0%;
+  overflow: hidden;
+
+}
 .switch-container{
   position: relative;
   top: 5px;
@@ -1029,7 +1042,7 @@
   display: flex;
   border-radius: 9px;
   padding: 5px;
-  height: 80%;
+  height: 0%;
   overflow: hidden;
 }
 .switch-container h1{

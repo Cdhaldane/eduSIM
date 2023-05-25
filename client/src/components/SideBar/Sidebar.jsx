@@ -377,10 +377,11 @@ const Sidebar = (props) => {
           delInts={props.delInts}
           shapes={props.shapes}
           allShapes={props.allShapes}
-          close={() => closePerformance()}
+          closePerformance={closePerformance}
           customObjects={props.customObjects}
           savedObjects={props.savedObjects}
           loadObjects={props.loadObjects}
+          {...props}
         />
         </div>
       )}

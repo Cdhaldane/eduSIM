@@ -36,8 +36,7 @@ const URLImage = forwardRef((props, ref) => {
 
   useEffect(() => {
     setImage(loadImage());
-    console.log(props.layer)
-    const layer = props.layer.getStage();
+    const layer = props.layer?.getStage();
     const anim = new Konva.Animation(() => { }, layer);
     anim.start();
     return () => {

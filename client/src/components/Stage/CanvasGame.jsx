@@ -468,9 +468,14 @@ class Graphics extends Component {
               );
               if (xDist < sW / 2 && yDist < sH / 2) {
                 e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
-                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
+                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 
+                this.handleCollisions(obj.id, id, true);
+              } else {
+                this.handleCollisions(obj.id, id, false);
               }
             });
+
+            
 
             // What is this?
             // this.setState({
@@ -666,52 +671,21 @@ class Graphics extends Component {
   }
 
 
-  handleCollisions = () => {
+  handleCollisions = (shape1, shape2, isAnchored) => {
+    console.log("handleCollisions", shape1, shape2, isAnchored)
     this.props.trigs.map((trigger) => {
       let shapeName1 = trigger[0];
       let shapeName2 = trigger[1];
       let variable = trigger[2];
-      let shape1, shape2;
-      let shapes = this.refs.graphicStage.getStage().children[0].children.map(child => child);
-      console.log
-      shapes.map(shape => {
-        if (shape.attrs.id === shapeName1) {
-          shape1 = shape.attrs;
-        } else if (shape.attrs.id === shapeName2) {
-          shape2 = shape.attrs;
-        }
-      });
-      console.log(shape1, shape2)
-      if (shape1 && shape2) {
-        let sX = shape2.x;
-        let sY = shape2.y;
-        let sW = this.realWidth({ width: shape2.width, radiusX: shape2.radiusX });
-        let sH = this.realHeight({ height: shape2.height, radiusY: shape2.radiusY });
-
-        const xDist = Math.abs(
-          (shape1.x + this.originCenter(shape1.width / 2, shape1.id)) -
-          (sX + this.originCenter(sW / 2, shape2.id))
-        );
-        const yDist = Math.abs(
-          (shape1.y + this.originCenter(shape1.height / 2, shape1.id)) -
-          (sY + this.originCenter(sH / 2, shape2.id))
-        );
-        if(isNaN(xDist) || isNaN(yDist)) return false;
-      
-        if (xDist < sW / 2 && yDist < sH / 2) {
-          this.props.socket.emit("varChange", {
-            name: variable, value: true
-          })
-        }  else {
-          this.props.socket.emit("varChange", {
-            name: variable, value: false
-          })
-        }
-        
-        }
-
-        return false;
-      })
+      if(shape1 === shapeName1 && shape2 === shapeName2) {
+        if(this.props.variables[variable] === isAnchored) return;
+        this.props.socket.emit("varChange", {
+          name: variable, value: isAnchored
+        })
+        return;
+      } 
+     
+    })
   }
 
 
@@ -833,7 +807,6 @@ class Graphics extends Component {
             height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
-            onDragMove={this.handleCollisions}
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>

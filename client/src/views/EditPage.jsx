@@ -160,6 +160,7 @@ const EditPage = (props) => {
               customObjects={props.customObjects}
               savedObjects={props.savedObjects}
               loadObjects={props.loadObjects}
+              page={page}
               alertProps={{
                 alerts: tasks[page] || [],
                 setAlerts: handleSetTasks
