@@ -673,6 +673,7 @@ class Graphics extends Component {
       let variable = trigger[2];
       let shape1, shape2;
       let shapes = this.refs.graphicStage.getStage().children[0].children.map(child => child);
+      console.log
       shapes.map(shape => {
         if (shape.attrs.id === shapeName1) {
           shape1 = shape.attrs;
@@ -680,6 +681,7 @@ class Graphics extends Component {
           shape2 = shape.attrs;
         }
       });
+      console.log(shape1, shape2)
       if (shape1 && shape2) {
         let sX = shape2.x;
         let sY = shape2.y;
