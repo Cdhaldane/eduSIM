@@ -330,205 +330,7 @@ class Graphics extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevState.canvasLoading !== this.state.canvasLoading) {
-      this.props.setCanvasLoading(this.state.canvasLoading);
-    }
-    // Show overlay if it is the next page and a pageEnter overlay is available
-    const page = this.getPage(this.state.level - 1);
-    let overlayPageEnter = null;
-    let overlayCondition = null;
-    if (page?.overlays) {
-      for (let i = 0; i < page.overlays.length; i++) {
-        if (page.overlays[i].overlayOpenOption === "pageEnter") {
-          overlayPageEnter = page.overlays[i];
-          break;
-        }
-        if (page.overlays[i].overlayCondition) {
-          let conditions = page.overlays[i].overlayCondition.conditions
-
-          if (conditions != undefined) {
-            let overlayCheck = this.checkObjConditions(conditions)
-            if (overlayCheck) {
-              overlayCondition = page.overlays[i];
-              this.renderOverlay(overlayCondition)
-              break;
-            }
-
-          }
-
-        }
-      }
-    }
-    if (
-      !this.state.overlayOpen &&
-      overlayPageEnter &&
-      (prevState.level < this.state.level || !this.state.updateRanOnce)
-    ) {
-      this.setState({
-        overlayOpenIndex: overlayPageEnter.id,
-        overlayOpen: true
-      });
-    }
-
-    if (!this.state.updateRanOnce) {
-      this.setState({
-        updateRanOnce: true
-      })
-    }
-
-    // This passes info all the way up to the App component so that it can be used in functions
-    // shared between Canvas (Simulation Edit Mode) and CanvasGame (Simulation Play Mode)
-    if (Object.keys(this.state).filter(key => this.state[key] !== prevState[key]).length) {
-      const userId = JSON.parse(localStorage.getItem('userInfo')) ?
-        JSON.parse(localStorage.getItem('userInfo')).dbid : null;
-
-      this.props.setGamePlayProps({
-        refresh: this.refresh,
-        setState: this.setState,
-        state: this.state,
-        refs: this.refs,
-        userId: userId,
-        getInteractiveProps: this.getInteractiveProps,
-        getVariableProps: this.getVariableProps,
-        getPageProps: this.getPageProps,
-        checkObjConditions: this.checkObjConditions,
-        formatTextMacros: this.formatTextMacros,
-        getDragProps: this.getDragProps,
-        sendInteraction: this.sendInteraction,
-        dragLayer: () => { },
-        handleDragEnd: (obj, e) => {
-          this.setState({
-            dragTick: 0
-          });
-          const synched = !obj.infolevel && !obj.overlay;
-          if (this.state.dragTick == 0) {
-            this.props.socket.emit("interaction", {
-              gamepieceId: obj.id,
-              parameters: {
-                ...this.props.gamepieceStatus[obj.id],
-                [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
-                  {
-                    x: e.target.x(),
-                    y: e.target.y()
-                  },
-                x: synched ? e.target.x() : null,
-                y: synched ? e.target.y() : null,
-                dragging: null
-              }
-            });
-          }
-        },
-        onObjectDragMove: (obj, e) => {
-          // Bound the drag to the edge of the screen
-          const objRef = this.refs[obj.id];
-          const topPad = document.getElementById("levelContainer").clientHeight;
-          const stage = objRef.getLayer();
-          const screenRect = {
-            x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
-            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? topPad : 0)) / stage.scaleY(),
-            width: (stage.width() - (objRef.getClientRect().width /
-              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
-            height: (stage.height() - (objRef.getClientRect().height /
-              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleY()
-          };
-          objRef.y(Math.max(objRef.y(), screenRect.y)); // Top Bound
-          objRef.y(Math.min(objRef.y(), screenRect.y + screenRect.height)); // Bottom Bound
-          objRef.x(Math.max(objRef.x(), screenRect.x)); // Left Bound
-          objRef.x(Math.min(objRef.x(), screenRect.x + screenRect.width)); // Right Bound
-
-          if (!obj.infolevel && !obj.overlay) {
-            [
-              ...this.state.images,
-              ...this.state.rectangles,
-              ...this.state.ellipses,
-              ...this.state.triangles,
-              ...this.state.stars,
-              ...this.state.texts
-            ].filter(img => (
-              img.rolelevel === obj.rolelevel &&
-              img.level === obj.level &&
-              img.overlay === obj.overlay &&
-              img.overlayIndex === obj.overlayIndex &&
-              img.id !== obj.id &&
-              img.anchor
-            )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
-              let sX = x, sY = y;
-              if (this.props.gamepieceStatus[id]) {
-                sX = this.props.gamepieceStatus[id].x;
-                sY = this.props.gamepieceStatus[id].y;
-              }
-              console.log(obj)
-              let sW = this.realWidth({ width, radiusX }), sH = this.realHeight({ height, radiusY });
-              const xDist = Math.abs(
-                (e.target.x() + this.originCenter(this.realWidth(obj) / 2, obj.id)) -
-                (sX + this.originCenter(sW / 2, id))
-              );
-              const yDist = Math.abs(
-                (e.target.y() + this.originCenter(this.realHeight(obj) / 2, obj.id)) -
-                (sY + this.originCenter(sH / 2, id))
-              );
-              if (xDist < sW / 2 && yDist < sH / 2) {
-                e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
-                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
-              }
-            });
-
-            // What is this?
-            // this.setState({
-            //   dragTick: (this.state.dragTick + 1) % 4
-            // });
-            if (this.state.dragTick == 0) {
-              // The drag ticking ensures that this does not run too often
-              // Update object with latest drag position
-              this.props.socket.emit("interaction", {
-                gamepieceId: obj.id,
-                parameters: {
-                  x: e.target.x(),
-                  y: e.target.y(),
-                  dragging: userId
-                }
-              });
-            }
-          }
-        }
-      });
-
-      this.props.setUserId(userId);
-
-      // Recenter if the canvas has changed
-      // This includes opening/closing personal and overlay areas and changing levels
-      if (
-        this.state.personalAreaOpen !== prevState.personalAreaOpen ||
-        this.state.overlayOpen !== prevState.overlayOpen ||
-        this.state.level !== prevState.level
-      ) {
-        const layer = this.state.personalAreaOpen ? "personal" :
-          (this.state.overlayOpen ? "overlay" : "group");
-        this.setState({
-          canvasLoading: true
-        });
-        setTimeout(() => {
-          this.props.reCenter("play", layer, this.state.level !== prevState.level ? "resize" : "normal")
-        }, 300);
-      }
-    }
-
-    // Update the custom objects state in the parent component (if custom objs changed)
-    for (let i = 0; i < this.customObjects.length; i++) {
-      if (this.state[this.customObjects[i]] !== prevState[this.customObjects[i]]) {
-        const customObjs = {};
-        for (let j = 0; j < this.customObjects.length; j++) {
-          customObjs[this.customObjects[j]] = this.state[this.customObjects[j]];
-        }
-        this.props.setCustomObjs(customObjs);
-        break;
-      }
-    }
-
-    if (this.state.pages[this.state.level - 1]) {
-      document.querySelector(':root').style.setProperty('--primary', this.state.pages[this.state.level - 1].primaryColor);
-      this.props.setPageColor(this.state.pages[this.state.level - 1].groupColor);
-    }
+   this.setState({canvasLoading: false});
   }
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
@@ -674,6 +476,7 @@ class Graphics extends Component {
       let variable = trigger[2];
       let shape1, shape2;
       let shapes = this.refs.graphicStage.getStage().children[0].children.map(child => child);
+      console.log(shapes)
       shapes.map(shape => {
         if (shape.attrs.id === shapeName1) {
           shape1 = shape.attrs;
@@ -701,7 +504,7 @@ class Graphics extends Component {
           this.props.socket.emit("varChange", {
             name: variable, value: true
           })
-        }  else {
+        } else if(this.props.variables[variable]) {
           this.props.socket.emit("varChange", {
             name: variable, value: false
           })
@@ -832,7 +635,7 @@ class Graphics extends Component {
             height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
             width={window.innerWidth}
             ref="graphicStage"
-            onDragMove={this.handleCollisions}
+     
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
           </Stage>
