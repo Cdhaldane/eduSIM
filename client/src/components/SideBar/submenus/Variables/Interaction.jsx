@@ -12,7 +12,6 @@ import { set } from "immutable";
 
 
 const Interaction = (props) => {
-  console.log(props)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
@@ -21,7 +20,9 @@ const Interaction = (props) => {
   const [isVCheck, setIsVCheck] = useState(false);
   const [isPCheck, setIsPCheck] = useState(false);
   const [shapes, setShapes] = useState()
-  const start = props.gameVars[0] ? (Object.keys(props.gameVars[0])).toString() : ''
+  const [variables, setVariables] = useState(props.globalVars)
+  const [fullInteractions, setFullInteractions] = useState([])
+  const start = variables[0] ? (Object.keys(variables[0])).toString() : ''
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
@@ -64,8 +65,7 @@ const Interaction = (props) => {
     }
 
   })
-  const populateGlobal = () => {
-    let ints = props.ints
+  const populateInteractions = (ints) => {
     let list = []
     for (let i = 0; i < ints.length; i++) {
       if (ints[i][6] === 'var') {
@@ -111,83 +111,21 @@ const Interaction = (props) => {
     }
     return list
   }
-  const populateSession = () => {
-    let ints = JSON.parse(localStorage.getItem('sessionInts')) || [];
-    let list = []
-    for (let i = 0; i < ints.length; i++) {
-      if (ints[i][6] === 'var') {
-        list.push(<div className="condition-inputs">
-          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-          <div className="ints-container">
-            <div className={"if"}>
-              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
-            </div>
-            <div className={"then"}>
-              <h1>Set</h1><h2>{ints[i][1]}</h2><h3>{ints[i][2]}</h3><h2>{ints[i][3]}</h2>
-              <h3>{ints[i][4]}</h3><h2>{ints[i][5]}</h2>
-            </div>
-          </div>
-        </div>)
-      }
-      if(ints[i][6] === 'page'){
-        list.push(<div className="condition-inputs">
-          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-          <div className="ints-container">
-            <div className={"if"}>
-              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
-            </div>
-            <div className={"then"}>
-              <h1>Go to page</h1><h2>{ints[i][5]}</h2>
-            </div>
-          </div>
-        </div>)
-      }
-      else {
-        list.push(<div className="condition-inputs">
-          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-          <div className="ints-container">
-            <div className={"if"}>
-              <h1>When</h1><h2>{ints[i][0]}</h2><h1>Is Clicked</h1>
-            </div>
-            <div className={"then"}>
-              <h1>Increment</h1><h2>{ints[i][1]}</h2><h1>By</h1><h3>{ints[i][3]}</h3>
-            </div>
-          </div>
-        </div>)
-      }
-    }
-    return list
-  }
-
+  
   const addCon = () => {
-    let a = [];
-    if (props.current === 'session') {
-      a = JSON.parse(localStorage.getItem('sessionInts')) || [];
-      a.push(interaction);
-      localStorage.setItem('sessionInts', JSON.stringify(a));
-    }
-    else if (props.current === 'global') {
-      a = JSON.parse(localStorage.getItem('interactions')) || [];
-      a.push(interaction);
-      localStorage.setItem('interactions', JSON.stringify(a));
-      props.setInts(a)
-    }
+    let a = fullInteractions;
+    a.push(interaction);
+    if (props.current === 'session') props.setLocalInts(a)
+    if (props.current === 'global') props.setGlobalInts(a)
+    
     setShowConAdd(!showConAdd)
     setInteraction([props.shapes[0]?.varName, start, '=', start, '', '', check])
   }
   const deleteCon = (i) => {
-    let a = [];
-    if (props.current === 'session') {
-      a = JSON.parse(localStorage.getItem('sessionInts')) || [];
-      a.splice(i, 1);
-      localStorage.setItem('sessionInts', JSON.stringify(a));
-    }
-    else if (props.current === 'global') {
-      a = JSON.parse(localStorage.getItem('interactions')) || [];
-      a.splice(i, 1);
-      localStorage.setItem('interactions', JSON.stringify(a));
-      props.setInts(a)
-    }
+    let a = fullInteractions;
+    a.splice(i, 1);
+    if (props.current === 'session') props.setLocalInts(a)
+    if (props.current === 'global') props.setGlobalInts(a)
   }
   const handle1 = () => {
     setShowAddition(!showAddition)
@@ -212,11 +150,27 @@ const Interaction = (props) => {
     handleInteraction(6, e)
   }
   const handleOut = () => {
-    if (props.current === 'global')
-      return (populateGlobal())
-    if (props.current === 'session')
-      return (populateSession())
+    let ints = []
+    if (props.current === 'global') {
+      ints = props.globalInts
+    }
+    if (props.current === 'session') {
+      ints = props.localInts
+    }
+    return (populateInteractions(ints))
   }
+
+  useEffect(() => {
+    if (props.current === 'global') {
+      setFullInteractions(props.globalInts)
+      setVariables(props.globalVars)
+    }
+    if (props.current === 'session') {
+      setFullInteractions(props.localInts)
+      setVariables(props.localVars)
+    }
+  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars])
+
   const updateState = (n, i) => {
     const newState = box.map(obj => {
       if (obj.id === i) {
@@ -234,7 +188,7 @@ const Interaction = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box int-special">
           {box[i].state === 'var' ? (
-            <MultiLevel data={props.gameVars} handleChange={handleChange} x={n} />
+            <MultiLevel data={variables} handleChange={handleChange} x={n} />
           ) : (
             <input
               className="int-box"
@@ -254,13 +208,10 @@ const Interaction = (props) => {
     let out = e.target.value
     let input = interaction
     input[n] = out
-    console.log(input)
-    console.log(out)
     setInteraction(input)
   }
 
   const handleChange = (value, x) => {
-    console.log(value, x)
     interaction[x] = value.label
   }
 
@@ -282,6 +233,9 @@ const Interaction = (props) => {
             <div className="ints-name">
               <h1>Input to Set</h1>
               <select onChange={(e) => handleInteraction(0, e)}>
+                <option value={''}>
+                  Select An Input
+                </option>
                 {shapes.map((data) => (
                   <option value={data}>
                     {data}
@@ -301,7 +255,7 @@ const Interaction = (props) => {
               <div className={'ints-con'}>
                 <h2 className="smaller-text">SET</h2>
                 <div className="box int-special">
-                  <MultiLevel data={props.gameVars} handleChange={handleChange} x={1} />
+                  <MultiLevel data={variables} handleChange={handleChange} x={1} />
                 </div>
                 <div className="box select jequal">
                   <h1>=</h1>
@@ -338,7 +292,7 @@ const Interaction = (props) => {
               <div className={'ints-con'}>
                 <h2 className="smaller-text">INCREMENT</h2>
                 <div className="box int-special incr">
-                  <MultiLevel data={props.gameVars} handleChange={handleChange} x={1} />
+                  <MultiLevel data={variables} handleChange={handleChange} x={1} />
                 </div>
                 <h2 className="smaller-text">BY</h2>
 

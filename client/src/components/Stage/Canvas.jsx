@@ -318,22 +318,37 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
-
+        console.log("objects.savedGroups", objects.globalVars);
         if (this.props.setTasks) {
           this.props.setTasks(objects.tasks || {});
         }
-        if (this.props.setVars) {
-          this.props.setVars(objects.variables || {});
+        if (this.props.setGlobalVars) {
+          this.props.setGlobalVars(objects.globalVars || {});
         }
-        if (this.props.setCons) {
-          this.props.setCons(objects.cons || {});
+        if (this.props.setGlobalCons) {
+          this.props.setGlobalCons(objects.globalCons || {});
         }
-        if (this.props.setInts) {
-          this.props.setInts(objects.ints || {});
+        if (this.props.setGlobalInts) {
+          this.props.setGlobalInts(objects.globalInts || {});
         }
-        if (this.props.setTrigs) {
-          this.props.setTrigs(objects.trigs || {});
+        if (this.props.setGlobalTrigs) {
+          this.props.setGlobalTrigs(objects.globalTrigs || {});
         }
+        if (this.props.setLocalVars) {
+          this.props.setLocalVars(objects.localVars || {});
+        }
+        if (this.props.setLocalCons) {
+          this.props.setLocalCons(objects.localCons || {});
+        }
+        if (this.props.setLocalInts) {
+          this.props.setLocalInts(objects.localInts || {});
+        }
+        if (this.props.setLocalTrigs) {
+          this.props.setLocalTrigs(objects.localTrigs || {});
+        }
+        
+        
+
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }
@@ -725,11 +740,16 @@ class Graphics extends Component {
       };
     }
     storedObj.tasks = this.props.tasks;
-    storedObj.variables = this.props.variables;
-    storedObj.cons = this.props.cons;
-    storedObj.ints = this.props.ints;
-    storedObj.trigs = this.props.trigs;
     storedObj.notes = this.props.notes;
+    storedObj.globalVars = this.props.globalVars;
+    storedObj.globalCons = this.props.globalCons;
+    storedObj.globalInts = this.props.globalInts;
+    storedObj.globalTrigs = this.props.globalTrigs;
+    storedObj.localVars = this.props.localVars;
+    storedObj.localCons = this.props.localCons;
+    storedObj.localInts = this.props.localInts;
+    storedObj.localTrigs = this.props.localTrigs;
+
     this.setState({
       saved: storedObj
     });

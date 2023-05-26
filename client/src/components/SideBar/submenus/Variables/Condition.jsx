@@ -8,6 +8,7 @@ import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import Multilevel from "../../../Dropdown/Multilevel";
+import { use } from "i18next";
 
 const Condition = (props) => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const Condition = (props) => {
   const [showAddition2, setShowAddition2] = useState(false);
   const [showAddition3, setShowAddition3] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
+  const [variables, setVariables] = useState(props.globalVars)
   const [updater, setUpdater] = useState(0);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
@@ -26,16 +28,16 @@ const Condition = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
   const alertContext = useAlertContext();
-  const [ifs, setIfs] = useState(0)
+  const [ifs, setIfs] = useState(1)
   const lt = "<"
   const gt = ">"
-  const start = Object.keys(props.gameVars[0] ? props.gameVars[0] : '').toString()
+  const [fullConditions, setFullConditions] = useState([])
   const [condition, setCondition] = useState([
-    [start, '=', start, '+', ''],
-    [start, '=', start, '+', ''],
-    [start, '=', start, '+', ''],
-    [start, '=', start, '+', ''],
-    [start, '=', start, '+', '']
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', '']
   ])
   const [box, setBox] = useState([
     {
@@ -87,19 +89,19 @@ const Condition = (props) => {
   useEffect(() => {
     let temp = condition
     if (showAddition) {
-      temp[temp.length - 1][4] = start
+      temp[temp.length - 1][4] = ''
     }
     if (showAddition0) {
-      temp[0][4] = start
+      temp[0][4] = ''
     }
     if (showAddition1) {
-      temp[1][4] = start
+      temp[1][4] = ''
     }
     if (showAddition2) {
-      temp[2][4] = start
+      temp[2][4] = ''
     }
     if (showAddition3) {
-      temp[3][4] = start
+      temp[3][4] = ''
     }
     if (!showAddition) {
       temp[temp.length - 1][4] = ''
@@ -118,8 +120,7 @@ const Condition = (props) => {
     }
   })
 
-  const populateConditions = () => {
-    let cons = props.cons ? props.cons : 0
+  const populateConditions = (cons) => {
     let list = []
     for (let i = 0; i < cons.length; i++) {
       list.push(<div className="condition-inputs cons-condition">
@@ -145,31 +146,7 @@ const Condition = (props) => {
 
     return list
   }
-  const populateSession = () => {
-    let cons = JSON.parse(localStorage.getItem('sessionCons')) || [];
-    let list = []
-    for (let i = 0; i < cons.length; i++) {
-      list.push(<div className="condition-inputs cons-condition">
-        <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-        {cons[i].map(data => {
-          if (cons[i][cons[i].length - 1] !== data) {
-            return (
-              <div className={"if"}>
-                {(cons[i][0] !== data) && (<h1 className="andfix">and</h1>)}<h1>If</h1><h2>{data[0]}</h2><h3>{data[1]}</h3><h2>{data[2]}</h2>
-                {(data[3]) && (<><h3>{data[3]}</h3><h2>{data[4]}</h2></>)}
-              </div>
-            )
-          }
-        })}
-        <div className={"then"}>
-          <h1>Then</h1><h2>{cons[i][cons[i].length - 1][0]}</h2><h3>{cons[i][cons[i].length - 1][1]}</h3><h2>{cons[i][cons[i].length - 1][2]}</h2>
-          {(cons[i][cons[i].length - 1][3]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
-        </div>
-      </div>)
-    }
 
-    return list
-  }
 
   const addCon = () => {
     if (ifs < 1) {
@@ -180,24 +157,23 @@ const Condition = (props) => {
     let temp = condition
     temp.splice(ifs, 4 - ifs)
     if (props.current === 'session') {
-      a = JSON.parse(localStorage.getItem('sessionCons')) || [];
-      a.push(temp);
-      localStorage.setItem('sessionCons', JSON.stringify(a));
+      let data = fullConditions
+      data.push(temp)
+      props.setLocalCons(data)
     }
     else if (props.current === 'global') {
-      a = JSON.parse(localStorage.getItem('conditions')) || [];
-      a.push(temp);
-      localStorage.setItem('conditions', JSON.stringify(a));
-      props.setCons(a)
+      let data = fullConditions
+      data.push(temp)
+      props.setGlobalCons(data)
     }
 
     setShowConAdd(!showConAdd)
     setCondition([
-      [start, '=', start, '+', ''],
-      [start, '=', start, '+', ''],
-      [start, '=', start, '+', ''],
-      [start, '=', start, '+', ''],
-      [start, '=', start, '+', '']
+      ['', '=', '', '+', ''],
+      ['', '=', '', '+', ''],
+      ['', '=', '', '+', ''],
+      ['', '=', '', '+', ''],
+      ['', '=', '', '+', '']
     ])
     setShowAddition(false)
     setShowAddition0(false)
@@ -206,26 +182,38 @@ const Condition = (props) => {
     setShowAddition3(false)
     setIfs(0)
   }
+
   const deleteCon = (i) => {
-    let a = [];
-    if (props.current === 'session') {
-      a = JSON.parse(localStorage.getItem('sessionCons')) || [];
-      a.splice(i, 1);
-      localStorage.setItem('sessionCons', JSON.stringify(a));
-    }
-    else if (props.current === 'global') {
-      a = JSON.parse(localStorage.getItem('conditions')) || [];
-      a.splice(i, 1);
-      localStorage.setItem('conditions', JSON.stringify(a));
-      props.setCons(a)
+    let data = fullConditions
+    data.splice(i, 1)
+    if (props.current === 'global') {
+      props.setGlobalCons(data)
+    } else {
+      props.setLocalCons(data)
     }
   }
+
   const handleOut = () => {
-    if (props.current === 'global')
-      return (populateConditions())
-    if (props.current === 'session')
-      return (populateSession())
+    let cons = []
+    if (props.current === 'global') {
+      cons = props.globalCons
+    }
+    if (props.current === 'session') {
+      cons = props.localCons
+    }
+    return (populateConditions(cons))
   }
+
+  useEffect(() => {
+    if (props.current === 'global') {
+      setFullConditions(props.globalCons)
+      setVariables(props.globalVars)
+    }
+    if (props.current === 'session') {
+      setFullConditions(props.localCons)
+      setVariables(props.localVars)
+    }
+  }, [props.current, props.localCons, props.globalCons, props.localVars, props.globalVars])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -245,7 +233,7 @@ const Condition = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box int-special">
           {box[i].state === 'var' ? (
-            <Multilevel data={props.gameVars} handleChange={handleChange} x={x} y={n}/>
+            <Multilevel data={variables} handleChange={handleChange} x={x} y={n} />
           ) : (
             <input
               onChange={(e) => { condition[x][n] = e.target.value }}
@@ -270,8 +258,8 @@ const Condition = (props) => {
           <div className="input-area">
             <h2>IF</h2>
             <div>
-              <div className="box">       
-                <Multilevel data={props.gameVars} handleChange={handleChange} x={i} y={0}/>   
+              <div className="box">
+                <Multilevel data={variables} handleChange={handleChange} x={i} y={0} />
               </div>
             </div>
             <div className="box jequal select">
@@ -285,31 +273,31 @@ const Condition = (props) => {
             <div>
               {getSpecialBox(x, 2, i)}
             </div>
-            <div className="fixer" >
-              {eval("showAddition" + i) && (
-                <div className="fixer" >
-                  <div className="box jequal select">
-                    <select onChange={(e) => { condition[i][3] = e.target.value }}>
-                      <option value="+">+</option>
-                      <option value="-">-</option>
-                      <option value="x"> x </option>
-                      <option value="/"> / </option>
-                    </select>
-                  </div>
-                  <div>
-                    {getSpecialBox(x + 1, 4, i)}
-                  </div>
-                </div>
-              )}
-              <button className="nob" onClick={() => handle(i)}>
-                {!eval("showAddition" + i) ? (
-                  <Plus className="icon plus specialt" />
-                ) : (
-                  <Line className="icon plus specialer" />
-                )}
 
-              </button>
-            </div>
+            {eval("showAddition" + i) && (
+              < >
+                <div className="box jequal select">
+                  <select onChange={(e) => { condition[i][3] = e.target.value }}>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="x"> x </option>
+                    <option value="/"> / </option>
+                  </select>
+                </div>
+                <div>
+                  {getSpecialBox(x + 1, 4, i)}
+                </div>
+              </>
+            )}
+            <button className="nob" onClick={() => handle(i)}>
+              {!eval("showAddition" + i) ? (
+                <Plus className="icon plus specialt" />
+              ) : (
+                <Line className="icon plus specialer" />
+              )}
+
+            </button>
+
           </div>
         </>
       )
@@ -340,7 +328,6 @@ const Condition = (props) => {
   }
 
   const handleChange = (value, x, y) => {
-    console.log(value, x, y)
     condition[x][y] = value.label
   }
 
@@ -371,7 +358,7 @@ const Condition = (props) => {
           <div className="input-area">
             <h2 className="smaller-text">THEN</h2>
             <div className="box">
-              <Multilevel data={props.gameVars} handleChange={handleChange} x={4} y={0}/>
+              <Multilevel data={variables} handleChange={handleChange} x={4} y={0} />
             </div>
 
             <div className="box select jequal">
@@ -380,31 +367,31 @@ const Condition = (props) => {
             <div>
               {getSpecialBox(8, 2, 4)}
             </div>
-           
-              {showAddition && (
-                 <>
-                  <div className="box jequal select">
-                    <select onChange={(e) => { condition[4][3] = e.target.value }}>
-                      <option value="+">+</option>
-                      <option value="-">-</option>
-                      <option value="x"> x </option>
-                      <option value="/"> / </option>
-                    </select>
-                  </div>
 
-                  <div>
-                    {getSpecialBox(9, 4, 4)}
-                  </div>
-                </>
+            {showAddition && (
+              <>
+                <div className="box jequal select">
+                  <select onChange={(e) => { condition[4][3] = e.target.value }}>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="x"> x </option>
+                    <option value="/"> / </option>
+                  </select>
+                </div>
+
+                <div>
+                  {getSpecialBox(9, 4, 4)}
+                </div>
+              </>
+            )}
+            <button className="nob" onClick={() => handle2()}>
+              {!showAddition ? (
+                <Plus className="icon plus specialt" />
+              ) : (
+                <Line className="icon plus specialer" />
               )}
-              <button className="nob" onClick={() => handle2()}>
-                {!showAddition ? (
-                  <Plus className="icon plus specialt" />
-                ) : (
-                  <Line className="icon plus specialer" />
-                )}
-              </button>
-         
+            </button>
+
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>

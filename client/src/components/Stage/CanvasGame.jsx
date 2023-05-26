@@ -9,6 +9,7 @@ import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import { throttle, debounce } from 'lodash';
+import CanvasGameUtils, {handleCollisions} from './CanvasGameUtils';
 
 import {
   EditorState,
@@ -91,6 +92,13 @@ class Graphics extends Component {
         [this.props.savedObjects[i]]: []
       }
     }
+
+    localStorage.setItem("localVars", JSON.stringify(this.props.localVars));
+    localStorage.setItem("localCons", JSON.stringify(this.props.localCons));
+    localStorage.setItem("localInts", JSON.stringify(this.props.localInts));
+    localStorage.setItem("localTrigs", JSON.stringify(this.props.localTrigs));
+
+    console.log(this.props.localVars, this.props.localCons, this.props.localInts, this.props.localTrigs);
 
     this.state = {
       // Objects
@@ -177,8 +185,9 @@ class Graphics extends Component {
               break;
             default:
               let vars = {};
-              if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
-              if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
+              if (!!sessionStorage.gameVars) vars = this.props.localVars;
+              if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
+        
               content = vars[key];
           }
           newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
@@ -190,7 +199,7 @@ class Graphics extends Component {
     } else {
       // Go block by block
       let vars = {};
-      if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
+      if (!!sessionStorage.gameVars) vars = this.props.localVars;
       const varKeys = Object.keys(vars);
       for (let blockNum = 0; blockNum < blocks.length; blockNum++) {
         const blockKey = blocks[blockNum][0];
@@ -242,7 +251,7 @@ class Graphics extends Component {
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
-    if (Object.keys(this.props.variables).length > 0) vars = { ...vars, ...this.props.variables };
+    if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
 
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
@@ -469,9 +478,10 @@ class Graphics extends Component {
               if (xDist < sW / 2 && yDist < sH / 2) {
                 e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
                 e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 
-                this.handleCollisions(obj.id, id, true);
+                console.log("COLLISION");
+                handleCollisions(obj.id, id, true, this.props);
               } else {
-                this.handleCollisions(obj.id, id, false);
+                handleCollisions(obj.id, id, false, this.props);
               }
             });
 
@@ -607,9 +617,9 @@ class Graphics extends Component {
         name, value, increment
       })
     },
-    variables: this.props.variables,
-    interactions: this.props.ints,
-    conditions: this.props.cons
+    variables: this.props.globalVars,
+    interactions: this.props.globalInts,
+    conditions: this.props.globalCons
   });
 
   getPageProps = () => ({
@@ -621,7 +631,7 @@ class Graphics extends Component {
   });
 
   handleVariable = (name, value) => {
-    if (this.props.variables[name] !== value) {
+    if (this.props.globalVars[name] !== value) {
       this.props.socket.emit("varChange", {
         name, value
       })
@@ -671,22 +681,7 @@ class Graphics extends Component {
   }
 
 
-  handleCollisions = (shape1, shape2, isAnchored) => {
-    console.log("handleCollisions", shape1, shape2, isAnchored)
-    this.props.trigs.map((trigger) => {
-      let shapeName1 = trigger[0];
-      let shapeName2 = trigger[1];
-      let variable = trigger[2];
-      if(shape1 === shapeName1 && shape2 === shapeName2) {
-        if(this.props.variables[variable] === isAnchored) return;
-        this.props.socket.emit("varChange", {
-          name: variable, value: isAnchored
-        })
-        return;
-      } 
-     
-    })
-  }
+ 
 
 
   contextMenuEventShortcuts = (event) => {
@@ -732,6 +727,8 @@ class Graphics extends Component {
             </Modal>
           </div>
         )}
+
+        <CanvasGameUtils {...this.props} {...this} />
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (
@@ -828,10 +825,10 @@ class Graphics extends Component {
             }}
             socket={this.props.socket}
             overlay={this.state.overlayOpen}
-            variables={this.props.variables}
+            variables={this.props.globalVars}
             alerts={this.props.alerts}
-            cons={this.props.cons}
-            ints={this.props.ints}
+            cons={this.props.globalCons}
+            ints={this.props}
             page={this.getPage(this.state.level - 1)}
             number={this.state.pageNumber}
             ptype={this.state.ptype}

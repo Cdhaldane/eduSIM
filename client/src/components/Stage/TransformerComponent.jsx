@@ -7,6 +7,8 @@ import {
 
 const TransformerComponent = forwardRef((props, ref) => {
 
+  
+
   const renderTransformer = () => {
     const shape = props.refs[props.selectedShapeName] ? props.refs[props.selectedShapeName].attrs : null;
     if (!props.state.groupSelection.length && !props.selectedShapeName) {

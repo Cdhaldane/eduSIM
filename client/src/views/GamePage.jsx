@@ -127,7 +127,7 @@ const Game = (props) => {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
-        if(status.level)
+        if (status.level)
           setLevel(status.level)
       });
       client.on("clientJoined", ({ id, ...player }) => {
@@ -150,7 +150,7 @@ const Game = (props) => {
         console.log(data)
         setLevel(data.level)
       })
-      
+
       setSocketInfo(client);
       setLoading(false);
       return () => client.disconnect();
@@ -194,13 +194,18 @@ const Game = (props) => {
   }, [players, roles, level]);
 
   let tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
-  let cons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).cons || [];
-  let variables = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).variables || [];
-  let ints = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).ints || [];
-  let trigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).trigs || [];
+  let globalCons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalCons || [];
+  let globalVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalVars || [];
+  let globalInts = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalInts || [];
+  let globalTrigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalTrigs || [];
+
+  let localCons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localCons || [];
+  let localVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localVars || [];
+  let localInts = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localInts || [];
+  let localTrigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localTrigs || [];
 
   if (roomStatus.variables)
-    variables.push(roomStatus.variables)
+    globalVars.push(roomStatus.variables)
   const flattenObject = (obj) => {
     const flattened = {}
     Object.keys(obj).forEach((key) => {
@@ -214,8 +219,8 @@ const Game = (props) => {
     return flattened
   }
 
-  variables = flattenObject(variables)
-  
+  globalVars = flattenObject(globalVars)
+
   useEffect(() => {
     setDisableNext(false)
     let curr = tasks[level];
@@ -230,7 +235,7 @@ const Game = (props) => {
 
   const handleLevel = (type, id) => {
     let x = level
-    if(type === 'global') {
+    if (type === 'global') {
       socket.emit("oneToPageSingle", {
         level: x + 1,
         id: socket.id
@@ -257,8 +262,8 @@ const Game = (props) => {
   }
   useEffect(() => {
     let x, y, s, t;
-    Object.keys(variables).forEach(function (key) {
-      s = variables[key]
+    Object.keys(globalVars).forEach(function (key) {
+      s = globalVars[key]
       if (typeof s === 'string' && s.includes('Random')) {
         for (let i = 0; i < s.length; i++) {
           if (s[i] == '(')
@@ -268,11 +273,11 @@ const Game = (props) => {
         }
         s = s.substring(x + 1, y).split(',')
         t = s[2].replace('.', '').split('').reverse().join('')
-        variables[key] = Math.round((Math.random() * (s[1] - s[0]) + s[0]) * t) / t;
+        globalVars[key] = Math.round((Math.random() * (s[1] - s[0]) + s[0]) * t) / t;
       }
     })
     setL(false)
-  }, [variables])
+  }, [globalVars])
   return (
     !isLoading && !isL ? (
       <div className="editpage">
@@ -288,7 +293,7 @@ const Game = (props) => {
           title={room.gameinstance?.gameinstance_name || ""}
           subtitle={room.gameroom_name || ""}
           handleLevel={handleLevel}
-          variables={variables || {}}
+          globalVars={globalVars || {}}
           level={level}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
@@ -324,10 +329,14 @@ const Game = (props) => {
             level={level || 0}
             freeAdvance={!roomStatus.settings?.advanceMode || roomStatus.settings?.advanceMode === "student"}
             gamepieceStatus={roomStatus.gamepieces || {}}
-            variables={variables || {}}
-            cons={cons || []}
-            ints={ints || []}
-            trigs={trigs || []}
+            globalVars={globalVars || {}}
+            globalCons={globalCons || []}
+            globalInts={globalInts || []}
+            globalTrigs={globalTrigs || []}
+            localCons={localCons || []}
+            localVars={localVars || []}
+            localInts={localInts || []}
+            localTrigs={localTrigs || []}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}

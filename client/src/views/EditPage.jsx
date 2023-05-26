@@ -8,6 +8,7 @@ import { useDropdownContext } from '../components/Dropdown/DropdownReactContext'
 import { Container } from "react-bootstrap";
 import ErrorBoundary from "../components/Loading/ErrorBoundary";
 import Loading from "../components/Loading/Loading";
+import { set } from "immutable";
 
 const Grid = styled.div`
   display: grid;
@@ -49,10 +50,15 @@ const EditPage = (props) => {
   const dropdownContext = useDropdownContext();
 
   const [tasks, setTasks] = useState({});
-  const [vars, setVars] = useState([]);
-  const [cons, setCons] = useState([]);
-  const [ints, setInts] = useState([]);
-  const [trigs, setTrigs] = useState([]);
+  const [globalVars, setGlobalVars] = useState([]);
+  const [globalCons , setGlobalCons] = useState([]);
+  const [globalInts, setGlobalInts] = useState([]);
+  const [globalTrigs, setGlobalTrigs] = useState([]);
+  const [localVars, setLocalVars] = useState([]);
+  const [localCons , setLocalCons] = useState([]);
+  const [localInts, setLocalInts] = useState([]);
+  const [localTrigs, setLocalTrigs] = useState([]);
+
   const [page, setPage] = useState(1);
   const [shapes, setShapes] = useState([])
   const [allShapes, setAllShapes] = useState([])
@@ -94,34 +100,31 @@ const EditPage = (props) => {
     }
   }
 
-  const handleSetVars = (data) => {
-    setVars(old => [...old, data])
+  const handleGlobalsVars = (data) => {
+    setGlobalVars(data)
   }
-
-  const handleEditVars = (data) => {
-    setVars(data)
+  const handleGlobalsCons = (data) => {
+    setGlobalCons(data)
   }
-
-  const handleDeleteVars = (data) => {
-    setVars(data)
+  const handleGlobalsInts = (data) => {
+    setGlobalInts(data)
   }
-
-  const handleDeleteCons = (data) => {
-    setCons(data)
+  const handleGlobalsTrigs = (data) => {
+    setGlobalTrigs(data)
   }
-  const handleSetCons = (data) => {
-    setCons(data)
+  const handleLocalVars = (data) => {
+    setLocalVars(data)
   }
-  const handleDeleteInts = (data) => {
-    setInts(data)
+  const handleLocalCons = (data) => {
+    setLocalCons(data)
   }
-  const handleSetInts = (data) => {
-    setInts(data)
+  const handleLocalInts = (data) => {
+    setLocalInts(data)
   }
-  const handleSetTrigs = (data) => {
-    console.log(data)
-    setTrigs(data)
+  const handleLocalTrigs = (data) => {
+    setLocalTrigs(data)
   }
+  
   const handleSetShapes = (data) => {
     setShapes(data.inputs)
   }
@@ -140,22 +143,28 @@ const EditPage = (props) => {
               className="grid-sidebar"
               visible={showNav}
               close={toggle}
-              variables={vars || {}}
-              cons={cons || {}}
-              ints={ints || {}}
-              trigs={trigs || {}}
+              globalVars={globalVars}
+              globalCons={globalCons}
+              globalInts={globalInts}
+              globalTrigs={globalTrigs}
+              localVars={localVars}
+              localCons={localCons}
+              localInts={localInts}
+              localTrigs={localTrigs}
+              
               shapes={shapes || {}}
               allShapes={allShapes || {}}
               img={localStorage.simimg}
               title={localStorage.simtitle}
-              setVars={handleSetVars}
-              setTrigs={handleSetTrigs}
-              setCons={handleSetCons}
-              setInts={handleSetInts}
-              editVars={handleEditVars}
-              delVars={handleDeleteVars}
-              delCons={handleDeleteCons}
-              delInts={handleDeleteInts}
+              setGlobalVars={handleGlobalsVars}
+              setGlobalCons={handleGlobalsCons}
+              setGlobalInts={handleGlobalsInts}
+              setGlobalTrigs={handleGlobalsTrigs}
+              setLocalVars={handleLocalVars}
+              setLocalCons={handleLocalCons}
+              setLocalInts={handleLocalInts}
+              setLocalTrigs={handleLocalTrigs}
+
               random={props.random}
               customObjects={props.customObjects}
               savedObjects={props.savedObjects}
@@ -186,19 +195,26 @@ const EditPage = (props) => {
                 showAlert={alertContext.showAlert}
                 adminid={localStorage.adminid}
                 gameinstance={localStorage.gameinstance}
-                variables={vars || {}}
-                cons={cons || {}}
-                ints={ints || {}}
-                tasks={tasks || {}}
-                trigs={trigs || {}}
+                globalVars={globalVars}
+                globalCons={globalCons}
+                globalInts={globalInts}
+                globalTrigs={globalTrigs}
+                localVars={localVars}
+                localCons={localCons}
+                localInts={localInts}
+                localTrigs={localTrigs}
                 page={page}
                 setTasks={setTasks}
-                setTrigs={setTrigs}
                 setShapes={handleSetShapes}
                 setAllShapes={handleSetAllShapes}
-                setInts={setInts}
-                setVars={setVars}
-                setCons={setCons}
+                setGlobalVars={handleGlobalsVars}
+                setGlobalCons={handleGlobalsCons}
+                setGlobalInts={handleGlobalsInts}
+                setGlobalTrigs={handleGlobalsTrigs}
+                setLocalVars={handleLocalVars}
+                setLocalCons={handleLocalCons}
+                setLocalInts={handleLocalInts}
+                setLocalTrigs={handleLocalTrigs}  
                 setEditState={props.setEditState}
                 handleLevel={handlePage}
               />

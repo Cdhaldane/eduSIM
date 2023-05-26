@@ -12,9 +12,10 @@ import { useAlertContext } from "../../../Alerts/AlertContext";
 
 
 const Trigger = (props) => {
-  console.log(props.allShapes)
   const { t } = useTranslation();
   const [showConAdd, setShowConAdd] = useState(false);
+  const [variables, setVariables] = useState(props.globalVars)
+  const [fullTriggers, setFullTriggers] = useState([])
   const [shapes, setShapes] = useState()
   const [trigger, setTrigger] = useState([null, null, null]);
   const [deleteIndex, setDeleteIndex] = useState(0);
@@ -35,50 +36,31 @@ const Trigger = (props) => {
     setShapes(out)
   }, [props.allShapes])
 
-  const populateGlobal = () => {
-    return props.trigs.map((trig, i) => (
+  const populateTriggers = (trigs) => {
+    return trigs?.map((trig, i) => (
       <div className="condition-inputs cons-condition">
         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
         <h1>When</h1><h2>{trig[0]}</h2> <h1>touches</h1> <h2>{trig[1]}</h2> <h1>set</h1> <h3>{trig[2]}</h3> <h1>to true.</h1>
       </div>
     ));
   };
-  
-  const populateSession = () => {
-    let trigs = JSON.parse(localStorage.getItem('triggers')) || [];
-    return trigs.map((trig, i) => (
-      <div className="condition-inputs cons-condition">
-        <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-        <h1>When</h1><h2>{trig[0]}</h2> <h1>touches</h1> <h2>{trig[1]}</h2> <h1>set</h1> <h3>{trig[2]}</h3> <h1>to true.</h1>
-      </div>
-    ));
-  }
+
   const addCon = () => {
     if(trigger[0] === null || trigger[1] === null || trigger[2] === null) {
       alertContext.showAlert("Please fill out all fields", "warning")
       return
     }
-    if (props.current === 'global') {
-      let temp = props.trigs
-      temp.push(trigger)
-      props.setTrigs(temp);
-    } if (props.current === 'session') {
-      const triggers = JSON.parse(localStorage.getItem('triggers')) || [];
-      triggers.push(trigger);
-      localStorage.setItem('triggers', JSON.stringify(triggers));
-    }
+    let data = fullTriggers
+    data.push(trigger)
+    if (props.current === 'global') props.setGlobalTrigs(data) 
+    if (props.current === 'session') props.setLocalTrigs(data)
     setShowConAdd(!showConAdd)
   }
   const deleteCon = (i) => {
-    if (props.current === 'global') {
-      let temp = props.trigs
-      temp.splice(i, 1)
-      props.setTrigs(temp);
-    } else {
-      const triggers = JSON.parse(localStorage.getItem('triggers')) || [];
-      triggers.splice(i, 1);
-      localStorage.setItem('triggers', JSON.stringify(triggers));
-    }
+    let data = fullTriggers
+    data.splice(i, 1)
+    if (props.current === 'global') props.setGlobalTrigs(data) 
+    if (props.current === 'session') props.setLocalTrigs(data)
     setConfirmationModal(false);
   }
 
@@ -96,11 +78,26 @@ const Trigger = (props) => {
   }
 
   const handleOut = () => {
-    if (props.current === 'global')
-      return (populateGlobal())
-    if (props.current === 'session')
-      return (populateSession())
+    let trigs = []
+    if (props.current === 'global') {
+      trigs = props.globalTrigs
+    }
+    if (props.current === 'session') {
+      trigs = props.localTrigs
+    }
+    return (populateTriggers(trigs))
   }
+
+  useEffect(() => {
+    if (props.current === 'global') {
+      setFullTriggers(props.globalTrigs)
+      setVariables(props.globalVars)
+    }
+    if (props.current === 'session') {
+      setFullTriggers(props.localTrigs)
+      setVariables(props.localVars)
+    }
+  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars])
 
   return (
     <>
@@ -115,11 +112,11 @@ const Trigger = (props) => {
       </div>
 
       {showConAdd && (
-        <div className="variable-adding ints-fix">
-          <div className="ints-area">
+        <div className="variable-adding trigs-fix">
+          <div className="trigs-area">
             <div className="trigger-name">
               <h1>Variable to Set</h1>
-              <MultiLevel data={props.gameVars} handleChange={handleChange} className="trigger-multi" />
+              <MultiLevel data={variables} handleChange={handleChange} className="trigger-multi" />
             </div>
             <div className='trigger-container'>
               <h2>WHEN SHAPE</h2>

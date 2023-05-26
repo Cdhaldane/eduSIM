@@ -412,7 +412,7 @@ const CanvasPage = (props) => {
       ref: obj.ref,
       fill: obj.fill,
       opacity: obj.opacity,
-      name: obj.name,
+      name: "shape",
       id: obj.id,
       x: obj.x,
       y: obj.y,
@@ -493,6 +493,7 @@ const CanvasPage = (props) => {
       src: obj.imgsrc,
       image: obj.imgsrc,
       layer: layer,
+
       width: obj.width,
       height: obj.height
     }

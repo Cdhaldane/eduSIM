@@ -872,7 +872,6 @@
   margin: auto;
   justify-content: space-evenly;
   position: relative;
-  margin-bottom: 50px;
   align-items: center;
 }
 
@@ -1068,7 +1067,7 @@
   background-color: white !important;
   border: 1px solid grey !important;
   padding: 15px 10px !important;
-  color: lightgrey !important;
+
 }
 .int-page-box input{
   

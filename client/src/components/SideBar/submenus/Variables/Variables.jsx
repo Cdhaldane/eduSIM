@@ -91,7 +91,6 @@ const Variables = (props) => {
         shapes.push(shape);
       }
     });
-    console.log(shapes)
     setShapes(shapes);
   }, [props.shapes, props.allShapes, props.page])
 
