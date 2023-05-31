@@ -14,7 +14,7 @@ import Down from "../../../public/icons/chevron-down.svg"
 
 const ContextMenu = (props) => {
   const [drop, setDrop] = useState(false);
-  const [conditions, setConditions] = useState(props.getObjState()?.conditions || {});
+  const [conditions, setConditions] = useState({});
   const [conditionsVisible, setConditionsVisible] = useState(false);
   const [showDeck, setShowDeck] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
@@ -24,6 +24,12 @@ const ContextMenu = (props) => {
 
   const menuRef = useRef();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    console.log(conditions)
+    console.log(props.getObjState())
+    setConditions(props.getObjState()?.conditions || {});
+  },[props.selectedShapeName])
 
   const setContextMenuTitle = () => {
     const editTitleOptions = ["text", "poll", "connect4", "tic", "html", "input", "timer"];

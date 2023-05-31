@@ -318,7 +318,6 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
-        console.log("objects.savedGroups", objects);
         if (this.props.setTasks) {
           this.props.setTasks(objects.tasks || {});
         }
@@ -346,9 +345,9 @@ class Graphics extends Component {
         if (this.props.setLocalTrigs) {
           this.props.setLocalTrigs(objects.localTrigs || []);
         }
-        
-        
-        
+
+
+
 
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
@@ -411,8 +410,8 @@ class Graphics extends Component {
                 let savedGroup = [];
                 for (let j = 0; j < this.state.savedGroups[i].length; j++) {
                   const groupObj = this.state.savedGroups[i][j];
-                  const id = groupObj.attrs ? groupObj.attrs.id : groupObj;
-                  savedGroup.push(groupObj.attrs ? this.refs[id] : id);
+                  console.log(groupObj)
+                  savedGroup.push(groupObj);
                 }
                 fullObjSavedGroups.push(savedGroup);
               }
@@ -581,7 +580,7 @@ class Graphics extends Component {
         allShapes = allShapes.concat(this.state[type]);
       }
 
- 
+
 
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
@@ -628,7 +627,7 @@ class Graphics extends Component {
         //   setState: this.setState,
         //   state: this.state,
         //   refs: this.refs,
-    
+
         //   // These are functions used for manipulating objects that are directly used in object props
         //   customRect: el => { this.refs.customRect = el },
         //   onObjectClick: this.onObjectClick,
@@ -654,7 +653,7 @@ class Graphics extends Component {
         //   getDragProps: () => { },
         //   dragLayer: this.dragLayer,
         //   getLayers: this.getLayers
-    
+
         // });
 
         // Recenter if the canvas has changed
@@ -1007,12 +1006,12 @@ class Graphics extends Component {
           (event.targetTouches ? event.targetTouches[0].clientY : this.state.mouseY))
       }
     }
-    
+
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
 
-    if(personalArea){
+    if (personalArea) {
       scale = this.state.personalLayerScale;
       xOffset = -this.state.personalLayerX - 20;
       yOffset = -this.state.personalLayerY;
@@ -1021,9 +1020,6 @@ class Graphics extends Component {
       xOffset = -this.state.overlayLayerX - 20;
       yOffset = -this.state.overlayLayerY;
     }
-
-    console.log("scale: " + scale + " xOffset: " + xOffset + " yOffset: " + yOffset)
- 
 
     if (this.state.drawMode === true) {
       this.setState({
@@ -1159,10 +1155,10 @@ class Graphics extends Component {
       ) {
         return;
       }
-
+      console.log(shape)
       const clickShapeGroup = shape ? this.getShapeGroup(shape.custom ? shape.id : this.refs[shape.id]) : null;
 
-    
+      console.log("clickShapeGroup", clickShapeGroup);
 
       if (event.button === 0) {
         // LEFT CLICK
@@ -1217,7 +1213,9 @@ class Graphics extends Component {
                 groupSelection: []
               }, this.handleObjectSelection);
             } else {
+
               const selection = [...selectedGroups, ...elemIds];
+              console.log(selection)
               if (!this.state.selection.isDraggingShape) {
                 this.setState({
                   selectedShapeName: "",
@@ -1260,7 +1258,6 @@ class Graphics extends Component {
                     break;
                   }
                 }
-
                 if (alreadySelectedCurrent && (alreadySelectedPrev || !this.state.selectedShapeName)) {
                   break;
                 }
@@ -1277,6 +1274,7 @@ class Graphics extends Component {
                   ) {
                     newSelection.push(this.state.selectedShapeName);
                   }
+                  console.log("newSelection", [...newSelection, shape.id], "clickShapeGroup", [clickShapeGroup])
                   if (newSelection.length === 0) {
                     // Shift select with nothing else selected so set it as the selection
                     if (!clickShapeGroup) {
@@ -1323,8 +1321,10 @@ class Graphics extends Component {
                       return obj.attrs ? obj.attrs.id !== shape.id : obj !== shape.id;
                     }
                   });
+                  console.log([newGroupSelection], newGroupSelection)
                   if (newGroupSelection.length === 1) {
                     // Only one selection left
+
                     if (Array.isArray(newGroupSelection[0])) {
                       this.setState({
                         selectedShapeName: "",
@@ -1346,6 +1346,7 @@ class Graphics extends Component {
               }
             } else {
               // Clicked on object -> put the selected object in state
+              console.log([clickShapeGroup])
               if (clickShapeGroup) {
                 this.setState({
                   selectedShapeName: "",
@@ -1401,7 +1402,7 @@ class Graphics extends Component {
                 alreadySelected = true;
               }
             }
-
+            console.log([...this.state.groupSelection, clickShapeGroup])
             if (!alreadySelected) {
               this.setState({
                 selectedShapeName: "",
@@ -1457,7 +1458,7 @@ class Graphics extends Component {
             contextMenuX = "groupAreaContextMenuX";
             contextMenuY = "groupAreaContextMenuY";
           }
-          
+
           const rel = this.refs[`${areaClicked}AreaLayer.objects`].getRelativePointerPosition();
           this.setState({
             selectedContextMenu: {
@@ -1578,6 +1579,7 @@ class Graphics extends Component {
         (this.state.overlayOpen ? "overlay" : "group");
       const pos = this.refs[stage + "Stage"].getPointerPosition();
       const shape = this.refs[stage + "Stage"].getIntersection(pos);
+      console.log(shape)
 
       if (this.state.lineTransformDragging) {
 
@@ -1604,7 +1606,7 @@ class Graphics extends Component {
           if (this.state.selection.isDraggingShape && this.state.selectedShapeName !== "pencils") {
             // Select the shape being dragged (and don't create a selection)
             const shapeGroup = this.getShapeGroup(shape);
-     
+            console.log(shapeGroup);
             if (shapeGroup) {
               this.setState({
                 selectedShapeName: "",
@@ -1613,6 +1615,7 @@ class Graphics extends Component {
             } else {
               let shapeId = "";
               if (this.state.selection.isDraggingShape === "customObj") {
+                
                 const customObjs = Array.from(document.getElementsByClassName("customObj"));
                 customObjs.reverse();
                 for (let i = 0; i < customObjs.length; i++) {
@@ -1639,6 +1642,7 @@ class Graphics extends Component {
             }
           } else {
             // Create drag selection rectangle
+            
             this.setState({
               selection: {
                 ...this.state.selection,
@@ -1736,11 +1740,12 @@ class Graphics extends Component {
     const layerScale = `${stage}LayerScale`;
 
 
-    flushSync(() => {this.setState({
-      [layerScale]: newScale,
-      [`${stage}LayerX`]: newPos.x,
-      [`${stage}LayerY`]: newPos.y,
-    });
+    flushSync(() => {
+      this.setState({
+        [layerScale]: newScale,
+        [`${stage}LayerX`]: newPos.x,
+        [`${stage}LayerY`]: newPos.y,
+      });
     });
   }
 
@@ -1808,19 +1813,37 @@ class Graphics extends Component {
   }
 
   getObjType = (name) => {
-    console.log(name)
-    if(!name) return;
     if (typeof name !== 'string') {
       name = name?.dataset ? name?.dataset?.name : name?.attrs?.id;
     }
-    return name.replace(/\d+$/, "");
+    try {
+      return name.replace(/\d+$/, "");;
+    }
+    catch (e) {
+      return null;
+    }
+
   }
 
   handleCopy = () => {
     const name = this.state.selectedShapeName;
     const state = this.state[this.getObjType(name)];
+
     const toCopy = name ?
-      [state ? state.filter(obj => obj.id === name)[0] : null] : this.state.groupSelection;
+      [state ? state.filter(obj => obj.id === name)[0] : null] : [];
+
+    console.log(this.state.groupSelection)
+    this.state.groupSelection.forEach(obj => {
+      if (Array.isArray(obj)) {
+        toCopy.push(...obj.map(o => this.state[this.getObjType(o)].filter(obj => obj.id === o)[0]))
+      } else {
+        console.log(obj)
+        const type = this.getObjType(obj);
+        toCopy.push(this.state[type].filter(o => o.id === obj)[0]);
+      }
+    })
+
+    console.log(toCopy)
     if (toCopy) {
       this.setState({
         copied: toCopy,
@@ -1937,12 +1960,15 @@ class Graphics extends Component {
     // Paste by type
     let types = [];
     for (let i = 0; i < itemsFlat.length; i++) {
+      console.log(itemsFlat[i])
       types.push(this.getObjType(itemsFlat[i].id));
     }
     types = [...new Set(types)];
-
+    console.log(types)
     for (let i = 0; i < types.length; i++) {
+      console.log(types[i])
       let objects = [...this.state[types[i]]];
+
       const typeIndex = this.savedObjects.indexOf(types[i]);
       const delCount = this.state[this.deletionCounts[typeIndex]];
       for (let j = 0; j < itemsFlat.length; j++) {
@@ -2057,7 +2083,8 @@ class Graphics extends Component {
       const toDeleteOfType = [];
       for (let j = 0; j < toDelete.length; j++) {
         if (this.getObjType(toDelete[j]) === type) {
-          toDeleteOfType.push(toDelete[j]?.dataset ? toDelete[j].dataset.name : toDelete[j].attrs.id);
+          console.log(toDelete[j])
+          toDeleteOfType.push(this.getObjType(toDelete[j]));
         }
       }
       let objs = [...this.state[type]];
@@ -2299,6 +2326,8 @@ class Graphics extends Component {
       newSavedGroups = newSavedGroups.filter(g => g !== null);
       newSavedGroups.push(newGroup);
 
+      console.log(newGroup)
+
       this.setState({
         selectedShape: "",
         groupSelection: [newGroup],
@@ -2335,20 +2364,70 @@ class Graphics extends Component {
   }
 
   // Returns the group a shape is part of or null if it isn't in a group
+  // getShapeGroup = (shape) => {
+  //   console.log(shape)
+  //   if (!shape) return null;
+  //   const shapeId = shape?.attrs ? shape.id() : shape;
+  //   if (shape && !Array.isArray(shape)) {
+  //     for (let i = 0; i < this.state.savedGroups.length; i++) {
+  //       for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+  //         if (this.state.savedGroups[i][j].attrs ?
+  //           this.state.savedGroups[i][j].attrs.id === shapeId :
+  //           this.state.savedGroups[i][j] === shapeId) {
+  //             console.log(this.state.savedGroups[i])
+  //           return this.state.savedGroups[i];
+  //         }
+  //       }
+  //     }
+
+  //   }
+
+  //   return null;
+  // }
+
   getShapeGroup = (shape) => {
-    if(!shape) return null;
-    const shapeId = shape?.attrs ? shape.id() : shape;
+    console.log(shape)
+    console.log(this.state.groupSelection)
+    let shapeId;
+    if(typeof shape !== 'object') {
+      shapeId = shape
+    } else {
+      shapeId = shape.attrs.id
+    }
+    console.log(shapeId, typeof shape)
     if (shape && !Array.isArray(shape)) {
-      for (let i = 0; i < this.state.savedGroups.length; i++) {
-        for (let j = 0; j < this.state.savedGroups[i].length; j++) {
-          if (this.state.savedGroups[i][j].attrs ?
-            this.state.savedGroups[i][j].attrs.id === shapeId :
-            this.state.savedGroups[i][j] === shapeId) {
-            return this.state.savedGroups[i];
+          for (let i = 0; i < this.state.savedGroups.length; i++) {
+            for (let j = 0; j < this.state.savedGroups[i].length; j++) {
+              if (this.state.savedGroups[i][j].attrs ?
+                this.state.savedGroups[i][j].attrs.id === shapeId :
+                this.state.savedGroups[i][j] === shapeId) {
+                  console.log(this.state.savedGroups[i])
+                return this.state.savedGroups[i];
+              }
+            }
           }
         }
+    let shapeGroup = []
+    if (this.state.groupSelection.length !== 0) {
+      for(let i = 0; i < this.state.groupSelection[0].length; i++) {
+        if(Array.isArray(this.state.groupSelection[0])) {
+          if(this.state.groupSelection[0][i] === shapeId) {
+            shapeGroup = this.state.groupSelection[0]
+            console.log(shapeGroup)
+            return shapeGroup
+          }
+        } else {
+          if(this.state.groupSelection[i] === shapeId) {
+            shapeGroup = this.state.groupSelection
+            console.log(shapeGroup)
+            return shapeGroup
+          }
+        }
+       
       }
     }
+    
+
     return null;
   }
 
@@ -2732,7 +2811,6 @@ class Graphics extends Component {
     }
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
-    console.log(obj.id, this.refs)
     this.refs[obj.id].moveTo(this.refs[`${layer}.dragging`]);
 
     this.objectSnapping(obj, e);
@@ -3020,7 +3098,6 @@ class Graphics extends Component {
         scaleY: object.scaleY()
       };
     }
-    console.log(transformOptions)
     this.setState(
       prevState => ({
         [type]: prevState[type].map(o =>
@@ -3279,9 +3356,9 @@ class Graphics extends Component {
     }))
   }
 
-  getDragProps = () => {}
-  getPageProps = () => {}
-  getVariableProps = () => {}
+  getDragProps = () => { }
+  getPageProps = () => { }
+  getVariableProps = () => { }
 
   renderAllObjects = () => {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas, this)
@@ -3765,11 +3842,11 @@ class Graphics extends Component {
                 });
               }}
               renameRoleRect={(oldName, newName) => {
-                console.log(oldName, newName)
+
                 const pages = JSON.parse(JSON.stringify(this.state.pages));
                 for (let i = 0; i < this.state.pages.length; i++) {
                   const page = pages[i];
-                  console.log(page)
+
                   page.personalPositionRect[newName] = page.personalPositionRect[oldName];
                   delete page.personalPositionRect[oldName];
                   pages[i] = page;

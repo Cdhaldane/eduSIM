@@ -261,6 +261,8 @@ const CanvasPage = (props) => {
       const viewableHeight = clientRect.height - topBarPadding;
       const padding = 10;
 
+      // console.log(viewableWidth, viewableHeight, positionWidth, positionHeight)
+
       let scaleX = viewableWidth / (positionWidth + 2 * padding);
       let scaleY = viewableHeight / (positionHeight + 2 * padding);
       
