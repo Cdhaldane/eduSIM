@@ -68,6 +68,7 @@ img {
 
 #groupGameContainer {
   margin-top: 55px;
+  height: 887px;
 }
 
 #personalGameContainer .konvajs-content>canvas,
@@ -257,6 +258,13 @@ a {
   flex-wrap: wrap;
   width: 100%;
   height: 100%;
+}
+
+.clear {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  z-index: 10000;
 }
 
 .column {

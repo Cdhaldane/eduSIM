@@ -38,7 +38,7 @@ const DEFAULT_STROKE = 2;
 
 const DropdownAddObjects = (props) => {
   const [activeMenu, setActiveMenu] = useState("main");
-  const [menuHeight, setMenuHeight] = useState(274);
+  const [menuHeight, setMenuHeight] = useState(234);
   const dropdownRef = useRef(null);
 
   const [imageUploaded, setImageUploaded] = useState(false);
@@ -629,11 +629,11 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("pieces")}>
             {t("edit.addInteractive")}
           </DropdownItem>
-          <DropdownItem
+          {/* <DropdownItem
             leftIcon={<i><Question className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("inputs")}>
             {t("edit.addInput")}
-          </DropdownItem>
+          </DropdownItem> */}
           <DropdownItem
             leftIcon={<i><Game className="icon add-icons" /></i>}
             onClick={() => setActiveMenu("games")}>
@@ -873,6 +873,32 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.addInteractive")}</h2>
           </DropdownItem>
           <DropdownItem
+            onClick={() => addInput("button")}
+            leftIcon={<i
+              onClick={() => addInput("button")}><i><Hand className="icon add-icons" /></i></i>}>
+            {t("edit.input.button")}</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("text")}
+            leftIcon={<i
+              onClick={() => addInput("text")}><i><Text className="icon add-icons" /></i></i>}>
+            {t("edit.input.textbox")}</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("checkbox")}
+            leftIcon={<i
+              onClick={() => addInput("checkbox")}><i><Check className="icon add-icons" /></i></i>}>
+            {t("edit.input.checkbox")}</DropdownItem>
+          <DropdownItem
+            onClick={() => addInput("radio")}
+            leftIcon={<i
+              onClick={() => addInput("radio")}><i><Radio className="icon add-icons" /></i></i>}>
+            {t("edit.input.radio")}</DropdownItem>
+
+          <DropdownItem
+            onClick={() => addInput("variable")}
+            leftIcon={<i
+              onClick={() => addInput("variable")}><i><Question className="icon add-icons" /></i></i>}>
+            Variable</DropdownItem>
+          <DropdownItem
             onClick={addPoll}
             leftIcon={<i
               onClick={addPoll}><i><Graph className="icon add-icons" /></i></i>}>
@@ -930,7 +956,7 @@ const DropdownAddObjects = (props) => {
         </div>
       </CSSTransition>
 
-      <CSSTransition
+      {/* <CSSTransition
         in={activeMenu === 'inputs'}
         timeout={500}
         classNames="menu-secondary"
@@ -942,34 +968,9 @@ const DropdownAddObjects = (props) => {
             onClick={() => setActiveMenu("main")}>
             <h2>{t("edit.addInput")}</h2>
           </DropdownItem>
-          <DropdownItem
-            onClick={() => addInput("button")}
-            leftIcon={<i
-              onClick={() => addInput("button")}><i><Hand className="icon add-icons" /></i></i>}>
-            {t("edit.input.button")}</DropdownItem>
-          <DropdownItem
-            onClick={() => addInput("text")}
-            leftIcon={<i
-              onClick={() => addInput("text")}><i><Text className="icon add-icons" /></i></i>}>
-            {t("edit.input.textbox")}</DropdownItem>
-          <DropdownItem
-            onClick={() => addInput("checkbox")}
-            leftIcon={<i
-              onClick={() => addInput("checkbox")}><i><Check className="icon add-icons" /></i></i>}>
-            {t("edit.input.checkbox")}</DropdownItem>
-          <DropdownItem
-            onClick={() => addInput("radio")}
-            leftIcon={<i
-              onClick={() => addInput("radio")}><i><Radio className="icon add-icons" /></i></i>}>
-            {t("edit.input.radio")}</DropdownItem>
-
-          <DropdownItem
-            onClick={() => addInput("variable")}
-            leftIcon={<i
-              onClick={() => addInput("variable")}><i><Question className="icon add-icons" /></i></i>}>
-            Variable</DropdownItem>
+         
         </div>
-      </CSSTransition>
+      </CSSTransition> */}
 
 
     </div>

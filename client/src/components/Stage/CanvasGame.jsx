@@ -801,8 +801,8 @@ class Graphics extends Component {
         {/* ---- GROUP CANVAS ---- */}
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <Stage
-            height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight}
-            width={window.innerWidth}
+            height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight - 50}
+            width={window.innerWidth - 70}
             ref="graphicStage"
           >
             {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
@@ -862,7 +862,7 @@ class Graphics extends Component {
                   style={{ position: "relative", overflow: "hidden" }}
                   height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :
                     (document.getElementById("personalGameContainer") ?
-                      document.getElementById("personalGameContainer").clientHeight * 0.95 : 0)}
+                      document.getElementById("personalGameContainer").clientHeight : 0)}
                   width={document.getElementById("personalGameContainer") ?
                     document.getElementById("personalGameContainer").clientWidth : 0}
                   ref="personalAreaStage"

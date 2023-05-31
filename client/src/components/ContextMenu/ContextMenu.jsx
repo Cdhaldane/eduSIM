@@ -209,18 +209,15 @@ const ContextMenu = (props) => {
           {props.selectedShapeName.includes("decks") && (
             <li onClick={handleDeck}>Edit Deck</li>
           )}
-          <div className="layerLbl">
-            {t("edit.layer")}
-          </div>
+
           <div className="layerBtns">
+            {t("edit.layer")}
             <li
               onClick={() => handleLayer("up")}
               className={props.getObjState()?.onTop !== undefined ? (props.getObjState().onTop ? "disabled" : "") : (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}
             >
               <i><Up className="icon alert-icon" /></i>
             </li>
-          </div>
-          <div className="layerBtns">
             <li
               onClick={() => handleLayer("down")}
               className={`${props.getObjState()?.onTop !== undefined ?

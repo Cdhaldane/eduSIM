@@ -599,10 +599,7 @@
   height: 100%;
   font-size: 1.5em;
 }
-.var-trash{
-  margin-right: 1000px !important;
-  margin-left: 20px !important;
-}
+
 .var-trash:hover{
   cursor: pointer;
 }
@@ -899,14 +896,14 @@
   background-color: var(--almostwhite);
   height: auto;
   width: auto;
-  min-width: 32%;
+  min-width: 49%;
   transition:all .5s;
   vertical-align: middle;
   margin-top: 10px;
   border-radius: 9px;
   border: 1px solid gray;
   margin: 3px;
-  padding: 10px;
+  padding: 5px;
   font-size: 0.8em !important;
   flex-grow: 1;
   display: flex;
@@ -914,9 +911,7 @@
 }
 
 .condition-inputs i{
-  width: 20px;
   font-size: 1.4em !important;
-  transform: translate(-20px, 0px);
 }
 
 .cons-condition{
@@ -931,12 +926,10 @@
 .if{
   display: flex;
   overflow-wrap: break-word;
-  margin-left: 10px;
 }
 .then{
   display: flex;
   overflow-wrap: break-word;
-  margin-left: 10px;
 }
 
 .condition-inputs h1{
@@ -1068,9 +1061,6 @@
   border: 1px solid grey !important;
   padding: 15px 10px !important;
 
-}
-.int-page-box input{
-  
 }
 .int-page-con {
   display: flex;

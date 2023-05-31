@@ -206,40 +206,47 @@ const CanvasPage = (props) => {
       
     }
     if (mode === "play") {
+      console.log(positionRect);
+      const positionWidth = (positionRect.w * positionRect.scaleX);
+      const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
-      const personalId = mode === "edit" ? "editPersonalContainer" : "personalGameContainer";
-      const isPortraitMode = window.matchMedia("(orientation: portrait)").matches;
+      let area =  document.getElementById('groupGameContainer').getBoundingClientRect();
+      if(areaString === "personal"){
+        area = document.getElementById('personalGameContainer').getBoundingClientRect();
+      }
+      if(areaString === "overlay"){
+        area = document.getElementById('overlayGameContainer').getBoundingClientRect();
+      }
+      console.log(area)
+      const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
+      const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
 
-      const personalArea = document.getElementById(personalId).getBoundingClientRect();
-      const sideMenuW = (isPersonalArea || overlay) ? personalArea.x : (isPortraitMode ? 0 : sidebar.width);
-      const screenW = window.innerWidth;
-      const topMenuH = overlay ? 100 : (isPersonalArea ? 80 : topBar.height);
-      const availableW = isPersonalArea ? personalArea.width : screenW - sideMenuW;
+      const viewableWidth = area.width;
+      const viewableHeight = area.height;
 
-      const newScale = availableW / (positionRect?.w * positionRect?.scaleX);
-      const newHeight = (positionRect?.h + topMenuH) * positionRect?.scaleY * newScale;
-      setPlayModeCanvasHeights({
-        overlay: areaString === "overlay" ? newHeight : 0,
-        personal: areaString === "personal" ? newHeight : 0,
-        group: areaString === "group" ? newHeight : 0,
-      });
+      console.log(viewableWidth, viewableHeight, positionWidth, positionHeight)
+      let scaleX = viewableWidth / (positionWidth);
+      let scaleY = viewableHeight / (positionHeight);
+
+      const scale = Math.min(scaleX, scaleY) / 1.01;
+      // Calculate the center position relative to the viewable area
+      console.log("scale", scale)
+      const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
+      const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
 
       canvas.setState({
-        [`${areaString}LayerX`]: -positionRect?.x * newScale,
-        [`${areaString}LayerY`]: -positionRect?.y * newScale,
-        [`${areaString}LayerScale`]: newScale,
+        [`${areaString}LayerX`]: -positionRect.x * scale + centerPositionX,
+        [`${areaString}LayerY`]: -positionRect.y * scale + centerPositionY,
+        [`${areaString}LayerScale`]: scale,
         canvasLoading: false
       });
-      console.log("recentering play mode");
       return;
     }
 
     // Edit mode centering with no objects
     if (canvas.getLayers().length >= 0 && positionRect && clientRect && topBar && sidebar ) {
-
-      positionRect.x = 0;
-      positionRect.y = 0;
+      
       const positionWidth = (positionRect.w * positionRect.scaleX);
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
@@ -262,15 +269,11 @@ const CanvasPage = (props) => {
       // Calculate the center position relative to the viewable area
       const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
       const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
-
-      
-      
-
       // Log information for debugging
 
       canvas.setState({
-        [`${areaString}LayerX`]: centerPositionX,
-        [`${areaString}LayerY`]: centerPositionY,
+        [`${areaString}LayerX`]: -positionRect.x * scale + centerPositionX,
+        [`${areaString}LayerY`]: -positionRect.y * scale + centerPositionY,
         [`${areaString}LayerScale`]: scale,
         canvasLoading: false
       });

@@ -45,8 +45,10 @@
 }
 
 .layerBtns {
-  width: 25%;
-  display: inline-block;
+  padding: 0px 5px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .layerBtns > li {
@@ -121,9 +123,7 @@
   z-index: 220000;
 }
 
-.custom-deck-modal-overlay{
 
-}
 
 .custom-deck-modal-card-preview{
   display: flex;

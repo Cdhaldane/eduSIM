@@ -318,34 +318,35 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
-        console.log("objects.savedGroups", objects.globalVars);
+        console.log("objects.savedGroups", objects);
         if (this.props.setTasks) {
           this.props.setTasks(objects.tasks || {});
         }
         if (this.props.setGlobalVars) {
-          this.props.setGlobalVars(objects.globalVars || {});
+          this.props.setGlobalVars(objects.globalVars || []);
         }
         if (this.props.setGlobalCons) {
-          this.props.setGlobalCons(objects.globalCons || {});
+          this.props.setGlobalCons(objects.globalCons || []);
         }
         if (this.props.setGlobalInts) {
-          this.props.setGlobalInts(objects.globalInts || {});
+          this.props.setGlobalInts(objects.globalInts || []);
         }
         if (this.props.setGlobalTrigs) {
-          this.props.setGlobalTrigs(objects.globalTrigs || {});
+          this.props.setGlobalTrigs(objects.globalTrigs || []);
         }
         if (this.props.setLocalVars) {
-          this.props.setLocalVars(objects.localVars || {});
+          this.props.setLocalVars(objects.localVars || []);
         }
         if (this.props.setLocalCons) {
-          this.props.setLocalCons(objects.localCons || {});
+          this.props.setLocalCons(objects.localCons || []);
         }
         if (this.props.setLocalInts) {
-          this.props.setLocalInts(objects.localInts || {});
+          this.props.setLocalInts(objects.localInts || []);
         }
         if (this.props.setLocalTrigs) {
-          this.props.setLocalTrigs(objects.localTrigs || {});
+          this.props.setLocalTrigs(objects.localTrigs || []);
         }
+        
         
         
 
@@ -943,7 +944,7 @@ class Graphics extends Component {
     const customObjs = Array.from(document.getElementsByClassName("customObj")).reverse();
     for (let i = 0; i < customObjs.length; i++) {
       const obj = customObjs[i];
-      const id = obj.dataset.name;
+      const id = obj?.dataset.name;
       const objType = this.getObjType(id);
       const objState = this.state[objType].filter(obj => obj.id === id)[0];
       const objBox = obj.getBoundingClientRect();
@@ -1006,9 +1007,22 @@ class Graphics extends Component {
           (event.targetTouches ? event.targetTouches[0].clientY : this.state.mouseY))
       }
     }
+    
     let scale = this.state.groupLayerScale;
     let xOffset = -this.state.groupLayerX;
     let yOffset = -this.state.groupLayerY;
+
+    if(personalArea){
+      scale = this.state.personalLayerScale;
+      xOffset = -this.state.personalLayerX - 20;
+      yOffset = -this.state.personalLayerY;
+    } else if (this.state.overlayOpen) {
+      scale = this.state.overlayLayerScale;
+      xOffset = -this.state.overlayLayerX - 20;
+      yOffset = -this.state.overlayLayerY;
+    }
+
+    console.log("scale: " + scale + " xOffset: " + xOffset + " yOffset: " + yOffset)
  
 
     if (this.state.drawMode === true) {
@@ -1603,7 +1617,7 @@ class Graphics extends Component {
                 customObjs.reverse();
                 for (let i = 0; i < customObjs.length; i++) {
                   const bounds = customObjs[i].getBoundingClientRect();
-                  const id = customObjs[i].dataset.name;
+                  const id = customObjs[i]?.dataset?.name;
                   const onTop = this.state[this.getObjType(id)].filter(obj => obj.id === id)[0].onTop;
                   if (
                     (!this.state.selection.isDraggingShape || this.state.selection.isDraggingShape === "customObj") &&
@@ -1611,7 +1625,7 @@ class Graphics extends Component {
                     pos.x > bounds.left && pos.x < bounds.right &&
                     pos.y > bounds.top && pos.y < bounds.bottom
                   ) {
-                    shapeId = customObjs[i].dataset.name;
+                    shapeId = customObjs[i]?.dataset?.name;
                     break;
                   }
                 }
@@ -1794,8 +1808,10 @@ class Graphics extends Component {
   }
 
   getObjType = (name) => {
+    console.log(name)
+    if(!name) return;
     if (typeof name !== 'string') {
-      name = name.dataset ? name.dataset.name : name.attrs.id;
+      name = name?.dataset ? name?.dataset?.name : name?.attrs?.id;
     }
     return name.replace(/\d+$/, "");
   }
@@ -2065,6 +2081,24 @@ class Graphics extends Component {
       groupSelection: [],
       selectedContextMenu: null
     }, this.handleObjectSelection);
+  }
+
+  handleClearPage = () => {
+    this.setState({
+      selectedShapeName: "",
+      groupSelection: [],
+      selectedContextMenu: null
+    }, this.handleObjectSelection);
+
+    const page = this.state.pages[this.state.level - 1];
+    const newPages = [...this.state.pages];
+    newPages[this.state.level - 1] = {
+      ...page,
+      groupLayers: [],
+    };
+    this.setState({
+      pages: newPages
+    }, this.handleSave);
   }
 
   handleCut = () => {
@@ -2698,6 +2732,7 @@ class Graphics extends Component {
     }
     const layer = this.state.personalAreaOpen ? "personalAreaLayer" :
       (this.state.overlayOpen ? "overlayAreaLayer" : "groupAreaLayer");
+    console.log(obj.id, this.refs)
     this.refs[obj.id].moveTo(this.refs[`${layer}.dragging`]);
 
     this.objectSnapping(obj, e);
@@ -3487,6 +3522,7 @@ class Graphics extends Component {
         >
           {/* The right click menu for the group area */}
           <input value={this.state.textInput} onChange={(event) => this.setState({ textInput: event.target.value })} />
+          {/* <button onClick={() => this.handleClearPage()} className='clear'>Clear</button> */}
           {this.state.groupAreaContextMenuVisible
             && this.state.selectedContextMenu
             && this.state.selectedContextMenu.type === "GroupAddMenu" && (

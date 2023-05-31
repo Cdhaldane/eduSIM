@@ -121,12 +121,11 @@ const Input = forwardRef((props, ref) => {
   const hanldeInteractionValue = () => {
     let interactions = props.interactions
     let ints;
-    console.log(interactions)
     if (!props.editMode) {
       for (let i = 0; i < interactions.length; i++) {
         if (props.varName === interactions[i][0]) {
           if (interactions[i][6] === 'page') {
-            props.handleButtonPage(interactions[i][5])
+            props.handleButtonPage(parseInt(interactions[i][5]))
             return;
           }
           ints = interactions[i]
@@ -138,7 +137,7 @@ const Input = forwardRef((props, ref) => {
           if (props.variables[ints[3]])
             value = props.variables[ints[3]]
           else value = ints[3]
-          console.log(ints, Number(value), Number(value2), operator)
+        
           switch (operator) {
             case '+':
               value = Number(value) + Number(value2);

@@ -9,6 +9,7 @@ import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import MultiLevel from "../../../Dropdown/Multilevel";
 import { set } from "immutable";
+import { use } from "i18next";
 
 
 const Interaction = (props) => {
@@ -19,6 +20,8 @@ const Interaction = (props) => {
   const [isCheck, setIsCheck] = useState(false);
   const [isVCheck, setIsVCheck] = useState(false);
   const [isPCheck, setIsPCheck] = useState(false);
+  const [render, setRender] = useState([]);
+  const [isLoading, setLoading] = useState(true);
   const [shapes, setShapes] = useState()
   const [variables, setVariables] = useState(props.globalVars)
   const [fullInteractions, setFullInteractions] = useState([])
@@ -63,8 +66,7 @@ const Interaction = (props) => {
       interaction[4] = '+'
       interaction[5] = start
     }
-
-  })
+  },[interaction])
   const populateInteractions = (ints) => {
     let list = []
     for (let i = 0; i < ints.length; i++) {
@@ -82,7 +84,7 @@ const Interaction = (props) => {
           </div>
         </div>)
       }
-      if(ints[i][6] === 'page'){
+      else if(ints[i][6] === 'page'){
         list.push(<div className="condition-inputs">
           <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
           <div className="ints-container">
@@ -113,19 +115,32 @@ const Interaction = (props) => {
   }
   
   const addCon = () => {
-    let a = fullInteractions;
+    let x = fullInteractions
+    x.push(interaction)
+    let a = props.localInts
+    if (props.current === 'global') a = props.globalInts;
     a.push(interaction);
     if (props.current === 'session') props.setLocalInts(a)
     if (props.current === 'global') props.setGlobalInts(a)
     
     setShowConAdd(!showConAdd)
     setInteraction([props.shapes[0]?.varName, start, '=', start, '', '', check])
+
+    setFullInteractions(x)
   }
   const deleteCon = (i) => {
-    let a = fullInteractions;
-    a.splice(i, 1);
-    if (props.current === 'session') props.setLocalInts(a)
-    if (props.current === 'global') props.setGlobalInts(a)
+    let a = fullInteractions
+    let x = props.localInts
+    if (props.current === 'global') x = props.globalInts;
+    const index = x.indexOf(a[i]);
+    if (index > -1) {
+      x.splice(index, 1);
+    }
+    a.splice(i, 1)
+    if (props.current === 'session') props.setLocalInts(x)
+    if (props.current === 'global') props.setGlobalInts(x)
+
+    setFullInteractions(a)
   }
   const handle1 = () => {
     setShowAddition(!showAddition)
@@ -149,27 +164,37 @@ const Interaction = (props) => {
     }
     handleInteraction(6, e)
   }
-  const handleOut = () => {
-    let ints = []
-    if (props.current === 'global') {
-      ints = props.globalInts
-    }
-    if (props.current === 'session') {
-      ints = props.localInts
-    }
-    return (populateInteractions(ints))
-  }
+
 
   useEffect(() => {
+    setLoading(true)
+    console.log(props.globalInts)
     if (props.current === 'global') {
-      setFullInteractions(props.globalInts)
+      let out = props.globalInts.filter(arr => {
+        for (let obj of props.shapes) {
+          if (arr[0] === obj.varName) {
+            return true;
+          }
+        }
+        return false;
+      });
+      setFullInteractions(out)
       setVariables(props.globalVars)
+     
     }
     if (props.current === 'session') {
-      setFullInteractions(props.localInts)
+      let out = props.localInts.filter(arr => {
+        for (let obj of props.shapes) {
+          if (arr[0] === obj.varName) {
+            return true;
+          }
+        }
+        return false;
+      });
+      setFullInteractions(out)
       setVariables(props.localVars)
     }
-  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars])
+  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -214,12 +239,14 @@ const Interaction = (props) => {
   const handleChange = (value, x) => {
     interaction[x] = value.label
   }
+  
+ 
 
   return (
     <>
-      {!showConAdd && (
+      {!showConAdd &&  (
         <>
-          {handleOut()}
+          {populateInteractions(fullInteractions)}
         </>
       )}
       <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
@@ -311,7 +338,7 @@ const Interaction = (props) => {
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
-            <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
+            <button className="con-can-b" onClick={() => setShowConAdd(false) && populateInteractions(fullInteractions)}>{t("common.cancel")}</button>
           </div>
         </div>
       )}
