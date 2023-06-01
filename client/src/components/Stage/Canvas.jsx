@@ -8,6 +8,7 @@ import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import { flushSync } from 'react-dom'; // Note: react-dom, not react
+import ReactDOM from 'react-dom';
 
 
 // Dropdowns
@@ -160,6 +161,7 @@ class Graphics extends Component {
       overlayOptionsOpen: -1,
       overlayOpenIndex: -1,
       overlayImage: -1,
+      customObjs: [],
 
 
 
@@ -3158,16 +3160,9 @@ class Graphics extends Component {
     const isCustom = this.customObjects.includes(this.getObjType(id));
     const newLayers = this.getLayers();
     const i = newLayers.indexOf(id);
-    if(isCustom) {
-    const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
-    if (customChild) {
-      customChild.parentElement.style.zIndex = i + 1;
-    }
-    console.log(customChild.parentElement)
-    }
+
     
-
-
+    let customObjs = [];
     if (dir === 'up') {
       if (i < newLayers.length - 1) {
         let obj = newLayers[i];
@@ -3176,10 +3171,35 @@ class Graphics extends Component {
       }
     } else {
       if (i > 0) {
-        const obj = newLayers[i];
-        newLayers[i] = newLayers[i - 1];
-        newLayers[i - 1] = obj;
+        console.log(!isCustom, !this.customObjects.includes(this.getObjType(newLayers[i - 1])));
+        if (isCustom && this.customObjects.includes(this.getObjType(newLayers[i - 1]))) {
+          const obj = newLayers[i];
+          newLayers[i] = newLayers[i - 1];
+          newLayers[i - 1] = obj;
+          console.log(obj, newLayers[i], newLayers[i - 1], newLayers);
+        }
+        else if(!isCustom) {
+          const obj = newLayers[i];
+          newLayers[i] = newLayers[i - 1];
+          newLayers[i - 1] = obj;
+          console.log(obj, newLayers[i], newLayers[i - 1], newLayers);
+        }
       }
+    }
+    newLayers.map((layer) => {
+      if (this.customObjects.includes(this.getObjType(layer))) {
+        customObjs.push(layer);
+      }
+    })
+    if (isCustom) {
+      customObjs.map((sid, si) => {
+        console.log(sid, si)
+        const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === sid)[0];
+        if(customChild) customChild.parentElement.style.zIndex = si;
+        this.setState({
+          customObjs: customObjs
+        });
+      })
     }
     this.setLayers(newLayers);
   }

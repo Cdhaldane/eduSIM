@@ -205,7 +205,6 @@ const CanvasPage = (props) => {
 
     }
     if (mode === "play") {
-      console.log(positionRect);
       const positionWidth = (positionRect.w * positionRect.scaleX);
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
@@ -865,7 +864,6 @@ const CanvasPage = (props) => {
   }
 
   const insertNodeAfter = (newNode, existingNode) => {
-    console.log(newNode, existingNode)
     
   }
 
@@ -892,7 +890,6 @@ const CanvasPage = (props) => {
 
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
-    console.log(obj.id)
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
@@ -1063,7 +1060,6 @@ const CanvasPage = (props) => {
       objectIds = overlay.layers;
     }
 
-    console.log("objectIds", objectIds);
 
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
     objectIds = [...new Set(objectIds)];
@@ -1091,7 +1087,6 @@ const CanvasPage = (props) => {
     });
     objectIds = newObjIds;
 
-    console.log(objectIds)
 
     return (
       <>
@@ -1136,40 +1131,11 @@ const CanvasPage = (props) => {
 
               const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
               const customObj = customChild ? customChild.parentElement : null;
-
-              // console.log(index)
+              
               // if (customObj) {
               //   customObj.style.zIndex = index;
               // }
 
-              if (customObj && (newLayers || canvas.state.customRenderRequested)) {
-                if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
-                setTimeout(() => {
-                  let stageParentElem = "";
-                  if (stage === "overlay") {
-                    stageParentElem = "overlayGameContainer";
-                  } else if (stage === "personal") {
-                    stageParentElem = editMode ? "editPersonalContainer" : "personalGameContainer";
-                  } else {
-                    stageParentElem = editMode ? "editMainContainer" : "groupGameContainer";
-                  }
-                  const stageElems = document.getElementById(stageParentElem)?.querySelectorAll(".konvajs-content");
-                  const stageElem = stageElems && stageElems.length ? stageElems[0] : null;
-
-                  if (stageElem) {
-                    const canvasElem = stageElem.querySelectorAll("canvas")[0];
-
-                    if (obj.onTop) {
-                      insertNodeAfter(customObj, canvasElem);
-                    } else {
-                      stageElem.insertBefore(customObj, canvasElem);
-                    }
-                  }
-                }, 0);
-                setPrevLayers(objectIdsNoPencils);
-              }
-             
-              
               return obj && objectIsOnStage(obj, canvas) === checkStage ? (
                 renderObject(obj, index, canvas, editMode, type, stage)
               ) : null;

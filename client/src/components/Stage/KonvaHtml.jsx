@@ -58,7 +58,7 @@ const KonvaHtml = ({
       div.style.transform = `translate(${attrs.x}px, ${attrs.y}px) rotate(${attrs.rotation}deg) scaleX(${attrs.scaleX}) scaleY(${attrs.scaleY})`;
       div.style.transformOrigin = 'top left';
       div.style.pointerEvents = editMode ? "none" : "auto";
-      div.style.zIndex = zIndex;
+
     } else {
       div.style.position = '';
       div.style.top = '';
@@ -66,7 +66,6 @@ const KonvaHtml = ({
       div.style.transform = ``;
       div.style.transformOrigin = '';
       div.style.pointerEvents = '';
-      
     }
     const _a = divProps || {}, { style } = _a, restProps = __rest(_a, ["style"]);
     Object.assign(div.style, style);
