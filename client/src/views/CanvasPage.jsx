@@ -108,7 +108,6 @@ const CanvasPage = (props) => {
 
   const getUpdatedCanvasState = (mode, editState) => {
     if (mode === "edit") {
-
       return gameEditPropsRef.current;
     } else if (mode === "play") {
       return gamePlayPropsRef.current;
@@ -161,8 +160,8 @@ const CanvasPage = (props) => {
     const sidebar = document.getElementsByClassName("grid-sidebar")[0]?.getBoundingClientRect();
     const personalArea = document.getElementById("editPersonalContainer")?.getBoundingClientRect();
     const overlayArea = document.getElementById("overlayGameContainer")?.getBoundingClientRect();
-    let clientRect = {width: window.innerWidth, height: window.innerHeight};
-    
+    let clientRect = { width: window.innerWidth, height: window.innerHeight };
+
 
     let defaultPagesTemp = new Array(6);
     defaultPagesTemp.fill({
@@ -203,7 +202,7 @@ const CanvasPage = (props) => {
       clientRect = personalArea;
     } else {
       positionRect = group;
-      
+
     }
     if (mode === "play") {
       console.log(positionRect);
@@ -211,27 +210,24 @@ const CanvasPage = (props) => {
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
-      let area =  document.getElementById('groupGameContainer').getBoundingClientRect();
-      if(areaString === "personal"){
+      let area = document.getElementById('groupGameContainer').getBoundingClientRect();
+      if (areaString === "personal") {
         area = document.getElementById('personalGameContainer').getBoundingClientRect();
       }
-      if(areaString === "overlay"){
+      if (areaString === "overlay") {
         area = document.getElementById('overlayGameContainer').getBoundingClientRect();
       }
-      console.log(area)
       const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
       const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
 
       const viewableWidth = area.width;
       const viewableHeight = area.height;
 
-      console.log(viewableWidth, viewableHeight, positionWidth, positionHeight)
       let scaleX = viewableWidth / (positionWidth);
       let scaleY = viewableHeight / (positionHeight);
 
       const scale = Math.min(scaleX, scaleY) / 1.01;
       // Calculate the center position relative to the viewable area
-      console.log("scale", scale)
       const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
       const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
 
@@ -245,8 +241,8 @@ const CanvasPage = (props) => {
     }
 
     // Edit mode centering with no objects
-    if (canvas.getLayers().length >= 0 && positionRect && clientRect && topBar && sidebar ) {
-      
+    if (canvas.getLayers().length >= 0 && positionRect && clientRect && topBar && sidebar) {
+
       const positionWidth = (positionRect.w * positionRect.scaleX);
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
@@ -265,7 +261,7 @@ const CanvasPage = (props) => {
 
       let scaleX = viewableWidth / (positionWidth + 2 * padding);
       let scaleY = viewableHeight / (positionHeight + 2 * padding);
-      
+
       const scale = Math.min(scaleX, scaleY) / 1.1;
 
       // Calculate the center position relative to the viewable area
@@ -596,10 +592,11 @@ const CanvasPage = (props) => {
           onTransform: canvas.handleTextTransform,
           onDblClick: () => {
             canvas.handleTextDblClick(
-            canvas.refs[obj.ref],
-            obj.infolevel ? canvas.refs[`personalAreaLayer.objects`] :
-              (obj.overlay ? canvas.refs[`overlayAreaLayer.objects`] : canvas.refs[`groupAreaLayer.objects`])
-          )},
+              canvas.refs[obj.ref],
+              obj.infolevel ? canvas.refs[`personalAreaLayer.objects`] :
+                (obj.overlay ? canvas.refs[`overlayAreaLayer.objects`] : canvas.refs[`groupAreaLayer.objects`])
+            )
+          },
           onContextMenu: (e) => {
             canvas.onObjectContextMenu(e);
             canvas.setState({
@@ -705,6 +702,7 @@ const CanvasPage = (props) => {
       draggable: true,
       onTop: obj.onTop,
       objectSnapping: canvas.objectSnapping,
+      zIndex: obj.zIndex,
       onDragMove: (e) => canvas.onObjectDragMove(obj, e),
       onMouseUp: (e) => canvas.handleMouseUp(e, false),
       onMouseDown: (e) => canvas.onMouseDown(e, false),
@@ -806,7 +804,7 @@ const CanvasPage = (props) => {
       positionRect = overlay;
     }
     if (positionRect === undefined) return {};
-    
+
     return {
       label: {
         text: `${Math.round(positionRect.w * positionRect.scaleX)} x ${Math.round(positionRect.h * positionRect.scaleY)}`,
@@ -867,7 +865,8 @@ const CanvasPage = (props) => {
   }
 
   const insertNodeAfter = (newNode, existingNode) => {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    console.log(newNode, existingNode)
+    
   }
 
   const arraysEqual = (a, b) => {
@@ -893,7 +892,7 @@ const CanvasPage = (props) => {
 
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
-
+    console.log(obj.id)
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
@@ -1015,10 +1014,10 @@ const CanvasPage = (props) => {
   const loadObjects = (stage, mode, moving, editState) => {
     const editMode = mode === "edit";
     let canvas = getUpdatedCanvasState(mode, editState);
-    if (editMode){
+    if (editMode) {
       canvas.state = editState.state
       canvas.refs = editState.refs
-    } 
+    }
 
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !canvas.state || !canvas.refs) {
@@ -1063,11 +1062,18 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
       objectIds = overlay.layers;
     }
+
+    console.log("objectIds", objectIds);
+
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
     objectIds = [...new Set(objectIds)];
+
+    
+
+ 
     const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
     const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
-
+    
     const newObjIds = JSON.parse(JSON.stringify(objectIds));
     // Put top layer custom objects last in list to correct render order
     objectIds.forEach(id => {
@@ -1084,6 +1090,8 @@ const CanvasPage = (props) => {
       }
     });
     objectIds = newObjIds;
+
+    console.log(objectIds)
 
     return (
       <>
@@ -1129,6 +1137,11 @@ const CanvasPage = (props) => {
               const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
               const customObj = customChild ? customChild.parentElement : null;
 
+              // console.log(index)
+              // if (customObj) {
+              //   customObj.style.zIndex = index;
+              // }
+
               if (customObj && (newLayers || canvas.state.customRenderRequested)) {
                 if (canvas.state.customRenderRequested) canvas.setState({ customRenderRequested: false });
                 setTimeout(() => {
@@ -1155,7 +1168,8 @@ const CanvasPage = (props) => {
                 }, 0);
                 setPrevLayers(objectIdsNoPencils);
               }
-
+             
+              
               return obj && objectIsOnStage(obj, canvas) === checkStage ? (
                 renderObject(obj, index, canvas, editMode, type, stage)
               ) : null;
@@ -1164,6 +1178,7 @@ const CanvasPage = (props) => {
               objs = objs.filter((e) => {
                 return e !== undefined;
               });
+              
               return (
                 <React.Fragment key={"drawings"}>
                   {objs.map((obj, index) => (
@@ -1222,9 +1237,9 @@ const CanvasPage = (props) => {
 
                   <Transformer
                     nodes={
-                      (positionRectRef.current ? [positionRectRef.current] : positionRectOverlayRef.current ? 
-                        [positionRectOverlayRef.current] : positionRectPersonalRef.current && canvas.state.personalAreaOpen ? 
-                        [positionRectPersonalRef.current]  : [])
+                      (positionRectRef.current ? [positionRectRef.current] : positionRectOverlayRef.current ?
+                        [positionRectOverlayRef.current] : positionRectPersonalRef.current && canvas.state.personalAreaOpen ?
+                          [positionRectPersonalRef.current] : [])
                     }
                     name="transformer"
                     keepRatio={false}

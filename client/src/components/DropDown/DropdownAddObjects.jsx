@@ -481,7 +481,8 @@ const DropdownAddObjects = (props) => {
 
   const addInput = (varType) => {
     addObjectToLayer(
-      "inputs", { varType, label: t("edit.labelText") }
+      "inputs", { varType, label: t("edit.labelText"),
+    zIndex: 0 }
     );
   }
 

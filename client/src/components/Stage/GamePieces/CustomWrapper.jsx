@@ -5,6 +5,8 @@ const CustomWrapper = forwardRef((props, ref) => {
 
   const obj = useRef(null);
 
+  console.log(props)
+
   // If rendering outside a konva canvas:
   // use the transform properties and apply them directly to style
   if (props.static) {
@@ -15,6 +17,7 @@ const CustomWrapper = forwardRef((props, ref) => {
           position: 'absolute',
           top: props.y+'px',
           left: props.x+'px',
+          zIndex: props.zIndex,
           transform: `
             ${props.rotation ? `rotateZ(${props.rotation}deg) ` : ''}
             ${props.scaleX ? `scaleX(${props.scaleX}) ` : ''}
@@ -71,6 +74,7 @@ const CustomWrapper = forwardRef((props, ref) => {
       objectSnapping={props.objectSnapping}
       editMode={props.editMode}
       onDragMove={props.onDragMove}
+      zIndex={props.zIndex}
     >
       <div
         className={"customObj"}

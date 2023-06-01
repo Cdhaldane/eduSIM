@@ -30,7 +30,8 @@ const KonvaHtml = ({
   visible,
   objectSnapping,
   editMode,
-  onDragMove
+  onDragMove,
+  zIndex
 }) => {
 
   const groupRef = useRef(null);
@@ -50,21 +51,22 @@ const KonvaHtml = ({
       if (transformFunc) {
         attrs = transformFunc(attrs);
       }
+      console.log(attrs)
       div.style.position = 'absolute';
-      div.style.zIndex = '0';
       div.style.top = '0px';
       div.style.left = '0px';
       div.style.transform = `translate(${attrs.x}px, ${attrs.y}px) rotate(${attrs.rotation}deg) scaleX(${attrs.scaleX}) scaleY(${attrs.scaleY})`;
       div.style.transformOrigin = 'top left';
       div.style.pointerEvents = editMode ? "none" : "auto";
+      div.style.zIndex = zIndex;
     } else {
       div.style.position = '';
-      div.style.zIndex = '';
       div.style.top = '';
       div.style.left = '';
       div.style.transform = ``;
       div.style.transformOrigin = '';
       div.style.pointerEvents = '';
+      
     }
     const _a = divProps || {}, { style } = _a, restProps = __rest(_a, ["style"]);
     Object.assign(div.style, style);

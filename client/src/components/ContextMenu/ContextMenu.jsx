@@ -19,6 +19,7 @@ const ContextMenu = (props) => {
   const [showDeck, setShowDeck] = useState(false);
   const [editModalLeft, setEditModalLeft] = useState(false);
   const [updater, setUpdater] = useState(false);
+  const [layerDisabled, setLayerDisabled] = useState('');
   const [editTitle, setEditTitle] = useState("");
 
 
@@ -26,10 +27,13 @@ const ContextMenu = (props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    console.log(conditions)
-    console.log(props.getObjState())
+    let layer = props.pages[props.level - 1].groupLayers
+    console.log(layer)
+    if(layer.indexOf(props.getObjState()?.id) === layer.length - 1) setLayerDisabled('up')
+    else if(layer.indexOf(props.getObjState()?.id) === 0) setLayerDisabled('down')
+    else setLayerDisabled('')
     setConditions(props.getObjState()?.conditions || {});
-  },[props.selectedShapeName])
+  },[props.pages, props.getObjState()])
 
   const setContextMenuTitle = () => {
     const editTitleOptions = ["text", "poll", "connect4", "tic", "html", "input", "timer"];
@@ -167,10 +171,7 @@ const ContextMenu = (props) => {
   }
 
   const handleLayer = (layer) => {
-    if (layer == "up")
-      props.layerUp(props.selectedShapeName)
-    else
-      props.layerDown(props.selectedShapeName)
+      props.layerTo(props.selectedShapeName, layer)
   }
 
   const handleUtil = (util) => {
@@ -220,15 +221,13 @@ const ContextMenu = (props) => {
             {t("edit.layer")}
             <li
               onClick={() => handleLayer("up")}
-              className={props.getObjState()?.onTop !== undefined ? (props.getObjState().onTop ? "disabled" : "") : (props.layers[props.layers.length - 1] === props.selectedShapeName ? "disabled" : "")}
+              className={layerDisabled === 'up' ? 'disabled' : ''}
             >
               <i><Up className="icon alert-icon" /></i>
             </li>
             <li
               onClick={() => handleLayer("down")}
-              className={`${props.getObjState()?.onTop !== undefined ?
-                (!props.getObjState().onTop ? "disabled" : "") :
-                (props.layers[0 + props.customCount()] === props.selectedShapeName ? "disabled" : "")}`}
+              className={layerDisabled === 'down' ? 'disabled' : ''}
             >
               <i><Down className="icon alert-icon" /></i>
             </li>
