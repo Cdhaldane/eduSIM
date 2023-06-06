@@ -52,6 +52,9 @@ const konvaObjects = [
 ];
 
 const CanvasPage = (props) => {
+  const layerRef = useRef();
+
+  const [objectIds, setObjectIds] = useState([]);
 
   const { settings: localSettings } = useContext(SettingsContext);
 
@@ -136,6 +139,8 @@ const CanvasPage = (props) => {
       reCenterObjects(props.edit ? "edit" : "play");
     }
   }, [zoomSettings]);
+
+
 
   /*-------------------------------------------------------------------------------------------/
    * RECENTER OBJECTS
@@ -864,7 +869,7 @@ const CanvasPage = (props) => {
   }
 
   const insertNodeAfter = (newNode, existingNode) => {
-    
+
   }
 
   const arraysEqual = (a, b) => {
@@ -1008,13 +1013,34 @@ const CanvasPage = (props) => {
     }
   }
 
+  const deepDiff = (obj1, obj2, path = "") => {
+    if (obj1 === obj2) return;
+
+    if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+      console.log(`Difference at ${path}: ${obj1} vs ${obj2}`);
+      return;
+    }
+
+    const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+    for (let key of keys) {
+      deepDiff(obj1[key], obj2[key], path ? `${path}.${key}` : key);
+    }
+
+    return 'No Diff';
+  }
+
+
   const loadObjects = (stage, mode, moving, editState) => {
     const editMode = mode === "edit";
+
     let canvas = getUpdatedCanvasState(mode, editState);
+
     if (editMode) {
       canvas.state = editState.state
       canvas.refs = editState.refs
     }
+
+
 
     const checkStage = stage === "overlay" ? stage + canvas.state.overlayOpenIndex : stage;
     if (!canvas || !canvas.state || !canvas.refs) {
@@ -1060,32 +1086,24 @@ const CanvasPage = (props) => {
       objectIds = overlay.layers;
     }
 
+    console.log(objectIds)
+
 
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
-    objectIds = [...new Set(objectIds)];
 
-    
 
- 
-    const objectIdsNoPencils = objectIds.filter(id => !Array.isArray(id));
-    const newLayers = !arraysEqual(prevLayers, objectIdsNoPencils);
-    
-    const newObjIds = JSON.parse(JSON.stringify(objectIds));
-    // Put top layer custom objects last in list to correct render order
-    objectIds.forEach(id => {
-      if (Array.isArray(id)) {
-        return;
+    let inputIds = [];
+    let newObject = []
+
+    for (let i = 0; i < objectIds.length; i++) {
+      if (objectIds[i].includes('inputs')) {
+        inputIds.push(objectIds[i]);
+      } else {
+        newObject.push(objectIds[i]);
       }
-      const type = id.replace(/\d+$/, "");
-      if (customObjects.includes(type)) {
-        const obj = canvas.state[type].filter(obj => obj.id === id)[0];
-        if (obj && obj.onTop) {
-          newObjIds.splice(newObjIds.indexOf(id), 1);
-          newObjIds.push(id);
-        }
-      }
-    });
-    objectIds = newObjIds;
+    }
+
+    objectIds = [[...newObject], [...inputIds]]
 
 
     return (
@@ -1123,38 +1141,18 @@ const CanvasPage = (props) => {
             */}
 
           {/* Render the objects in the layer */}
-          {objectIds.map((id, index) => {
 
-            if (index !== 0) {
-              const type = id.replace(/\d+$/, "");
-              const obj = canvas.state[type].filter(obj => obj.id === id)[0];
-
-              const customChild = Array.from(document.getElementsByClassName("customObj")).filter(obj => obj.dataset.name === id)[0];
-              const customObj = customChild ? customChild.parentElement : null;
-              
-              // if (customObj) {
-              //   customObj.style.zIndex = index;
-              // }
-
-              return obj && objectIsOnStage(obj, canvas) === checkStage ? (
-                renderObject(obj, index, canvas, editMode, type, stage)
-              ) : null;
-            } else {
-              let objs = id.map((id) => canvas.state["pencils"].filter(obj => obj.id === id)[0]);
-              objs = objs.filter((e) => {
-                return e !== undefined;
-              });
-              
-              return (
-                <React.Fragment key={"drawings"}>
-                  {objs.map((obj, index) => (
-                    <React.Fragment key={index}>
-                      {renderObject(obj, index, canvas, editMode, "pencils", stage)}
-                    </React.Fragment>
-                  ))}
-                </React.Fragment>
-              );
-            }
+          {objectIds.map(subArray => {
+            let out = []
+            subArray.map((id, index) => {
+              if (id.length > 0) {
+                const type = id.replace(/\d+$/, "");
+                const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+                if (objectIsOnStage(obj, canvas))
+                  out.push(renderObject(obj, index, canvas, editMode, type, stage))
+              }
+            });
+            return out
           })}
         </Layer>
         <Layer {...layerProps(canvas, stage, "dragging")}>

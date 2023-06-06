@@ -164,7 +164,7 @@ const EditPage = (props) => {
               setLocalCons={handleLocalCons}
               setLocalInts={handleLocalInts}
               setLocalTrigs={handleLocalTrigs}
-
+              handleLevel={handlePage}
               random={props.random}
               customObjects={props.customObjects}
               savedObjects={props.savedObjects}

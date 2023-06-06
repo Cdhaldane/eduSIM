@@ -113,6 +113,7 @@ export default CanvasUtils;
 
 
 export const handleCollisions = (shape1, shape2, isAnchored, props) => {
+  console.log(shape1, shape2, isAnchored)
   props.globalTrigs.map((trigger) => {
     let shapeName1 = trigger[0];
     let shapeName2 = trigger[1];

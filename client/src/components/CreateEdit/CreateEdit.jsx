@@ -29,16 +29,7 @@ const CreateEdit = (props) => {
   const imageArea = new useRef();
   const fileInputRef= new useRef();
 
-  const handleClickOutside = e => {
-    if (detailsArea.current &&
-      !(detailsArea.current.contains(e.target) || (imageArea.current && imageArea.current.contains(e.target)))) {
-      props.close();
-    }
-  };
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+ 
 
   const handleChange = (event) => {
     setTitle(event.target.value);

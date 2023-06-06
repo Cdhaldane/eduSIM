@@ -325,19 +325,16 @@ const Join = (props) => {
       </Modal>
       <Modal
         isOpen={editModal}
-        hide={() => setEditModal(false)}
-        onRequestClose={toggleModal}
+        onRequestClose={() => setEditModal(false)}
         contentLabel="My dialog"
         className="createmodalarea"
         overlayClassName="myoverlay"
-        closeTimeoutMS={250}
         ariaHideApp={false}
       >
       <CreateEdit
         updateTitle={updateTitle}
         updateImg={updateImg}
         gameid={localStorage.gameid}
-        isOpen={editModal}
         close={() => setEditModal(false)}
         title={props.location.title}
         img={props.location.img}

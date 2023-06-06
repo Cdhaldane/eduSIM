@@ -429,6 +429,7 @@ class Graphics extends Component {
         },
         onObjectDragMove: (obj, e) => {
           // Bound the drag to the edge of the screen
+          console.log(obj)
           const objRef = this.refs[obj.id];
           const topPad = document.getElementById("levelContainer").clientHeight;
           const stage = objRef.getLayer();
@@ -461,6 +462,7 @@ class Graphics extends Component {
               img.id !== obj.id &&
               img.anchor
             )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
+              console.log( x , y)
               let sX = x, sY = y;
               if (this.props.gamepieceStatus[id]) {
                 sX = this.props.gamepieceStatus[id].x;
@@ -475,6 +477,7 @@ class Graphics extends Component {
                 (e.target.y() + this.originCenter(this.realHeight(obj) / 2, obj.id)) -
                 (sY + this.originCenter(sH / 2, id))
               );
+              console.log(xDist, yDist)
               if (xDist < sW / 2 && yDist < sH / 2) {
                 e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
                 e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 

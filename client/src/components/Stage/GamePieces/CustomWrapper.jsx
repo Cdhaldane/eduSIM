@@ -71,7 +71,6 @@ const CustomWrapper = forwardRef((props, ref) => {
       objectSnapping={props.objectSnapping}
       editMode={props.editMode}
       onDragMove={props.onDragMove}
-      zIndex={props.zIndex}
     >
       <div
         className={"customObj"}

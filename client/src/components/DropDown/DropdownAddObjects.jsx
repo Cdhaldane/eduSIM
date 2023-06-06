@@ -225,6 +225,8 @@ const DropdownAddObjects = (props) => {
     }
     newPages[props.state.level - 1] = thisPage;
 
+    
+
     props.setState({
       [objectName]: [...objectsState, object],
       selectedShapeName: name,

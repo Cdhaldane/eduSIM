@@ -204,6 +204,7 @@
 .create-fix {
   position: relative;
   left: 20px;
+  top: 10px;
   fill: var(--red) !important;
   font-size: 1.1em;
   transition: all .3s;

@@ -10,6 +10,7 @@ import "./ContextMenu.css"
 
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
+import { set } from "immutable";
 
 
 const ContextMenu = (props) => {
@@ -27,13 +28,9 @@ const ContextMenu = (props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    let layer = props.pages[props.level - 1].groupLayers
-    console.log(layer)
-    if(layer.indexOf(props.getObjState()?.id) === layer.length - 1) setLayerDisabled('up')
-    else if(layer.indexOf(props.getObjState()?.id) === 0) setLayerDisabled('down')
-    else setLayerDisabled('')
+    setLayerDisabled(props.contextDisabled);
     setConditions(props.getObjState()?.conditions || {});
-  },[props.pages, props.getObjState()])
+  },[props.pages, props.getObjState(), props.contextDisabled])
 
   const setContextMenuTitle = () => {
     const editTitleOptions = ["text", "poll", "connect4", "tic", "html", "input", "timer"];

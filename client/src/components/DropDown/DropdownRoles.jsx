@@ -18,6 +18,7 @@ import Pencil from "../../../public/icons/pencil.svg"
 import Add from "../../../public/icons/plus.svg"
 import Left from "../../../public/icons/arrow-left.svg"
 import Card from "../../../public/icons/id-card.svg"
+import { use } from 'i18next';
 
 const DropdownRoles = (props) => {
   const { t } = useTranslation();
@@ -49,6 +50,10 @@ const DropdownRoles = (props) => {
     if (props.refreshPersonalCanvas && props.personalAreaOpen) props.refreshPersonalCanvas();
   }, [selectedRole]);
 
+  useEffect(() => {
+    console.log(props.roles)
+  });
+
   const updateRolesData = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
       params: {
@@ -64,7 +69,7 @@ const DropdownRoles = (props) => {
           roleDesc: res.data[i].roleDesc
         });
       }
-      if (rolesData.length) {
+      if (rolesData.length > 0) {
         setRoles(rolesData);
       } else {
         const defaultRoleAPI = {

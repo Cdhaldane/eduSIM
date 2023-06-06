@@ -126,7 +126,7 @@ const Level = (props) => {
           <>
             <div className="editModeTitleContainer" onClick={() => setPlayMode()} ref={infoBtn}>
               <h1 id="editModeTitle">
-                {mode ? "Play Mode" : t("edit.editMode")}
+                {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
                 <i className="fa fa-info" />
