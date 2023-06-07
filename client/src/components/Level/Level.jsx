@@ -37,6 +37,24 @@ const Level = (props) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  function compare(a, b) {
+    // Move objects with obj.true to the front of the array
+    if (a.optional && !b.optional) {
+      return 1;
+    } else if (a.optional && b.optional) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+  
+  // Sort the array
+ 
+
+  useEffect(() => {
+    console.log(props.disableNext)    
+  }, [props]);
+
   useEffect(() => {
     if (props.levelVal > props.number) {
       props.end()
@@ -232,28 +250,28 @@ const Level = (props) => {
             </div>
           )}
 
-          
+
         </div>
         {props.handlePageNum && (
-            <div className="pencil-container">
-              <Pencil
-                positionRect={props.positionRect}
-                id="Timeline"
-                psize="3"
-                type="info"
-                getobjState={props.getObjState}
-                updateObjState={props.updateObjState}
-                pages={props.pages}
-                refreshCanvas={props.refreshCanvas}
-                getObjState={props.getObjState}
-                changeObjectPage={props.changeObjectPage}
-                handleCopyPage={props.handleCopyPage}
-                handlePageTitle={props.handlePageTitle}
-                handlePageNum={props.handlePageNum}
-                numOfPages={props.numOfPages}
-              />
-            </div>
-          )}
+          <div className="pencil-container">
+            <Pencil
+              positionRect={props.positionRect}
+              id="Timeline"
+              psize="3"
+              type="info"
+              getobjState={props.getObjState}
+              updateObjState={props.updateObjState}
+              pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              getObjState={props.getObjState}
+              changeObjectPage={props.changeObjectPage}
+              handleCopyPage={props.handleCopyPage}
+              handlePageTitle={props.handlePageTitle}
+              handlePageNum={props.handlePageNum}
+              numOfPages={props.numOfPages}
+            />
+          </div>
+        )}
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
             <i className="lni lni-exit"></i>

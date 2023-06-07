@@ -222,15 +222,15 @@ const Game = (props) => {
   globalVars = flattenObject(globalVars)
 
   useEffect(() => {
-    setDisableNext(false)
-    let curr = tasks[level];
-    if (curr) {
-      for (let i = 0; i < curr.length; i++) {
-        if (curr[i].advance === false) {
-          setDisableNext(true)
-        }
-      }
-    }
+    // setDisableNext(false)
+    // let curr = tasks[level];
+    // if (curr) {
+    //   for (let i = 0; i < curr.length; i++) {
+    //     if (curr[i].advance === false) {
+    //       setDisableNext(true)
+    //     }
+    //   }
+    // }
   }), [level]
 
   const handleLevel = (type, id) => {
@@ -259,6 +259,10 @@ const Game = (props) => {
 
   const handleDelNotes = (data) => {
     setNotes(data)
+  }
+  const handleDisable = (e) => {
+    console.log(e)
+    setDisableNext(e)
   }
   useEffect(() => {
     let x, y, s, t;
@@ -295,13 +299,13 @@ const Game = (props) => {
           handleLevel={handleLevel}
           globalVars={globalVars || {}}
           level={level}
+          page={level}
+          handleDisable={handleDisable}
           submenuProps={{ messageBacklog }}
           players={parsedPlayers}
           game
           disabled={!roomStatus.running}
-          alertProps={{
-            alerts: tasks[level] || []
-          }}
+          alerts={tasks}
           notes={{ notes }}
           setNotes={handleSetNotes}
           editNotes={handleEditNotes}
@@ -317,12 +321,13 @@ const Game = (props) => {
             setUserId={setUserId}
             setCustomObjs={setCustomObjs}
             setCanvasLoading={setCanvasLoading}
+            disableNext={disableNext}
             setGamePlayProps={props.setGamePlayProps}
             savedObjects={props.savedObjects}
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
             socket={socket}
-            alerts={tasks[level] || []}
+            alerts={tasks || []}
             players={parsedPlayers}
             handleLevel={handleLevel}
             isEnd={isEnd}
@@ -344,7 +349,6 @@ const Game = (props) => {
             initialUserId={userid}
             alert={alertContext.showAlert}
             refresh={() => setInvalidateSidebar(Math.random())}
-            disableNext={disableNext}
             countdown={roomStatus.settings && !isNaN(roomStatus.settings.advanceMode) && countdown}
           />
           {!roomStatus.running && (<PauseCover>

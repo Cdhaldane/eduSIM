@@ -49,7 +49,7 @@ const EditPage = (props) => {
   const alertContext = useAlertContext();
   const dropdownContext = useDropdownContext();
 
-  const [tasks, setTasks] = useState({});
+  const [tasks, setTasks] = useState([]);
   const [globalVars, setGlobalVars] = useState([]);
   const [globalCons , setGlobalCons] = useState([]);
   const [globalInts, setGlobalInts] = useState([]);
@@ -84,20 +84,9 @@ const EditPage = (props) => {
     setPage(level);
   }
 
-  const handleSetTasks = (f) => {
-    if (typeof f === 'function') {
-      setTasks(old => {
-        let n = { ...old };
-        n[page] = f(n[page] || []);
-        return n;
-      });
-    } else {
-      setTasks(old => {
-        let n = { ...old };
-        n[page] = f;
-        return n;
-      });
-    }
+  const handleSetTasks = (data) => {
+    console.log(data)
+    setTasks(data)
   }
 
   const handleGlobalsVars = (data) => {
@@ -170,10 +159,9 @@ const EditPage = (props) => {
               savedObjects={props.savedObjects}
               loadObjects={props.loadObjects}
               page={page}
-              alertProps={{
-                alerts: tasks[page] || [],
-                setAlerts: handleSetTasks
-              }}
+              setAlerts={handleSetTasks}
+              alerts={tasks || []}
+              
             />
           </GridNav>
           <GridMain color={pageColor}>
@@ -203,8 +191,9 @@ const EditPage = (props) => {
                 localCons={localCons}
                 localInts={localInts}
                 localTrigs={localTrigs}
+                tasks={tasks}
                 page={page}
-                setTasks={setTasks}
+                setTasks={handleSetTasks}
                 setShapes={handleSetShapes}
                 setAllShapes={handleSetAllShapes}
                 setGlobalVars={handleGlobalsVars}

@@ -1086,7 +1086,6 @@ const CanvasPage = (props) => {
       objectIds = overlay.layers;
     }
 
-    console.log(objectIds)
 
 
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
@@ -1148,7 +1147,7 @@ const CanvasPage = (props) => {
               if (id.length > 0) {
                 const type = id.replace(/\d+$/, "");
                 const obj = canvas.state[type].filter(obj => obj.id === id)[0];
-                if (objectIsOnStage(obj, canvas))
+                if (obj && objectIsOnStage(obj, canvas) )
                   out.push(renderObject(obj, index, canvas, editMode, type, stage))
               }
             });

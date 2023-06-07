@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select, { components } from "react-select";
 
 const MultiLevel = (props) => {
@@ -44,6 +44,10 @@ const MultiLevel = (props) => {
         padding: 0,
         marging: 0
     };
+
+    useEffect(() => {
+        setSelectedValue(props.baseValue)
+    }, [props.baseValue]);
 
     const groupedOptions = (data) => {
         let list = []

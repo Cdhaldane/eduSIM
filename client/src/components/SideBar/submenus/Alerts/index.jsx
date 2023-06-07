@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import Check from "../../../../../public/icons/checkmark.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
+import { a } from "react-spring";
 
 const AlertsContainer = styled.div`
   display: flex;
@@ -95,29 +96,45 @@ const EditButtons = styled.div`
   }
 `;
 
-const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, setTicker, refresh, variables = {} }) => {
+const Alerts = (props) => {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
   const { t } = useTranslation();
   const [curr, setCurr] = useState(0)
   const [firstLoad, setFirstLoad] = useState(false)
+  const [allAlerts, setAllAlerts] = useState([])
+
+  useEffect(() => {
+    let out = []
+    props.alerts.map((alert, index) => {
+      if (alert.page === props.page) {
+        out.push(alert)
+      }
+    })
+    console.log(out)
+    setAllAlerts(out)
+  }, [props.alerts])
 
   const handleAddAlert = (data) => {
-    setAlerts(old => [...old, data]);
+    let out = props.alerts || []
+    props.setAlerts(out)
+    data.page = props.page
+    setAllAlerts([...allAlerts, data])
     setAdding(false);
   };
 
   const handleEditAlert = (data) => {
-    setAlerts(old => {
-      let n = [...old];
-      n[editingIndex] = data;
-      return n;
-    });
-    setTimeout(() => setEditingIndex(-1), 10)
+    console.log(data)
+    let out = allAlerts
+    out[editingIndex] = data
+    console.log(out)
+    // setAllAlerts(out)
+    props.setAlerts(out)
+    setEditingIndex(-1);
   };
 
   const handleRemoveAlert = (index) => {
-    setAlerts(old => {
+    props.setAlerts(old => {
       let n = [...old];
       n.splice(index, 1);
       return n;
@@ -125,7 +142,7 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
   };
 
   const handleMoveUp = (index) => {
-    setAlerts(old => {
+    props.setAlerts(old => {
       let n = [...old];
       let el = n.splice(index, 1)[0];
       n.splice(index - 1, 0, el);
@@ -134,7 +151,7 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
   };
 
   const handleMoveDown = (index) => {
-    setAlerts(old => {
+    props.setAlerts(old => {
       let n = [...old];
       let el = n.splice(index, 1)[0];
       n.splice(index + 1, 0, el);
@@ -142,13 +159,14 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
     });
   };
 
+
   const checkObjConditions = (varName, condition, check, checkAlt) => {
 
     if (!varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
-    if (Object.keys(variables).length > 0) vars = { ...vars, ...variables };
+    if (Object.keys(props.globalVars).length > 0) vars = { ...vars, ...props.globalVars };
 
     let trueValue = isNaN(check) ? check : parseInt(check);
     let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
@@ -173,9 +191,10 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
         return sessionStorage.lastSetVar === varName
       default: return !!val;
     }
+
   }
 
-  const taskTrueCount = alerts.reduce((a, data) =>
+  const taskTrueCount = allAlerts?.reduce((a, data) =>
     !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a + 1 : a
     , 0)
 
@@ -183,14 +202,15 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
     let advance = false;
     let numRequired = 0;
     let curr = 0;
-    for (let i = 0; i < alerts.length; i++) {
-      if (!alerts[i].optional) {
+    for (let i = 0; i < allAlerts.length; i++) {
+      if (!allAlerts[i].optional) {
         numRequired += 1;
       }
     }
-    for (let i = 0; i < alerts.length; i++) {
-      let done = checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)
-      if (!alerts[i].optional && done) {
+    if (numRequired === 0) return true
+    for (let i = 0; i < allAlerts.length; i++) {
+      let done = checkObjConditions(allAlerts[i].varName, allAlerts[i].varCondition, allAlerts[i].varCheck, allAlerts[i].varCheckAlt)
+      if (!allAlerts[i].optional && done) {
         curr += 1;
       }
     }
@@ -201,30 +221,36 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
     }
   }
 
+  useEffect(() => {
+    let done = checkAdvance()
+    console.log(done, props)
+    if (!props.editpage) props.handleDisable(!done)
+  }, [allAlerts])
+
 
   useEffect(() => {
-    setTicker(taskTrueCount);
+    props.setTicker(taskTrueCount);
     const done = taskTrueCount;
-  }, [taskTrueCount, refresh]);
+  }, [taskTrueCount, props.refresh]);
 
-  useEffect(() => {
-    for (let i = 0; i < alerts.length; i++) {
-      if (checkObjConditions(alerts[i].varName, alerts[i].varCondition, alerts[i].varCheck, alerts[i].varCheckAlt)) {
-        if (!alerts[i].advance) {
-          if (checkAdvance() && firstLoad === true) {
-            handleLevel('global')
-          }
-        }
-      }
-    }
-    setFirstLoad(true)
-  }), []
+  // useEffect(() => {
+  //   for (let i = 0; i < allAlerts.length; i++) {
+  //     if (checkObjConditions(allAlerts[i].varName, allAlerts[i].varCondition, allAlerts[i].varCheck, allAlerts[i].varCheckAlt)) {
+  //       if (!allAlerts[i].advance) {
+  //         if (checkAdvance() && firstLoad === true) {
+  //           props.handleLevel('global')
+  //         }
+  //       }
+  //     }
+  //   }
+  //   setFirstLoad(true)
+  // }), []
 
   return (
     <AlertsContainer>
       <h2>{t("sidebar.alerts")}</h2>
       <hr />
-      {alerts.map((data, index) => {
+      {allAlerts.length > 0 && allAlerts.map((data, index) => {
         const done = checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt);
         return (
           <React.Fragment key={index}>
@@ -233,6 +259,7 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
                 onEdit={handleEditAlert}
                 onCancel={() => setTimeout(() => setEditingIndex(-1), 10)}
                 init={data}
+                variables={props.globalVars}
               />
             ) : (
               <>
@@ -245,7 +272,7 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
                     <div>{done ? data.onLabel : data.offLabel}</div>
                   </div>
                 </Alert>
-                {editpage &&
+                {props.editpage &&
                   <EditButtons>
                     <button onClick={() => setTimeout(() => handleMoveUp(index), 10)}>
                       <i className="fas fa-angle-up" />
@@ -266,15 +293,16 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
           </React.Fragment>
         )
       })}
-      {editpage ? (
+      {props.editpage ? (
         <>
           <EditAlert
+            page={props.page}
             onEdit={handleAddAlert}
             adding
             onCancel={() => setAdding(false)}
             hidden={!adding}
             init={{ advance: false, global: true, optional: false, varName: "", varCondition: "isgreater", varCheck: 0, varCheckAlt: 0, onLabel: "", offLabel: "" }}
-            variables={variables}
+            variables={props.globalVars}
           />
           <AddAlert
             onClick={() => setAdding(true)}
@@ -284,7 +312,7 @@ const Alerts = ({ socket, handleLevel, editpage = true, alerts = [], setAlerts, 
             {t("sidebar.addNewTask")}
           </AddAlert>
         </>
-      ) : alerts.length == 0 && (
+      ) : props.alerts.length == 0 && (
         <div style={{ opacity: 0.5 }}>
           {t("sidebar.noTasks")}
         </div>

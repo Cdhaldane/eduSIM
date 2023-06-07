@@ -78,7 +78,7 @@ const Container = styled.form`
   border: 2px solid darkgray;
 `;
 
-const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden, variables }) => {
+const EditAlert = ({ onEdit, onCancel, init, adding, hidden, variables }) => {
   const [formData, setFormData] = useState(init);
   const [lastHidden, setLastHidden] = useState(hidden);
   const [advance, setAdvance] = useState(false);
@@ -138,10 +138,10 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden, variables }) => 
         <input type="checkbox" checked={!formData.optional} onChange={changeOptional} />
         <label>{t("edit.requiredToAdvance")}</label>
       </div>
-      <div>
+      {/* <div>
         <input type="checkbox" checked={formData.global} onChange={changeGlobal} />
         <label>Global advance</label>
-      </div>
+      </div> */}
       
       <div>
         <input type="checkbox" checked={!formData.advance} onChange={setAdvanceOn} />
@@ -153,7 +153,7 @@ const EditAlert = ({ onEdit, onCancel, init={}, adding, hidden, variables }) => 
       <input type="text" placeholder="Completed" value={formData.onLabel || ""} onChange={changeValue("onLabel")} />
       <label>{t("edit.completedWhen")}</label>
       {/* <input type="text" placeholder="Variable name" value={formData.varName || ""} onChange={changeValue("varName")} /> */}
-      <div ><MultiLevel data={variables && variables} handleChange={handleChange} className="alert-multi" /></div>
+      <div ><MultiLevel data={variables} handleChange={handleChange} baseValue={init.varName} className="alert-multi" /></div>
       <select
         name="inputtype"
         value={formData.varCondition}

@@ -51,7 +51,6 @@ const DropdownRoles = (props) => {
   }, [selectedRole]);
 
   useEffect(() => {
-    console.log(props.roles)
   });
 
   const updateRolesData = () => {

@@ -198,6 +198,7 @@ const Sidebar = (props) => {
     if (submenuVisible && submenu == 'messaging') {
       setNavCountTickers(old => ({...old, messaging: 0}));
     }
+    console.log(props)
   }, [submenu, submenuVisible, navCountTickers]);
 
   const links = [
@@ -232,10 +233,15 @@ const Sidebar = (props) => {
         <Alerts
           editpage={!props.game}
           refresh={props.refresh}
-          variables={props.variables}
+          globalVars={props.globalVars}
+          localVars={props.localVars}
           handleLevel={props.handleLevel}
           socket={props.socket}
           level={props.level}
+          handleDisable={props.handleDisable}
+          setAlerts={props.setAlerts}
+          alerts={props.alerts}
+          page={props.page}
           setTicker={(val) => handleSetTicker("alert", val)}
           {...props.alertProps}
         />

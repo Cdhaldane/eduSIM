@@ -324,8 +324,9 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
+        console.log(this.props.setTasks)
         if (this.props.setTasks) {
-          this.props.setTasks(objects.tasks || {});
+          this.props.setTasks(objects.tasks || []);
         }
         if (this.props.setGlobalVars) {
           this.props.setGlobalVars(objects.globalVars || []);
@@ -711,6 +712,7 @@ class Graphics extends Component {
         [newObj]: this.state[newObj]
       };
     }
+    console.log(this.props.tasks)
     storedObj.tasks = this.props.tasks;
     storedObj.notes = this.props.notes;
     storedObj.globalVars = this.props.globalVars;
@@ -1076,6 +1078,8 @@ class Graphics extends Component {
       if (out.has(layer)) {
       }
     })
+
+    
 
     newLayers = Array.from(newLay);
     if (this.state.overlayOpen) {
