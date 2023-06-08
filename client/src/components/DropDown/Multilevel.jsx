@@ -46,7 +46,12 @@ const MultiLevel = (props) => {
     };
 
     useEffect(() => {
-        setSelectedValue(props.baseValue)
+        let options = filteredOptions()
+        options.map((option) => {
+            if(option.label.includes(props.baseValue)){
+                setSelectedValue(option)
+            }
+        })
     }, [props.baseValue]);
 
     const groupedOptions = (data) => {
@@ -121,6 +126,7 @@ const MultiLevel = (props) => {
     };
 
     const handleChange = (selectValue) => {
+        console.log(selectValue)
         setSelectedValue(selectValue);
         props.handleChange(selectValue, props.x, props.y);
     };

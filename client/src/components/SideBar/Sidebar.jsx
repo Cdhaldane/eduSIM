@@ -198,7 +198,6 @@ const Sidebar = (props) => {
     if (submenuVisible && submenu == 'messaging') {
       setNavCountTickers(old => ({...old, messaging: 0}));
     }
-    console.log(props)
   }, [submenu, submenuVisible, navCountTickers]);
 
   const links = [

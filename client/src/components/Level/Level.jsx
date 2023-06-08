@@ -50,11 +50,6 @@ const Level = (props) => {
   
   // Sort the array
  
-
-  useEffect(() => {
-    console.log(props.disableNext)    
-  }, [props]);
-
   useEffect(() => {
     if (props.levelVal > props.number) {
       props.end()

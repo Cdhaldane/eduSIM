@@ -111,7 +111,7 @@ const Alerts = (props) => {
         out.push(alert)
       }
     })
-    console.log(out)
+    handeleNextLevel(out)
     setAllAlerts(out)
   }, [props.alerts])
 
@@ -223,7 +223,6 @@ const Alerts = (props) => {
 
   useEffect(() => {
     let done = checkAdvance()
-    console.log(done, props)
     if (!props.editpage) props.handleDisable(!done)
   }, [allAlerts])
 
@@ -233,18 +232,20 @@ const Alerts = (props) => {
     const done = taskTrueCount;
   }, [taskTrueCount, props.refresh]);
 
-  // useEffect(() => {
-  //   for (let i = 0; i < allAlerts.length; i++) {
-  //     if (checkObjConditions(allAlerts[i].varName, allAlerts[i].varCondition, allAlerts[i].varCheck, allAlerts[i].varCheckAlt)) {
-  //       if (!allAlerts[i].advance) {
-  //         if (checkAdvance() && firstLoad === true) {
-  //           props.handleLevel('global')
-  //         }
-  //       }
-  //     }
-  //   }
-  //   setFirstLoad(true)
-  // }), []
+  const handeleNextLevel = (out) => {
+    let page = props.page
+    for (let i = 0; i < out.length; i++) {
+      if (checkObjConditions(out[i].varName, out[i].varCondition, out[i].varCheck, out[i].varCheckAlt)) {
+        if (!out[i].advance) {
+          if (checkAdvance() && firstLoad === true) {
+            props.handleLevel(page + 1)
+            return;
+          }
+        }
+      }
+    }
+    setFirstLoad(true)
+  }
 
   return (
     <AlertsContainer>

@@ -111,20 +111,79 @@ const CanvasUtils = (props) => {
 
 export default CanvasUtils;
 
-
-export const handleCollisions = (shape1, shape2, isAnchored, props) => {
-  console.log(shape1, shape2, isAnchored)
-  props.globalTrigs.map((trigger) => {
-    let shapeName1 = trigger[0];
-    let shapeName2 = trigger[1];
-    let variable = trigger[2];
-    if (shape1 === shapeName1 && shape2 === shapeName2) {
-      if (props.globalVars[variable] === isAnchored) return;
-      props.socket.emit("varChange", {
-        name: variable, value: isAnchored
-      })
-      return;
+function splitArrayByValue(arr, index) {
+  const result = [];
+  arr.forEach(item => {
+    const value = item[index];
+    const existingArray = result.find(arr => arr[0][index] === value);
+    if (existingArray) {
+      existingArray.push(item);
+    } else {
+      result.push([item]);
     }
-  })
+  });
+  return result;
 }
 
+
+export const handleCollisions = (props, state) => {
+  let trigs = props.globalTrigs;
+  let result = props.savedObjects.flatMap(key => state[key])
+  let filteredResult = result.filter(obj => obj.level === props.level);
+  const groupedArrays = splitArrayByValue(trigs, 2);
+  groupedArrays.map((group) => {
+  let touchingArray = [];
+    group.map((item) => {
+      if(!props.gamepieceStatus[item[0]]) return;
+      let shape1 = props.gamepieceStatus[item[0]]
+      let shape1WH = filteredResult.find(obj => obj.id === item[0]);
+      shape1.width = shape1WH.width;
+      shape1.height = shape1WH.height;
+      touchingArray.push(handleTouching(shape1, item[1], filteredResult))
+    });
+    if(touchingArray.includes(true) && !props.globalVars[group[0][2]]){
+      props.socket.emit("varChange", {
+        name: group[0][2], value: true
+      })
+    } else if(!touchingArray.includes(true) && props.globalVars[group[0][2]] !== false) {
+      props.socket.emit("varChange", {
+        name: group[0][2], value: false
+      })
+    }
+  });  
+}
+
+export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
+  let shape1 = shapeOne
+  let shape2 = filteredResult.find(obj => obj.id === shapeTwo);
+  const shape1Left = shape1.x - shape1.width / 2;
+  const shape1Right = shape1.x + 0.5 * shape1.width;
+  const shape1Top = shape1.y - shape1.height / 2;
+  const shape1Bottom = shape1.y + 0.5 * shape1.height;
+
+  const shape2Left = shape2.x - shape2.width / 2;
+  const shape2Right = shape2.x + 0.5 * shape2.width;
+  const shape2Top = shape2.y - shape2.height / 2;
+  const shape2Bottom = shape2.y + 0.5 * shape2.height; 
+  // Check for intersection along the x-axis
+  const isIntersectX = shape1Right >= shape2Left && shape1Left <= shape2Right;
+
+  // Check for intersection along the y-axis
+  const isIntersectY = shape1Bottom >= shape2Top && shape1Top <= shape2Bottom;
+  
+  // Return true if there is intersection along both axes
+  return isIntersectX && isIntersectY;
+}
+
+export const handleNotColliding = (id, props) => {
+  
+}
+
+// if (xDist < sW / 2 && yDist < sH / 2) {
+//   e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
+//   e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 
+//   console.log("COLLISION");
+//   handleCollisions(obj.id, id, true, this.props);
+// } else {
+//   handleNotColliding(obj.id, this.props);
+// }

@@ -9,7 +9,7 @@ import Overlay from "./Overlay";
 import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import { throttle, debounce } from 'lodash';
-import CanvasGameUtils, {handleCollisions} from './CanvasGameUtils';
+import CanvasGameUtils, { handleCollisions, handleNotColliding } from './CanvasGameUtils';
 
 import {
   EditorState,
@@ -80,7 +80,6 @@ class Graphics extends Component {
   ];
 
   constructor(props) {
-    console.log(props)
     super(props);
     this.setState = this.setState.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
@@ -98,7 +97,6 @@ class Graphics extends Component {
     localStorage.setItem("localInts", JSON.stringify(this.props.localInts));
     localStorage.setItem("localTrigs", JSON.stringify(this.props.localTrigs));
 
-    console.log(this.props.localVars, this.props.localCons, this.props.localInts, this.props.localTrigs);
 
     this.state = {
       // Objects
@@ -134,9 +132,11 @@ class Graphics extends Component {
       adminid: this.props.adminid,
       canvasLoading: true,
       updateRanOnce: false,
-
-      dragTick: 0
     };
+    this.dragTick = 0;
+    this.topPad = 0;  // to be set in componentDidMount or elsewhere outside the drag callback
+    this.stage = null; // to be set when stage is available
+    this.shapeHashTable = {}; // precomputed hash table
 
     setTimeout(() => {
       this.setState({
@@ -187,7 +187,7 @@ class Graphics extends Component {
               let vars = {};
               if (!!sessionStorage.gameVars) vars = this.props.localVars;
               if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
-        
+
               content = vars[key];
           }
           newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
@@ -342,6 +342,9 @@ class Graphics extends Component {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
+
+    handleCollisions(this.props, this.state);
+
     // Show overlay if it is the next page and a pageEnter overlay is available
     const page = this.getPage(this.state.level - 1);
     let overlayPageEnter = null;
@@ -406,36 +409,34 @@ class Graphics extends Component {
         sendInteraction: this.sendInteraction,
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
-          this.setState({
-            dragTick: 0
-          });
+          handleCollisions(this.props, this.state);
           const synched = !obj.infolevel && !obj.overlay;
-          if (this.state.dragTick == 0) {
-            this.props.socket.emit("interaction", {
-              gamepieceId: obj.id,
-              parameters: {
-                ...this.props.gamepieceStatus[obj.id],
-                [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
-                  {
-                    x: e.target.x(),
-                    y: e.target.y()
-                  },
-                x: synched ? e.target.x() : null,
-                y: synched ? e.target.y() : null,
-                dragging: null
-              }
-            });
-          }
+          this.props.socket.emit("interaction", {
+            gamepieceId: obj.id,
+            parameters: {
+              ...this.props.gamepieceStatus[obj.id],
+              [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
+                {
+                  x: e.target.x(),
+                  y: e.target.y()
+                },
+              x: synched ? e.target.x() : null,
+              y: synched ? e.target.y() : null,
+              dragging: null
+            }
+          });
+
         },
         onObjectDragMove: (obj, e) => {
           // Bound the drag to the edge of the screen
-          console.log(obj)
           const objRef = this.refs[obj.id];
-          const topPad = document.getElementById("levelContainer").clientHeight;
-          const stage = objRef.getLayer();
+          const stage = this.stage || objRef.getLayer();
+          this.stage = stage;
+          
+
           const screenRect = {
             x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
-            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? topPad : 0)) / stage.scaleY(),
+            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
             width: (stage.width() - (objRef.getClientRect().width /
               (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
             height: (stage.height() - (objRef.getClientRect().height /
@@ -462,7 +463,6 @@ class Graphics extends Component {
               img.id !== obj.id &&
               img.anchor
             )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
-              console.log( x , y)
               let sX = x, sY = y;
               if (this.props.gamepieceStatus[id]) {
                 sX = this.props.gamepieceStatus[id].x;
@@ -477,39 +477,24 @@ class Graphics extends Component {
                 (e.target.y() + this.originCenter(this.realHeight(obj) / 2, obj.id)) -
                 (sY + this.originCenter(sH / 2, id))
               );
-              console.log(xDist, yDist)
               if (xDist < sW / 2 && yDist < sH / 2) {
                 e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
-                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 
-                console.log("COLLISION");
-                handleCollisions(obj.id, id, true, this.props);
-              } else {
-                handleCollisions(obj.id, id, false, this.props);
+                e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
+              }
+            });
+            this.props.socket.emit("interaction", {
+              gamepieceId: obj.id,
+              parameters: {
+                x: e.target.x(),
+                y: e.target.y(),
+                dragging: userId
               }
             });
 
-            
-
-            // What is this?
-            // this.setState({
-            //   dragTick: (this.state.dragTick + 1) % 4
-            // });
-            if (this.state.dragTick == 0) {
-              // The drag ticking ensures that this does not run too often
-              // Update object with latest drag position
-              this.props.socket.emit("interaction", {
-                gamepieceId: obj.id,
-                parameters: {
-                  x: e.target.x(),
-                  y: e.target.y(),
-                  dragging: userId
-                }
-              });
-            }
           }
         }
       });
-
+      
       this.props.setUserId(userId);
 
       // Recenter if the canvas has changed
@@ -684,7 +669,7 @@ class Graphics extends Component {
   }
 
 
- 
+
 
 
   contextMenuEventShortcuts = (event) => {

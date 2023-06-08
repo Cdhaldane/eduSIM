@@ -30,7 +30,7 @@ const Trigger = (props) => {
   useEffect(() => {
     let out = []
     for (let i = 0; i < props.allShapes.length; i++) {
-      out.push(props.allShapes[i].ref)
+      out.push(props.allShapes[i].name)
     }
     out.sort()
     setShapes(out)

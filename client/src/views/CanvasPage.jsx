@@ -1103,6 +1103,7 @@ const CanvasPage = (props) => {
     }
 
     objectIds = [[...newObject], [...inputIds]]
+    
 
 
     return (

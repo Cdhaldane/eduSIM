@@ -233,18 +233,12 @@ const Game = (props) => {
     // }
   }), [level]
 
-  const handleLevel = (type, id) => {
-    let x = level
-    if (type === 'global') {
-      socket.emit("oneToPageSingle", {
-        level: x + 1,
-        id: socket.id
-      });
-    } if (type === 'edit')
+  const handleLevel = (x, type) => {
+    if (type === 'edit')
       setLevel(id)
     else {
       socket.emit("goToPage", {
-        level: x + 1
+        level: x
       });
     }
   }
@@ -261,7 +255,6 @@ const Game = (props) => {
     setNotes(data)
   }
   const handleDisable = (e) => {
-    console.log(e)
     setDisableNext(e)
   }
   useEffect(() => {

@@ -85,7 +85,6 @@ const EditPage = (props) => {
   }
 
   const handleSetTasks = (data) => {
-    console.log(data)
     setTasks(data)
   }
 
@@ -118,6 +117,7 @@ const EditPage = (props) => {
     setShapes(data.inputs)
   }
   const handleSetAllShapes = (data) => {
+    console.log(data)
     setAllShapes(data)
   }
 
