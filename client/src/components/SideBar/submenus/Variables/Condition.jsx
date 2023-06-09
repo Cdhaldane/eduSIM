@@ -19,7 +19,6 @@ const Condition = (props) => {
   const [showAddition3, setShowAddition3] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
   const [variables, setVariables] = useState(props.globalVars)
-  const [editingCondition, setEditingCondition] = useState(false);
   const [updater, setUpdater] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [deleteIndex, setDeleteIndex] = useState(0);
@@ -124,22 +123,22 @@ const Condition = (props) => {
 
   const handleEdit = (i) => {
     console.log(props.globalCons[i])
-    let condition = ([['', '=', '', '+', ''],
+    let out = ([['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', '']])
     for(let j = 0; j < props.globalCons[i].length; j++){
       if(j < props.globalCons[i].length - 1){
-        condition[j] = props.globalCons[i][j]
+        out[j] = props.globalCons[i][j]
       }
       else{
-        condition[4] = props.globalCons[i][props.globalCons[i].length -1]
+        out[4] = props.globalCons[i][props.globalCons[i].length -1]
       }
     }
-    console.log(condition)
+    console.log(out)
+    setCondition(out)
     setShowConAdd(!showConAdd)
-    setEditingCondition(condition)
     setEditingIndex(i)
   }
 
@@ -148,7 +147,7 @@ const Condition = (props) => {
     for (let i = 0; i < cons.length; i++) {
       list.push(<div className="condition-inputs cons-condition">
         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-        {/* <i onClick={() => handleEdit(i)} className="fas fa-pen" /> */}
+        <i onClick={() => handleEdit(i)} className="fas fa-pen" />
 
         <div className="ints-container">
           {cons[i].map(data => {
@@ -262,14 +261,14 @@ const Condition = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box int-special">
           {box[i].state === 'var' ? (
-            <Multilevel data={variables} handleChange={handleChange} x={x} y={n}  baseValue={editingIndex !== -1 && editingCondition[x][n]} />
+            <Multilevel data={variables} handleChange={handleChange} x={x} y={n}  baseValue={condition[x][n]} />
           ) : (
             <input
               onChange={(e) => { condition[x][n] = e.target.value }}
               type="text"
               placeholder="value"
               className="int-box"
-              value={editingIndex !== -1 && editingCondition[x][n]}
+              value={editingIndex !== -1 && condition[x][n]}
             />
           )}
 
@@ -280,6 +279,18 @@ const Condition = (props) => {
     return list
   }
 
+  const handleSelectChange = (event, x, y) => {
+    // Make a copy of your state
+    const newCondition = [...condition];
+
+    // Change the value at the specific index
+    newCondition[x][y] = event.value;
+
+    // Update the state
+    setCondition(newCondition);
+  };
+
+
   const handleIfStatements = () => {
     let list = []
     for (let i = 0, x = 0; i < ifs; i++, x = x + 2) {
@@ -289,11 +300,11 @@ const Condition = (props) => {
             <h2>IF</h2>
             <div>
               <div className="box">
-                <Multilevel data={variables} handleChange={handleChange} x={i} y={0} baseValue={editingIndex !== -1 && editingCondition[i][0]} />
+                <Multilevel data={variables} handleChange={handleChange} x={i} y={0} baseValue={condition[i][0]} />
               </div>
             </div>
             <div className="box jequal select">
-              <select onChange={(e) => { condition[i][1] = e.target.value }} value={editingIndex !== -1 && editingCondition[i][1]}>
+              <select onChange={(e) => handleSelectChange(e.target, 4, 3)} value={condition[i][1]}>
                 <option value="=">=</option>
                 <option value="!=">!=</option>
                 <option value={lt}> {lt} </option>
@@ -307,7 +318,7 @@ const Condition = (props) => {
             {eval("showAddition" + i) && (
               < >
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[i][3] = e.target.value }} value={editingIndex !== -1 && editingCondition[i][3]}>
+                  <select onChange={(e) => { condition[i][3] = e.target.value }} value={editingIndex !== -1 && condition[i][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>
@@ -390,7 +401,7 @@ const Condition = (props) => {
           <div className="input-area">
             <h2 className="smaller-text">THEN</h2>
             <div className="box">
-              <Multilevel data={variables} handleChange={handleChange} baseValue={editingIndex !== -1 && editingCondition[4][0]} x={4} y={0} />
+              <Multilevel data={variables} handleChange={handleChange} baseValue={editingIndex !== -1 && condition[4][0]} x={4} y={0} />
             </div>
 
             <div className="box select jequal">
@@ -403,7 +414,7 @@ const Condition = (props) => {
             {showAddition && (
               <>
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[4][3] = e.target.value }} value={editingIndex !== -1 && editingCondition[4][3]}>
+                  <select onChange={(e) => { condition[4][3] = e.target.value }} value={condition[4][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>

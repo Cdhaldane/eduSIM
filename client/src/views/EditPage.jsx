@@ -85,6 +85,7 @@ const EditPage = (props) => {
   }
 
   const handleSetTasks = (data) => {
+    console.log(data)
     setTasks(data)
   }
 

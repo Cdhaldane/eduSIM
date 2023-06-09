@@ -125,12 +125,10 @@ function splitArrayByValue(arr, index) {
   return result;
 }
 
-
 export const handleCollisions = (props, state) => {
   let trigs = props.globalTrigs;
   let result = props.savedObjects.flatMap(key => state[key])
   let filteredResult = result.filter(obj => obj.level === props.level);
-  console.log(result, props.level)
   const groupedArrays = splitArrayByValue(trigs, 2);
   groupedArrays.map((group) => {
   let touchingArray = [];
@@ -139,7 +137,6 @@ export const handleCollisions = (props, state) => {
       let shape1 = props.gamepieceStatus[item[0]]
       let shape1WH = filteredResult.find(obj => obj.id === item[0]);
       if(!shape1WH) return;
-      console.log(shape1, shape1WH)
       shape1.width = shape1WH.width;
       shape1.height = shape1WH.height;
       touchingArray.push(handleTouching(shape1, item[1], filteredResult))
@@ -159,7 +156,6 @@ export const handleCollisions = (props, state) => {
 export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
   let shape1 = shapeOne
   let shape2 = filteredResult.find(obj => obj.id === shapeTwo);
-  console.log(shape1, shape2)
   const shape1Left = shape1.x - shape1.width / 2;
   const shape1Right = shape1.x + 0.5 * shape1.width;
   const shape1Top = shape1.y - shape1.height / 2;
@@ -178,9 +174,7 @@ export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
   // Return true if there is intersection along both axes
   return isIntersectX && isIntersectY;
 }
-
-export const handleNotColliding = (id, props) => {
-  
+export const handleNotColliding = (id, props) => {  
 }
 
 // if (xDist < sW / 2 && yDist < sH / 2) {

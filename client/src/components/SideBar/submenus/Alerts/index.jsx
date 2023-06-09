@@ -106,6 +106,7 @@ const Alerts = (props) => {
 
   useEffect(() => {
     let out = []
+    console.log(props.alerts, props)
     props.alerts.map((alert, index) => {
       if (alert.page === props.page) {
         out.push(alert)
@@ -113,10 +114,11 @@ const Alerts = (props) => {
     })
     handeleNextLevel(out)
     setAllAlerts(out)
-  }, [props.alerts])
+  }, [props.alerts, props.page])
 
   const handleAddAlert = (data) => {
     let out = props.alerts || []
+    out.push(data)
     props.setAlerts(out)
     data.page = props.page
     setAllAlerts([...allAlerts, data])
@@ -170,8 +172,7 @@ const Alerts = (props) => {
 
     let trueValue = isNaN(check) ? check : parseInt(check);
     let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
-
-    let val = vars[varName];
+    let val = vars[varName].toString();
     let varLen = isNaN(val) ? (val || "").length : val;
 
     switch (condition) {

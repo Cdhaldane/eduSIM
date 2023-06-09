@@ -89,6 +89,8 @@ const Trigger = (props) => {
   }
 
   useEffect(() => {
+    console.log(props)
+
     if (props.current === 'global') {
       setFullTriggers(props.globalTrigs)
       setVariables(props.globalVars)

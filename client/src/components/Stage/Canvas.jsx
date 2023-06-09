@@ -348,6 +348,7 @@ class Graphics extends Component {
             [type]: shape
           })
         })
+        this.props.setAllShapes(uniqueShapesSet);
 
         if (this.props.setTasks) {
           this.props.setTasks(objects.tasks || []);
@@ -2406,7 +2407,7 @@ class Graphics extends Component {
       } else if (sidebarPx > 0 && layer === this.refs[`overlayAreaLayer.objects`]) {
         sidebarPx = 100;
       }
-      let topPx = 0;
+      let topPx = 57;
       if (layer === this.refs[`personalAreaLayer.objects`]) {
         topPx = 57;
       } else if (layer === this.refs[`overlayAreaLayer.objects`]) {
