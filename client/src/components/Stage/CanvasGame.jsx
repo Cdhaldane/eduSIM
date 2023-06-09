@@ -278,7 +278,6 @@ class Graphics extends Component {
   getDragProps = (id) => {
     const obj = this.props.gamepieceStatus[id];
     const dbid = JSON.parse(localStorage.getItem('userInfo'))?.dbid;
-    if(obj) console.log(obj)
     if (!obj || obj.info) return {};
     if (obj.dragging === dbid) return {}
 

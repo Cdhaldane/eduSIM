@@ -483,20 +483,20 @@ const CanvasPage = (props) => {
     return {
       width: obj.width,
       height: obj.height,
-      fill: obj.fill,
-      visible: canvas.state.canvasLoading ? false :
-        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
-      rotation: obj.rotation,
-      fill: obj.fill,
-      opacity: obj.opacity,
-      lock: false,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      stroke: obj.stroke,
-      strokeWidth: obj.strokeWidth,
-      infolevel: obj.infolevel,
-      overlay: obj.overlay,
-      strokeScaleEnabled: true,
+      // fill: obj.fill,
+      // visible: canvas.state.canvasLoading ? false :
+      //   (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
+      // rotation: obj.rotation,
+      // fill: obj.fill,
+      // opacity: obj.opacity,
+      // lock: false,
+      // scaleX: obj.scaleX,
+      // scaleY: obj.scaleY,
+      // stroke: obj.stroke,
+      // strokeWidth: obj.strokeWidth,
+      // infolevel: obj.infolevel,
+      // overlay: obj.overlay,
+      // strokeScaleEnabled: true,
     }
   }
   const textRectProps = (obj, canvas, editMode) => {
@@ -934,12 +934,12 @@ const CanvasPage = (props) => {
             {/* <Group {...canvas.getDragProps(obj.id)}
               {...defaultObjProps(obj, canvas, editMode)}
             > */}
-              <Rect
+            <Rect
               {...canvas.getDragProps(obj.id)}
               {...defaultObjProps(obj, canvas, editMode)}
-                {...rectProps(obj, canvas, editMode)}
-              />
-              {/* <Text
+              {...rectProps(obj, canvas, editMode)}
+            />
+            {/* <Text
                 {...textRectProps(obj, canvas, editMode)}
               />
             </Group> */}

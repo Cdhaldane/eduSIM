@@ -139,8 +139,10 @@ const Game = (props) => {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
-        if (status.level !== level)
-          setLevel(status.level)
+        // console.log(status.level)
+        // if (status.level !== level)
+        //   setLevel(status.level);
+        
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
