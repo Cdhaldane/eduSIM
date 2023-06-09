@@ -931,16 +931,18 @@ const CanvasPage = (props) => {
       case "rectangles":
         return (
           <>
-            <Group {...canvas.getDragProps(obj.id)}
+            {/* <Group {...canvas.getDragProps(obj.id)}
               {...defaultObjProps(obj, canvas, editMode)}
-            >
+            > */}
               <Rect
+              {...canvas.getDragProps(obj.id)}
+              {...defaultObjProps(obj, canvas, editMode)}
                 {...rectProps(obj, canvas, editMode)}
               />
-              <Text
+              {/* <Text
                 {...textRectProps(obj, canvas, editMode)}
               />
-            </Group>
+            </Group> */}
           </>
         );
       case "ellipses":
