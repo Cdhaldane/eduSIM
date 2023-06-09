@@ -172,8 +172,12 @@ const Alerts = (props) => {
 
     let trueValue = isNaN(check) ? check : parseInt(check);
     let trueValueAlt = isNaN(checkAlt) ? checkAlt : parseInt(checkAlt);
-    let val = vars[varName].toString();
+    let val = vars[varName];
     let varLen = isNaN(val) ? (val || "").length : val;
+
+    if(val === true){
+      val ='true'
+    }
 
     switch (condition) {
       case "isequal":
