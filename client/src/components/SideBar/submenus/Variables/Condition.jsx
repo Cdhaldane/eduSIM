@@ -19,7 +19,9 @@ const Condition = (props) => {
   const [showAddition3, setShowAddition3] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
   const [variables, setVariables] = useState(props.globalVars)
+  const [editingCondition, setEditingCondition] = useState(false);
   const [updater, setUpdater] = useState(0);
+  const [editingIndex, setEditingIndex] = useState(-1);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -120,11 +122,34 @@ const Condition = (props) => {
     }
   })
 
+  const handleEdit = (i) => {
+    console.log(props.globalCons[i])
+    let condition = ([['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', '']])
+    for(let j = 0; j < props.globalCons[i].length; j++){
+      if(j < props.globalCons[i].length - 1){
+        condition[j] = props.globalCons[i][j]
+      }
+      else{
+        condition[4] = props.globalCons[i][props.globalCons[i].length -1]
+      }
+    }
+    console.log(condition)
+    setShowConAdd(!showConAdd)
+    setEditingCondition(condition)
+    setEditingIndex(i)
+  }
+
   const populateConditions = (cons) => {
     let list = []
     for (let i = 0; i < cons.length; i++) {
       list.push(<div className="condition-inputs cons-condition">
         <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
+        {/* <i onClick={() => handleEdit(i)} className="fas fa-pen" /> */}
+
         <div className="ints-container">
           {cons[i].map(data => {
             if (cons[i][cons[i].length - 1] !== data) {
@@ -163,7 +188,11 @@ const Condition = (props) => {
     }
     else if (props.current === 'global') {
       let data = fullConditions
-      data.push(temp)
+      if(editingIndex !== -1){
+        data.splice(editingIndex, 1, temp); // Remove item at editingIndex and replace with temp
+      } else {
+        data.push(temp)
+      }  
       props.setGlobalCons(data)
     }
 
@@ -233,13 +262,14 @@ const Condition = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box int-special">
           {box[i].state === 'var' ? (
-            <Multilevel data={variables} handleChange={handleChange} x={x} y={n} />
+            <Multilevel data={variables} handleChange={handleChange} x={x} y={n}  baseValue={editingIndex !== -1 && editingCondition[x][n]} />
           ) : (
             <input
               onChange={(e) => { condition[x][n] = e.target.value }}
               type="text"
               placeholder="value"
               className="int-box"
+              value={editingIndex !== -1 && editingCondition[x][n]}
             />
           )}
 
@@ -259,11 +289,11 @@ const Condition = (props) => {
             <h2>IF</h2>
             <div>
               <div className="box">
-                <Multilevel data={variables} handleChange={handleChange} x={i} y={0} />
+                <Multilevel data={variables} handleChange={handleChange} x={i} y={0} baseValue={editingIndex !== -1 && editingCondition[i][0]} />
               </div>
             </div>
             <div className="box jequal select">
-              <select onChange={(e) => { condition[i][1] = e.target.value }}>
+              <select onChange={(e) => { condition[i][1] = e.target.value }} value={editingIndex !== -1 && editingCondition[i][1]}>
                 <option value="=">=</option>
                 <option value="!=">!=</option>
                 <option value={lt}> {lt} </option>
@@ -277,7 +307,7 @@ const Condition = (props) => {
             {eval("showAddition" + i) && (
               < >
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[i][3] = e.target.value }}>
+                  <select onChange={(e) => { condition[i][3] = e.target.value }} value={editingIndex !== -1 && editingCondition[i][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>
@@ -328,6 +358,7 @@ const Condition = (props) => {
   }
 
   const handleChange = (value, x, y) => {
+    console.log(value, x, y)
     condition[x][y] = value.label
   }
 
@@ -339,13 +370,14 @@ const Condition = (props) => {
           {handleOut()}
         </>
       )}
-      <div className="variable-add tester" onClick={() => setShowConAdd(true)} hidden={showConAdd}>
+      <div className="variable-add tester" onClick={() => (setShowConAdd(true),setEditingIndex(-1))} hidden={showConAdd}>
         <Plus className="icon plus" />
         ADD NEW CONDITION
       </div>
 
       {showConAdd && (
         <div className="variable-con-adding">
+          {editingIndex}
           <div className="con-ifs">
             <h1>Set Number of If Statements</h1>
             <input
@@ -358,7 +390,7 @@ const Condition = (props) => {
           <div className="input-area">
             <h2 className="smaller-text">THEN</h2>
             <div className="box">
-              <Multilevel data={variables} handleChange={handleChange} x={4} y={0} />
+              <Multilevel data={variables} handleChange={handleChange} baseValue={editingIndex !== -1 && editingCondition[4][0]} x={4} y={0} />
             </div>
 
             <div className="box select jequal">
@@ -371,7 +403,7 @@ const Condition = (props) => {
             {showAddition && (
               <>
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[4][3] = e.target.value }}>
+                  <select onChange={(e) => { condition[4][3] = e.target.value }} value={editingIndex !== -1 && editingCondition[4][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>

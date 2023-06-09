@@ -67,6 +67,18 @@ const Game = (props) => {
   const [playerLevels, setPlayerLevels] = useState({});
   const { t } = useTranslation();
 
+  //set states for globalVars, globalInts, globalCons, globalTrigs, localVars, localInts, localCons, localTrigs
+  const [globalVars, setGlobalVars] = useState({});
+  const [globalInts, setGlobalInts] = useState({});
+  const [globalCons, setGlobalCons] = useState({});
+  const [globalTrigs, setGlobalTrigs] = useState({});
+  const [tasks, setTasks] = useState({});
+  const [localVars, setLocalVars] = useState({});
+  const [localInts, setLocalInts] = useState({});
+  const [localCons, setLocalCons] = useState({});
+  const [localTrigs, setLocalTrigs] = useState({});
+
+
   const toggle = () => setShowNav(!showNav);
 
   const userid = (new URLSearchParams(useLocation().search)).get("user");
@@ -127,7 +139,7 @@ const Game = (props) => {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         setRoomStatus(status);
-        if (status.level)
+        if (status.level !== level)
           setLevel(status.level)
       });
       client.on("clientJoined", ({ id, ...player }) => {
@@ -193,45 +205,37 @@ const Game = (props) => {
     return newPlayers;
   }, [players, roles, level]);
 
-  let tasks = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [];
-  let globalCons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalCons || [];
-  let globalVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalVars || [];
-  let globalInts = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalInts || [];
-  let globalTrigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalTrigs || [];
-
-  let localCons = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localCons || [];
-  let localVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localVars || [];
-  let localInts = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localInts || [];
-  let localTrigs = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localTrigs || [];
-
-  if (roomStatus.variables)
-    globalVars.push(roomStatus.variables)
-  const flattenObject = (obj) => {
-    const flattened = {}
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key]
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-        Object.assign(flattened, flattenObject(value))
-      } else {
-        flattened[key] = value
-      }
-    })
-    return flattened
-  }
-
-  globalVars = flattenObject(globalVars)
 
   useEffect(() => {
-    // setDisableNext(false)
-    // let curr = tasks[level];
-    // if (curr) {
-    //   for (let i = 0; i < curr.length; i++) {
-    //     if (curr[i].advance === false) {
-    //       setDisableNext(true)
-    //     }
-    //   }
-    // }
-  }), [level]
+    setTasks(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [])
+    setGlobalCons(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalCons || [])
+    let globalVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalVars || []
+    setGlobalInts(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalInts || [])
+    setGlobalTrigs(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalTrigs || [])
+
+    setLocalCons(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localCons || [])
+    setLocalVars(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localVars || [])
+    setLocalInts(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localInts || [])
+    setLocalTrigs(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localTrigs || [])
+
+    if (roomStatus.variables)
+      globalVars.push(roomStatus.variables)
+    const flattenObject = (obj) => {
+      const flattened = {}
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key]
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          Object.assign(flattened, flattenObject(value))
+        } else {
+          flattened[key] = value
+        }
+      })
+      return flattened
+    }
+
+    setGlobalVars(flattenObject(globalVars))
+  }, [roomStatus])
+
 
   const handleLevel = (x, type) => {
     if (type === 'edit')

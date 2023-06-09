@@ -324,7 +324,31 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
-        console.log(this.props.setTasks)
+
+        let currentMainShapes = [];
+        for (let i = 0; i < this.savedObjects.length; i++) {
+          const type = this.savedObjects[i];
+          currentMainShapes.push(objects[type]);
+        }
+        let uniqueShapesSet = []
+        currentMainShapes.map((set, i) => {
+          let uniqueArray = set.filter((shape, index, self) =>
+            index === self.findIndex((s) => (
+              s.id === shape.id
+            ))
+          );
+          uniqueShapesSet.push(uniqueArray)
+        })
+
+
+        uniqueShapesSet.map((shape, i) => {
+          if (shape.length === 0) return
+          let type = shape[0].type
+          this.setState({
+            [type]: shape
+          })
+        })
+
         if (this.props.setTasks) {
           this.props.setTasks(objects.tasks || []);
         }
@@ -574,11 +598,13 @@ class Graphics extends Component {
     }
   }
 
+
+
   componentDidUpdate = (prevProps, prevState) => {
 
     if (this.state.savedStateLoaded) {
       const prevMainShapes = [];
-      const currentMainShapes = [];
+      let currentMainShapes = [];
       let allShapes = [];
       for (let i = 0; i < this.savedObjects.length; i++) {
         const type = this.savedObjects[i];
@@ -587,7 +613,7 @@ class Graphics extends Component {
         allShapes = allShapes.concat(this.state[type]);
       }
 
-      
+
 
       if (!this.state.isTransforming && !this.state.redoing) {
         if (JSON.stringify(this.state) !== JSON.stringify(prevState)) {
@@ -712,7 +738,6 @@ class Graphics extends Component {
         [newObj]: this.state[newObj]
       };
     }
-    console.log(this.props.tasks)
     storedObj.tasks = this.props.tasks;
     storedObj.notes = this.props.notes;
     storedObj.globalVars = this.props.globalVars;
@@ -1079,7 +1104,7 @@ class Graphics extends Component {
       }
     })
 
-    
+
 
     newLayers = Array.from(newLay);
     if (this.state.overlayOpen) {
@@ -1994,18 +2019,16 @@ class Graphics extends Component {
           const page = this.state.pages[this.state.level - 1];
           let layers = [];
           if (this.state.overlayOpen) {
-            const i = 0;
-            const overlay = page.overlays.filter((o, i) => {
-              if (o.id === this.state.overlayOpenIndex) {
-                i = i;
-                return true;
-              } else {
-                return false;
-              }
-            })[0];
-            layers = overlay.layers;
+            const overlayLayer = page.overlays.filter((obj, i) => {
+              return obj.id === this.state.overlayOpenIndex;
+            })
+            layers = overlayLayer[0].layers;
             layers.push(newId);
-            page.overlays[i].layers = layers;
+            page.overlays.map((obj, i) => {
+              if (obj.id === this.state.overlayOpenIndex) {
+                obj.layers = layers;
+              }
+            })
           } else if (this.state.personalAreaOpen) {
             layers = page.personalLayers;
             layers.push(newId);
@@ -3245,8 +3268,6 @@ class Graphics extends Component {
         }
       }
     }
-
-
     newLayers.unshift(...tempObject);
     newLayers.unshift(...tempInputs);
 
@@ -3282,14 +3303,20 @@ class Graphics extends Component {
   }
 
   handleOverlayIcon = (img) => {
+    const { pages, level, overlayOptionsOpen } = this.state;
+
+    const updatedPages = [...pages]; // Create a shallow copy of the pages array
+    const currentOverlay = { ...updatedPages[level - 1].overlays[overlayOptionsOpen] }; // Create a shallow copy of the current overlay object
+    currentOverlay.image = img; // Update the overlay object with the new image
+
+    updatedPages[level - 1].overlays[overlayOptionsOpen] = currentOverlay; // Replace the updated overlay object in the pages array
+
     this.setState({
-      overlayImage: img
-    })
-    this.setState(prevState => ({
-      ...prevState.savedState,
-      [this.state.overlayImage]: img
-    }))
+      pages: updatedPages
+    });
+
   }
+
 
   getDragProps = () => { }
   getPageProps = () => { }
@@ -3303,7 +3330,6 @@ class Graphics extends Component {
       return obj;
     }, {});
     for (let i = 0; i < shapes.length; i++) {
-      console.log(shapes[i])
       shapes[i].length > 0 && Array.isArray(shapes[i]) && shapes[i].map(shape => {
         if (shape.rolelevel === 'Students') {
           roles['Students'].push(shape);
@@ -3311,7 +3337,7 @@ class Graphics extends Component {
       })
     }
     console.log(roles, this.state.roles)
-    if(roles !== this.state.roles){
+    if (roles !== this.state.roles) {
       this.setState({
         roles: roles
       })
@@ -3329,7 +3355,7 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         {/* <CanvasUtils state={this.state} savedObjects={this.savedObjects} /> */}
-       
+
         <Level
           positionRect={this.positionRect}
           refreshCanvas={() => {
@@ -3441,17 +3467,24 @@ class Graphics extends Component {
                     this.setOverlayOpen(true, overlay.id);
                   }}
                 >
-                  {!this.state.overlayImage.length ? (
-                    <i><Layers className="icon overlay-icon" /></i>
-                  ) : (
-                    <Image
-                      className="overlayIcons"
-                      cloudName="uottawaedusim"
-                      publicId={
-                        "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
-                      }
-                    />
-                  )}
+
+                  {this.state.pages[this.state.level - 1].overlays.map((image, i) => {
+                    if (image.id === overlay.id && image.image) {
+                      return (
+                        <Image
+                          key={i}
+                          className="overlayIcons"
+                          cloudName="uottawaedusim"
+                          publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + image.image}
+                        />
+                      );
+                    } else if (overlay.id === image.id) {
+                      return (
+                        <i><Layers className="icon overlay-icon" /></i>
+                      )
+                    }
+                  })
+                  }
                 </div>
               );
             })}
@@ -3468,6 +3501,8 @@ class Graphics extends Component {
             level={this.state.level}
             updateObjState={this.updateSelectedObj}
             handleOverlayIcon={this.handleOverlayIcon}
+            variables={this.props.globalVars}
+
           />
         )}
 

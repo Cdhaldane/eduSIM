@@ -89,7 +89,7 @@ const Level = (props) => {
         props.end()
         return
       }
-      props.socket.emit("oneToPageSingle", {
+      props.socket.emit("goToPage", {
         level: e
       });
     } else {

@@ -15,6 +15,7 @@ import Poll from "../components/Stage/GamePieces/Poll/Poll";
 import HTMLFrame from "../components/Stage/GamePieces/HTMLFrame";
 import Timer from "../components/Stage/GamePieces/Timer";
 import Input from "../components/Stage/GamePieces/Input";
+import Rectangle from "../components/Stage/GamePieces/Rectangles/Rect";
 import { flushSync } from 'react-dom'; // Note: react-dom, not react
 
 
@@ -32,7 +33,8 @@ import {
   Arrow,
   Shape,
   Layer,
-  Transformer
+  Transformer,
+  Group
 } from "react-konva";
 import { Socket } from "socket.io-client";
 import { is } from "immutable";
@@ -445,6 +447,7 @@ const CanvasPage = (props) => {
     }
   }
 
+
   const lineObjProps = (obj, canvas, editMode) => {
     return {
       key: obj.id,
@@ -480,8 +483,36 @@ const CanvasPage = (props) => {
     return {
       width: obj.width,
       height: obj.height,
-      fillPatternImage: obj.fillPatternImage,
-      image: obj.image,
+      fill: obj.fill,
+      visible: canvas.state.canvasLoading ? false :
+        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
+      rotation: obj.rotation,
+      fill: obj.fill,
+      opacity: obj.opacity,
+      lock: false,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth,
+      infolevel: obj.infolevel,
+      overlay: obj.overlay,
+      strokeScaleEnabled: true,
+    }
+  }
+  const textRectProps = (obj, canvas, editMode) => {
+    return {
+      text: obj.name,
+      fontSize: obj.width / 6,
+      width: obj.width,
+      height: obj.height,
+      fill: 'white',
+      stroke: 'white',
+      strokeWidth: 0,
+      fontFamily: 'Calibri',
+      ref: obj.ref,
+      id: obj.id,
+      padding: 5,
+      align: 'center',
     }
   }
 
@@ -898,7 +929,20 @@ const CanvasPage = (props) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
-        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
+        return (
+          <>
+            <Group {...canvas.getDragProps(obj.id)}
+              {...defaultObjProps(obj, canvas, editMode)}
+            >
+              <Rect
+                {...rectProps(obj, canvas, editMode)}
+              />
+              <Text
+                {...textRectProps(obj, canvas, editMode)}
+              />
+            </Group>
+          </>
+        );
       case "ellipses":
         return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
@@ -922,7 +966,7 @@ const CanvasPage = (props) => {
           {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "documents":
-        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />;
+        return (<Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />);
       case "triangles":
         return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)} />;
       case "stars":
@@ -1082,7 +1126,7 @@ const CanvasPage = (props) => {
       if (canvas.state.overlayOpenIndex === -1) {
         return;
       }
-      const overlay = page.overlays.filter(overlay => overlay.id === canvas.state.overlayOpenIndex)[0];
+      const overlay = page.overlays.find(overlay => overlay.id === canvas.state.overlayOpenIndex)
       objectIds = overlay.layers;
     }
 
@@ -1102,9 +1146,9 @@ const CanvasPage = (props) => {
       }
     }
 
+    inputIds = [...new Set(inputIds)]
+    newObject = [...new Set(newObject)]
     objectIds = [[...newObject], [...inputIds]]
-    
-
 
     return (
       <>
@@ -1148,7 +1192,7 @@ const CanvasPage = (props) => {
               if (id.length > 0) {
                 const type = id.replace(/\d+$/, "");
                 const obj = canvas.state[type].filter(obj => obj.id === id)[0];
-                if (obj && objectIsOnStage(obj, canvas) )
+                if (obj && objectIsOnStage(obj, canvas))
                   out.push(renderObject(obj, index, canvas, editMode, type, stage))
               }
             });

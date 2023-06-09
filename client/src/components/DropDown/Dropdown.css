@@ -126,6 +126,7 @@ a {
 
 .overlayDeleteRow, .overlayHideRow {
   height: 35px;
+  display: flex;
 }
 
 .overlayDeleteRow>h2, .overlayHideRow>h2 {
@@ -185,7 +186,9 @@ a {
 .overlayOpenOptions {
   padding: 0px 10px;
   border-bottom: 1px dotted black;
-  margin-bottom: 10px;
+}
+.overlay-multilevel {
+  padding-top: 5px;
 }
 
 .overlayOpenOptions label {
@@ -200,19 +203,20 @@ a {
 }
 
 .overlayConditions>input {
-  height: 30px;
+  height: 40px;
   width: 100%;
   font-size: 0.8em;
-  padding-left: 0.25em;
+  padding-left: 10px;
   font-family: "Montserrat";
   margin-right: 5px;
-  margin-top: 5px;
   margin-bottom: 5px;
-  border: 2px solid var(--text-color);
+  border: 1px solid lightgray;
   border-radius: 4px;
 }
 .overlayConditions>select {
-  height: 30px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  height: 40px;
   margin: 5px 0px;
   width: 100%;
   font-size: 0.8em;
@@ -341,8 +345,7 @@ a {
 }
 
 .overlaySettingsSub {
-  padding: 10px;
-  padding-top: 0px;
+  padding: 5px;
   font-size: 1.2rem;
   font-weight: 100;
   color: #636363;

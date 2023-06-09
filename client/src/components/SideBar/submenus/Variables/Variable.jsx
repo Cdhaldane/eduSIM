@@ -87,7 +87,7 @@ const deleteVar = (data, i) => {
 const populateGameVars = (data) => {
   let list = []
   for (let i = 0; i < data.length; i++) {
-    list.push(<div className="condition-inputs vars">
+    list.push(<div className="condition-inputs vars" key={i}>
       <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
       <h1>{Object.keys(data[i])}</h1>
       <h2> = </h2>
@@ -113,7 +113,6 @@ const handleOut = () => {
   if (props.current === 'global')
     out = props.globalVars
   if (props.current === 'session')
-    
     out = props.localVars
   return (populateGameVars(out))
 }

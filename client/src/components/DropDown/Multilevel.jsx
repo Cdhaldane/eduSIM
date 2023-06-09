@@ -20,8 +20,8 @@ const MultiLevel = (props) => {
             width: "auto",
         }),
         menuPortal: base => ({ ...base, zIndex: 9999, fontSize: '13px' }),
-        valueContainer: base => ({ ...base, paddingLeft: 0, paddingRight: 0 }),
-        group: base => ({ ...base, paddingLeft: 0, paddingRight: 0 }),
+        valueContainer: base => ({ ...base, paddingLeft: '10px', paddingRight: 0 }),
+        group: base => ({ ...base, paddingLeft: '10px', paddingRight: 0 }),
         groupHeading: base => ({ ...base, paddingLeft: 0, paddingRight: 0, fontSize: '15px', fontSize: 'bold' }),
         menuList: (base) => ({
             ...base,
@@ -46,9 +46,14 @@ const MultiLevel = (props) => {
     };
 
     useEffect(() => {
+        console.log(props.baseValue)
+        let base = props.baseValue
+        if(Array.isArray(base)){
+            base = base[0]
+        }
         let options = filteredOptions()
         options.map((option) => {
-            if(option.label.includes(props.baseValue)){
+            if(option.label.includes(base)){
                 setSelectedValue(option)
             }
         })
@@ -126,7 +131,6 @@ const MultiLevel = (props) => {
     };
 
     const handleChange = (selectValue) => {
-        console.log(selectValue)
         setSelectedValue(selectValue);
         props.handleChange(selectValue, props.x, props.y);
     };

@@ -117,7 +117,6 @@ const EditPage = (props) => {
     setShapes(data.inputs)
   }
   const handleSetAllShapes = (data) => {
-    console.log(data)
     setAllShapes(data)
   }
 

@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
 import { useTranslation } from "react-i18next";
+import MultiLevel from './Multilevel';
 
 import "./Dropdown.css";
 
@@ -25,7 +26,7 @@ const DropdownOverlay = (props) => {
   const { t } = useTranslation();
 
   const handleClickOutside = e => {
-    if (menuElem.current && !menuElem.current.contains(e.target)) {
+    if (menuElem.current && !menuElem.current.contains(e.target) && !e.target.className.includes('option')) {
       props.close();
     }
   }
@@ -117,6 +118,19 @@ const DropdownOverlay = (props) => {
     );
     myWidget.open();
   }
+  
+  const handleChange = (value) => {
+    setConditions(old => ({
+      ...old,
+      varName: value.label[0] ? value.label[0] : undefined
+    }))
+    debounceObjState({
+      conditions: {
+        ...conditions,
+        varName: value.label[0] ? value.label[0] : undefined
+      }
+    });
+  }
 
 
 
@@ -193,12 +207,13 @@ const DropdownOverlay = (props) => {
 
             <div className={`overlayConditions ${selectedOption !== "condition" ? "overlayConditionsDisabled" : ""}`}>
               {/* The overlay conditions for opening */}
-              <input
+              <MultiLevel data={props.variables} handleChange={handleChange} baseValue={conditions?.varName} className={'overlay-multilevel'} />
+              {/* <input
                 type="text"
                 placeholder={t("edit.variableName")}
                 value={conditions?.varName || ""}
                 onChange={(e) => handleUpdateConditions("varName", e.target.value)}
-              />
+              /> */}
               <select
                 name="inputtype"
                 value={conditions?.condition}

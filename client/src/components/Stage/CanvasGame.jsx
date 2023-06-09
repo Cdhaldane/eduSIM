@@ -276,23 +276,18 @@ class Graphics extends Component {
   }
 
   getDragProps = (id) => {
-    const obj = this.props.gamepieceStatus[id] || {};
+    const obj = this.props.gamepieceStatus[id];
     const dbid = JSON.parse(localStorage.getItem('userInfo'))?.dbid;
-    const synched = obj[dbid];
-    if (
-      dbid &&
-      (obj.x && obj.y || obj[dbid]) &&
-      obj.dragging !== dbid
-    ) {
-      return {
-        x: synched ? synched.x : obj.x,
-        y: synched ? synched.y : obj.y,
-        ...(obj.dragging ? {
-          opacity: 0.7,
-          draggable: false
-        } : {})
-      };
-    } else return {};
+    if(obj) console.log(obj)
+    if (!obj || obj.info) return {};
+    if (obj.dragging === dbid) return {}
+
+    return {
+      x: obj.x,
+      y: obj.y,
+      opacity: obj.dragging ? 0.7 : 1,
+      draggable: obj.dragging ? false : true
+    };
   }
 
   sendInteraction = (gamepieceId, parameters) => {
@@ -410,19 +405,15 @@ class Graphics extends Component {
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
           handleCollisions(this.props, this.state);
-          const synched = !obj.infolevel && !obj.overlay;
+          console.log(this.props.gamepieceStatus)
+          if(obj.infolevel) return {}
           this.props.socket.emit("interaction", {
             gamepieceId: obj.id,
             parameters: {
               ...this.props.gamepieceStatus[obj.id],
-              [JSON.parse(localStorage.getItem('userInfo')).dbid]: synched ? null :
-                {
-                  x: e.target.x(),
-                  y: e.target.y()
-                },
-              x: synched ? e.target.x() : null,
-              y: synched ? e.target.y() : null,
-              dragging: null
+              x: e.target.x(),
+              y: e.target.y(),
+              dragging: false
             }
           });
 
@@ -432,22 +423,20 @@ class Graphics extends Component {
           const objRef = this.refs[obj.id];
           const stage = this.stage || objRef.getLayer();
           this.stage = stage;
-          
 
-          const screenRect = {
-            x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
-            y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
-            width: (stage.width() - (objRef.getClientRect().width /
-              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
-            height: (stage.height() - (objRef.getClientRect().height /
-              (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleY()
-          };
-          objRef.y(Math.max(objRef.y(), screenRect.y)); // Top Bound
-          objRef.y(Math.min(objRef.y(), screenRect.y + screenRect.height)); // Bottom Bound
-          objRef.x(Math.max(objRef.x(), screenRect.x)); // Left Bound
-          objRef.x(Math.min(objRef.x(), screenRect.x + screenRect.width)); // Right Bound
-
-          if (!obj.infolevel && !obj.overlay) {
+          // const screenRect = {
+          //   x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
+          //   y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
+          //   width: (stage.width() - (objRef.getClientRect().width /
+          //     (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleX(),
+          //   height: (stage.height() - (objRef.getClientRect().height /
+          //     (obj.id.includes("ellipse") ? 2 : 1))) / stage.scaleY()
+          // };
+          // objRef.y(Math.max(objRef.y(), screenRect.y)); // Top Bound
+          // objRef.y(Math.min(objRef.y(), screenRect.y + screenRect.height)); // Bottom Bound
+          // objRef.x(Math.max(objRef.x(), screenRect.x)); // Left Bound
+          // objRef.x(Math.min(objRef.x(), screenRect.x + screenRect.width)); // Right Bound
+          if (obj) {
             [
               ...this.state.images,
               ...this.state.rectangles,
@@ -463,10 +452,14 @@ class Graphics extends Component {
               img.id !== obj.id &&
               img.anchor
             )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
-              let sX = x, sY = y;
+              let sX, sY;
               if (this.props.gamepieceStatus[id]) {
                 sX = this.props.gamepieceStatus[id].x;
                 sY = this.props.gamepieceStatus[id].y;
+              }
+              if (!sX || !sY) {
+                sX = x;
+                sY = y;
               }
               let sW = this.realWidth({ width, radiusX }), sH = this.realHeight({ height, radiusY });
               const xDist = Math.abs(
@@ -482,19 +475,21 @@ class Graphics extends Component {
                 e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
               }
             });
-            this.props.socket.emit("interaction", {
-              gamepieceId: obj.id,
-              parameters: {
-                x: e.target.x(),
-                y: e.target.y(),
-                dragging: userId
-              }
-            });
+            if (!obj.infolevel) {
+              this.props.socket.emit("interaction", {
+                gamepieceId: obj.id,
+                parameters: {
+                  x: e.target.x(),
+                  y: e.target.y(),
+                  dragging: userId
+                }
+              });
+            }
 
           }
         }
       });
-      
+
       this.props.setUserId(userId);
 
       // Recenter if the canvas has changed
@@ -612,7 +607,7 @@ class Graphics extends Component {
 
   getPageProps = () => ({
     handleButtonPage: (e) => {
-      this.props.socket.emit("oneToPageSingle", {
+      this.props.socket.emit("goToPage", {
         level: e,
       });
     },
@@ -742,17 +737,23 @@ class Graphics extends Component {
                       top: window.matchMedia("(orientation: portrait)").matches ? 100 : `${70 * (nonHiddenI + 1)}px`
                     }}
                   >
-                    {!this.state.overlayImage.length ? (
-                      <i><Layers className="icon overlay-icon" /></i>
-                    ) : (
-                      <Image
-                        className="overlayIcons"
-                        cloudName="uottawaedusim"
-                        publicId={
-                          "https://res.cloudinary.com/uottawaedusim/image/upload/" + this.state.overlayImage
-                        }
-                      />
-                    )}
+                    {this.state.pages[this.state.level - 1].overlays.map((image, i) => {
+                      if (image.id === overlay.id && image.image) {
+                        return (
+                          <Image
+                            key={i}
+                            className="overlayIcons"
+                            cloudName="uottawaedusim"
+                            publicId={"https://res.cloudinary.com/uottawaedusim/image/upload/" + image.image}
+                          />
+                        );
+                      } else if (overlay.id === image.id) {
+                        return (
+                          <i><Layers className="icon overlay-icon" /></i>
+                        )
+                      }
+                    })
+                    }
                   </div>
                 );
               } else {

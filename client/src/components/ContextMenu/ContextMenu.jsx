@@ -187,7 +187,7 @@ const ContextMenu = (props) => {
         key={props.position.x}
         className={`cmenu `}
         style={{
-          width: "155px",
+          width: "170px",
           left: props.position.x + offsetX,
           top: props.position.y + offsetY
         }}
