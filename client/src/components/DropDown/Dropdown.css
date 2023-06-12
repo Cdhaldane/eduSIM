@@ -1128,3 +1128,8 @@ a {
 .group-heading-wrapper.collapsed + div {
   display: none;
 }
+
+.multilevel-interaction {
+  width: 40%;
+}
+

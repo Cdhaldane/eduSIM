@@ -123,7 +123,7 @@
   margin-top: 10px;
 }
 .variable-add i{
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin-right: 8px;
   vertical-align: middle;
 }
@@ -597,7 +597,7 @@
 .con-button {
   width: 100%;
   height: 100%;
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 
 .var-trash:hover{
@@ -809,6 +809,7 @@
 
 .select{
   width: 60px;
+  
 }
 .select select{
   position: relative;
@@ -816,7 +817,7 @@
   font-weight: lighter;
   border: 1px solid var(--dark);
   width: 100%;
-  height: 100%;
+  height: 50px;
   border-radius: 5px;
   text-align: left;
   padding: 10px 5px;
@@ -835,13 +836,15 @@
 }
 .int-box{
   width: 100% !important;
-  height: 100% !important;
+  height: 50px !important;
   border: 1px solid lightgrey !important;
-  color: grey !important;
+  color: black !important;
+  background-color: white !important;
   border-radius: 5px !important;
   padding: 10px 10px !important;
   min-height: 40px !important;
   margin-left: 0px !important;
+  background-color: white;
 }
 .alert-green {
   fill: var(--success) !important;
@@ -890,6 +893,8 @@
   flex-wrap: wrap;
   overflow-x: hidden;
   flex-basis:auto!important;
+  padding: 5px;
+
 }
 
 .condition-inputs{
@@ -909,7 +914,16 @@
   display: flex;
   flex-wrap: wrap;
 }
+.trigger-inputs{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+}
 
+.trigger-inputs div{
+  display: flex;
+}
 .condition-inputs i{
   font-size: 1.4em !important;
 }
@@ -917,9 +931,6 @@
 .cons-condition{
   display: flex;
   overflow-wrap: break-word;
-  margin-left: 10px;
-  margin-right: 10px;
-
 }
 
 
@@ -934,7 +945,7 @@
 
 .condition-inputs h1{
   color: var(--red);
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin-right: 10px;
   margin-left: 10px;
   font-style:oblique;
@@ -944,11 +955,11 @@
 }
 .condition-inputs h2{
   color: var(--warning);
-  font-size: 1.5em;
+  font-size: 1.3em;
   position: relative;
 }
 .condition-inputs h3{
-  font-size: 1.5em;
+  font-size: 1.3em;
   color: var(--success);
   margin-left: 5px;
   margin-right: 5px;
@@ -983,7 +994,7 @@
   background-color: var(--green);
   border-radius: 0px 9px 9px 0px;
   border-left: 1px solid var(--dark);
-  font-size: 1.5em;
+  font-size: 1.3em;
   width: 60%;
 }
 .tooltips{
@@ -1004,11 +1015,10 @@
   font-weight: lighter;
   border: 1px solid var(--dark);
   width: 100%;
-  height: 100%;
+  height: 50px;
   border-radius: 5px;
-  text-align: left;
-  padding: 10px 10px;
-
+  text-align: center;
+  padding: 27% 3px;
 }
 
 .variable-header{
@@ -1038,7 +1048,7 @@
   overflow: hidden;
 }
 .switch-container h1{
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin-left: 5px;
   text-transform: capitalize;
 }
@@ -1083,10 +1093,13 @@
 }
 .ints-name{
   display: flex;
+  width: 50%;
   justify-content: space-around;
   font-size: 1.1em;
   margin-bottom: 20px;
   align-items: center;
+  height: auto;
+  margin: 0px auto;
 }
 .ints-name select {
   height: 50px;
@@ -1160,7 +1173,23 @@
   justify-content: space-between;
   margin: 30px 10px;
   align-items: center;
+  padding: auto;
 }
+.trigger-container > * {
+  margin-right: 5px;
+}
+
+.trigger-container > *:last-child {
+  margin-right: 0;
+}
+.trigger-container h2{
+  font-size: 1.3em;
+  width: max-content;
+  align-items: center;
+
+
+}
+
 
 .trigger-box select{
   font-family: "Montserrat", sans-serif;
@@ -1186,13 +1215,15 @@
   margin-left: 0px;
   padding: 20px 0px;
 }
+.trigger-shapes {
+  width: 100% !important;
+}
 
 .trigger-multi {
   height: max-content;
-  width: 50%;
+  width: 40%;
   padding: 0px;
   font-size: 0.95em;
-  border: 1px solid var(--primary);
   opacity: 9;
   margin-bottom: 0px;
   border-radius: 5px;
@@ -1200,9 +1231,24 @@
 }
 
 .trigger-touch {
-  /* vertical-align: bottom !important; */
-  /* margin-left: 20px;
-  padding: 20px 0px; */
+  
+  
+}
+
+.variable-buttons {
+  display: flex;
+  flex-direction: column;
+}
+.variable-buttons i, .variable-buttons svg {
+  fill: var(--primary);
+  color: var(--primary);
+  font-size: 1.6em !important;
+  margin: 1px 0px;
+  width: 23px;
+  height: 23px;
+}
+.variable-buttons:hover{
+  cursor: pointer;
 }
 
 

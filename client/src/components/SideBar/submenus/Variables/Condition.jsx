@@ -9,6 +9,7 @@ import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import Multilevel from "../../../Dropdown/Multilevel";
 import { use } from "i18next";
+import { set } from "draft-js/lib/EditorState";
 
 const Condition = (props) => {
   const { t } = useTranslation();
@@ -88,41 +89,40 @@ const Condition = (props) => {
   }
 
   useEffect(() => {
-    let temp = condition
-    if (showAddition) {
-      temp[temp.length - 1][4] = ''
-    }
-    if (showAddition0) {
-      temp[0][4] = ''
-    }
-    if (showAddition1) {
-      temp[1][4] = ''
-    }
-    if (showAddition2) {
-      temp[2][4] = ''
-    }
-    if (showAddition3) {
-      temp[3][4] = ''
-    }
-    if (!showAddition) {
-      temp[temp.length - 1][4] = ''
-    }
-    if (!showAddition0) {
-      temp[0][4] = ''
-    }
-    if (!showAddition1) {
-      temp[1][4] = ''
-    }
-    if (!showAddition2) {
-      temp[2][4] = ''
-    }
-    if (!showAddition3) {
-      temp[3][4] = ''
-    }
+    // let temp = condition
+    // if (showAddition) {
+    //   temp[temp.length - 1][4] = ''
+    // }
+    // if (showAddition0) {
+    //   temp[0][4] = ''
+    // }
+    // if (showAddition1) {
+    //   temp[1][4] = ''
+    // }
+    // if (showAddition2) {
+    //   temp[2][4] = ''
+    // }
+    // if (showAddition3) {
+    //   temp[3][4] = ''
+    // }
+    // if (!showAddition) {
+    //   temp[temp.length - 1][4] = ''
+    // }
+    // if (!showAddition0) {
+    //   temp[0][4] = ''
+    // }
+    // if (!showAddition1) {
+    //   temp[1][4] = ''
+    // }
+    // if (!showAddition2) {
+    //   temp[2][4] = ''
+    // }
+    // if (!showAddition3) {
+    //   temp[3][4] = ''
+    // }
   })
 
   const handleEdit = (i) => {
-    console.log(props.globalCons[i])
     let out = ([['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
@@ -136,18 +136,34 @@ const Condition = (props) => {
         out[4] = props.globalCons[i][props.globalCons[i].length -1]
       }
     }
-    console.log(out)
+    let additions = [showAddition0, showAddition1, showAddition2, showAddition3]
+    for(let j = 0; j < out.length; j++){
+      if(out[j][4] != '') handleEditState(j, true)
+      else handleEditState(j, false)
+    }
+    setIfs(props.globalCons[i].length - 1)
     setCondition(out)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
   }
 
+  useEffect(() => {
+    let out = ([['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', '']])
+    setCondition(out)
+  }, [props.globalCons])
+
   const populateConditions = (cons) => {
     let list = []
     for (let i = 0; i < cons.length; i++) {
       list.push(<div className="condition-inputs cons-condition">
-        <i onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}><Trash className="icon var-trash" /></i>
-        <i onClick={() => handleEdit(i)} className="fas fa-pen" />
+        <div className="variable-buttons">
+        <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}/>
+        <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+        </div>
 
         <div className="ints-container">
           {cons[i].map(data => {
@@ -187,6 +203,7 @@ const Condition = (props) => {
     }
     else if (props.current === 'global') {
       let data = fullConditions
+      console.log(editingIndex)
       if(editingIndex !== -1){
         data.splice(editingIndex, 1, temp); // Remove item at editingIndex and replace with temp
       } else {
@@ -208,7 +225,7 @@ const Condition = (props) => {
     setShowAddition1(false)
     setShowAddition2(false)
     setShowAddition3(false)
-    setIfs(0)
+    setIfs(1)
   }
 
   const deleteCon = (i) => {
@@ -264,11 +281,11 @@ const Condition = (props) => {
             <Multilevel data={variables} handleChange={handleChange} x={x} y={n}  baseValue={condition[x][n]} />
           ) : (
             <input
-              onChange={(e) => { condition[x][n] = e.target.value }}
+              onChange={(e) => { handleSelectChange(e.target, x, n) }}
               type="text"
               placeholder="value"
               className="int-box"
-              value={editingIndex !== -1 && condition[x][n]}
+              value={condition[x][n]}
             />
           )}
 
@@ -281,11 +298,9 @@ const Condition = (props) => {
 
   const handleSelectChange = (event, x, y) => {
     // Make a copy of your state
-    const newCondition = [...condition];
-
+    let newCondition = [...condition];
     // Change the value at the specific index
     newCondition[x][y] = event.value;
-
     // Update the state
     setCondition(newCondition);
   };
@@ -304,7 +319,7 @@ const Condition = (props) => {
               </div>
             </div>
             <div className="box jequal select">
-              <select onChange={(e) => handleSelectChange(e.target, 4, 3)} value={condition[i][1]}>
+              <select onChange={(e) => handleSelectChange(e.target, i, 1)} value={condition[i][1]}>
                 <option value="=">=</option>
                 <option value="!=">!=</option>
                 <option value={lt}> {lt} </option>
@@ -318,7 +333,7 @@ const Condition = (props) => {
             {eval("showAddition" + i) && (
               < >
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[i][3] = e.target.value }} value={editingIndex !== -1 && condition[i][3]}>
+                  <select onChange={(e) => { handleSelectChange(e.target, i, 3) }} value={condition[i][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>
@@ -354,7 +369,19 @@ const Condition = (props) => {
     if (i === 2)
       setShowAddition2(!showAddition2)
     if (i === 3)
-      setShowAddition3(!showAddition3)
+      setShowAddition3(!showAddition)
+  }
+  const handleEditState = (i, bool) => {
+    if (i === 0)
+      setShowAddition0(bool)
+    if (i === 1)
+      setShowAddition1(bool)
+    if (i === 2)
+      setShowAddition2(bool)
+    if (i === 3)
+      setShowAddition3(bool)
+    if (i === 4)
+      setShowAddition(bool)
   }
 
   const handle2 = () => {
@@ -363,7 +390,9 @@ const Condition = (props) => {
   const handleIfs = (e) => {
     if (parseInt(e.target.value) < 5)
       setIfs(parseInt(e.target.value))
-
+    if(!e.target.value){
+      setIfs(1)
+    }
     else
       alertContext.showAlert("If value must be less than 5.", "warning");
   }
@@ -414,7 +443,7 @@ const Condition = (props) => {
             {showAddition && (
               <>
                 <div className="box jequal select">
-                  <select onChange={(e) => { condition[4][3] = e.target.value }} value={condition[4][3]}>
+                  <select onChange={(e) => { handleSelectChange(e.target, 4, 3) }} value={condition[4][3]}>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="x"> x </option>
@@ -437,7 +466,7 @@ const Condition = (props) => {
 
           </div>
           <div className="con-hold">
-            <button className="con-add-b" onClick={() => addCon()}>{t("common.add")}</button>
+            <button className="con-add-b" onClick={() => addCon()}>{editingIndex === -1 ? t("common.add") : "Edit"}</button>
             <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
           </div>
         </div>

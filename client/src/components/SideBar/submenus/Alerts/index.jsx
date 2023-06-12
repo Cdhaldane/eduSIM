@@ -106,7 +106,6 @@ const Alerts = (props) => {
 
   useEffect(() => {
     let out = []
-    console.log(props.alerts, props)
     props.alerts.map((alert, index) => {
       if (alert.page === props.page) {
         out.push(alert)

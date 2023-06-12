@@ -1,3 +1,4 @@
+import { is } from 'immutable';
 import React, { useEffect } from 'react';
 
 const CanvasUtils = (props) => {
@@ -104,7 +105,7 @@ const CanvasUtils = (props) => {
           }
         }
       }
-  }, [props.globalVars]);
+  }, [props]);
 
   return <></>;
 };
@@ -124,62 +125,80 @@ function splitArrayByValue(arr, index) {
   });
   return result;
 }
+const filterObjectBasedOnArray = (obj, arr) => {
+  const newObj = {};
+  
+  arr.forEach(item => {
+    // assuming each object in the array has an 'id' property
+    const key = item.id;
+    if (key in obj) {
+      newObj[key] = obj[key];
+    }
+  });
+
+  return newObj;
+}
 
 export const handleCollisions = (props, state) => {
   let trigs = props.globalTrigs;
   let result = props.savedObjects.flatMap(key => state[key])
   let filteredResult = result.filter(obj => obj.level === props.level);
   const groupedArrays = splitArrayByValue(trigs, 2);
+  console.log(filterObjectBasedOnArray(props.gamepieceStatus, filteredResult))
+  const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
   groupedArrays.map((group) => {
-  let touchingArray = [];
+    let touchingArray = [];
     group.map((item) => {
-      if(!props.gamepieceStatus[item[0]]) return;
-      let shape1 = props.gamepieceStatus[item[0]]
-      let shape1WH = filteredResult.find(obj => obj.id === item[0]);
-      if(!shape1WH) return;
-      shape1.width = shape1WH.width;
-      shape1.height = shape1WH.height;
-      touchingArray.push(handleTouching(shape1, item[1], filteredResult))
+      
+      Object.entries(gamepieces).map((piece, i) => {
+        let touch = handleTouching(piece, item[1], filteredResult)
+        touchingArray.push(touch)
+      })
     });
-    if(touchingArray.includes(true) && !props.globalVars[group[0][2]]){
+    if (touchingArray.includes(true) && !props.globalVars[group[0][2]]) {
       props.socket.emit("varChange", {
         name: group[0][2], value: true
       })
-    } else if(!touchingArray.includes(true) && props.globalVars[group[0][2]] !== false) {
+    } else if (!touchingArray.includes(true) && props.globalVars[group[0][2]] !== false) {
       props.socket.emit("varChange", {
         name: group[0][2], value: false
       })
     }
-  });  
+  });
 }
 
 export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
-  let shape1 = shapeOne
-  let shape2 = filteredResult.find(obj => obj.id === shapeTwo);
-  const shape1Left = shape1.x - shape1.width / 2;
-  const shape1Right = shape1.x + 0.5 * shape1.width;
-  const shape1Top = shape1.y - shape1.height / 2;
-  const shape1Bottom = shape1.y + 0.5 * shape1.height;
+  let shape1 = shapeOne[1]
+  let shape2 = filteredResult.find(obj => obj.name === shapeTwo);
+  if(shape1 === undefined || shape2 === undefined) return false;
+  const shape1Left = shape1.x;
+  const shape1Right = shape1.x;
+  const shape1Top = shape1.y;
+  const shape1Bottom = shape1.y;
 
   const shape2Left = shape2.x - shape2.width / 2;
   const shape2Right = shape2.x + 0.5 * shape2.width;
   const shape2Top = shape2.y - shape2.height / 2;
-  const shape2Bottom = shape2.y + 0.5 * shape2.height; 
+  const shape2Bottom = shape2.y + 0.5 * shape2.height;
   // Check for intersection along the x-axis
   const isIntersectX = shape1Right >= shape2Left && shape1Left <= shape2Right;
 
   // Check for intersection along the y-axis
   const isIntersectY = shape1Bottom >= shape2Top && shape1Top <= shape2Bottom;
-  
+
+  if(isIntersectX && isIntersectY) console.log(shapeOne, shapeTwo)
+
   // Return true if there is intersection along both axes
   return isIntersectX && isIntersectY;
 }
-export const handleNotColliding = (id, props) => {  
+
+
+export const handleNotColliding = (id, props) => {
 }
 
 // if (xDist < sW / 2 && yDist < sH / 2) {
 //   e.target.x(sX + this.originCenter(sW / 2, id) - this.originCenter(this.realWidth(obj) / 2, obj.id));
-//   e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id)); 
+//   e.target.y(sY + this.originCenter(sH / 2, id) - this.originCenter(this.realHeight(obj) / 2, obj.id));
 //   console.log("COLLISION");
 //   handleCollisions(obj.id, id, true, this.props);
 // } else {
