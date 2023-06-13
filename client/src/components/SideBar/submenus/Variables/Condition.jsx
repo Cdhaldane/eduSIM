@@ -417,7 +417,6 @@ const Condition = (props) => {
 
       {showConAdd && (
         <div className="variable-con-adding">
-          {editingIndex}
           <div className="con-ifs">
             <h1>Set Number of If Statements</h1>
             <input

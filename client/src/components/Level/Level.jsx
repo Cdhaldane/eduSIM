@@ -209,7 +209,7 @@ const Level = (props) => {
             <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
             <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
-              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(0 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
+              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(23 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
             }}></div>
             <i className={`lnif lnif-angle-double-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
             <div className="level-bar-segments">

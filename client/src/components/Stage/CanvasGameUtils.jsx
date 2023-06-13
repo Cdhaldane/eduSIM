@@ -173,10 +173,11 @@ export const handleCollisions = (props, state) => {
     group.map((item) => {
       let name = filteredResult.find(obj => obj.name === item[0]);
       if(name === undefined) return
-      console.log(item[0], name)
       let shape = gamepieces[name.id]
       if(shape === undefined) return
       shape.id = item[0]
+      console.log(shape, item[1])
+
       let touch = handleTouching(shape, item[1], filteredResult)
       touchingArray.push(touch)
     });
@@ -197,7 +198,6 @@ export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
   let shape1 = shapeOne
   let shape2 = filteredResult.find(obj => obj.name === shapeTwo);
   if (shape1 === undefined || shape2 === undefined) return false;
-  console.log(shape1, shape2)
   const shape1Left = shape1.x;
   const shape1Right = shape1.x;
   const shape1Top = shape1.y;

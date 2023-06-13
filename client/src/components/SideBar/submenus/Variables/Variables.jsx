@@ -51,33 +51,45 @@ const SettingRow = styled.div`
   }
 `;
 
+function useResizeObserver() {
+  const ref = useRef();
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const observeTarget = ref.current;
+    const resizeObserver = new ResizeObserver(entries => {
+      entries.forEach(entry => {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height,
+        });
+      });
+    });
+
+    if (observeTarget) {
+      resizeObserver.observe(observeTarget);
+    }
+
+    return () => {
+      resizeObserver.unobserve(observeTarget);
+    };
+  }, [ref]);
+  return [ref, dimensions];
+}
+
+
+
 const Variables = (props) => {
   const { t } = useTranslation();
-  const { updateSetting, settings } = useContext(SettingsContext);
-  const alertContext = useAlertContext();
   const [enviroment, setEnviroment] = useState(false)
   const [tabsEnviroment, setTabsEnviroment] = useState('global')
-  const [current, setCurrent] = useState();
   const [updater, setUpdater] = useState(0);
   const [allShapes, setAllShapes] = useState();
   const [shapes, setShapes] = useState();
   const [tabs, setTabs] = useState("variable");
-  const ref = useRef(null);
-  const [height, setHeight] = useState(0);
-  const [width, setWidth] = useState(0);
+  const [ref, dimensions] = useResizeObserver();
 
-  useEffect(() => {
-    const element = ref.current;
-    element.addEventListener('resize', () => { });
-    function checkResize(mutations) {
-      const event = new CustomEvent('resize', { detail: { width: element.clientWidth, height: element.clientHeight } });
-      element.dispatchEvent(event);
-      setHeight(element.clientHeight)
-    }
-    const observer = new MutationObserver(checkResize);
-    observer.observe(element, { attributes: true, attributeOldValue: true, attributeFilter: ['style'] });
-  }, []);
-
+ 
   useEffect(() => {
     let allShapes = []; // Initialize allShapes as an empty array
     let shapes = []; // Initialize shapes as an empty variable
@@ -99,26 +111,26 @@ const Variables = (props) => {
   const populateTab = () => {
     if (tabs === "variable") {
       return (
-        <div className="condition-input-container" index={tabsEnviroment} style={{ maxHeight: height - 200 }}>
+        <div className="condition-input-container" index={tabsEnviroment} style={{ maxHeight: dimensions.height - 200 }}>
           <Variable current={tabsEnviroment} {...props} />
         </div>
       )
     }
     if (tabs === "condition")
       return (
-        <div className="condition-input-container" style={{ maxHeight: height - 200 }}>
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
           <Condition current={tabsEnviroment} {...props} update={handleUpdate} />
         </div>
       )
     if (tabs === "interaction")
       return (
-        <div className="condition-input-container" style={{ maxHeight: height - 200 }}>
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
           <Interaction current={tabsEnviroment} {...props} shapes={shapes} />
         </div>
       )
     if (tabs === "trigger")
       return (
-        <div className="condition-input-container" style={{ maxHeight: height - 200 }}>
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
           <Trigger current={tabsEnviroment} {...props} allShapes={allShapes} />
         </div>
       )
@@ -163,7 +175,9 @@ const Variables = (props) => {
               <button className={tabsEnviroment === 'global' ? 'con-tabs' : 'con-tabs-session'} onClick={() => setTabs("interaction")}>Interactions</button>
               <button className={tabsEnviroment === 'global' ? 'con-tabs' : 'con-tabs-session'} onClick={() => setTabs("trigger")}>Triggers</button>
             </div>
-            {populateTab()}
+         
+              {populateTab()}
+           
           </div>
         </div>
       </Draggable>

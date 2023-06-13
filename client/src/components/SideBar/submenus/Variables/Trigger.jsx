@@ -62,9 +62,10 @@ const Trigger = (props) => {
       alertContext.showAlert("Please fill out all fields", "warning")
       return
     }
+    let trig = trigger.flatMap(x => x)
     let data = fullTriggers
-    if (editingIndex !== -1) data.splice(editingIndex, 1, trigger)
-    else data.push(trigger)
+    if (editingIndex !== -1) data.splice(editingIndex, 1, trig)
+    else data.push(trig)
     if (props.current === 'global') props.setGlobalTrigs(data)
     if (props.current === 'session') props.setLocalTrigs(data)
     setShowConAdd(!showConAdd)
@@ -89,7 +90,6 @@ const Trigger = (props) => {
   const handleChange = (value, x) => {
     let input = [...trigger]
     input[x] = value.label
-    console.log(input)
     setTrigger(input)
   }
 
@@ -106,12 +106,10 @@ const Trigger = (props) => {
 
   const handleEdit = (i) => {
     let x = fullTriggers[i]
-    console.log(x[0][0], fullTriggers)
     const filteredShapes = shapes.filter(data => {
       const keys = Object.keys(data);
       return !keys.includes(x[0][0]);
     });
-    console.log(filteredShapes)
     setTrigger(x)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
@@ -143,7 +141,6 @@ const Trigger = (props) => {
 
       {showConAdd && (
         <div className="variable-adding trigs-fix">
-          {editingIndex}
           <div className="trigs-area">
             <div className="trigger-name">
               <h1>Variable to Set</h1>

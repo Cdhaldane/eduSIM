@@ -338,7 +338,7 @@ const Interaction = (props) => {
 
       {showConAdd && (
         <div className="variable-adding ints-fix">
-          {editingIndex}
+  
           <div className="ints-area">
             <div className="ints-name">
               <h1>Input to Set</h1>
