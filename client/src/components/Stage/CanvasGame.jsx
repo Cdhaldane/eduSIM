@@ -404,9 +404,7 @@ class Graphics extends Component {
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
           handleCollisions(this.props, this.state);
-          console.log(this.props.gamepieceStatus)
           if(obj.infolevel) return {}
-          
           this.props.socket.emit("interaction", {
             gamepieceId: obj.id,
             parameters: {

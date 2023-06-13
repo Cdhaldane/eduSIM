@@ -170,7 +170,7 @@ const Trigger = (props) => {
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{editingIndex === -1 ? t("common.add") : "Edit"}</button>
-            <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
+            <button className="con-can-b" onClick={() => (setShowConAdd(false), setEditingIndex(-1))}>{t("common.cancel")}</button>
           </div>
         </div>
       )}

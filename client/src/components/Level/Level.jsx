@@ -142,7 +142,7 @@ const Level = (props) => {
                 {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
-                <i className="fa fa-info" />
+              <i class="lni lni-information"></i>
               </button>
             </div>
 
@@ -209,9 +209,9 @@ const Level = (props) => {
             <div className="level-bar-underlay"></div>
             <div className="level-bar-progress-edge"></div>
             <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
-              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(24 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
+              width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(0 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
             }}></div>
-            <i className={`fas fa-caret-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
+            <i className={`lnif lnif-angle-double-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
             <div className="level-bar-segments">
               {times(props.number + (props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
                 <div key={num} className="level-bar-segment">
@@ -227,7 +227,7 @@ const Level = (props) => {
                     }
                     }>
                     {props.number > num ? (
-                      <i className={`fas fa-arrow-alt-circle-right ${count - 1 > num ? 'arrow-left' : ''}`}></i>
+                      <i className={`lni lni-chevron-right-circle ${count - 1 > num ? 'arrow-left' : ''}`}></i>
                     ) : <i className="lni lni-checkmark-circle"></i>}
                   </div>
                 </div>

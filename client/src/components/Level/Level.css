@@ -47,8 +47,15 @@
 }
 
 #levelInfoButton>i {
-  font-size: 15px;
+  font-size: 25px;
+  /* width: 10px;
+  height: 10px; */
+  border: 1px solid var(--primary);
+  border-radius: 100%;
   transform: translateY(-2px);
+  right: 1px;
+  background-color: var(--white);
+  color: var(--primary)
 }
 
 .levelInstructionsDiv {

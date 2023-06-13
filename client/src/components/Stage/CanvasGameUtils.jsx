@@ -127,7 +127,7 @@ function splitArrayByValue(arr, index) {
 }
 const filterObjectBasedOnArray = (obj, arr) => {
   const newObj = {};
-  
+
   arr.forEach(item => {
     // assuming each object in the array has an 'id' property
     const key = item.id;
@@ -138,22 +138,47 @@ const filterObjectBasedOnArray = (obj, arr) => {
 
   return newObj;
 }
+const filterArrayBasedOnArray = (a, b) => {
+  // Create a Set from b's ids for easier lookup
+  const bIds = new Set(b.map(item => item.name));
+
+  // Flatten a by one level
+  const flatA = a.flat();
+  let out =[]
+  a.map((item) => {
+    item.map((subItem) => {
+      subItem.map((subSubItem) => {
+        if(bIds.has(subSubItem)) out.push(item)
+      })
+    })
+  })
+  // Filter a based on whether every item in each subarray exists in b
+  return out
+};
+
 
 export const handleCollisions = (props, state) => {
+  
   let trigs = props.globalTrigs;
+  trigs = trigs.map(subArr => subArr.map(item => Array.isArray(item) ? item.flat().join('') : item));
   let result = props.savedObjects.flatMap(key => state[key])
   let filteredResult = result.filter(obj => obj.level === props.level);
-  const groupedArrays = splitArrayByValue(trigs, 2);
-  console.log(filterObjectBasedOnArray(props.gamepieceStatus, filteredResult))
+  let groupedArrays = splitArrayByValue(trigs, 2);
+
+  groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
+  console.log(groupedArrays)
   groupedArrays.map((group) => {
     let touchingArray = [];
     group.map((item) => {
-      
-      Object.entries(gamepieces).map((piece, i) => {
-        let touch = handleTouching(piece, item[1], filteredResult)
-        touchingArray.push(touch)
-      })
+      let name = filteredResult.find(obj => obj.name === item[0]);
+      if(name === undefined) return
+      console.log(item[0], name)
+      let shape = gamepieces[name.id]
+      if(shape === undefined) return
+      shape.id = item[0]
+      let touch = handleTouching(shape, item[1], filteredResult)
+      touchingArray.push(touch)
     });
     if (touchingArray.includes(true) && !props.globalVars[group[0][2]]) {
       props.socket.emit("varChange", {
@@ -164,13 +189,15 @@ export const handleCollisions = (props, state) => {
         name: group[0][2], value: false
       })
     }
+
   });
 }
 
 export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
-  let shape1 = shapeOne[1]
+  let shape1 = shapeOne
   let shape2 = filteredResult.find(obj => obj.name === shapeTwo);
-  if(shape1 === undefined || shape2 === undefined) return false;
+  if (shape1 === undefined || shape2 === undefined) return false;
+  console.log(shape1, shape2)
   const shape1Left = shape1.x;
   const shape1Right = shape1.x;
   const shape1Top = shape1.y;
@@ -186,7 +213,7 @@ export const handleTouching = (shapeOne, shapeTwo, filteredResult) => {
   // Check for intersection along the y-axis
   const isIntersectY = shape1Bottom >= shape2Top && shape1Top <= shape2Bottom;
 
-  if(isIntersectX && isIntersectY) console.log(shapeOne, shapeTwo)
+  // if(isIntersectX && isIntersectY) console.log(shapeOne, shapeTwo)
 
   // Return true if there is intersection along both axes
   return isIntersectX && isIntersectY;

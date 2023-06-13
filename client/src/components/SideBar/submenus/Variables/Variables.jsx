@@ -9,6 +9,8 @@ import ReactTooltip from "react-tooltip";
 import Switch from "react-switch";
 
 
+
+
 import Variable from "./Variable.jsx"
 import Condition from "./Condition.jsx"
 import Interaction from "./Interaction.jsx"
@@ -136,11 +138,6 @@ const Variables = (props) => {
     setTabs('condition')
   }
 
-  const populateLevelDropdown = () => {
-
-
-  }
-
   return (
     <div className="variable-container" index={updater}>
       <Draggable handle="strong">
@@ -152,7 +149,6 @@ const Variables = (props) => {
                 Random = Random(min, max, step) <br />
                 Seperate values in array with ','
               </ReactTooltip>
-              {populateLevelDropdown()}
               <strong><h1 className="variable-title">Variable Wizard</h1></strong>
               <div className="switch-container" style={{ border: tabsEnviroment === 'global' ? '1px solid var(--red)' : '1px solid var(--green)' }}>
                 <Switch onChange={handleSwitchChange} checked={enviroment} checkedIcon={false} uncheckedIcon={false} onColor="#75fa83" offColor="#cf6161"

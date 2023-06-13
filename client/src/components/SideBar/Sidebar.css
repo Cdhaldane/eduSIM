@@ -1250,6 +1250,55 @@
 .variable-buttons:hover{
   cursor: pointer;
 }
+.draggable-trigger-container {
+  /* overflow-y: scroll; */
+  display: flex !important;
+  flex-wrap: wrap;
+  overflow-x: hidden;
+  flex-basis: auto!important;
+  padding: 5px;
+}
+.draggable-trigger-inputs-container {
+  display: flex;
+}
+.draggable-trigger-inputs {
+  position: relative;
+   background-color: var(--almostwhite);
+  height: auto;
+  width: auto;
+  min-width: 49%;
+  transition:all .5s;
+  vertical-align: middle;
+  border-radius: 9px;
+  border: 1px solid gray;
+  margin: 3px;
+  padding: 5px;
+  font-size: 0.8em !important;
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+}
+.draggable-trigger-inputs h1{
+  color: var(--red);
+  font-size: 1.3em;
+  margin-right: 10px;
+  margin-left: 10px;
+  font-style:oblique;
+}
+
+.draggable-trigger-inputs h2{
+  color: var(--warning);
+  font-size: 1.3em;
+  position: relative;
+}
+.draggable-trigger-inputs h3{
+  font-size: 1.3em;
+  color: var(--success);
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+
 
 
 .condition-input-container::-webkit-scrollbar-track
