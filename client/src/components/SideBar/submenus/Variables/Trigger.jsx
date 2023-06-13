@@ -20,6 +20,7 @@ const Trigger = (props) => {
   const [trigger, setTrigger] = useState([null, null, null]);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [render, setRender] = useState([]);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -39,11 +40,12 @@ const Trigger = (props) => {
   }, [props.allShapes])
 
   const populateTriggers = (trigs) => {
+    setFullTriggers(trigs)
     return trigs?.map((trig, i) => (
       <div className="condition-inputs">
         <div className="variable-buttons">
           <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
-          <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+          <i onClick={() => handleEdit(i, trigs)} className="lnil lnil-pencil" />
         </div>
         <div className="ints-container">
           <div className="if">
@@ -63,6 +65,8 @@ const Trigger = (props) => {
       return
     }
     let trig = trigger.flatMap(x => x)
+    console.log(props)
+    trig.push(props.page)
     let data = fullTriggers
     if (editingIndex !== -1) data.splice(editingIndex, 1, trig)
     else data.push(trig)
@@ -93,45 +97,43 @@ const Trigger = (props) => {
     setTrigger(input)
   }
 
-  const handleOut = () => {
-    let trigs = []
-    if (props.current === 'global') {
-      trigs = props.globalTrigs
-    }
-    if (props.current === 'session') {
-      trigs = props.localTrigs
-    }
-    return (populateTriggers(trigs))
-  }
 
-  const handleEdit = (i) => {
-    let x = fullTriggers[i]
-    const filteredShapes = shapes.filter(data => {
-      const keys = Object.keys(data);
-      return !keys.includes(x[0][0]);
-    });
+
+  const handleEdit = (i, trigs) => {
+    let x = trigs[i]
+
     setTrigger(x)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
   }
 
-
   useEffect(() => {
+    let out;
     if (props.current === 'global') {
-      setFullTriggers(props.globalTrigs)
+      out = props.globalTrigs
       setVariables(props.globalVars)
     }
     if (props.current === 'session') {
-      setFullTriggers(props.localTrigs)
+      out = props.localTrigs
       setVariables(props.localVars)
     }
-  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars])
+    let x = [];
+    if (shapes)
+      out.map((trig) => {
+        let t = trig.flatMap(x => x)
+        if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
+          x.push(t)
+        }
+      })
+
+    setRender(populateTriggers(x))
+  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes])
 
   return (
     <>
       {!showConAdd && (
         <>
-          {handleOut()}
+          {render}
         </>
       )}
       <div className="variable-add tester" onClick={() => (setShowConAdd(true), setTrigger(['', '', '']))} hidden={showConAdd}>

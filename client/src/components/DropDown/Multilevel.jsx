@@ -46,7 +46,6 @@ const MultiLevel = (props) => {
     };
 
     useEffect(() => {
-        console.log(props.baseValue)
         let base = props.baseValue
         if(Array.isArray(base)){
             base = base[0]

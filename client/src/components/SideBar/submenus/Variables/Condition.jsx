@@ -20,11 +20,14 @@ const Condition = (props) => {
   const [showAddition3, setShowAddition3] = useState(false);
   const [showAddition, setShowAddition] = useState(false);
   const [variables, setVariables] = useState(props.globalVars)
+  const [shapes, setShapes] = useState()
+
   const [updater, setUpdater] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
+  const [render, setRender] = useState([]);
   const setConfirmationModal = (data) => {
     setConfirmationVisible(data);
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
@@ -89,6 +92,18 @@ const Condition = (props) => {
   }
 
   useEffect(() => {
+    let out = []
+    for (let i = 0; i < props.allShapes.length; i++) {
+      let name = props.allShapes[i].name
+      out.push({ [name]: i })
+    }
+
+    setShapes(out)
+  }, [props.allShapes])
+
+
+
+  useEffect(() => {
     // let temp = condition
     // if (showAddition) {
     //   temp[temp.length - 1][4] = ''
@@ -122,18 +137,19 @@ const Condition = (props) => {
     // }
   })
 
-  const handleEdit = (i) => {
+  const handleEdit = (i, cons) => {
     let out = ([['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', '']])
-    for(let j = 0; j < props.globalCons[i].length; j++){
-      if(j < props.globalCons[i].length - 1){
-        out[j] = props.globalCons[i][j]
+  
+    for(let j = 0; j < cons[i].length; j++){
+      if(j < cons[i].length - 1){
+        out[j] = cons[i][j]
       }
       else{
-        out[4] = props.globalCons[i][props.globalCons[i].length -1]
+        out[4] = cons[i][cons[i].length -1]
       }
     }
     let additions = [showAddition0, showAddition1, showAddition2, showAddition3]
@@ -141,7 +157,7 @@ const Condition = (props) => {
       if(out[j][4] != '') handleEditState(j, true)
       else handleEditState(j, false)
     }
-    setIfs(props.globalCons[i].length - 1)
+    setIfs(cons[i].length - 1)
     setCondition(out)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
@@ -154,15 +170,16 @@ const Condition = (props) => {
     ['', '=', '', '+', ''],
     ['', '=', '', '+', '']])
     setCondition(out)
-  }, [props.globalCons])
+  }, [props.globalCons, props.localCons])
 
   const populateConditions = (cons) => {
+    setFullConditions(cons)
     let list = []
     for (let i = 0; i < cons.length; i++) {
       list.push(<div className="condition-inputs cons-condition">
         <div className="variable-buttons">
         <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}/>
-        <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+        <i onClick={() => handleEdit(i, cons)} className="lnil lnil-pencil" />
         </div>
 
         <div className="ints-container">
@@ -196,6 +213,7 @@ const Condition = (props) => {
     let a = [];
     let temp = condition
     temp.splice(ifs, 4 - ifs)
+    temp.push(props.page)
     if (props.current === 'session') {
       let data = fullConditions
       data.push(temp)
@@ -220,6 +238,7 @@ const Condition = (props) => {
       ['', '=', '', '+', ''],
       ['', '=', '', '+', '']
     ])
+    setEditingIndex(-1)
     setShowAddition(false)
     setShowAddition0(false)
     setShowAddition1(false)
@@ -250,15 +269,18 @@ const Condition = (props) => {
   }
 
   useEffect(() => {
+    let out;
     if (props.current === 'global') {
-      setFullConditions(props.globalCons)
+      out = props.globalCons
       setVariables(props.globalVars)
     }
     if (props.current === 'session') {
-      setFullConditions(props.localCons)
+      out = props.localCons
       setVariables(props.localVars)
     }
-  }, [props.current, props.localCons, props.globalCons, props.localVars, props.globalVars])
+    console.log(out)
+    setRender(populateConditions(out))
+  }, [props.current, props.localCons, props.globalCons, props.localVars, props.globalVars, editingIndex])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -398,7 +420,6 @@ const Condition = (props) => {
   }
 
   const handleChange = (value, x, y) => {
-    console.log(value, x, y)
     condition[x][y] = value.label
   }
 
@@ -407,7 +428,7 @@ const Condition = (props) => {
     <>
       {!showConAdd && (
         <>
-          {handleOut()}
+          {render}
         </>
       )}
       <div className="variable-add tester" onClick={() => (setShowConAdd(true),setEditingIndex(-1))} hidden={showConAdd}>

@@ -87,20 +87,24 @@ const CanvasUtils = (props) => {
 
   useEffect(() => {
     let x = []
+    console.log(props.globalCons)
     if (!props.editMode)
       for (let i = 0; i < props.globalCons.length; i++) {
         let result = [];
         for (let j = 0; j < props.globalCons[i].length; j++) {
-          let var1 = props.globalCons[i][j][0];
-          let comparator = props.globalCons[i][j][1];
-          let var2 = props.globalCons[i][j][2];
-          let math = props.globalCons[i][j][3];
-          let var3 = props.globalCons[i][j][4];
-          if (j < props.globalCons[i].length - 1) result.push(checkCondition(var1, comparator, var2, math, var3));
+          let con = props.globalCons[i][j].flatMap(x => x)
+          console.log(con)
+          let var1 = con[0];
+          let comparator = con[1];
+          let var2 = con[2];
+          let math = con[3];
+          let var3 = con[4];
+          if (j < props.globalCons[i].length - 1) {
+            result.push(checkCondition(var1, comparator, var2, math, var3));
+          }
           else {
             if (!result.includes(false)) {
               setCondition(var1, var2, math, var3);
-              return;
             }
           }
         }
@@ -144,11 +148,11 @@ const filterArrayBasedOnArray = (a, b) => {
 
   // Flatten a by one level
   const flatA = a.flat();
-  let out =[]
+  let out = []
   a.map((item) => {
     item.map((subItem) => {
       subItem.map((subSubItem) => {
-        if(bIds.has(subSubItem)) out.push(item)
+        if (bIds.has(subSubItem)) out.push(item)
       })
     })
   })
@@ -158,7 +162,7 @@ const filterArrayBasedOnArray = (a, b) => {
 
 
 export const handleCollisions = (props, state) => {
-  
+
   let trigs = props.globalTrigs;
   trigs = trigs.map(subArr => subArr.map(item => Array.isArray(item) ? item.flat().join('') : item));
   let result = props.savedObjects.flatMap(key => state[key])
@@ -167,17 +171,14 @@ export const handleCollisions = (props, state) => {
 
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
-  console.log(groupedArrays)
   groupedArrays.map((group) => {
     let touchingArray = [];
     group.map((item) => {
       let name = filteredResult.find(obj => obj.name === item[0]);
-      if(name === undefined) return
+      if (name === undefined) return
       let shape = gamepieces[name.id]
-      if(shape === undefined) return
+      if (shape === undefined) return
       shape.id = item[0]
-      console.log(shape, item[1])
-
       let touch = handleTouching(shape, item[1], filteredResult)
       touchingArray.push(touch)
     });
