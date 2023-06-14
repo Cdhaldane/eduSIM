@@ -147,6 +147,7 @@ class Graphics extends Component {
       });
     }, 0);
   }
+  
 
   // Replaces variables in text content (stored in {})
   formatTextMacros = (simple, text) => {
@@ -421,6 +422,7 @@ class Graphics extends Component {
           const objRef = this.refs[obj.id];
           const stage = this.stage || objRef.getLayer();
           this.stage = stage;
+          handleCollisions(this.props, this.state);
 
           const layer = this.state.personalAreaOpen ? "personal" :
           (this.state.overlayOpen ? "overlay" : "group");

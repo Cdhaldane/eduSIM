@@ -68,9 +68,7 @@ const Trigger = (props) => {
       alertContext.showAlert("Please fill out all fields", "warning")
       return
     }
-    let trig = trigger.flatMap(x => x)
-    console.log(props)
-    trig.push(props.page)
+    let trig = trigger.flatMap(x => x)    
     let data = fullTriggers
     if (editingIndex !== -1) data.splice(editingIndex, 1, trig)
     else data.push(trig)
@@ -126,7 +124,15 @@ const Trigger = (props) => {
       let trigger = props.group[props.currentPage] ? props.group[props.currentPage].trigger : []
       out = trigger
     }
-
+    let x = []
+    if (shapes)
+      out.map((trig) => {
+        let t = trig.flatMap(x => x)
+        if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
+          x.push(t)
+        }
+      })
+    out = x
 
 
     setRender(populateTriggers(out))

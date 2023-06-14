@@ -233,20 +233,31 @@ const Interaction = (props) => {
 
   useEffect(() => {
     setLoading(true)
+    let out = []
     if(props.currentPage=== 0) {
-      console.log('2')
     if (props.current === 'global') {
-      setFullInteractions(props.globalInts)
+      out = (props.globalInts)
       setVariables(props.globalVars)
     }
     if (props.current === 'session') {
-      setFullInteractions(props.localInts)
+      out = (props.localInts)
       setVariables(props.localVars)
     } 
     } else {
       let interaction = props.group[props.currentPage] ? props.group[props.currentPage].interaction : []
-      setFullInteractions(interaction)
+      out = (interaction)
     }
+    console.log(out)
+    out = out.filter(arr => {
+      for (let obj of props.shapes) {
+        if (arr[0] === obj.varName) {
+          return true;
+        }
+      }
+      return false;
+    });
+    console.log(out)
+    setFullInteractions(out)
   }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes, props.group, props.currentPage])
 
   const updateState = (n, i) => {

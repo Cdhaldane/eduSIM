@@ -140,21 +140,33 @@ const filterObjectBasedOnArray = (obj, arr) => {
 
   return newObj;
 }
-const filterArrayBasedOnArray = (a, b) => {
-  // Create a Set from b's ids for easier lookup
-  const bIds = new Set(b.map(item => item.name));
+const checkCorrespondence = (objArray, subArray) => {
+  // Check if we've reached a bottom-level array (its elements are not arrays)
+  if (!Array.isArray(subArray[0])) {
+    // Check first two positions
+    for(let j = 0; j < Math.min(2, subArray.length); j++) {
+      let objExists = objArray.some(obj => (
+        obj.name === subArray[j]
+       ) );
+      if(!objExists) return false;
+    }
+    return true;
+  }
 
-  // Flatten a by one level
-  const flatA = a.flat();
+  // If we haven't reached a bottom-level array, recurse into each subArray
+  for(let i = 0; i < subArray.length; i++) {
+    if(!checkCorrespondence(objArray, subArray[i])) return false;
+  }
+  
+  return true;
+};
+const filterArrayBasedOnArray = (arr, obj) => {
   let out = []
-  a.map((item) => {
-    item.map((subItem) => {
-      subItem.map((subSubItem) => {
-        if (bIds.has(subSubItem)) out.push(item)
-      })
-    })
-  })
-  // Filter a based on whether every item in each subarray exists in b
+  for(let i = 0; i < arr.length; i++) {
+    if(checkCorrespondence(obj, arr[i])) {
+      out.push(arr[i]);
+    }
+  }
   return out
 };
 
@@ -163,10 +175,14 @@ export const handleCollisions = (props, state) => {
 
   let trigs = props.globalTrigs;
   trigs = trigs.map(subArr => subArr.map(item => Array.isArray(item) ? item.flat().join('') : item));
+  for (let i = 0; i < trigs.length; i++) {
+    if (trigs[i].length === 4) {
+      trigs[i].splice(3, 1);
+    }
+  }
   let result = props.savedObjects.flatMap(key => state[key])
   let filteredResult = result.filter(obj => obj.level === props.level);
   let groupedArrays = splitArrayByValue(trigs, 2);
-
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
   groupedArrays.map((group) => {

@@ -177,7 +177,7 @@ const Condition = (props) => {
       ['', '=', '', '+', ''],
       ['', '=', '', '+', '']
     ])
-    setEditingIndex(-1)
+    setEditingIndex(-2)
     setShowAddition(false)
     setShowAddition0(false)
     setShowAddition1(false)
@@ -194,7 +194,7 @@ const Condition = (props) => {
     } else {
       props.setLocalCons(data)
     }
-    setEditingIndex(-2)
+    setEditingIndex(-3)
   }
 
   useEffect(() => {
