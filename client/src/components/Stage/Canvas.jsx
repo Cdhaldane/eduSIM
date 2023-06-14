@@ -252,6 +252,7 @@ class Graphics extends Component {
       gamepieceStatus: {},
 
       lineTransformDragging: false,
+      groups: {},
 
       connectors: [],
       gameroles: [],
@@ -377,6 +378,8 @@ class Graphics extends Component {
         if (this.props.setLocalTrigs) {
           this.props.setLocalTrigs(objects.localTrigs || []);
         }
+        if (this.props.handleGroups)
+          this.props.handleGroups(objects.groups || {});
 
 
 
@@ -613,6 +616,7 @@ class Graphics extends Component {
         currentMainShapes.push(this.state[type]);
         allShapes = allShapes.concat(this.state[type]);
       }
+      this.props.handleSetPages(this.state.pages.length)
 
 
 
@@ -749,6 +753,9 @@ class Graphics extends Component {
     storedObj.localCons = this.props.localCons;
     storedObj.localInts = this.props.localInts;
     storedObj.localTrigs = this.props.localTrigs;
+    storedObj.groups = this.props.groups;
+
+    console.log(storedObj)
 
     this.setState({
       saved: storedObj

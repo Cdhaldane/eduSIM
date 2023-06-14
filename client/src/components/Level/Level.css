@@ -53,9 +53,11 @@
   border: 1px solid var(--primary);
   border-radius: 100%;
   transform: translateY(-2px);
-  right: 1px;
-  background-color: var(--white);
-  color: var(--primary)
+  right: 3px;
+  bottom: 0px;
+  padding: 2px;
+  background-color: var(--primary);
+  color: var(--white)
 }
 
 .levelInstructionsDiv {

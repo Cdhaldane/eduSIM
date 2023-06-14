@@ -58,8 +58,10 @@ const EditPage = (props) => {
   const [localCons , setLocalCons] = useState([]);
   const [localInts, setLocalInts] = useState([]);
   const [localTrigs, setLocalTrigs] = useState([]);
-
   const [page, setPage] = useState(1);
+  const [groups, setGroups] = useState({});
+
+  const [pages, setPages] = useState(6);
   const [shapes, setShapes] = useState([])
   const [allShapes, setAllShapes] = useState([])
 
@@ -85,7 +87,6 @@ const EditPage = (props) => {
   }
 
   const handleSetTasks = (data) => {
-    console.log(data)
     setTasks(data)
   }
 
@@ -120,6 +121,12 @@ const EditPage = (props) => {
   const handleSetAllShapes = (data) => {
     setAllShapes(data)
   }
+  const handleSetPages = data => {
+    setPages(data)
+  }
+  const handleGroups = (data) => {
+    setGroups(data)
+  }
 
   return (
     <div className="editpage">
@@ -140,7 +147,6 @@ const EditPage = (props) => {
               localCons={localCons}
               localInts={localInts}
               localTrigs={localTrigs}
-              
               shapes={shapes || {}}
               allShapes={allShapes || {}}
               img={localStorage.simimg}
@@ -154,14 +160,16 @@ const EditPage = (props) => {
               setLocalInts={handleLocalInts}
               setLocalTrigs={handleLocalTrigs}
               handleLevel={handlePage}
+              handleGroups={handleGroups}
               random={props.random}
               customObjects={props.customObjects}
               savedObjects={props.savedObjects}
               loadObjects={props.loadObjects}
               page={page}
+              pages={pages}
               setAlerts={handleSetTasks}
               alerts={tasks || []}
-              
+              groups={groups}
             />
           </GridNav>
           <GridMain color={pageColor}>
@@ -204,8 +212,11 @@ const EditPage = (props) => {
                 setLocalCons={handleLocalCons}
                 setLocalInts={handleLocalInts}
                 setLocalTrigs={handleLocalTrigs}  
+                handleGroups={handleGroups}
                 setEditState={props.setEditState}
                 handleLevel={handlePage}
+                handleSetPages={handleSetPages}
+                groups={groups}
               />
           </GridMain>
         </Grid>

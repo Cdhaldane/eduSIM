@@ -140,6 +140,8 @@ const NavLink = forwardRef((props, ref) => {
       onClick={props.action}
       disabled={props.disabled}
       textopacity={props.compact ? 0 : 1}
+      title={props.label}
+
     >
       {props.children || (
         <>

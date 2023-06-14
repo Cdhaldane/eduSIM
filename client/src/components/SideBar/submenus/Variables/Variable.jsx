@@ -1,10 +1,11 @@
-import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../../../Alerts/AlertContext";
-
+import { MenuContext } from "./VariableContext";
 
 import "../../Sidebar.css";
+import "./Variable.css"
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import { use } from "i18next";
@@ -19,6 +20,7 @@ const Variable = (props) => {
   const [variables, setVariables] = useState([])
   const [gameText, setGameText] = useState([])
   const [updater, setUpdater] = useState(0);
+  const [contextIndex, setContextIndex] = useState(-1)
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -26,6 +28,8 @@ const Variable = (props) => {
     setConfirmationVisible(data);
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
+
+  const { contextMenu, handleContextMenu, hideContextMenu } = useContext(MenuContext);
   const alertContext = useAlertContext();
 
   const addVar = () => {
@@ -75,102 +79,115 @@ const Variable = (props) => {
   }
 
 
-const deleteVar = (data, i) => {
-  data.splice(i, 1)
-  if (props.current === 'global') {
-    props.setGlobalVars(data)
-  } else {
-    props.setLocalVars(data)
+  const deleteVar = (data, i) => {
+    data.splice(i, 1)
+    if (props.current === 'global') {
+      props.setGlobalVars(data)
+    } else {
+      props.setLocalVars(data)
+    }
   }
-}
 
-const populateGameVars = (data) => {
-  let list = []
-  for (let i = 0; i < data.length; i++) {
-    list.push(<div className="condition-inputs vars" key={i}>
-      <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
-      <h1>{Object.keys(data[i])}</h1>
-      <h2> = </h2>
-      <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
-    </div>
-    )
-  }
-  return list
-}
-const handleGame = (e, varName, i) => { 
-  let vars = variables;
-  let key = Object.keys(vars[i])
-  vars[i][key] = e;
-  if (props.current === 'global')
-  props.setGlobalVars(vars);
-  if (props.current === 'session')
-  props.setLocalVars(vars);
-}
-
-
-const handleOut = () => {
-  let out = []
-  if (props.current === 'global')
-    out = props.globalVars
-  if (props.current === 'session')
-    out = props.localVars
-  return (populateGameVars(out))
-}
-
-useEffect(() => {
-  if (props.current === 'global')
-    setVariables(props.globalVars)
-  if (props.current === 'session')
-    setVariables(props.localVars)
-}, [props.current, props.globalVars, props.localVars])
-
-
-return (
-  <>
-    {!showAdd && (
-      <>
-        {handleOut()}
-      </>
-    )}
-    <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
-      <Plus className="icon plus" />
-      {t("sidebar.addNewVar")}
-    </div>
-
-    {showAdd && (props.current === 'global' || props.current === 'session') && (
-      <div className="variable-adding">
-        <div className="variable-choose">
-          <label for="var-type">Variable Type</label>
-          <select name="var-type" id="var-type" onChange={(e) => setVarType(e.target.value)} value={varType}>
-            <option value="integer">Integer</option>
-            <option value="arrayInt">Integer Array</option>
-            <option value="string">String</option>
-            <option value="arrayString">String Array</option>
-          </select>
-        </div>
-        <div className="variable-hold">
-          <h1>Variable Name</h1>
-          <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)} />
-        </div>
-        <div className="variable-hold">
-          <h1>Variable Value</h1>
-          <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
-        </div>
-        <div className="variable-hold">
-          <button onClick={() => addVar()}>{t("common.add")}</button>
-          <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
-        </div>
+  const populateGameVars = (data) => {
+    let list = []
+    for (let i = 0; i < data.length; i++) {
+      list.push(<div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
+        <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
+        <h1>{Object.keys(data[i])}</h1>
+        <h2> = </h2>
+        <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
       </div>
-    )}
-    <ConfirmationModal
-      visible={confirmationVisible}
-      hide={() => setConfirmationModal(false)}
-      confirmFunction={() => deleteVar(deleteIndex)}
-      confirmMessage={"Yes"}
-      message={"Are you sure you want to delete this variable? This action cannot be undone."}
-    />
-  </>
-);
+      )
+    }
+    return list
+  }
+  const handleGame = (e, varName, i) => {
+    let vars = variables;
+    let key = Object.keys(vars[i])
+    vars[i][key] = e;
+    if (props.current === 'global')
+      props.setGlobalVars(vars);
+    if (props.current === 'session')
+      props.setLocalVars(vars);
+  }
+
+
+
+  useEffect(() => {
+    if (props.currentPage === 0) {
+      if (props.current === 'global')
+        setVariables(props.globalVars)
+      if (props.current === 'session')
+        setVariables(props.localVars)
+    }
+    else {
+      let variable = props.group[props.currentPage] ? props.group[props.currentPage].variable : []
+      setVariables(variable)
+    }
+
+  }, [props.current, props.globalVars, props.localVars, props.group, props.currentPage])
+
+
+  return (
+    <div className="menu-context-container">
+      {!showAdd && (
+        <>
+          {populateGameVars(variables)}
+        </>
+      )}
+      <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
+        <Plus className="icon plus" />
+        {t("sidebar.addNewVar")}
+      </div>
+
+      {showAdd && (props.current === 'global' || props.current === 'session') && (
+        <div className="variable-adding">
+          <div className="variable-choose">
+            <label for="var-type">Variable Type</label>
+            <select name="var-type" id="var-type" onChange={(e) => setVarType(e.target.value)} value={varType}>
+              <option value="integer">Integer</option>
+              <option value="arrayInt">Integer Array</option>
+              <option value="string">String</option>
+              <option value="arrayString">String Array</option>
+            </select>
+          </div>
+          <div className="variable-hold">
+            <h1>Variable Name</h1>
+            <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)} />
+          </div>
+          <div className="variable-hold">
+            <h1>Variable Value</h1>
+            <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
+          </div>
+          <div className="variable-hold">
+            <button onClick={() => addVar()}>{t("common.add")}</button>
+            <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
+          </div>
+        </div>
+      )}
+      <ConfirmationModal
+        visible={confirmationVisible}
+        hide={() => setConfirmationModal(false)}
+        confirmFunction={() => deleteVar(deleteIndex)}
+        confirmMessage={"Yes"}
+        message={"Are you sure you want to delete this variable? This action cannot be undone."}
+      />
+      {contextMenu.show && (
+        <div className={`variable-context ${contextMenu.show ? 'show' : ''}`}
+          style={{
+            top: `${contextMenu.y - props.position.y}px`,
+            left: `${contextMenu.x - props.position.x}px`,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {props.currentPage === 0 ? (
+            <button onClick={() => (props.handleGroup(props.page, variables[contextIndex], 'add', 'variable'), hideContextMenu())}>Add to page {props.page}</button>) : (
+            <button onClick={() => (props.handleGroup(props.currentPage, variables[contextIndex], 'remove', 'variable'), hideContextMenu())}>Remove from page {props.currentPage}</button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Variable;

@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } 
 import { useAlertContext } from "../../../Alerts/AlertContext";
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import { MenuContext } from "./VariableContext";
 
 import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
@@ -26,6 +27,7 @@ const Condition = (props) => {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [contextIndex, setContextIndex] = useState(-1)
   const confirmationVisibleRef = useRef(confirmationVisible);
   const [render, setRender] = useState([]);
   const setConfirmationModal = (data) => {
@@ -37,6 +39,8 @@ const Condition = (props) => {
   const lt = "<"
   const gt = ">"
   const [fullConditions, setFullConditions] = useState([])
+  const { contextMenu, handleContextMenu, hideContextMenu } = useContext(MenuContext);
+
   const [condition, setCondition] = useState([
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
@@ -45,46 +49,16 @@ const Condition = (props) => {
     ['', '=', '', '+', '']
   ])
   const [box, setBox] = useState([
-    {
-      id: 0,
-      state: 'var'
-    },
-    {
-      id: 1,
-      state: 'var'
-    },
-    {
-      id: 2,
-      state: 'var'
-    },
-    {
-      id: 3,
-      state: 'var'
-    },
-    {
-      id: 4,
-      state: 'var'
-    },
-    {
-      id: 5,
-      state: 'var'
-    },
-    {
-      id: 6,
-      state: 'var'
-    },
-    {
-      id: 7,
-      state: 'var'
-    },
-    {
-      id: 8,
-      state: 'var'
-    },
-    {
-      id: 9,
-      state: 'var'
-    },
+    { id: 0, state: 'var' },
+    { id: 1, state: 'var' },
+    { id: 2, state: 'var' },
+    { id: 3, state: 'var' },
+    { id: 4, state: 'var' },
+    { id: 5, state: 'var' },
+    { id: 6, state: 'var' },
+    { id: 7, state: 'var' },
+    { id: 8, state: 'var' },
+    { id: 9, state: 'var' },
   ]);
   if (!localStorage.conditions) {
     var a = [];
@@ -102,62 +76,29 @@ const Condition = (props) => {
   }, [props.allShapes])
 
 
-
-  useEffect(() => {
-    // let temp = condition
-    // if (showAddition) {
-    //   temp[temp.length - 1][4] = ''
-    // }
-    // if (showAddition0) {
-    //   temp[0][4] = ''
-    // }
-    // if (showAddition1) {
-    //   temp[1][4] = ''
-    // }
-    // if (showAddition2) {
-    //   temp[2][4] = ''
-    // }
-    // if (showAddition3) {
-    //   temp[3][4] = ''
-    // }
-    // if (!showAddition) {
-    //   temp[temp.length - 1][4] = ''
-    // }
-    // if (!showAddition0) {
-    //   temp[0][4] = ''
-    // }
-    // if (!showAddition1) {
-    //   temp[1][4] = ''
-    // }
-    // if (!showAddition2) {
-    //   temp[2][4] = ''
-    // }
-    // if (!showAddition3) {
-    //   temp[3][4] = ''
-    // }
-  })
-
   const handleEdit = (i, cons) => {
     let out = ([['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', '']])
-  
-    for(let j = 0; j < cons[i].length; j++){
-      if(j < cons[i].length - 1){
+
+    for (let j = 0; j < cons[i].length; j++) {
+      if (j < cons[i].length - 1) {
         out[j] = cons[i][j]
       }
-      else{
-        out[4] = cons[i][cons[i].length -1]
+      else {
+        out[4] = cons[i][cons[i].length - 1]
       }
     }
     let additions = [showAddition0, showAddition1, showAddition2, showAddition3]
-    for(let j = 0; j < out.length; j++){
-      if(out[j][4] != '') handleEditState(j, true)
+    for (let j = 0; j < out.length; j++) {
+      if (out[j][4] != '') handleEditState(j, true)
       else handleEditState(j, false)
     }
-    setIfs(cons[i].length - 1)
+    if (cons[i].length > 5)
+      setIfs(cons[i].length - 2)
+    else setIfs(cons[i].length - 1)
     setCondition(out)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
@@ -176,10 +117,10 @@ const Condition = (props) => {
     setFullConditions(cons)
     let list = []
     for (let i = 0; i < cons.length; i++) {
-      list.push(<div className="condition-inputs cons-condition">
+      list.push(<div className="condition-inputs cons-condition" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
-        <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }}/>
-        <i onClick={() => handleEdit(i, cons)} className="lnil lnil-pencil" />
+          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
+          <i onClick={() => handleEdit(i, cons)} className="lnil lnil-pencil" />
         </div>
 
         <div className="ints-container">
@@ -213,7 +154,6 @@ const Condition = (props) => {
     let a = [];
     let temp = condition
     temp.splice(ifs, 4 - ifs)
-    temp.push(props.page)
     if (props.current === 'session') {
       let data = fullConditions
       data.push(temp)
@@ -221,12 +161,11 @@ const Condition = (props) => {
     }
     else if (props.current === 'global') {
       let data = fullConditions
-      console.log(editingIndex)
-      if(editingIndex !== -1){
+      if (editingIndex !== -1) {
         data.splice(editingIndex, 1, temp); // Remove item at editingIndex and replace with temp
       } else {
         data.push(temp)
-      }  
+      }
       props.setGlobalCons(data)
     }
 
@@ -255,32 +194,27 @@ const Condition = (props) => {
     } else {
       props.setLocalCons(data)
     }
-  }
-
-  const handleOut = () => {
-    let cons = []
-    if (props.current === 'global') {
-      cons = props.globalCons
-    }
-    if (props.current === 'session') {
-      cons = props.localCons
-    }
-    return (populateConditions(cons))
+    setEditingIndex(-2)
   }
 
   useEffect(() => {
     let out;
-    if (props.current === 'global') {
-      out = props.globalCons
-      setVariables(props.globalVars)
+    if (props.currentPage === 0) {
+      if (props.current === 'global') {
+        out = props.globalCons
+        setVariables(props.globalVars)
+      }
+      if (props.current === 'session') {
+        out = props.localCons
+        setVariables(props.localVars)
+      }
     }
-    if (props.current === 'session') {
-      out = props.localCons
-      setVariables(props.localVars)
+    else {
+      let conditions = props.group[props.currentPage] ? props.group[props.currentPage].condition : []
+      out = conditions
     }
-    console.log(out)
     setRender(populateConditions(out))
-  }, [props.current, props.localCons, props.globalCons, props.localVars, props.globalVars, editingIndex])
+  }, [props.current, props.localCons, props.globalCons, props.localVars, props.globalVars, editingIndex, props.group, props.currentPage])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -300,7 +234,7 @@ const Condition = (props) => {
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
         <div className="box int-special">
           {box[i].state === 'var' ? (
-            <Multilevel data={variables} handleChange={handleChange} x={x} y={n}  baseValue={condition[x][n]} />
+            <Multilevel data={variables} handleChange={handleChange} x={x} y={n} baseValue={condition[x][n]} />
           ) : (
             <input
               onChange={(e) => { handleSelectChange(e.target, x, n) }}
@@ -330,6 +264,7 @@ const Condition = (props) => {
 
   const handleIfStatements = () => {
     let list = []
+    console.log(ifs)
     for (let i = 0, x = 0; i < ifs; i++, x = x + 2) {
       list.push(
         <>
@@ -412,7 +347,7 @@ const Condition = (props) => {
   const handleIfs = (e) => {
     if (parseInt(e.target.value) < 5)
       setIfs(parseInt(e.target.value))
-    if(!e.target.value){
+    if (!e.target.value) {
       setIfs(1)
     }
     else
@@ -431,7 +366,7 @@ const Condition = (props) => {
           {render}
         </>
       )}
-      <div className="variable-add tester" onClick={() => (setShowConAdd(true),setEditingIndex(-1))} hidden={showConAdd}>
+      <div className="variable-add tester" onClick={() => (setShowConAdd(true), setEditingIndex(-1))} hidden={showConAdd}>
         <Plus className="icon plus" />
         ADD NEW CONDITION
       </div>
@@ -498,6 +433,20 @@ const Condition = (props) => {
         confirmMessage={"Yes"}
         message={"Are you sure you want to delete this condition? This action cannot be undone."}
       />
+      {contextMenu.show && (
+        <div className={`variable-context ${contextMenu.show ? 'show' : ''}`}
+          style={{
+            top: `${contextMenu.y - props.position.y}px`,
+            left: `${contextMenu.x - props.position.x}px`,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {props.currentPage === 0 ? (
+            <button onClick={() => (props.handleGroup(props.page, fullConditions[contextIndex], 'add', 'condition'), hideContextMenu())}>Add to page {props.page}</button>) : (
+            <button onClick={() => (props.handleGroup(props.currentPage, fullConditions[contextIndex], 'remove', 'condition'), hideContextMenu())}>Remove from page {props.currentPage}</button>
+          )}
+        </div>
+      )}
     </>
   );
 }

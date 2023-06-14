@@ -2,6 +2,8 @@ import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } 
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../../../Alerts/AlertContext";
+import { MenuContext } from "./VariableContext";
+
 
 import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
@@ -29,6 +31,7 @@ const Interaction = (props) => {
   const [interaction, setInteraction] = useState([props.shapes[0]?.varName, start, '=', start, '', '', check])
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [contextIndex, setContextIndex] = useState(-1)
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -36,6 +39,7 @@ const Interaction = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
   const alertContext = useAlertContext();
+  const { contextMenu, handleContextMenu, hideContextMenu } = useContext(MenuContext);
   const [box, setBox] = useState([
     {
       id: 0,
@@ -63,17 +67,6 @@ const Interaction = (props) => {
     out.sort((a, b) => a.varName.localeCompare(b.varName))
     setShapes(out)
   }, [props.shapes])
-
-  // useEffect(() => {
-  //   if (showAddition && interaction[4] === '') {
-  //     interaction[4] = '+'
-  //     interaction[5] = start
-  //   }
-  // }, [interaction])
-
-  // useEffect(() => {
-
-  // }, [showConAdd])
 
   const handleEdit = (i) => {
     let x = fullInteractions[i]
@@ -107,7 +100,7 @@ const Interaction = (props) => {
     let list = []
     for (let i = 0; i < ints.length; i++) {
       if (ints[i][6] === 'var') {
-        list.push(<div className="condition-inputs">
+        list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
             <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
             <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
@@ -240,32 +233,21 @@ const Interaction = (props) => {
 
   useEffect(() => {
     setLoading(true)
+    if(props.currentPage=== 0) {
+      console.log('2')
     if (props.current === 'global') {
-      let out = props.globalInts.filter(arr => {
-        for (let obj of props.shapes) {
-          if (arr[0] === obj.varName) {
-            return true;
-          }
-        }
-        return false;
-      });
-      setFullInteractions(out)
+      setFullInteractions(props.globalInts)
       setVariables(props.globalVars)
-
     }
     if (props.current === 'session') {
-      let out = props.localInts.filter(arr => {
-        for (let obj of props.shapes) {
-          if (arr[0] === obj.varName) {
-            return true;
-          }
-        }
-        return false;
-      });
-      setFullInteractions(out)
+      setFullInteractions(props.localInts)
       setVariables(props.localVars)
+    } 
+    } else {
+      let interaction = props.group[props.currentPage] ? props.group[props.currentPage].interaction : []
+      setFullInteractions(interaction)
     }
-  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes])
+  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes, props.group, props.currentPage])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -423,6 +405,20 @@ const Interaction = (props) => {
         confirmMessage={"Yes"}
         message={"Are you sure you want to delete this interaction? This action cannot be undone."}
       />
+      {contextMenu.show && (
+        <div className={`variable-context ${contextMenu.show ? 'show' : ''}`}
+          style={{
+            top: `${contextMenu.y - props.position.y}px`,
+            left: `${contextMenu.x - props.position.x}px`,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {props.currentPage === 0 ? (
+            <button onClick={() => (props.handleGroup(props.page, fullInteractions[contextIndex], 'add', 'interaction'), hideContextMenu())}>Add to page {props.page}</button>) : (
+            <button onClick={() => (props.handleGroup(props.currentPage, fullInteractions[contextIndex], 'remove', 'interaction'), hideContextMenu())}>Remove from page {props.currentPage}</button>
+          )}
+        </div>
+      )}
     </>
   );
 }

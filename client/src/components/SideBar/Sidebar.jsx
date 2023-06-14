@@ -310,7 +310,7 @@ const Sidebar = (props) => {
             )
           ))}
         </Submenu>
-        <StyledNav compact={!expanded || submenuVisible} submenu={submenuVisible} {...props}>
+        <StyledNav compact={!expanded || submenuVisible} submenu={submenuVisible} {...props} title={''}>
           <NavLinksGroup
             isPlayMode={props.game}
             compact={!expanded || submenuVisible}

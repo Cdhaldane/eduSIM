@@ -1,0 +1,56 @@
+.menu-context-container {
+    height: auto;
+    width: auto;
+    min-width: 49%;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* ContextMenu.css */
+.variable-context {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 10;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    min-width: 160px;
+}
+
+.variable-context.show {
+    display: block;
+    /* Shown when the 'show' class is added */
+}
+
+.variable-context button {
+    background: none;
+    border: none;
+    color: #333;
+    padding: 8px 16px;
+    text-align: left;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+
+.variable-context button:hover {
+    background-color: #f1f1f1;
+}
+
+.variable-page-select {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    position: relative;
+    left: -50px;
+    margin-right: -50px;
+    border: 1px solid var(--red);
+    border-radius: 7px;
+    padding: 5px;
+
+}

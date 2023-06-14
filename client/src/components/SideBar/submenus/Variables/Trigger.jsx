@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useState, useEffect, useMemo, useRef } from "react";
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
+import { MenuContext } from "./VariableContext";
+
 
 
 import "../../Sidebar.css";
@@ -20,6 +22,7 @@ const Trigger = (props) => {
   const [trigger, setTrigger] = useState([null, null, null]);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [contextIndex, setContextIndex] = useState(-1)
   const [render, setRender] = useState([]);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
@@ -28,6 +31,7 @@ const Trigger = (props) => {
     setTimeout(() => { confirmationVisibleRef.current = data }, 250);
   }
   const alertContext = useAlertContext();
+  const { contextMenu, handleContextMenu, hideContextMenu } = useContext(MenuContext);
 
   useEffect(() => {
     let out = []
@@ -42,7 +46,7 @@ const Trigger = (props) => {
   const populateTriggers = (trigs) => {
     setFullTriggers(trigs)
     return trigs?.map((trig, i) => (
-      <div className="condition-inputs">
+      <div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
           <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
           <i onClick={() => handleEdit(i, trigs)} className="lnil lnil-pencil" />
@@ -109,25 +113,24 @@ const Trigger = (props) => {
 
   useEffect(() => {
     let out;
-    if (props.current === 'global') {
-      out = props.globalTrigs
-      setVariables(props.globalVars)
+    if (props.currentPage === 0) {
+      if (props.current === 'global') {
+        out = props.globalTrigs
+        setVariables(props.globalVars)
+      }
+      if (props.current === 'session') {
+        out = props.localTrigs
+        setVariables(props.localVars)
+      }
+    } else {
+      let trigger = props.group[props.currentPage] ? props.group[props.currentPage].trigger : []
+      out = trigger
     }
-    if (props.current === 'session') {
-      out = props.localTrigs
-      setVariables(props.localVars)
-    }
-    let x = [];
-    if (shapes)
-      out.map((trig) => {
-        let t = trig.flatMap(x => x)
-        if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
-          x.push(t)
-        }
-      })
 
-    setRender(populateTriggers(x))
-  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes])
+
+
+    setRender(populateTriggers(out))
+  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes, props.currentPage, props.group])
 
   return (
     <>
@@ -180,6 +183,20 @@ const Trigger = (props) => {
         confirmMessage={"Yes"}
         message={"Are you sure you want to delete this interaction? This action cannot be undone."}
       />
+      {contextMenu.show && (
+        <div className={`variable-context ${contextMenu.show ? 'show' : ''}`}
+          style={{
+            top: `${contextMenu.y - props.position.y}px`,
+            left: `${contextMenu.x - props.position.x}px`,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {props.currentPage === 0 ? (
+            <button onClick={() => (props.handleGroup(props.page, fullTriggers[contextIndex], 'add', 'trigger'), hideContextMenu())}>Add to page {props.page}</button>) : (
+            <button onClick={() => (props.handleGroup(props.currentPage, fullTriggers[contextIndex], 'remove', 'trigger'), hideContextMenu())}>Remove from page {props.currentPage}</button>
+          )}
+        </div>
+      )}
     </>
   );
 }
