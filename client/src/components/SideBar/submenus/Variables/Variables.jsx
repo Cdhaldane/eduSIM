@@ -98,6 +98,7 @@ const Variables = (props) => {
   const [page, setPage] = useState(0);
   const [ref, dimensions, position] = useResizeObserver();
   const [group, setGroup] = useState(props.groups);
+  const [height, setDomHeight] = useState(180);
 
   useEffect(() => {
     let allShapes = []; // Initialize allShapes as an empty array
@@ -151,32 +152,36 @@ const Variables = (props) => {
       return out;
     });
   };
+
+  const setHeight = (x) => {
+    setDomHeight(x)
+  } 
   
 
   const populateTab = () => {
     if (tabs === "variable") {
       return (
-        <div className="condition-input-container" index={tabsEnviroment} style={{ maxHeight: dimensions.height - 200 }}>
-          <Variable current={tabsEnviroment} {...props} position={position} handleGroup={handleGroup} group={group} currentPage={page} />
+        <div className="condition-input-container" index={tabsEnviroment} style={{ maxHeight: dimensions.height - height }}>
+          <Variable current={tabsEnviroment} {...props} setHeight={setHeight}position={position} dimensions={dimensions} handleGroup={handleGroup} group={group} currentPage={page} />
         </div>
       )
     }
     if (tabs === "condition")
       return (
-        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
-          <Condition current={tabsEnviroment} {...props} update={handleUpdate} position={position} handleGroup={handleGroup} group={group} currentPage={page}  />
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - height }}>
+          <Condition current={tabsEnviroment} {...props} update={handleUpdate} setHeight={setHeight}position={position} dimensions={dimensions} handleGroup={handleGroup} group={group} currentPage={page}  />
         </div>
       )
     if (tabs === "interaction")
       return (
-        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
-          <Interaction current={tabsEnviroment} {...props} shapes={shapes} position={position} handleGroup={handleGroup} group={group} currentPage={page} />
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - height }}>
+          <Interaction current={tabsEnviroment} {...props} shapes={shapes} setHeight={setHeight}position={position} dimensions={dimensions} handleGroup={handleGroup} group={group} currentPage={page} />
         </div>
       )
     if (tabs === "trigger")
       return (
-        <div className="condition-input-container" style={{ maxHeight: dimensions.height - 200 }}>
-          <Trigger current={tabsEnviroment} {...props} allShapes={allShapes} position={position} handleGroup={handleGroup} group={group} currentPage={page}/>
+        <div className="condition-input-container" style={{ maxHeight: dimensions.height - height }}>
+          <Trigger current={tabsEnviroment} {...props} allShapes={allShapes} setHeight={setHeight}position={position} dimensions={dimensions} handleGroup={handleGroup} group={group} currentPage={page}/>
         </div>
       )
   }

@@ -77,6 +77,7 @@ const Condition = (props) => {
 
 
   const handleEdit = (i, cons) => {
+    props.setHeight(120)
     let out = ([['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
     ['', '=', '', '+', ''],
@@ -151,7 +152,6 @@ const Condition = (props) => {
       alertContext.showAlert("A condition needs an if statement!", "warning");
       return
     }
-    let a = [];
     let temp = condition
     temp.splice(ifs, 4 - ifs)
     if (props.current === 'session') {
@@ -358,7 +358,16 @@ const Condition = (props) => {
     condition[x][y] = value.label
   }
 
-
+  const handleOpenModal = () => {
+    props.setHeight(120)
+    setShowConAdd(true)
+    setEditingIndex(-1)
+  }
+  useEffect(() => {
+    console.log(editingIndex)
+    if(editingIndex < 0)
+      props.setHeight(180)
+  }, [editingIndex]);
   return (
     <>
       {!showConAdd && (
@@ -366,7 +375,7 @@ const Condition = (props) => {
           {render}
         </>
       )}
-      <div className="variable-add tester" onClick={() => (setShowConAdd(true), setEditingIndex(-1))} hidden={showConAdd}>
+      <div className="variable-add tester" onClick={() => handleOpenModal()} hidden={showConAdd}>
         <Plus className="icon plus" />
         ADD NEW CONDITION
       </div>
@@ -422,7 +431,7 @@ const Condition = (props) => {
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{editingIndex === -1 ? t("common.add") : "Edit"}</button>
-            <button className="con-can-b" onClick={() => setShowConAdd(false)}>{t("common.cancel")}</button>
+            <button className="con-can-b" onClick={() => (setShowConAdd(false), setEditingIndex(-2))}>{t("common.cancel")}</button>
           </div>
         </div>
       )}

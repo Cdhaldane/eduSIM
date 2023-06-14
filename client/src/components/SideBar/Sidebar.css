@@ -112,24 +112,21 @@
 
 .variable-add{
   font-size: 0.9em;
-  background-color: lightgray;
-  padding: 10px;
-  border: 2px dashed var(--dark);
+  background-color: var(--almostwhite);
+  padding: 7px;
+  border: 2px dashed var(--primary);
   border-radius: 8px;
   text-align: center;
-  opacity: 0.4;
+  opacity: 1;
   width: 99%;
   transition: 0.2s opacity;
-  margin-top: 10px;
 }
-.variable-add i{
-  font-size: 1.3em;
-  margin-right: 8px;
+.variable-add svg{
+  margin-right: 10px;
   vertical-align: middle;
 }
 .variable-add:hover{
   cursor: pointer;
-  opacity: 0.6;
 }
 .variable-hover {
   position: absolute;
@@ -665,7 +662,7 @@
   width: 90% !important;
   margin-left: 5%;
   position: absolute !important;
-  bottom: 20px;
+  bottom: 10px;
 }
 
 .e {
@@ -756,14 +753,14 @@
 }
 
 .variable-con-adding{
-  margin-top: 10px;
+  position: relative;
   margin-left: 15px;
   background-color: var(--almostwhite);
   padding: 10px;
   border: 2px solid darkgray;
   border-radius: 8px;
   width: 95%;
-  height: auto;
+  z-index: 10000 ;
 }
 .variable-con-adding select{
   font-size: 1.0em;
@@ -824,7 +821,8 @@
 }
 
 .var-box {
-  padding-bottom: 20px; 
+  position: relative;
+ bottom: 10px;
 }
 .var-box button{
   position: relative;
@@ -875,13 +873,6 @@
   align-items: center;
 }
 
-.input-area h2{
-
-}
-
-. {
-
-}
 .fixer{
   display: flex;
   flex-direction: row;
@@ -893,7 +884,6 @@
   flex-wrap: wrap;
   overflow-x: hidden;
   flex-basis:auto!important;
-  padding: 5px;
 
 }
 

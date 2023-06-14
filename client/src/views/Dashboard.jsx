@@ -118,7 +118,6 @@ const Dashboard = (props) => {
   }
 
   const toggleModal = () => {
-    console.log(2)
     if (!uploadedImages) {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/image/getImagesFrom/' + localStorage.adminid).then((res) => {
         setUploadedImages(res.data.resources);

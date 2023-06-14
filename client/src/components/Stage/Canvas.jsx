@@ -755,8 +755,6 @@ class Graphics extends Component {
     storedObj.localTrigs = this.props.localTrigs;
     storedObj.groups = this.props.groups;
 
-    console.log(storedObj)
-
     this.setState({
       saved: storedObj
     });

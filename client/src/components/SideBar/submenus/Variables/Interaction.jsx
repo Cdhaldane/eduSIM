@@ -70,7 +70,6 @@ const Interaction = (props) => {
 
   const handleEdit = (i) => {
     let x = fullInteractions[i]
-    console.log(x, fullInteractions)
     setIsCheck(false)
     setIsVCheck(false)
     setIsPCheck(false)
@@ -158,26 +157,19 @@ const Interaction = (props) => {
       return
     }
     let x = fullInteractions
-    let a = props.localInts
-
-    if (props.current === 'global') {
-      a = props.globalInts;
-    }
+  
     if (editingIndex !== -1) {
-      a.splice(editingIndex, 1, interaction)
       x.splice(editingIndex, 1, interaction)
     } else {
-      a.push(interaction);
       x.push(interaction)
     }
-    console.log(interaction)
-
-    if (props.current === 'session') props.setLocalInts(a)
-    if (props.current === 'global') props.setGlobalInts(a)
+    console.log(x)
+    if (props.current === 'session') props.setLocalInts(x)
+    if (props.current === 'global') props.setGlobalInts(x)
 
     setShowConAdd(!showConAdd)
     setInteraction(['', '', '=', '', '', '', check])
-
+    setEditingIndex(-4)
     setFullInteractions(x)
   }
   const deleteCon = (i) => {
@@ -247,9 +239,10 @@ const Interaction = (props) => {
       let interaction = props.group[props.currentPage] ? props.group[props.currentPage].interaction : []
       out = (interaction)
     }
-    console.log(out)
     out = out.filter(arr => {
       for (let obj of props.shapes) {
+        arr = arr.flat()
+        console.log(arr, obj)
         if (arr[0] === obj.varName) {
           return true;
         }
@@ -330,8 +323,7 @@ const Interaction = (props) => {
       </div>
 
       {showConAdd && (
-        <div className="variable-adding ints-fix">
-  
+        <div className="variable-adding ints-fix" >
           <div className="ints-area">
             <div className="ints-name">
               <h1>Input to Set</h1>
