@@ -1152,6 +1152,7 @@ const CanvasPage = (props) => {
     newObject = [...new Set(newObject)]
     objectIds = [[...newObject], [...inputIds]]
 
+    
     return (
       <>
         <Layer {...layerProps(canvas, stage, "objects")}>
@@ -1193,7 +1194,7 @@ const CanvasPage = (props) => {
             subArray.map((id, index) => {
               if (id.length > 0) {
                 const type = id.replace(/\d+$/, "");
-                const obj = canvas.state[type].filter(obj => obj.id === id)[0];
+                const obj = canvas.state[type].filter(obj => obj?.id === id)[0];
                 if (obj && objectIsOnStage(obj, canvas))
                   out.push(renderObject(obj, index, canvas, editMode, type, stage))
               }

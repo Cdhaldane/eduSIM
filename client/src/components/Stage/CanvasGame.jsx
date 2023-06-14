@@ -422,6 +422,19 @@ class Graphics extends Component {
           const stage = this.stage || objRef.getLayer();
           this.stage = stage;
 
+          const layer = this.state.personalAreaOpen ? "personal" :
+          (this.state.overlayOpen ? "overlay" : "group");
+          let layerGroup = []
+          if(layer === 'overlay'){
+            layerGroup = this.state.pages[this.state.level - 1].overlays.filter(overlay => overlay.id === this.state.overlayOpenIndex)[0].layers
+          } else {
+            layerGroup = this.state.pages[this.state.level - 1][`${layer}Layers`]
+          }          
+          if(layerGroup.includes(obj.id) && layerGroup[layerGroup.length - 1] !== obj.id){
+            layerGroup.splice(layerGroup.indexOf(obj.id), 1)
+            layerGroup.push(obj.id)
+          }
+          
           // const screenRect = {
           //   x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
           //   y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
@@ -580,6 +593,9 @@ class Graphics extends Component {
         this.props.reCenter("play", layer, "resize");
       }, 100);
     };
+
+    // Check if shape is draggable, move to top of page layers
+    
   }
 
   getInteractiveProps = (id) => ({

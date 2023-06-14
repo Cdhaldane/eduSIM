@@ -87,13 +87,11 @@ const CanvasUtils = (props) => {
 
   useEffect(() => {
     let x = []
-    console.log(props.globalCons)
     if (!props.editMode)
       for (let i = 0; i < props.globalCons.length; i++) {
         let result = [];
         for (let j = 0; j < props.globalCons[i].length; j++) {
           let con = props.globalCons[i][j].flatMap(x => x)
-          console.log(con)
           let var1 = con[0];
           let comparator = con[1];
           let var2 = con[2];

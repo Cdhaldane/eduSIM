@@ -1608,19 +1608,21 @@ class Graphics extends Component {
       const pos = this.refs[stage + "Stage"].getPointerPosition();
       const shape = this.refs[stage + "Stage"].getIntersection(pos);
 
-      if (this.state.lineTransformDragging) {
-
+      if (this.state.lineTransformDragging && this.state.selectedShapeName) {
         const newLines = [...this.state.lines].filter(line => line.id !== this.state.selectedShapeName);
         const newLine = [...this.state.lines].filter(line => line.id === this.state.selectedShapeName)[0];
 
         const xIndex = this.state.lineTransformDragging === "top" ? 0 : 2;
         const yIndex = this.state.lineTransformDragging === "top" ? 1 : 3;
-
-        newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
-        newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
-        this.setState({
-          lines: [...newLines, newLine]
-        });
+        if(newLine){
+          newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
+          newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
+          this.setState({
+            lines: [...newLines, newLine]
+          });
+        }
+        
+        
 
         return;
       }
