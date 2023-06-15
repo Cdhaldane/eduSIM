@@ -914,9 +914,24 @@
 .trigger-inputs div{
   display: flex;
 }
+.vars-sidebar{
+  display: flex;
+  flex-direction: row;
+}
 .condition-inputs i{
   font-size: 1.4em !important;
+  width: 15px !important;
 }
+.condition-inputs h4{
+  position: relative;
+  color: black !important;
+  display: flex;
+  align-items: center;
+  margin-left: 0px;
+  font-size: 1.0em !important;
+
+}
+
 
 .cons-condition{
   display: flex;
@@ -978,7 +993,6 @@
   margin-right: 10px;
   position: relative;
   transform: translate(0px, 5px);
-  width: 50px !important;
 }
 .vars input{
   background-color: var(--green);

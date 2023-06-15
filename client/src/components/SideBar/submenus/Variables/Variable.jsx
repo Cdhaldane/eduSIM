@@ -88,11 +88,34 @@ const Variable = (props) => {
     }
   }
 
+  const getPageData = (data) => {
+    let obj = props.group
+
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const isObjectInArray = value.variable.some(obj => {
+          return Object.entries(data).every(([key, value]) => {
+            return obj[key] === value;
+          });
+        });
+        if (isObjectInArray)
+          return key
+          
+      }
+    }
+  }
+
   const populateGameVars = (data) => {
     let list = []
     for (let i = 0; i < data.length; i++) {
+      let x = getPageData(data[i])
+      console.log(x)
       list.push(<div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
-        <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
+        <div className='vars-sidebar'>
+          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
+          <h4>{x}</h4>
+        </div>
         <h1>{Object.keys(data[i])}</h1>
         <h2> = </h2>
         <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
@@ -124,7 +147,6 @@ const Variable = (props) => {
       let variable = props.group[props.currentPage] ? props.group[props.currentPage].variable : []
       setVariables(variable)
     }
-
   }, [props.current, props.globalVars, props.localVars, props.group, props.currentPage])
 
 

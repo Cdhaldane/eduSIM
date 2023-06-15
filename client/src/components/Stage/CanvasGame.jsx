@@ -248,17 +248,23 @@ class Graphics extends Component {
   };
 
   checkObjConditions = (conditions) => {
+    console.log("checkObjConditions", conditions)
     if (!conditions || !conditions.varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
     if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
-
+    console.log("vars", vars)
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
 
     let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
     let varLen = isNaN(val) ? (val || "").length : val;
+
+    if(val === true){
+      val ='true'
+    }
+    
     switch (conditions.condition) {
       case "isequal":
         return val == trueValue;

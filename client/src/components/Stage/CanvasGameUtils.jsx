@@ -86,6 +86,7 @@ const CanvasUtils = (props) => {
 
 
   useEffect(() => {
+    console.log(props)
     let x = []
     if (!props.editMode)
       for (let i = 0; i < props.globalCons.length; i++) {
@@ -185,19 +186,25 @@ export const handleCollisions = (props, state) => {
   let groupedArrays = splitArrayByValue(trigs, 2);
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
-  console.log(groupedArrays)
   groupedArrays.map((group) => {
     let touchingArray = [];
     group.map((item) => {
-      let name = filteredResult.find(obj => obj.name === item[0]);
+      let name = filteredResult.filter(obj => obj.name === item[0]);
+      let shape = undefined;
+      name.map((obj) => {
+        if (Object.keys(gamepieces).includes(obj.id)) {
+          shape=gamepieces[obj.id]
+        }
+      })
       if (name === undefined) return
-      let shape = gamepieces[name.id]
       if (shape === undefined) return
       shape.id = item[0]
       let touch = handleTouching(shape, item[1], filteredResult)
+      
       touchingArray.push(touch)
     });
     if (touchingArray.includes(true) && !props.globalVars[group[0][2]]) {
+      console.log("touching", group[0][2])
       props.socket.emit("varChange", {
         name: group[0][2], value: true
       })
