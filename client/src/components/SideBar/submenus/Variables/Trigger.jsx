@@ -44,10 +44,11 @@ const Trigger = (props) => {
   }, [props.allShapes])
 
   const populateTriggers = (trigs) => {
-    return trigs?.map((trig, i) => (
+    let out;
+    out = trigs?.map((trig, i) => (
       <div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
-          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
+          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(trig); }} />
           <i onClick={() => handleEdit(i, trigs)} className="lnil lnil-pencil" />
         </div>
         <div className="ints-container">
@@ -60,6 +61,7 @@ const Trigger = (props) => {
         </div>
       </div>
     ));
+    return out;
   };
 
   const addCon = () => {
@@ -77,10 +79,23 @@ const Trigger = (props) => {
   }
   const deleteCon = (i) => {
     let data = fullTriggers
-    console.log(data, i)
-    data.splice(i, 1)
-    if (props.current === 'global') props.setGlobalTrigs(data)
-    if (props.current === 'session') props.setLocalTrigs(data)
+    let actual =[]
+   
+    data.map((x, index) => {
+      x = x.flat()
+      let bool = true
+      for(let j = 0; j < x.length; j++){
+        if (x[j] === i[j]){
+          bool = false
+        }
+      }
+      if (bool) actual.push(x)
+      
+    })
+    console.log(actual)
+    if (props.current === 'global') props.setGlobalTrigs(actual)
+    if (props.current === 'session') props.setLocalTrigs(actual)
+    setFullTriggers(actual)
     setConfirmationModal(false);
   }
 
@@ -114,15 +129,15 @@ const Trigger = (props) => {
       out = trigger
     }
     let x = []
-    // if (shapes)
-    //   out.map((trig) => {
-    //     let t = trig.flatMap(x => x)
-    //     if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
-    //       x.push(t)
-    //     }
-    //   })
+    if (shapes)
+      out.map((trig) => {
+        let t = trig.flatMap(x => x)
+        if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
+          x.push(t)
+        }
+      })
     setFullTriggers(out)
-    setRender(populateTriggers(out))
+    setRender(populateTriggers(x))
   }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes, props.currentPage, props.group, editingIndex, showConAdd, fullTriggers])
 
   return (
