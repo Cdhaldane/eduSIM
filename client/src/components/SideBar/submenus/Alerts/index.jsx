@@ -134,12 +134,18 @@ const Alerts = (props) => {
     setEditingIndex(-1);
   };
 
-  const handleRemoveAlert = (index) => {
-    props.setAlerts(old => {
-      let n = [...old];
-      n.splice(index, 1);
-      return n;
-    });
+  const handleRemoveAlert = (data) => {
+    let out = props.alerts || []
+    let actual = []
+    out.map((alert, index) => {
+      if(alert !== data)
+        actual.push(alert)
+    })
+    props.setAlerts(actual)
+    console.log(actual)
+    data.page = props.page
+    setAllAlerts(actual)
+    setAdding(false);
   };
 
   const handleMoveUp = (index) => {
@@ -288,7 +294,7 @@ const Alerts = (props) => {
                     <button onClick={() => setTimeout(() => setEditingIndex(index), 10)}>
                       <i className="fas fa-pen" />
                     </button>
-                    <button onClick={() => setTimeout(() => handleRemoveAlert(index), 10)}>
+                    <button onClick={() => setTimeout(() => handleRemoveAlert(data), 10)}>
                       <i className="fas fa-trash" />
                     </button>
                   </EditButtons>

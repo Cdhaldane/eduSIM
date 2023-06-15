@@ -100,6 +100,7 @@ const EditPage = (props) => {
     setGlobalInts(data)
   }
   const handleGlobalsTrigs = (data) => {
+    console.log(data)
     setGlobalTrigs(data)
   }
   const handleLocalVars = (data) => {

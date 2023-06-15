@@ -44,7 +44,6 @@ const Trigger = (props) => {
   }, [props.allShapes])
 
   const populateTriggers = (trigs) => {
-    setFullTriggers(trigs)
     return trigs?.map((trig, i) => (
       <div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
@@ -78,20 +77,12 @@ const Trigger = (props) => {
   }
   const deleteCon = (i) => {
     let data = fullTriggers
+    console.log(data, i)
     data.splice(i, 1)
     if (props.current === 'global') props.setGlobalTrigs(data)
     if (props.current === 'session') props.setLocalTrigs(data)
     setConfirmationModal(false);
   }
-
-  const handleInteraction = (index, e) => {
-    const value = e.target.value;
-    if (index === 0) {
-      setTrigger([value, trigger[1] !== value ? trigger[1] : null, trigger[2]]);
-    } else if (index === 1 && value !== trigger[0]) {
-      setTrigger([trigger[0], value, trigger[2]]);
-    }
-  };
 
   const handleChange = (value, x) => {
     let input = [...trigger]
@@ -99,11 +90,8 @@ const Trigger = (props) => {
     setTrigger(input)
   }
 
-
-
   const handleEdit = (i, trigs) => {
     let x = trigs[i]
-
     setTrigger(x)
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
@@ -111,6 +99,7 @@ const Trigger = (props) => {
 
   useEffect(() => {
     let out;
+
     if (props.currentPage === 0) {
       if (props.current === 'global') {
         out = props.globalTrigs
@@ -125,18 +114,16 @@ const Trigger = (props) => {
       out = trigger
     }
     let x = []
-    if (shapes)
-      out.map((trig) => {
-        let t = trig.flatMap(x => x)
-        if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
-          x.push(t)
-        }
-      })
-    out = x
-
-
+    // if (shapes)
+    //   out.map((trig) => {
+    //     let t = trig.flatMap(x => x)
+    //     if(shapes.some(obj => obj.hasOwnProperty(t[0])) && shapes.some(obj => obj.hasOwnProperty(t[1]))){
+    //       x.push(t)
+    //     }
+    //   })
+    setFullTriggers(out)
     setRender(populateTriggers(out))
-  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes, props.currentPage, props.group])
+  }, [props.current, props.localTrigs, props.globalTrigs, props.localVars, props.globalVars, shapes, props.currentPage, props.group, editingIndex, showConAdd, fullTriggers])
 
   return (
     <>
