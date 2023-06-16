@@ -9,7 +9,6 @@ const URLImage = forwardRef((props, ref) => {
 
   const getMeta = (url, callback) => {
     const img = new window.Image();
-    console.log(img)
     img.src = url;
     img.onload = () => {
       callback();

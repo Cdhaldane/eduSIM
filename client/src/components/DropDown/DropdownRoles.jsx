@@ -139,7 +139,6 @@ const DropdownRoles = (props) => {
   }
 
   const handleSubmitModification = async () => {
-    console.log(roles, roleDesc, selected)
     await props.handleEditRole({
       id: roles[selected].id,
       roleName,

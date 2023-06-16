@@ -123,7 +123,6 @@ const Tabs = (props) => {
       gameinstanceid: props.gameid,
       gameroom_name: t("admin.newGroupX", { index })
     }
-    console.log(data)
     axios.post(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/createRoom', data)
       .then((res) => {
         setTabs([...tabs, [res.data.gameroom_name, res.data.gameroomid, res.data.gameroom_url]]);

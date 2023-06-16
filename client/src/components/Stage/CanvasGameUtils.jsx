@@ -63,8 +63,9 @@ const CanvasUtils = (props) => {
   };
 
   const getRealValue = (var1, var2, var3) => {
-    let variable1, variable2, variable3;
-    variable1 = props.globalVars[var1.toString()];
+    let variable1, variable2, variable3;   
+    if (Array.isArray(var2)) variable1 = props.globalVars[var2.toString()];
+    else variable1 = var1;
     if (Array.isArray(var2)) variable2 = props.globalVars[var2.toString()];
     else variable2 = var2;
     if (Array.isArray(var3)) variable3 = props.globalVars[var3.toString()];
@@ -86,7 +87,6 @@ const CanvasUtils = (props) => {
 
 
   useEffect(() => {
-    console.log(props)
     let x = []
     if (!props.editMode)
       for (let i = 0; i < props.globalCons.length; i++) {
@@ -204,7 +204,6 @@ export const handleCollisions = (props, state) => {
       touchingArray.push(touch)
     });
     if (touchingArray.includes(true) && !props.globalVars[group[0][2]]) {
-      console.log("touching", group[0][2])
       props.socket.emit("varChange", {
         name: group[0][2], value: true
       })

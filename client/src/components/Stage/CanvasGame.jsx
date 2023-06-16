@@ -147,7 +147,7 @@ class Graphics extends Component {
       });
     }, 0);
   }
-  
+
 
   // Replaces variables in text content (stored in {})
   formatTextMacros = (simple, text) => {
@@ -248,23 +248,19 @@ class Graphics extends Component {
   };
 
   checkObjConditions = (conditions) => {
-    console.log("checkObjConditions", conditions)
     if (!conditions || !conditions.varName) return true;
     let vars = {};
     if (!!sessionStorage.gameVars) vars = JSON.parse(sessionStorage.gameVars);
     if (!!sessionStorage.lastSetVar) vars.lastsetvar = sessionStorage.lastSetVar;
     if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
-    console.log("vars", vars)
     let trueValue = isNaN(conditions.trueValue) ? conditions.trueValue : parseInt(conditions.trueValue);
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
-
     let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
     let varLen = isNaN(val) ? (val || "").length : val;
 
-    if(val === true){
-      val ='true'
-    }
-    
+    if (val === true) val = 'true'
+
+    if (val === false) val = 'false'
     switch (conditions.condition) {
       case "isequal":
         return val == trueValue;
@@ -358,7 +354,6 @@ class Graphics extends Component {
         }
         if (page.overlays[i].overlayCondition) {
           let conditions = page.overlays[i].overlayCondition.conditions
-
           if (conditions != undefined) {
             let overlayCheck = this.checkObjConditions(conditions)
             if (overlayCheck) {
@@ -411,7 +406,7 @@ class Graphics extends Component {
         dragLayer: () => { },
         handleDragEnd: (obj, e) => {
           handleCollisions(this.props, this.state);
-          if(obj.infolevel) return {}
+          if (obj.infolevel) return {}
           this.props.socket.emit("interaction", {
             gamepieceId: obj.id,
             parameters: {
@@ -431,18 +426,18 @@ class Graphics extends Component {
           handleCollisions(this.props, this.state);
 
           const layer = this.state.personalAreaOpen ? "personal" :
-          (this.state.overlayOpen ? "overlay" : "group");
+            (this.state.overlayOpen ? "overlay" : "group");
           let layerGroup = []
-          if(layer === 'overlay'){
+          if (layer === 'overlay') {
             layerGroup = this.state.pages[this.state.level - 1].overlays.filter(overlay => overlay.id === this.state.overlayOpenIndex)[0].layers
           } else {
             layerGroup = this.state.pages[this.state.level - 1][`${layer}Layers`]
-          }          
-          if(layerGroup.includes(obj.id) && layerGroup[layerGroup.length - 1] !== obj.id){
+          }
+          if (layerGroup.includes(obj.id) && layerGroup[layerGroup.length - 1] !== obj.id) {
             layerGroup.splice(layerGroup.indexOf(obj.id), 1)
             layerGroup.push(obj.id)
           }
-          
+
           // const screenRect = {
           //   x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
           //   y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
@@ -603,7 +598,7 @@ class Graphics extends Component {
     };
 
     // Check if shape is draggable, move to top of page layers
-    
+
   }
 
   getInteractiveProps = (id) => ({
@@ -618,6 +613,7 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
+      console.log("updating variable", name, value, increment)
       this.props.socket.emit("varChange", {
         name, value, increment
       })

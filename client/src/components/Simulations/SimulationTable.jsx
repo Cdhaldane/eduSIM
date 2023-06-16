@@ -94,7 +94,6 @@ const SimulationTable = (props) => {
 
   const history = useHistory();
   function handleTdClick(simulation) {
-    console.log(simulation)
     history.push('/profile/' + simulation.createdby_adminid);
   }
 

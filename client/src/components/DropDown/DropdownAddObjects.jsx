@@ -327,7 +327,6 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = (img, info) => {
-    console.log(info)
         addObjectToLayer(
           "images",
           {
@@ -586,7 +585,6 @@ const DropdownAddObjects = (props) => {
           } else if (preset == "mfcgzpkg") {
             type == "pdf"
           }
-          console.log(result.info)
           uploadFile(result.info, type);
           myWidget.close();
         }

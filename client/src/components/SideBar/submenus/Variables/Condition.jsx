@@ -264,7 +264,6 @@ const Condition = (props) => {
 
   const handleIfStatements = () => {
     let list = []
-    console.log(ifs)
     for (let i = 0, x = 0; i < ifs; i++, x = x + 2) {
       list.push(
         <>
@@ -364,7 +363,6 @@ const Condition = (props) => {
     setEditingIndex(-1)
   }
   useEffect(() => {
-    console.log(editingIndex)
     if(editingIndex < 0)
       props.setHeight(180)
   }, [editingIndex]);

@@ -7,7 +7,6 @@ import User from "../../../public/icons/user-alt-4.svg"
 import Exit from "../../../public/icons/exit.svg"
 
 const ProfileDropdown = (props) => {
-    console.log(props)
     const [isOpen, setIsOpen] = useState(false);
     const { t, i18n } = useTranslation();
 

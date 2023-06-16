@@ -125,10 +125,8 @@ const Alerts = (props) => {
   };
 
   const handleEditAlert = (data) => {
-    console.log(data)
     let out = allAlerts
     out[editingIndex] = data
-    console.log(out)
     // setAllAlerts(out)
     props.setAlerts(out)
     setEditingIndex(-1);
@@ -142,7 +140,6 @@ const Alerts = (props) => {
         actual.push(alert)
     })
     props.setAlerts(actual)
-    console.log(actual)
     data.page = props.page
     setAllAlerts(actual)
     setAdding(false);

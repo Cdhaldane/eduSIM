@@ -9,6 +9,7 @@ const Poll = forwardRef((props, ref) => {
   const [survey, setSurvey] = useState(new Survey.Model(props.defaultProps.custom.pollJson));
   const [completed, setCompleted] = useState();
   const customName = props.defaultProps.custom.customName;
+  const [score, setScore] = useState([]);
 
   survey.mode = props.editMode ? 'display' : "";
 
@@ -97,6 +98,8 @@ const Poll = forwardRef((props, ref) => {
         } else {
           setVar(correctVar, false);
         }
+        setScore([...score, [question.id, correctAnswer, answer]]);
+
       }
     }
 
@@ -130,7 +133,42 @@ const Poll = forwardRef((props, ref) => {
 
       // Set the completion variable
       setVar(customName + "_completed", true);
+      props.updateVariable(props.defaultProps.custom.varName, calculateTruePercentage(score))
+      setVar(customName + "_score", calculateTruePercentage(score))
     }
+   
+  }
+  const calculateTruePercentage = (arr) => {
+    if (arr.length === 0) {
+      return 0; // If the array is empty, return 0%
+    }
+    let out = [];
+    const unique = getUniqueArray(arr);
+    unique.map((item, index) => {
+        if(item[1] === item[2]){
+          out.push(true)
+        } else {
+          out.push(false)
+        }  
+    })
+    var trueCount = out.filter(function(value) {
+      return value === true;
+    }).length;
+    var truePercentage = (trueCount / unique.length) * 100;
+  
+    return truePercentage;
+  }
+  const getUniqueArray = (arr) => {
+    const uniqueMap = new Map();
+    
+    for (let i = arr.length - 1; i >= 0; i--) {
+      const key = arr[i][0];
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, arr[i]);
+      }
+    }
+  
+    return Array.from(uniqueMap.values());
   }
 
   // Formats the status data according to if it is for personal/overlay or group area

@@ -68,15 +68,15 @@ const Game = (props) => {
   const { t } = useTranslation();
 
   //set states for globalVars, globalInts, globalCons, globalTrigs, localVars, localInts, localCons, localTrigs
-  const [globalVars, setGlobalVars] = useState({});
-  const [globalInts, setGlobalInts] = useState({});
-  const [globalCons, setGlobalCons] = useState({});
-  const [globalTrigs, setGlobalTrigs] = useState({});
-  const [tasks, setTasks] = useState({});
-  const [localVars, setLocalVars] = useState({});
-  const [localInts, setLocalInts] = useState({});
-  const [localCons, setLocalCons] = useState({});
-  const [localTrigs, setLocalTrigs] = useState({});
+  const [globalVars, setGlobalVars] = useState([]);
+  const [globalInts, setGlobalInts] = useState([]);
+  const [globalCons, setGlobalCons] = useState([]);
+  const [globalTrigs, setGlobalTrigs] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [localVars, setLocalVars] = useState([]);
+  const [localInts, setLocalInts] = useState([]);
+  const [localCons, setLocalCons] = useState([]);
+  const [localTrigs, setLocalTrigs] = useState([]);
 
 
   const toggle = () => setShowNav(!showNav);
@@ -92,6 +92,7 @@ const Game = (props) => {
           id: roomid,
         }
       });
+      let gameData = roomData;
       setRoomInfo(roomData);
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
         params: {
@@ -129,6 +130,15 @@ const Game = (props) => {
         setRoomStatus(status || {});
         setMessageBacklog(chatlog);
         setNotes(notelog);
+        setTasks(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).tasks || [])
+        setGlobalCons(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).globalCons)
+        setGlobalVars(flattenObject(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).globalVars))
+        setGlobalInts(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).globalInts)
+        setGlobalTrigs(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).globalTrigs)
+        setLocalCons(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localCons)
+        setLocalVars(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localVars)
+        setLocalInts(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localInts)
+        setLocalTrigs(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localTrigs)
       });
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
@@ -138,11 +148,9 @@ const Game = (props) => {
         if (lastSetVar) {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
+       
         setRoomStatus(status);
-        // console.log(status.level)
-        // if (status.level !== level)
-        //   setLevel(status.level);
-        
+
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
@@ -161,7 +169,6 @@ const Game = (props) => {
         alertContext.showAlert(t(key, params), "error");
       });
       client.on("userLevelUpdate", (data) => {
-        console.log(data)
         setLevel(data.level)
       })
 
@@ -208,35 +215,21 @@ const Game = (props) => {
   }, [players, roles, level]);
 
 
-  useEffect(() => {
-    setTasks(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).tasks || [])
-    setGlobalCons(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalCons || [])
-    let globalVars = room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalVars || []
-    setGlobalInts(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalInts || [])
-    setGlobalTrigs(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).globalTrigs || [])
 
-    setLocalCons(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localCons || [])
-    setLocalVars(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localVars || [])
-    setLocalInts(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localInts || [])
-    setLocalTrigs(room?.gameinstance?.game_parameters && JSON.parse(room.gameinstance.game_parameters).localTrigs || [])
+  const flattenObject = (obj) => {
+    const flattened = {}
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key]
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(flattened, flattenObject(value))
+      } else {
+        flattened[key] = value
+      }
+    })
+    return flattened
+  }
 
-    if (roomStatus.variables)
-      globalVars.push(roomStatus.variables)
-    const flattenObject = (obj) => {
-      const flattened = {}
-      Object.keys(obj).forEach((key) => {
-        const value = obj[key]
-        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          Object.assign(flattened, flattenObject(value))
-        } else {
-          flattened[key] = value
-        }
-      })
-      return flattened
-    }
 
-    setGlobalVars(flattenObject(globalVars))
-  }, [roomStatus])
 
 
   const handleLevel = (x, type) => {
@@ -281,6 +274,16 @@ const Game = (props) => {
     })
     setL(false)
   }, [globalVars])
+
+  useEffect(() => {
+    let vars = {
+      ...globalVars, // Spread the existing globalVars state
+      ...roomStatus.variables // Spread the properties from status.variables
+    };
+    
+    console.log(roomStatus.variables)
+    setGlobalVars(vars);
+  }, [roomStatus.variables])
   return (
     !isLoading && !isL ? (
       <div className="editpage">

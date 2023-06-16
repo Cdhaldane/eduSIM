@@ -216,7 +216,7 @@ const CanvasPage = (props) => {
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
-      let area = document.getElementById('groupGameContainer').getBoundingClientRect();
+      let area = document.getElementById('groupGameContainer')?.getBoundingClientRect();
       if (areaString === "personal") {
         area = document.getElementById('personalGameContainer').getBoundingClientRect();
       }
@@ -890,7 +890,8 @@ const CanvasPage = (props) => {
       custom: {
         performanceEnabled: obj.performanceEnabled,
         customName: obj.customName,
-        pollJson: obj.json
+        pollJson: obj.json,
+        varName: obj.varName,
       },
       ...(!editMode ?
         {
@@ -994,6 +995,7 @@ const CanvasPage = (props) => {
             ...defaultObjProps(obj, canvas, editMode),
             ...pollProps(obj, canvas, editMode)
           }}
+          {...canvas.getVariableProps()}
           {...canvas.getInteractiveProps(obj.id)}
           {...defaultObjProps(obj, canvas, editMode)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
@@ -1151,6 +1153,7 @@ const CanvasPage = (props) => {
     inputIds = [...new Set(inputIds)]
     newObject = [...new Set(newObject)]
     objectIds = [[...newObject], [...inputIds]]
+
 
     
     return (

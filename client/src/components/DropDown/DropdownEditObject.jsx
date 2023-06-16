@@ -18,7 +18,7 @@ import Left from "../../../public/icons/arrow-left.svg"
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
-  console.log(props.getObjState())
+  console.log(props)
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -324,6 +324,7 @@ const DropdownEditObject = (props) => {
   }
 
   const newTabInputSettings = (tab) => {
+    console.log(objState)
     setInputStrokeWidth(objState.style.borderWidth ?
       parseInt(objState.style.borderWidth.slice(0, -2)) : DEFAULT_INPUT_STROKE_W);
     setInputFillColor(tab === "fill" ? objState.style.backgroundColor :
@@ -547,7 +548,18 @@ const DropdownEditObject = (props) => {
                 setData={props.setCustomObjData}
                 shape={shape}
                 title={t("edit.pollEdit")}
+                {...props}
               />
+              <p>{t("edit.variableNameToSet")}</p>
+                <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
+                {props.globalVars.map((data) => {
+                  return (
+                    <option value={Object.keys(data)}>
+                      {Object.keys(data)}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </CSSTransition>
         </div>
@@ -685,7 +697,7 @@ const DropdownEditObject = (props) => {
               ) : <>
                 <p>{t("edit.variableNameToSet")}</p>
                 <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
-                {(objState?.sync ? props.variables : Object.entries(JSON.parse(sessionStorage.gameVars)).map((e) => ({ [e[0]]: e[1] }))).map((data) => {
+                {props.globalVars.map((data) => {
                   return (
                     <option value={Object.keys(data)}>
                       {Object.keys(data)}

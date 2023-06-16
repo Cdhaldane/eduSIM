@@ -51,7 +51,6 @@ const SimNote = (props) => {
         }
       }).then((res) => {
         let jsonCopy = JSON.parse(json);
-        console.log(json)
         jsonCopy.roles = (res.data)
         const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
         const href =  URL.createObjectURL(blob);

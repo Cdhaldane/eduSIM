@@ -128,7 +128,6 @@ const Variables = (props) => {
         trigger: []
       };
       if(pageData[type] === undefined) pageData[type] = [];
-      console.log(pageData)
   
       // Check if type is valid
       if (["variable", "condition", "interaction", "trigger"].includes(type)) {

@@ -64,7 +64,12 @@ const Interaction = (props) => {
       let name = props.shapes[i].varName
       out.push({ [name]: i })
     }
-    out.sort((a, b) => a.varName.localeCompare(b.varName))
+    
+    out.sort((a, b) => {
+      console.log(a, b)
+      if(a.varName)
+        return a.varName.localeCompare(b.varName)
+    })
     setShapes(out)
   }, [props.shapes])
 
@@ -101,7 +106,7 @@ const Interaction = (props) => {
       if (ints[i][6] === 'var') {
         list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
-            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
+            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(ints[i]); }} />
             <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
           </div>
           <div className="ints-container">
@@ -174,17 +179,16 @@ const Interaction = (props) => {
   }
   const deleteCon = (i) => {
     let a = fullInteractions
-    let x = props.localInts
-    if (props.current === 'global') x = props.globalInts;
-    const index = x.indexOf(a[i]);
-    if (index > -1) {
-      x.splice(index, 1);
-    }
-    a.splice(i, 1)
+    let x = []
+    a.map((int) => {
+      if(int !== i)
+      x.push(int)
+    })
+    
     if (props.current === 'session') props.setLocalInts(x)
     if (props.current === 'global') props.setGlobalInts(x)
 
-    setFullInteractions(a)
+    setFullInteractions(x)
   }
   const handle1 = () => {
     setShowAddition(!showAddition)
@@ -239,19 +243,19 @@ const Interaction = (props) => {
       let interaction = props.group[props.currentPage] ? props.group[props.currentPage].interaction : []
       out = (interaction)
     }
-    out = out.filter(arr => {
+    let x
+    x = out.filter(arr => {
       for (let obj of props.shapes) {
         arr = arr.flat()
-        console.log(arr, obj)
         if (arr[0] === obj.varName) {
           return true;
         }
       }
       return false;
     });
-    console.log(out)
     setFullInteractions(out)
-  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes, props.group, props.currentPage])
+    setRender(populateInteractions(x))
+  }, [props.current, props.localInts, props.globalInts, props.localVars, props.globalVars, props.page, props.shapes, props.group, props.currentPage, showConAdd, editingIndex, fullInteractions])
 
   const updateState = (n, i) => {
     const newState = box.map(obj => {
@@ -314,7 +318,7 @@ const Interaction = (props) => {
     <>
       {!showConAdd && (
         <>
-          {populateInteractions(fullInteractions)}
+          {render}
         </>
       )}
       <div className="variable-add tester" onClick={() => handleAdding()} hidden={showConAdd}>

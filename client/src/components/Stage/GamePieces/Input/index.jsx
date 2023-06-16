@@ -2,6 +2,8 @@ import React, { forwardRef, useContext, useState, useEffect } from "react";
 import CustomWrapper from "../CustomWrapper";
 import styled from "styled-components";
 import { SettingsContext } from "../../../../App";
+import { throttle, debounce } from 'lodash';
+
 
 const Wrapper = styled.div`
   & > * {
@@ -30,8 +32,7 @@ const Input = forwardRef((props, ref) => {
     }
   }, [props.variables])
 
-  const handleChangeValue = (value, bName) => {
-    console.log(props.variables)
+  const handleChangeValue = (value, bName, type) => {
     let values = value
     let variable;
     let newArray;
@@ -40,17 +41,18 @@ const Input = forwardRef((props, ref) => {
     } catch {
       variable = bName
     }
-
     if (Array.isArray(props.variables[variable])) {
       let currentArray = props.variables[bName.split('_')[0]]
       let replaceString = bName.split('_')[1]
       values = currentArray.map(str => str === replaceString ? value : str);
       variable = bName.split('_')[0]
-      console.log(currentArray, replaceString, value, variable)
     } else {
       variable = bName
     }
+    const delayInMilliseconds = 500; // customize this value to your needs
+
     if (props.sync && props.updateVariable) {
+      console.log(variable, values)
       props.updateVariable(variable, values)
     } else {
       let vars = {};
@@ -104,63 +106,68 @@ const Input = forwardRef((props, ref) => {
   }
 
   const handleButton = () => {
+    console.log(props.variables)
     let value;
-    for (let i = 0; i < props.interactions.length; i++)
-      if (props.interactions[i][0] === props.varName) {
-        if (props.interactions[i][6] === 'incr') {
-          if (parseInt(props.interactions[i][3]))
-            value = parseInt(props.variables[props.interactions[i][1]]) + parseInt(props.interactions[i][3])
-          else value = parseInt(props.variables[props.interactions[i][1]]) + parseInt(props.variables[props.interactions[i][3]])
-          handleChangeValue(value, props.interactions[i][1])
-        } else {
-          value = hanldeInteractionValue()
+    let int;
+    const delayInMilliseconds = 50; // customize this value to your needs
+
+    for (let i = 0; i < props.interactions.length; i++) {
+      setTimeout(() => {
+        int = props.interactions[i].flat()
+        if (int[0] === props.varName) {
+          console.log(int)
+          if (int[6] === 'incr') {
+            if (parseInt(int[3]))
+              value = parseInt(props.variables[int[1]]) + parseInt(int[3])
+            handleChangeValue(value, int[1])
+          } else {
+            value = hanldeInteractionValue(int)
+          }
         }
-      }
+      }, delayInMilliseconds);
+    }
   }
 
-  const hanldeInteractionValue = () => {
-    let interactions = props.interactions
-    let ints;
+
+  const hanldeInteractionValue = (int) => {
     if (!props.editMode) {
-      for (let i = 0; i < interactions.length; i++) {
-        if (props.varName === interactions[i][0]) {
-          if (interactions[i][6] === 'page') {
-            props.handleButtonPage(parseInt(interactions[i][5]))
-            return;
-          }
-          ints = interactions[i]
-          let operator = ints[4];
-          let value;
-          let result = true;
-          let value2 = ints[5]
-          let vName = ints[1]
-          if (props.variables[ints[3]])
-            value = props.variables[ints[3]]
-          else value = ints[3]
-        
-          switch (operator) {
-            case '+':
-              value = Number(value) + Number(value2);
-              break;
-            case '-':
-              value = Number(value) - Number(value2);
-              break;
-            case '*':
-              value = Number(value) * Number(value2);
-              break;
-            case '/':
-              value = Number(value) / Number(value2);
-              break;
-            default:
-              result = false;
-          }
-          handleChangeValue(value, vName)
+      if (props.varName === int[0]) {
+        if (int[6] === 'page') {
+          props.handleButtonPage(parseInt(int[5]))
+          return;
         }
+        let ints = int
+        let operator = ints[4];
+        let value;
+        let result = true;
+        let value2 = ints[5]
+        let vName = ints[1]
+        if (props.variables[ints[3]])
+          value = props.variables[ints[3]]
+        else value = ints[3]
+
+        switch (operator) {
+          case '+':
+            value = Number(value) + Number(value2);
+            break;
+          case '-':
+            value = Number(value) - Number(value2);
+            break;
+          case '*':
+            value = Number(value) * Number(value2);
+            break;
+          case '/':
+            value = Number(value) / Number(value2);
+            break;
+          default:
+            result = false;
+        }
+        handleChangeValue(value, vName)
       }
     }
   }
 
- 
+
 
   return (
     <CustomWrapper {...props} ref={ref}>
@@ -183,7 +190,7 @@ const Input = forwardRef((props, ref) => {
               }}
               placeholder={props.label}
               value={getValue()}
-              onChange={(e) => (props.visible ? handleChangeValue((e.target.value).toLowerCase()) : false)}
+              onChange={(e) => (props.visible ? handleChangeValue((e.target.value).toLowerCase(), props.varName) : false)}
             />
           ),
           checkbox: (

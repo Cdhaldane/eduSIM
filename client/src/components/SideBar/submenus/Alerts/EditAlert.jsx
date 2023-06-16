@@ -125,7 +125,6 @@ const EditAlert = ({ onEdit, onCancel, init, adding, hidden, variables }) => {
   }, [init, hidden]);
 
   const handleChange = (e, x) => {
-    console.log(e, x)
     setFormData(old => ({
       ...old,
       varName: e.label[0]

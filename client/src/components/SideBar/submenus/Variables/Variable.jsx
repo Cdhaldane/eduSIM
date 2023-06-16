@@ -79,13 +79,19 @@ const Variable = (props) => {
   }
 
 
-  const deleteVar = (data, i) => {
-    data.splice(i, 1)
+  const deleteVar = (data) => {
+    let newData = [];
+    console.log(data)
+    variables.map((item) => {
+      if(item !== data)
+        newData.push(item)
+    })
     if (props.current === 'global') {
-      props.setGlobalVars(data)
+      props.setGlobalVars(newData)
     } else {
-      props.setLocalVars(data)
+      props.setLocalVars(newData)
     }
+    setVariables(newData)
   }
 
   const getPageData = (data) => {
@@ -107,23 +113,40 @@ const Variable = (props) => {
   }
 
   const populateGameVars = (data) => {
-    let list = []
+    let list = [];
+  
     for (let i = 0; i < data.length; i++) {
-      let x = getPageData(data[i])
-      console.log(x)
-      list.push(<div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
-        <div className='vars-sidebar'>
-          <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data, i); }}><Trash className="icon var-trash" /></i>
-          <h4>{x}</h4>
+      let x = getPageData(data[i]);
+  
+      let divElement = (
+        <div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
+          <div className='vars-sidebar'>
+            <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data[i]); }}><Trash className="icon var-trash" /></i>
+            <h4 title={'Group ' + x}>{x}</h4>
+          </div>
+          <h1>{Object.keys(data[i])}</h1>
+          <h2> = </h2>
+          <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
         </div>
-        <h1>{Object.keys(data[i])}</h1>
-        <h2> = </h2>
-        <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
-      </div>
-      )
+      );
+  
+      list.push({ x, element: divElement });
     }
-    return list
-  }
+  
+    list.sort((a, b) => {
+      if (a.x < b.x) {
+        return -1;
+      } else if (a.x > b.x) {
+        return 1;
+      }
+      return 0;
+    });
+  
+    const sortedList = list.map(item => item.element);
+  
+    return sortedList;
+  };
+
   const handleGame = (e, varName, i) => {
     let vars = variables;
     let key = Object.keys(vars[i])

@@ -13,7 +13,6 @@ const Wrapper = styled.div`
 const Rectangle = forwardRef((props, ref) => {
     const { settings } = useContext(SettingsContext);
 
-    console.log(props)
     return (
         <>
             <Rect {...settings} {...props} />

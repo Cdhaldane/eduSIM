@@ -61,7 +61,6 @@ const DropdownTimelineBar = (props) => {
   }
 
   const handleClickOutside = e => {
-    console.log(props.pencilRef)
     if (dropdown.current && props.pencilRef.current 
       && props.pencilRef.current.contains(e.target) && 
       e.target.id !== "confirmModalConfirmButton" &&

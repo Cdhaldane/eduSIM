@@ -92,7 +92,6 @@ const Trigger = (props) => {
       if (bool) actual.push(x)
       
     })
-    console.log(actual)
     if (props.current === 'global') props.setGlobalTrigs(actual)
     if (props.current === 'session') props.setLocalTrigs(actual)
     setFullTriggers(actual)
