@@ -168,7 +168,6 @@ const Interaction = (props) => {
     } else {
       x.push(interaction)
     }
-    console.log(x)
     if (props.current === 'session') props.setLocalInts(x)
     if (props.current === 'global') props.setGlobalInts(x)
 
