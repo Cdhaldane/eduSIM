@@ -16,7 +16,13 @@ const PORT = process.env.PORT || 8080;
 
 //Initialising express and registering the basic middleware
 const app = express();
-app.use(cors()); // Use this after the variable declaration
+
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://edusim.ca', "https://reactapp-jyfluau3gq-uc.a.run.app"],
+  optionsSuccessStatus: 200 
+}
+
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ limit: '50mb',
@@ -47,6 +53,21 @@ const io = require("socket.io")(httpServer, {
 });
 
 io.on("connection", (socket) => events(io, socket));
+io.eio.pingTimeout = 320000; // 2 minutes
+io.eio.pingInterval = 10000;  // 5 seconds
+
+io.on("connection", (socket) => {
+  socket.on('disconnect', function() {
+    console.log('Got disconnect!');
+  });
+  socket.on("disconnecting", (reason) => {
+    for (const room of socket.rooms) {
+      if (room !== socket.id) {
+        socket.to(room).emit("errorLog", { key: "alert.noUpdateGameXInProgress", params: { game: socket.id } });
+      }
+    }
+  });
+});
 
 httpServer.listen(PORT, () => {
   console.log(`Server listening on portt ${PORT}!`);

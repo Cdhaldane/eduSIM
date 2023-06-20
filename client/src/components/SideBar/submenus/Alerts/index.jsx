@@ -112,11 +112,13 @@ const Alerts = (props) => {
       }
     })
     handeleNextLevel(out)
+    console.log(props.alerts)
     setAllAlerts(out)
   }, [props.alerts, props.page])
 
   const handleAddAlert = (data) => {
     let out = props.alerts || []
+    console.log(out)
     out.push(data)
     props.setAlerts(out)
     data.page = props.page
@@ -125,11 +127,12 @@ const Alerts = (props) => {
   };
 
   const handleEditAlert = (data) => {
-    let out = allAlerts
+    let out = props.alerts  
     out[editingIndex] = data
     // setAllAlerts(out)
     props.setAlerts(out)
     setEditingIndex(-1);
+    setAdding(false);
   };
 
   const handleRemoveAlert = (data) => {
@@ -231,7 +234,7 @@ const Alerts = (props) => {
   useEffect(() => {
     let done = checkAdvance()
     if (!props.editpage) props.handleDisable(!done)
-  }, [allAlerts])
+  }, [props])
 
 
   useEffect(() => {

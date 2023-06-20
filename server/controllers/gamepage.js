@@ -155,7 +155,7 @@ exports.updateGameInstance = async (req, res) => {
 
 // Delete a game instance
 exports.deleteGameInstance = async (req, res) => {
-  const { id } = req.body;
+  const id = req.params.id;
 
   const gameinstance = await GameInstance.findOne({
     where: {

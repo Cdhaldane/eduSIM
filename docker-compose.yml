@@ -2,20 +2,19 @@ version: '3'
 
 services:
   backend:
-    env_file:
-        "./.env"
     build:
       context: ./server
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     image: "simapp"
     ports:
       - "8080:8080"
+  
   frontend:
     build:
       context: ./client
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     image: "reactapp"
     ports:
       - "3000:3000"
-    links:
-      - "backend:be"
+    depends_on:
+      - backend

@@ -1154,8 +1154,6 @@ const CanvasPage = (props) => {
     newObject = [...new Set(newObject)]
     objectIds = [[...newObject], [...inputIds]]
 
-
-    
     return (
       <>
         <Layer {...layerProps(canvas, stage, "objects")}>

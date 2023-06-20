@@ -434,8 +434,10 @@ class Graphics extends Component {
             layerGroup = this.state.pages[this.state.level - 1][`${layer}Layers`]
           }
           if (layerGroup.includes(obj.id) && layerGroup[layerGroup.length - 1] !== obj.id) {
+            console.log(layerGroup)
             layerGroup.splice(layerGroup.indexOf(obj.id), 1)
             layerGroup.push(obj.id)
+            this.refresh()
           }
 
           // const screenRect = {
@@ -544,6 +546,7 @@ class Graphics extends Component {
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
+    this.setState({selectrole: false})
     let role = initRole;
     if (this.props.roleSelection === "random") role = -1;
     else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
@@ -560,9 +563,17 @@ class Graphics extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      selectrole: true
-    })
+    console.log(this.props.gamepieceStatus)
+    if(this.props.gamepieceStatus.running) {
+      this.setState({
+        selectrole: false
+      })
+    } else {
+      this.setState({
+        selectrole: true
+      })
+    }
+    
     this.setState({
       nextLevel: this.state.level + 1
     })
@@ -710,7 +721,7 @@ class Graphics extends Component {
         {this.state.selectrole && (
           <div>
             <Modal
-              isOpen={!this.props.players[this.props.socket.id]}
+              isOpen={this.state.selectrole}
               contentLabel="My dialog"
               className="createmodaltab"
               overlayClassName="myoverlaytab"

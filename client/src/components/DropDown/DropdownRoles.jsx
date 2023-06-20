@@ -50,8 +50,37 @@ const DropdownRoles = (props) => {
     if (props.refreshPersonalCanvas && props.personalAreaOpen) props.refreshPersonalCanvas();
   }, [selectedRole]);
 
-  useEffect(() => {
-  });
+  const handleFillRoles = (arr) => {
+    let out = arr;
+    if (props.roles) {
+      props.roles.map((role) => {
+        let roleObj = {};
+        roleObj.id = props.gameid;
+        roleObj.roleName = role
+        roleObj.numOfSpots = 1;
+        roleObj.roleDesc = "";
+        out.push(roleObj);
+        let data = {
+          gameinstanceid: props.gameid,
+          gamerole: role.trim(),
+          numspots: 1,
+          roleDesc: ''
+        };
+    
+        props.addNewRoleRect(data.gamerole);
+        axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
+          setRoleName("");
+          setRoleNum("");
+          setRoleDesc("");
+        }).catch(error => {
+          console.error(error);
+        });
+        
+      });
+      
+    }
+    setRoles(out)
+  }
 
   const updateRolesData = () => {
     axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
@@ -60,6 +89,8 @@ const DropdownRoles = (props) => {
       }
     }).then((res) => {
       const rolesData = [];
+      console.log(res);
+
       for (let i = 0; i < res.data.length; i++) {
         rolesData.push({
           id: res.data[i].gameroleid,
@@ -68,6 +99,7 @@ const DropdownRoles = (props) => {
           roleDesc: res.data[i].roleDesc
         });
       }
+      
       if (rolesData.length > 0) {
         setRoles(rolesData);
       } else {
@@ -85,14 +117,17 @@ const DropdownRoles = (props) => {
             roleDesc: res.data.roleDesc,
           };
           setRoles([defaultRole]);
+          handleFillRoles([defaultRole]);
           props.addNewRoleRect(defaultRole.roleName);
         }).catch(error => {
           console.error(error);
         });
       }
+      
     }).catch(error => {
       console.error(error);
     });
+   
   }
 
 
@@ -335,9 +370,9 @@ const DropdownRoles = (props) => {
 
     let data = {
       gameinstanceid: props.gameid,
-      gamerole: roleName.trim(),
+      gamerole: roleName?.trim(),
       numspots: parseInt(roleNum),
-      roleDesc: roleDesc.trim()
+      roleDesc: roleDesc?.trim()
     };
 
     props.addNewRoleRect(data.gamerole);

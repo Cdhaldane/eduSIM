@@ -256,6 +256,7 @@ class Graphics extends Component {
 
       connectors: [],
       gameroles: [],
+      roles: [],
       errMsg: "",
       arrowDraggable: false,
       newArrowRef: "",
@@ -312,6 +313,7 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
+        console.log(objects)
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -340,15 +342,23 @@ class Graphics extends Component {
           );
           uniqueShapesSet.push(uniqueArray)
         })
-
-
+        let roleData = []
         uniqueShapesSet.map((shape, i) => {
           if (shape.length === 0) return
+          shape.map((obj) => {
+            if (!roleData.includes(obj.rolelevel) && obj.rolelevel !== '') {
+              roleData.push(obj.rolelevel)
+            }
+          })
+          
           let type = shape[0].type
           this.setState({
             [type]: shape
           })
         })
+        if (this.props.setRoles) {
+          this.props.setRoles(roleData || []);
+        }
         this.props.setAllShapes(uniqueShapesSet);
 
         if (this.props.setTasks) {
@@ -754,6 +764,7 @@ class Graphics extends Component {
     storedObj.localInts = this.props.localInts;
     storedObj.localTrigs = this.props.localTrigs;
     storedObj.groups = this.props.groups;
+    storedObj.roles = this.state.roles;
 
     this.setState({
       saved: storedObj
@@ -1612,15 +1623,15 @@ class Graphics extends Component {
 
         const xIndex = this.state.lineTransformDragging === "top" ? 0 : 2;
         const yIndex = this.state.lineTransformDragging === "top" ? 1 : 3;
-        if(newLine){
+        if (newLine) {
           newLine.points[xIndex] = newLine.points[xIndex] + (event.movementX / this.state[`${stage}LayerScale`]);
           newLine.points[yIndex] = newLine.points[yIndex] + (event.movementY / this.state[`${stage}LayerScale`]);
           this.setState({
             lines: [...newLines, newLine]
           });
         }
-        
-        
+
+
 
         return;
       }
@@ -3330,27 +3341,7 @@ class Graphics extends Component {
   getPageProps = () => { }
   getVariableProps = () => { }
 
-  handleFillRoles = (shapes) => {
-    const roleTypes = ['Students', 'Teachers', 'Admins']; // your array of strings
-
-    let roles = roleTypes.reduce((obj, role) => {
-      obj[role] = [];
-      return obj;
-    }, {});
-    for (let i = 0; i < shapes.length; i++) {
-      shapes[i].length > 0 && Array.isArray(shapes[i]) && shapes[i].map(shape => {
-        if (shape.rolelevel === 'Students') {
-          roles['Students'].push(shape);
-        }
-      })
-    }
-    console.log(roles, this.state.roles)
-    if (roles !== this.state.roles) {
-      this.setState({
-        roles: roles
-      })
-    }
-  }
+ 
 
   renderAllObjects = () => {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas, this)
@@ -3807,6 +3798,7 @@ class Graphics extends Component {
           {/* The Role Picker */}
           <div id="rolesdrop">
             <DropdownRoles
+              roles={this.props.roles}
               refreshPersonalCanvas={() => {
                 this.setState({
                   canvasLoading: true,
@@ -3825,7 +3817,6 @@ class Graphics extends Component {
               handleCopyRole={this.handleCopyRole}
               handleEditRole={this.handleEditRole}
               roleRef={"rolesdrop"}
-              savedRoles={this.state.roles}
               editMode={true}
               addNewRoleRect={(name) => {
                 const pages = JSON.parse(JSON.stringify(this.state.pages));
@@ -3863,7 +3854,7 @@ class Graphics extends Component {
                   pages: pages
                 });
               }}
-              roles={this.state.roles}
+
             />
           </div>
         </div>

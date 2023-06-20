@@ -60,6 +60,7 @@ const EditPage = (props) => {
   const [localTrigs, setLocalTrigs] = useState([]);
   const [page, setPage] = useState(1);
   const [groups, setGroups] = useState({});
+  const [roles, setRoles] = useState([]);
 
   const [pages, setPages] = useState(6);
   const [shapes, setShapes] = useState([])
@@ -82,11 +83,15 @@ const EditPage = (props) => {
     document.body.style.zoom = "100%";
   }, [updater]);
 
+  const handleSetRoles = (roles) => {
+    setRoles(roles);
+  }
   const handlePage = (level) => {
     setPage(level);
   }
 
   const handleSetTasks = (data) => {
+    console.log(data)
     setTasks(data)
   }
 
@@ -217,6 +222,8 @@ const EditPage = (props) => {
                 handleLevel={handlePage}
                 handleSetPages={handleSetPages}
                 groups={groups}
+                roles ={roles}
+                setRoles={handleSetRoles}
               />
           </GridMain>
         </Grid>

@@ -13,6 +13,11 @@ import "./Level.css";
 import "../Stage/Info.css";
 import { set } from "immutable";
 
+import Info from "../../../public/icons/information.svg"
+import ChevronRight from "../../../public/icons/chevron-right-circle.svg"
+import Exit from "../../../public/icons/exit.svg"
+import Check from "../../../public/icons/checkmark-circle.svg"
+
 const Level = (props) => {
   const { t } = useTranslation();
   const { roomid } = useParams();
@@ -49,8 +54,8 @@ const Level = (props) => {
   }
   
   // Sort the array
- 
   useEffect(() => {
+   
     if (props.levelVal > props.number) {
       props.end()
     } else {
@@ -78,6 +83,7 @@ const Level = (props) => {
     }
     if (props.gamepage) {
       if (props.disableNext) {
+
         alertContext.showAlert("Must complete a task to advance!", "info");
         return
       };
@@ -144,7 +150,7 @@ const Level = (props) => {
                 {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
-              <i class="lni lni-information"></i>
+              <Info />
               </button>
             </div>
 
@@ -229,8 +235,8 @@ const Level = (props) => {
                     }
                     }>
                     {props.number > num ? (
-                      <i className={`lni lni-chevron-right-circle ${count - 1 > num ? 'arrow-left' : ''}`}></i>
-                    ) : <i className="lni lni-checkmark-circle"></i>}
+                      <ChevronRight className={`${count - 1 > num ? 'arrow-left' : ''}`}/>
+                    ) : <Check className='level-checkmark'/>}
                   </div>
                 </div>
               ))}
@@ -271,7 +277,7 @@ const Level = (props) => {
         )}
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
-            <i className="lni lni-exit"></i>
+            <Exit />
             <h1>{t("edit.exit")}</h1>
           </Link>
         )}

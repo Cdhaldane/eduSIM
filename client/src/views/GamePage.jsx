@@ -58,6 +58,7 @@ const Game = (props) => {
   const [customObjs, setCustomObjs] = useState();
   const [level, setLevel] = useState(1);
   const alertContext = useAlertContext();
+  const [selectrole, setSelectrole] = useState(false);
   const [notes, setNotes] = useState();
   const [userId, setUserId] = useState();
   const [pageColor, setPageColor] = useState("#FFF");
@@ -139,6 +140,7 @@ const Game = (props) => {
         setLocalVars(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localVars)
         setLocalInts(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localInts)
         setLocalTrigs(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localTrigs)
+        setSelectrole(true);
       });
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
@@ -281,7 +283,6 @@ const Game = (props) => {
       ...roomStatus.variables // Spread the properties from status.variables
     };
     
-    console.log(roomStatus.variables)
     setGlobalVars(vars);
   }, [roomStatus.variables])
   return (
@@ -315,6 +316,7 @@ const Game = (props) => {
         />
         <Main color={pageColor}>
           <CanvasGame
+            selectrole={selectrole}
             setPageColor={setPageColor}
             canvasHeights={props.canvasHeights}
             customObjectsLabels={props.customObjectsLabels}

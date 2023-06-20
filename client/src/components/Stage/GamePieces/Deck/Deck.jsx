@@ -149,7 +149,7 @@ const Deck = forwardRef((props, ref) => {
       setTopCardIndex(newState.index)
     });
     return () => {
-      socketRef.current.disconnect();
+      // socketRef.current.disconnect();
     };
   }, [props.id]);
 

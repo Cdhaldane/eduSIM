@@ -64,8 +64,8 @@ const CanvasUtils = (props) => {
 
   const getRealValue = (var1, var2, var3) => {
     let variable1, variable2, variable3;   
-    if (Array.isArray(var2)) variable1 = props.globalVars[var2.toString()];
-    else variable1 = var1;
+    if(props.globalVars[var1])
+      variable1 = props.globalVars[var1];
     if (Array.isArray(var2)) variable2 = props.globalVars[var2.toString()];
     else variable2 = var2;
     if (Array.isArray(var3)) variable3 = props.globalVars[var3.toString()];
@@ -81,7 +81,7 @@ const CanvasUtils = (props) => {
     if (isNumeric(variable2)) variable2 = parseInt(variable2);
     if (isNumeric(variable3)) variable3 = parseInt(variable3);
 
-    if (variable1 === undefined || variable2 === undefined) return false;
+    if (variable1 === undefined || variable2 === undefined) return [false];
     return [variable1, variable2, variable3];
   };
 
@@ -93,6 +93,7 @@ const CanvasUtils = (props) => {
         let result = [];
         for (let j = 0; j < props.globalCons[i].length; j++) {
           let con = props.globalCons[i][j].flatMap(x => x)
+         
           let var1 = con[0];
           let comparator = con[1];
           let var2 = con[2];
@@ -100,6 +101,7 @@ const CanvasUtils = (props) => {
           let var3 = con[4];
           if (j < props.globalCons[i].length - 1) {
             result.push(checkCondition(var1, comparator, var2, math, var3));
+
           }
           else {
             if (!result.includes(false)) {

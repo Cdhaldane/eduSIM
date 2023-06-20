@@ -21,7 +21,7 @@ const Dashboard = (props) => {
   const [showNote, setShowNote] = useState(false);
   const [showTable, setShowTable] = useState(false);
   const [gamedata, getGamedata] = useState();
-  const [fulldata, getFullGamedata] = useState();
+  const [fulldata, getFullGamedata] = useState([]);
   const [uploadedImages, setUploadedImages] = useState(null);
   const [updater, setUpdate] = useState(0)
   const [deletionId, setDeletionId] = useState(0);
@@ -86,6 +86,7 @@ const Dashboard = (props) => {
     try {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getAllGameInstances')
         .then((res) => {
+          console.log(res)
           getFullGamedata(res.data)
         }).catch(error => {
           console.error(error);
@@ -136,7 +137,7 @@ const Dashboard = (props) => {
       var body = {
         id: deletionId
       }
-      axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/delete/:id', body).then((res) => {
+      axios.put(`${process.env.REACT_APP_API_ORIGIN}/api/gameinstances/delete/${deletionId}`, body).then((res) => {
         var temp = JSON.parse(localStorage.getItem("order"));
         temp = temp.filter(function (item) {
           return item.gameinstanceid != res.data.gameinstance.gameinstanceid;

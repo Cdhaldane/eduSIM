@@ -6,7 +6,7 @@ import { useAlertContext } from "../Alerts/AlertContext";
 import { useHistory } from 'react-router-dom';
 
 const SimulationTable = (props) => {
-  const [simulations, setSimulations] = useState(props.data)
+  const [simulations, setSimulations] = useState(props.data || [])
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [createdBy, setcreatedBy] = useState('');
