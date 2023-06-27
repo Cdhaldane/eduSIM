@@ -8,7 +8,7 @@ const AuthenticationButton = (props) => {
   const { isAuthenticated, loginWithRedirect, logout, } = useAuth0();
   const { user } = useAuth0();
   const { t } = useTranslation();
-
+  
   useEffect(() => {
     if(user)
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {

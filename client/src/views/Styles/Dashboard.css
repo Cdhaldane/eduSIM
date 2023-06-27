@@ -1,7 +1,6 @@
 .dashboard-wrapper {
     font-size: 1.5em;
     min-height: 100vh;
-    height: auto;
     color: var(--primary);
     background-color: var(--almostwhite);
 }
@@ -20,6 +19,14 @@
     margin-bottom: 100px;
     /* animation: 1s ease-out 0s 1 slideInFromLeft; */
 }
+
+.dashsim {
+    display: flex;
+    flex-wrap: wrap;
+
+    margin-top: 20px;
+
+  }
 
 .dashboard-buttons {
     display: flex;

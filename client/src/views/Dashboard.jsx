@@ -11,6 +11,7 @@ import swap from 'lodash-move'
 import { useDrag } from 'react-use-gesture'
 import { useSprings, animated } from 'react-spring'
 import SimulationTable from "../components/Simulations/SimulationTable";
+import Loading from "../components/Loading/Loading";
 
 import "./Styles/Dashboard.css";
 
@@ -28,7 +29,29 @@ const Dashboard = (props) => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [users, setUsers] = useState();
   const { t } = useTranslation();
+  const [height, setHeight] = useState(1000);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
+
+  useEffect(() => {
+    if(user)
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+        params: {
+          email: user.email,
+          name: user.name,
+        }
+      }).then((res) => {
+        const allData = res.data;
+        localStorage.setItem('adminid', allData.adminid);
+        localStorage.setItem('adminEmail', allData.email);
+        let body = {
+          email: user.email,
+          picture: user.picture,
+        }
+        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
+      }).catch(error => {
+        console.error(error);
+      });
+  }, [user])
 
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
@@ -39,35 +62,37 @@ const Dashboard = (props) => {
     }
   }
   const getAllGamedata = async () => {
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
-      params: {
-        email: user.email,
-        name: user.name
+    try {
+      const res1 = await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+        params: {
+          email: user.email,
+          name: user.name
+        }
+      });
+  
+      const allData = res1.data;
+  
+      const res2 = await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id', {
+        params: {
+          id: allData.adminid
+        }
+      });
+  
+      let allData2 = res2.data;
+  
+      if (localStorage?.order?.length > 5) {
+        getGamedata(JSON.parse(localStorage.order));
       }
-    }).then((res) => {
-      const allData = res.data;
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id',
-        {
-          params: {
-            id: allData.adminid
-          }
-        }).then((res) => {
-          let allData = res.data;
-
-          if (localStorage?.order?.length > 5) {
-
-            getGamedata(JSON.parse(localStorage.order));
-          }
-          else {
-            getGamedata(allData);
-          }
-          setLoading(false);
-        }).catch(error => {
-          console.error(error);
-        });
-    }).catch(error => {
+      else {
+        getGamedata(allData2);
+      }
+        setHeight(allData2.length * 150);
+      
+      if(allData2.length > 0)
+        setLoading(false);
+    } catch (error) {
       console.error(error);
-    });
+    }
   }
 
   useEffect(() => {
@@ -86,7 +111,6 @@ const Dashboard = (props) => {
     try {
       axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getAllGameInstances')
         .then((res) => {
-          console.log(res)
           getFullGamedata(res.data)
         }).catch(error => {
           console.error(error);
@@ -95,7 +119,6 @@ const Dashboard = (props) => {
       axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${user.email}`)
         .then((res) => {
           setUsers(res.data)
-          setLoading(false);
         }).catch(error => {
           console.error(error);
         });
@@ -104,9 +127,6 @@ const Dashboard = (props) => {
     }
   }, [user]);
 
-  if (!isDataLoaded || isLoading) {
-    return <div className="App"></div>;
-  }
 
   const deleteNote = (id) => {
     getGamedata((prevgamedata) => {
@@ -204,6 +224,9 @@ const Dashboard = (props) => {
       </div>
     )
   }
+  if (isLoading) {
+    return <div className="App"><Loading /></div>;
+  }
 
   return (
     <div className="dashboard-wrapper">
@@ -218,7 +241,7 @@ const Dashboard = (props) => {
         </div>
         <div className="page-margin">
           <h2>{t("admin.mySimulations")}</h2>
-          <div className="dashsim" index={updater}>
+          <div className="dashsim" index={updater} style={{height: height}}>
             <DraggableList items={gamedata ? gamedata : []} />
           </div>
           <Modal

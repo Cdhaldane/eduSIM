@@ -83,8 +83,6 @@ exports.copyRole = async (req, res) => {
     },
   });
 
-  console.log(gamerole);
-
   if (!gamerole) {
     return res.status(400).send({
       message: `No game role found with the id ${id}`,

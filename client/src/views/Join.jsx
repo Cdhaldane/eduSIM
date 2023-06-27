@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { withAuth0 } from "@auth0/auth0-react";
 import Tabs from "../components/Tabs/Tabs";
 import CreateCsv from "../components/CreateCsv/CreateCsv";
@@ -18,6 +18,7 @@ import Pause from "../../public/icons/pause.svg"
 import Reload from "../../public/icons/reload.svg"
 import Left from "../../public/icons/angle-double-left.svg"
 import Right from "../../public/icons/angle-double-right.svg"
+import Clipboard from "../../public/icons/clipboard.svg"
 
 const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
@@ -50,10 +51,10 @@ const Join = (props) => {
   if (props.location.img !== undefined) {
     localStorage.setItem('img', props.location.img);
   }
-  if(title == null){
+  if (title == null) {
     setTitle(localStorage.title)
   }
-  if(image == null){
+  if (image == null) {
     setImage(localStorage.img)
   }
 
@@ -72,20 +73,20 @@ const Join = (props) => {
         }
       });
       client.on("roomStatusUpdate", (data) => {
-        if(data.chatlog){
-        let name;
-        for(let i = 0; i < data.chatlog.length; i++){
-          if(data.chatlog.length != 0){
-            if(data.chatlog[i].sender.name === undefined){
-              name="Admin"
+        if (data.chatlog) {
+          let name;
+          for (let i = 0; i < data.chatlog.length; i++) {
+            if (data.chatlog.length != 0) {
+              if (data.chatlog[i].sender.name === undefined) {
+                name = "Admin"
+              }
+              else {
+                name = data.chatlog[i].sender.name
+              }
+              setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.chatlog[i].room, name, data.chatlog[i].message]]);
             }
-            else{
-              name=data.chatlog[i].sender.name
-            }
-            setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.chatlog[i].room, name, data.chatlog[i].message]]);
           }
         }
-      }
         setRoomStatus((rooms) => ({
           ...rooms,
           [data.room]: data.status
@@ -95,8 +96,8 @@ const Join = (props) => {
             ...messages,
             [data.room]: data.chatlog
           }));
-          for(let i = 0; i < data.chatlog.length; i++){
-            if(data.chatlog[i].sender.name === undefined){
+          for (let i = 0; i < data.chatlog.length; i++) {
+            if (data.chatlog[i].sender.name === undefined) {
               data.chatlog[i].sender.name = "Admin"
             }
           }
@@ -116,22 +117,22 @@ const Join = (props) => {
       });
       client.on("clientLeft", (id) => {
         setPlayers((players) => {
-          let n = {...players};
+          let n = { ...players };
           delete n[id];
           return n;
         });
       });
       client.on("message", (data) => {
-        if(data.sender.name === undefined){
-          data.sender.name="Admin";
+        if (data.sender.name === undefined) {
+          data.sender.name = "Admin";
         }
-        setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.room,   data.sender.name, data.message]]);
+        setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.room, data.sender.name, data.message]]);
         setRoomMessages((messages) => ({
           ...messages,
           [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
         }));
       });
-      client.on("errorLog", ({key, params={}}) => {
+      client.on("errorLog", ({ key, params = {} }) => {
         alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
@@ -206,6 +207,14 @@ const Join = (props) => {
   const updateImg = (img) => {
     setImage(img);
   }
+  const copyToClipboard = () => {
+    const roomCode = currentRoom && currentRoom[2];
+    if (roomCode) {
+      alertContext.showAlert("Copied to clipboard", "info");
+      navigator.clipboard.writeText(roomCode);
+    }
+  };
+  const textInputRef = useRef(null);
 
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
@@ -217,154 +226,168 @@ const Join = (props) => {
     numTabs <= Object.values(roomStatus).length &&
     !Object.values(roomStatus).some(s => !s.running);
 
-  const playerDBIDS = useMemo(() => Object.values(players).map(({dbid}) => dbid), [players]);
+  const playerDBIDS = useMemo(() => Object.values(players).map(({ dbid }) => dbid), [players]);
   return (
     <div className="join-wrapper">
-    <div className="join">
-      <div className="page-margin joinboard-header">
-        <Image
-          className="joinboard-image"
-          cloudName="uottawaedusim"
-          publicId={
-            "https://res.cloudinary.com/uottawaedusim/image/upload/" +
-            image
-          }
-          alt={t("alt.sim")}
-        />
-        <div className="joinboard-info">
-          <h2 className="joinboard-title">{title}   <i className="joinboard-edit"  onClick={() => {
+      <div className="join">
+        <div className="page-margin joinboard-header">
+          <Image
+            className="joinboard-image"
+            cloudName="uottawaedusim"
+            publicId={
+              "https://res.cloudinary.com/uottawaedusim/image/upload/" +
+              image
+            }
+            alt={t("alt.sim")}
+          />
+          <div className="joinboard-info">
+            <h2 className="joinboard-title">{title}   <i className="joinboard-edit" onClick={() => {
               setEditModal(true);
             }}><Pencil className="icon join-icon" /><h1>Edit</h1></i></h2>
-          <button onClick={() => setShowNote(!showNote)} className="addbutton">
-            {t("admin.addStudentCSV")}
-          </button>
-        </div>
-        <div className="joinboard-controls">
-          {currentRoom ? (
-            <>
-              <p>{currentRoom[0]}</p>
-              <p>
-                {advanceMode === "teacher" && t("admin.pageX", { page: currentRoomStatus.level || 1 }) + ", "}
-                <AutoUpdate
-                  value={(currentRoomStatus.running
-                    ? timeFromNow
-                    : () => moment.duration(currentRoomStatus.timeElapsed || 0).hours() + ":" + moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
-                  )}
-                  intervalTime={20}
-                  enabled
-                />
-                {(currentRoomStatus.running == true ? '' : (
-                  currentRoomStatus.running === false ? ` ${t("admin.pausedSuffix")}` : ` ${t("admin.stoppedSuffix")}`
-                ))}
-              </p>
-            </>
-          ) : (
-            <>
-              <p>{t("admin.allRooms")}</p>
-              <p>{displayPause ? (
-                allRunning ? t("admin.allRunning") : t("admin.someRunning")
-              ) : t("admin.allPaused")}</p>
-            </>
+            <button onClick={() => setShowNote(!showNote)} className="addbutton">
+              {t("admin.addStudentCSV")}
+            </button>
+          </div>
+          {currentRoom && (
+            <div className="joinboard-room">
+              <p>Room Code:</p>
+              <p>{currentRoom[2]}</p>
+              <button onClick={copyToClipboard}><Clipboard /></button>
+              <input
+                ref={textInputRef}
+                type="text"
+                value={currentRoom && currentRoom[2]}
+                readOnly
+                style={{ position: 'absolute', left: '-9999px' }}
+              />
+            </div>
           )}
-          <div className="joinboard-buttons">
-            <button
-              className="joinboard-button"
-              onClick={displayPause ? pauseSim : startSim}
-              title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
-            >
-              {displayPause ? (
-                <Pause className="icon control-icon"/>
-              ) : (
-                <Play className="icon control-icon"/>
-              )}
-            </button>
-            <button
-              className="joinboard-button"
-              onClick={() => setResetID(true)}
-              title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
-            >
-              <Reload className="icon control-icon"/>
-            </button>
-            {advanceMode === "teacher" && (
+          <div className="joinboard-controls">
+            {currentRoom ? (
               <>
-                <button
-                  className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                  onClick={handlePrevPage}
-                  title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
-                >
-                  <Left className="icon control-icon"/>
-                </button>
-                <button
-                  className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
-                  onClick={handleNextPage}
-                  title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
-                >
-                  <Right className="icon control-icon"/>
-                </button>
+                <p>{currentRoom[0]}</p>
+                <p>
+                  {advanceMode === "teacher" && t("admin.pageX", { page: currentRoomStatus.level || 1 }) + ", "}
+                  <AutoUpdate
+                    value={(currentRoomStatus.running
+                      ? timeFromNow
+                      : () => moment.duration(currentRoomStatus.timeElapsed || 0).hours() + ":" + moment(currentRoomStatus.timeElapsed || 0).format("mm:ss")
+                    )}
+                    intervalTime={20}
+                    enabled
+                  />
+                  {(currentRoomStatus.running == true ? '' : (
+                    currentRoomStatus.running === false ? ` ${t("admin.pausedSuffix")}` : ` ${t("admin.stoppedSuffix")}`
+                  ))}
+                </p>
+              </>
+            ) : (
+              <>
+                <p>{t("admin.allRooms")}</p>
+                <p>{displayPause ? (
+                  allRunning ? t("admin.allRunning") : t("admin.someRunning")
+                ) : t("admin.allPaused")}</p>
               </>
             )}
+            <div className="joinboard-buttons">
+              <button
+                className="joinboard-button"
+                onClick={displayPause ? pauseSim : startSim}
+                title={currentRoom ? t("admin.pauseSim") : t("admin.pauseAllSims")}
+              >
+                {displayPause ? (
+                  <Pause className="icon control-icon" />
+                ) : (
+                  <Play className="icon control-icon" />
+                )}
+              </button>
+              <button
+                className="joinboard-button"
+                onClick={() => setResetID(true)}
+                title={currentRoom ? t("admin.resetSim") : t("admin.resetAllSims")}
+              >
+                <Reload className="icon control-icon" />
+              </button>
+              {advanceMode === "teacher" && (
+                <>
+                  <button
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handlePrevPage}
+                    title={currentRoom ? t("admin.goBackSim") : t("admin.goBackAllSims")}
+                  >
+                    <Left className="icon control-icon" />
+                  </button>
+                  <button
+                    className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}
+                    onClick={handleNextPage}
+                    title={currentRoom ? t("admin.advanceSim") : t("admin.advanceAllSims")}
+                  >
+                    <Right className="icon control-icon" />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <hr />
-      <Modal
-        isOpen={showNote}
-        onRequestClose={toggleModal}
-        contentLabel="My dialog"
-        className="createmodaltab"
-        overlayClassName="myoverlaytab"
-        closeTimeoutMS={250}
-        ariaHideApp={false}
-      >
-        <CreateCsv
-          gameid={localStorage.gameid}
+        <hr />
+        <Modal
           isOpen={showNote}
-          close={toggleModal}
-          success={() => setRefreshRooms(r => r + 1)}
-        />
-      </Modal>
-      <Modal
-        isOpen={editModal}
-        onRequestClose={() => setEditModal(false)}
-        contentLabel="My dialog"
-        className="createmodalarea"
-        overlayClassName="myoverlay"
-        ariaHideApp={false}
-      >
-      <CreateEdit
-        updateTitle={updateTitle}
-        updateImg={updateImg}
-        gameid={localStorage.gameid}
-        close={() => setEditModal(false)}
-        title={props.location.title}
-        img={props.location.img}
-      />
+          onRequestClose={toggleModal}
+          contentLabel="My dialog"
+          className="createmodaltab"
+          overlayClassName="myoverlaytab"
+          closeTimeoutMS={250}
+          ariaHideApp={false}
+        >
+          <CreateCsv
+            gameid={localStorage.gameid}
+            isOpen={showNote}
+            close={toggleModal}
+            success={() => setRefreshRooms(r => r + 1)}
+          />
+        </Modal>
+        <Modal
+          isOpen={editModal}
+          onRequestClose={() => setEditModal(false)}
+          contentLabel="My dialog"
+          className="createmodalarea"
+          overlayClassName="myoverlay"
+          ariaHideApp={false}
+        >
+          <CreateEdit
+            updateTitle={updateTitle}
+            updateImg={updateImg}
+            gameid={localStorage.gameid}
+            close={() => setEditModal(false)}
+            title={props.location.title}
+            img={props.location.img}
+          />
         </Modal>
 
-      <Tabs
-        customObjNames={props.customObjects}
-        adminid={localStorage.adminid}
-        gameid={localStorage.gameid}
-        title={localStorage.title}
-        setRoom={setCurrentRoom}
-        chatMessages={currentRoomMessages}
-        allMessages={allRoomMessages}
-        socket={socket}
-        roomStatus={roomStatus}
-        refreshRooms={refreshRooms}
-        players={playerDBIDS}
-        adminMessage={adminMessage}
-        updateNumTabs={l => setNumTabs(l)}
-      />
+        <Tabs
+          customObjNames={props.customObjects}
+          adminid={localStorage.adminid}
+          gameid={localStorage.gameid}
+          title={localStorage.title}
+          setRoom={setCurrentRoom}
+          chatMessages={currentRoomMessages}
+          allMessages={allRoomMessages}
+          socket={socket}
+          roomStatus={roomStatus}
+          refreshRooms={refreshRooms}
+          players={playerDBIDS}
+          adminMessage={adminMessage}
+          updateNumTabs={l => setNumTabs(l)}
+        />
 
-      <ConfirmationModal
-        visible={!!resetID}
-        hide={() => setResetID(null)}
-        confirmFunction={resetSim}
-        confirmMessage={t("admin.reset")}
-        message={t("admin.resetConfirm")}
-      />
-    </div>
+        <ConfirmationModal
+          visible={!!resetID}
+          hide={() => setResetID(null)}
+          confirmFunction={resetSim}
+          confirmMessage={t("admin.reset")}
+          message={t("admin.resetConfirm")}
+        />
+      </div>
     </div>
   );
 }

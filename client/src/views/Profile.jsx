@@ -288,3 +288,13 @@ const Profile = ({ auth0 }) => {
 };
 
 export default withAuth0(Profile);
+
+// computer build
+// cpu - ryzen 7 5800x $270
+// gpu - rtx 3080 $800
+// ram - 32gb 3400mhz $100
+// mobo - b550 $150
+// psu - 750w $100
+// case - $100
+// storage - 1tb nvme $100
+// total - $1620

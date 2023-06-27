@@ -808,6 +808,7 @@ class Graphics extends Component {
               }
             }}
             handleLevel={this.handleLevel}
+            overlayIndex={this.state.overlayOpenIndex}
             state={this.state}
             propsIn={this.props}
             setRefs={(type, ref) => {
@@ -817,14 +818,27 @@ class Graphics extends Component {
         )}
 
         {/* ---- GROUP CANVAS ---- */}
+        {this.state.pages[this.state.level - 1] && 
+        console.log(this.state)}
+        {/* // console.log((this.state.pages[this.state.level - 1].groupPositionRect.h) * this.state.groupLayerScale, this.state.groupLayerScale, 
+        // this.state.pages[this.state.level - 1].groupPositionRect.h, this.state.pages[this.state.level - 1].groupPositionRect.w)} */}
+        {/* ---- GROUP CANVAS ---- */}
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
-          <Stage
-            height={this.props.canvasHeights.group ? this.props.canvasHeights.group : window.innerHeight - 50}
-            width={window.innerWidth - 70}
-            ref="graphicStage"
-          >
-            {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
-          </Stage>
+          <div className="stageContainer">
+            <Stage
+              height={this.state.pages[this.state.level - 1] 
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.h * this.state.pages[this.state.level - 1].groupPositionRect.scaleY) * this.state.groupLayerScale ) 
+                : window.innerHeight - 50}
+              width={this.state.pages[this.state.level - 1] 
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale) 
+                : window.innerWidth}
+              offsetX={this.state.groupLayerX}
+              offsetY={this.state.groupLayerY}
+              ref="graphicStage"
+            >
+              {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
+            </Stage>
+          </div>
         </div>
         <div className="eheader">
           <Level
@@ -875,14 +889,18 @@ class Graphics extends Component {
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"
+                style={{backgroundImage: 'none'}}
               >
                 <Stage
                   style={{ position: "relative", overflow: "hidden" }}
-                  height={this.props.canvasHeights.personal ? this.props.canvasHeights.personal :
-                    (document.getElementById("personalGameContainer") ?
-                      document.getElementById("personalGameContainer").clientHeight : 0)}
-                  width={document.getElementById("personalGameContainer") ?
-                    document.getElementById("personalGameContainer").clientWidth : 0}
+                  height={this.state.pages[this.state.level - 1] 
+                    ? ((this.state.pages[this.state.level - 1].personalPositionRect.h * this.state.pages[this.state.level - 1].personalPositionRect.scaleY) * this.state.personalLayerScale ) 
+                    : window.innerHeight - 50}
+                  width={this.state.pages[this.state.level - 1] 
+                    ? ((this.state.pages[this.state.level - 1].personalPositionRect.w * this.state.pages[this.state.level - 1].personalPositionRect.scaleX) * this.state.personalLayerScale) 
+                    : window.innerWidth}
+                  offsetX={this.state.personalLayerX}
+                  offsetY={this.state.personalLayerY}
                   ref="personalAreaStage"
                 >
                   {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}

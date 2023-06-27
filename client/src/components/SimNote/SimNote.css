@@ -76,6 +76,7 @@
 
 .notesim-thumbnail img {
   width: 120px;
+  min-width: 120px;
   height: 100px;
   border-radius: 10px;
   object-fit: cover;

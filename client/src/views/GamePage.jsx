@@ -18,7 +18,8 @@ import { set } from "immutable";
 const Main = styled.main`
   grid-area: main;
   background-color: ${p => p.color};
-  padding-left: 70px;
+  padding-left: 50px;
+  height: 100vh - 70px;
   @media screen and (orientation: portrait) {
     padding-left: 0px;
   }
@@ -168,7 +169,7 @@ const Game = (props) => {
         });
       });
       client.on("errorLog", ({ key, params = {} }) => {
-        alertContext.showAlert(t(key, params), "error");
+        // alertContext.showAlert(t(key, params), "error");
       });
       client.on("userLevelUpdate", (data) => {
         setLevel(data.level)

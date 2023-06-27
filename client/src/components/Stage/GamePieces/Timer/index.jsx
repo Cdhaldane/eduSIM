@@ -56,7 +56,6 @@ const Timer = forwardRef((props, ref) => {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
-
     if (props.infolevel || props.overlay) {
       if (props.status[props.defaultProps.userId] === undefined) return;
       setRunning(props.status[props.defaultProps.userId].running);
@@ -67,7 +66,6 @@ const Timer = forwardRef((props, ref) => {
       setRunning(props.status.running);
       setStartTime(props.status.startTime);
       setElapsedTime(props.status.elapsedTime);
-
     }
   }, [props.status]);
 
@@ -90,8 +88,6 @@ const Timer = forwardRef((props, ref) => {
       }
     }
   }
-
-
 
   const toggleRun = () => {
     if (!running) {

@@ -216,16 +216,16 @@ const CanvasPage = (props) => {
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
-      let area = document.getElementById('groupGameContainer')?.getBoundingClientRect();
+      let area = { width: 1850, height: 887 };
       if (areaString === "personal") {
-        area = document.getElementById('personalGameContainer').getBoundingClientRect();
+        area = { width: 1788, height: 875}
       }
       if (areaString === "overlay") {
-        area = document.getElementById('overlayGameContainer').getBoundingClientRect();
+        area = {width: 1790, height: 877}
       }
       const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
       const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
-
+      console.log(area.width, area.height)
       const viewableWidth = area.width;
       const viewableHeight = area.height;
 

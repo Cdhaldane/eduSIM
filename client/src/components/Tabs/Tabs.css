@@ -544,6 +544,9 @@ input[type='radio']:checked:after {
   margin-right: 7vw;
   height: 10px;
 }
+.logs button {
+  margin-bottom: 10px;
+}
 
 .logrow {
   display: flex;
@@ -626,3 +629,33 @@ input[type='radio']:checked:after {
 
 
 @media screen and (orientation: portrait) {}
+
+.joinboard-room {
+  margin-left: 2%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--primary);
+  font-size: 1.5em;
+}
+.joinboard-room p:nth-child(1) {
+  margin-right: 10px;
+  color: black;
+}
+.joinboard-room p:nth-child(2) {
+  margin-right: 10px;
+}
+.joinboard-room button {
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary);
+  padding: 2px;
+}
+.joinboard-room button svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+

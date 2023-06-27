@@ -98,6 +98,7 @@
   float: left;
   width: calc(100vw - 70px);
   height: 100vh;
+  left: 70px;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 6;
@@ -148,13 +149,17 @@
 }
 
 .playModeCanvasContainer {
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-image: none !important;
-  scrollbar-color: var(--primary) var(--white) !important;
-  scrollbar-width: thin !important;
+  /* Your existing styles */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+/* .stageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
 
 .playModeCanvasContainer::-webkit-scrollbar-track
 {
@@ -214,4 +219,3 @@
 .video-container {
   width: 100% !important;
 }
-

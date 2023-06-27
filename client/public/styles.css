@@ -68,7 +68,7 @@ img {
 
 #groupGameContainer {
   margin-top: 55px;
-  height: 887px;
+  height: 100%;
 }
 
 #personalGameContainer .konvajs-content>canvas,
@@ -446,12 +446,6 @@ a {
   margin-bottom: 10px;
 }
 
-.dashsim {
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 100vh !important;
-  margin-top: 20px;
-}
 
 .dashboard-new {
   display: flex;
@@ -668,8 +662,7 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #e5e5e5;
-
+  background-color: white
   
 }
 
