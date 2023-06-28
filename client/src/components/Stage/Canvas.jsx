@@ -342,22 +342,25 @@ class Graphics extends Component {
           );
           uniqueShapesSet.push(uniqueArray)
         })
-        let roleData = []
-        uniqueShapesSet.map((shape, i) => {
-          if (shape.length === 0) return
-          shape.map((obj) => {
-            if (!roleData.includes(obj.rolelevel) && obj.rolelevel !== '') {
-              roleData.push(obj.rolelevel)
-            }
-          })
-          
-          let type = shape[0].type
-          this.setState({
-            [type]: shape
-          })
+        let pages = objects.pages;
+        for (let j = 0; j < pages.length; j++) {
+          let layer = []
+          for (let i = 0; i < this.savedObjects.length; i++) {
+            let type = this.savedObjects[i];
+            objects[type].forEach((obj) => {
+              if (obj.level - 1 === j) {
+                layer.push(obj.id)
+              }
+            })
+          }
+          pages[j].personalLayers = layer;
+        }
+        console.log(pages)
+        this.setState({
+          pages: pages
         })
         if (this.props.setRoles) {
-          this.props.setRoles(roleData || []);
+          this.props.setRoles(objects.roles || []);
         }
         this.props.setAllShapes(uniqueShapesSet);
 
@@ -500,7 +503,10 @@ class Graphics extends Component {
     }).catch(error => {
       console.error(error);
     });
+
   }
+
+
 
   setCustomGroupPos = (state, layer) => {
     if (!this.refs[layer]) return;
@@ -558,6 +564,8 @@ class Graphics extends Component {
     this.props.setPerformanceFunctions({
       setCustomObjData: this.setCustomObjData
     });
+
+
 
     this.props.setGameEditProps({
       setState: this.setState,
@@ -788,75 +796,6 @@ class Graphics extends Component {
     });
   };
 
-  handleCopyRole = async (gameroleid) => {
-    await this.handleSave();
-    return axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/copy', {
-      gameroleid
-    }).then((res) => {
-      const objects = JSON.parse(res.data.gameinstance.game_parameters);
-      const newIds = res.data.newIds;
-
-      // Parse the saved groups
-      let parsedSavedGroups = [];
-      for (let i = 0; i < objects.savedGroups.length; i++) {
-        let savedGroup = [];
-        for (let j = 0; j < objects.savedGroups[i].length; j++) {
-          savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
-        }
-        parsedSavedGroups.push(savedGroup);
-      }
-      objects.savedGroups = parsedSavedGroups;
-
-      // Put parsed saved data into state
-      this.savedState.forEach((object, idx, array) => {
-        this.setState({
-          [object]: objects[object]
-        }, () => {
-          if (idx === array.length - 1) {
-            this.setLayers([...this.getLayers(), ...newIds]);
-          }
-        });
-      });
-
-      return res.data.gamerole;
-    }).catch(error => {
-      console.error(error);
-    });
-  }
-
-  handleEditRole = async ({ id, roleName, roleNum, roleDesc }) => {
-    await this.handleSave();
-    return axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/update', {
-      id: id,
-      name: roleName,
-      numspots: roleNum,
-      roleDesc: roleDesc,
-    }).then((res) => {
-      let objects = JSON.parse(res.data.gameinstance.game_parameters);
-
-      // Parse the saved groups
-      let parsedSavedGroups = [];
-      for (let i = 0; i < objects.savedGroups.length; i++) {
-        let savedGroup = [];
-        for (let j = 0; j < objects.savedGroups[i].length; j++) {
-          savedGroup.push(JSON.parse(objects.savedGroups[i][j]));
-        }
-        parsedSavedGroups.push(savedGroup);
-      }
-      objects.savedGroups = parsedSavedGroups;
-
-      // Put parsed saved data into state
-      this.savedState.forEach((object) => {
-        this.setState({
-          [object]: objects[object]
-        });
-      });
-
-      return true;
-    }).catch(error => {
-      console.error(error);
-    });
-  }
 
   onObjectContextMenu = e => {
     if (
@@ -3341,7 +3280,71 @@ class Graphics extends Component {
   getPageProps = () => { }
   getVariableProps = () => { }
 
- 
+  handleSetRoles = (role) => {
+    this.setState({
+      roles: role
+    });
+  }
+
+  handleEditShapes = (prevRoleName, roleName) => {
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      let type = this.savedObjects[i];
+      this.state[type].forEach((obj) => {
+        if (obj.rolelevel === prevRoleName) {
+          obj.rolelevel = roleName;
+        }
+      })
+    }
+  }
+  handleCopyRole = async (role, newName) => {
+    let roleName = role.roleName;
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      let type = this.savedObjects[i];
+      let newObj = []
+      let delCount = this.state[this.deletionCounts[i]];
+      let num = this.state[type].length + delCount + 1;
+      this.state[type].forEach((obj) => {
+        let copyObj = { ...obj };
+        if (obj.rolelevel === roleName) {
+          copyObj.rolelevel = newName;
+          copyObj.name = type + num;
+          copyObj.ref = type + num;
+          copyObj.id = type + num;
+
+          newObj.push(copyObj);
+          num++;
+
+          this.state.pages[this.state.level - 1].personalLayers.push(copyObj.id)
+        }
+      })
+      this.setState({
+        [type]: [...this.state[type], ...newObj]
+      })
+
+    }
+  }
+  handleDeleteRole = (role) => {
+    let roleName = role.roleName;
+    console.log(role)
+    for (let i = 0; i < this.savedObjects.length; i++) {
+      let type = this.savedObjects[i];
+      let newObj = []
+      this.state[type].forEach((obj) => {
+        if (obj.rolelevel !== roleName) {
+          newObj.push(obj);
+        }
+      })
+
+      console.log(newObj)
+      this.setState({
+        [type]: newObj
+      })
+    }
+    console.log(this.state)
+  }
+
+
+
 
   renderAllObjects = () => {
     return this.props.loadObjects("group", "edit", this.state.movingCanvas, this)
@@ -3816,6 +3819,9 @@ class Graphics extends Component {
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}
               handleEditRole={this.handleEditRole}
+              handleSetRoles={this.handleSetRoles}
+              handleDeleteRole={this.handleDeleteRole}
+              handleEditShapes={this.handleEditShapes}
               roleRef={"rolesdrop"}
               editMode={true}
               addNewRoleRect={(name) => {

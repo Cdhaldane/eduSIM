@@ -5,6 +5,7 @@ import CanvasFunctional from "../components/Stage/CanvasFunctional";
 import styled from "styled-components"
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useDropdownContext } from '../components/Dropdown/DropdownReactContext';
+import { useTranslation } from "react-i18next";
 import { Container } from "react-bootstrap";
 import ErrorBoundary from "../components/Loading/ErrorBoundary";
 import Loading from "../components/Loading/Loading";
@@ -45,6 +46,7 @@ const EditPage = (props) => {
   const [showNav, setShowNav] = useState(false);
   const [updater, setUpdater] = useState(0);
   const [canvasLoading, setCanvasLoading] = useState(false);
+  const { t } = useTranslation();
 
   const alertContext = useAlertContext();
   const dropdownContext = useDropdownContext();
@@ -91,7 +93,6 @@ const EditPage = (props) => {
   }
 
   const handleSetTasks = (data) => {
-    console.log(data)
     setTasks(data)
   }
 

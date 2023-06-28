@@ -114,9 +114,21 @@ const Card = forwardRef(({ image, text, value, suit, style, onMouseDown, onMouse
   );
 });
 
-const ContextMenu = ({ onClose, onReset }) => {
+const ContextMenu = ({ onClose, onReset, onDeal }) => {
+  const [dealAmount, setDealAmount] = useState(1);
   const handleClick = (e) => {
     e.stopPropagation();
+    // onClose();
+  };
+
+  const handleDeal = () => {
+    onDeal(dealAmount);
+    onClose();
+  };
+
+  const handleDealAmountChange = (e) => {
+    setDealAmount(e.target.value);
+    onDeal(e.target.value);
     onClose();
   };
 
@@ -126,7 +138,17 @@ const ContextMenu = ({ onClose, onReset }) => {
       onClick={handleClick}
     >
       <button onClick={onReset}>Reset Deck</button>
-      <button onClick={onReset}>Deal 2</button>
+      <div className='context-menu-dropdown'>
+        <label for="dealAmount">Deal </label>
+        <select id="dealAmount" value={dealAmount} onChange={handleDealAmountChange}>
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4</option>
+          <option value={5}>5</option>
+        </select>
+      </div>
+      {/* <button onClick={handleDeal}>Deal</button> */}
     </div>
   );
 };
@@ -159,10 +181,14 @@ const Deck = forwardRef((props, ref) => {
     socketRef.current.emit("card-dragged", { index: 0, cards: newCards, id: props.id });
   }, [])
 
+  const handleDeal = (amount) => {
+    console.log(amount)
+  }
+
   const createDeck = () => {
     const newDeck = [];
     let position = { x: 0, y: 0 }
-    if (props.deck.length > 0) {
+    if (props.deck?.length > 0) {
       props.deck.forEach((card) => {
         newDeck.push({ ...card, flipped, position });
       });
@@ -217,6 +243,7 @@ const Deck = forwardRef((props, ref) => {
         }
       }, 1000);
     });
+    setContextMenuVisible(false);
   };
 
   const handleDragStop = (index, position) => {
@@ -276,7 +303,12 @@ const Deck = forwardRef((props, ref) => {
         <Draggable
           key={index}
           position={cards[index].position}
-          onDrag={() => setIsDragging(true)}
+ 
+          onDrag={(e, data) => {
+            setIsDragging(true)
+            position.x = data.lastX + (data.deltaX * 0.5);
+            position.y = data.lastY + (data.deltaY * 0.5);
+          }}
           onStop={(e, data) =>
             handleDragStop(index, { x: data.x, y: data.y })
           }
@@ -310,6 +342,7 @@ const Deck = forwardRef((props, ref) => {
               <ContextMenu
                 onClose={closeContextMenu}
                 onReset={resetDeck}
+                onDeal={handleDeal}
               />
             )}
           </>

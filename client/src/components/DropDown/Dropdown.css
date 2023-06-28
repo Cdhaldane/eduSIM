@@ -444,21 +444,6 @@ a {
   margin-left: auto;
 }
 
-.role-deselect-icon {
-  margin-left: auto;
-  margin-right: 6px;
-  border-radius: 0 !important;
-  color: var(--primary) !important;
-  z-index: 3000;
-}
-
-.role-deselect-icon i {
-  fill: var(--primary) !important;
-  width: 20px !important;
-  height: 20px !important;
-  position: relative;
-  right: 16px;
-}
 
 .gamemode i {
   position: relative;
@@ -869,8 +854,8 @@ a {
 
 #roleNumAdd {
   width: 15%;
-  padding: 15x;
   height: 100%;
+  margin-left: 5px;
 }
 
 .add-dropdown-item-input {
@@ -1005,14 +990,23 @@ a {
 
 .dropdown-desc {
   position: absolute;
-  right: -5px;
+  right: 0px;
   align-items: center !important;
+
 }
 .dropdown-desc svg{
-  width: 30px !important;
-  height: 30px !important;
-  left: 10px;
+  width: 27px !important;
+  height: 27px !important;
   bottom: 0px !important;
+  left: -6px !important;
+}
+.dropdown-desc svg:hover{
+  cursor: pointer;
+  fill: white !important;
+}
+.dropdown-desc button:hover {
+  background-color: var(--primary) !important;
+
 }
 .role-desc{
   width: 90%;
@@ -1025,6 +1019,7 @@ a {
   resize: none;
   margin-top: 10px;
 }
+
 .roles-submit{
   margin-right: 25px !important;
   margin-bottom: 10px !important;

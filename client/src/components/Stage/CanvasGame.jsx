@@ -563,7 +563,6 @@ class Graphics extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.gamepieceStatus)
     if(this.props.gamepieceStatus.running) {
       this.setState({
         selectrole: false
@@ -624,7 +623,6 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
-      console.log("updating variable", name, value, increment)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -735,6 +733,7 @@ class Graphics extends Component {
                 players={this.props.players}
                 initialUserInfo={this.props.initialUserInfo}
                 roleSelection={this.props.roleSelection}
+                roles={this.props.roles}
               />
             </Modal>
           </div>
@@ -817,12 +816,6 @@ class Graphics extends Component {
           />
         )}
 
-        {/* ---- GROUP CANVAS ---- */}
-        {this.state.pages[this.state.level - 1] && 
-        console.log(this.state)}
-        {/* // console.log((this.state.pages[this.state.level - 1].groupPositionRect.h) * this.state.groupLayerScale, this.state.groupLayerScale, 
-        // this.state.pages[this.state.level - 1].groupPositionRect.h, this.state.pages[this.state.level - 1].groupPositionRect.w)} */}
-        {/* ---- GROUP CANVAS ---- */}
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <div className="stageContainer">
             <Stage

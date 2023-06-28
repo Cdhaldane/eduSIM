@@ -53,11 +53,11 @@ const Game = (props) => {
   const [players, setPlayers] = useState({});
   const [messageBacklog, setMessageBacklog] = useState([]);
   const [isEnd, setIsEnd] = useState(false);
-  const [roles, setRoles] = useState(null);
   const [isLoading, setLoading] = useState(true);
   const [isL, setL] = useState(true);
   const [customObjs, setCustomObjs] = useState();
   const [level, setLevel] = useState(1);
+  const [roles, setRoles] = useState([]);
   const alertContext = useAlertContext();
   const [selectrole, setSelectrole] = useState(false);
   const [notes, setNotes] = useState();
@@ -96,22 +96,7 @@ const Game = (props) => {
       });
       let gameData = roomData;
       setRoomInfo(roomData);
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-        params: {
-          gameinstanceid: roomData.gameinstanceid,
-        }
-      }).then((res) => {
-        const rolesData = [];
-        for (let i = 0; i < res.data.length; i++) {
-          rolesData.push({
-            id: res.data[i].gameroleid,
-            roleName: res.data[i].gamerole,
-            numOfSpots: res.data[i].numspots
-          });
-        }
-        setRoles(rolesData);
-      })
-
+      
       if (userid) {
         axios.get(process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getPlayer', {
           params: {
@@ -141,6 +126,7 @@ const Game = (props) => {
         setLocalVars(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localVars)
         setLocalInts(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localInts)
         setLocalTrigs(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localTrigs)
+        setRoles(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).roles)
         setSelectrole(true);
       });
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
@@ -151,9 +137,9 @@ const Game = (props) => {
         if (lastSetVar) {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
-       
+        setLevel(status.level)
         setRoomStatus(status);
-
+        console.log(status)
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
@@ -347,6 +333,7 @@ const Game = (props) => {
             localVars={localVars || []}
             localInts={localInts || []}
             localTrigs={localTrigs || []}
+            roles={roles || []}
             setNotes={setNotes}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}

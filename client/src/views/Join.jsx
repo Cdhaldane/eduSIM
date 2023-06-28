@@ -133,7 +133,7 @@ const Join = (props) => {
         }));
       });
       client.on("errorLog", ({ key, params = {} }) => {
-        alertContext.showAlert(t(key, params), "error");
+        // alertContext.showAlert(t(key, params), "error");
       });
       setSocketInfo(client);
       return () => client.disconnect();

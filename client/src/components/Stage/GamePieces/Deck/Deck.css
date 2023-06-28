@@ -1,14 +1,12 @@
 .card-container,
 .card-container red {
-    transition: top 0.5s;
-    left: 3px;
+    transition: top 0.5s;  
     
 }   
 
 .decks-red {
     width: 98px;
     height: 144px;
-    border: 1.5px solid #f25f5c;
     color: #f25f5c !important;
     fill: #f25f5c !important;
     background-color: white;
@@ -19,44 +17,38 @@
 .card-container {
     width: 100px;
     height: 144px;
-    border: 1.5px solid #f25f5c;
     color: black;
     fill: black;
     background-color: white;
     top: -0px;
  
+ 
 }
 
 .deck-container {
-    color: rgb(107, 107, 107);
-    position: relative;
-    width: 100px;
-    height: 140px !important;
-    box-shadow: 5px 5px;
-    
-    border-radius: 5px;
-    transition: top 0.5s;
+
 }
 
 .card-back {
     position: relative;
-    left: -35px !important;
-    top: -30px !important;
-    width: 167px;
-    height: 200px;
-    padding: -30px !important;
+    left: -1px !important; 
+    top: -1px !important; 
+    width: 100px;
+    height: 144px;
+    padding: 2px !important;
     color: #f25f5c;
     fill: #f25f5c;
+    background-color: whitesmoke;
 }
 
 .card-back-edit {
-    position: relative;
-    left: 2px;
-    top: 2px;
-    transform: scale(1.65);
-    padding: -30px !important;
-    color: #f25f5c;
+    padding: 2px;
+    color: rgb(107, 107, 107);
     fill: #f25f5c;
+    width: 100px;
+    height: 144px;
+    border-radius: 5px;
+    box-shadow: 1px 1px;
 }
 
 .shuffle-button {
@@ -73,14 +65,14 @@
     font-size: 9.9em;
     position: relative;
     top: -44px;
-    left: -4.5px;
+    left: 0px;
 }
 
 .deck-black {
     font-size: 9.9em;
     position: relative;
-    top: -44px;
-    left: -4.5px;
+    top: -43px;
+    left: 0px;
 }
 
 .context-menu {
@@ -94,7 +86,8 @@
     position: relative;
     top: -30px;
     left: 100px;
-
+    font-size: 0.8em;
+    
 }
 
 .context-menu button {
@@ -102,15 +95,39 @@
     border: none;
     color: #333;
     cursor: pointer;
-    font-size: 14px;
-    padding: 2px 2px;
+    font-size: 13px;
+    padding: 0px 0px;
     width: 100%;
     text-align: left;
-
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
 }
 
 .context-menu button:hover {
     background-color: #eee;
+}
+.context-menu-dropdown{
+    display: flex;
+    flex-direction: row;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0px 0px;
+    width: 100%;
+    text-align: left;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    align-items: center;
+}
+.context-menu-dropdown select{
+    height: 50%;
+    border: 0px solid black;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 0px;
+    margin-left: 5px;
+    width: 50%;
 }
 
 .card-preview p {
@@ -149,7 +166,8 @@
     backface-visibility: hidden;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 0px;
+  
 }
 
 .card-back {

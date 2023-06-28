@@ -41,8 +41,8 @@
   border-color: rgb(57, 57, 255);
 }
 
-.alert-popup-icon.info {
-  color: rgb(57, 57, 255);
+.alert-popup-icon.info svg{
+  fill: rgb(57, 57, 255) !important;
 }
 
 /* Error Style */
@@ -52,8 +52,19 @@
   border-color: rgb(150, 0, 0);
 }
 
-.alert-popup-icon.error {
-  color: rgb(255, 0, 0);
+.alert-popup-icon.error svg {
+  fill: rgb(150, 0, 0) !important;
+}
+
+/* Success Style */
+
+.alert-popup.success {
+  background-color: rgb(209, 255, 209);
+  border-color: rgb(0, 150, 0);
+}
+
+.alert-popup-icon.success svg {
+  fill: rgb(0, 150, 0) !important;
 }
 
 /* CSS Transition */

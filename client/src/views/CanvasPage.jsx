@@ -225,7 +225,6 @@ const CanvasPage = (props) => {
       }
       const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
       const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
-      console.log(area.width, area.height)
       const viewableWidth = area.width;
       const viewableHeight = area.height;
 
@@ -1133,8 +1132,6 @@ const CanvasPage = (props) => {
       const overlay = page.overlays.find(overlay => overlay.id === canvas.state.overlayOpenIndex)
       objectIds = overlay.layers;
     }
-
-
 
     objectIds = [objectIds.filter(id => id && id.includes("pencils")), ...objectIds.filter(id => id && !id.includes("pencils"))];
 

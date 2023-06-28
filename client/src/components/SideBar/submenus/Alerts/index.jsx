@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditAlert from "./EditAlert";
 import { useTranslation } from "react-i18next";
+import { useAlertContext } from "../../../Alerts/AlertContext";
+
 
 
 import Check from "../../../../../public/icons/checkmark.svg"
@@ -99,10 +101,12 @@ const EditButtons = styled.div`
 const Alerts = (props) => {
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
-  const { t } = useTranslation();
   const [curr, setCurr] = useState(0)
   const [firstLoad, setFirstLoad] = useState(false)
   const [allAlerts, setAllAlerts] = useState([])
+
+  const alertContext = useAlertContext();
+  const { t } = useTranslation();
 
   useEffect(() => {
     let out = []
@@ -112,13 +116,11 @@ const Alerts = (props) => {
       }
     })
     handeleNextLevel(out)
-    console.log(props.alerts)
     setAllAlerts(out)
-  }, [props.alerts, props.page])
+  }, [props.alerts, props.page, props.globalVars])
 
   const handleAddAlert = (data) => {
     let out = props.alerts || []
-    console.log(out)
     out.push(data)
     props.setAlerts(out)
     data.page = props.page
@@ -127,9 +129,9 @@ const Alerts = (props) => {
   };
 
   const handleEditAlert = (data) => {
-    let out = props.alerts  
+    let out = props.alerts
     out[editingIndex] = data
-    // setAllAlerts(out)
+    setAllAlerts(out)
     props.setAlerts(out)
     setEditingIndex(-1);
     setAdding(false);
@@ -139,7 +141,7 @@ const Alerts = (props) => {
     let out = props.alerts || []
     let actual = []
     out.map((alert, index) => {
-      if(alert !== data)
+      if (alert !== data)
         actual.push(alert)
     })
     props.setAlerts(actual)
@@ -180,9 +182,10 @@ const Alerts = (props) => {
     let val = vars[varName];
     let varLen = isNaN(val) ? (val || "").length : val;
 
-    if(val === true){
-      val ='true'
+    if (val === true) {
+      val = 'true'
     }
+
 
     switch (condition) {
       case "isequal":
@@ -248,9 +251,13 @@ const Alerts = (props) => {
       if (checkObjConditions(out[i].varName, out[i].varCondition, out[i].varCheck, out[i].varCheckAlt)) {
         if (!out[i].advance) {
           if (checkAdvance() && firstLoad === true) {
+            console.log('Advance')
             props.handleLevel(page + 1)
             return;
           }
+        } else {
+          if(!out[i].optional) alertContext.showAlert("Objective completed! Advance when ready.", "success");
+          else alertContext.showAlert("Objective completed!", "success");
         }
       }
     }

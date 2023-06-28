@@ -33,6 +33,7 @@ const DropdownRoles = (props) => {
   const [roles, setRoles] = useState([]);
   const [roleDesc, setRoleDesc] = useState("");
   const [deleteIndex, setDeleteIndex] = useState(0);
+  const [isCopyingRole, setIsCopyingRole] = useState(false);
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [selected, setSelected] = useState(-1)
   const [description, setDescription] = useState(false);
@@ -50,95 +51,15 @@ const DropdownRoles = (props) => {
     if (props.refreshPersonalCanvas && props.personalAreaOpen) props.refreshPersonalCanvas();
   }, [selectedRole]);
 
-  const handleFillRoles = (arr) => {
-    let out = arr;
-    if (props.roles) {
-      props.roles.map((role) => {
-        let roleObj = {};
-        roleObj.id = props.gameid;
-        roleObj.roleName = role
-        roleObj.numOfSpots = 1;
-        roleObj.roleDesc = "";
-        out.push(roleObj);
-        let data = {
-          gameinstanceid: props.gameid,
-          gamerole: role.trim(),
-          numspots: 1,
-          roleDesc: ''
-        };
-    
-        props.addNewRoleRect(data.gamerole);
-        axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
-          setRoleName("");
-          setRoleNum("");
-          setRoleDesc("");
-        }).catch(error => {
-          console.error(error);
-        });
-        
-      });
-      
-    }
-    setRoles(out)
-  }
-
-  const updateRolesData = () => {
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-        gameinstanceid: props.gameid,
-      }
-    }).then((res) => {
-      const rolesData = [];
-      console.log(res);
-
-      for (let i = 0; i < res.data.length; i++) {
-        rolesData.push({
-          id: res.data[i].gameroleid,
-          roleName: res.data[i].gamerole,
-          numOfSpots: res.data[i].numspots,
-          roleDesc: res.data[i].roleDesc
-        });
-      }
-      
-      if (rolesData.length > 0) {
-        setRoles(rolesData);
-      } else {
-        const defaultRoleAPI = {
-          gameinstanceid: props.gameid,
-          gamerole: t("game.defaultRole"),
-          numspots: -1,
-          roleDesc: "Default role",
-        };
-        axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', defaultRoleAPI).then((res) => {
-          const defaultRole = {
-            id: res.data.gameroleid,
-            roleName: t("game.defaultRole"),
-            numOfSpots: -1,
-            roleDesc: res.data.roleDesc,
-          };
-          setRoles([defaultRole]);
-          handleFillRoles([defaultRole]);
-          props.addNewRoleRect(defaultRole.roleName);
-        }).catch(error => {
-          console.error(error);
-        });
-      }
-      
-    }).catch(error => {
-      console.error(error);
-    });
-   
-  }
 
 
   const handleClickOutside = e => {
     let menuRef = document.getElementsByClassName('personalAreaStageContainer')[0];
     let roleRef = document.getElementById('dropdown');
-
-    if (menuRef?.contains(e.target)) {
-      setActiveMenu('main');
-      setModifyIndex(-1);
-    }
+    // if (menuRef?.contains(e.target)) {
+    //   setActiveMenu('main');
+    //   setModifyIndex(-1);
+    // }
   }
 
 
@@ -146,7 +67,7 @@ const DropdownRoles = (props) => {
     updateRolesData();
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [props.gameid]);
+  }, [props.gameid, props.roles]);
 
   useEffect(() => {
     calcHeight(menuElem.current?.firstChild);
@@ -167,45 +88,28 @@ const DropdownRoles = (props) => {
   }
 
   const handleModifyRole = (e, index) => {
+    e.stopPropagation();
     setModifyIndex(index);
     setSelected(index)
     setRoleName(roles[index].roleName);
     setRoleNum(roles[index].numOfSpots);
   }
 
-  const handleSubmitModification = async () => {
-    await props.handleEditRole({
-      id: roles[selected].id,
-      roleName,
-      roleNum,
-      roleDesc
-    });
-    props.renameRoleRect(roles[selected].roleName, roleName);
-    
-    setSelectedRole(roleName);
-    props.roleLevel(roleName, roleNum, roleDesc);
-    setRoles(roles.map((v, i) => i === selected ? {
-      ...v,
-      roleName: roleName,
-      numOfSpots: roleNum,
-      roleDesc: roleDesc
-    } : v));
-    setRoleName('');
-    setRoleNum('');
-    setRoleDesc('');
-    setModifyIndex(-1);
-    setActiveMenu('main')
-  }
 
-  const handleCopyRole = async (gameroleid) => {
-    const newRole = await props.handleCopyRole(gameroleid);
-    setRoles([...roles, {
-      id: newRole.gameroleid,
-      roleName: newRole.gamerole,
-      numOfSpots: newRole.numspots,
-      roleDesc: newRole.roleDesc
-    }]);
-  }
+  const handleCopyRole = async (role) => {
+    let name = role.roleName + 'copy';
+    setRoleName(name);
+    setRoleNum(role.numOfSpots);
+    setRoleDesc(role.roleDesc);
+    props.handleCopyRole(role, name);
+    setIsCopyingRole(true);
+  };
+  useEffect(() => {
+    if (isCopyingRole) {
+      handleAddRole();
+      setIsCopyingRole(false); // reset the flag
+    }
+  }, [roleName, roleNum, roleDesc, isCopyingRole]); 
 
   const DropdownItem = (item) => {
     return (
@@ -233,6 +137,119 @@ const DropdownRoles = (props) => {
   const handleRoleNumChange = (e) => {
     setRoleNum(e.target.value);
   }
+  useEffect(() => {
+    if (props.initRole && !props.random) {
+      setSelectedRole(props.initRole.name);
+    }
+  }, [props.initRole]);
+
+  const handleRoleSelected = (e, roleName, roleNum, index) => {
+    if (menuElem.current.contains(e.target)) {
+      setSelected(index)
+      setSelectedRole(roleName);
+      setRoleDesc(roles[index].roleDesc)
+      setActiveMenu('main');
+      props.roleLevel(roleName, roleNum, roleDesc);
+    }
+  }
+
+  const handleDeleteRole = async (e) => {
+    props.deleteRoleRect(roles[e].roleName);
+    let newRoles = [...roles];
+    newRoles.splice(e, 1);
+    setRoles(newRoles);
+    props.handleSetRoles(newRoles);
+    props.handleDeleteRole(roles[e]);
+    setSelectedRole()
+    setActiveMenu('main')
+    setModifyIndex(-1);
+  }
+
+  const handleAddRole = () => {
+    // Check if name is empty or a duplicate
+    if (roleName.trim() === "") {
+      alertContext.showAlert(t("alert.noRoleName"), "warning");
+      return;
+    }
+    if (roles.some(role => role.roleName === roleName.trim())) {
+      alertContext.showAlert(t("alert.roleAlreadyExists"), "warning");
+      return;
+    }
+    // Check if number value is valid (is an integer)
+    if (roleNum === null || !/^\d+$/.test(roleNum)) {
+      alertContext.showAlert(t("alert.noRoleLimit"), "warning");
+      return;
+    }
+
+    let role = {
+      roleName: roleName.trim(),
+      numOfSpots: parseInt(roleNum),
+      roleDesc: roleDesc.trim()
+    }
+    setRoleName('');
+    setRoleNum('');
+    setRoleDesc('');
+    setModifyIndex(-1);
+    setActiveMenu('main')
+    setRoles([...roles, role]);
+    props.handleSetRoles([...roles, role]);
+    props.addNewRoleRect(role.roleName);
+  }
+
+  const handleEditSelect = (e) => {
+    setRoleDesc(e)
+    setRoleName(roles[selected].roleName)
+    setRoleNum(roles[selected].numOfSpots)
+  }
+
+  const handleSubmitModification = () => {
+    let role = {
+      roleName: roleName,
+      numOfSpots: roleNum,
+      roleDesc: roleDesc
+    }
+    console.log(role.roleName, roles[selected].roleName, role.numOfSpots, roles[selected].numOfSpots, role.roleDesc, roles[selected].roleDesc)
+    if (role.roleName.trim() === roles[selected].roleName && role.numOfSpots === roles[selected].numOfSpots && role.roleDesc.trim() === roles[selected].roleDesc) {
+      setRoleName('');
+      setRoleNum('');
+      setRoleDesc('');
+      setModifyIndex(-1);
+      setActiveMenu('main')
+      return;
+    }
+    let newRoles = [...roles];
+    console.log(selected, role)
+    newRoles[selected] = role;
+    setRoles(newRoles);
+    props.handleSetRoles(newRoles);
+
+    if (role.roleName.trim() !== roles[selected].roleName) {
+      props.renameRoleRect(roles[selected].roleName, roleName);
+      props.roleLevel(roleName, roleNum, roleDesc);
+      props.handleEditShapes(roles[selected].roleName, role.roleName)
+      setSelectedRole(roleName);
+    }
+
+    setRoleName('');
+    setRoleNum('');
+    setRoleDesc('');
+    setModifyIndex(-1);
+    setActiveMenu('main')
+  }
+
+  const updateRolesData = () => {
+    let currRoles = props.roles;
+    if (currRoles.length < 1) {
+      currRoles.push({
+        roleName: t("game.defaultRole"),
+        numOfSpots: -1,
+        roleDesc: 'Default Role'
+      })
+      if(props.editmode) props.addNewRoleRect(currRoles[0].roleName);
+    }
+    setRoles(currRoles);    
+  }
+
 
   const AvailableRoles = (
     <div className="roles-container">
@@ -244,7 +261,7 @@ const DropdownRoles = (props) => {
                 className="menu-item"
                 key={index}
               >
-                <span className="icon-button" onClick={handleSubmitModification}>
+                <span className="icon-button" onClick={() => handleSubmitModification(index)}>
                   <i><Check className="icon roles-icons" /></i>
                 </span>
                 <input
@@ -293,7 +310,7 @@ const DropdownRoles = (props) => {
                     <i><Pencil className="icon roles-icons" /></i>
 
                   </span>
-                  <span className="icon-button" onClick={() => handleCopyRole(role.id)}>
+                  <span className="icon-button" onClick={() => handleCopyRole(role)}>
                     <i><Copy className="icon roles-icons" /></i>
                   </span>
                 </div>
@@ -319,79 +336,6 @@ const DropdownRoles = (props) => {
       })}
     </div>
   );
-
-
-
-  useEffect(() => {
-    if (props.initRole && !props.random) {
-      setSelectedRole(props.initRole.name);
-    }
-  }, [props.initRole]);
-
-  const handleRoleSelected = (e, roleName, roleNum, index) => {
-    if (menuElem.current.contains(e.target)) {
-      setSelected(index)
-      setSelectedRole(roleName);
-      setRoleDesc(roles[index].roleDesc)
-      setActiveMenu('main');
-      props.roleLevel(roleName, roleNum, roleDesc);
-    }
-  }
-
-  const handleDeleteRole = async (e) => {
-    props.deleteRoleRect(roles[e].roleName);
-    await axios.delete(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/deleteRole/:gameroleid', {
-      params: {
-        id: roles[e].id
-      }
-    }).then((res) => {
-      props.roleLevel("");
-      updateRolesData();
-    }).catch(error => {
-      console.error(error);
-    });
-  }
-
-  const handleAddRole = () => {
-    // Check if name is empty or a duplicate
-    if (roleName.trim() === "") {
-      alertContext.showAlert(t("alert.noRoleName"), "warning");
-      return;
-    }
-    if (roles.some(role => role.roleName === roleName.trim())) {
-      alertContext.showAlert(t("alert.roleAlreadyExists"), "warning");
-      return;
-    }
-    // Check if number value is valid (is an integer)
-    if (roleNum === null || !/^\d+$/.test(roleNum)) {
-      alertContext.showAlert(t("alert.noRoleLimit"), "warning");
-      return;
-    }
-
-    let data = {
-      gameinstanceid: props.gameid,
-      gamerole: roleName?.trim(),
-      numspots: parseInt(roleNum),
-      roleDesc: roleDesc?.trim()
-    };
-
-    props.addNewRoleRect(data.gamerole);
-
-    axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
-      updateRolesData();
-      setRoleName("");
-      setRoleNum("");
-      setRoleDesc("");
-    }).catch(error => {
-      console.error(error);
-    });
-  }
-
-  const handleEditSelect = (e) => {
-    setRoleDesc(e)
-    setRoleName(roles[selected].roleName)
-    setRoleNum(roles[selected].numOfSpots)
-  }
 
   return (
     <div className="dropdown" style={{ height: menuHeight }} ref={menuElem} disabled={props.disabled}>
@@ -499,5 +443,7 @@ const DropdownRoles = (props) => {
     </div>
   );
 }
+
+
 
 export default DropdownRoles;

@@ -52,7 +52,6 @@ const Input = forwardRef((props, ref) => {
     const delayInMilliseconds = 500; // customize this value to your needs
 
     if (props.sync && props.updateVariable) {
-      console.log(variable, values)
       props.updateVariable(variable, values)
     } else {
       let vars = {};
@@ -106,7 +105,6 @@ const Input = forwardRef((props, ref) => {
   }
 
   const handleButton = () => {
-    console.log(props.variables)
     let value;
     let int;
     const delayInMilliseconds = 50; // customize this value to your needs
@@ -115,7 +113,6 @@ const Input = forwardRef((props, ref) => {
       setTimeout(() => {
         int = props.interactions[i].flat()
         if (int[0] === props.varName) {
-          console.log(int)
           if (int[6] === 'incr') {
             if (parseInt(int[3]))
               value = parseInt(props.variables[int[1]]) + parseInt(int[3])

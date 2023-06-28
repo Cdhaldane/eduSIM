@@ -7,6 +7,7 @@ import "./AlertPopup.css";
 
 import Circle from "../../../public/icons/question-circle.svg"
 import Triangle from "../../../public/icons/warning.svg"
+import CheckMark from "../../../public/icons/checkmark-circle.svg"
 
 const AlertPopup = () => {
 
@@ -21,7 +22,7 @@ const AlertPopup = () => {
   return (
     <CSSTransition
       in={alertContext.visible}
-      timeout={300}
+      timeout={3000}
       classNames="alert-popup-css-anim"
       unmountOnExit
       onEnter={startTimer}>
@@ -29,7 +30,10 @@ const AlertPopup = () => {
         (alertContext.type === "warning" ? "warning " : "") +
         (alertContext.type === "info" ? "info " : "") +
         (alertContext.type === "error" ? "error " : "") +
-        (alertContext.type === "loading" ? "info " : "")}>
+        (alertContext.type === "loading" ? "info " : "") +
+        (alertContext.type === "success" ? "success " : "")}
+        >
+          
 
         {alertContext.type === "warning" && (
           <i className="alert-popup-icon warning" ><Circle className="icon alert-icon"/></i>
@@ -39,6 +43,9 @@ const AlertPopup = () => {
         )}
         {alertContext.type === "error" && (
           <i className="alert-popup-icon error" ><Circle className="icon alert-icon"/></i>
+        )}
+          {alertContext.type === "success" && (
+          <i className="alert-popup-icon success" ><CheckMark className="icon alert-icon"/></i>
         )}
         {alertContext.type === "loading" && (
           <div className="loadingMediaAlert">
