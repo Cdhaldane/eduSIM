@@ -17,7 +17,7 @@
       "cookieOverview": "eduSIM uses cookies. By continuing to browse the site you are agreeing to our use of cookies.",
       "cookieOK": "OK",
       "cookieLearnMore": "Launch",
-      "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Also third party cookies are used for logging in with Google / Microsoft.",
+      "cookieDetails": "We use cookies to track simulation settings such as name and role type, as well as other settings such as language options. Third party cookies are also used for logging in with Google / Microsoft.",
       "aboutP1": "eduSIM is a web based application for creating and hosting online educational simulators. The core feature of eduSIM is that it facilitates synchronized teamwork over the web, allowing groups of participants to work together remotely in realtime.",
       "aboutP2": "eduSIM offers many features for creating complex simulations, known as Educational Simulated Interaction Models (eduSIMs), via its Edit Mode. Once created, these simulations can be administered to groups of participants via its Admin Mode.",
       "aboutP3": "The eduSIM platform is licensed under an <1>Ontario Commons License - No Derivatives.</1> Example simulations provided with the eduSIM platform are licensed under a <3>Creative Commons Attribution-ShareAlike 4.0 International License.</3>",
