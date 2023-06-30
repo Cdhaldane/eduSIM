@@ -116,6 +116,7 @@ img {
 
 .main-content {
   min-height: 100%;
+  width: 100%;
   position: relative;
   overflow-y: hidden;
   overflow-x: hidden;

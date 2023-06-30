@@ -5,7 +5,7 @@ import WebFont from "webfontloader";
 
 import TransformerComponent from "../components/Stage/TransformerComponent";
 import URLVideo from "../components/Stage/URLVideos";
-import URLImage from "../components/Stage/URLImage";
+import URLDocument from "../components/Stage/URLDocument";
 import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Deck from "../components/Stage/GamePieces/Deck/Deck";
 import Dice from "../components/Stage/GamePieces/Dice/Dice";
@@ -56,7 +56,7 @@ const konvaObjects = [
 const CanvasPage = (props) => {
   const layerRef = useRef();
 
-  const [objectIds, setObjectIds] = useState([]);
+  const [img, setImg] = useState(null);
 
   const { settings: localSettings } = useContext(SettingsContext);
 
@@ -159,6 +159,8 @@ const CanvasPage = (props) => {
     }
 
     let canvas = getUpdatedCanvasState(mode);
+
+    console.log(canvas)
     if (!canvas) {
       return;
     }
@@ -236,9 +238,15 @@ const CanvasPage = (props) => {
       const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
       const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
 
+      console.log('positionRectx', positionRect.x, 'positionRecty', positionRect.y, 'scale', scale, 'centerPositionX', centerPositionX, 'centerPositionY', centerPositionY)
+
+      console.log(-positionRect.x * scale + centerPositionX, -positionRect.y * scale + centerPositionY, scale)
+
       canvas.setState({
         [`${areaString}LayerX`]: -positionRect.x * scale + centerPositionX,
         [`${areaString}LayerY`]: -positionRect.y * scale + centerPositionY,
+        [`${areaString}CenterX`]: centerPositionX,
+        [`${areaString}CenterY`]: centerPositionY,
         [`${areaString}LayerScale`]: scale,
         canvasLoading: false
       });
@@ -567,20 +575,16 @@ const CanvasPage = (props) => {
   }
 
 
-
   const documentProps = (obj, canvas) => {
-    const bimage = new window.Image();
-    bimage.src = 'downloadicon.png';
-    bimage.width = 10;
-    bimage.height = 10;
+
     return {
       width: obj.width,
       height: obj.height,
-      fillPatternImage: bimage,
-      fillPatternScaleY: 0.2,
-      fillPatternScaleX: 0.2,
+      fillPatternImage: img,
+      fillPatternScaleY: 1,
+      fillPatternScaleX: 1,
       image: obj.image,
-      onDblClick: () => canvas.onDocClick()
+      onDblClick: () => canvas.onDocClick(obj)
     }
   }
 
@@ -968,7 +972,11 @@ const CanvasPage = (props) => {
           {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       case "documents":
-        return (<Rect {...defaultObjProps(obj, canvas, editMode)} {...documentProps(obj, canvas)} />);
+        return <URLDocument
+          defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
+          {...defaultObjProps(obj, canvas, editMode)}
+          {...documentProps(obj, canvas)}
+          {...(editMode ? customObjProps(obj, canvas) : {})} />
       case "triangles":
         return <RegularPolygon {...defaultObjProps(obj, canvas, editMode)} {...triangleProps(obj)}  {...canvas.getDragProps(obj.id)} />;
       case "stars":
@@ -1150,6 +1158,7 @@ const CanvasPage = (props) => {
     inputIds = [...new Set(inputIds)]
     newObject = [...new Set(newObject)]
     objectIds = [[...newObject], [...inputIds]]
+
 
     return (
       <>

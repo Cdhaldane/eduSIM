@@ -52,10 +52,10 @@ const Level = (props) => {
       return 0;
     }
   }
-  
+
   // Sort the array
   useEffect(() => {
-   
+
     if (props.levelVal > props.number) {
       props.end()
     } else {
@@ -65,7 +65,7 @@ const Level = (props) => {
 
   const handleLevel = (e) => {
     let closeOverlay = null;
-    if(props.overlay) return;
+    if (props.overlay) return;
     if (props?.page?.overlays) {
       for (let i = 0; i < props.page.overlays.length; i++) {
         if (props.page.overlays[i].overlayOpenOption === "pageExit") {
@@ -141,7 +141,7 @@ const Level = (props) => {
 
   return (
     <div id="levelContainer">
-      <div className={`level ${props.gamepage ? 'level-gamepage' : ''}`}>
+      <div className={`level ${props.gamepage ? 'level-gamepage' : 'level-editpage'}`}>
 
         {!props.gamepage && (
           <>
@@ -150,7 +150,7 @@ const Level = (props) => {
                 {t("edit.editMode")}
               </h1>
               <button id="levelInfoButton" onClick={() => setShowInfoPopup(true)} ref={infoBtn}>
-              <Info />
+                <Info />
               </button>
             </div>
 
@@ -193,7 +193,8 @@ const Level = (props) => {
                                 "cutObject",
                                 "copyObject",
                                 "pasteObject",
-                                "undo", "redo"
+                                "undo", "redo",
+                                "openAddShape"
                               ].map((key, i) => (
                                 <li key={i}>
                                   {t(`edit.shortcut.${key}SC`)}
@@ -219,7 +220,7 @@ const Level = (props) => {
             <div className={`level-bar-progress ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`} style={{
               width: `calc(${(100 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}% - ${(23 * (count - 1) / (props.number - (props.gamepage ? 0 : 1)))}px)`
             }}></div>
-            <i className={`lnif lnif-angle-double-right ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
+            <i className={`level-bar-triangle ${props.number == count - (props.gamepage ? 1 : 0) ? 'level-bar-full' : ''}`}></i>
             <div className="level-bar-segments">
               {times(props.number + (props.gamepage ? 1 : 0), (num) => ( // dynamically scaling level bar
                 <div key={num} className="level-bar-segment">
@@ -235,8 +236,8 @@ const Level = (props) => {
                     }
                     }>
                     {props.number > num ? (
-                      <ChevronRight className={`${count - 1 > num ? 'arrow-left' : ''}`}/>
-                    ) : <Check className='level-checkmark'/>}
+                      <ChevronRight className={`${count - 1 > num ? 'arrow-left' : ''}`} />
+                    ) : <Check className='level-checkmark' />}
                   </div>
                 </div>
               ))}
@@ -254,27 +255,28 @@ const Level = (props) => {
           )}
 
 
+
+          {props.handlePageNum && (
+            <div className="pencil-container">
+              <Pencil
+                positionRect={props.positionRect}
+                id="Timeline"
+                psize="3"
+                type="info"
+                getobjState={props.getObjState}
+                updateObjState={props.updateObjState}
+                pages={props.pages}
+                refreshCanvas={props.refreshCanvas}
+                getObjState={props.getObjState}
+                changeObjectPage={props.changeObjectPage}
+                handleCopyPage={props.handleCopyPage}
+                handlePageTitle={props.handlePageTitle}
+                handlePageNum={props.handlePageNum}
+                numOfPages={props.numOfPages}
+              />
+            </div>
+          )}
         </div>
-        {props.handlePageNum && (
-          <div className="pencil-container">
-            <Pencil
-              positionRect={props.positionRect}
-              id="Timeline"
-              psize="3"
-              type="info"
-              getobjState={props.getObjState}
-              updateObjState={props.updateObjState}
-              pages={props.pages}
-              refreshCanvas={props.refreshCanvas}
-              getObjState={props.getObjState}
-              changeObjectPage={props.changeObjectPage}
-              handleCopyPage={props.handleCopyPage}
-              handlePageTitle={props.handlePageTitle}
-              handlePageNum={props.handlePageNum}
-              numOfPages={props.numOfPages}
-            />
-          </div>
-        )}
         {!props.gamepage && (
           <Link onClick={saveOnClose} to="/dashboard" className="level-close">
             <Exit />

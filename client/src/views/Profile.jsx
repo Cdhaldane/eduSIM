@@ -146,41 +146,43 @@ const Profile = ({ auth0 }) => {
 
 
   useEffect(() => {
-    if(adminid)
+    if (adminid)
       updateProfile('adminid', adminid)
   }, []);
 
   const updateProfile = (idType, id) => {
-    try {
-      axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/${idType}/${id}`)
-        .then((res) => {
-          console.log(res.data)
-          setUsers(res.data)
-          setLoading(false);
-          getAllGamedata()
-          if (res.data.following.includes(localStorage.adminid)) {
-            console.log("already following")
-            setIcon('lni lni-cross-circle');
-            setText('Unfollow');
-            setBtnStyle({
-              color: 'maroon',
-              cursor: 'normal',
-              animation: 'spin 200ms ease-in-out'
-            });
-          } else {
-            setIcon('lni lni-circle-plus');
-            setText('Follow');
-            setBtnStyle({
-              color: 'limegreen',
-              cursor: 'pointer',
-              animation: 'spinBack 200ms ease-in-out'
-            });
-          }
-        })
-    } catch (error) {
-      console.error(error);
-    }
-  }
+    axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/${idType}/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        setUsers(res.data);
+        setLoading(false);
+        getAllGamedata();
+
+        if (res.data.following.includes(localStorage.adminid)) {
+          console.log("already following");
+          setIcon('lni lni-cross-circle');
+          setText('Unfollow');
+          setBtnStyle({
+            color: 'maroon',
+            cursor: 'normal',
+            animation: 'spin 200ms ease-in-out'
+          });
+        } else {
+          setIcon('lni lni-circle-plus');
+          setText('Follow');
+          setBtnStyle({
+            color: 'limegreen',
+            cursor: 'pointer',
+            animation: 'spinBack 200ms ease-in-out'
+          });
+        }
+      })
+      .catch((error) => {
+        setLoading(false); // Set loading to false even if there is an error
+        setUsers([]); // Set users to an empty array if there is an error
+        // Add any other fallback or error handling logic you need here
+      });
+  };
 
 
   const getAllGamedata = async (email, name) => {

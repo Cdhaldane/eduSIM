@@ -183,6 +183,7 @@ const Deck = forwardRef((props, ref) => {
 
   const handleDeal = (amount) => {
     console.log(amount)
+    socketRef.emit("deal-cards", { amount, id: props.id });
   }
 
   const createDeck = () => {

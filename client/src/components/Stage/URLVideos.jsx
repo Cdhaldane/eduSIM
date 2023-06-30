@@ -4,18 +4,15 @@ import CustomWrapper from "./GamePieces/CustomWrapper";
 import ReactPlayer from 'react-player'
 import ReactAudioPlayer from 'react-audio-player';
 import { SettingsContext } from "../../App";
+import Loading from "../Loading/Loading";
 
 
 const URLVideo = forwardRef((props, ref) => {
-  const [playing, setPlaying] = useState(false)
-
-  const handlePlay = () => {
-    setPlaying(!playing)
-  }
-
+  const [loading, setLoading] = useState(true);
   return (
     <CustomWrapper {...props} ref={ref}>
         <div className="video-container">
+          {loading && <Loading />}
           {props?.type === "audio" ? (
             <ReactAudioPlayer
                src={props.src}
@@ -26,12 +23,16 @@ const URLVideo = forwardRef((props, ref) => {
                preload="none"
             />
           ) : (
-            <ReactPlayer url={props.src}
-              volume={props.volume}
-              loop={props.loop}
-              playing={props.autoStart && !props.editMode ? true : false}
-              controls={props.editMode || props.autoStart ?  false : true}
-            />
+            <>
+              <ReactPlayer 
+                url={props.src}
+                volume={props.volume}
+                loop={props.loop}
+                playing={props.autoStart && !props.editMode ? true : false}
+                controls={props.editMode || props.autoStart ?  false : true}
+                onReady={() => setLoading(false)}
+              />
+            </>
           )}
         </div>
     </CustomWrapper>

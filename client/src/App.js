@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/Auth0/protected-route";
 import AlertPopup from "./components/Alerts/AlertPopup";
 import AlertContextProvider from "./components/Alerts/AlertContext";
 import CookiesPopup from "./components/Alerts/CookiesPopup";
+import Modal from "react-modal";
 import { useLocalStorage } from 'usehooks-ts'
 import "./components/CreateCsv/CreateCsv.css";
 import "./components/CreateArea/CreateArea.css";
@@ -114,13 +115,22 @@ const App = (props) => {
                   />}
                 />
               </Switch>
-              {cookiesPopupVisible &&
-                document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
+              {document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
+                <Modal
+                  isOpen={cookiesPopupVisible}
+                  // onRequestClose={() => setCookiesPopupVisible(false)}
+                  className="cookies-modal"
+                  overlayClassName="myoverlay"
+                  ariaHideApp={false}
+                  closeTimeoutMS={250}
+                >
                   <CookiesPopup close={() => {
                     setCookiesPopupVisible(false);
                     document.cookie = "cookiesAccepted=true";
                   }} />
-                )}
+                </Modal>
+              )}
+
 
             </Suspense>
 

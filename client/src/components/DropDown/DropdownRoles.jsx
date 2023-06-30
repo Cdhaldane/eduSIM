@@ -208,7 +208,6 @@ const DropdownRoles = (props) => {
       numOfSpots: roleNum,
       roleDesc: roleDesc
     }
-    console.log(role.roleName, roles[selected].roleName, role.numOfSpots, roles[selected].numOfSpots, role.roleDesc, roles[selected].roleDesc)
     if (role.roleName.trim() === roles[selected].roleName && role.numOfSpots === roles[selected].numOfSpots && role.roleDesc.trim() === roles[selected].roleDesc) {
       setRoleName('');
       setRoleNum('');
@@ -218,7 +217,6 @@ const DropdownRoles = (props) => {
       return;
     }
     let newRoles = [...roles];
-    console.log(selected, role)
     newRoles[selected] = role;
     setRoles(newRoles);
     props.handleSetRoles(newRoles);
@@ -245,8 +243,11 @@ const DropdownRoles = (props) => {
         numOfSpots: -1,
         roleDesc: 'Default Role'
       })
-      if(props.editmode) props.addNewRoleRect(currRoles[0].roleName);
+      if(props.editMode){
+        props.addNewRoleRect(currRoles[0].roleName);
+      }
     }
+    
     setRoles(currRoles);    
   }
 

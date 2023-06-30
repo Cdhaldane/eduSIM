@@ -10,16 +10,16 @@ class Overlay extends Component {
     this.state = {
       height: 0,
       width: 0,
+      loading: true
     }
-    console.log(this.props)
   }
   
 
   componentDidMount = () => {
     let overlay = this.props.state.pages[this.props.state.level-1].overlays
     for(let i = 0; i < overlay.length; i++){
-      if(overlay[i].id === this.props.overlayIndex){
-        console.log(overlay[i].positionRect.h * overlay[i].positionRect.scaleY, overlay[i].positionRect.w * overlay[i].positionRect.scaleX)
+      if(overlay[i].id === this.props.state.overlayOpenIndex){
+        
         this.setState({
           height: overlay[i].positionRect.h * overlay[i].positionRect.scaleY,
           width: overlay[i].positionRect.w * overlay[i].positionRect.scaleX,
@@ -30,6 +30,16 @@ class Overlay extends Component {
       const key = Object.keys(this.refs)[i];
       this.props.setRefs(key, this.refs[key]);
     }
+
+    if(!this.props.playMode){
+      let meainElem = document.getElementById("overlayGameContainer");
+      console.log(meainElem)
+      meainElem.style.backgroundImage = `repeating-linear-gradient(rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%),
+      repeating-linear-gradient(90deg, rgb(0, 0, 0, 0.1) 0 1px, transparent 1px 100%);`
+    }
+    this.setState({
+      loading: false
+    })
   }
 
   componentDidUpdate = () => {
@@ -74,7 +84,6 @@ class Overlay extends Component {
               
               style={{
                 backgroundColor: this.props.state.pages[this.props.state.level - 1].overlayColor,
-                backgroundImage: 'none'
               }}
               className={this.props.playMode ? "playModeCanvasContainer" : ""}
               tabIndex="0"
@@ -82,10 +91,11 @@ class Overlay extends Component {
             >
               <Stage
                 ref={"overlayStage"}
-                height={this.state.height * this.props.state.overlayLayerScale}
-                width={this.state.width * this.props.state.overlayLayerScale}
-                offsetX={this.props.state.overlayLayerX}
-                offsetY={this.props.state.overlayLayerY}
+                height={this.props.playMode ? this.state.height * this.props.state.overlayLayerScale : stageHeight}
+                width={this.props.playMode ? this.state.width * this.props.state.overlayLayerScale : document.getElementById("overlayGameContainer") ?
+                document.getElementById("overlayGameContainer").clientWidth : 0}
+                offsetX={this.props.playMode ? this.props.state.overlayCenterX : 0}
+                offsetY={this.props.playMode ? this.props.state.overlayCenterY : 0}
                 {...(this.props.playMode ? {} :
                   {
                     onMouseDown: (e) => this.props.onMouseDown(e, false),

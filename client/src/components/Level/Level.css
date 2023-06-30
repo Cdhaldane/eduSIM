@@ -84,15 +84,11 @@
 
 .level-close {
   display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 0.5vw;
   color: var(--primary);
   border-radius: 7px;
   box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.1);
   padding: 3.9px 12px 3.9px 3px;
   width: max-content !important;
-  margin-left: auto;
   flex-basis: 1;
   margin-top: 5px;
 }
@@ -110,14 +106,19 @@
 }
 
 .level-close:hover {
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 0px 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.1s;
 }
 
 .pencil-container {
   width: max-content !important;
-  flex-basis: 5%;
   margin-top: 5px;
+  box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+}
+.pencil-container:hover{
+  box-shadow: 0px 0px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.1s;
 }
 
 
@@ -143,12 +144,26 @@
   transition: all 0.1s;
 }
 
+.level-gamepage{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90vw !important;
+}
+.level-editpage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100% - 70px;
+  justify-content: space-between;
+}
+
 .level-nav {
-  max-width: 2000px;
+  width: 100%;
   flex-basis: 70%;
-  margin-left: auto;
-  margin-right: 10px;
-  margin-top: 5px !important;
+  display: flex;
+  align-items: center;
+  margin: 0px 0px;
 }
 
 .level-bar {
@@ -159,13 +174,15 @@
   display: flex;
   align-items: center;
   position: relative;
+  margin: 0px 10px;
+  width: 100%;
 }
 
 .level-bar-edit {
   width: 100%;
 }
 
-.level-bar>i {
+.level-bar>svg {
   font-size: 36px;
   color: var(--primary);
   margin-left: -1px;
@@ -185,7 +202,7 @@
   border-radius: 99px;
   background-color: var(--primary);
   opacity: 0.4;
-  filter: saturate(0.4);
+
 }
 
 .level-bar-progress-edge {
@@ -200,7 +217,14 @@
   height: 22px;
   transition: .4s all;
 }
-
+.level-bar-triangle {
+  position: relative;
+  left: 0px;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  
+  border-left: 10px solid var(--primary);
+}
 .level-bar-progress.level-bar-full {
   width: calc(100% - 18px) !important;
   border-radius: 0 11px 11px 0;
@@ -210,10 +234,7 @@
   top: 0px;
   width: 100%;
 }
-.level-gamepage{
-  align-items: center !important;
-  display: inline !important;
-}
+
 .level-bar-segments {
   width: 100%;
   height: 100%;
@@ -231,7 +252,7 @@
   width: 0px;
 }
 
-.level-bar-segment>.dot {
+.level-bar-segment > .dot {
   width: 6px;
   height: 6px;
   display: block;
@@ -241,7 +262,8 @@
 }
 
 .level-bar-segment.fill>.dot {
-  background-color: white;
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .level-bar-time {
@@ -252,50 +274,50 @@
   font-size: 1.25em;
 }
 
-.level-bar-dot-fill>i {
+
+.level-bar-dot-fill > svg {
   background-color: white !important;
 }
-
 .level-bar-dot-clickable {
   cursor: pointer;
   padding: 14px;
 }
-
 .level-bar-dot-glow {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255,255,255,0.2);
 }
-
 .level-bar-dot {
   width: min-content;
   transform: translate(-50%);
   border-radius: 99px;
   font-size: 6px;
-  transition: .3s all cubic-bezier(.08, .82, .17, 1);
+  position: relative;
+  top: 1px;
+  transition: .3s all cubic-bezier(.08,.82,.17,1);
 }
-
 .level-bar-dot-clickable:hover {
   width: min-content;
   font-size: 30px;
   padding: 8px;
-  transition: .2s all cubic-bezier(.28, 1.05, .58, 1.2);
+  transition: .2s all cubic-bezier(.28,1.05,.58,1.2);
 }
-
-.level-bar-dot svg {
+.level-bar-dot > svg {
   color: transparent;
+  fill: transparent;
   border-radius: 99px;
   border: 2px solid white;
-  background-color: white;
-  height: 30px;
-  width: 30px;
-  fill: var(--primary);
-  transition: .3s all cubic-bezier(.08, .82, .17, 1);
+  background-color: transparent;
+  transition: .3s all cubic-bezier(.08,.82,.17,1);
+  width: 10px;
+  height: 10px;
 }
-
-.level-bar-dot-clickable:hover>svg {
-  fill: var(--primary);
+.level-bar-dot-clickable:hover > svg {
+  fill: var(--primary) !important;
+  position: relative;
+  top: 4px;
   background-color: white;
-  border: 4px solid white;
-  
+  width: 30px !important;
+  height: 30px !important;
+  transition: .2s all cubic-bezier(.28,1.05,.58,1.2);
 }
 
 .arrow-left {
@@ -318,6 +340,7 @@
   filter: saturate(0.5) brightness(3) saturate(0.7);
   z-index: 1;
 }
+
 
 .level-bar-node {
   width: 30px;
@@ -364,9 +387,17 @@
   height: 30px;
   fill: var(--primary);
 }
-.level-checkmark {
+.level-checkmark svg {
   background-color: var(--primary) !important;
   fill: white !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+.level-checkmark:hover {
+  background-color: var(--white) !important;
+  fill: white !important;
+  width: 25px !important;
+  height: 25px !important;
 }
 
 

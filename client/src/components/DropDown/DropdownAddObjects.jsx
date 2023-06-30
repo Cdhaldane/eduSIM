@@ -119,6 +119,7 @@ const DropdownAddObjects = (props) => {
 
 
   const uploadFile = async (info, type) => {
+    console.log(info, type)
     try {
       if (type === "image") {
         setImageUploading(true);
@@ -128,19 +129,17 @@ const DropdownAddObjects = (props) => {
         addImage(name, info)
         props.handleImage(name);
       } else if (type === "video") {
-        setVideoUploading(true);
         const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + info.file + "." + info.format;
-        setVideoUploaded(true);
-        setVideoUploading(false);
         addVideo(name)
         props.handleVideo(name);
       } else if (type === "audio") {
-        const name = "https://res.cloudinary.com/uottawaedusim/video/upload/" + info.file + "." + info.format;
+        const name = info.secure_url;
         setAudioUploaded(true);
         addAudio(name)
         props.handleAudio(name);
       } else if (type === "pdf") {
-        const name = "https://res.cloudinary.com/uottawaedusim/image/upload/" + info.file + "." + info.format;
+        console.log(type)
+        const name = info.secure_url;
         addDocument(name)
         props.handleDocument(name);
       }
@@ -387,12 +386,11 @@ const DropdownAddObjects = (props) => {
   }
 
   const addDocument = (document) => {
+    console.log(props.state.docimage)
     addObjectToLayer(
       "documents",
       {
-        stroke: 'black',
-        strokeWidth: 0,
-        fillPatternImage: props.state.docimage,
+        fill: 'none',
         rotation: 0,
         width: 100,
         height: 100,
@@ -566,7 +564,7 @@ const DropdownAddObjects = (props) => {
   }
 
   const openWidget = (preset) => {
-
+    console.log(preset)
     let myWidget = window.cloudinary.createUploadWidget(
       {
         cloudName: "uottawaedusim",
@@ -576,6 +574,7 @@ const DropdownAddObjects = (props) => {
       (error, result) => {
         if (!error && result && result.event === "success") {
           let type = "";
+          console.log(preset)
           if (preset == "bb8lewrh") {
             type = "image"
           } else if (preset == "tj5ptxi8") {
@@ -583,8 +582,9 @@ const DropdownAddObjects = (props) => {
           } else if (preset == "du7sbfat") {
             type = "audio"
           } else if (preset == "mfcgzpkg") {
-            type == "pdf"
+            type = "pdf"
           }
+          console.log(type)
           uploadFile(result.info, type);
           myWidget.close();
         }
@@ -826,17 +826,6 @@ const DropdownAddObjects = (props) => {
               </button>
             </DropdownItem>
           </div>
-
-          <div className={`${validAudioURL ? "" : "dropdown-add-disabled"}`}>
-            <DropdownItem
-              leftIcon={<i onClick={(e) => {
-                if (validAudioURL) {
-                  addAudio(e);
-                }
-              }}><i><Plus className="icon add-icons" /></i></i>}>
-              <input className="add-dropdown-item-input" type="text" placeholder={t("edit.media.audioURL")} onChange={handleAudio} value={audiosrc} />
-            </DropdownItem>
-          </div>
         </div>
       </CSSTransition>
 
@@ -853,7 +842,7 @@ const DropdownAddObjects = (props) => {
             <h2>{t("edit.media.addDocument")}</h2>
           </DropdownItem>
           <DropdownItem
-            leftIcon={<i onClick={(e) => addDocument(e)}><i><Plus className="icon add-icons" /></i></i>}>
+            leftIcon={<i ><i><Plus className="icon add-icons" /></i></i>}>
             <button type="button" className="add-media-button" onClick={() => openWidget("mfcgzpkg")}>
               {t("modal.imageFromFile")}
             </button>

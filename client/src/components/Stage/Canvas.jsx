@@ -342,23 +342,25 @@ class Graphics extends Component {
           );
           uniqueShapesSet.push(uniqueArray)
         })
-        let pages = objects.pages;
-        for (let j = 0; j < pages.length; j++) {
-          let layer = []
-          for (let i = 0; i < this.savedObjects.length; i++) {
-            let type = this.savedObjects[i];
+
+
+        let roles = objects.roles.map((role) => role.roleName);
+        roles.push('')
+
+        for (let i = 0; i < this.savedObjects.length; i++) {
+          let newStateArray = []
+          let type = this.savedObjects[i];
+          if (type !== 'roles') {
             objects[type].forEach((obj) => {
-              if (obj.level - 1 === j) {
-                layer.push(obj.id)
+              if (roles.includes(obj.rolelevel)) {
+                newStateArray.push(obj)
               }
             })
+            objects[type] = newStateArray;
           }
-          pages[j].personalLayers = layer;
         }
-        console.log(pages)
-        this.setState({
-          pages: pages
-        })
+
+
         if (this.props.setRoles) {
           this.props.setRoles(objects.roles || []);
         }
@@ -416,29 +418,7 @@ class Graphics extends Component {
                 page.personalPositionRect = null;
               }
               // Get the personal roles and give them default values (if none exist yet)
-              axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-                params: {
-                  gameinstanceid: this.state.gameinstanceid,
-                }
-              }).then((res) => {
-                const rolesData = [];
-                for (let i = 0; i < res.data.length; i++) {
-                  rolesData.push({
-                    id: res.data[i].gameroleid,
-                    roleName: res.data[i].gamerole,
-                    numOfSpots: res.data[i].numspots,
-                    roleDesc: res.data[i].roleDesc
-                  });
-                }
-                for (let i = 0; i < rolesData.length; i++) {
-                  const role = rolesData[i];
-                  if (!page.personalPositionRect[role.roleName]) {
-                    page.personalPositionRect[role.roleName] = this.positionRect;
-                  }
-                }
-              }).catch(error => {
-                console.error(error);
-              });
+
               for (let j = 0; j < overlays.length; j++) {
                 const overlay = overlays[j];
                 if (!overlay.positionRect) {
@@ -636,6 +616,27 @@ class Graphics extends Component {
       }
       this.props.handleSetPages(this.state.pages.length)
 
+      // let pages = [...this.state.pages]; // Clone pages array
+      // for (let j = 0; j < pages.length; j++) {
+      //   let layer = pages[j].personalLayers
+      //   for (let i = 0; i < this.savedObjects.length; i++) {
+      //     currentMainShapes[i].forEach((obj) => {
+      //       console.log(obj)
+      //       if (obj.level - 1 === j && obj.rolelevel === this.state.rolelevel) {
+      //         console.log(layer, obj.id, layer.includes(obj.id))
+      //         if(!layer.includes(obj.id)) layer.splice(i, 0, obj.id)
+      //       }
+      //     })
+      //   }
+      //   console.log(layer)
+      //   pages[j].personalLayers = layer;
+      // }
+      // // Check if pages has changed before setting state
+      // if (JSON.stringify(pages) !== JSON.stringify(this.state.pages)) {
+      //   this.setState({
+      //     pages: pages
+      //   });
+      // }
 
 
       if (!this.state.isTransforming && !this.state.redoing) {
@@ -1107,10 +1108,6 @@ class Graphics extends Component {
       document.body.style.cursor = "auto";
     }
 
-    let layerX = event.clientX - (personalArea ? 100 : 70);
-    let layerY = event.clientY - (personalArea ? 60 : this.state.overlayOpen ? 0 : 50);
-
-
     // Determine how long screen has been clicked (if on mobile)
     if (this.state.touchTime && this.state.touchEvent) {
       const elapsedTimeMS = Date.now() - this.state.touchTime;
@@ -1362,6 +1359,10 @@ class Graphics extends Component {
           }
         }
       } else if (event.button === 2) {
+        if (event.ctrlKey) {
+          this.handleContextMenuHook(personalArea);
+          return
+        }
         // RIGHT CLICK
         if (personalArea && !this.state.rolelevel) {
           this.props.showAlert(this.props.t("alert.personalEditAttemptNoRole"), "warning");
@@ -1408,48 +1409,7 @@ class Graphics extends Component {
           }
           this.onObjectContextMenu(event);
         } else {
-          const areaClicked = personalArea ? "personal" : (this.state.overlayOpen ? "overlay" : "group");
-          let type;
-          let notVisible;
-          let visible;
-          let contextMenuX;
-          let contextMenuY;
-          if (areaClicked === "personal") {
-            type = "PersonalAddMenu";
-            notVisible = "groupAreaContextMenuVisible";
-            visible = "personalAreaContextMenuVisible";
-            contextMenuX = "personalAreaContextMenuX";
-            contextMenuY = "personalAreaContextMenuY";
-          } else if (areaClicked === "overlay") {
-            type = "OverlayAddMenu";
-            notVisible = "groupAreaContextMenuVisible";
-            visible = "overlayAreaContextMenuVisible";
-            contextMenuX = "overlayAreaContextMenuX";
-            contextMenuY = "overlayAreaContextMenuY";
-          } else {
-            type = "GroupAddMenu";
-            notVisible = "personalAreaContextMenuVisible";
-            visible = "groupAreaContextMenuVisible";
-            contextMenuX = "groupAreaContextMenuX";
-            contextMenuY = "groupAreaContextMenuY";
-          }
-
-          const rel = this.refs[`${areaClicked}AreaLayer.objects`].getRelativePointerPosition();
-          this.setState({
-            selectedContextMenu: {
-              type: type,
-              position: {
-                x: layerX,
-                y: layerY,
-                relX: rel.x,
-                relY: rel.y
-              }
-            },
-            [notVisible]: false,
-            [visible]: true,
-            [contextMenuX]: layerX,
-            [contextMenuY]: layerY,
-          });
+          this.handleContextMenuHook(personalArea);
         }
       }
 
@@ -1472,6 +1432,54 @@ class Graphics extends Component {
       }
     }
   };
+
+  handleContextMenuHook = (personalArea) => {
+    console.log("handleContextMenuHook")
+    const areaClicked = personalArea ? "personal" : (this.state.overlayOpen ? "overlay" : "group");
+    let type;
+    let notVisible;
+    let visible;
+    let contextMenuX;
+    let contextMenuY;
+    let layerX = event.clientX - (personalArea ? 100 : 70);
+    let layerY = event.clientY - (personalArea ? 60 : this.state.overlayOpen ? 0 : 50);
+    if (areaClicked === "personal") {
+      type = "PersonalAddMenu";
+      notVisible = "groupAreaContextMenuVisible";
+      visible = "personalAreaContextMenuVisible";
+      contextMenuX = "personalAreaContextMenuX";
+      contextMenuY = "personalAreaContextMenuY";
+    } else if (areaClicked === "overlay") {
+      type = "OverlayAddMenu";
+      notVisible = "groupAreaContextMenuVisible";
+      visible = "overlayAreaContextMenuVisible";
+      contextMenuX = "overlayAreaContextMenuX";
+      contextMenuY = "overlayAreaContextMenuY";
+    } else {
+      type = "GroupAddMenu";
+      notVisible = "personalAreaContextMenuVisible";
+      visible = "groupAreaContextMenuVisible";
+      contextMenuX = "groupAreaContextMenuX";
+      contextMenuY = "groupAreaContextMenuY";
+    }
+
+    const rel = this.refs[`${areaClicked}AreaLayer.objects`].getRelativePointerPosition();
+    this.setState({
+      selectedContextMenu: {
+        type: type,
+        position: {
+          x: layerX,
+          y: layerY,
+          relX: rel.x,
+          relY: rel.y
+        }
+      },
+      [notVisible]: false,
+      [visible]: true,
+      [contextMenuX]: layerX,
+      [contextMenuY]: layerY,
+    });
+  }
 
   simulateMouseEvent = (el, event) => {
     if (window.MouseEvent && typeof window.MouseEvent === 'function') {
@@ -2368,7 +2376,7 @@ class Graphics extends Component {
       if (layer === this.refs[`personalAreaLayer.objects`]) {
         topPx = 57;
       } else if (layer === this.refs[`overlayAreaLayer.objects`]) {
-        topPx = 57;
+        topPx = 30;
       }
       const scaleVal = layer === this.refs[`personalAreaLayer.objects`] ?
         this.state.personalLayerScale :
@@ -2471,6 +2479,7 @@ class Graphics extends Component {
   }
 
   contextMenuEventShortcuts = (event) => {
+    console.log(event)
     const x = 88,
       deleteKey = 46,
       copy = 67,
@@ -3577,7 +3586,7 @@ class Graphics extends Component {
               onMouseMove={this.handleMouseOver}
               onWheel={this.handleWheel}
               onDragMove={this.dragLayer}
-              onKeyDown={this.contextMenuEventShortcuts}
+              onKeyDown={e => this.contextMenuEventShortcuts(e, false)}
               onKeyUp={this.keyUp}
               canvasState={this}
               setRefs={(type, ref) => {
@@ -3589,7 +3598,7 @@ class Graphics extends Component {
 
         {/* ---- GROUP CANVAS ---- */}
         <div
-          onKeyDown={this.contextMenuEventShortcuts}
+          onKeyDown={e => this.contextMenuEventShortcuts(e, false)}
           onKeyUp={this.keyUp}
           name="pasteContainer"
           tabIndex="0"
@@ -3674,7 +3683,7 @@ class Graphics extends Component {
             name="pasteContainer"
             tabIndex="0"
             className="personalAreaStageContainer"
-            onKeyDown={this.contextMenuEventShortcuts}
+            onKeyDown={e => this.contextMenuEventShortcuts(e, true)}
             onKeyUp={this.keyUp}
           >
             {/* The right click menu for the personal area */}

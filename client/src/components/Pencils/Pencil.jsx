@@ -17,7 +17,7 @@ const Pencil = (props) => {
   }
 
   return (
-    <div>
+    <>
       <div className={"pencil" + props.type} onClick={handleDrop}>
         <i
           id={"pencil" + props.id}
@@ -59,7 +59,7 @@ const Pencil = (props) => {
           )}
         </div>
       )}
-    </div>
+      </>
   );
 }
 

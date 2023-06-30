@@ -189,7 +189,9 @@
         "undo": "Undo action",
         "undoSC": "Ctrl + Z",
         "redo": "Redo action",
-        "redoSC": "Ctrl + Shift + Z"
+        "redoSC": "Ctrl + Shift + Z",
+        "openAddShape": "Add Menu",
+        "openAddShapeSC": "Ctrl + Right click"
       },
       "editOverlaySpace": "Edit Overlay Space",
       "editPersonalSpace": "Edit Personal Space",

@@ -404,6 +404,7 @@ class Graphics extends Component {
         getDragProps: this.getDragProps,
         sendInteraction: this.sendInteraction,
         dragLayer: () => { },
+        onDocClick: (e) => this.onDocClick(e),
         handleDragEnd: (obj, e) => {
           handleCollisions(this.props, this.state);
           if (obj.infolevel) return {}
@@ -689,6 +690,30 @@ class Graphics extends Component {
       overlayOpenIndex: index
     });
   }
+  onDocClick = (e) => {
+    let src = e.docsrc
+    fetch(src, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf',
+      },
+    }).then(response => response.blob()).then(blob => {
+      // Create a blob link to download
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'file.pdf');
+
+      // Append to html link element page
+      document.body.appendChild(link);
+
+      // Start download
+      link.click();
+
+      // Clean up and remove the link
+      link.parentNode.removeChild(link);
+    });
+  }
 
 
 
@@ -756,7 +781,7 @@ class Graphics extends Component {
                 return (
                   <div
                     key={i}
-                    className="overlayButton"
+                    className="overlayButton overlayButton--play"
                     onClick={() => {
                       if (this.state.personalAreaOpen) return;
                       this.setOverlayOpen(true, overlay.id);
@@ -815,7 +840,6 @@ class Graphics extends Component {
             }}
           />
         )}
-
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <div className="stageContainer">
             <Stage
@@ -825,8 +849,8 @@ class Graphics extends Component {
               width={this.state.pages[this.state.level - 1] 
                 ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale) 
                 : window.innerWidth}
-              offsetX={this.state.groupLayerX}
-              offsetY={this.state.groupLayerY}
+              offsetX={this.state.groupCenterX}
+              offsetY={this.state.groupCenterY}
               ref="graphicStage"
             >
               {!this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("group", "play") : null}
@@ -885,15 +909,14 @@ class Graphics extends Component {
                 style={{backgroundImage: 'none'}}
               >
                 <Stage
-                  style={{ position: "relative", overflow: "hidden" }}
-                  height={this.state.pages[this.state.level - 1] 
-                    ? ((this.state.pages[this.state.level - 1].personalPositionRect.h * this.state.pages[this.state.level - 1].personalPositionRect.scaleY) * this.state.personalLayerScale ) 
+                  height={this.state.pages[this.state.level - 1]
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.h * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleY) * this.state.personalLayerScale ) 
                     : window.innerHeight - 50}
                   width={this.state.pages[this.state.level - 1] 
-                    ? ((this.state.pages[this.state.level - 1].personalPositionRect.w * this.state.pages[this.state.level - 1].personalPositionRect.scaleX) * this.state.personalLayerScale) 
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.w * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleX) * this.state.personalLayerScale) 
                     : window.innerWidth}
-                  offsetX={this.state.personalLayerX}
-                  offsetY={this.state.personalLayerY}
+                    offsetX={this.state.personalCenterX}
+                    offsetY={this.state.personalCenterY}
                   ref="personalAreaStage"
                 >
                   {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}
