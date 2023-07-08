@@ -12,6 +12,7 @@ exports.getAdminbyEmail = async (req, res) => {
       email: email,
     },
   });
+  console.log(admin)
   try {
     if (!admin) {
       let newAdmin = await AdminAccount.create({

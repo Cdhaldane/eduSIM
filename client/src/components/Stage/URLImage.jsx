@@ -1,12 +1,14 @@
 import React, { useState, useEffect, forwardRef } from "react";
 import { Image } from "react-konva";
+import Loading from "../Loading/Loading";
 import SuperGif from "libgif";
+import { set } from "draft-js/lib/EditorState";
 
 
 const URLImage = forwardRef((props, ref) => {
   const [image, setImage] = useState(null);
   const [gifSrc, setGifSrc] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const getMeta = (url, callback) => {
     const img = new window.Image();
     img.src = url;
@@ -35,12 +37,19 @@ const URLImage = forwardRef((props, ref) => {
 
   useEffect(() => {
     setImage(loadImage());
-    const layer = props.layer?.getStage();
+    const actualLayer = props.canvas.refs[`${props.stage}AreaLayer.objects`];
+    console.log(actualLayer)
+    if(!props.editMode){
+    const layer = actualLayer.getStage();
     const anim = new Konva.Animation(() => { }, layer);
+    console.log(props)
+    //create time out for 5 seconds then set loading false.   
     anim.start();
     return () => {
       anim.stop();
     };
+  }
+    
   }, [ref]);
 
   return (

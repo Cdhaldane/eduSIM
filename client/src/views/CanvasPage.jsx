@@ -6,6 +6,7 @@ import WebFont from "webfontloader";
 import TransformerComponent from "../components/Stage/TransformerComponent";
 import URLVideo from "../components/Stage/URLVideos";
 import URLDocument from "../components/Stage/URLDocument";
+import URLImage from "../components/Stage/URLImage";
 import TicTacToe from "../components/Stage/GamePieces/TicTacToe/TicTacToe";
 import Deck from "../components/Stage/GamePieces/Deck/Deck";
 import Dice from "../components/Stage/GamePieces/Dice/Dice";
@@ -954,7 +955,7 @@ const CanvasPage = (props) => {
       case "pencils":
         return <Line {...pencilProps(obj, index, canvas, editMode)} />;
       case "images":
-        return <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} />;
+        return <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} canvas={canvas} stage={stage}/>;
       case "videos":
         return <URLVideo
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}

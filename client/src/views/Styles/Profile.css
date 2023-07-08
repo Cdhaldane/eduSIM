@@ -50,6 +50,12 @@
   padding: 20px 10px;
   flex-direction: column;
 }
+.card-main svg {
+  width: 20px; 
+  height: 20px;
+  margin: 0px;
+  align-self: start;
+}
 
 @media (min-width: 601px) {
   .card-main {
@@ -141,7 +147,7 @@
   margin-top: 0px !important;
   position: absolute;
   top: 0px;
-  object-fit:scale-down;
+  object-fit: cover;
   background-color: lightgrey;
 }
 
@@ -152,7 +158,7 @@
 }
 
 
-.card button {
+.card-banner {
   position: absolute;
   transform: translateX(350px);
   color: #fff;
@@ -168,8 +174,28 @@
   border-radius: 3px 10px 10px 10px;
 }
 
+.follow-btnplus {
+  width: 60px;
+  height: 60px;
+  background-color:white;
+  border-radius: 100%;
+  fill: limegreen;
+  cursor: pointer;
+  animation: spin 200ms ease-in-out;
+}
+.follow-btncross {
+  width: 60px;
+  height: 60px;
+  background-color:white;
+  border-radius: 100%;
+  border: 0px;
+  fill: maroon;
+  cursor: pointer;
+  animation: spin 200ms ease-in-out;
+}
 
-.card button:before {
+
+.card-banner:before {
   content: "";
   position: absolute;
   height: 150px;
@@ -182,7 +208,7 @@
   opacity: 0.3;
 }
 
-.card button:hover:before {
+.card-banner:hover:before {
   left: 102%;
 }
 

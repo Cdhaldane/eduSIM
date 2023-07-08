@@ -63,33 +63,32 @@ const Dashboard = (props) => {
   }
   const getAllGamedata = async () => {
     try {
-      const res1 = await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+      await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
         params: {
           email: user.email,
           name: user.name
         }
-      });
-  
-      const allData = res1.data;
-  
-      const res2 = await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id', {
+      }).then((res) => {
+        console.log(res.data)
+        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id', {
         params: {
-          id: allData.adminid
+          id: res.data.adminid
         }
-      });
-  
-      let allData2 = res2.data;
-  
-      if (localStorage?.order?.length > 5) {
-        getGamedata(JSON.parse(localStorage.order));
-      }
-      else {
-        getGamedata(allData2);
-      }
+      }).then((res) => {
+        const allData2 = res.data;
+        if (localStorage?.order?.length > 5) {
+          getGamedata(JSON.parse(localStorage.order));
+        }
+        else {
+          getGamedata(allData2);
+        }
+        if(allData2.length !== (localStorage.order && JSON.parse(localStorage.order).length)) localStorage.removeItem('order');
         setHeight(allData2.length * 150);
+        console.log(allData2)
+        setLoading(false)
+      });
+    });
       
-      if(allData2.length > 0)
-        setLoading(false);
     } catch (error) {
       console.error(error);
     }

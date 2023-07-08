@@ -54,7 +54,7 @@ const Welcome = (props) => {
             </form>
         </div>
          <div className='welcome-img'>
-            <img src="03_Illustrations LogoIn.png" alt={t("alt.team")}></img>
+            <img src="/assets/03_Illustrations LogoIn.png" alt={t("alt.team")}></img>
         </div>
       </div>
 

@@ -13,10 +13,10 @@ function UserSearch(props) {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-
     setLoading(true);
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getProfile/:email', { params: { email: searchTerm } })
+    axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${searchTerm}`)
       .then((res) => {
+        console.log(res.data);
         props.setUser(res.data)
         setLoading(false);
       }).catch(error => {

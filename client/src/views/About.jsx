@@ -34,9 +34,9 @@ const About = (props) => {
         </i></p>
         <br/>
         <div className="about-logos">
-          <a target="_blank" rel="noopener noreferrer" href={localStorage.lang == "en" ? "https://dumonddesign.com/" : "https://dumonddesign.com/fr" }><img src="ddl.png"></img></a>
-          <a target="_blank" rel="noopener noreferrer"href={localStorage.lang == "en" ? "https://www2.uottawa.ca/" : "https://www2.uottawa.ca/fr"}><img src="uottawa.png"></img></a>
-          <a target="_blank" rel="noopener noreferrer" href={localStorage.lang == "en" ? "https://vls.ecampusontario.ca/" : "https://vls.ecampusontario.ca/fr/"}><img src="ecampus.png"></img></a>
+          <a target="_blank" rel="noopener noreferrer" href={localStorage.lang == "en" ? "https://dumonddesign.com/" : "https://dumonddesign.com/fr" }><img src="/assets/ddl.png"></img></a>
+          <a target="_blank" rel="noopener noreferrer"href={localStorage.lang == "en" ? "https://www2.uottawa.ca/" : "https://www2.uottawa.ca/fr"}><img src="/assets/uottawa.png"></img></a>
+          <a target="_blank" rel="noopener noreferrer" href={localStorage.lang == "en" ? "https://vls.ecampusontario.ca/" : "https://vls.ecampusontario.ca/fr/"}><img src="/assets/ecampus.png"></img></a>
         </div>
       </div>
     </div>

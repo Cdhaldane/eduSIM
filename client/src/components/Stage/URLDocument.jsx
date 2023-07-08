@@ -4,13 +4,6 @@ import useImage from 'use-image';
 
 
 const URLDocument = forwardRef((props, ref) => {
-  const [gifSrc, setGifSrc] = useState(null);
-
-  const URLImage = ({ src, ...props }) => {
-    
-    return <Image image={image} {...props} />;
-  };
-
   const [image] = useImage('https://res.cloudinary.com/uottawaedusim/image/upload/v1688111161/doc_wclapg.png');
 
   return (

@@ -152,7 +152,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2rem;
+  margin: 1rem;
   z-index: 0;
 }
 .card-banner {
@@ -161,23 +161,44 @@
   translate: 0px -60px;
   z-index: 1;
 }
+.usersearch-container button {
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.0em;
+  text-transform: uppercase;
+  transition: all .3s;
+  border: 2px solid var(--almost-white) !important;
+  cursor: pointer;
+  width: 200px;
+  height: 30px;
+  border-radius: 0px 9px 9px 0px;
+}
+
+.usersearch-container button:hover {
+  font-size: 1.2em;
+}
 
 
 .input-container {
   display: flex;
   margin-bottom: 2rem;
+  border-radius: 9px;
+  padding: 4px;
 }
 
 .input-container input[type='text'] {
-  font-size: 1.5rem;
+  position: relative;
+  background-color: white;
+  height: 30px;
+  width: 200px;
+  font-size: 0.9rem;
   padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 0.25rem;
+  border: none;
+  border-radius: 9px 0px 0px 9px;
   flex: 1;
-  margin-right: 1rem;
 }
 .input-container input::placeholder {
-  font-size: 1.5rem;
+  font-size: 1.0rem;
   opacity: 0.5;
 }
 

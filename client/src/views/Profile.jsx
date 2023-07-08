@@ -11,6 +11,12 @@ import { ColorExtractor } from 'react-color-extractor'
 import "./Styles/Profile.css";
 import { useLocation } from "react-router-dom";
 
+import UsersIcon from "../../public/icons/users.svg";
+import CirclePlus from "../../public/icons/circle-plus2.svg";
+import CircleCross from "../../public/icons/cross-circle.svg";
+import Stopwatch from "../../public/icons/stopwatch2.svg";
+import Bookmark from "../../public/icons/bookmark.svg";
+
 const Activity = ({ border, children, onClick }) => {
   const activityRef = useRef();
 
@@ -49,6 +55,9 @@ const Card_component = (props) => {
   const name = colors[Math.floor(Math.random() * colors.length)]
   const border = colors[Math.floor(Math.random() * colors.length)]
 
+  const path = useLocation()
+  const adminid = path.pathname.split("/")[2];
+
   const handleColors = (colors) => {
     setColors(colors);
     console.log(colors);
@@ -86,7 +95,7 @@ const Card_component = (props) => {
       <ColorExtractor getColors={handleColors}>
         <img className="card-background" src={"https://res.cloudinary.com/uottawaedusim/image/upload/" + imageSelected} />
       </ColorExtractor>
-      {props.user.adminid === localStorage.adminid &&
+      {adminid === localStorage.adminid &&
         <button className="card-banner" onClick={() => openWidget()}
           style={{ 'background': colors[2] }}>
           Banner
@@ -100,24 +109,24 @@ const Card_component = (props) => {
             <h3 style={{ color: colors[Math.floor(Math.random() * colors.length)] }}>{props.user.email}</h3>
           </div>
         </div>
-        {props.user.adminid !== localStorage.adminid &&
+        {adminid !== localStorage.adminid &&
           <div className="button-box">
-            <a style={props.btnStyle} className="follow-btn" href="#" ><i class={props.icon} onClick={props.follow}></i></a>
+            <div onClick={props.follow}>{props.icon === 'plus' ? <CirclePlus className={"follow-btn" + props.icon} /> : <CircleCross className={"follow-btn" + props.icon} />}</div>
           </div>}
       </header>
       <main className="card-main">
         <Activity border={border}>
-          <i className="lni lni-users"></i>
+          <UsersIcon />
           <span className="activity-name">Followers</span>
           <span className="index">{props.user.followers}</span>
         </Activity>
         <Activity border={border}>
-          <i className="lni lni-timer"></i>
+          <Stopwatch />
           <span className="activity-name">Activity</span>
           <span className="index sepcial">{props.user.updatedAt?.split("T")[0]}</span>
         </Activity>
         <Activity border={border} onClick={props.openSims}>
-          <i className="lni lni-bookmark-alt"></i>
+          <Bookmark />
           <span className="activity-name">Simulations</span>
           <span className="index">{props.data && Object.keys(props.data).length}</span>
         </Activity>
@@ -129,15 +138,11 @@ const Card_component = (props) => {
 
 const Profile = ({ auth0 }) => {
   const [loading, setLoading] = useState(true);
-  const [icon, setIcon] = useState('lni lni-circle-plus');
+  const [icon, setIcon] = useState('plus');
   const [text, setText] = useState('Follow');
   const [showTable, setShowTable] = useState(false);
   const [gamedata, getGamedata] = useState();
-  const [btnStyle, setBtnStyle] = useState({
-    borderRadius: '50%',
-    color: 'limegreen',
-    cursor: 'pointer'
-  });
+
   const alertContext = useAlertContext();
   const path = useLocation()
   const adminid = path.pathname.split("/")[2];
@@ -160,21 +165,13 @@ const Profile = ({ auth0 }) => {
 
         if (res.data.following.includes(localStorage.adminid)) {
           console.log("already following");
-          setIcon('lni lni-cross-circle');
+          setIcon('cross');
           setText('Unfollow');
-          setBtnStyle({
-            color: 'maroon',
-            cursor: 'normal',
-            animation: 'spin 200ms ease-in-out'
-          });
+      
         } else {
-          setIcon('lni lni-circle-plus');
+          setIcon('plus');
           setText('Follow');
-          setBtnStyle({
-            color: 'limegreen',
-            cursor: 'pointer',
-            animation: 'spinBack 200ms ease-in-out'
-          });
+          
         }
       })
       .catch((error) => {
@@ -200,7 +197,7 @@ const Profile = ({ auth0 }) => {
 
   const follow = (e) => {
     e.preventDefault();
-    if (icon === 'lni lni-circle-plus' && text === 'Follow') {
+    if (icon === 'plus' && text === 'Follow') {
       let body = {
         email: users.email,
         followers: users.followers + 1,
@@ -217,13 +214,9 @@ const Profile = ({ auth0 }) => {
         .catch(error => {
           console.error('Error updating download count:', error);
         });
-      setIcon('lni lni-cross-circle');
+      setIcon('cross');
       setText('Unfollow');
-      setBtnStyle({
-        color: 'maroon',
-        cursor: 'normal',
-        animation: 'spin 200ms ease-in-out'
-      });
+ 
     } else {
       let body = {
         email: users.email,
@@ -241,13 +234,9 @@ const Profile = ({ auth0 }) => {
         .catch(error => {
           console.error('Error updating download count:', error);
         });
-      setIcon('lni lni-circle-plus');
+      setIcon('plus');
       setText('Follow');
-      setBtnStyle({
-        color: 'limegreen',
-        cursor: 'pointer',
-        animation: 'spinBack 200ms ease-in-out'
-      });
+   
     }
   };
 
@@ -266,7 +255,6 @@ const Profile = ({ auth0 }) => {
   return (
     <>
       <Card_component
-        btnStyle={btnStyle}
         icon={icon}
         text={text}
         follow={follow}

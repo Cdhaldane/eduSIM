@@ -1,5 +1,6 @@
 require('dotenv').config()
 import helmet from 'helmet';
+import { createClient } from '@supabase/supabase-js'
 
 import routes from './routes';
 import events from './events';
@@ -8,6 +9,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+
 
 let cors = require('cors')
 
@@ -18,7 +20,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://edusim.ca', "https://reactapp-jyfluau3gq-uc.a.run.app"],
+  origin: ['http://localhost:3000', 'https://edusim.ca', "https://reactapp-jyfluau3gq-uc.a.run.app", "https://react-frontend-socurjfina-uc.a.run.app"],
   optionsSuccessStatus: 200 
 }
 

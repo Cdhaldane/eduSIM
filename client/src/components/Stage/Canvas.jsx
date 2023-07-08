@@ -396,12 +396,11 @@ class Graphics extends Component {
         if (this.props.handleGroups)
           this.props.handleGroups(objects.groups || {});
 
-
-
-
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }
+
+        
 
 
         // Put parsed saved data into state
@@ -940,6 +939,7 @@ class Graphics extends Component {
   }
 
   onMouseDown = (e, personalArea) => {
+    console.log(this.state)
     const event = e.evt ? e.evt : e;
     const shape = this.getTopObjAtPos({
       x: event.clientX,
@@ -1659,7 +1659,7 @@ class Graphics extends Component {
     }
 
     let out = this.state[objectsName].map(eachObj =>
-      eachObj.id === shape.attrs.id
+      eachObj.id === shape?.attrs.id
         ? {
           ...eachObj,
           x: e.target.x(),

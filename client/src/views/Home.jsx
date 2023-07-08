@@ -14,21 +14,21 @@ const Home = (props) => {
       <div className='welcome-nav'>
         <h1>{t("home.title")}</h1>
         <h2>{t("home.sub-title")}</h2>
-        <img src="lightbulb.png"></img>
+        <img src="/assets/lightbulb.png"></img>
       </div>
       <div className='welcome-notes'>
         <Note
           title={t("home.isStudent")}
           text={t("home.student_welcome")}
           url="/welcome"
-          img="01_Illustrations Student.png"
+          img="/assets/01_Illustrations Student.png"
           className="welcome-navbutton"
         />
         <Note
           title={t("home.isTeacher")}
           text={t("home.welcomeText")}
           onClick={() => loginWithRedirect({ redirectUri: window.location.origin + "/dashboard", prompt: "select_account" })}
-          img="02_Illustrations Teacher.png"
+          img="/assets/02_Illustrations Teacher.png"
           className="welcome-navbutton"
         />
       </div>

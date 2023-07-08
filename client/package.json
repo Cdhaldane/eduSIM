@@ -54,6 +54,7 @@
     "socket.io-client": "^4.2.0",
     "styled-components": "^5.3.0",
     "survey-react": "^1.8.72",
+    "use-image": "^1.1.1",
     "usehooks-ts": "^2.4.1",
     "webfontloader": "^1.6.28"
   },
