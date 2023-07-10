@@ -1,51 +1,44 @@
-const Sequelize = require('sequelize');
-const db = require('../databaseConnection');
+// Replace the require statement for Sequelize with the Supabase client import
+const { createClient } = require('@supabase/supabase-js');
 
-const adminaccounts = db.define('adminaccounts', {
-  adminid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    primaryKey: true,
-    allowNull: false
-  },
-  email: {
-    type: Sequelize.STRING(50),
-    allowNull: false
-  },
-  name: {
-    type: Sequelize.STRING(50)
-  },
-  picture: {
-    type: Sequelize.STRING(250)
-  },
-  issuperadmin: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: true
-  },
-  followers: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
-  },
-  following: {
-    type: Sequelize.ARRAY( Sequelize.STRING ),
-    defaultValue: []
-  },
-  bannerPath: {
-    type: Sequelize.STRING(250),
-    defaultValue: 'v1677271353/images/yavagre0lvkt8vtegdvv.jpg'
-  },
-  likedSims: {
-    type: Sequelize.ARRAY( Sequelize.STRING ),
-    defaultValue: []
-  },
-  downloadedSims: {
-    type: Sequelize.ARRAY( Sequelize.STRING ),
-    defaultValue: []
-  },
-});
+require('dotenv').config()
 
-adminaccounts.sync({ alter: true }).then(() => {
-  console.log('AdminAccounts table created');
-});
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Define the 'adminaccounts' table in Supabase
+const adminaccounts = 'adminaccounts';
+
+// Define the table schema in Supabase
+const adminaccountsSchema = {
+  adminid: 'uuid',
+  email: 'text',
+  name: 'text',
+  picture: 'text',
+  issuperadmin: 'boolean',
+  followers: 'integer',
+  following: 'text[]',
+  bannerPath: 'text',
+  likedSims: 'text[]',
+  downloadedSims: 'text[]',
+};
+
+// Create the 'adminaccounts' table in Supabase
+// const createAdminAccountsTable = async () => {
+//   const { error } = await supabase.rpc('create_table', {
+//     schema: 'public',
+//     name: adminaccounts,
+//     definition: adminaccountsSchema,
+//   });
+
+//   if (error) {
+//     throw new Error(error.message);
+//   }
+
+//   console.log('AdminAccounts table created');
+// };
+
+// createAdminAccountsTable();
 
 module.exports = adminaccounts;

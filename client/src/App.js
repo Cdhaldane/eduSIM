@@ -12,6 +12,7 @@ import Modal from "react-modal";
 import { useLocalStorage } from 'usehooks-ts'
 import "./components/CreateCsv/CreateCsv.css";
 import "./components/CreateArea/CreateArea.css";
+import { set } from "draft-js/lib/EditorState";
 
 const Welcome = React.lazy(() => import("./views/Welcome"));
 const Home = React.lazy(() => import("./views/Home"));
@@ -49,7 +50,9 @@ const App = (props) => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   //const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
   const [theme, setTheme] = useLocalStorage('light');
+  const [showProfile, setShowProfile] = useState(false);
   const location = useLocation();
+
 
   const updateSetting = (key, val) => {
     const obj = JSON.parse(localStorage.userSettings || '{}');
@@ -66,6 +69,9 @@ const App = (props) => {
   const switchTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
+  }
+  const showProfileDropdown = () => {
+    setShowProfile(!showProfile);
   }
 
   useEffect(() => {
@@ -86,7 +92,7 @@ const App = (props) => {
 
           <AlertPopup />
           {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
-            <Navbar switchTheme={switchTheme} />
+            <Navbar switchTheme={switchTheme} show={showProfile} />
           )}
           <div className="main-content">
             <Suspense fallback={<>
@@ -94,7 +100,7 @@ const App = (props) => {
             </>}>
               <Switch>
                 <Route exact path="/" >
-                  <Home />
+                  <Home show={showProfileDropdown}/>
                 </Route>
                 {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
                   <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
@@ -106,9 +112,9 @@ const App = (props) => {
                 <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
                 <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
                 <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
-                <ProtectedRoute path="/profile/:adminid" render={(props) => <Profile {...props} />} />
-                <ProtectedRoute path="/dashboard" render={(props) => <Dashboard {...props} />} />
-                <ProtectedRoute path="/join" render={(props) =>
+                <Route path="/profile/:adminid" render={(props) => <Profile {...props} />} />
+                <Route path="/dashboard" render={(props) => <Dashboard {...props} />} hashType="noslash"/>
+                <Route path="/join" render={(props) =>
                   <Join
                     customObjects={customObjects}
                     {...props}

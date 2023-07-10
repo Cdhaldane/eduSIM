@@ -9,7 +9,7 @@ router.get('/getProfile/:param(email|adminid)?/:value', adminaccount.getProfile)
 
 router.get('/getName/:adminid', adminaccount.getName);
 
-router.post('/verifyCollaborator', verifyCollaboratorStatus);
+// router.post('/verifyCollaborator', verifyCollaboratorStatus);
 
 router.put('/update/:email', adminaccount.updateProfile);
 

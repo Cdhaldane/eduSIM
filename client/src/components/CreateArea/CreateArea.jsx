@@ -77,29 +77,10 @@ const CreateArea = (props) => {
         }).catch(error => {
           console.error(error);
         });
-        props.onAdd();
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
-
-          if(gameData) {
-            let roles = JSON.parse(gameData).roles
-            for(let i = 0; i < roles.length; i++){
-              let data = {
-                gameinstanceid: res.data.gameinstanceid,
-                gamerole: roles[i].gamerole,
-                numspots: roles[i].numspots,
-                roleDesc: roles[i].roleDesc,
-              };
-              axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/createRole', data).then((res) => {
-              }).catch(error => {
-                console.error(error);
-              });
-            }
-          }
-
-          var temp = JSON.parse(localStorage.getItem("order"));
-          temp?.unshift(res.data)
-          localStorage.setItem("order", JSON.stringify(temp))
+          console.log(res)
+          props.setOrder(res.data);
         }).catch(error => {
           console.error(error);
         })

@@ -1,16 +1,13 @@
 const uuid = require('uuid');
-const GameRoom = require("../models/GameRooms");
-const GameRole = require("../models/GameRoles");
-const GamePlayer = require("../models/GamePlayers");
-const GameInstance = require("../models/GameInstances");
-const GameActions = require("../models/GameActions");
+
 import cryptoRandomString from 'crypto-random-string';
-import { 
-  getInteractionBreakdown,
-  getInteractions,
-  getChatlog,
-  getRoomStatus
-} from '../events/utils';
+
+import { createClient } from '@supabase/supabase-js';
+require('dotenv').config()
+
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Create Players using csv
 exports.createGamePlayers = async (req, res) => {
@@ -27,47 +24,52 @@ exports.createGamePlayers = async (req, res) => {
       let gamerole = req.body.data[i].Role;
 
       if (gamerole) {
-        const gameroles = await GameRole.findOne({
-          where: {
-            gameinstanceid: gameinstanceid,
-            gamerole: gamerole,
-          },
-        });
+        const { data: gameroles, error } = await supabase
+          .from('GameRoles')
+          .select('*')
+          .eq('gameinstanceid', gameinstanceid)
+          .eq('gamerole', gamerole)
+          .single();
 
+        if (error) throw error;
         if (!gameroles) {
           replacedroles.push(gamerole);
           gamerole = "";
         }
       }
 
-      let newGamePlayer = await GamePlayer.create({
-        fname,
-        lname,
-        gameinstanceid,
-        game_room,
-        player_email,
-        gamerole
-      });
+      const { data: newGamePlayer, error } = await supabase
+        .from('GamePlayers')
+        .insert([
+          { fname, lname, gameinstanceid, game_room, player_email, gamerole }
+        ]);
+
+      if (error) throw error;
 
       if (lookuproom.indexOf(game_room) === -1) {
-        const realGameRoom = await GameRoom.findOne({
-          where: {
-            gameinstanceid: gameinstanceid,
-            gameroom_name: game_room,
-          },
-        });
+        const { data: realGameRoom, error } = await supabase
+          .from('GameRooms')
+          .select('*')
+          .eq('gameinstanceid', gameinstanceid)
+          .eq('gameroom_name', game_room)
+          .single();
+
+        if (error) throw error;
+
         if (realGameRoom) {
           lookuproom.push(realGameRoom);
         } else {
-          const gameroom_name = game_room
+          const gameroom_name = game_room;
           const gameroomid = uuid.v4();
           const gameroom_url = cryptoRandomString(10);
-          let newGameRoom = await GameRoom.create({
-            gameroomid,
-            gameinstanceid,
-            gameroom_name,
-            gameroom_url
-          });
+
+          const { data: newGameRoom, error } = await supabase
+            .from('GameRooms')
+            .insert([
+              { gameroomid, gameinstanceid, gameroom_name, gameroom_url }
+            ]);
+
+          if (error) throw error;
         }
       }
     }
@@ -85,29 +87,31 @@ exports.getGamePlayers = async (req, res) => {
   const gameinstanceid = req.params.id;
 
   try {
-    let gameplayer = await GamePlayer.findAll({
-      where: {
-        gameinstanceid: gameinstanceid
-      },
-    });
+    const { data: gameplayer, error } = await supabase
+      .from('GamePlayers')
+      .select('*')
+      .eq('gameinstanceid', gameinstanceid);
+
+    if (error) throw error;
     return res.send(gameplayer);
   } catch (err) {
     return res.status(400).send({
-      message: `No game instance found with the id ${id}`,
+      message: `No game instance found with the id ${gameinstanceid}`,
     });
   }
 };
 
-// Get all rooms for a gameinstance id
 exports.getRooms = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
   try {
-    let gameroom = await GameRoom.findAll({
-      where: {
-        gameinstanceid: gameinstanceid
-      },
-    });
-    return res.send(gameroom);
+    let { data, error } = await supabase
+      .from('GameRoom')
+      .select('*')
+      .eq('gameinstanceid', gameinstanceid);
+
+    if (error) throw error;
+
+    return res.send(data);
   } catch (err) {
     return res.status(400).send({
       message: `No game rooms found with the id ${gameinstanceid}`,
@@ -115,211 +119,114 @@ exports.getRooms = async (req, res) => {
   }
 };
 
-exports.getRoomInteractionBreakdown = async (req, res) => {
-  const gameroomid = req.query.gameroomid;
-  try {
-    let { dataValues } = await GameRoom.findOne({
-      where: {
-        gameroomid
-      },
-      attributes: ["gameroom_url"]
-    });
-    const breakdown = await getInteractionBreakdown(dataValues.gameroom_url);
-    return res.send(breakdown);
-  } catch (err) {
-    return res.status(400).send({
-      message: `No game rooms found with the id ${gameroomid}`,
-    });
-  }
-};
 
-// these next two endpoints return the CURRENT STATUS of the room
-exports.getRunningGameLog = async (req, res) => {
-  const gameroomid = req.params.gameroomid;
-  try {
-    let { dataValues } = await GameRoom.findOne({
-      where: {
-        gameroomid
-      }
-    });
-    const messages = await getChatlog(dataValues.gameroom_url);
-    const interactions = await getInteractions(dataValues.gameroom_url);
-    return res.send({
-      ...dataValues,
-      messages,
-      interactions
-    });
-  } catch (err) {
-    return res.status(400).send({
-      message: `No game rooms found with the id ${gameroomid}`,
-    });
-  }
-}
+// exports.getRoomInteractionBreakdown = async (req, res) => {
+//   const gameroomid = req.query.gameroomid;
+//   try {
+//     let { dataValues } = await GameRoom.findOne({
+//       where: {
+//         gameroomid
+//       },
+//       attributes: ["gameroom_url"]
+//     });
+//     const breakdown = await getInteractionBreakdown(dataValues.gameroom_url);
+//     return res.send(breakdown);
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `No game rooms found with the id ${gameroomid}`,
+//     });
+//   }
+// };
 
-exports.getRunningSimulationLogs = async (req, res) => {
-  const gameinstanceid = req.params.gameinstanceid;
-  try {
-    let rooms = await GameRoom.findAll({
-      where: {
-        gameinstanceid
-      }
-    });
-    const roomData = [];
-    for (let i=0; i<rooms.length; i++) {
-      const { dataValues } = rooms[i];
-      const roomStatus = await getRoomStatus(dataValues.gameroom_url);
-      const messages = await getChatlog(dataValues.gameroom_url);
-      const interactions = await getInteractions(dataValues.gameroom_url);
-      roomData.push({
-        ...dataValues,
-        messages,
-        interactions,
-        roomStatus
-      });
-    }
-    return res.send(roomData);
-  } catch (err) {
-    return res.status(400).send({
-      message: `Error: ${err.message}`,
-    });
-  }
-}
+// // these next two endpoints return the CURRENT STATUS of the room
+// exports.getRunningGameLog = async (req, res) => {
+//   const gameroomid = req.params.gameroomid;
+//   try {
+//     let { dataValues } = await GameRoom.findOne({
+//       where: {
+//         gameroomid
+//       }
+//     });
+//     const messages = await getChatlog(dataValues.gameroom_url);
+//     const interactions = await getInteractions(dataValues.gameroom_url);
+//     return res.send({
+//       ...dataValues,
+//       messages,
+//       interactions
+//     });
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `No game rooms found with the id ${gameroomid}`,
+//     });
+//   }
+// }
 
-// this returns all SAVED DATA of PAST simuilation runs stored in GameActions
+// exports.getRunningSimulationLogs = async (req, res) => {
+//   const gameinstanceid = req.params.gameinstanceid;
+//   try {
+//     let rooms = await GameRoom.findAll({
+//       where: {
+//         gameinstanceid
+//       }
+//     });
+//     const roomData = [];
+//     for (let i=0; i<rooms.length; i++) {
+//       const { dataValues } = rooms[i];
+//       const roomStatus = await getRoomStatus(dataValues.gameroom_url);
+//       const messages = await getChatlog(dataValues.gameroom_url);
+//       const interactions = await getInteractions(dataValues.gameroom_url);
+//       roomData.push({
+//         ...dataValues,
+//         messages,
+//         interactions,
+//         roomStatus
+//       });
+//     }
+//     return res.send(roomData);
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `Error: ${err.message}`,
+//     });
+//   }
+// }
+
 exports.getGameLogs = async (req, res) => {
   const gameroomid = req.query.gameroomid;
   try {
-    const gameactions = await GameActions.findAll({
-      where: {
-        gameroomid
-      }
-    });
-    return res.send(gameactions);
+    const { data, error } = await supabase
+      .from('GameActions')
+      .select('*')
+      .eq('gameroomid', gameroomid);
+
+    if (error) throw error;
+
+    return res.send(data);
   } catch (err) {
     return res.status(400).send({
       message: `No game logs found with the id ${gameroomid}`,
     });
   }
-}
+};
 
+// Delete a game log
 exports.deleteGameLog = async (req, res) => {
   const gameactionid = req.body.gameactionid;
 
-  const gameaction = await GameActions.findOne({
-    where: {
-      gameactionid
-    },
-  });
-
-  if (!gameaction) {
-    return res.status(400).send({
-      message: `No game log found with the id ${id}`,
-    });
-  }
-
   try {
-    await gameaction.destroy();
+    const { data, error } = await supabase
+      .from('GameActions')
+      .delete()
+      .eq('gameactionid', gameactionid);
+
+    if (error) throw error;
+    if (!data.length) {
+      return res.status(400).send({
+        message: `No game log found with the id ${gameactionid}`,
+      });
+    }
+
     return res.send({
-      message: `Log ${gameaction} has been deleted!`,
-    });
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
-  }
-}
-
-exports.getPlayer = async (req, res) => {
-  const gameplayerid = req.query.id;
-  try {
-    let gameplayer = await GamePlayer.findOne({
-      where: {
-        gameplayerid
-      },
-    });
-    return res.send(gameplayer);
-  } catch (err) {
-    return res.status(400).send({
-      message: `No players found with the id ${gameplayerid}`,
-    });
-  }
-};
-
-// Get players for a particular tab or room
-exports.getPlayers = async (req, res) => {
-  const game_room = req.query.game_room;
-  const gameinstanceid = req.query.gameinstanceid;
-  try {
-    let gameplayer = await GamePlayer.findAll({
-      where: {
-        game_room,
-        gameinstanceid
-      },
-    });
-    return res.send(gameplayer);
-  } catch (err) {
-    return res.status(400).send({
-      message: `No players found with the game room ${game_room}`,
-    });
-  }
-};
-
-exports.getAllPlayers = async (req, res) => {
-  const gameinstanceid = req.query.id;
-  try {
-    let gameplayer = await GamePlayer.findAll({
-      where: {
-        gameinstanceid: gameinstanceid
-      },
-    });
-    return res.send(gameplayer);
-  } catch (err) {
-    return res.status(400).send({
-      message: `No players found with the gameid ${gameinstanceid}`,
-    });
-  }
-};
-
-exports.createRoom = async (req, res) => {
-  const { gameinstanceid, gameroom_name } = req.body;
-  const gameroom_url = cryptoRandomString(10);
-  const gameroomid = uuid.v4();
-
-  try {
-    let gameroom = await GameRoom.create({
-      gameinstanceid,
-      gameroom_name,
-      gameroomid,
-      gameroom_url
-    });
-    return res.send(gameroom);
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
-  }
-};
-
-exports.updateRoomName = async (req, res) => {
-  const { gameroomid, gameroom_name } = req.body;
-
-  const gameroom = await GameRoom.findOne({
-    where: {
-      gameroomid,
-    },
-  });
-
-  if (!gameroom) {
-    return res.status(400).send({
-      message: `No game room found with the id ${id}`,
-    });
-  }
-
-  try {
-    gameroom.gameroom_name = gameroom_name;
-    gameroom.save();
-    return res.send({
-      message: `Game room has been updated!`,
+      message: `Log ${gameactionid} has been deleted!`,
     });
   } catch (err) {
     return res.status(500).send({
@@ -328,45 +235,166 @@ exports.updateRoomName = async (req, res) => {
   }
 };
 
-GameRoom.belongsTo(GameInstance, { foreignKey: 'gameinstanceid' });
 
-exports.getRoomByURL = async (req, res) => {
-  const roomid = req.query.id;
+// exports.getPlayer = async (req, res) => {
+//   const gameplayerid = req.query.id;
+//   try {
+//     let gameplayer = await GamePlayer.findOne({
+//       where: {
+//         gameplayerid
+//       },
+//     });
+//     return res.send(gameplayer);
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `No players found with the id ${gameplayerid}`,
+//     });
+//   }
+// };
 
-  try {
-    let gameroom = await GameRoom.findOne({
-      where: {
-        gameroom_url: roomid
-      },
-      include: [{
-        model: GameInstance,
-        required: true
-      }]
-    });
-    return res.send(gameroom);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).send({
-      message: `No game room found with the id ${roomid}`,
-    });
-  }
-};
+// // Get players for a particular tab or room
+// exports.getPlayers = async (req, res) => {
+//   const game_room = req.query.game_room;
+//   const gameinstanceid = req.query.gameinstanceid;
+//   try {
+//     let gameplayer = await GamePlayer.findAll({
+//       where: {
+//         game_room,
+//         gameinstanceid
+//       },
+//     });
+//     return res.send(gameplayer);
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `No players found with the game room ${game_room}`,
+//     });
+//   }
+// };
+
+// exports.getAllPlayers = async (req, res) => {
+//   const gameinstanceid = req.query.id;
+//   try {
+//     let gameplayer = await GamePlayer.findAll({
+//       where: {
+//         gameinstanceid: gameinstanceid
+//       },
+//     });
+//     return res.send(gameplayer);
+//   } catch (err) {
+//     return res.status(400).send({
+//       message: `No players found with the gameid ${gameinstanceid}`,
+//     });
+//   }
+// };
+
+// exports.createRoom = async (req, res) => {
+//   const { gameinstanceid, gameroom_name } = req.body;
+//   const gameroom_url = cryptoRandomString(10);
+//   const gameroomid = uuid.v4();
+
+//   try {
+//     let gameroom = await GameRoom.create({
+//       gameinstanceid,
+//       gameroom_name,
+//       gameroomid,
+//       gameroom_url
+//     });
+//     return res.send(gameroom);
+//   } catch (err) {
+//     return res.status(500).send({
+//       message: `Error: ${err.message}`,
+//     });
+//   }
+// };
+
+// exports.updateRoomName = async (req, res) => {
+//   const { gameroomid, gameroom_name } = req.body;
+
+//   const gameroom = await GameRoom.findOne({
+//     where: {
+//       gameroomid,
+//     },
+//   });
+
+//   if (!gameroom) {
+//     return res.status(400).send({
+//       message: `No game room found with the id ${id}`,
+//     });
+//   }
+
+//   try {
+//     gameroom.gameroom_name = gameroom_name;
+//     gameroom.save();
+//     return res.send({
+//       message: `Game room has been updated!`,
+//     });
+//   } catch (err) {
+//     return res.status(500).send({
+//       message: `Error: ${err.message}`,
+//     });
+//   }
+// };
+
+// GameRoom.belongsTo(GameInstance, { foreignKey: 'gameinstanceid' });
+
+// exports.getRoomByURL = async (req, res) => {
+//   const roomid = req.query.id;
+
+//   try {
+//     let gameroom = await GameRoom.findOne({
+//       where: {
+//         gameroom_url: roomid
+//       },
+//       include: [{
+//         model: GameInstance,
+//         required: true
+//       }]
+//     });
+//     return res.send(gameroom);
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).send({
+//       message: `No game room found with the id ${roomid}`,
+//     });
+//   }
+// };
 
 exports.createPlayer = async (req, res) => {
   const { game_room, gameinstanceid, fname, lname, gamerole, player_email } = req.body;
+
   try {
-    let gameplayer = await GamePlayer.create({
-      gameinstanceid,
-      fname,
-      lname,
-      game_room,
-      player_email,
-      gamerole
-    });
-    return res.send(gameplayer);
+    let { data, error } = await supabase
+      .from('gameplayers')
+      .insert([
+        { gameinstanceid, fname, lname, game_room, player_email, gamerole }
+      ]);
+
+    if (error) throw error;
+
+    return res.send(data);
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,
+    });
+  }
+};
+
+// Get all players for a single game instance
+exports.getGamePlayers = async (req, res) => {
+  const gameinstanceid = req.params.id;
+
+  try {
+    let { data, error } = await supabase
+      .from('gameplayers')
+      .select('*')
+      .eq('gameinstanceid', gameinstanceid);
+
+    if (error) throw error;
+
+    return res.send(data);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No game instance found with the id ${id}`,
     });
   }
 };
@@ -375,20 +403,19 @@ exports.createPlayer = async (req, res) => {
 exports.deletePlayers = async (req, res) => {
   const id = req.query.id;
 
-  const gameplayers = await GamePlayer.findOne({
-    where: {
-      gameplayerid: id,
-    },
-  });
-
-  if (!gameplayers) {
-    return res.status(400).send({
-      message: `No game player found with the id ${id}`,
-    });
-  }
-
   try {
-    await gameplayers.destroy();
+    let { data, error } = await supabase
+      .from('gameplayers')
+      .delete()
+      .eq('gameplayerid', id);
+
+    if (error) throw error;
+    if (!data.length) {
+      return res.status(400).send({
+        message: `No game player found with the id ${id}`,
+      });
+    }
+
     return res.send({
       message: `Player ${id} has been deleted!`,
     });
@@ -399,71 +426,23 @@ exports.deletePlayers = async (req, res) => {
   }
 };
 
-// Delete a room
-exports.deleteRoom = async (req, res) => {
-  const id = req.query.id;
-
-  const gameroom = await GameRoom.findOne({
-    where: {
-      gameroomid: id,
-    },
-  });
-
-  if (!gameroom) {
-    return res.status(400).send({
-      message: `No game instance found with the id ${id}`,
-    });
-  }
-
-  try {
-    await gameroom.destroy();
-    return res.send({
-      message: `Room ${id} has been deleted!`,
-    });
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
-  }
-};
-
+// Update a player
 exports.updatePlayer = async (req, res) => {
   const { gameplayerid, fname, lname, player_email, gamerole, game_room } = req.body;
 
-  const gameplayers = await GamePlayer.findOne({
-    where: {
-      gameplayerid: gameplayerid,
-    },
-  });
-
-  if (!gameplayers) {
-    return res.status(400).send({
-      message: `No game instance found with the id ${id}`,
-    });
-  }
-
   try {
-    if (fname) {
-      gameplayers.fname = fname;
+    let { data, error } = await supabase
+      .from('gameplayers')
+      .update({ fname, lname, player_email, gamerole, game_room })
+      .eq('gameplayerid', gameplayerid);
+
+    if (error) throw error;
+    if (!data.length) {
+      return res.status(400).send({
+        message: `No game instance found with the id ${gameplayerid}`,
+      });
     }
 
-    if (lname) {
-      gameplayers.lname = lname;
-    }
-
-    if (player_email) {
-      gameplayers.player_email = player_email;
-    }
-
-    if (gamerole) {
-      gameplayers.gamerole = gamerole;
-    }
-    
-    if (game_room) {
-      gameplayers.game_room = game_room;
-    }
-
-    gameplayers.save();
     return res.send({
       message: `Game Player has been updated!`,
     });

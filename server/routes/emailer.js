@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 const nodemailer = require('nodemailer');
-const db = require('../databaseConnection');
+//const db = require('../databaseConnection');
 const AdminAccount = require("../models/AdminAccounts");
 const Collaborators = require("../models/Collaborators");
 

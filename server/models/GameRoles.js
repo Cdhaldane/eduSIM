@@ -1,31 +1,23 @@
-const Sequelize = require('sequelize');
-const db = require('../databaseConnection');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config()
 
-const gameroles = db.define('gameroles', {
-  gameroleid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    primaryKey: true,
-    allowNull: false
-  },
-  gameinstanceid: {
-    type: Sequelize.UUID,
-    allowNull: false
-  },
-  gamerole: {
-    type: Sequelize.STRING(250)
-  },
-  numspots: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  roleDesc: {
-    type: Sequelize.STRING(250)
-  }
-});
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-gameroles.sync({ alter: true }).then(() => {
-  console.log('GameRoles table created');
-});
+const gameroles = 'gameroles';
+
+// // Define the table schema in Supabase
+// const gamerolesSchema = {
+//   gameroleid: 'uuid',
+//   gameinstanceid: 'uuid',
+//   gamerole: 'text',
+//   numspots: 'integer',
+//   roleDesc: 'text',
+// };
+
+
+
+// createGameRolesTable();
 
 module.exports = gameroles;

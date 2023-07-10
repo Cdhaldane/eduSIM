@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import { useTranslation, Trans } from "react-i18next";
 import axios from "axios";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { useHistory } from "react-router-dom";
+import { supabase } from "../components/Supabase";
 
 import "./Styles/Welcome.css";
 
 const Welcome = (props) => {
   const { t } = useTranslation();
-  const { loginWithRedirect } = useAuth0();
   const alertContext = useAlertContext();
   let history = useHistory();
   const [code, setCode] = useState("");
+
+
 
   const joinGame = async (e) => {
     e.preventDefault();
@@ -33,6 +35,10 @@ const Welcome = (props) => {
     return false;
   };
 
+  const handleRedirect = () => {
+    window.location.href = window.location.origin + "/dashboard";
+  }
+
   return (
     <div className="welcome-container-welcome">
         <div className='welcome-text'>
@@ -41,10 +47,7 @@ const Welcome = (props) => {
               If not, get one from your teacher/facilitator, or
               <button
                 id="link"
-                onClick={() => loginWithRedirect({
-                  redirectUri: window.location.origin + "/dashboard",
-                  prompt: "select_account"
-                })}>
+                onClick={handleRedirect}>
                 create your own simulation.
               </button>
             </Trans>

@@ -1,35 +1,25 @@
-const Sequelize = require('sequelize');
-const db = require('../databaseConnection');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config()
 
-const gameplayers = db.define('gameplayers', {
-  gameplayerid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    primaryKey: true,
-    allowNull: false
-  },
-  fname: {
-    type: Sequelize.STRING(250)
-  },
-  lname: {
-    type: Sequelize.STRING(250)
-  },
-  gameinstanceid: {
-    type: Sequelize.UUID
-  },
-  game_room: {
-    type: Sequelize.STRING(250)
-  },
-  player_email: {
-    type: Sequelize.STRING(250)
-  },
-  gamerole: {
-    type: Sequelize.STRING(250)
-  },
-});
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-gameplayers.sync({ alter: true }).then(() => {
-  console.log('GamePlayers table created');
-});
+// Define the 'gameplayers' table in Supabase
+const gameplayers = 'gameplayers';
+
+// Define the table schema in Supabase
+const gameplayersSchema = {
+  gameplayerid: 'uuid',
+  fname: 'text',
+  lname: 'text',
+  gameinstanceid: 'uuid',
+  game_room: 'text',
+  player_email: 'text',
+  gamerole: 'text',
+};
+
+
+// createGamePlayersTable();
 
 module.exports = gameplayers;

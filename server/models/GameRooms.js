@@ -1,25 +1,23 @@
-const Sequelize = require('sequelize');
-const db = require('../databaseConnection');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config()
 
-const gamerooms = db.define('gamerooms', {
-  gameroomid: {
-    type: Sequelize.UUID,
-    primaryKey: true,
-    allowNull: false
-  },
-  gameinstanceid: {
-    type: Sequelize.UUID,
-  },
-  gameroom_name: {
-    type: Sequelize.STRING(250)
-  },
-  gameroom_url: {
-    type: Sequelize.STRING(250)
-  },
-});
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-gamerooms.sync({ alter: true }).then(() => {
-  console.log('GameRooms table created');
-});
+const gamerooms = 'gamerooms';
+
+// Define the table schema in Supabase
+const gameroomsSchema = {
+  gameroomid: 'uuid',
+  gameinstanceid: 'uuid',
+  gameroom_name: 'text',
+  gameroom_url: 'text',
+};
+
+
+
+// createGameRoomsTable();
 
 module.exports = gamerooms;
+

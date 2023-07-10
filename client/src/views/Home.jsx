@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Note from "../components/Note/Note";
 import { useTranslation } from "react-i18next";
+import { supabase } from "../components/Supabase";
+import { useAlertContext } from "../components/Alerts/AlertContext";
 
 import "./Styles/Home.css"
 
 const Home = (props) => {
   const { t } = useTranslation();
-  const { loginWithRedirect } = useAuth0();
+
+  const handleRedirect = () => {
+    window.location.href = window.location.origin + "/dashboard";
+  }
 
   return (
     <div className="welcome-container">
@@ -27,7 +32,7 @@ const Home = (props) => {
         <Note
           title={t("home.isTeacher")}
           text={t("home.welcomeText")}
-          onClick={() => loginWithRedirect({ redirectUri: window.location.origin + "/dashboard", prompt: "select_account" })}
+          onClick={handleRedirect}
           img="/assets/02_Illustrations Teacher.png"
           className="welcome-navbutton"
         />

@@ -92,3 +92,13 @@ hr {
     color: var(--primary);
     border-radius: 10px 10px 3px 10px;
 }
+
+.dashboard-login {
+    background-color: var(--almostwhite);
+    border: 3px solid black;
+    border-radius: 10px;
+    color: white;
+    height: auto;
+    width: 60%;
+    padding: 100px;
+}

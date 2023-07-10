@@ -1,136 +1,122 @@
-const AdminAccount = require("../models/AdminAccounts");
+require('dotenv').config()
+import { createClient } from '@supabase/supabase-js';
 
-// Get admin
-// if email exists -> getAdminbyemail
-// if not -> create admin
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 exports.getAdminbyEmail = async (req, res) => {
   const email = req.query.email;
   const name = req.query.name;
 
-  const admin = await AdminAccount.findOne({
-    where: {
-      email: email,
-    },
-  });
-  console.log(admin)
-  try {
-    if (!admin) {
-      let newAdmin = await AdminAccount.create({
-        email,
-        name,
-      });
-      return res.send(newAdmin);
-    }
-    else {
-      let adminaccount = await AdminAccount.findOne({
-        where: {
-          email: email,
-        },
-      });
-      return res.send(adminaccount);
-    }
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
+  const { data, error } = await supabase
+    .from('adminaccounts')
+    .select('*')
+    .eq('email', email);
+
+  if (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
   }
+
+  if (!data || data.length === 0) {
+    // Create new admin
+    const { data: newAdmin, error: createError } = await supabase
+      .from('adminaccounts')
+      .insert([
+        { email, name }
+      ]);
+
+    if (createError) {
+      console.error(createError);
+      return res.status(500).json({ error: createError.message });
+    }
+    return res.json(newAdmin[0]);
+  }
+
+  return res.json(data[0]);
 };
 
 exports.getProfile = async (req, res) => {
   const idType = req.params.param;
   const id = req.params.value;
 
-  try {
-    let adminaccount;
-    if (idType === 'email') {
-      adminaccount = await AdminAccount.findOne({
-        where: {
-          email: id,
-        },
-      });
-    } else if (idType === 'adminid') {
-      adminaccount = await AdminAccount.findOne({
-        where: {
-          adminid: id,
-        },
-      });
-    } else {
-      return res.status(400).send({
-        message: `Invalid id type: ${idType}`,
-      });
-    }
-    if (!adminaccount) {
-      return res.status(404).send({
-        message: `Admin account with ${idType} '${id}' not found`,
-      });
-    }
-    return res.send(adminaccount);
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
+  const { data, error } = await supabase
+    .from('adminaccounts')
+    .select('*')
+    .eq(idType, id);
+
+  if (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!data || data.length === 0) {
+    return res.status(404).send({
+      message: `Admin account with ${idType} '${id}' not found`,
     });
   }
+
+  return res.json(data[0]);
 };
 
 exports.getName = async (req, res) => {
   const adminid = req.query.adminid;
-  try {
-      let adminaccount = await AdminAccount.findOne({
-        where: {
-          adminid: adminid,
-        },
-      });
-      return res.send(adminaccount);
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
+
+  const { data, error } = await supabase
+    .from('adminaccounts')
+    .select('*')
+    .eq('adminid', adminid);
+
+  if (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!data || data.length === 0) {
+    return res.status(404).send({
+      message: `Admin account with adminid '${adminid}' not found`,
     });
   }
+
+  return res.json(data[0]);
 };
 
-
 exports.updateProfile = async (req, res) => {
-  const { email, followers, picture, bannerPath, likedSims, downloadedSims, following } = req.body;
+  const { email, followers, picture, bannerpath, likedSims, downloadedSims, following } = req.body;
 
-  let adminaccount = await AdminAccount.findOne({
-    where: {
-      email: email,
-    },
-  });
+  const { data, error } = await supabase
+    .from('adminaccounts')
+    .select('*')
+    .eq('email', email);
 
-  if (!adminaccount) {
+  if (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!data || data.length === 0) {
     return res.status(400).send({
       message: `No user found with the email ${email}`,
     });
   }
 
-  try {
-    if (followers) {
-      adminaccount.followers = followers;
-    }
-    if (picture) {
-      adminaccount.picture = picture;
-    }
-    if (bannerPath) {
-      adminaccount.bannerPath = bannerPath;
-    }
-    if (likedSims) {
-      adminaccount.likedSims = likedSims;
-    }
-    if (downloadedSims) {
-      adminaccount.downloadedSims = downloadedSims;
-    }
-    if (following) {
-      adminaccount.following = following;
-    }
-    adminaccount.save();
-    return res.send({
-      adminaccount: adminaccount,
-      message: `User ${email} has been updated!`,
-    });
-  } catch (err) {
-    return res.status(500).send({
-      message: `Error: ${err.message}`,
-    });
+  const { data: updatedAdmin, error: updateError } = await supabase
+    .from('adminaccounts')
+    .update({
+      followers,
+      picture,
+      bannerpath,
+      likedSims,
+      downloadedSims,
+      following
+    })
+    .eq('email', email);
+
+  if (updateError) {
+    console.error(updateError);
+    return res.status(500).json({ error: updateError.message });
   }
+
+  return res.json(updatedAdmin);
 };

@@ -1,6 +1,5 @@
 require('dotenv').config()
 import helmet from 'helmet';
-import { createClient } from '@supabase/supabase-js'
 
 import routes from './routes';
 import events from './events';
@@ -16,12 +15,15 @@ let cors = require('cors')
 const ENV = process.env.NODE_ENV  //Tells us if we're working in development or production
 const PORT = process.env.PORT || 8080;
 
+
 //Initialising express and registering the basic middleware
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://edusim.ca', "https://reactapp-jyfluau3gq-uc.a.run.app", "https://react-frontend-socurjfina-uc.a.run.app"],
-  optionsSuccessStatus: 200 
+  origin: ['http://localhost:3000', 'https://edusim.ca', "https://reactapp-jyfluau3gq-uc.a.run.app", "https://react-frontend-socurjfina-uc.a.run.app", "https://hgjdchierhxsyosxrfqi.supabase.co"],
+  optionsSuccessStatus: 200,
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 app.use(cors(corsOptions));

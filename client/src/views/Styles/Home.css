@@ -38,6 +38,17 @@
     margin-top: 1vw;
     margin-left: 1vw;
 }
+.home-profile {
+    width: 20%;
+    height: 50%;
+    margin-top: -5vw;
+    align-items: center;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+}
+
+
 
 @media screen and (orientation: portrait) {
     .welcome-container {
@@ -70,3 +81,79 @@
         font-size: 1.5vh;
     }
 }
+
+/* Variable Declarations */
+
+.arrow {
+    width: 12px;
+    height: 12px;
+    border: none;
+    background: none;
+    position: absolute;
+    right: 400px;
+    top: 200px;
+    display: inline-block;
+  }
+  
+  .arrow::before {
+    top: -20px;
+    right: -50px;
+    width: 30px;
+    height: 30px;
+    content: '';
+    position: absolute;
+    transform: rotate(-105deg);
+    box-shadow: 2px 2px 0 #493D3F, 3px 2px 0 #493D3F, 2px 3px 0 #493D3F, 3px 3px 0 #493D3F;
+  }
+  
+  .arrow::after {
+    width: 0;
+    height: 0;
+    left: -1px;
+    bottom: 50%;
+    content: '•';
+    color: #493D3F;
+    line-height: 0;
+    font-size: 30px;
+    position: absolute;
+    transition: left 0.1s ease-out, bottom 0.1s ease-out, letter-spacing 0.1s ease-out;
+  }
+  
+  .arrow.-long {
+    width: 22px;
+  }
+  
+  .arrow.-long::after {
+    left: 20px;
+    top: 60px;
+    content: '••••••••';
+    text-align: right;
+    transform: rotate(-60deg);
+  }
+  
+  .arrow:hover,
+  .arrow:focus {
+    outline: none;
+  }
+  
+  .arrow:hover::after {
+    left: 19px;
+    top: 58px;
+  }
+  
+  .arrow.-long::after:hover {
+    left: -0.19em;
+    letter-spacing: 0.1em;
+  }
+
+  
+  .arrow.-huge {
+    transform: scale(5);
+  }
+  .arrow.-red::before,
+  .arrow.-red::after {
+    color: #E67573;
+    box-shadow: 6px 6px 0 #E67573, 6px 6px 0 #E67573, 6px 6px 0 #E67573, 6px 6px 0 #E67573;
+  }
+  
+  

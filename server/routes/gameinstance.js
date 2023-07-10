@@ -24,13 +24,13 @@ router.put('/update/:id', gameinstance.updateGameInstance);
 // API Path to update a specific game instance
 router.put('/delete/:id', gameinstance.deleteGameInstance);
 
-router.post('/revokeGameInstanceAccess', gameinstance.revokeGameInstanceAccess)
+// router.post('/revokeGameInstanceAccess', gameinstance.revokeGameInstanceAccess)
 
-router.get('/getCollaborators/:gameinstanceid', gameinstance.getCollaborators)
+// router.get('/getCollaborators/:gameinstanceid', gameinstance.getCollaborators)
 
-router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
+// router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
 
-router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
+// router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
 
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
 export default router;

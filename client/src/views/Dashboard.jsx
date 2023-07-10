@@ -13,11 +13,16 @@ import { useSprings, animated } from 'react-spring'
 import SimulationTable from "../components/Simulations/SimulationTable";
 import Loading from "../components/Loading/Loading";
 
+import { supabase } from "../components/Supabase.js";
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+
 import "./Styles/Dashboard.css";
+import { use } from "i18next";
 
 
 const Dashboard = (props) => {
-  const { user } = useAuth0();
+  // const { user } = useAuth0();
   const [isLoading, setLoading] = useState(true);
   const [showNote, setShowNote] = useState(false);
   const [showTable, setShowTable] = useState(false);
@@ -31,27 +36,46 @@ const Dashboard = (props) => {
   const { t } = useTranslation();
   const [height, setHeight] = useState(1000);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [user, setUser] = useState(null)
+  const [showAuth, setShowAuth] = useState(false)
+
+  const [adminid, setAdminid] = useState(null);
+  const [adminEmail, setAdminEmail] = useState(null);
+
 
   useEffect(() => {
-    if(user)
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
-        params: {
-          email: user.email,
-          name: user.name,
-        }
-      }).then((res) => {
-        const allData = res.data;
-        localStorage.setItem('adminid', allData.adminid);
-        localStorage.setItem('adminEmail', allData.email);
-        let body = {
-          email: user.email,
-          picture: user.picture,
-        }
-        axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
-      }).catch(error => {
-        console.error(error);
-      });
-  }, [user])
+    supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null)
+      let tempUser = session?.user ?? null;
+      if (session) {
+        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+          params: {
+            email: tempUser.email,
+            name: tempUser.user_metadata.name,
+          }
+        }).then((res) => {
+          const allData = res.data;
+          localStorage.setItem('adminid', allData.adminid);
+          localStorage.setItem('adminEmail', allData.email);
+          setAdminid(allData.adminid);
+          setAdminEmail(allData.email);
+          let body = {
+            email: tempUser.email,
+            picture: tempUser.user_metadata.picture,
+          }
+          axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
+          getAllGamedata(allData.adminid)
+
+        }).then(res => { }).catch(error => {
+          console.error(error);
+        });
+      } else {
+        setLoading(false)
+        setShowAuth(true)
+      }
+    })
+
+  }, [])
 
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
@@ -61,81 +85,76 @@ const Dashboard = (props) => {
       setDeletionId(null);
     }
   }
-  const getAllGamedata = async () => {
+  const getAllGamedata = async (id) => {
+    console.log(adminid)
+    let adminid = localStorage.getItem('adminid');
+    if (id) adminid = id;
     try {
-      await axios.get(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/getAdminbyEmail/:email/:name', {
+      if (!adminid) return;
+      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id', {
         params: {
-          email: user.email,
-          name: user.name
-        }
-      }).then((res) => {
-        console.log(res.data)
-        axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getGameInstances/:id', {
-        params: {
-          id: res.data.adminid
+          id: adminid
         }
       }).then((res) => {
         const allData2 = res.data;
-        if (localStorage?.order?.length > 5) {
-          getGamedata(JSON.parse(localStorage.order));
-        }
-        else {
-          getGamedata(allData2);
-        }
-        if(allData2.length !== (localStorage.order && JSON.parse(localStorage.order).length)) localStorage.removeItem('order');
+        setOrder(allData2)
+
         setHeight(allData2.length * 150);
+        setLoading(false)
         console.log(allData2)
+      }).catch(error => {
+        console.error(error);
         setLoading(false)
       });
-    });
-      
     } catch (error) {
       console.error(error);
+      setLoading(false)
     }
   }
-
   useEffect(() => {
-    getAllGamedata()
-      .then(() => {
-        setIsDataLoaded(true);
+    console.log(gamedata)
+  }, [gamedata]);
+  const setOrder = (data) => {
+    // set gamedata to be in order of localStorage.order
+    console.log(data)
+    if (localStorage.order && data) {
+      let order = JSON.parse(localStorage.order);
+      console.log(data)
+      if (order.length !== data.length) {
+        console.log('here')
+        getGamedata(data);
+        localStorage.setItem('order', JSON.stringify(data));
+        return;
+      };
+      order.map((item, index) => {
+        if (item === null) localStorage.removeItem('order');
       })
-      .catch(error => {
-        console.error(error);
-      });
-    if (localStorage.getItem('order') === 'null')
-      localStorage.removeItem('order')
-  }, [localStorage.order]);
+
+      getGamedata(order);
+    } else {
+      console.log('here')
+      getGamedata(data);
+      localStorage.setItem('order', JSON.stringify(data));
+    }
+
+
+  }
+
 
   useEffect(() => {
-    try {
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/getAllGameInstances')
-        .then((res) => {
-          getFullGamedata(res.data)
-        }).catch(error => {
-          console.error(error);
-        });
-
-      axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${user.email}`)
-        .then((res) => {
-          setUsers(res.data)
-        }).catch(error => {
-          console.error(error);
-        });
-    } catch (error) {
-      console.error(error);
-    }
+    const getAllGameInstances = async () => {
+      try {
+        const gameInstancesResponse = await axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/gameinstances/getAllGameInstances`);
+        const gameInstancesData = gameInstancesResponse.data;
+        // Process the game instances data as needed
+        getFullGamedata(gameInstancesData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getAllGameInstances();
   }, [user]);
 
-
-  const deleteNote = (id) => {
-    getGamedata((prevgamedata) => {
-      return prevgamedata.filter((noteItem, index) => {
-        return index !== id;
-      });
-    });
-    getAllGamedata();
-    localStorage.setItem("order", JSON.stringify(gamedata))
-  }
 
   const toggleModal = () => {
     if (!uploadedImages) {
@@ -152,20 +171,21 @@ const Dashboard = (props) => {
 
   const confirmAction = () => {
     if (deletionId) {
-      deleteNote(deletionId);
-      var body = {
+      let body = {
         id: deletionId
       }
-      axios.put(`${process.env.REACT_APP_API_ORIGIN}/api/gameinstances/delete/${deletionId}`, body).then((res) => {
-        var temp = JSON.parse(localStorage.getItem("order"));
-        temp = temp.filter(function (item) {
-          return item.gameinstanceid != res.data.gameinstance.gameinstanceid;
-        });
-        localStorage.setItem("order", JSON.stringify(temp))
-      }).catch(error => {
-        console.error(error);
-      });
+      axios.put(`${process.env.REACT_APP_API_ORIGIN}/api/gameinstances/delete/${deletionId}`, body)
     }
+    console.log(deletionId, gamedata)
+    let out = []
+    gamedata.forEach((item) => {
+      if (item.gameinstanceid !== deletionId) {
+        out.push(item)
+      }
+    });
+    localStorage.setItem('order', JSON.stringify(out));
+
+    getGamedata(out);
   }
 
 
@@ -195,6 +215,7 @@ const Dashboard = (props) => {
         localStorage.setItem("order", JSON.stringify(gamedata))
       }
     })
+
     return (
       <div cancel=".notesim">
         {springs.map(({ zIndex, shadow, y, scale }, i) => (
@@ -240,7 +261,7 @@ const Dashboard = (props) => {
         </div>
         <div className="page-margin">
           <h2>{t("admin.mySimulations")}</h2>
-          <div className="dashsim" index={updater} style={{height: height}}>
+          <div className="dashsim" index={updater} style={{ height: height }}>
             <DraggableList items={gamedata ? gamedata : []} />
           </div>
           <Modal
@@ -257,6 +278,7 @@ const Dashboard = (props) => {
               isOpen={showNote}
               close={toggleModal}
               previewImages={uploadedImages}
+              setOrder={setOrder}
             />
           </Modal>
 
@@ -269,6 +291,22 @@ const Dashboard = (props) => {
             ariaHideApp={false}
           >
             <SimulationTable data={fulldata} user={users} />
+          </Modal>
+          <Modal
+            isOpen={showAuth}
+            className="dashboard-login"
+            overlayClassName="tableoverlay"
+            onRequestClose={() => setShowAuth(false)}
+            closeTimeoutMS={250}
+            ariaHideApp={false}
+          >
+            <Auth
+              supabaseClient={supabase}
+              appearance={{ theme: ThemeSupa }}
+              theme="dark"
+              providers={['google', 'azure']}
+              redirectTo={`${location.origin}/dashboard`}
+            />
           </Modal>
 
           <ConfirmationModal
@@ -284,4 +322,4 @@ const Dashboard = (props) => {
   );
 }
 
-export default withAuth0(Dashboard);
+export default (Dashboard);

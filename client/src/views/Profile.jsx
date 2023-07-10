@@ -7,7 +7,7 @@ import UserSearch from "../components/Simulations/UserSearch";
 import Loading from "../components/Loading/Loading";
 import { useAlertContext } from "../components/Alerts/AlertContext";
 import { ColorExtractor } from 'react-color-extractor'
-
+import Gravatar from "react-gravatar";
 import "./Styles/Profile.css";
 import { useLocation } from "react-router-dom";
 
@@ -49,7 +49,7 @@ const Activity = ({ border, children, onClick }) => {
 };
 
 const Card_component = (props) => {
-  const [imageSelected, setImageSelected] = useState("")
+  const [imageSelected, setImageSelected] = useState("v1688854666/sunset_312-wallpaper-3440x1440_inuomb.jpg")
   const [colors, setColors] = useState([]);
 
   const name = colors[Math.floor(Math.random() * colors.length)]
@@ -60,12 +60,13 @@ const Card_component = (props) => {
 
   const handleColors = (colors) => {
     setColors(colors);
-    console.log(colors);
   };
 
+
   useEffect(() => {
-    setImageSelected(props.user.bannerPath)
-  }, [props.user.bannerPath])
+    if(props.user.bannerpath === undefined) return
+    setImageSelected(props?.user?.bannerpath)
+  }, [props?.user?.bannerpath])
 
   const openWidget = (event) => {
     var myWidget = window.cloudinary.createUploadWidget(
@@ -78,7 +79,7 @@ const Card_component = (props) => {
           setImageSelected(result.info.public_id);
           let body = {
             email: props.user.email,
-            bannerPath: result.info.public_id,
+            bannerpath: result.info.public_id,
           }
           axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body).then((res) => {
             console.log(res.data)
@@ -103,7 +104,7 @@ const Card_component = (props) => {
       <UserSearch setUser={props.setUser} style={{ 'background': colors[2] }}></UserSearch>
       <header className="card-header">
         <div className="hello">
-          <img src={props.user.picture} alt="" />
+          {props.user.picture ? <img src={props.user.picture} alt="" /> : <Gravatar email={props.user.email} className="gravatar" />}
           <div className="heading-box">
             <h1 style={{ color: name, border: '2px solid ' + name }}>{props.user.name}</h1>
             <h3 style={{ color: colors[Math.floor(Math.random() * colors.length)] }}>{props.user.email}</h3>
@@ -146,7 +147,7 @@ const Profile = ({ auth0 }) => {
   const alertContext = useAlertContext();
   const path = useLocation()
   const adminid = path.pathname.split("/")[2];
-  const { user } = useAuth0();
+  const [user, setUser] = useState(null);
   const [users, setUsers] = useState()
 
 
@@ -158,13 +159,11 @@ const Profile = ({ auth0 }) => {
   const updateProfile = (idType, id) => {
     axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/${idType}/${id}`)
       .then((res) => {
-        console.log(res.data);
-        setUsers(res.data);
+        setUser(res.data);
         setLoading(false);
         getAllGamedata();
 
         if (res.data.following.includes(localStorage.adminid)) {
-          console.log("already following");
           setIcon('cross');
           setText('Unfollow');
       
@@ -244,10 +243,6 @@ const Profile = ({ auth0 }) => {
     setShowTable(!showTable)
   };
 
-  const setUser = (data) => {
-    setUsers(data)
-  }
-
   if (loading) {
     return <><Loading /></>
   }
@@ -258,7 +253,7 @@ const Profile = ({ auth0 }) => {
         icon={icon}
         text={text}
         follow={follow}
-        user={users}
+        user={user}
         openSims={openSims}
         setUser={(e) => setUser(e)}
         data={gamedata}
