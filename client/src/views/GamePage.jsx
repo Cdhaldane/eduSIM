@@ -137,7 +137,6 @@ const Game = (props) => {
         }
         setLevel(status.level)
         setRoomStatus(status);
-        console.log(status)
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
@@ -267,7 +266,6 @@ const Game = (props) => {
       ...globalVars, // Spread the existing globalVars state
       ...roomStatus.variables // Spread the properties from status.variables
     };
-    
     setGlobalVars(vars);
   }, [roomStatus.variables])
   return (

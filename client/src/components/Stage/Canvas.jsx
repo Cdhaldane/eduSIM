@@ -3366,7 +3366,7 @@ class Graphics extends Component {
       <React.Fragment>
         {/* The Top Bar */}
         {/* <CanvasUtils state={this.state} savedObjects={this.savedObjects} /> */}
-
+        <button className="temp-save-button" onClick={() => this.handleSave}>Save</button>
         <Level
           positionRect={this.positionRect}
           refreshCanvas={() => {

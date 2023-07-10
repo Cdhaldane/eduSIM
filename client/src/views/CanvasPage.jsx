@@ -1052,6 +1052,7 @@ const CanvasPage = (props) => {
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
           {...canvas.getInteractiveProps(obj.id)}
+          {...canvas.getVariableProps()}
           {...(editMode ? customObjProps(obj, canvas) : {})}
           {...timerProps(obj, canvas, editMode)}
         />;

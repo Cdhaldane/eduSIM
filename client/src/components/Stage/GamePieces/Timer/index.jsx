@@ -110,6 +110,9 @@ const Timer = forwardRef((props, ref) => {
       startTime: null,
       elapsedTime: 0
     }));
+    if(props.sync && props.updateVariable){
+      props.updateVariable(props.varEnable, "false")
+    }
   };
 
   const runningValue = () => {
@@ -154,10 +157,12 @@ const Timer = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
-    if (props.varEnable && sessionStorage.lastSetVar === props.varEnable && !running) {
+    if(props.editMode) return;
+    let bool = props.variables[props.varEnable] === "true" || props.variables[props.varEnable] === true
+    if (bool && !running) {
       toggleRun();
     }
-  }, [sessionStorage.lastSetVar]);
+  }, [!props.editMode && props.variables[props.varEnable]]);
 
   return (
     <CustomWrapper {...props} ref={ref}>

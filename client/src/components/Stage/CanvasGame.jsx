@@ -190,6 +190,9 @@ class Graphics extends Component {
               if (Object.keys(this.props.globalVars).length > 0) vars = { ...vars, ...this.props.globalVars };
 
               content = vars[key];
+              // console.log(this.props)
+              // console.log(text, content)
+
           }
           newText = newText.slice(0, start) + (content !== undefined ? content : "unknown") + newText.slice(i + 1);
           i = start;
@@ -547,7 +550,7 @@ class Graphics extends Component {
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
-    this.setState({selectrole: false})
+    this.setState({ selectrole: false })
     let role = initRole;
     if (this.props.roleSelection === "random") role = -1;
     else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
@@ -564,7 +567,7 @@ class Graphics extends Component {
   }
 
   componentDidMount() {
-    if(this.props.gamepieceStatus.running) {
+    if (this.props.gamepieceStatus.running) {
       this.setState({
         selectrole: false
       })
@@ -573,7 +576,7 @@ class Graphics extends Component {
         selectrole: true
       })
     }
-    
+
     this.setState({
       nextLevel: this.state.level + 1
     })
@@ -624,6 +627,7 @@ class Graphics extends Component {
 
   getVariableProps = () => ({
     updateVariable: (name, value, increment) => {
+      console.log(name, value, increment)
       this.props.socket.emit("varChange", {
         name, value, increment
       })
@@ -843,11 +847,11 @@ class Graphics extends Component {
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <div className="stageContainer">
             <Stage
-              height={this.state.pages[this.state.level - 1] 
-                ? ((this.state.pages[this.state.level - 1].groupPositionRect.h * this.state.pages[this.state.level - 1].groupPositionRect.scaleY) * this.state.groupLayerScale ) 
+              height={this.state.pages[this.state.level - 1]
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.h * this.state.pages[this.state.level - 1].groupPositionRect.scaleY) * this.state.groupLayerScale)
                 : window.innerHeight - 50}
-              width={this.state.pages[this.state.level - 1] 
-                ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale) 
+              width={this.state.pages[this.state.level - 1]
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale)
                 : window.innerWidth}
               offsetX={this.state.groupCenterX}
               offsetY={this.state.groupCenterY}
@@ -906,17 +910,17 @@ class Graphics extends Component {
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"
-                style={{backgroundImage: 'none'}}
+                style={{ backgroundImage: 'none' }}
               >
                 <Stage
                   height={this.state.pages[this.state.level - 1]
-                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.h * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleY) * this.state.personalLayerScale ) 
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.h * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleY) * this.state.personalLayerScale)
                     : window.innerHeight - 50}
-                  width={this.state.pages[this.state.level - 1] 
-                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.w * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleX) * this.state.personalLayerScale) 
+                  width={this.state.pages[this.state.level - 1]
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.w * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleX) * this.state.personalLayerScale)
                     : window.innerWidth}
-                    offsetX={this.state.personalCenterX}
-                    offsetY={this.state.personalCenterY}
+                  offsetX={this.state.personalCenterX}
+                  offsetY={this.state.personalCenterY}
                   ref="personalAreaStage"
                 >
                   {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}
