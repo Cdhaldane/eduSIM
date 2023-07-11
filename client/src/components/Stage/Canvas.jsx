@@ -343,7 +343,6 @@ class Graphics extends Component {
           uniqueShapesSet.push(uniqueArray)
         })
 
-
         let roles = objects.roles.map((role) => role.roleName);
         roles.push('')
 
@@ -360,7 +359,7 @@ class Graphics extends Component {
           }
         }
 
-
+        console.log(objects)
         if (this.props.setRoles) {
           this.props.setRoles(objects.roles || []);
         }

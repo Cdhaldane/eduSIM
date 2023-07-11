@@ -100,22 +100,7 @@ const Table = (props) => {
         console.error(error);
       });
     }
-    axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-      params: {
-        gameinstanceid: props.gameid,
-      }
-    }).then((res) => {
-      const allData = res.data;
-      let items = [(<option key={-1} value="">{t("admin.selectARole")}</option>)];
-      for (let i = 0; i <= allData.length - 1; i++) {
-        // Here I will be creating my options dynamically based on
-        items.push(<option key={i} value={allData[i].gamerole}>{allData[i].gamerole}</option>);
-        // What props are currently passed to the parent component
-      }
-      setRolelist(items);
-    }).catch(error => {
-      console.error(error);
-    });
+   
   }, [props.gameid]);
 
   // Add change

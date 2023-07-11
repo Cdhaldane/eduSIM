@@ -175,7 +175,6 @@ export default async (server, client, event, args) => {
         // client.emit("errorLog", "Game is paused/stopped!");
         return;
       }
-
       if (!sameState) {
         const newStatus = await updateRoomStatus(room, {
           gamepieces: {

@@ -32,8 +32,8 @@ const SimNote = (props) => {
       }).then((res) => {
         setJson(JSON.stringify(res.data));
         let str = "";
-        if(res.data.updatedAt !== undefined)
-          str = res.data.updatedAt.slice(0, -14);
+        if (res.data.updatedAt !== undefined)
+          str = res.data.updatedAt.substring(0, 10);
         setDate(str)
         setSimName(res.data.gameinstance_name)
       }).catch(error => {
@@ -46,45 +46,34 @@ const SimNote = (props) => {
 
 
   const downloadFile = async () => {
-    const getRoles = async () => {
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-        params: {
-          gameinstanceid: props.gameid,
-        }
-      }).then((res) => {
-        let jsonCopy = JSON.parse(json);
-        jsonCopy.roles = (res.data)
-        const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
-        const href =  URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = href;
-        link.download = simName + ".json";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }).catch(error => {
-        console.error(error);
-      })
-    }
-    getRoles()
+    let jsonCopy = JSON.parse(json);
+    const blob = new Blob([JSON.stringify(jsonCopy)], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = simName + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
   }
 
   return (
-      <div className="notesim" >
-        <div className="notesim-draggable"><div className="drag-icons"></div></div>
-        <div className="notesim-thumbnail">
-          <Image
-            cloudName="uottawaedusim"
-            publicId={
-              "https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img
-            }
-            alt={t("alt.sim")}
-          />
-            <h1>{props.title}</h1>
-        </div>
-        <div className="notesim-icons">
-          {props.superadmin ? (
-            <>
+    <div className="notesim" >
+      <div className="notesim-draggable"><div className="drag-icons"></div></div>
+      <div className="notesim-thumbnail">
+        <Image
+          cloudName="uottawaedusim"
+          publicId={
+            "https://res.cloudinary.com/uottawaedusim/image/upload/" + props.img
+          }
+          alt={t("alt.sim")}
+        />
+        <h1>{props.title}</h1>
+      </div>
+      <div className="notesim-icons">
+        {props.superadmin ? (
+          <>
             <i><Calendar className="icon sim-icon" /><h1>{currDate}</h1></i>
             <i className="notesim-icon" onClick={() => downloadFile()} ><Download className="icon sim-icon" /><h1>{t("admin.download")}</h1></i>
             <Link
@@ -96,18 +85,18 @@ const SimNote = (props) => {
                 adminid: props.adminid,
               }}
             >
-              <Pencil className="icon sim-icon"/><h1>{t("admin.simedit")}</h1>
+              <Pencil className="icon sim-icon" /><h1>{t("admin.simedit")}</h1>
             </Link>
-            <i id="add-user" onClick={() => setModalOpen(true)}><Mail className="icon sim-icon"/><h1>{t("admin.siminvite")}</h1></i>
+            <i id="add-user" onClick={() => setModalOpen(true)}><Mail className="icon sim-icon" /><h1>{t("admin.siminvite")}</h1></i>
             <i
               id="garbage"
               aria-hidden="true"
               onClick={() => props.setConfirmationModal(true, props.gameid)}
-            ><Trash className="icon sim-icon"/><h1>{t("admin.simdelete")}</h1></i>
+            ><Trash className="icon sim-icon" /><h1>{t("admin.simdelete")}</h1></i>
 
           </>
         ) : (
-          <i onClick={() => props.setConfirmationModal(true, props.gameid)} tooltip="test"><Trash className="icon sim-icon"/><h1>Run</h1></i>
+          <i onClick={() => props.setConfirmationModal(true, props.gameid)} tooltip="test"><Trash className="icon sim-icon" /><h1>Run</h1></i>
         )}
         <Link
           to={{
@@ -118,8 +107,8 @@ const SimNote = (props) => {
             adminid: props.adminid,
           }}
           onClick={() => localStorage.setItem("gameid", props.gameid)}
-        > 
-          <Play className="icon sim-icon"/><h1>{t("admin.simrun")}</h1>
+        >
+          <Play className="icon sim-icon" /><h1>{t("admin.simrun")}</h1>
         </Link>
       </div>
       <Modal

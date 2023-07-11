@@ -1,6 +1,12 @@
 const uuid = require('uuid');
 
 import cryptoRandomString from 'crypto-random-string';
+import { 
+  getInteractionBreakdown,
+  getInteractions,
+  getChatlog,
+  getRoomStatus
+} from '../events/utils';
 
 import { createClient } from '@supabase/supabase-js';
 require('dotenv').config()
@@ -23,23 +29,9 @@ exports.createGamePlayers = async (req, res) => {
       const player_email = req.body.data[i].Email;
       let gamerole = req.body.data[i].Role;
 
-      if (gamerole) {
-        const { data: gameroles, error } = await supabase
-          .from('GameRoles')
-          .select('*')
-          .eq('gameinstanceid', gameinstanceid)
-          .eq('gamerole', gamerole)
-          .single();
-
-        if (error) throw error;
-        if (!gameroles) {
-          replacedroles.push(gamerole);
-          gamerole = "";
-        }
-      }
 
       const { data: newGamePlayer, error } = await supabase
-        .from('GamePlayers')
+        .from('gameplayers')
         .insert([
           { fname, lname, gameinstanceid, game_room, player_email, gamerole }
         ]);
@@ -48,7 +40,7 @@ exports.createGamePlayers = async (req, res) => {
 
       if (lookuproom.indexOf(game_room) === -1) {
         const { data: realGameRoom, error } = await supabase
-          .from('GameRooms')
+          .from('gamerooms')
           .select('*')
           .eq('gameinstanceid', gameinstanceid)
           .eq('gameroom_name', game_room)
@@ -64,7 +56,7 @@ exports.createGamePlayers = async (req, res) => {
           const gameroom_url = cryptoRandomString(10);
 
           const { data: newGameRoom, error } = await supabase
-            .from('GameRooms')
+            .from('gamerooms')
             .insert([
               { gameroomid, gameinstanceid, gameroom_name, gameroom_url }
             ]);
@@ -88,7 +80,7 @@ exports.getGamePlayers = async (req, res) => {
 
   try {
     const { data: gameplayer, error } = await supabase
-      .from('GamePlayers')
+      .from('gameplayers')
       .select('*')
       .eq('gameinstanceid', gameinstanceid);
 
@@ -105,7 +97,7 @@ exports.getRooms = async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
   try {
     let { data, error } = await supabase
-      .from('GameRoom')
+      .from('gamerooms')
       .select('*')
       .eq('gameinstanceid', gameinstanceid);
 
@@ -119,92 +111,92 @@ exports.getRooms = async (req, res) => {
   }
 };
 
+exports.getRoomInteractionBreakdown = async (req, res) => {
+  const { gameroomid } = req.query;
+  try {
+    const { data: gamerooms, error } = await supabase
+      .from('gamerooms')
+      .select('gameroom_url')
+      .eq('gameroomid', gameroomid);
 
-// exports.getRoomInteractionBreakdown = async (req, res) => {
-//   const gameroomid = req.query.gameroomid;
-//   try {
-//     let { dataValues } = await GameRoom.findOne({
-//       where: {
-//         gameroomid
-//       },
-//       attributes: ["gameroom_url"]
-//     });
-//     const breakdown = await getInteractionBreakdown(dataValues.gameroom_url);
-//     return res.send(breakdown);
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `No game rooms found with the id ${gameroomid}`,
-//     });
-//   }
-// };
+    if (error || !gamerooms.length) {
+      throw new Error(`No game rooms found with the id ${gameroomid}`);
+    }
 
-// // these next two endpoints return the CURRENT STATUS of the room
-// exports.getRunningGameLog = async (req, res) => {
-//   const gameroomid = req.params.gameroomid;
-//   try {
-//     let { dataValues } = await GameRoom.findOne({
-//       where: {
-//         gameroomid
-//       }
-//     });
-//     const messages = await getChatlog(dataValues.gameroom_url);
-//     const interactions = await getInteractions(dataValues.gameroom_url);
-//     return res.send({
-//       ...dataValues,
-//       messages,
-//       interactions
-//     });
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `No game rooms found with the id ${gameroomid}`,
-//     });
-//   }
-// }
+    const breakdown = await getInteractionBreakdown(gamerooms[0].gameroom_url);
+    return res.send(breakdown);
+  } catch (err) {
+    return res.status(400).send({
+      message: err.message,
+    });
+  }
+};
 
-// exports.getRunningSimulationLogs = async (req, res) => {
-//   const gameinstanceid = req.params.gameinstanceid;
-//   try {
-//     let rooms = await GameRoom.findAll({
-//       where: {
-//         gameinstanceid
-//       }
-//     });
-//     const roomData = [];
-//     for (let i=0; i<rooms.length; i++) {
-//       const { dataValues } = rooms[i];
-//       const roomStatus = await getRoomStatus(dataValues.gameroom_url);
-//       const messages = await getChatlog(dataValues.gameroom_url);
-//       const interactions = await getInteractions(dataValues.gameroom_url);
-//       roomData.push({
-//         ...dataValues,
-//         messages,
-//         interactions,
-//         roomStatus
-//       });
-//     }
-//     return res.send(roomData);
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `Error: ${err.message}`,
-//     });
-//   }
-// }
+// these next two endpoints return the CURRENT STATUS of the room
+exports.getRunningGameLog = async (req, res) => {
+  const gameroomid = req.params.gameroomid;
+  try {
+    let { dataValues } = await GameRoom.findOne({
+      where: {
+        gameroomid
+      }
+    });
+    const messages = await getChatlog(dataValues.gameroom_url);
+    const interactions = await getInteractions(dataValues.gameroom_url);
+    return res.send({
+      ...dataValues,
+      messages,
+      interactions
+    });
+  } catch (err) {
+    return res.status(400).send({
+      message: `No game rooms found with the id ${gameroomid}`,
+    });
+  }
+}
+
+exports.getRunningSimulationLogs = async (req, res) => {
+  const gameinstanceid = req.params.gameinstanceid;
+  try {
+    let rooms = await GameRoom.findAll({
+      where: {
+        gameinstanceid
+      }
+    });
+    const roomData = [];
+    for (let i=0; i<rooms.length; i++) {
+      const { dataValues } = rooms[i];
+      const roomStatus = await getRoomStatus(dataValues.gameroom_url);
+      const messages = await getChatlog(dataValues.gameroom_url);
+      const interactions = await getInteractions(dataValues.gameroom_url);
+      roomData.push({
+        ...dataValues,
+        messages,
+        interactions,
+        roomStatus
+      });
+    }
+    return res.send(roomData);
+  } catch (err) {
+    return res.status(400).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+}
 
 exports.getGameLogs = async (req, res) => {
   const gameroomid = req.query.gameroomid;
   try {
     const { data, error } = await supabase
-      .from('GameActions')
+      .from('gameactions')
       .select('*')
-      .eq('gameroomid', gameroomid);
+      .eq('gameroomid', gameroomid).select();
 
     if (error) throw error;
-
+    
     return res.send(data);
   } catch (err) {
-    return res.status(400).send({
-      message: `No game logs found with the id ${gameroomid}`,
-    });
+    return [];
   }
 };
 
@@ -214,7 +206,7 @@ exports.deleteGameLog = async (req, res) => {
 
   try {
     const { data, error } = await supabase
-      .from('GameActions')
+      .from('gameactions')
       .delete()
       .eq('gameactionid', gameactionid);
 
@@ -236,128 +228,185 @@ exports.deleteGameLog = async (req, res) => {
 };
 
 
-// exports.getPlayer = async (req, res) => {
-//   const gameplayerid = req.query.id;
-//   try {
-//     let gameplayer = await GamePlayer.findOne({
-//       where: {
-//         gameplayerid
-//       },
-//     });
-//     return res.send(gameplayer);
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `No players found with the id ${gameplayerid}`,
-//     });
-//   }
-// };
+exports.getPlayer = async (req, res) => {
+  const gameplayerid = req.query.id;
 
-// // Get players for a particular tab or room
-// exports.getPlayers = async (req, res) => {
-//   const game_room = req.query.game_room;
-//   const gameinstanceid = req.query.gameinstanceid;
-//   try {
-//     let gameplayer = await GamePlayer.findAll({
-//       where: {
-//         game_room,
-//         gameinstanceid
-//       },
-//     });
-//     return res.send(gameplayer);
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `No players found with the game room ${game_room}`,
-//     });
-//   }
-// };
+  try {
+    const { data: gameplayer, error } = await supabase
+      .from('gameplayers')
+      .select()
+      .eq('gameplayerid', gameplayerid)
+      .single();
 
-// exports.getAllPlayers = async (req, res) => {
-//   const gameinstanceid = req.query.id;
-//   try {
-//     let gameplayer = await GamePlayer.findAll({
-//       where: {
-//         gameinstanceid: gameinstanceid
-//       },
-//     });
-//     return res.send(gameplayer);
-//   } catch (err) {
-//     return res.status(400).send({
-//       message: `No players found with the gameid ${gameinstanceid}`,
-//     });
-//   }
-// };
+    if (error) {
+      console.log(error)
+      return res.status(400).send({
+        message: `No players found with the id ${gameplayerid}`,
+      });
+    }
 
-// exports.createRoom = async (req, res) => {
-//   const { gameinstanceid, gameroom_name } = req.body;
-//   const gameroom_url = cryptoRandomString(10);
-//   const gameroomid = uuid.v4();
+    return res.send(gameplayer);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No players found with the id ${gameplayerid}`,
+    });
+  }
+};
 
-//   try {
-//     let gameroom = await GameRoom.create({
-//       gameinstanceid,
-//       gameroom_name,
-//       gameroomid,
-//       gameroom_url
-//     });
-//     return res.send(gameroom);
-//   } catch (err) {
-//     return res.status(500).send({
-//       message: `Error: ${err.message}`,
-//     });
-//   }
-// };
+exports.getPlayers = async (req, res) => {
+  const game_room = req.query.game_room;
+  const gameinstanceid = req.query.gameinstanceid;
 
-// exports.updateRoomName = async (req, res) => {
-//   const { gameroomid, gameroom_name } = req.body;
+  try {
+    const { data: gameplayers, error } = await supabase
+      .from('gameplayers')
+      .select()
+      .eq('game_room', game_room)
+      .eq('gameinstanceid', gameinstanceid);
 
-//   const gameroom = await GameRoom.findOne({
-//     where: {
-//       gameroomid,
-//     },
-//   });
+    if (error) {
+      console.log(error)
+      return res.status(400).send({
+        message: `No players found with the game room ${game_room}`,
+      });
+    }
 
-//   if (!gameroom) {
-//     return res.status(400).send({
-//       message: `No game room found with the id ${id}`,
-//     });
-//   }
+    return res.send(gameplayers);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No players found with the game room ${game_room}`,
+    });
+  }
+};
 
-//   try {
-//     gameroom.gameroom_name = gameroom_name;
-//     gameroom.save();
-//     return res.send({
-//       message: `Game room has been updated!`,
-//     });
-//   } catch (err) {
-//     return res.status(500).send({
-//       message: `Error: ${err.message}`,
-//     });
-//   }
-// };
+exports.getAllPlayers = async (req, res) => {
+  const gameinstanceid = req.query.id;
+  try {
+    const { data: gameplayer, error } = await supabase
+      .from('gameplayers')
+      .select()
+      .eq('gameinstanceid', gameinstanceid);
 
-// GameRoom.belongsTo(GameInstance, { foreignKey: 'gameinstanceid' });
+    if (error) {
+      console.log(error)
+      return res.status(400).send({
+        message: `No players found with the gameid ${gameinstanceid}`,
+      });
+    }
 
-// exports.getRoomByURL = async (req, res) => {
-//   const roomid = req.query.id;
+    return res.send(gameplayer);
+  } catch (err) {
+    return res.status(400).send({
+      message: `No players found with the gameid ${gameinstanceid}`,
+    });
+  }
+};
 
-//   try {
-//     let gameroom = await GameRoom.findOne({
-//       where: {
-//         gameroom_url: roomid
-//       },
-//       include: [{
-//         model: GameInstance,
-//         required: true
-//       }]
-//     });
-//     return res.send(gameroom);
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(400).send({
-//       message: `No game room found with the id ${roomid}`,
-//     });
-//   }
-// };
+exports.createRoom = async (req, res) => {
+  const { gameinstanceid, gameroom_name } = req.body;
+  const gameroom_url = cryptoRandomString(10);
+  try {
+    const { data: gameroom, error } = await supabase
+      .from('gamerooms')
+      .insert([{ gameinstanceid, gameroom_name, gameroom_url }])
+      .select();
+
+    if (error) {
+      console.log('Error creating room', error)
+      return res.status(500).send({
+        message: `Error: ${error.message}`,
+      });
+    }
+    console.log('Created room', gameroom)
+    return res.send(gameroom[0]);
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.deleteRoom = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const { data: gameroom, error } = await supabase
+      .from('gamerooms')
+      .delete()
+      .eq('gameroomid', id);
+
+    if (error) {
+      console.log('Error deleting room', error)
+      return res.status(500).send({
+        message: `Error: ${error.message}`,
+      });
+    }
+
+    return res.send(gameroom);
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.updateRoomName = async (req, res) => {
+  const { gameroomid, gameroom_name } = req.body;
+
+  try {
+    const { data: gameroom, error } = await supabase
+      .from('gamerooms')
+      .update({ gameroom_name })
+      .eq('gameroomid', gameroomid);
+
+    if (error) {
+      console.log(error)
+      return res.status(500).send({
+        message: `Error: ${error.message}`,
+      });
+    }
+
+    return res.send({
+      message: `Game room has been updated!`,
+    });
+  } catch (err) {
+    return res.status(500).send({
+      message: `Error: ${err.message}`,
+    });
+  }
+};
+
+exports.getRoomByURL = async (req, res) => {
+  const roomurl = req.query.url;
+  try {
+    const { data: gameroom, error } = await supabase
+      .from('gamerooms')
+      .select('*')
+      .eq('gameroom_url', roomurl)
+      .single();
+
+    const { data: gameinfo } = await supabase
+    .from('gameinstances')
+    .select('*')
+    .eq('gameinstanceid', gameroom.gameinstanceid)
+    .single();
+
+    gameroom.gameinstance = gameinfo;
+
+    if (error) {
+      console.log(error)
+      return res.status(400).send({
+        message: `No game room found with the url ${roomurl}`,
+      });
+    }
+
+    return res.send(gameroom);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send({
+      message: `No game room found ${roomurl}`,
+    });
+  }
+};
 
 exports.createPlayer = async (req, res) => {
   const { game_room, gameinstanceid, fname, lname, gamerole, player_email } = req.body;

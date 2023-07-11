@@ -43,7 +43,7 @@ const PauseCover = styled.div`
 `;
 
 const Game = (props) => {
-  const { roomid } = useParams();
+  const roomurl  = useLocation().pathname.split("/")[2];
   const [room, setRoomInfo] = useState(null);
   const [socket, setSocketInfo] = useState(null);
   const [roomStatus, setRoomStatus] = useState({});
@@ -86,10 +86,11 @@ const Game = (props) => {
 
   useEffect(() => {
     (async function () {
+      if(!roomurl) return;
       const { data: roomData } = await axios.get(
         process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
         params: {
-          id: roomid,
+          url: roomurl,
         }
       });
       let gameData = roomData;
@@ -107,7 +108,7 @@ const Game = (props) => {
 
       const client = await io(process.env.REACT_APP_API_ORIGIN, {
         query: {
-          room: roomid
+          room: roomurl
         }
       });
       client.on("connectStatus", ({ players, chatlog, notelog, ...status }) => {
@@ -137,7 +138,6 @@ const Game = (props) => {
         }
         setLevel(status.level)
         setRoomStatus(status);
-        console.log(status)
       });
       client.on("clientJoined", ({ id, ...player }) => {
         setPlayers(l => ({
@@ -163,7 +163,7 @@ const Game = (props) => {
       setLoading(false);
       return () => client.disconnect();
     }());
-  }, [roomid]);
+  }, [roomurl]);
 
   const timeFromNow = () => (
     (roomStatus.running
@@ -267,7 +267,7 @@ const Game = (props) => {
       ...globalVars, // Spread the existing globalVars state
       ...roomStatus.variables // Spread the properties from status.variables
     };
-    
+
     setGlobalVars(vars);
   }, [roomStatus.variables])
   return (

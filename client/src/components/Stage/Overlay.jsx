@@ -19,7 +19,7 @@ class Overlay extends Component {
     let overlay = this.props.state.pages[this.props.state.level-1].overlays
     for(let i = 0; i < overlay.length; i++){
       if(overlay[i].id === this.props.state.overlayOpenIndex){
-        
+        console.log(overlay[i].positionRect.h * overlay[i].positionRect.scaleY)
         this.setState({
           height: overlay[i].positionRect.h * overlay[i].positionRect.scaleY,
           width: overlay[i].positionRect.w * overlay[i].positionRect.scaleX,
@@ -65,7 +65,7 @@ class Overlay extends Component {
     } else if (document.getElementById("overlayGameContainer")) {
       stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
-
+    console.log(this.props.state)
     return (
       <div className={`overlayMain`}>
         <div>

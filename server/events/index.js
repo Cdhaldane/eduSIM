@@ -17,11 +17,13 @@ export default async (server, client) => {
     const { game } = client.handshake.query;
 
     const rooms = await getSimulationRooms(game);
-    rooms.forEach(async ({ dataValues: room }) => {
-      const status = await getRoomStatus(room.gameroom_url);
-      const chatlog = await getChatlog(room.gameroom_url);
-      const notelog = await getNotelog(room.gameroom_url);
-      const players = await getPlayersInRoom(room.gameroom_url, server);
+    console.log(rooms)
+    rooms.forEach(room => {
+      console.log(room)
+      const status = getRoomStatus(room.gameroom_url);
+      const chatlog = getChatlog(room.gameroom_url);
+      const notelog = getNotelog(room.gameroom_url);
+      const players = getPlayersInRoom(room.gameroom_url, server);
       client.join(room.gameroom_url);
       client.emit("roomStatusUpdate", {
         room: room.gameroom_url,

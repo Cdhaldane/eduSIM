@@ -6,25 +6,25 @@ router.post('/createGamePlayers', playerrecord.createGamePlayers);
 
 router.post('/createPlayer', playerrecord.createPlayer);
 
-// router.post('/createRoom', playerrecord.createRoom);
+router.post('/createRoom', playerrecord.createRoom);
 
-// router.post('/updateRoomName', playerrecord.updateRoomName);
+router.post('/updateRoomName', playerrecord.updateRoomName);
 
 router.delete('/deletePlayers/:gameplayerid', playerrecord.deletePlayers);
 
-// router.delete('/deleteRoom/:gameroomid', playerrecord.deleteRoom);
+router.delete('/deleteRoom/:gameroomid', playerrecord.deleteRoom);
 
 router.get('/getRooms/:gameinstanceid', playerrecord.getRooms);
 
-// router.get('/getRoomByURL', playerrecord.getRoomByURL);
+router.get('/getRoomByURL', playerrecord.getRoomByURL);
 
-// router.get('/getRoomInteractionBreakdown', playerrecord.getRoomInteractionBreakdown);
+router.get('/getRoomInteractionBreakdown', playerrecord.getRoomInteractionBreakdown);
 
-// router.get('/getPlayer', playerrecord.getPlayer);
+router.get('/getPlayer', playerrecord.getPlayer);
 
-// router.get('/getPlayers/:game_room', playerrecord.getPlayers);
+router.get('/getPlayers/:game_room', playerrecord.getPlayers);
 
-// router.get('/getAllPlayers/:gameinstanceid', playerrecord.getAllPlayers);
+router.get('/getAllPlayers/:gameinstanceid', playerrecord.getAllPlayers);
 
 router.put('/updatePlayer', playerrecord.updatePlayer);
 

@@ -86,7 +86,6 @@ const Dashboard = (props) => {
     }
   }
   const getAllGamedata = async (id) => {
-    console.log(adminid)
     let adminid = localStorage.getItem('adminid');
     if (id) adminid = id;
     try {
@@ -101,7 +100,6 @@ const Dashboard = (props) => {
 
         setHeight(allData2.length * 150);
         setLoading(false)
-        console.log(allData2)
       }).catch(error => {
         console.error(error);
         setLoading(false)
@@ -111,17 +109,12 @@ const Dashboard = (props) => {
       setLoading(false)
     }
   }
-  useEffect(() => {
-    console.log(gamedata)
-  }, [gamedata]);
+
   const setOrder = (data) => {
     // set gamedata to be in order of localStorage.order
-    console.log(data)
     if (localStorage.order && data) {
       let order = JSON.parse(localStorage.order);
-      console.log(data)
       if (order.length !== data.length) {
-        console.log('here')
         getGamedata(data);
         localStorage.setItem('order', JSON.stringify(data));
         return;
@@ -132,7 +125,6 @@ const Dashboard = (props) => {
 
       getGamedata(order);
     } else {
-      console.log('here')
       getGamedata(data);
       localStorage.setItem('order', JSON.stringify(data));
     }

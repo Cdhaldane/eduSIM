@@ -74,13 +74,13 @@ exports.getGameInstance = async (req, res) => {
 exports.createGameInstance = async (req, res) => {
   const { gameinstance_name, gameinstance_photo_path, game_parameters, createdby_adminid, status } = req.body;
 
-  const { data: newGameInstance2, error3 } = await supabase
+  const { error } = await supabase
     .from('gameinstances')
     .insert([
       { gameinstance_name, gameinstance_photo_path, game_parameters, createdby_adminid, status }
     ]);
 
-    const { data: newGameInstance, error } = await supabase
+    const { data: newGameInstance, error1 } = await supabase
     .from('gameinstances')
     .select('*').eq('createdby_adminid', createdby_adminid);
   

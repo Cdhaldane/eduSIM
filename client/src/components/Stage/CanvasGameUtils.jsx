@@ -175,7 +175,6 @@ const filterArrayBasedOnArray = (arr, obj) => {
 
 
 export const handleCollisions = (props, state) => {
-
   let trigs = props.globalTrigs;
   trigs = trigs.map(subArr => subArr.map(item => Array.isArray(item) ? item.flat().join('') : item));
   for (let i = 0; i < trigs.length; i++) {
@@ -184,10 +183,11 @@ export const handleCollisions = (props, state) => {
     }
   }
   let result = props.savedObjects.flatMap(key => state[key])
-  let filteredResult = result.filter(obj => obj.level === props.level);
+  let filteredResult = result.filter(obj => obj.level === state.level);
   let groupedArrays = splitArrayByValue(trigs, 2);
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
+  console.log(state)
   groupedArrays.map((group) => {
     let touchingArray = [];
     group.map((item) => {

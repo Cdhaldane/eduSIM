@@ -5,12 +5,12 @@ const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-exports.getGameRoles = async (req, res) => {
+exports.getGameRoles= async (req, res) => {
   const gameinstanceid = req.query.gameinstanceid;
 
   try {
     let { data: gamerole, error } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .select('*')
       .eq('gameinstanceid', gameinstanceid);
 
@@ -35,7 +35,7 @@ exports.createRole = async (req, res) => {
 
   try {
     let { data: newGameInstance, error } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .insert([{ gameinstanceid, gamerole, numspots, roleDesc }]);
 
     if (error) {
@@ -55,7 +55,7 @@ exports.deleteRole = async (req, res) => {
 
   try {
     let { data: gameinstance, error } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .delete()
       .eq('gameroleid', id)
       .single();
@@ -85,7 +85,7 @@ exports.copyRole = async (req, res) => {
 
   try {
     let { data: gamerole, error } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .select('*')
       .eq('gameroleid', gameroleid)
       .single();
@@ -103,7 +103,7 @@ exports.copyRole = async (req, res) => {
     const { gamerole: roleName, numspots, gameinstanceid, roleDesc } = gamerole;
 
     let { data: newGameRole, error: createError } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .insert([{ gameinstanceid, gamerole: roleName + ' (Copy)', roleDesc, numspots: numspots === -1 ? 1 : numspots }]);
 
     if (createError) {
@@ -177,7 +177,7 @@ exports.updateRole = async (req, res) => {
 
   try {
     let { data: gamerole, error } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .select('*')
       .eq('gameroleid', id)
       .single();
@@ -257,7 +257,7 @@ exports.updateRole = async (req, res) => {
     }
 
     let { error: saveRoleError } = await supabase
-      .from('GameRoles')
+      .from('gameroles')
       .update(gamerole)
       .eq('gameroleid', id);
 

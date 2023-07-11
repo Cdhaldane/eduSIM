@@ -97,6 +97,7 @@ class Graphics extends Component {
     localStorage.setItem("localInts", JSON.stringify(this.props.localInts));
     localStorage.setItem("localTrigs", JSON.stringify(this.props.localTrigs));
 
+    console.log(this.props)
 
     this.state = {
       // Objects
@@ -339,7 +340,7 @@ class Graphics extends Component {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
-
+    
     handleCollisions(this.props, this.state);
 
     // Show overlay if it is the next page and a pageEnter overlay is available
@@ -435,7 +436,6 @@ class Graphics extends Component {
             layerGroup = this.state.pages[this.state.level - 1][`${layer}Layers`]
           }
           if (layerGroup.includes(obj.id) && layerGroup[layerGroup.length - 1] !== obj.id) {
-            console.log(layerGroup)
             layerGroup.splice(layerGroup.indexOf(obj.id), 1)
             layerGroup.push(obj.id)
             this.refresh()
@@ -675,14 +675,6 @@ class Graphics extends Component {
     });
   }
 
-
-  componentWillReceiveProps = ({ level }) => {
-    if (level) {
-      this.setState({
-        level
-      })
-    }
-  }
 
   setOverlayOpen = (val, index) => {
     this.setState({

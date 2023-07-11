@@ -161,7 +161,6 @@ const CanvasPage = (props) => {
 
     let canvas = getUpdatedCanvasState(mode);
 
-    console.log(canvas)
     if (!canvas) {
       return;
     }
@@ -219,15 +218,27 @@ const CanvasPage = (props) => {
       const positionHeight = (positionRect.h * positionRect.scaleY);
       const isPersonalArea = areaString === "personal";
       const overlay = areaString === "overlay";
-      let area = { width: 1850, height: 887 };
+      let groupGameContainer = document.getElementById('groupGameContainer');
+      let personalGameContainer = document.getElementById('personalGameContainer');
+      let overlayGameContainer = document.getElementById('overlayGameContainer');
+      let area = {
+        width: groupGameContainer.clientWidth - 70,
+        height: groupGameContainer.clientHeight
+      };
+
       if (areaString === "personal") {
-        area = { width: 1788, height: 875}
+        area = { 
+          width: personalGameContainer.clientWidth, 
+          height: personalGameContainer.clientHeight 
+        }
       }
       if (areaString === "overlay") {
-        area = {width: 1790, height: 877}
+        console.log("overlay", overlayGameContainer.clientWidth, overlayGameContainer.clientHeight)
+        area = {
+          width: overlayGameContainer.clientWidth,
+          height: overlayGameContainer.clientHeight
+        }
       }
-      const sideBarPadding = isPersonalArea || overlay ? 0 : sidebar.width;
-      const topBarPadding = isPersonalArea || overlay ? 0 : topBar.height;
       const viewableWidth = area.width;
       const viewableHeight = area.height;
 
@@ -238,10 +249,6 @@ const CanvasPage = (props) => {
       // Calculate the center position relative to the viewable area
       const centerPositionX = (viewableWidth - (positionWidth * scale)) / 2;
       const centerPositionY = (viewableHeight - (positionHeight * scale)) / 2;
-
-      console.log('positionRectx', positionRect.x, 'positionRecty', positionRect.y, 'scale', scale, 'centerPositionX', centerPositionX, 'centerPositionY', centerPositionY)
-
-      console.log(-positionRect.x * scale + centerPositionX, -positionRect.y * scale + centerPositionY, scale)
 
       canvas.setState({
         [`${areaString}LayerX`]: -positionRect.x * scale + centerPositionX,
@@ -491,20 +498,8 @@ const CanvasPage = (props) => {
     return {
       width: obj.width,
       height: obj.height,
-      // fill: obj.fill,
-      // visible: canvas.state.canvasLoading ? false :
-      //   (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
-      // rotation: obj.rotation,
-      // fill: obj.fill,
-      // opacity: obj.opacity,
-      // lock: false,
-      // scaleX: obj.scaleX,
-      // scaleY: obj.scaleY,
-      // stroke: obj.stroke,
-      // strokeWidth: obj.strokeWidth,
-      // infolevel: obj.infolevel,
-      // overlay: obj.overlay,
-      // strokeScaleEnabled: true,
+      fillPatternImage: obj.fillPatternImage,
+      image: obj.image,
     }
   }
   const textRectProps = (obj, canvas, editMode) => {
@@ -934,28 +929,13 @@ const CanvasPage = (props) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     switch (type) {
       case "rectangles":
-        return (
-          <>
-            {/* <Group {...canvas.getDragProps(obj.id)}
-              {...defaultObjProps(obj, canvas, editMode)}
-            > */}
-            <Rect
-              {...canvas.getDragProps(obj.id)}
-              {...defaultObjProps(obj, canvas, editMode)}
-              {...rectProps(obj, canvas, editMode)}
-            />
-            {/* <Text
-                {...textRectProps(obj, canvas, editMode)}
-              />
-            </Group> */}
-          </>
-        );
+        return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
       case "ellipses":
         return <Ellipse {...defaultObjProps(obj, canvas, editMode)} {...ellipseProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "pencils":
         return <Line {...pencilProps(obj, index, canvas, editMode)} />;
       case "images":
-        return <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} canvas={canvas} stage={stage}/>;
+        return <URLImage {...defaultObjProps(obj, canvas, editMode)} {...imageProps(obj, layer)} {...canvas.getInteractiveProps(obj.id)} {...canvas.getDragProps(obj.id)} canvas={canvas} stage={stage} />;
       case "videos":
         return <URLVideo
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}

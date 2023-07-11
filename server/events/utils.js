@@ -1,40 +1,21 @@
-const GameRoom = require("../models/GameRooms");
 import moment from "moment";
+import { createClient } from '@supabase/supabase-js';
+require('dotenv').config()
 
-// if nothing happens for 3 hours pause the sim
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 const TIMEOUT_MINUTES = 180;
 
-// we store real-time simulation stuff in a js map
-// using the simulation ID as keys
-// in hindsight, might be better to use something like redis
-
-// room status map
-// contains timestamps, flags for when game is running/paused,
-// information about gamepieces
 let rooms = new Map();
-
-// client info (name, role, etc)
 let players = new Map();
-// we also keep data for player IDs so we can map a user's
-// Socket.IO id (which changes everytime a user reconnects) to their
-// database id (persists, used to identify players)
 let playerIDs = new Map();
-
-// simulation actions, would probably be too large/unnecessary to include in room status
-// DOES NOT STORE *CURRENT* STATUS
-// mostly just used for logging/stats
 let interactions = new Map();
-
-// message lists
 let chatlogs = new Map();
-
 let notelogs = new Map();
-
-// stores the setTimeout objects for simulation rooms
-// so we can destroy them if needed
 let timeouts = new Map();
 
-// helper functions
 export const getRoomStatus = async (id) => rooms.get(id) || {};
 export const updateRoomStatus = async (id, val) => {
   const room = await getRoomStatus(id);
@@ -47,6 +28,7 @@ export const updateRoomStatus = async (id, val) => {
     ...val
   };
 }
+
 export const clearRoomStatus = async (id, keepSettings=true, wipeLogs=true) => {
   if (wipeLogs) {
     chatlogs.delete(id);
@@ -66,12 +48,15 @@ export const clearRoomStatus = async (id, keepSettings=true, wipeLogs=true) => {
 }
 
 export const getSimulationRooms = async (id) => {
-  const res = await GameRoom.findAll({
-    where: {
-      gameinstanceid: id
-    },
-  });
-  return res;
+  const { data, error } = await supabase
+    .from('gamerooms')
+    .select('*')
+    .eq('gameinstanceid', id);
+
+  if (error) {
+    // Handle the error
+  }
+  return data || [];
 };
 
 export const getPlayer = async (id) => {
@@ -79,18 +64,20 @@ export const getPlayer = async (id) => {
   if (!player) return {};
   return {
     ...player,
-    id
-  }
+    id,
+  };
 };
+
 export const getPlayerByDBID = async (dbid) => {
   const id = await playerIDs.get(dbid);
   const player = await players.get(id);
   if (!player) return null;
   return {
     ...player,
-    id
-  }
+    id,
+  };
 };
+
 export const setPlayer = async (id, val) => {
   const player = await getPlayer(id);
   if (val.dbid) {
@@ -98,20 +85,21 @@ export const setPlayer = async (id, val) => {
   }
   players.set(id, {
     ...player,
-    ...val
+    ...val,
   });
   return {
     ...player,
-    ...val
+    ...val,
   };
-}
+};
+
 export const removePlayer = async (id) => {
   const player = await getPlayer(id);
   if (player.dbid) {
     playerIDs.delete(player.dbid);
   }
   players.delete(id);
-}
+};
 
 export const getPlayersInRoom = async (roomid, server) => {
   const sockets = await server.in(roomid).fetchSockets();
@@ -129,14 +117,16 @@ export const addInteraction = async (roomid, interaction) => {
   interactions.set(roomid, old);
   return true;
 };
-export const getInteractionBreakdown = async (roomid) => { // not really used
+
+export const getInteractionBreakdown = async (roomid) => {
   const list = interactions.get(roomid) || [];
   let counts = {};
-  list.forEach(({level}) => {
+  list.forEach(({ level }) => {
     counts[level] = (counts[level] || 0) + 1;
   });
   return counts;
 };
+
 export const getInteractions = async (roomid) => {
   return interactions.get(roomid) || [];
 };
@@ -147,27 +137,33 @@ export const updateChatlog = async (roomid, message) => {
   chatlogs.set(roomid, old);
   return true;
 };
+
 export const getChatlog = async (roomid) => {
-  return chatlogs.get(roomid) || [];
+  const logs = chatlogs.get(roomid) || [];
+  return logs;
 };
+
 export const updateNotelog = async (roomid, note) => {
   const old = notelogs.get(roomid) || [];
   old.push(note);
   notelogs.set(roomid, old);
   return true;
 };
+
 export const deleteNotelog = async (roomid, note) => {
   const old = notelogs.get(roomid) || [];
   old.splice(note, 1);
   notelogs.set(roomid, old);
   return true;
 };
+
 export const editNotelog = async (roomid, note, i) => {
   const old = notelogs.get(roomid) || [];
   old[note.i] = note;
   notelogs.set(roomid, old);
   return true;
 };
+
 export const getNotelog = async (roomid) => {
   return notelogs.get(roomid) || [];
 };
@@ -176,24 +172,29 @@ export const updateRoomTimeout = async (id, server) => {
   if (timeouts.get(id)) {
     clearInterval(timeouts.get(id));
   }
-  timeouts.set(id, setTimeout(async () => {
-    const { startTime, timeElapsed } = await getRoomStatus(id);
-    const newStatus = await updateRoomStatus(id, {
-      running: false,
-      timeElapsed: moment().valueOf() - startTime + (timeElapsed || 0)
-    });
-    if (server) {
-      server.to(id).emit("errorLog", { key: "alert.inactivityTimeoutPause" });
-      server.to(id).emit("roomStatusUpdate", {
-        room: id,
-        status: newStatus,
-        refresh: true
+  timeouts.set(
+    id,
+    setTimeout(async () => {
+      const { startTime, timeElapsed } = await getRoomStatus(id);
+      const newStatus = await updateRoomStatus(id, {
+        running: false,
+        timeElapsed: moment().valueOf() - startTime + (timeElapsed || 0),
       });
-    }
-  }, TIMEOUT_MINUTES*60000));
+      if (server) {
+        server.to(id).emit('errorLog', { key: 'alert.inactivityTimeoutPause' });
+        server.to(id).emit('roomStatusUpdate', {
+          room: id,
+          status: newStatus,
+          refresh: true,
+        });
+      }
+    }, TIMEOUT_MINUTES * 60000)
+  );
 };
+
 export const clearRoomTimeout = async (id) => {
   if (timeouts.get(id)) {
     clearInterval(timeouts.get(id));
   }
 };
+

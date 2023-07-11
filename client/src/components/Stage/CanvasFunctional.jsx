@@ -271,30 +271,7 @@ const Graphics = (props) => {
                   if (!page.personalPositionRect) {
                     page.personalPositionRect = null;
                   }
-                  // Get the personal roles and give them default values (if none exist yet)
-                  axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-                    params: {
-                      gameinstanceid: state.gameinstanceid,
-                    }
-                  }).then((res) => {
-                    const rolesData = [];
-                    for (let i = 0; i < res.data.length; i++) {
-                      rolesData.push({
-                        id: res.data[i].gameroleid,
-                        roleName: res.data[i].gamerole,
-                        numOfSpots: res.data[i].numspots,
-                        roleDesc: res.data[i].roleDesc
-                      });
-                    }
-                    for (let i = 0; i < rolesData.length; i++) {
-                      const role = rolesData[i];
-                      if (!page.personalPositionRect[role.roleName]) {
-                        page.personalPositionRect[role.roleName] = positionRect;
-                      }
-                    }
-                  }).catch(error => {
-                    console.error(error);
-                  });
+                  
                   for (let j = 0; j < overlays.length; j++) {
                     const overlay = overlays[j];
                     if (!overlay.positionRect) {

@@ -64,7 +64,7 @@ const Card_component = (props) => {
 
 
   useEffect(() => {
-    if(props.user.bannerpath === undefined) return
+    if(props.user.bannerpath === undefined || props.user.bannerpath === null) return
     setImageSelected(props?.user?.bannerpath)
   }, [props?.user?.bannerpath])
 

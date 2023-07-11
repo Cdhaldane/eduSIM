@@ -12,6 +12,8 @@ import Performance from "../SideBar/Performance";
 import { useTranslation } from "react-i18next";
 import Messages from "../SideBar/submenus/Messages";
 
+import Loading from "../Loading/Loading";
+
 import Pencil from "../../../public/icons/pencil.svg"
 import Check from "../../../public/icons/checkmark.svg"
 import Trash from "../../../public/icons/trash-can-alt-2.svg"
@@ -60,6 +62,7 @@ const Tabs = (props) => {
       for (let i = 0; i < res.data.length; i++) {
         cart.push([res.data[i].gameroom_name, res.data[i].gameroomid, res.data[i].gameroom_url]);
       }
+      setLoading(false);
       setTabs(cart);
     }).catch((error) => {
       console.error(error);
@@ -114,6 +117,7 @@ const Tabs = (props) => {
   };
 
   const handleNewGroup = (e) => {
+    setLoading(true);
     e.preventDefault();
     let index = tabs.length + 1;
     tabs.forEach(tab => {
@@ -323,30 +327,15 @@ const Tabs = (props) => {
       const { data: roomData } = await axios.get(
         process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
         params: {
-          id: tabs[x][2],
+          url: tabs[x][2],
         }
       }).catch((error) => {console.error(error)});
-      setRoomInfo(roomData);
-      axios.get(process.env.REACT_APP_API_ORIGIN + '/api/gameroles/getGameRoles/:gameinstanceid', {
-        params: {
-          gameinstanceid: roomData.gameinstanceid,
-        }
-      }).then((res) => {
-        const rolesData = [];
-        for (let i = 0; i < res.data.length; i++) {
-          rolesData.push({
-            id: res.data[i].gameroleid,
-            roleName: res.data[i].gamerole,
-            numOfSpots: res.data[i].numspots
-          });
-        }
-        setRoles(rolesData);
-      })
+     
       let adminJSON = {"gameid":tabs[x][2],"role":"None","name":"Admin","dbid":"111111"}
       localStorage.setItem("userInfo", JSON.stringify(adminJSON))
       setQueryUser("Admin");
 
-      const client = await io(process.env.REACT_APP_API_ORIGIN, {
+      const client = io(process.env.REACT_APP_API_ORIGIN, {
         query: {
           room: tabs[x][2]
         }
@@ -389,8 +378,6 @@ const Tabs = (props) => {
     }());
   }
 
-
-
   return (
     <>
       {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
@@ -432,9 +419,7 @@ const Tabs = (props) => {
           >
             <span className="tab-text">{t("admin.overview")}</span>
           </li>
-
           {tabs.map((tab, i) => (
-
             <li
               key={i}
               className={toggleState === i + 1 ? "tab-container selected" : "tab-container"}
@@ -628,8 +613,8 @@ const Tabs = (props) => {
                   <h3>{t("admin.chat")}</h3>
                   <div className="group-chatlog">
                     <div>
-                      {props.chatMessages.map(({ sender, message }, index) => (
-                        <p key={index}><b className={sender.name}>{sender.name}: </b>{message}</p>
+                      {allRoomMessages.map((message, index) => (
+                        <p key={index}><b className={message[1]}>{message[1]}: </b>{message[2]}</p>
                       ))}
                     </div>
                   </div>

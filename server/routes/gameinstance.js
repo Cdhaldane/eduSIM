@@ -28,9 +28,9 @@ router.put('/delete/:id', gameinstance.deleteGameInstance);
 
 // router.get('/getCollaborators/:gameinstanceid', gameinstance.getCollaborators)
 
-// router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
+router.get('/getRunningGameLog/:gameroomid', gameroom.getRunningGameLog)
 
-// router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
+router.get('/getRunningSimulationLogs/:gameinstanceid', gameroom.getRunningSimulationLogs)
 
 // router.put('/delete/:id', gameinstance.deleteGameInstance);
 export default router;

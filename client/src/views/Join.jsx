@@ -26,7 +26,7 @@ const Join = (props) => {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [players, setPlayers] = useState({});
   const [roomStatus, setRoomStatus] = useState({});
-  const [roomMessages, setRoomMessages] = useState({});
+  const [roomMessages, setRoomMessages] = useState([]);
   const [allRoomMessages, setAllRoomMessages] = useState([])
   const [resetID, setResetID] = useState(null);
   const [numTabs, setNumTabs] = useState(0);
@@ -73,6 +73,7 @@ const Join = (props) => {
         }
       });
       client.on("roomStatusUpdate", (data) => {
+        console.log(data)
         if (data.chatlog) {
           let name;
           for (let i = 0; i < data.chatlog.length; i++) {
@@ -127,10 +128,10 @@ const Join = (props) => {
           data.sender.name = "Admin";
         }
         setAllRoomMessages(allRoomMessages => [...allRoomMessages, [data.room, data.sender.name, data.message]]);
-        setRoomMessages((messages) => ({
-          ...messages,
-          [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
-        }));
+        // setRoomMessages((messages) => ({
+        //   ...messages,
+        //   [data.room]: [...messages[data.room] || [], { sender: data.sender || "admin", message: data.message }]
+        // }));
       });
       client.on("errorLog", ({ key, params = {} }) => {
         // alertContext.showAlert(t(key, params), "error");
