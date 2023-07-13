@@ -498,8 +498,7 @@ const CanvasPage = (props) => {
     return {
       width: obj.width,
       height: obj.height,
-      fillPatternImage: obj.fillPatternImage,
-      image: obj.image,
+  
     }
   }
   const textRectProps = (obj, canvas, editMode) => {
@@ -927,6 +926,8 @@ const CanvasPage = (props) => {
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
+    if(Object.keys(canvas.refs).length === 0) return null; //important! prevents render before canvas is ready
+    
     switch (type) {
       case "rectangles":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;

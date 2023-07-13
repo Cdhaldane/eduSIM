@@ -86,7 +86,7 @@ class Graphics extends Component {
     super(props);
 
     this.setState = this.setState.bind(this);
-
+    this.handleSetRoles = this.handleSetRoles.bind(this);
     let objectState = {};
     let objectDeleteState = {};
     for (let i = 0; i < this.props.savedObjects.length; i++) {
@@ -255,8 +255,6 @@ class Graphics extends Component {
       groups: {},
 
       connectors: [],
-      gameroles: [],
-      roles: [],
       errMsg: "",
       arrowDraggable: false,
       newArrowRef: "",
@@ -359,7 +357,6 @@ class Graphics extends Component {
           }
         }
 
-        console.log(objects)
         if (this.props.setRoles) {
           this.props.setRoles(objects.roles || []);
         }
@@ -399,7 +396,7 @@ class Graphics extends Component {
           this.props.setNotes(objects.notes || {});
         }
 
-        
+
 
 
         // Put parsed saved data into state
@@ -771,8 +768,7 @@ class Graphics extends Component {
     storedObj.localInts = this.props.localInts;
     storedObj.localTrigs = this.props.localTrigs;
     storedObj.groups = this.props.groups;
-    storedObj.roles = this.state.roles;
-
+    storedObj.roles = this.props.roles;
     this.setState({
       saved: storedObj
     });
@@ -938,7 +934,6 @@ class Graphics extends Component {
   }
 
   onMouseDown = (e, personalArea) => {
-    console.log(this.state)
     const event = e.evt ? e.evt : e;
     const shape = this.getTopObjAtPos({
       x: event.clientX,
@@ -1086,6 +1081,7 @@ class Graphics extends Component {
 
 
   handleMouseUp = (e, personalArea) => {
+    // console.log(this.state.pages)
     this.setState({
       selection: {
         ...this.state.selection,
@@ -1923,7 +1919,6 @@ class Graphics extends Component {
     }
 
 
-
     // Get group item ids
     const groupCopiedIds = [];
     for (let i = 0; i < stateItems.length; i++) {
@@ -2325,7 +2320,7 @@ class Graphics extends Component {
   handleLevel = (e) => {
     this.setState({
       level: e
-    }, this.handleLevelUpdate)
+    })
     this.props.handleLevel(e);
   }
 
@@ -2478,7 +2473,6 @@ class Graphics extends Component {
   }
 
   contextMenuEventShortcuts = (event) => {
-    console.log(event)
     const x = 88,
       deleteKey = 46,
       copy = 67,
@@ -3289,9 +3283,7 @@ class Graphics extends Component {
   getVariableProps = () => { }
 
   handleSetRoles = (role) => {
-    this.setState({
-      roles: role
-    });
+    this.props.setRoles(role);
   }
 
   handleEditShapes = (prevRoleName, roleName) => {
@@ -3304,7 +3296,7 @@ class Graphics extends Component {
       })
     }
   }
-  handleCopyRole = async (role, newName) => {
+  handleCopyRole = async (role, level) => {
     let roleName = role.roleName;
     for (let i = 0; i < this.savedObjects.length; i++) {
       let type = this.savedObjects[i];
@@ -3313,18 +3305,19 @@ class Graphics extends Component {
       let num = this.state[type].length + delCount + 1;
       this.state[type].forEach((obj) => {
         let copyObj = { ...obj };
-        if (obj.rolelevel === roleName) {
-          copyObj.rolelevel = newName;
-          copyObj.name = type + num;
-          copyObj.ref = type + num;
-          copyObj.id = type + num;
+        if(obj.rolelevel === roleName){
+        copyObj.rolelevel = roleName;
+        copyObj.name = type + num;
+        copyObj.ref = type + num;
+        copyObj.id = type + num;
+        copyObj.level = level;
+        newObj.push(copyObj);
+        num++;
 
-          newObj.push(copyObj);
-          num++;
-
-          this.state.pages[this.state.level - 1].personalLayers.push(copyObj.id)
+        this.state.pages[level - 1].personalLayers.push(copyObj.id)
         }
       })
+      console.log(newObj)
       this.setState({
         [type]: [...this.state[type], ...newObj]
       })
@@ -3333,7 +3326,6 @@ class Graphics extends Component {
   }
   handleDeleteRole = (role) => {
     let roleName = role.roleName;
-    console.log(role)
     for (let i = 0; i < this.savedObjects.length; i++) {
       let type = this.savedObjects[i];
       let newObj = []
@@ -3343,12 +3335,10 @@ class Graphics extends Component {
         }
       })
 
-      console.log(newObj)
       this.setState({
         [type]: newObj
       })
     }
-    console.log(this.state)
   }
 
 
@@ -3456,7 +3446,7 @@ class Graphics extends Component {
 
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
         {this.state.pages[this.state.level - 1] && (
-          <>
+          <div className='overlay-button-container'>
             {this.state.pages[this.state.level - 1].overlays.map((overlay, i) => {
               return (
                 <div
@@ -3498,7 +3488,7 @@ class Graphics extends Component {
                 </div>
               );
             })}
-          </>
+          </div>
         )}
 
         {this.state.overlayOptionsOpen !== -1 && (
@@ -3823,6 +3813,8 @@ class Graphics extends Component {
                 //this.refs.customRectCanvas.add(this.refs.customRect);
                 this.setState(() => this.handlePersonalAreaOpen(true));
               }}
+              level={this.state.level}
+              pages={this.state.pages}
               roleLevel={this.handleRoleLevel}
               gameid={this.state.gameinstanceid}
               handleCopyRole={this.handleCopyRole}

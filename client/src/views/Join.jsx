@@ -216,7 +216,6 @@ const Join = (props) => {
     }
   };
   const textInputRef = useRef(null);
-
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
   const displayPause = currentRoom
@@ -309,7 +308,8 @@ const Join = (props) => {
               >
                 <Reload className="icon control-icon" />
               </button>
-              {advanceMode === "teacher" && (
+              {console.log(roomStatus[Object.keys(roomStatus)[0]], Object.keys(roomStatus))}
+              {roomStatus[Object.keys(roomStatus)[0]]?.running && (
                 <>
                   <button
                     className={`joinboard-button ${currentRoom && !currentRoomStatus.running ? ' joinboard-disabled' : undefined}`}

@@ -19,15 +19,13 @@ const Pencil = (props) => {
   return (
     <>
       <div className={"pencil" + props.type} onClick={handleDrop}>
-        <i
-          id={"pencil" + props.id}
-          aria-hidden="true"
-          className={"" +(props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
+        <PencilIcon
+          className={"" + (props.hidden ? " hidden" : "") + (props.submenu ? " submenu" : "")}
           onClick={handleDrop}
-        ><PencilIcon className="icon pencil"/></i>
+        />
         {props.type == "info" && (
           <div>
-            <h1>{t("admin.simedit")}</h1>
+            <h1>{t("admin.pageedit")}</h1>
           </div>
         )}
       </div>
@@ -45,9 +43,9 @@ const Pencil = (props) => {
               updateObjState={props.updateObjState}
               handleCopyPage={props.handleCopyPage}
               close={handleDrop}
-              getObjState={props.getObjState} 
+              getObjState={props.getObjState}
               pencilRef={pencilRef}
-              />
+            />
           )}
           {props.type === "nav" && (
             <DropdownNavigationBar
@@ -59,7 +57,7 @@ const Pencil = (props) => {
           )}
         </div>
       )}
-      </>
+    </>
   );
 }
 

@@ -1,4 +1,3 @@
-import { supabase } from '../../client/src/components/Supabase';
 import {
   updateRoomStatus,
   getSimulationRooms,
@@ -11,8 +10,12 @@ import {
   clearRoomTimeout
 } from './utils';
 import moment from "moment";
-const GameActions = require("../models/GameActions");
-const GameRoom = require("../models/GameRooms");
+import { createClient } from '@supabase/supabase-js';
+require('dotenv').config()
+
+const supabaseUrl = process.env.SUPABASE_URL // Your Supabase URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY // Your Supabase service role key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async (server, client, event, args) => {
   const { game } = client.handshake.query;

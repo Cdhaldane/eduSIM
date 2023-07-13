@@ -138,16 +138,16 @@ const DropdownTimelineBar = (props) => {
     <div className="icons-right">
       {/* EDIT PAGE TITLE */}
       <span className="icon-button" onClick={() => handleModifyPage(index)}>
-        <i data-tip data-for="edit"><Pencil className="icon timeline-roles"/></i>
+        <i data-tip data-for="edit" ><Pencil className="icon timeline-roles"/></i>
       </span>
-      <ReactTooltip id="edit">
-       <span>Edit</span>
+      <ReactTooltip className='timeline-tooltip' id="edit">
+       <span>Edit Name</span>
       </ReactTooltip>
       {/* PAGE SETTINGS */}
       <span className="icon-button" data-tip data-for="settings" onClick={() => setTimeout(() => setCurrentSettingsIndex(index), 0)}>
         <i><Cog className="icon timeline-roles"/></i>
       </span>
-      <ReactTooltip id="settings">
+      <ReactTooltip className='timeline-tooltip' id="settings">
        <span>Settings</span>
       </ReactTooltip>
 
@@ -177,7 +177,7 @@ const DropdownTimelineBar = (props) => {
         }}
       >
         <i data-tip data-for="copy"><Scroll className="icon timeline-roles"/></i>
-        <ReactTooltip id="copy">
+        <ReactTooltip className='timeline-tooltip' id="copy">
            <span>Copy</span>
         </ReactTooltip>
       </span>
@@ -212,7 +212,7 @@ const DropdownTimelineBar = (props) => {
           }
         }}>
         <i data-tip data-for="up"><Up className="icon timeline-roles chevron"/></i>
-        <ReactTooltip id="up">
+        <ReactTooltip className='timeline-tooltip' id="up">
            <span>Move Up</span>
         </ReactTooltip>
       </span>
@@ -247,7 +247,7 @@ const DropdownTimelineBar = (props) => {
           }
         }}>
         <i data-tip data-for="down"><Down className="icon timeline-roles chevron"/></i>
-        <ReactTooltip id="down">
+        <ReactTooltip className='timeline-tooltip' id="down">
            <span>Move Down</span>
         </ReactTooltip>
       </span>
@@ -310,7 +310,8 @@ const DropdownTimelineBar = (props) => {
                         key={index}
                       >
                         <span className="icon-button" onClick={() => pageNameChanged(modifyPageName, index)}>
-                          <i><Check className="icon timeline-roles"/></i>
+                          <i ><Check className="icon timeline-roles"/></i>
+          
                         </span>
                         <input
                           id="roleNameAdd"
@@ -341,8 +342,8 @@ const DropdownTimelineBar = (props) => {
                           }}
                         >
                           <i data-tip data-for="delete" ><Trash className="icon timeline-roles"/></i>
-                          <ReactTooltip id="delete">
-                             <span>Delete</span>
+                          <ReactTooltip className='timeline-tooltip' id="delete">
+                             {modifyIndex !== -1 ? <span>Save</span> :<span>Delete</span>}
                           </ReactTooltip>
                         </span>
                         {`${page.name}`}
@@ -374,7 +375,7 @@ const DropdownTimelineBar = (props) => {
               }}>
               <i data-tip data-for="add"><Plus className="icon timeline-roles"/></i>
               </span>
-              <ReactTooltip id="add">
+              <ReactTooltip className='timeline-tooltip' id="add">
                  <span>Add</span>
               </ReactTooltip>
               <input
@@ -442,7 +443,7 @@ const DropdownTimelineBar = (props) => {
                     >
                       <i data-tip data-for="add"><Plus className="icon timeline-roles"/></i>
                     </span>
-                    <ReactTooltip id="add">
+                    <ReactTooltip className='timeline-tooltip' id="add">
                        <span>Add</span>
                     </ReactTooltip>
                   </div>

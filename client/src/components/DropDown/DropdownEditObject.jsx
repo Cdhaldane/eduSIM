@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { TwitterPicker } from 'react-color';
+import { ChromePicker } from 'react-color';
 import Slider from 'rc-slider';
 import FontPicker from "font-picker-react";
 import debounce from 'lodash.debounce';
 import DOMPurify from 'dompurify';
 import { CompactPicker } from 'react-color';
 import { useTranslation } from "react-i18next";
+import Wheel from '@uiw/react-color-wheel';
 
 import 'rc-slider/assets/index.css';
 import "./DropdownEditObject.css";
@@ -18,7 +19,6 @@ import Left from "../../../public/icons/arrow-left.svg"
 const DEFAULT_FONT_SIZE = 50;
 
 const DropdownEditObject = (props) => {
-  console.log(props)
   const [activeMenu, setActiveMenu] = useState('main');
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
@@ -38,6 +38,9 @@ const DropdownEditObject = (props) => {
   const [vTextsV, setVTextsV] = useState(objState.varValue ? objState.varValue : [])
   const [varOne, setVarOne] = useState(objState.varOne ? objState.varOne : "")
   const [varTwo, setVarTwo] = useState(objState.varTwo ? objState.varTwo : "")
+
+  const [showFill, setShowFill] = useState(true);
+  const [showStroke, setShowStroke] = useState(false);
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -128,13 +131,15 @@ const DropdownEditObject = (props) => {
   }
 
   const onSliderChange = (e) => {
-    setStrokeWidth(e);
-    props.handleWidth(e);
+    let newStrokeWidth = parseFloat(e);
+    setStrokeWidth(newStrokeWidth);
+    props.handleWidth(newStrokeWidth);
   }
 
-  const onSliderChangeO = (e) => {
-    setOpacity(e);
-    props.handleOpacity(e);
+  const onSliderChangeOpacity = (e) => {
+    let newOpacity = parseFloat(e);
+    setOpacity(newOpacity);
+    props.handleOpacity(newOpacity);
   }
 
   const onSliderChangeV = (e) => {
@@ -349,35 +354,36 @@ const DropdownEditObject = (props) => {
             unmountOnExit>
             <div className="menuedit">
               <input id="menuedit-name" type="text" onChange={e => handleObjectName(e.target.value)} value={objState?.name} placeholder={objState?.id} />
-              <br />
               {!((objState?.id).includes("videos") || (objState?.id).includes("audios")) && (
                 <>
-                  {!props.selectedShapeName.includes("lines") && (
-                    <>
-                      <b>
-                        {t("edit.colorFill")}
-                        <TwitterPicker
-                          colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                          color={fillColor}
-                          triangle="hide"
-                          width={350}
-                          onChangeComplete={handleChangeF} />
-                      </b>
-                      <br />
-                    </>
-                  )}
-                  <b>
-                    {t("edit.colorStroke")}
-                    <TwitterPicker
-                      colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                      color={strokeColor}
-                      triangle="hide"
-                      width={350}
-                      onChangeComplete={handleChangeS} />
-                  </b>
-                  <br />
-                  <b>
-                    {t("edit.strokeWidth")}
+                  <div className="menuedit-color-container">
+                    {!props.selectedShapeName.includes("lines") && (
+                      <>
+                        <div className='color-button-container'>
+                          <button onClick={() => { setShowFill(!showFill), setShowStroke(false) }} className={showFill ? 'active' : ''}  >Fill Color</button>
+                          <button onClick={() => { setShowStroke(!showStroke), setShowFill(false) }} className={showStroke ? 'active' : ''}>Stroke Color</button>
+                        </div>
+                        {showFill &&
+                          <ChromePicker
+                            color={fillColor}
+                            onChangeComplete={handleChangeF}
+                            className='color-picker'
+                          />
+                        }
+                      </>
+                    )}
+                    {showStroke &&
+                      <ChromePicker
+                        className='color-picker'
+                        color={strokeColor}
+                        onChangeComplete={handleChangeS} />
+                    }
+                  </div>
+                  <div className="menuedit-sliders">
+                    <div className='slider-container'>
+                      <h1>{t("edit.strokeWidth")}</h1>
+                      <input type="number" value={strokeWidth} onChange={e => onSliderChange(e.target.value)} />
+                    </div>
                     <Slider
                       min={0}
                       max={100}
@@ -389,23 +395,24 @@ const DropdownEditObject = (props) => {
                       handleStyle={handleStyle}
                       trackStyle={trackStyle}
                     />
-                  </b>
-                  <br />
-                  <b>
-                    {t("edit.opacity")}
+                  </div>
+                  <div className="menuedit-sliders">
+                    <div className='slider-container'>
+                      <h1>{t("edit.opacity")}</h1>
+                      <input type="number" value={opacity} onChange={e => onSliderChangeOpacity(e.target.value)} />
+                    </div>
                     <Slider
                       className="slider"
                       value={opacity}
                       min={0}
                       max={1}
                       step={0.01}
-                      onChange={onSliderChangeO}
+                      onChange={onSliderChangeOpacity}
                       railStyle={railStyle}
                       handleStyle={handleStyle}
                       trackStyle={trackStyle}
                     />
-                  </b>
-                  <br />
+                  </div>
                 </>
               )}
               {(objState?.id).includes("videos") || (objState?.id).includes("audios") ? (
@@ -483,12 +490,12 @@ const DropdownEditObject = (props) => {
               <h1>{t("edit.textEdit")}</h1>
               <b>
                 {t("edit.textColor")}
-                <TwitterPicker
+                {/* <TwitterPicker
                   colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
                   color={fillColor}
                   triangle="hide"
                   width={350}
-                  onChangeComplete={handleChangeF} />
+                  onChangeComplete={handleChangeF} /> */}
               </b>
               <br />
               <b>{t("edit.textFont")}</b>
@@ -515,7 +522,7 @@ const DropdownEditObject = (props) => {
                   min={0}
                   max={1}
                   step={0.01}
-                  onChange={onSliderChangeO}
+                  onChange={onSliderChangeOpacity}
                   railStyle={railStyle}
                   handleStyle={handleStyle}
                   trackStyle={trackStyle}
@@ -551,7 +558,7 @@ const DropdownEditObject = (props) => {
                 {...props}
               />
               <p>{t("edit.variableNameToSet")}</p>
-                <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
+              <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
                 {props.globalVars.map((data) => {
                   return (
                     <option value={Object.keys(data)}>
@@ -686,25 +693,25 @@ const DropdownEditObject = (props) => {
 
               {/* TODO MAKE LOCALSTORAGE WORK FOR INTERACTIONS AND CONDITIONS */}
               <div className="htmliframeinput">
-                <input type="checkbox" checked={!!objState.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} /> 
+                <input type="checkbox" checked={!!objState.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
                 <p>{t("edit.variableSync")}</p>
               </div>
               {objState?.varType === "button" ? (
                 <>
                   <p>Button name to set</p>
-                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />  
+                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
                 </>
               ) : <>
                 <p>{t("edit.variableNameToSet")}</p>
                 <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
-                {props.globalVars.map((data) => {
-                  return (
-                    <option value={Object.keys(data)}>
-                      {Object.keys(data)}
-                    </option>
-                  );
-                })}
-              </select>
+                  {props.globalVars.map((data) => {
+                    return (
+                      <option value={Object.keys(data)}>
+                        {Object.keys(data)}
+                      </option>
+                    );
+                  })}
+                </select>
               </>}
               {objState?.varType === "radio" && (
                 <div className="radio-dropdown">
@@ -745,6 +752,7 @@ const DropdownEditObject = (props) => {
                     </button>
                   </div>
                   {inputCurrentOptions === "fill" && (
+
                     <CompactPicker
                       className="compactPickerEditInput"
                       color={inputFillColor}

@@ -67,7 +67,7 @@
   color: var(--primary);
   padding: 0px 8px 0px 8px;
   margin-top: 0px;
-  border-radius: 40%;
+  border-radius: 100%;
   border: 1px solid var(--primary);
   box-shadow: var(--box-shadow);
   background-color: white;

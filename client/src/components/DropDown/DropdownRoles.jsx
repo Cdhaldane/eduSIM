@@ -3,13 +3,10 @@ import { CSSTransition } from 'react-transition-group';
 import axios from "axios";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 import { useAlertContext } from "../Alerts/AlertContext";
-
-import { v4 as uuidv4 } from 'uuid';
-
+import MultiLevel from './Multilevel';
 import { useTranslation } from "react-i18next";
 
 import "./Dropdown.css";
-
 import Crown from "../../../public/icons/crown.svg"
 import Trash from "../../../public/icons/trash-can-alt-2.svg"
 import Check from "../../../public/icons/checkmark.svg"
@@ -18,7 +15,6 @@ import Pencil from "../../../public/icons/pencil.svg"
 import Add from "../../../public/icons/plus.svg"
 import Left from "../../../public/icons/arrow-left.svg"
 import Card from "../../../public/icons/id-card.svg"
-import { use } from 'i18next';
 
 const DropdownRoles = (props) => {
   const { t } = useTranslation();
@@ -34,6 +30,8 @@ const DropdownRoles = (props) => {
   const [roleDesc, setRoleDesc] = useState("");
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [isCopyingRole, setIsCopyingRole] = useState(false);
+  const [copyRole, setCopyRole] = useState(null);
+  const [copyTo, setCopyTo] = useState(null);
   const [modifyIndex, setModifyIndex] = useState(-1);
   const [selected, setSelected] = useState(-1)
   const [description, setDescription] = useState(false);
@@ -94,22 +92,6 @@ const DropdownRoles = (props) => {
     setRoleName(roles[index].roleName);
     setRoleNum(roles[index].numOfSpots);
   }
-
-
-  const handleCopyRole = async (role) => {
-    let name = role.roleName + 'copy';
-    setRoleName(name);
-    setRoleNum(role.numOfSpots);
-    setRoleDesc(role.roleDesc);
-    props.handleCopyRole(role, name);
-    setIsCopyingRole(true);
-  };
-  useEffect(() => {
-    if (isCopyingRole) {
-      handleAddRole();
-      setIsCopyingRole(false); // reset the flag
-    }
-  }, [roleName, roleNum, roleDesc, isCopyingRole]); 
 
   const DropdownItem = (item) => {
     return (
@@ -237,20 +219,34 @@ const DropdownRoles = (props) => {
 
   const updateRolesData = () => {
     let currRoles = props.roles;
-    if (currRoles.length < 1) {
+    console.log(currRoles.length)
+    if (currRoles.length === 0) {
       currRoles.push({
         roleName: t("game.defaultRole"),
         numOfSpots: -1,
         roleDesc: 'Default Role'
       })
-      if(props.editMode){
+      if (props.editMode) {
         props.addNewRoleRect(currRoles[0].roleName);
       }
     }
-    
-    setRoles(currRoles);    
+
+    setRoles(currRoles);
   }
 
+  const handleChange = (data) => {
+    console.log(data.value[0])
+    setCopyTo(data.value[0] + 1)
+  }
+  const handleCopying = (e, role) => {
+    e.stopPropagation();
+    setIsCopyingRole(true);
+    setActiveMenu('copy')
+    setCopyRole(role)
+  }
+  const handleCopyRole = async () => {
+    props.handleCopyRole(copyRole, copyTo);
+  };
 
   const AvailableRoles = (
     <div className="roles-container">
@@ -288,19 +284,12 @@ const DropdownRoles = (props) => {
                 key={index}
                 disabled={modifyIndex >= 0}
               >
-                {index !== 0 && (
-                  <span className="icon-button" onClick={() => {
-                    setConfirmationModal(true);
-                    setDeleteIndex(index);
-                  }} >
-
-                    <i><Trash className="icon roles-icons" /></i>
-
-                  </span>
-                )}
-                {index === 0 && (
-                  <span className="icon-button" style={{ backgroundColor: "rgba(0,0,0,0)" }} ><i><Crown className="icon roles-icons" /></i></span>
-                )}
+                <span className="icon-button" onClick={() => {
+                  setConfirmationModal(true);
+                  setDeleteIndex(index);
+                }} >
+                  <i><Trash className="icon roles-icons" /></i>
+                </span>
                 <h1>
                   {role.roleName}
                   {role.numOfSpots !== -1 && ` (${role.numOfSpots})`}
@@ -311,7 +300,7 @@ const DropdownRoles = (props) => {
                     <i><Pencil className="icon roles-icons" /></i>
 
                   </span>
-                  <span className="icon-button" onClick={() => handleCopyRole(role)}>
+                  <span className="icon-button" onClick={(e) => handleCopying(e, role)}>
                     <i><Copy className="icon roles-icons" /></i>
                   </span>
                 </div>
@@ -338,6 +327,16 @@ const DropdownRoles = (props) => {
     </div>
   );
 
+  const processData = () => {
+    let data = props?.pages?.map((page, i) => ({ [page.name]: i }));
+
+    if (props.level - 1 >= 0 && props.level - 1 < data.length) {
+      data.splice(props.level - 1, 1);
+    }
+
+    return data;
+  }
+
   return (
     <div className="dropdown" style={{ height: menuHeight }} ref={menuElem} disabled={props.disabled}>
       <CSSTransition
@@ -354,6 +353,30 @@ const DropdownRoles = (props) => {
             {props.random ? "Random" : selectedRole || PLACEHOLDER_TEXT}
           </DropdownItem>
 
+        </div>
+      </CSSTransition>
+      <CSSTransition
+        in={activeMenu === 'copy'}
+        timeout={500}
+        classNames="menu-primary"
+        unmountOnExit
+        onEnter={calcHeight}>
+        <div className="menu">
+          <DropdownItem
+            goToMenu="main"
+            icon={<i><Left className="icon roles-icons" /></i>}>
+            <h2 className="menu-copy">Copying {copyRole?.roleName}</h2>
+          </DropdownItem>
+          <div className='menu-copy-title'>
+            <h2>Select page</h2>
+            <MultiLevel
+              data={processData()}
+              handleChange={handleChange}
+              baseValue={copyRole?.roleName}
+              className={'roles-multilevel'}
+            />
+          </div>
+          <button className="menu-copy-submit" onClick={handleCopyRole}>Submit</button>
         </div>
       </CSSTransition>
 
@@ -377,7 +400,7 @@ const DropdownRoles = (props) => {
               className="role-desc"
 
             />
-              <button className="roles-submit" onClick={handleSubmitModification}>Submit</button></>
+              <button className="menu-copy-submit" onClick={handleSubmitModification}>Submit</button></>
             : <textarea
               readOnly
               wrap="soft"

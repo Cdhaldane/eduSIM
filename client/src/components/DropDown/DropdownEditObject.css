@@ -12,6 +12,7 @@ ul {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 214px;
@@ -19,6 +20,7 @@ ul {
     z-index: 10000;
   }
 }
+
 @keyframes html {
   from {
     margin-left: -20px;
@@ -27,6 +29,7 @@ ul {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 528px;
@@ -34,6 +37,7 @@ ul {
     z-index: 10000;
   }
 }
+
 @keyframes input {
   from {
     margin-left: -20px;
@@ -42,6 +46,7 @@ ul {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 424px;
@@ -49,6 +54,7 @@ ul {
     z-index: 10000;
   }
 }
+
 @keyframes checkbox {
   from {
     margin-left: -20px;
@@ -57,6 +63,7 @@ ul {
     z-index: 0;
     bottom: 50px;
   }
+
   to {
     margin-left: 0px;
     height: 279px;
@@ -66,19 +73,19 @@ ul {
 }
 
 /* Icon Button */
-.htmledit > span {
+.htmledit>span {
   font-size: 0.8em;
 }
 
-.htmledit > p {
+.htmledit>p {
   margin-top: 5px;
 }
 
-.htmledit > span {
+.htmledit>span {
   font-size: 0.8em;
 }
 
-.htmledit > p {
+.htmledit>p {
   margin-top: 5px;
 }
 
@@ -87,46 +94,47 @@ ul {
   animation-duration: 1.0s;
   animation-name: slideinleft !important;
 }
+
 .fixed-anim-2 {
   animation-duration: 1.0s;
-  animation-name: slide !important;
+  animation-name: fadeIn !important;
   white-space: nowrap;
 }
+
 .fixed-anim select {
   text-align: left;
   height: auto !important;
 }
+
 .dropdownedit {
   position: absolute;
   bottom: -2px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 1);
   border: 1px solid var(--primary);
   border-radius: 30px;
   padding: 10px;
   box-shadow: var(--box-shadow);
-  overflow: hidden;
   animation-duration: 0.5s;
-  animation-name: slidePoll;
 }
+
 .timer {
   animation-duration: 0.5s;
   animation-name: timer;
 }
+
 .html {
   animation-duration: 0.5s;
   animation-name: html;
 }
+
 .input {
   animation-duration: 0.5s;
   animation-name: input;
 }
+
 .checkbox {
   animation-duration: 0.5s;
   animation-name: checkbox;
-}
-
-.dropdownedit.paddingRight {
-  padding-right: 20px;
 }
 
 .dropdowncheckbox {
@@ -134,24 +142,26 @@ ul {
   align-items: center;
 }
 
-.dropdowncheckbox > input {
+.dropdowncheckbox>input {
   width: 24px;
   height: 24px;
   margin-right: 6px !important;
 }
 
 .menuedit {
-  width: 100%;
+  width: 100% !important;
   font-size: 1.3rem;
   color: black;
 }
 
-#menuedit-name{
+#menuedit-name {
   width: 100%;
   height: 100%;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 25px;
-  border: 1px solid rgb(112, 112, 112);
+  border: 3px solid var(--primary);
+  background-color: var(--white);
+  color: var(--primary);
   padding: 5px;
 }
 
@@ -171,7 +181,59 @@ ul {
   display: flex;
   border-radius: 9px;
   padding: 2px;
-  border:1px solid var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.menuedit-color-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-direction: column;
+  background-color: #f6f5f5 !important;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.color-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.color-button-container>button {
+  background: var(--white);
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.55em;
+  text-transform: uppercase !important;
+  font-weight: 700;
+  transition: all .3s;
+  border: 4px solid var(--primary) !important;
+  cursor: pointer;
+  width: 48% !important;
+  height: 50px !important;
+  border-radius: 10px !important;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.color-button-container button.active {
+  background-color: var(--primary) !important;
+  color: var(--white) !important;
+  border: 4px solid var(--primary) !important;
+  font-weight: bolder !important;
+}
+
+.color-picker {
+  font-family: inherit !important;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  margin-top: 5px;
+  background: none;
 }
 
 .menuedit input {
@@ -202,11 +264,13 @@ ul {
   background-color: #bcd6ff;
   border: 1px solid rgb(112, 112, 112) !important;
 }
+
 .simple {
   position: relative;
   top: -7px;
   margin-top: 10px !important;
 }
+
 .notSimple {
   position: relative;
   top: 9px;
@@ -303,7 +367,7 @@ ul {
 .dropdown button {
   position: relative;
   top: 0px;
-  left: 10px;
+  left: 0px;
   width: 45px;
   height: 60px;
   font-family: "Montserrat", sans-serif;
@@ -326,7 +390,8 @@ ul {
   color: white;
 }
 
-#pagetype input, #pagetype textarea {
+#pagetype input,
+#pagetype textarea {
   position: absolute;
   left: 20px;
   top: 160px;
@@ -354,9 +419,47 @@ ul {
   left: 35px;
 }
 
+.menuedit-sliders {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #f6f5f5;
+  color: var(--primary);
+  font-size: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
 .slider {
   left: 2%;
-  width: 98%;
+  width: 95%;
+  height: 40px;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.slider-container>input {
+  width: 35% !important;
+  border: 3px solid var(--primary);
+  border-radius: 10px;
+  padding: 5px;
+  font-size: 1.0rem;
+}
+
+.slider-container>h1 {
+  width: 45%;
+  font-size: 0.9em;
+  font-family: inherit;
 }
 
 .htmltextarea {
@@ -431,4 +534,14 @@ ul {
 
 .htmliframeinput>input {
   margin: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

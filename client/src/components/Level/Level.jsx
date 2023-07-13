@@ -17,6 +17,7 @@ import Info from "../../../public/icons/information.svg"
 import ChevronRight from "../../../public/icons/chevron-right-circle.svg"
 import Exit from "../../../public/icons/exit.svg"
 import Check from "../../../public/icons/checkmark-circle.svg"
+import Save from "../../../public/icons/save.svg"
 
 const Level = (props) => {
   const { t } = useTranslation();
@@ -41,17 +42,6 @@ const Level = (props) => {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
-
-  function compare(a, b) {
-    // Move objects with obj.true to the front of the array
-    if (a.optional && !b.optional) {
-      return 1;
-    } else if (a.optional && b.optional) {
-      return -1;
-    } else {
-      return 0;
-    }
-  }
 
   // Sort the array
   useEffect(() => {
@@ -82,7 +72,7 @@ const Level = (props) => {
       return;
     }
     if (props.gamepage) {
-      if (props.disableNext) {
+      if (props.disableNext && e > count) {
 
         alertContext.showAlert("Must complete a task to advance!", "info");
         return
@@ -97,11 +87,10 @@ const Level = (props) => {
         props.end()
         return
       }
-      props.socket.emit("goToPage", {
-        level: e
-      });
+      props.handleLevel(e, 'game')
+      setCount(e)
     } else {
-      props.handleLevel(e)
+      props.handleLevel(e, 'edit')
       setCount(e)
     }
   }
@@ -256,33 +245,36 @@ const Level = (props) => {
 
 
 
+        </div>
+        <div className="level-buttons">
           {props.handlePageNum && (
-            <div className="pencil-container">
-              <Pencil
-                positionRect={props.positionRect}
-                id="Timeline"
-                psize="3"
-                type="info"
-                getobjState={props.getObjState}
-                updateObjState={props.updateObjState}
-                pages={props.pages}
-                refreshCanvas={props.refreshCanvas}
-                getObjState={props.getObjState}
-                changeObjectPage={props.changeObjectPage}
-                handleCopyPage={props.handleCopyPage}
-                handlePageTitle={props.handlePageTitle}
-                handlePageNum={props.handlePageNum}
-                numOfPages={props.numOfPages}
-              />
-            </div>
+            <Pencil
+              positionRect={props.positionRect}
+              id="Timeline"
+              psize="3"
+              type="info"
+              getobjState={props.getObjState}
+              updateObjState={props.updateObjState}
+              pages={props.pages}
+              refreshCanvas={props.refreshCanvas}
+              getObjState={props.getObjState}
+              changeObjectPage={props.changeObjectPage}
+              handleCopyPage={props.handleCopyPage}
+              handlePageTitle={props.handlePageTitle}
+              handlePageNum={props.handlePageNum}
+              numOfPages={props.numOfPages}
+            />
+          )}
+          {!props.gamepage && (
+            <>
+              <div className="level-save" onClick={() => props.saveGame()}> <Save /> Save </div>
+              <Link onClick={saveOnClose} to="/dashboard" className="level-close">
+                <Exit />
+                <h1>{t("edit.exit")}</h1>
+              </Link>
+            </>
           )}
         </div>
-        {!props.gamepage && (
-          <Link onClick={saveOnClose} to="/dashboard" className="level-close">
-            <Exit />
-            <h1>{t("edit.exit")}</h1>
-          </Link>
-        )}
       </div>
     </div>
   );

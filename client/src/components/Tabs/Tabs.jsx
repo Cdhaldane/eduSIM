@@ -101,18 +101,18 @@ const Tabs = (props) => {
           interactions: val[1]
         })));
       });
-      if (!logs[id]) {
-        axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getGameLogs", {
-          params: {
-            gameroomid: id,
-          },
-        }).then((res) => {
-          setLogs(prev => ({
-            ...prev,
-            [id]: res.data
-          }));
-        });
-      }
+      // if (!logs[id]) {
+      //   axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getGameLogs", {
+      //     params: {
+      //       gameroomid: id,
+      //     },
+      //   }).then((res) => {
+      //     setLogs(prev => ({
+      //       ...prev,
+      //       [id]: res.data
+      //     }));
+      //   });
+      // }
     }
   };
 

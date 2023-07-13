@@ -38,11 +38,9 @@ const URLImage = forwardRef((props, ref) => {
   useEffect(() => {
     setImage(loadImage());
     const actualLayer = props.canvas.refs[`${props.stage}AreaLayer.objects`];
-    console.log(actualLayer)
     if(!props.editMode){
     const layer = actualLayer.getStage();
     const anim = new Konva.Animation(() => { }, layer);
-    console.log(props)
     //create time out for 5 seconds then set loading false.   
     anim.start();
     return () => {

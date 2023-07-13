@@ -136,6 +136,7 @@ const Game = (props) => {
         if (lastSetVar) {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
+        console.log(status.level)
         setLevel(status.level)
         setRoomStatus(status);
       });
@@ -220,8 +221,8 @@ const Game = (props) => {
 
 
   const handleLevel = (x, type) => {
-    if (type === 'edit')
-      setLevel(id)
+    if (type === 'game')
+      setLevel(x)
     else {
       socket.emit("goToPage", {
         level: x

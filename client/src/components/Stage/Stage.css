@@ -26,18 +26,14 @@
   height: 0px !important;
 }
 
-.overlayButton {
-  position: absolute;
+.overlay-button-container {
+  position: fixed;
   top: 70px;
   right: 20px;
   z-index: 2;
+}
 
-}
-.overlayButton.overlayButton--play {
-  position: absolute;
-  top: 50px !important;
-  right: 30px !important;
-}
+
 
 
 
@@ -54,6 +50,14 @@
 .overlayButton svg {
   fill: var(--primary);
   font-size: 40px;
+  width: 50px;
+  height: 50px;
+}
+.overlayButton img {
+  fill: var(--primary);
+  font-size: 40px;
+  width: 50px;
+  height: 50px;
 }
 
 .overlayButton>i:hover {
@@ -139,10 +143,16 @@
     width: 100vw;
     left: 0px;
   }
-
-  .overlayButton {
+  .overlay-button-container {
+    position: fixed;
     top: 120px;
+    right: 20px;
+    z-index: 2;
   }
+  .overlay-button-container.play {
+    top: 70px;
+  }
+ 
 }
 
 .jsgif {

@@ -92,6 +92,7 @@ const DropdownAddObjects = (props) => {
   }, []);
 
   const handleReposition = (e) => {
+    setActiveMenu("main");
     const offset = calcOutOfBounds(e.clientX, e.clientY);
     setOffsetX(-offset.x);
     setOffsetY(-offset.y);
@@ -198,7 +199,7 @@ const DropdownAddObjects = (props) => {
           onTop: true
         } : {})
     };
-
+    console.log(object)
     let newPages = [...props.state.pages];
     const thisPage = { ...newPages[props.state.level - 1] };
     if (props.layer.attrs.name === "group") {
@@ -673,9 +674,7 @@ const DropdownAddObjects = (props) => {
           <DropdownItem onClick={addStar} leftIcon={<i onClick={addStar}><i><Star className="icon add-icons" /></i></i>}>{t("edit.shape.star")}</DropdownItem>
           <DropdownItem
             onClick={addLine}
-            leftIcon={<i className="icons" onClick={addLine} style={{
-              fontWeight: 800
-            }}>
+            leftIcon={<i className="add-icons-line" onClick={addLine}>
               /
             </i>}
           >

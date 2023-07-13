@@ -340,7 +340,9 @@ class Graphics extends Component {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
-    
+    if (prevProps.level !== this.props.level) {
+      this.setState({ level: this.props.level })
+    }
     handleCollisions(this.props, this.state);
 
     // Show overlay if it is the next page and a pageEnter overlay is available
@@ -564,6 +566,7 @@ class Graphics extends Component {
   }
 
   componentDidMount() {
+
     if(this.props.gamepieceStatus.running) {
       this.setState({
         selectrole: false
@@ -760,7 +763,7 @@ class Graphics extends Component {
 
         {/* The button to view the overlay */}
         {this.getPage(this.state.level - 1).overlays && (
-          <>
+          <div className='overlay-button-container play'>
             {this.getPage(this.state.level - 1).overlays.map((overlay, i) => {
               if (!overlay.hideBtn) {
                 let nonHiddenI = 0;
@@ -773,7 +776,7 @@ class Graphics extends Component {
                 return (
                   <div
                     key={i}
-                    className="overlayButton overlayButton--play"
+                    className="overlayButton"
                     onClick={() => {
                       if (this.state.personalAreaOpen) return;
                       this.setOverlayOpen(true, overlay.id);
@@ -805,7 +808,7 @@ class Graphics extends Component {
                 return;
               }
             })}
-          </>
+          </div>
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}

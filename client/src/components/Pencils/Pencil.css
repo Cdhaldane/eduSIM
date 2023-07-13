@@ -1,16 +1,6 @@
-#pencilTimeline {
-  color: var(--primary);
-  font-size: 1.70em;
-  padding: 0px 6px;
-}
 
-#pencilTimeline:hover {
-  cursor: pointer;
-  text-shadow: 2px 2px 3px rgba(0,0,0,0.25);
-  transition: all 0.1s;
-}
 
-#pencil3{
+#pencil3 {
   position: fixed;
   top: 80px;
   right: 20px;
@@ -18,20 +8,40 @@
   transition-duration: 0.3s !important;
   transition-timing-function: cubic-bezier(0.4, 0, 1, 1) !important;
 }
+
 .pencilinfo {
   display: flex;
   align-items: center;
   flex-direction: row;
   width: auto;
-  padding-right: 12px !important;
-  padding: 0.5px;
+  padding: 3.9px 12px 3.9px 3px;
   border-radius: 7px;
+  width: max-content !important;
+  margin-top: 5px;
+  box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+  margin-right: 10px;
 }
+
+.pencilinfo:hover {
+  box-shadow: 0px 0px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.1s;
+}
+
 .pencilinfo h1 {
   color: var(--dark);
   font-size: 1.50rem;
   font-weight: normal;
+  width: 100%;
 }
+
+.pencilinfo svg {
+  width: 30px !important;
+    height: 30px !important;
+    margin-right: 5px !important;
+    fill: var(--primary);
+}
+
 .pencilinfo:hover {
   cursor: pointer;
 }
@@ -62,17 +72,19 @@
   position: relative;
   top: -150px;
 }
+
 .dropTimeline {
   width: auto !important;
   height: auto !important;
 }
+
 .drop3 {
   position: fixed;
   top: 150px;
   right: 320px;
 }
 
-.drop4{
+.drop4 {
   position: fixed;
   top: 20px;
   left: 270px;
@@ -83,11 +95,13 @@
   top: -270px;
   left: unset;
 }
+
 .drop4.hidden {
   position: fixed;
   top: 20px;
   left: 90px;
 }
+
 .drop4.submenu {
   left: 440px;
 }
@@ -96,11 +110,13 @@
   #pencil3 {
     top: 140px;
   }
+
   .drop3 {
     top: 210px;
   }
 
-  #pencil4.hidden, #pencil4.submenu {
+  #pencil4.hidden,
+  #pencil4.submenu {
     opacity: 0;
     pointer-events: none;
     left: 20px;

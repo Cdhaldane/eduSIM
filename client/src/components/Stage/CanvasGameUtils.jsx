@@ -187,7 +187,6 @@ export const handleCollisions = (props, state) => {
   let groupedArrays = splitArrayByValue(trigs, 2);
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
-  console.log(state)
   groupedArrays.map((group) => {
     let touchingArray = [];
     group.map((item) => {

@@ -104,49 +104,45 @@ const Alerts = (props) => {
   const [curr, setCurr] = useState(0)
   const [firstLoad, setFirstLoad] = useState(false)
   const [allAlerts, setAllAlerts] = useState([])
+  const [currAlerts, setCurrAlerts] = useState([])
 
   const alertContext = useAlertContext();
   const { t } = useTranslation();
 
+
   useEffect(() => {
-    let out = []
-    props.alerts.map((alert, index) => {
-      if (alert.page === props.page) {
-        out.push(alert)
-      }
-    })
-    handeleNextLevel(out)
-    setAllAlerts(out)
-  }, [props.alerts, props.page, props.globalVars])
+    const out = props.alerts.filter((alert) => alert.page === props.page);
+    handleNextLevel(out);
+    setCurrAlerts(out);
+    setAllAlerts(props.alerts);
+  }, [props.alerts, props.page, props.globalVars]);
 
   const handleAddAlert = (data) => {
-    let out = props.alerts || []
-    out.push(data)
-    props.setAlerts(out)
-    data.page = props.page
-    setAllAlerts([...allAlerts, data])
+    data.page = props.page;
+    const out = [...props.alerts || [], data];
+    props.setAlerts(out);
+    setCurrAlerts([...currAlerts, data]);
     setAdding(false);
   };
 
   const handleEditAlert = (data) => {
-    let out = props.alerts
-    out[editingIndex] = data
-    setAllAlerts(out)
-    props.setAlerts(out)
+    const out = [...currAlerts];
+    const alerts = [...allAlerts];
+    out[editingIndex] = data;
+    alerts[alerts.indexOf(currAlerts[editingIndex])] = data;
+    props.setAlerts(alerts);
+    setCurrAlerts(out);
     setEditingIndex(-1);
     setAdding(false);
   };
 
   const handleRemoveAlert = (data) => {
-    let out = props.alerts || []
-    let actual = []
-    out.map((alert, index) => {
-      if (alert !== data)
-        actual.push(alert)
-    })
-    props.setAlerts(actual)
-    data.page = props.page
-    setAllAlerts(actual)
+    const out = [...currAlerts];
+    const alerts = [...allAlerts];
+    out.splice(editingIndex, 1);
+    alerts.splice(alerts.indexOf(currAlerts[editingIndex]), 1);
+    props.setAlerts(alerts);
+    setCurrAlerts(out);
     setAdding(false);
   };
 
@@ -207,7 +203,7 @@ const Alerts = (props) => {
 
   }
 
-  const taskTrueCount = allAlerts?.reduce((a, data) =>
+  const taskTrueCount = currAlerts?.reduce((a, data) =>
     !checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt) && !data.optional ? a + 1 : a
     , 0)
 
@@ -215,15 +211,15 @@ const Alerts = (props) => {
     let advance = false;
     let numRequired = 0;
     let curr = 0;
-    for (let i = 0; i < allAlerts.length; i++) {
-      if (!allAlerts[i].optional) {
+    for (let i = 0; i < currAlerts.length; i++) {
+      if (!currAlerts[i].optional) {
         numRequired += 1;
       }
     }
     if (numRequired === 0) return true
-    for (let i = 0; i < allAlerts.length; i++) {
-      let done = checkObjConditions(allAlerts[i].varName, allAlerts[i].varCondition, allAlerts[i].varCheck, allAlerts[i].varCheckAlt)
-      if (!allAlerts[i].optional && done) {
+    for (let i = 0; i < currAlerts.length; i++) {
+      let done = checkObjConditions(currAlerts[i].varName, currAlerts[i].varCondition, currAlerts[i].varCheck, currAlerts[i].varCheckAlt)
+      if (!currAlerts[i].optional && done) {
         curr += 1;
       }
     }
@@ -245,18 +241,17 @@ const Alerts = (props) => {
     const done = taskTrueCount;
   }, [taskTrueCount, props.refresh]);
 
-  const handeleNextLevel = (out) => {
+  const handleNextLevel = (out) => {
     let page = props.page
     for (let i = 0; i < out.length; i++) {
       if (checkObjConditions(out[i].varName, out[i].varCondition, out[i].varCheck, out[i].varCheckAlt)) {
         if (!out[i].advance) {
           if (checkAdvance() && firstLoad === true) {
-            console.log('Advance')
-            props.handleLevel(page + 1)
+            // props.handleLevel(page + 1)
             return;
           }
         } else {
-          if(!out[i].optional) alertContext.showAlert("Objective completed! Advance when ready.", "success");
+          if (!out[i].optional) alertContext.showAlert("Objective completed! Advance when ready.", "success");
           else alertContext.showAlert("Objective completed!", "success");
         }
       }
@@ -268,7 +263,7 @@ const Alerts = (props) => {
     <AlertsContainer>
       <h2>{t("sidebar.alerts")}</h2>
       <hr />
-      {allAlerts.length > 0 && allAlerts.map((data, index) => {
+      {currAlerts.length > 0 && currAlerts.map((data, index) => {
         const done = checkObjConditions(data.varName, data.varCondition, data.varCheck, data.varCheckAlt);
         return (
           <React.Fragment key={index}>
