@@ -168,16 +168,27 @@
   display: flex;
   justify-content: space-between !important;
 }
+.variable-hold select {
+  height: auto;
+  width: 50%;
+  padding: 1px;
+  font-size: 1em;
+  border: 1px solid var(--primary);
+  border-radius: 5px;
+  opacity: 9;
+  margin-bottom: 3px;
+}
 .variable-hold input{
   font-size: 1.0em !important;
   opacity: 1 !important;
-  padding: 3px !important;
+  padding: 2px 5px !important;
   width: 50% !important;
   margin-bottom: 3px !important;
   border: 1px solid var(--primary) !important;
   background-color: white !important;
-
+  border-radius: 5px !important;
 }
+
 .variable-adding button{
 
 }
@@ -916,10 +927,7 @@
 .trigger-inputs div{
   display: flex;
 }
-.vars-sidebar{
-  display: flex;
-  flex-direction: row;
-}
+
 .condition-inputs i{
   font-size: 1.4em !important;
   width: 15px !important;
@@ -949,7 +957,22 @@
   display: flex;
   overflow-wrap: break-word;
 }
-
+.vars-sidebar{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--primary);
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+.vars-sidebar svg {
+  width: 25px !important;
+  height: 25px !important;
+  fill: white;
+  cursor: pointer;
+}
 .condition-inputs h1{
   color: var(--red);
   font-size: 1.3em;
@@ -957,6 +980,29 @@
   margin-left: 10px;
   font-style:oblique;
 }
+
+.display {
+  display: flex;
+  height: 100%;
+  margin: 0 auto;
+  width: 100%;
+}
+.display h1{
+  color: var(--red);
+  font-size: 1.3em;
+  margin-right: 5px;
+  margin-left: 10px;
+  font-style:oblique;
+}
+.display h1:nth-child(3){
+  color: var(--almostwhite);
+  background-color: var(--primary);
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: left;
+  width: 100%;
+}
+
 .andfix{
   margin-right: 0px!important;
 }

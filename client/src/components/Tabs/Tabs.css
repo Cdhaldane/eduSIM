@@ -618,12 +618,6 @@ input[type='radio']:checked:after {
   left: -500px;
 }
 
-.var-trash {
-  color: var(--primary);
-  font-size: 1.0rem;
-  position: relative;
-
-}
 
 
 

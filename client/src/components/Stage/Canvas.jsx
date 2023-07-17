@@ -9,7 +9,8 @@ import { withTranslation } from "react-i18next";
 import { Image } from "cloudinary-react";
 import { flushSync } from 'react-dom'; // Note: react-dom, not react
 import ReactDOM from 'react-dom';
-
+import { v4 as uuidv4 } from 'uuid';
+import { Tooltip } from "../Tooltip/Tooltip";
 
 // Dropdowns
 import DropdownRoles from "../Dropdown/DropdownRoles";
@@ -20,8 +21,9 @@ import DropdownOverlay from "../Dropdown/DropdownOverlay";
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
 import Layers from "../../../public/icons/layers.svg"
+import Plus from "../../../public/icons/plus.svg"
 
-import CanvasUtils from './CanvasUtils';
+import CanvasUtils, { handleArrowKeys } from './CanvasUtils';
 
 // Standard Konva Components
 import Konva from "konva";
@@ -1888,7 +1890,7 @@ class Graphics extends Component {
     }
   }
 
-  handlePaste = () => {
+  handlePaste = (direction) => {
     if (
       this.state.copied === null ||
       this.state.copied === undefined ||
@@ -1933,6 +1935,7 @@ class Graphics extends Component {
     // Get the top left copied shape's x & y coords
     let originX = null;
     let originY = null;
+
     const itemsFlat = stateItems.flat();
     for (let i = 0; i < itemsFlat.length; i++) {
       if (originX === null || itemsFlat[i].x < originX) {
@@ -1955,10 +1958,16 @@ class Graphics extends Component {
       const typeIndex = this.savedObjects.indexOf(types[i]);
       const delCount = this.state[this.deletionCounts[typeIndex]];
       for (let j = 0; j < itemsFlat.length; j++) {
+        let pasteX = this.state.selection.x1 - (itemsFlat[j].width / 2);
+        let pasteY = this.state.selection.y1 - (itemsFlat[j].height / 2);
+        if (direction === 'inPlace') {
+          pasteX = itemsFlat[j].x;
+          pasteY = itemsFlat[j].y;
+        }
         if (this.getObjType(itemsFlat[j].id) === types[i]) {
           const num = objects.length + delCount + 1;
-          const newX = this.state.selection.x1 + (itemsFlat[j].x - originX);
-          const newY = this.state.selection.y1 + (itemsFlat[j].y - originY);
+          const newX = pasteX;
+          const newY = pasteY;
           const newId = types[i] + num;
           const newObject = {
             ...itemsFlat[j],
@@ -2479,7 +2488,15 @@ class Graphics extends Component {
       paste = 86,
       z = 90,
       y = 89,
-      r = 82;
+      r = 82,
+      left = 37,
+      up = 38,
+      right = 39,
+      down = 40;
+
+    if (event.keyCode === left || event.keyCode === up || event.keyCode === right || event.keyCode === down) {
+      handleArrowKeys(event.keyCode, this)
+    }
     if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
       this.handleDelete();
       this.handleCopy();
@@ -2493,6 +2510,8 @@ class Graphics extends Component {
       this.handleRedo();
     } else if (event.ctrlKey && event.keyCode === copy) {
       this.handleCopy();
+    } else if (event.ctrlKey && event.keyCode === paste && event.shiftKey) {
+      this.handlePaste('inPlace');
     } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
       this.handlePaste();
     } else if (event.ctrlKey) {
@@ -3305,16 +3324,16 @@ class Graphics extends Component {
       let num = this.state[type].length + delCount + 1;
       this.state[type].forEach((obj) => {
         let copyObj = { ...obj };
-        if(obj.rolelevel === roleName){
-        copyObj.rolelevel = roleName;
-        copyObj.name = type + num;
-        copyObj.ref = type + num;
-        copyObj.id = type + num;
-        copyObj.level = level;
-        newObj.push(copyObj);
-        num++;
+        if (obj.rolelevel === roleName) {
+          copyObj.rolelevel = roleName;
+          copyObj.name = type + num;
+          copyObj.ref = type + num;
+          copyObj.id = type + num;
+          copyObj.level = level;
+          newObj.push(copyObj);
+          num++;
 
-        this.state.pages[level - 1].personalLayers.push(copyObj.id)
+          this.state.pages[level - 1].personalLayers.push(copyObj.id)
         }
       })
       console.log(newObj)
@@ -3341,7 +3360,23 @@ class Graphics extends Component {
     }
   }
 
+  handleAddOverlay = () => {
+    const { pages, level } = this.state;
+    const newOverlay = {
+      id: uuidv4(),
+      overlayOpenOption: "doNotAutoOpen",
+      positionRect: this.positionRect,
+      hideBtn: false,
+      layers: []
+    }
+    const updatedPages = [...pages]; // Create a shallow copy of the pages array
 
+    updatedPages[level - 1].overlays.push(newOverlay); // Replace the updated overlay object in the pages array
+
+    this.setState({
+      pages: updatedPages
+    });
+  }
 
 
   renderAllObjects = () => {
@@ -3447,6 +3482,9 @@ class Graphics extends Component {
         {/* The button to edit the overlay (only visible if overlay is active on the current page) */}
         {this.state.pages[this.state.level - 1] && (
           <div className='overlay-button-container'>
+            <Tooltip tooltipText="Add new overlay" direction="left">
+              <button onClick={() => this.handleAddOverlay()} ><Plus /></button>
+            </Tooltip>
             {this.state.pages[this.state.level - 1].overlays.map((overlay, i) => {
               return (
                 <div

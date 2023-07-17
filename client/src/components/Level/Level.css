@@ -54,14 +54,18 @@
   fill: var(--white);
   font-weight: bold;
 }
-
+.instructionsModal {
+  margin: 5% auto !important;
+  width: 1000px;
+  height: 80% !important;
+}
 .levelInstructionsDiv {
   display: block !important;
   margin: 0 !important;
 }
 
 .levelInstructionsTable>tr>td {
-  font-size: 22px;
+  font-size: 20px;
   vertical-align: top;
 }
 
@@ -427,7 +431,11 @@
     transform: translateX(0px);
   }
 
- 
+  .instructionsModal {
+    margin: 2% auto !important;
+    width: 98%;
+    height: 80% !important;
+  }
   .level-buttons {
     position: absolute;
     top: 0px;

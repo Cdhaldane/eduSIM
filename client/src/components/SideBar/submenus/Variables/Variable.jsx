@@ -8,6 +8,7 @@ import "../../Sidebar.css";
 import "./Variable.css"
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
+import Pencil from "../../../../../public/icons/pencil.svg"
 import { use } from "i18next";
 
 
@@ -22,6 +23,7 @@ const Variable = (props) => {
   const [updater, setUpdater] = useState(0);
   const [contextIndex, setContextIndex] = useState(-1)
   const [deleteIndex, setDeleteIndex] = useState(0);
+  const [editingIndex, setEditingIndex] = useState(-1);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
   const confirmationVisibleRef = useRef(confirmationVisible);
   const setConfirmationModal = (data) => {
@@ -54,6 +56,13 @@ const Variable = (props) => {
       }
       value = (arrayVal)
     }
+    if (varType === "boolean") {
+      console.log(varValue)
+      if (varValue === 'true')
+        value = true
+      else
+        value = false
+    }
     if (value !== value || value === NaN) {
       alertContext.showAlert(t("Value Not Valid"), "warning");
       return;
@@ -62,7 +71,21 @@ const Variable = (props) => {
       alertContext.showAlert(t("VarName cannot be a system Variable, change the name :)"), "warning");
       return;
     }
-    else {
+
+    if (editingIndex !== -1) {
+      let data = variables;
+      data[editingIndex] = { [varName]: value }
+      if (props.current === 'global') {
+        props.setGlobalVars(data);
+        setShowAdd(false)
+      }
+      if (props.current === 'session') {
+        props.setLocalVars(data);
+        setShowAdd(false)
+      }
+      setVariables(data)
+      setEditingIndex(-1)
+    } else {
       if (props.current === 'global') {
         let data = variables;
         data.push({ [varName]: value })
@@ -76,14 +99,17 @@ const Variable = (props) => {
         setShowAdd(false)
       }
     }
+    setVarName('')
+    setVarValue('')
+    setVarType('integer')
+    setEditingIndex(-1)
   }
 
 
   const deleteVar = (data) => {
     let newData = [];
-    console.log(data)
     variables.map((item) => {
-      if(item !== data)
+      if (item !== data)
         newData.push(item)
     })
     if (props.current === 'global') {
@@ -107,32 +133,44 @@ const Variable = (props) => {
         });
         if (isObjectInArray)
           return key
-          
+
       }
     }
+  }
+  const handleEdit = (data, i) => {
+    setEditingIndex(i)
+    setShowAdd(true)
+    setVarName(Object.keys(data)[0])
+    setVarValue(Object.values(data)[0])
+    let type = typeof (Object.values(data)[0])
+    if (type === 'number') type = 'integer'
+    setVarType(type)
   }
 
   const populateGameVars = (data) => {
     let list = [];
-  
+
     for (let i = 0; i < data.length; i++) {
       let x = getPageData(data[i]);
-  
+      console.log(Object.values(data[i])[0])
       let divElement = (
         <div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className='vars-sidebar'>
-            <i onClick={() => { setConfirmationModal(true); setDeleteIndex(data[i]); }}><Trash className="icon var-trash" /></i>
+            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(data[i]) }} className="icon var-trash" />
+            <Pencil onClick={() => handleEdit(data[i], i)}className="icon var-pencil"/>
             <h4 title={'Group ' + x}>{x}</h4>
           </div>
+          <div className="display">
           <h1>{Object.keys(data[i])}</h1>
           <h2> = </h2>
-          <input type="text" placeholder={data[i] ? Object.values(data[i]) : "Some Value"} onChange={e => handleGame(e.target.value, Object.keys(data[i]), i)} />
+          <h1>{Object.values(data[i]).toString()}</h1>
+          </div>
         </div>
       );
-  
+
       list.push({ x, element: divElement });
     }
-  
+
     list.sort((a, b) => {
       if (a.x < b.x) {
         return -1;
@@ -141,9 +179,9 @@ const Variable = (props) => {
       }
       return 0;
     });
-  
+
     const sortedList = list.map(item => item.element);
-  
+
     return sortedList;
   };
 
@@ -190,6 +228,7 @@ const Variable = (props) => {
           <div className="variable-choose">
             <label for="var-type">Variable Type</label>
             <select name="var-type" id="var-type" onChange={(e) => setVarType(e.target.value)} value={varType}>
+              <option value="boolean">Boolean</option>
               <option value="integer">Integer</option>
               <option value="arrayInt">Integer Array</option>
               <option value="string">String</option>
@@ -200,13 +239,21 @@ const Variable = (props) => {
             <h1>Variable Name</h1>
             <input type="text" value={varName} placeholder={"Name"} onChange={(e) => setVarName(e.target.value)} />
           </div>
+
           <div className="variable-hold">
             <h1>Variable Value</h1>
-            <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
+            {varType !== 'boolean' ? (
+              <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
+            ) : (
+              <select name="var-value" id="var-value" onChange={(e) => setVarValue(e.target.value)} value={varValue}>
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            )}
           </div>
           <div className="variable-hold">
             <button onClick={() => addVar()}>{t("common.add")}</button>
-            <button onClick={() => setShowAdd(false)}>{t("common.cancel")}</button>
+            <button onClick={() => {setShowAdd(false), setEditingIndex(-1)}}>{t("common.cancel")}</button>
           </div>
         </div>
       )}

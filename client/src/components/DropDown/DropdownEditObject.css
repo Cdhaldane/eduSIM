@@ -115,6 +115,7 @@ ul {
   padding: 10px;
   box-shadow: var(--box-shadow);
   animation-duration: 0.5s;
+  width: 272px;
 }
 
 .timer {
@@ -207,11 +208,11 @@ ul {
   background: var(--white);
   color: var(--primary);
   font-family: inherit;
-  font-size: 0.55em;
+  font-size: 0.52em;
   text-transform: uppercase !important;
   font-weight: 700;
   transition: all .3s;
-  border: 4px solid var(--primary) !important;
+  border: 3px solid var(--primary) !important;
   cursor: pointer;
   width: 48% !important;
   height: 50px !important;
@@ -224,7 +225,7 @@ ul {
 .color-button-container button.active {
   background-color: var(--primary) !important;
   color: var(--white) !important;
-  border: 4px solid var(--primary) !important;
+  border: 3px solid var(--primary) !important;
   font-weight: bolder !important;
 }
 

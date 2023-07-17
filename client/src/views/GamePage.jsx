@@ -137,7 +137,7 @@ const Game = (props) => {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
         console.log(status.level)
-        setLevel(status.level)
+        if(status.level) setLevel(status.level)
         setRoomStatus(status);
       });
       client.on("clientJoined", ({ id, ...player }) => {
@@ -221,6 +221,7 @@ const Game = (props) => {
 
 
   const handleLevel = (x, type) => {
+    console.log(x)
     if (type === 'game')
       setLevel(x)
     else {

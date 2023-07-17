@@ -39,7 +39,7 @@ const DropdownEditObject = (props) => {
   const [varOne, setVarOne] = useState(objState.varOne ? objState.varOne : "")
   const [varTwo, setVarTwo] = useState(objState.varTwo ? objState.varTwo : "")
 
-  const [showFill, setShowFill] = useState(true);
+  const [showFill, setShowFill] = useState(false);
   const [showStroke, setShowStroke] = useState(false);
 
   // Input Settings

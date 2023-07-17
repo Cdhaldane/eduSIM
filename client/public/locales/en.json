@@ -187,6 +187,8 @@
         "copyObjectSC": "Ctrl + C",
         "pasteObject": "Paste selected object",
         "pasteObjectSC": "Ctrl + V",
+        "pasteObjectInPlace": "Paste selected object in place",
+        "pasteObjectInPlaceSC": "Ctrl + Shift + V",
         "undo": "Undo action",
         "undoSC": "Ctrl + Z",
         "redo": "Redo action",
@@ -375,6 +377,8 @@
       "cond": {
         "positive": "contains a positive value",
         "negative": "contains a negative/null value",
+        "true": "is true",
+        "false": "is false",
         "isgreater": "is greater than",
         "isless": "is less than",
         "isequal": "is equal to",

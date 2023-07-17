@@ -221,6 +221,8 @@ const DropdownOverlay = (props) => {
               >
                 <option value="positive">{t("edit.cond.positive")}</option>
                 <option value="negative">{t("edit.cond.negative")}</option>
+                <option value="true">{t("edit.cond.istrue")}</option>
+                <option value="false">{t("edit.cond.isfalse")}</option>
                 <option value="isequal">{t("edit.cond.isequal")}</option>
                 <option value="onchange">{t("edit.cond.onchange")}</option>
               </select>

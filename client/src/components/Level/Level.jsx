@@ -146,7 +146,7 @@ const Level = (props) => {
             <Modal
               isOpen={showInfoPopup}
               onRequestClose={() => setShowInfoPopup(false)}
-              className="createmodalarea"
+              className="instructionsModal"
               overlayClassName="myoverlay"
               closeTimeoutMS={250}
               ariaHideApp={false}
@@ -182,6 +182,7 @@ const Level = (props) => {
                                 "cutObject",
                                 "copyObject",
                                 "pasteObject",
+                                "pasteObjectInPlace",
                                 "undo", "redo",
                                 "openAddShape"
                               ].map((key, i) => (

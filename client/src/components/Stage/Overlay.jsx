@@ -16,7 +16,7 @@ class Overlay extends Component {
   
 
   componentDidMount = () => {
-    let overlay = this.props.state.pages[this.props.state.level-1].overlays
+    let overlay = this.props.state.pages[this.props.state.level-1]?.overlays
     for(let i = 0; i < overlay.length; i++){
       if(overlay[i].id === this.props.state.overlayOpenIndex){
         this.setState({
@@ -50,7 +50,7 @@ class Overlay extends Component {
 
   handleClose = () => {
     let page = this.props.state.pages[this.props.state.level-1]
-    if(page.overlays[0].overlayOpenOption === "pageExit" && this.props.playMode){
+    if(page?.overlays[0].overlayOpenOption === "pageExit" && this.props.playMode){
       this.props.handleLevel(this.props.state.level+1)
     }
     this.props.closeOverlay();
@@ -80,7 +80,7 @@ class Overlay extends Component {
               id="overlayGameContainer"
               
               style={{
-                backgroundColor: this.props.state.pages[this.props.state.level - 1].overlayColor,
+                backgroundColor: this.props.state.pages[this.props.state.level - 1]?.overlayColor,
               }}
               className={this.props.playMode ? "playModeCanvasContainer" : ""}
               tabIndex="0"

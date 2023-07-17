@@ -15,6 +15,7 @@ const URLVideo = forwardRef((props, ref) => {
           {loading && <Loading />}
           {props?.type === "audio" ? (
             <ReactAudioPlayer
+              className="audio-player"
                src={props.src}
                volume={props.volume}
                loop={props.loop}

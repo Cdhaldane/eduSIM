@@ -9,6 +9,7 @@ import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
+import Pencil from "../../../../../public/icons/pencil.svg"
 import MultiLevel from "../../../Dropdown/Multilevel";
 import { set } from "immutable";
 import { use } from "i18next";
@@ -107,7 +108,7 @@ const Interaction = (props) => {
         list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
             <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(ints[i]); }} />
-            <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+            <Pencil onClick={() => handleEdit(i)} />
           </div>
           <div className="ints-container">
             <div className={"if"}>

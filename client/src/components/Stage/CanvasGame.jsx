@@ -258,13 +258,17 @@ class Graphics extends Component {
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
     let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
     let varLen = isNaN(val) ? (val || "").length : val;
-
+    console.log("checkObjConditions", conditions, vars, trueValue, trueValueAlt, val, varLen)
     if (val === true) val = 'true'
 
     if (val === false) val = 'false'
     switch (conditions.condition) {
       case "isequal":
         return val == trueValue;
+      case "true":
+        return val === 'true';
+      case "false":
+        return val === 'false';
       case "isgreater":
         return varLen > trueValue;
       case "isless":

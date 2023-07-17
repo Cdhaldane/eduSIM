@@ -9,6 +9,7 @@ import "../../Sidebar.css";
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
+import Pencil from "../../../../../public/icons/pencil.svg"
 import MultiLevel from "../../../Dropdown/Multilevel";
 import { useAlertContext } from "../../../Alerts/AlertContext";
 
@@ -48,8 +49,8 @@ const Trigger = (props) => {
     out = trigs?.map((trig, i) => (
       <div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
-          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(trig); }} />
-          <i onClick={() => handleEdit(i, trigs)} className="lnil lnil-pencil" />
+          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(trig) }} />
+          <Pencil onClick={() => handleEdit(i, trigs)} />
         </div>
         <div className="ints-container">
           <div className="if">

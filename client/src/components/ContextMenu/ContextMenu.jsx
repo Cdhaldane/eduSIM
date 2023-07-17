@@ -280,6 +280,8 @@ const ContextMenu = (props) => {
                   {[
                     "positive",
                     "negative",
+                    "true",
+                    "false",
                     "isgreater",
                     "isless",
                     "isequal",

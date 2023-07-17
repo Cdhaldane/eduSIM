@@ -27,12 +27,36 @@
 }
 
 .overlay-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   position: fixed;
   top: 70px;
   right: 20px;
   z-index: 2;
 }
-
+.overlay-button-container button {
+  display: flex;
+  justify-content: center;
+  background-color: var(--white);
+  padding: 3px;
+  fill: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.overlay-button-container button:hover {
+  background-color: var(--primary);
+  fill: var(--white);
+  transition: all 0.2s ease-in-out;
+}
+.overlay-button-container svg {
+  width: 30px;
+  height: 30px;
+}
 
 
 
@@ -251,3 +275,4 @@
   height: 100% !important;
   z-index: -1;
 }
+
