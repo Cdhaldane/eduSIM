@@ -100,15 +100,18 @@ const Interaction = (props) => {
     setShowConAdd(!showConAdd)
     setEditingIndex(i)
   }
+  
 
   const populateInteractions = (ints) => {
     let list = []
     for (let i = 0; i < ints.length; i++) {
+
       if (ints[i][6] === 'var') {
         list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
             <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(ints[i]); }} />
             <Pencil onClick={() => handleEdit(i)} />
+           
           </div>
           <div className="ints-container">
             <div className={"if"}>
@@ -122,10 +125,11 @@ const Interaction = (props) => {
         </div>)
       }
       else if (ints[i][6] === 'page') {
-        list.push(<div className="condition-inputs">
+        list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
-            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
-            <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(ints[i]); }} />
+            <Pencil onClick={() => handleEdit(i)} />
+            
           </div>
           <div className="ints-container">
             <div className={"if"}>
@@ -138,10 +142,11 @@ const Interaction = (props) => {
         </div>)
       }
       else {
-        list.push(<div className="condition-inputs">
+        list.push(<div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
           <div className="variable-buttons">
-            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
-            <i onClick={() => handleEdit(i)} className="lnil lnil-pencil" />
+            <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(ints[i]); }} />
+            <Pencil onClick={() => handleEdit(i)} />
+           
           </div>
           <div className="ints-container">
             <div className={"if"}>
@@ -177,18 +182,21 @@ const Interaction = (props) => {
     setEditingIndex(-4)
     setFullInteractions(x)
   }
-  const deleteCon = (i) => {
-    let a = fullInteractions
+  const deleteCon = (int) => {
+    let a = props.current === 'global' ? props.globalInts : props.localInts
+    let page = getPageData(int)
     let x = []
-    a.map((int) => {
-      if(int !== i)
-      x.push(int)
+    a.map((temp) => {
+      if(temp !== int)
+      x.push(temp)
     })
     
     if (props.current === 'session') props.setLocalInts(x)
     if (props.current === 'global') props.setGlobalInts(x)
 
-    setFullInteractions(x)
+    props.handleGroup(page, int, 'remove', 'interaction')
+    setConfirmationModal(false)
+    // setFullInteractions(x)
   }
   const handle1 = () => {
     setShowAddition(!showAddition)
@@ -203,7 +211,6 @@ const Interaction = (props) => {
       x[4] = fullInteractions[editingIndex][4]
       x[5] = fullInteractions[editingIndex][5]
     }
-    console.log(x)
     setInteraction(x)
   }
   const handleCheck = (e) => {

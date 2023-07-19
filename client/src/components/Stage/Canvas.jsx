@@ -313,7 +313,6 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
-        console.log(objects)
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -1843,17 +1842,15 @@ class Graphics extends Component {
 
   handleLock = () => {
     const type = this.getObjType(this.state.selectedShapeName);
-
     this.setState(
       prevState => ({
-        [type]: prevState[type]?.map(obj =>
-          obj.id === this.state.selectedShapeName
-            ? {
+        [type]: prevState[type]?.map(obj => 
+          obj.id === this.state.selectedShapeName ? {
               ...obj,
-              lock: !obj.lock,
+              lock: !obj.lock ? true : false,
             }
             : obj
-        ),
+          ),
       }),
       () => {
         const lockedObj = this.state[type]?.find(
@@ -1958,8 +1955,8 @@ class Graphics extends Component {
       const typeIndex = this.savedObjects.indexOf(types[i]);
       const delCount = this.state[this.deletionCounts[typeIndex]];
       for (let j = 0; j < itemsFlat.length; j++) {
-        let pasteX = this.state.selection.x1 - (itemsFlat[j].width / 2);
-        let pasteY = this.state.selection.y1 - (itemsFlat[j].height / 2);
+        let pasteX = this.state.selection.x1 + (itemsFlat[j].x - originX);
+        let pasteY = this.state.selection.y1 - (itemsFlat[j].y - originY);
         if (direction === 'inPlace') {
           pasteX = itemsFlat[j].x;
           pasteY = itemsFlat[j].y;
@@ -2168,6 +2165,19 @@ class Graphics extends Component {
           ? {
             ...obj,
             stroke: e.hex
+          }
+          : obj
+      )
+    }));
+  }
+  handleBackgroundColor = (e) => {
+    const type = this.getObjType(this.state.selectedShapeName);
+    this.setState(prevState => ({
+      [type]: prevState[type].map(obj =>
+        obj.id === this.state.selectedShapeName
+          ? {
+            ...obj,
+            backgroundColor: e.hex
           }
           : obj
       )
@@ -3322,9 +3332,13 @@ class Graphics extends Component {
       let newObj = []
       let delCount = this.state[this.deletionCounts[i]];
       let num = this.state[type].length + delCount + 1;
+      let layerOut = []
       this.state[type].forEach((obj) => {
+        let layerArray = this.state.pages[this.state.level - 1].personalLayers
         let copyObj = { ...obj };
-        if (obj.rolelevel === roleName) {
+        
+        if (obj.rolelevel === roleName && layerArray.includes(obj.id)) {
+          console.log(obj)
           copyObj.rolelevel = roleName;
           copyObj.name = type + num;
           copyObj.ref = type + num;
@@ -3332,11 +3346,10 @@ class Graphics extends Component {
           copyObj.level = level;
           newObj.push(copyObj);
           num++;
-
-          this.state.pages[level - 1].personalLayers.push(copyObj.id)
+          layerOut.push(copyObj.id)
+          this.state.pages[level - 1].personalLayers = layerOut;
         }
       })
-      console.log(newObj)
       this.setState({
         [type]: [...this.state[type], ...newObj]
       })
@@ -3749,6 +3762,7 @@ class Graphics extends Component {
                   handleUngrouping={this.handleUngrouping}
                   handleGrouping={this.handleGrouping}
                   handleStrokeColor={this.handleStrokeColor}
+                  handleBackgroundColor={this.handleBackgroundColor}
                   handleFillColor={this.handleFillColor}
                   handleWidth={this.handleWidth}
                   handleOpacity={this.handleOpacity}

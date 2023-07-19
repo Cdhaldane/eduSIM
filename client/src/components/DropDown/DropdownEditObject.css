@@ -92,8 +92,9 @@ ul {
 /* Dropdown Menu */
 .fixed-anim {
   animation-duration: 1.0s;
-  animation-name: slideinleft !important;
+  animation-name: fadeIn !important;
 }
+
 
 .fixed-anim-2 {
   animation-duration: 1.0s;
@@ -203,6 +204,37 @@ ul {
   display: flex;
   justify-content: space-between;
 }
+.color-button-container.text  {
+  /* flex-wrap: wrap; */
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border: 4px solid var(--primary);
+  border-radius: 11px;
+  overflow: hidden;
+}
+.color-button-container.text button {
+  width: 45% !important;
+  border: 0px !important;
+  border-radius: 0px !important;
+  font-size: 0.50em;
+}
+.color-button-container.text button:nth-child(2) {
+  width: 40% !important;
+  border: 0px !important;
+  border-radius: 0px !important;
+  font-size: 0.50em;
+  background-color: var(--almost-white) ;
+  padding: 5px;
+}
+
+.color-button-container.text button.active {
+  background-color: var(--primary) !important;
+  color: var(--white) !important;
+  border: 0px solid var(--primary) !important;
+  font-weight: bolder !important;
+  width: 50% !important;
+}
 
 .color-button-container>button {
   background: var(--white);
@@ -220,6 +252,8 @@ ul {
   align-items: center;
   justify-content: center;
   display: flex;
+  /* set button to wrape if text overflows */
+  white-space: wrap;
 }
 
 .color-button-container button.active {

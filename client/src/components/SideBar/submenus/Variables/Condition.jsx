@@ -10,8 +10,10 @@ import Plus from "../../../../../public/icons/circle-plus.svg"
 import Line from "../../../../../public/icons/minus.svg"
 import Pencil from "../../../../../public/icons/pencil.svg"
 import Multilevel from "../../../Dropdown/Multilevel";
-import { use } from "i18next";
-import { set } from "draft-js/lib/EditorState";
+
+
+const EMPTY_CONDITION = ['', '=', '', '+', ''];
+const INITIAL_CONDITIONS = Array(5).fill(EMPTY_CONDITION);
 
 const Condition = (props) => {
   const { t } = useTranslation();
@@ -23,8 +25,9 @@ const Condition = (props) => {
   const [showAddition, setShowAddition] = useState(false);
   const [variables, setVariables] = useState(props.globalVars)
   const [shapes, setShapes] = useState()
+  const [editState, setEditState] = useState([])
 
-  const [updater, setUpdater] = useState(0);
+
   const [editingIndex, setEditingIndex] = useState(-1);
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [confirmationVisible, setConfirmationVisible] = useState(false);
@@ -77,34 +80,7 @@ const Condition = (props) => {
   }, [props.allShapes])
 
 
-  const handleEdit = (i, cons) => {
-    props.setHeight(120)
-    let out = ([['', '=', '', '+', ''],
-    ['', '=', '', '+', ''],
-    ['', '=', '', '+', ''],
-    ['', '=', '', '+', ''],
-    ['', '=', '', '+', '']])
 
-    for (let j = 0; j < cons[i].length; j++) {
-      if (j < cons[i].length - 1) {
-        out[j] = cons[i][j]
-      }
-      else {
-        out[4] = cons[i][cons[i].length - 1]
-      }
-    }
-    let additions = [showAddition0, showAddition1, showAddition2, showAddition3]
-    for (let j = 0; j < out.length; j++) {
-      if (out[j][4] != '') handleEditState(j, true)
-      else handleEditState(j, false)
-    }
-    if (cons[i].length > 5)
-      setIfs(cons[i].length - 2)
-    else setIfs(cons[i].length - 1)
-    setCondition(out)
-    setShowConAdd(!showConAdd)
-    setEditingIndex(i)
-  }
 
   useEffect(() => {
     let out = ([['', '=', '', '+', ''],
@@ -115,14 +91,32 @@ const Condition = (props) => {
     setCondition(out)
   }, [props.globalCons, props.localCons])
 
+  const getPageData = (data) => {
+    let obj = props.group
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const isObjectInArray = value.condition.some(subArrayA =>
+          subArrayA.length === data.length &&
+          subArrayA.every((val, index) => JSON.stringify(val) === JSON.stringify(data[index]))
+        );
+        if (isObjectInArray)
+          return key
+
+      }
+    }
+  }
+
   const populateConditions = (cons) => {
     setFullConditions(cons)
     let list = []
     for (let i = 0; i < cons.length; i++) {
-      list.push(<div className="condition-inputs cons-condition" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
+      let x = getPageData(cons[i]);
+      list.push(<div className="condition-inputs cons-condition" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))} key={i}>
         <div className="variable-buttons">
-          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(i); }} />
+          <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(cons[i]); }} />
           <Pencil onClick={() => handleEdit(i, cons)} />
+
         </div>
 
         <div className="ints-container">
@@ -141,6 +135,8 @@ const Condition = (props) => {
             {(cons[i][cons[i].length - 1][4]) && (<><h3>{cons[i][cons[i].length - 1][3]}</h3><h2>{cons[i][cons[i].length - 1][4]}</h2></>)}
           </div>
         </div>
+
+        <h4 className="con-h4" title={'Group ' + x}>{x}</h4>
       </div>)
     }
 
@@ -153,21 +149,35 @@ const Condition = (props) => {
       alertContext.showAlert("A condition needs an if statement!", "warning");
       return
     }
-    let temp = condition
-    temp.splice(ifs, 4 - ifs)
+    let newItem = condition
+    console.log(condition)
+    newItem.splice(ifs, 4 - ifs)
     if (props.current === 'session') {
       let data = fullConditions
-      data.push(temp)
+      data.push(newItem)
       props.setLocalCons(data)
     }
     else if (props.current === 'global') {
-      let data = fullConditions
+      const data = [...fullConditions]
+      const out = [...props.globalCons]
+      const page = getPageData(editState);
+      const index = out.findIndex(item => _.isEqual(item, editState));
       if (editingIndex !== -1) {
-        data.splice(editingIndex, 1, temp); // Remove item at editingIndex and replace with temp
+        if (page > 0) {
+          props.handleGroup(page, editState, 'remove', 'condition');
+          props.handleGroup(page, newItem, 'add', 'condition');
+        }
+
+        out[index] = newItem
+        props.setGlobalCons(out)
+
       } else {
-        data.push(temp)
+        if (props.currentPage !== 0) {
+          props.handleGroup(props.currentPage, newItem, 'add', 'condition');
+        }
+        props.setGlobalCons([...props.globalCons, newItem])
       }
-      props.setGlobalCons(data)
+
     }
 
     setShowConAdd(!showConAdd)
@@ -184,18 +194,59 @@ const Condition = (props) => {
     setShowAddition1(false)
     setShowAddition2(false)
     setShowAddition3(false)
+    setEditState([])
     setIfs(1)
   }
 
-  const deleteCon = (i) => {
-    let data = fullConditions
-    data.splice(i, 1)
+  const deleteCon = (con) => {
+    let data = props.current === 'global' ? props.globalCons : props.localCons
+
+    let page = getPageData(con)
+    let out = []
+    data.map((item, index) => {
+      if (JSON.stringify(item) !== JSON.stringify(con)) {
+        out.push(item)
+      }
+    })
     if (props.current === 'global') {
-      props.setGlobalCons(data)
+      props.setGlobalCons(out)
     } else {
-      props.setLocalCons(data)
+      props.setLocalCons(out)
     }
-    setEditingIndex(-3)
+
+    props.handleGroup(page, con, 'remove', 'condition')
+    setConfirmationModal(false)
+    setEditingIndex(-1)
+  }
+  const handleEdit = (i, cons) => {
+    props.setHeight(120)
+    let data = cons[i].map((item) => Array.isArray(item) ? [...item] : { ...item });
+    let out = ([['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', ''],
+    ['', '=', '', '+', '']])
+
+    for (let j = 0; j < cons[i].length; j++) {
+      if (j < cons[i].length - 1) {
+        out[j] = cons[i][j]
+      }
+      else {
+        out[4] = cons[i][cons[i].length - 1]
+      }
+    }
+    for (let j = 0; j < out.length; j++) {
+      if (out[j][4] != '') handleEditState(j, true)
+      else handleEditState(j, false)
+    }
+    if (cons[i].length > 5)
+      setIfs(cons[i].length - 2)
+    else setIfs(cons[i].length - 1)
+
+    setEditState(data)
+    setCondition(out)
+    setShowConAdd(!showConAdd)
+    setEditingIndex(i)
   }
 
   useEffect(() => {
@@ -364,7 +415,7 @@ const Condition = (props) => {
     setEditingIndex(-1)
   }
   useEffect(() => {
-    if(editingIndex < 0)
+    if (editingIndex < 0)
       props.setHeight(180)
   }, [editingIndex]);
   return (
@@ -430,7 +481,7 @@ const Condition = (props) => {
           </div>
           <div className="con-hold">
             <button className="con-add-b" onClick={() => addCon()}>{editingIndex === -1 ? t("common.add") : "Edit"}</button>
-            <button className="con-can-b" onClick={() => (setShowConAdd(false), setEditingIndex(-2))}>{t("common.cancel")}</button>
+            <button className="con-can-b" onClick={() => { setShowConAdd(false), setEditingIndex(-1) }}>{t("common.cancel")}</button>
           </div>
         </div>
       )}

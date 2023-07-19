@@ -23,11 +23,12 @@ const DropdownEditObject = (props) => {
   const dropdownRef = useRef(null);
   const [fillColor, setFillColor] = useState("black");
   const [strokeColor, setStrokeColor] = useState("black");
+  const [backgroundColor, setBackgroundColor] = useState("white");
   const [strokeWidth, setStrokeWidth] = React.useState(0);
   const [opacity, setOpacity] = React.useState(1);
   const [font, setFont] = React.useState("Belgrano");
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
-  const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "160px" });
+  const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "180px" });
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.getObjState());
@@ -41,6 +42,7 @@ const DropdownEditObject = (props) => {
 
   const [showFill, setShowFill] = useState(false);
   const [showStroke, setShowStroke] = useState(false);
+  const [showBackground, setShowBackground] = useState(false);
 
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
@@ -129,6 +131,11 @@ const DropdownEditObject = (props) => {
     setStrokeColor(e.hex);
     props.handleStrokeColor(e);
   }
+  const handleChangeB = (e) => {
+    setBackgroundColor(e.hex);
+    props.handleBackgroundColor(e);
+  }
+
 
   const onSliderChange = (e) => {
     let newStrokeWidth = parseFloat(e);
@@ -475,7 +482,7 @@ const DropdownEditObject = (props) => {
       /* Edit a Text Object */
       return (
         <div
-          className="dropdownedit paddingRight"
+          className="dropdownedit paddingRight fixed-anim-2"
           ref={dropdownRef}
           style={{
             ...leftOrRight,
@@ -487,35 +494,73 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit">
-              <h1>{t("edit.textEdit")}</h1>
-              <b>
-                {t("edit.textColor")}
-                {/* <TwitterPicker
-                  colors={['black', '#FCB900', '#FF6900', '#00D084', '#0693E3',]}
-                  color={fillColor}
-                  triangle="hide"
-                  width={350}
-                  onChangeComplete={handleChangeF} /> */}
-              </b>
-              <br />
-              <b>{t("edit.textFont")}</b>
+              <input id="menuedit-name" type="text" onChange={e => handleObjectName(e.target.value)} value={objState?.name} placeholder={objState?.id} />
+              <div className="menuedit-color-container">
+                <div className='color-button-container text'>
+                  <button onClick={() => { setShowFill(!showFill), setShowStroke(false), setShowBackground(false) }} className={showFill ? 'active' : ''}  >Fill Color</button>
+                  <button onClick={() => { setShowBackground(!showBackground), setShowFill(false), setShowStroke(false) }} className={showBackground ? 'active' : ''}>Background Color</button>
+                  <button onClick={() => { setShowStroke(!showStroke), setShowFill(false), setShowBackground(false) }} className={showStroke ? 'active' : ''}>Stroke Color</button>
 
-              <b id="fontpick">
-                {font && (
-                  <FontPicker
-                    apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
-                    activeFontFamily={font}
-                    onChange={(nextFont) => {
-                      setFont(nextFont.family);
-                      props.handleFont(nextFont.family);
-                    }}
+                </div>
+                {showFill &&
+                  <ChromePicker
+                    color={fillColor}
+                    onChangeComplete={handleChangeF}
+                    className='color-picker'
                   />
-                )}
-              </b>
-              <br />
-              <b id="text">
-                <br />
-                {t("edit.opacity")}
+                }
+                {showBackground &&
+                  <ChromePicker
+                    className='color-picker'
+                    color={backgroundColor}
+                    onChangeComplete={handleChangeB} />
+                }
+                {showStroke &&
+                  <>
+                    <ChromePicker
+                      className='color-picker'
+                      color={strokeColor}
+                      onChangeComplete={handleChangeS} />
+                    <div className="menuedit-sliders">
+                      <div className='slider-container'>
+                        <h1>{t("edit.strokeWidth")}</h1>
+                        <input type="number" value={strokeWidth} onChange={e => onSliderChange(e.target.value)} />
+                      </div>
+                      <Slider
+                        min={0}
+                        max={100}
+                        step={0.01}
+                        className="slider"
+                        value={strokeWidth}
+                        onChange={onSliderChange}
+                        railStyle={railStyle}
+                        handleStyle={handleStyle}
+                        trackStyle={trackStyle}
+                      />
+                    </div>
+                  </>
+                }
+              </div>
+              <div className="menuedit-sliders">
+                <b>{t("edit.textFont")}</b>
+                <b id="fontpick">
+                  {font && (
+                    <FontPicker
+                      apiKey="AIzaSyCvq0AcfmcAeJeJ7-IZwi0JGjeTYBhWghU"
+                      activeFontFamily={font}
+                      onChange={(nextFont) => {
+                        setFont(nextFont.family);
+                        props.handleFont(nextFont.family);
+                      }}
+                    />
+                  )}
+                </b>
+              </div>
+              <div className="menuedit-sliders">
+                <div className='slider-container'>
+                  <h1>{t("edit.opacity")}</h1>
+                  <input type="number" value={opacity} onChange={e => onSliderChangeOpacity(e.target.value)} />
+                </div>
                 <Slider
                   className="slider"
                   value={opacity}
@@ -527,11 +572,11 @@ const DropdownEditObject = (props) => {
                   handleStyle={handleStyle}
                   trackStyle={trackStyle}
                 />
-              </b>
-              <br />
-              <br />
-              <b>{t("edit.textSize")}</b>
-              <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
+              </div>
+              <div className='menuedit-sliders'>
+                <b>{t("edit.textSize")}</b>
+                <input id="sizeinput" type="text" pattern="[0-9]*" onChange={handleSize} value={fontSize} />
+              </div>
             </div>
           </CSSTransition>
         </div>

@@ -240,6 +240,7 @@ const ContextMenu = (props) => {
                 title={editTitle}
                 handleFillColor={props.handleFillColor}
                 handleStrokeColor={props.handleStrokeColor}
+                handleBackgroundColor={props.handleBackgroundColor}
                 handleWidth={props.handleWidth}
                 handleOpacity={props.handleOpacity}
                 handleSize={props.handleSize}
@@ -262,7 +263,7 @@ const ContextMenu = (props) => {
               <div
                 className="dropdownedit conditionsedit fixed-anim"
                 style={{
-                  ...(editModalLeft ? { right: "110px" } : { left: "160px" }),
+                  ...(editModalLeft ? { right: "110px" } : { left: "180px" }),
                 }}
               >
                 <p>{t("edit.onlyDisplayThisIf")}</p>

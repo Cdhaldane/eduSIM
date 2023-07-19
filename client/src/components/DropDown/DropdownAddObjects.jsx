@@ -371,7 +371,10 @@ const DropdownAddObjects = (props) => {
         fill: props.state.colorf,
         rotation: 0,
         width: 300,
-        height: 25
+        height: 60,
+        stroke: 'black',
+        strokeWidth: 0,
+        backgroundColor: "transparent",
       }
     );
   }

@@ -43,14 +43,33 @@ const Trigger = (props) => {
 
     setShapes(out)
   }, [props.allShapes])
+  const getPageData = (data) => {
+    let obj = props.group
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const isObjectInArray = value.variable.some(obj => {
+          return Object.entries(data).every(([key, value]) => {
+            return obj[key] === value;
+          });
+        });
+        if (isObjectInArray)
+          return key
+
+      }
+    }
+  }
 
   const populateTriggers = (trigs) => {
     let out;
-    out = trigs?.map((trig, i) => (
+    out = trigs?.map((trig, i) => {
+      // let x = getPageData(trig)
+      return(
       <div className="condition-inputs" onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
         <div className="variable-buttons">
           <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(trig) }} />
           <Pencil onClick={() => handleEdit(i, trigs)} />
+          {/* <h4 title={'Group ' + x}>{x}</h4> */}
         </div>
         <div className="ints-container">
           <div className="if">
@@ -61,7 +80,8 @@ const Trigger = (props) => {
           </div>
         </div>
       </div>
-    ));
+      )
+  });
     return out;
   };
 

@@ -196,7 +196,6 @@ const CanvasPage = (props) => {
     const areaString = canvas.state.overlayOpen ? "overlay" :
       (canvas.state.personalAreaOpen ? "personal" : "group");
     const page = canvas.state.pages[canvas.state.level - 1];
-    console.log(canvas.state.level)
     const group = page.groupPositionRect;
     const personal = page.personalPositionRect[canvas.state.rolelevel];
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
@@ -228,9 +227,9 @@ const CanvasPage = (props) => {
       };
 
       if (areaString === "personal") {
-        area = { 
-          width: personalGameContainer.clientWidth, 
-          height: personalGameContainer.clientHeight 
+        area = {
+          width: personalGameContainer.clientWidth,
+          height: personalGameContainer.clientHeight
         }
       }
       if (areaString === "overlay") {
@@ -439,7 +438,7 @@ const CanvasPage = (props) => {
       id: obj.id,
       x: obj.x,
       y: obj.y,
-      lock: false,
+      lock: obj.lock,
       scaleX: obj.scaleX,
       scaleY: obj.scaleY,
       stroke: obj.stroke,
@@ -490,7 +489,8 @@ const CanvasPage = (props) => {
           onDragMove: (e) => canvas.onObjectDragMove(obj, e),
           onDragEnd: e => canvas.handleDragEnd(e, canvas.getObjType(obj.id), obj.ref),
           onContextMenu: canvas.onObjectContextMenu
-        } : {})
+        } : {}),
+
     }
   }
 
@@ -499,25 +499,10 @@ const CanvasPage = (props) => {
     return {
       width: obj.width,
       height: obj.height,
-  
+
     }
   }
-  const textRectProps = (obj, canvas, editMode) => {
-    return {
-      text: obj.name,
-      fontSize: obj.width / 6,
-      width: obj.width,
-      height: obj.height,
-      fill: 'white',
-      stroke: 'white',
-      strokeWidth: 0,
-      fontFamily: 'Calibri',
-      ref: obj.ref,
-      id: obj.id,
-      padding: 5,
-      align: 'center',
-    }
-  }
+
 
 
   const ellipseProps = (obj) => {
@@ -600,6 +585,42 @@ const CanvasPage = (props) => {
     }
   }
 
+  const textRectProps = (obj, canvas, editMode) => {
+    console.log(obj)
+    return {
+      width: obj.width,
+      height: obj.height,
+      fill: obj.backgroundColor,
+      stroke: obj.stroke,
+      strokeWidth: obj.strokeWidth,
+      fontFamily: 'Calibri',
+      ref: obj.ref,
+      id: obj.id,
+      padding: 5,
+      align: 'center',
+    }
+  }
+
+  const groupProps = (obj, canvas, editMode) => {
+    return {
+      x: obj.x,
+      y: obj.y,
+      draggable: editMode,
+      opacity: obj.opacity,
+      width: obj.width,
+      key: obj.id,
+      onDragMove: (e) => {
+        console.log(e.evt)
+        const group = e.target;
+        const newPosition = group.position();
+
+        // update the obj's x and y values to match the new position
+        obj.x = newPosition.x;
+        obj.y = newPosition.y;
+      },
+    }
+  }
+
   const textProps = (obj, canvas, editMode) => {
     // Load in the font if it hasn't been loaded yet
     if (!loadedFontsRef.current.includes(obj.fontFamily)) {
@@ -615,12 +636,27 @@ const CanvasPage = (props) => {
       });
     }
     return {
+      key: obj.id,
+      visible: canvas.state.canvasLoading ? false :
+        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
+      rotation: obj.rotation,
+      ref: obj.ref,
+      fill: obj.fill,
+      opacity: obj.opacity,
+      name: "shape",
+      id: obj.id,
+      lock: obj.lock,
+      scaleX: obj.scaleX,
+      scaleY: obj.scaleY,
+      infolevel: obj.infolevel,
+      overlay: obj.overlay,
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
+      padding: 5,
       ...(editMode ?
         {
           onTransform: canvas.handleTextTransform,
@@ -636,8 +672,26 @@ const CanvasPage = (props) => {
             canvas.setState({
               selectedFont: canvas.refs[obj.ref]
             });
-          }
-        } : {})
+          },
+          onTransform: (e) => {
+            if (editMode) {
+              canvas.handleTextTransform(e);
+            }
+    
+            const node = e.target;
+            // assuming a constant lineHeight
+            const lineHeight = node.fontSize();
+            let type = 'group'
+            if (obj.overlay) type = 'overlay'
+            if (obj.infolevel) type = 'personal'
+            const textArr = canvas.refs[type + 'Transformer']._nodes[0].textArr.length;
+            const textHeight = textArr * lineHeight + 10;
+            obj.width = node.width();
+            obj.height = textHeight;
+          },
+        } : {}),
+
+      
     }
   }
 
@@ -927,8 +981,8 @@ const CanvasPage = (props) => {
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
-    if(Object.keys(canvas.refs).length === 0) return null; //important! prevents render before canvas is ready
-    
+    if (Object.keys(canvas.refs).length === 0) return null; //important! prevents render before canvas is ready
+
     switch (type) {
       case "rectangles":
         return <Rect {...defaultObjProps(obj, canvas, editMode)} {...rectProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
@@ -965,7 +1019,12 @@ const CanvasPage = (props) => {
       case "stars":
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
-        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
+        return (
+          <Group {...groupProps(obj, canvas, editMode)}>
+            <Rect {...textRectProps(obj, canvas, editMode)} />
+            <Text {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />
+          </Group>
+        );
       case "lines":
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "richTexts":
@@ -1273,9 +1332,11 @@ const CanvasPage = (props) => {
   
     return returnValue;*/
   }
+
   return (
     <Suspense fallback={<Loading />}>
       {props.edit ? (
+
         <EditPage
           loadObjects={loadObjects}
           reCenter={reCenterObjects}

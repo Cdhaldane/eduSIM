@@ -83,7 +83,16 @@ const EditPage = (props) => {
       setUpdater(updater + 1);
     }
     document.body.style.zoom = "100%";
+    
   }, [updater]);
+
+  useEffect(() => {
+    document.title = ('eduSIM - Editing ' + localStorage.title);
+    // Clean up the title when the component unmounts
+    return () => {
+      document.title = 'eduSIM';
+    };
+  }, []);
 
   const handleSetRoles = (roles) => {
     setRoles(roles);

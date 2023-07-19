@@ -219,7 +219,6 @@ const DropdownRoles = (props) => {
 
   const updateRolesData = () => {
     let currRoles = props.roles;
-    console.log(currRoles.length)
     if (currRoles.length === 0) {
       currRoles.push({
         roleName: t("game.defaultRole"),
@@ -235,7 +234,6 @@ const DropdownRoles = (props) => {
   }
 
   const handleChange = (data) => {
-    console.log(data.value[0])
     setCopyTo(data.value[0] + 1)
   }
   const handleCopying = (e, role) => {

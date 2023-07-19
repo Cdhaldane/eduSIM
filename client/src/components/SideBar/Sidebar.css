@@ -621,7 +621,7 @@
   display: flex;
   flex-direction: row;
 }
-.con-tabs{
+.con-container button {
   width: 100%;
   border-radius: 0px;
   border: none;
@@ -631,34 +631,26 @@
   font-size: 0.8em;
   font-family: "Montserrat", sans-serif;
 }
+
+.con-tabs-selected{
+ 
+  background-color: var(--red);
+  color: white;
+}
 .con-tabs:hover{
   background-color: var(--red);
   color: white;
 }
-.con-tabs:focus{
-  background-color: var(--red);
+
+.con-tabs-session-selected{
+  background-color: var(--green);
   color: white;
-}
-
-.con-tabs-session{
-  width: 33.33%;
-  border-radius: 0px;
-  border: none;
-  height: 40px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  font-size: 0.8em;
-  font-family: "Montserrat", sans-serif;
-
 }
 .con-tabs-session:hover{
   background-color: var(--green);
   color: white;
 }
-.con-tabs-session:focus{
-  background-color: var(--green);
-  color: white;
-}
+
 
 
 
@@ -943,10 +935,7 @@
 }
 
 
-.cons-condition{
-  display: flex;
-  overflow-wrap: break-word;
-}
+
 
 
 .if{
@@ -971,6 +960,13 @@
   width: 25px !important;
   height: 25px !important;
   fill: white;
+  cursor: pointer;
+}
+.vars-sidebar h4 {
+  margin-left: 10px;
+  font-size: 1.0em;
+  font-weight: lighter;
+  color: white;
   cursor: pointer;
 }
 .condition-inputs h1{

@@ -865,13 +865,12 @@ a {
 
 #sizeinput {
   position: relative;
-  width: 200px;
+  width: 130px;
   left: 20px;
   border-radius: 0.3em;
-  border: solid 2px grey;
-  padding: 0.1em;
+  border: solid 3px var(--primary);
+  padding: 0px 5px;
   font-size: 1.2em;
-  padding-left: 3.0em;
 }
 
 #sizeinput::placeholder {
@@ -993,10 +992,64 @@ a {
   left: 0px;
 }
 
-#fontpick {
+#text {
+  display: flex;
+ height: 50px !important;
+ align-items: center;
+}
+
+#font-picker {
   position: relative;
   left: 20px;
-  margin-bottom: -100px;
+  width: 130px !important;
+  padding: 0px !important;
+  background-color: var(--primary) !important;
+  font-size: 0.8em;
+  border: 0px solid var(--primary) !important;
+  border-radius: 4px !important;
+
+}
+#font-picker .dropdown-button  {
+  background-color: var(--primary) !important;
+  color: white;
+}
+#font-picker ul li   {
+  background-color: var(--primary) !important;
+  color: white;
+  font-size: 0.8em;
+}
+#font-picker.expanded ul::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: var(--red);
+}
+
+#font-picker.expanded ul::-webkit-scrollbar {
+  width: 10px;
+  background-color: var(--primary);
+}
+
+#font-picker.expanded ul::-webkit-scrollbar-thumb {
+  background-color: var(--white);
+  
+}
+
+#font-picker ul li button   {
+  border-radius: 4px;
+}
+
+#font-picker ul li button.active-font   {
+  background-color: var(--white) !important;
+  color: var(--primary);
+}
+#font-picker ul li button:hover   {
+  background-color: var(--white) !important;
+  color: var(--primary);
+}
+#font-picker .dropdown-icon.finished::before {
+  color: white !important;
+  fill: white !important;
+  border-top: 6px solid white;
 }
 
 .lni {

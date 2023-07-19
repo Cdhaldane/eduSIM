@@ -40,6 +40,8 @@ const TransformerComponent = forwardRef((props, ref) => {
             name="transformer"
             boundBoxFunc={(oldBox, newBox) => {
               newBox.width = Math.max(30, newBox.width);
+              newBox.height = Math.max(30, newBox.height);
+              console.log(newBox)
               return newBox;
             }}
             enabledAnchors={[

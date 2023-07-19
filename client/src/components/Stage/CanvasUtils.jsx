@@ -41,6 +41,9 @@ export const handleArrowKeys = (keyCode, canvas) => {
       type = shape.type;
     }
   })
+  if (selected === '') {
+    return;
+  }
   switch (keyCode) {
     case 37: // arrow left
       selected.x -= moveMargin;

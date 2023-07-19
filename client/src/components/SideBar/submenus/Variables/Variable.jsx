@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
 import ConfirmationModal from "../../../Modal/ConfirmationModal";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../../../Alerts/AlertContext";
@@ -9,18 +9,22 @@ import "./Variable.css"
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Pencil from "../../../../../public/icons/pencil.svg"
-import { use } from "i18next";
 
 
-const Variable = (props) => {
+const VariableTypes = {
+  BOOLEAN: "boolean",
+  INTEGER: "integer",
+  ARRAY_INT: "arrayInt",
+  STRING: "string",
+  ARRAY_STRING: "arrayString",
+};
+
+const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, handleGroup, current, currentPage, page, position }) => {
   const { t } = useTranslation();
   const [showAdd, setShowAdd] = useState(false);
   const [varName, setVarName] = useState('')
   const [varValue, setVarValue] = useState('')
   const [varType, setVarType] = useState("integer")
-  const [variables, setVariables] = useState([])
-  const [gameText, setGameText] = useState([])
-  const [updater, setUpdater] = useState(0);
   const [contextIndex, setContextIndex] = useState(-1)
   const [deleteIndex, setDeleteIndex] = useState(0);
   const [editingIndex, setEditingIndex] = useState(-1);
@@ -34,110 +38,108 @@ const Variable = (props) => {
   const { contextMenu, handleContextMenu, hideContextMenu } = useContext(MenuContext);
   const alertContext = useAlertContext();
 
-  const addVar = () => {
-    let value;
-    let arrayVal;
-    if (varType === "string")
-      value = String(varValue)
-    if (varType === "integer" && !varValue.includes('Random'))
-      value = parseInt(varValue)
-    if (varType === "integer" && varValue.includes('Random'))
-      value = varValue
-    if (varType === "arrayString") {
-      arrayVal = varValue.replace(/\s/g, '')
-      arrayVal = arrayVal.split(',')
-      value = (arrayVal)
+  const variables = useMemo(() => {
+    if (currentPage === 0) {
+      return current === 'global' ? globalVars : localVars;
     }
-    if (varType === "arrayInt") {
-      arrayVal = varValue.replace(/\s/g, '')
-      arrayVal = arrayVal.split(',')
-      for (let i = 0; i < arrayVal.length; i++) {
-        arrayVal[i] = parseInt(arrayVal[i])
-      }
-      value = (arrayVal)
+    const groupVariables = group[currentPage]?.variable;
+    return groupVariables ? groupVariables : [];
+  }, [currentPage, current, globalVars, localVars, group]);
+
+  const getValueByVarType = useCallback((type, value) => {
+    switch (type) {
+      case VariableTypes.STRING:
+        return String(value);
+      case VariableTypes.INTEGER:
+        return value.includes('Random') ? value : parseInt(value);
+      case VariableTypes.ARRAY_STRING:
+      case VariableTypes.ARRAY_INT:
+        const arrayVal = value.replace(/\s/g, '').split(',');
+        return type === VariableTypes.ARRAY_INT ? arrayVal.map(Number) : arrayVal;
+      case VariableTypes.BOOLEAN:
+        return value === 'true';
+      default:
+        return undefined;
     }
-    if (varType === "boolean") {
-      console.log(varValue)
-      if (varValue === 'true')
-        value = true
-      else
-        value = false
-    }
+  }, []);
+
+  const addVar = useCallback(() => {
+    const value = getValueByVarType(varType, varValue);
+  
     if (value !== value || value === NaN) {
       alertContext.showAlert(t("Value Not Valid"), "warning");
       return;
-    }
-    else if (varName.toLocaleLowerCase() === 'page' || varName.toLocaleLowerCase() === 'deck') {
+    } else if (['page', 'deck'].includes(varName.toLowerCase())) {
       alertContext.showAlert(t("VarName cannot be a system Variable, change the name :)"), "warning");
       return;
     }
-
+  
+    const newItem = { [varName]: value };
+    const data = [...variables];
+    const out = [...globalVars];
+  
     if (editingIndex !== -1) {
-      let data = variables;
-      data[editingIndex] = { [varName]: value }
-      if (props.current === 'global') {
-        props.setGlobalVars(data);
-        setShowAdd(false)
+      const removedItem = { ...variables[editingIndex] };
+      const page = getPageData(removedItem);
+      const index = out.findIndex(item => _.isEqual(item, removedItem));
+      
+      data[editingIndex] = newItem;
+      if (current === 'global') {
+        if (page > 0) {
+          handleGroup(page, removedItem, 'remove', 'variable');
+          handleGroup(page, newItem, 'add', 'variable');
+        }
+        if (currentPage === 0) {
+          setGlobalVars(data);
+        } else {
+          out[index] = newItem;
+          setGlobalVars(out);
+        }
+      } else if (current === 'session') {
+        setLocalVars(data);
       }
-      if (props.current === 'session') {
-        props.setLocalVars(data);
-        setShowAdd(false)
-      }
-      setVariables(data)
-      setEditingIndex(-1)
     } else {
-      if (props.current === 'global') {
-        let data = variables;
-        data.push({ [varName]: value })
-        props.setGlobalVars(data);
-        setShowAdd(false)
-      }
-      if (props.current === 'session') {
-        let data = variables;
-        data.push({ [varName]: value })
-        props.setLocalVars(data);
-        setShowAdd(false)
+      data.push(newItem);
+      if (current === 'global') {
+        if (currentPage !== 0) {
+          handleGroup(currentPage, newItem, 'add', 'variable');
+        }
+        setGlobalVars([...out, newItem]);
+      } else if (current === 'session') {
+        setLocalVars(data);
       }
     }
-    setVarName('')
-    setVarValue('')
-    setVarType('integer')
-    setEditingIndex(-1)
-  }
+  
+    setShowAdd(false);
+    setVarName('');
+    setVarValue('');
+    setVarType('integer');
+    setEditingIndex(-1);
+  }, [varType, varValue, varName, editingIndex, current, currentPage, globalVars, localVars, getValueByVarType]);
 
-
-  const deleteVar = (data) => {
+  const deleteVar = useCallback((data) => {
     let newData = [];
+    let out = [];
+    let fullAraay = current === 'global' ? globalVars : localVars
     variables.map((item) => {
       if (item !== data)
         newData.push(item)
     })
-    if (props.current === 'global') {
-      props.setGlobalVars(newData)
+    fullAraay.map((item) => {
+      if (!_.isEqual(data, item))
+        out.push(item)
+    })
+    if (current === 'global') {
+      setGlobalVars(out)
     } else {
-      props.setLocalVars(newData)
+      setLocalVars(out)
     }
-    setVariables(newData)
-  }
+    let page = getPageData(data)
+    handleGroup(page, data, 'remove', 'variable')
 
-  const getPageData = (data) => {
-    let obj = props.group
+  }, [current, globalVars, localVars]);
 
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const value = obj[key];
-        const isObjectInArray = value.variable.some(obj => {
-          return Object.entries(data).every(([key, value]) => {
-            return obj[key] === value;
-          });
-        });
-        if (isObjectInArray)
-          return key
-
-      }
-    }
-  }
-  const handleEdit = (data, i) => {
+  const handleEdit = useCallback((data, i) => {
     setEditingIndex(i)
     setShowAdd(true)
     setVarName(Object.keys(data)[0])
@@ -145,25 +147,24 @@ const Variable = (props) => {
     let type = typeof (Object.values(data)[0])
     if (type === 'number') type = 'integer'
     setVarType(type)
-  }
+  }, []);
 
-  const populateGameVars = (data) => {
+  const populateGameVars = useCallback((data) => {
     let list = [];
 
     for (let i = 0; i < data.length; i++) {
       let x = getPageData(data[i]);
-      console.log(Object.values(data[i])[0])
       let divElement = (
-        <div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, props.page), setContextIndex(i))}>
+        <div className="condition-inputs vars" key={i} onContextMenu={(e) => (handleContextMenu(e, page), setContextIndex(i))}>
           <div className='vars-sidebar'>
             <Trash onClick={() => { setConfirmationModal(true); setDeleteIndex(data[i]) }} className="icon var-trash" />
-            <Pencil onClick={() => handleEdit(data[i], i)}className="icon var-pencil"/>
+            <Pencil onClick={() => handleEdit(data[i], i)} className="icon var-pencil" />
             <h4 title={'Group ' + x}>{x}</h4>
           </div>
           <div className="display">
-          <h1>{Object.keys(data[i])}</h1>
-          <h2> = </h2>
-          <h1>{Object.values(data[i]).toString()}</h1>
+            <h1>{Object.keys(data[i])}</h1>
+            <h2> = </h2>
+            <h1>{Object.values(data[i]).toString()}</h1>
           </div>
         </div>
       );
@@ -183,49 +184,43 @@ const Variable = (props) => {
     const sortedList = list.map(item => item.element);
 
     return sortedList;
-  };
+  }, [handleContextMenu, page]);
 
-  const handleGame = (e, varName, i) => {
-    let vars = variables;
-    let key = Object.keys(vars[i])
-    vars[i][key] = e;
-    if (props.current === 'global')
-      props.setGlobalVars(vars);
-    if (props.current === 'session')
-      props.setLocalVars(vars);
+  const getPageData = (data) => {
+    if (data === undefined) return
+    let obj = group
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+        const isObjectInArray = value.variable.some(obj => {
+          return Object.entries(data).every(([key, value]) => {
+            return obj[key] === value;
+          });
+        });
+        if (isObjectInArray)
+          return key
+
+      }
+    }
   }
 
+  
 
 
-  useEffect(() => {
-    if (props.currentPage === 0) {
-      if (props.current === 'global')
-        setVariables(props.globalVars)
-      if (props.current === 'session')
-        setVariables(props.localVars)
-    }
-    else {
-      let variable = props.group[props.currentPage] ? props.group[props.currentPage].variable : []
-      setVariables(variable)
-    }
-  }, [props.current, props.globalVars, props.localVars, props.group, props.currentPage])
+ 
 
 
   return (
     <div className="menu-context-container">
-      {!showAdd && (
-        <>
-          {populateGameVars(variables)}
-        </>
-      )}
+      {!showAdd && populateGameVars(variables)}
       <div className="variable-add tester" onClick={() => setShowAdd(true)} hidden={showAdd}>
         <Plus className="icon plus" />
         {t("sidebar.addNewVar")}
       </div>
 
-      {showAdd && (props.current === 'global' || props.current === 'session') && (
+      {showAdd && (current === 'global' || current === 'session') && (
         <div className="variable-adding">
-          <div className="variable-choose">
+           <div className="variable-choose">
             <label for="var-type">Variable Type</label>
             <select name="var-type" id="var-type" onChange={(e) => setVarType(e.target.value)} value={varType}>
               <option value="boolean">Boolean</option>
@@ -253,13 +248,13 @@ const Variable = (props) => {
           </div>
           <div className="variable-hold">
             <button onClick={() => addVar()}>{t("common.add")}</button>
-            <button onClick={() => {setShowAdd(false), setEditingIndex(-1)}}>{t("common.cancel")}</button>
+            <button onClick={() => { setShowAdd(false), setEditingIndex(-1) }}>{t("common.cancel")}</button>
           </div>
         </div>
       )}
       <ConfirmationModal
         visible={confirmationVisible}
-        hide={() => setConfirmationModal(false)}
+        hide={() => setConfirmationVisible(false)}
         confirmFunction={() => deleteVar(deleteIndex)}
         confirmMessage={"Yes"}
         message={"Are you sure you want to delete this variable? This action cannot be undone."}
@@ -267,14 +262,14 @@ const Variable = (props) => {
       {contextMenu.show && (
         <div className={`variable-context ${contextMenu.show ? 'show' : ''}`}
           style={{
-            top: `${contextMenu.y - props.position.y}px`,
-            left: `${contextMenu.x - props.position.x}px`,
+            top: `${contextMenu.y - position.y}px`,
+            left: `${contextMenu.x - position.x}px`,
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {props.currentPage === 0 ? (
-            <button onClick={() => (props.handleGroup(props.page, variables[contextIndex], 'add', 'variable'), hideContextMenu())}>Add to page {props.page}</button>) : (
-            <button onClick={() => (props.handleGroup(props.currentPage, variables[contextIndex], 'remove', 'variable'), hideContextMenu())}>Remove from page {props.currentPage}</button>
+          {currentPage === 0 ? (
+            <button onClick={() => (handleGroup(page, variables[contextIndex], 'add', 'variable'), hideContextMenu())}>Add to page {page}</button>) : (
+            <button onClick={() => (handleGroup(currentPage, variables[contextIndex], 'remove', 'variable'), hideContextMenu())}>Remove from page {currentPage}</button>
           )}
         </div>
       )}

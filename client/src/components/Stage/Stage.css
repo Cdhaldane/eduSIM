@@ -73,7 +73,6 @@
 }
 .overlayButton svg {
   fill: var(--primary);
-  font-size: 40px;
   width: 50px;
   height: 50px;
 }
@@ -269,10 +268,12 @@
 .video-container {
   width: 100% !important;
   height: 100% !important;
+  background-color: transparent !important;
 }
 .video-container>.spinner {
   width: 100% !important;
   height: 100% !important;
   z-index: -1;
+  background-color: transparent !important;
 }
 

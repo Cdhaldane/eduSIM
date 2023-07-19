@@ -1,5 +1,3 @@
-
-
 #pencil3 {
   position: fixed;
   top: 80px;
@@ -37,9 +35,9 @@
 
 .pencilinfo svg {
   width: 30px !important;
-    height: 30px !important;
-    margin-right: 5px !important;
-    fill: var(--primary);
+  height: 30px !important;
+  margin-right: 5px !important;
+  fill: var(--primary);
 }
 
 .pencilinfo:hover {

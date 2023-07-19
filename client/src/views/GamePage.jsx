@@ -85,6 +85,15 @@ const Game = (props) => {
   const [queryUser, setQueryUser] = useState({});
 
   useEffect(() => {
+    document.title = ('eduSIM - Playing');
+    // Clean up the title when the component unmounts
+    console.log(roomStatus)
+    return () => {
+      document.title = 'eduSIM';
+    };
+  }, [room]);
+
+  useEffect(() => {
     (async function () {
       if(!roomurl) return;
       const { data: roomData } = await axios.get(

@@ -54,3 +54,17 @@
     padding: 5px;
 
 }
+
+.cons-condition{
+    display: flex;
+    overflow-wrap: break-word;
+    justify-content: space-between;
+  }
+.ints-container {
+    width: 80%;
+}
+.con-h4 {
+    position: relative !important;
+    align-self: flex-start;
+    /* width: 100%; */
+}

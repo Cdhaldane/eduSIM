@@ -26,7 +26,7 @@ const DropdownOverlay = (props) => {
   const { t } = useTranslation();
 
   const handleClickOutside = e => {
-    if (menuElem.current && !menuElem.current.contains(e.target) && !e.target.className.includes('option')) {
+    if (menuElem.current && !menuElem.current.contains(e.target)) {
       props.close();
     }
   }
