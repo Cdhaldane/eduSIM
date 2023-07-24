@@ -233,7 +233,6 @@ const CanvasPage = (props) => {
         }
       }
       if (areaString === "overlay") {
-        console.log("overlay", overlayGameContainer.clientWidth, overlayGameContainer.clientHeight)
         area = {
           width: overlayGameContainer.clientWidth,
           height: overlayGameContainer.clientHeight
@@ -586,7 +585,6 @@ const CanvasPage = (props) => {
   }
 
   const textRectProps = (obj, canvas, editMode) => {
-    console.log(obj)
     return {
       width: obj.width,
       height: obj.height,
@@ -610,7 +608,6 @@ const CanvasPage = (props) => {
       width: obj.width,
       key: obj.id,
       onDragMove: (e) => {
-        console.log(e.evt)
         const group = e.target;
         const newPosition = group.position();
 
@@ -656,7 +653,7 @@ const CanvasPage = (props) => {
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
-      padding: 5,
+      padding: obj.strokeWidth / 2,
       ...(editMode ?
         {
           onTransform: canvas.handleTextTransform,
@@ -727,7 +724,7 @@ const CanvasPage = (props) => {
       stroke: obj.pos === "center" ? "blue" : "red",
       strokeWidth: 1,
       strokeScaleEnabled: false,
-      globalCompositeOperation: 'source-over',
+      // globalCompositeOperation: 'source-over',
       draggable: false,
       dash: [5, 5]
     }
@@ -1263,9 +1260,7 @@ const CanvasPage = (props) => {
                 ) ?
                   <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
               })}
-              {canvas.state.guides.map((obj, index) => {
-                return <Line {...guideProps(obj, index, canvas, editMode)} />
-              })}
+              
               {/* This is the stage container (positionRect) */}
               {positionRect && (
                 <>
@@ -1315,6 +1310,9 @@ const CanvasPage = (props) => {
                   />
                 </>
               )}
+              {canvas.state.guides.map((obj, index) => {
+                return <Line {...guideProps(obj, index, canvas, editMode)} />
+              })}
               {/* This is the blue transformer rectangle that pops up when objects are selected */}
               <TransformerComponent {...transformerProps(stage, canvas)} />
               <Rect fill="rgba(0,0,0,0.5)" ref={`${stage}SelectionRect`} />

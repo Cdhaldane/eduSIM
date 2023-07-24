@@ -87,7 +87,7 @@ const EditPage = (props) => {
   }, [updater]);
 
   useEffect(() => {
-    document.title = ('eduSIM - Editing ' + localStorage.title);
+    document.title = ('eduSIM - Editing ' + localStorage.getItem('simtitle'));
     // Clean up the title when the component unmounts
     return () => {
       document.title = 'eduSIM';

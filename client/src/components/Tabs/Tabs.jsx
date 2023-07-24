@@ -348,7 +348,7 @@ const Tabs = (props) => {
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
         if (refresh) {
           localStorage.removeItem("userInfo");
-          window.location.reload();
+          // window.location.reload();
         }
         if (lastSetVar) {
           sessionStorage.setItem('lastSetVar', lastSetVar);
@@ -369,7 +369,7 @@ const Tabs = (props) => {
         });
       });
       client.on("errorLog", ({ key, params = {} }) => {
-        alertContext.showAlert(t(key, params), "error");
+        // alertContext.showAlert(t(key, params), "error");
       });
 
       setSocketInfo(client);

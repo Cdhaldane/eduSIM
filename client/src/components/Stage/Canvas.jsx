@@ -1844,13 +1844,13 @@ class Graphics extends Component {
     const type = this.getObjType(this.state.selectedShapeName);
     this.setState(
       prevState => ({
-        [type]: prevState[type]?.map(obj => 
+        [type]: prevState[type]?.map(obj =>
           obj.id === this.state.selectedShapeName ? {
-              ...obj,
-              lock: !obj.lock ? true : false,
-            }
+            ...obj,
+            lock: !obj.lock ? true : false,
+          }
             : obj
-          ),
+        ),
       }),
       () => {
         const lockedObj = this.state[type]?.find(
@@ -2142,23 +2142,46 @@ class Graphics extends Component {
   // Fill Color
   handleFillColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
-    this.setState(prevState => ({
-      [type]: prevState[type].map(obj =>
-        obj.id === this.state.selectedShapeName
-          ? {
-            ...obj,
-            fill: e.hex
-          }
-          : obj
-      )
-    }));
+    if (type) {
+      console.log(type)
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              fill: e.hex
+            }
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.forEach(objName => {
+        const type = this.getObjType(objName);
+        console.log(type)
+        if(!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj => 
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                fill: e.hex
+              }
+              : obj
+          )
+      }));
+      })
+    }
+
   }
+
+
 
 
 
   // Stroke Color
   handleStrokeColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
+    if(type) {
     this.setState(prevState => ({
       [type]: prevState[type].map(obj =>
         obj.id === this.state.selectedShapeName
@@ -2169,7 +2192,24 @@ class Graphics extends Component {
           : obj
       )
     }));
+  } else {
+    this.state.groupSelection.forEach(objName => {
+      const type = this.getObjType(objName);
+      if(!type) return;
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj => 
+          obj.id === objName.toString()
+            ? {
+              ...obj,
+              stroke: e.hex
+            }
+            : obj
+        )
+    }));
+    })
   }
+  }
+
   handleBackgroundColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
     this.setState(prevState => ({
@@ -2586,6 +2626,23 @@ class Graphics extends Component {
       }
     }
   }
+  getSelectedGroup = () => {
+    let out = [];
+    for (let name of this.savedObjects) {
+      this.state.groupSelection.map((obj) => {
+        if (Array.isArray(obj)) return;
+        if (obj.toString().startsWith(name)) {
+          this.state[name].map((obj2) => {
+            if (obj2.id === obj) {
+              out.push(obj2)
+            }
+          })
+        }
+      })
+    }
+    return out
+  }
+
   updateSelectedObj = (newState) => {
     let type;
     if (this.state.selectedShapeName) {
@@ -2679,39 +2736,54 @@ class Graphics extends Component {
       const objStage = obj.attrs ? obj.attrs : obj;
       const stage = objStage.overlay ? "overlay" : (objStage.infolevel ? "personal" : "group");
       const objRef = obj.attrs ? obj : this.refs[obj.id];
-      const layerScale = this.state[`${stage}LayerScale`];
       this.getLineGuideStops(stage, objRef);
 
       const stageRef = this.refs[`${stage}Stage`];
       const objBox = objRef.getClientRect();
       const guides = stageRef.find('.guide');
-
+      let isTouchingX = false;
+      let isTouchingY = false;
+      let paddingW = objBox.width / 2;
+      let paddingH = objBox.height / 2;
+      let middleX = objBox.x + objBox.width / 2;
+      let middleY = objBox.y + objBox.height / 2;
       for (let i = 0; i < guides.length; i++) {
         const g = guides[i];
         let gBox = g.getClientRect();
-        let paddingW = objBox.width / 2;
-        let paddingH = objBox.height / 2;
-        gBox.x -= paddingW
-        gBox.y -= paddingH
+        let newX = gBox.x;
+        let newY = gBox.y;
 
-        if (objBox.x > gBox.x - paddingW && objBox.x < gBox.x + paddingW) {
+
+        if (middleX > (newX - paddingW) && middleX < (newX + paddingW)) isTouchingX = true;
+        if (middleY > (newY - paddingH) && middleY < (newY + paddingH)) isTouchingY = true;
+        if (isTouchingX) {
           objRef.absolutePosition({
-            x: gBox.x,
+            x: newX - objBox.width / 2,
             y: objBox.y
           });
         }
-        if (objBox.y > gBox.y - paddingH && objBox.y < gBox.y + paddingH) {
+        if (isTouchingY) {
           objRef.absolutePosition({
             x: objBox.x,
-            y: gBox.y
+            y: newY - objBox.height / 2
           });
         }
+        isTouchingX = false;
+        isTouchingY = false;
       }
+
+      // if (isTouchingX && isTouchingY) {
+      //   objRef.absolutePosition({
+      //     x: newX,
+      //     y: newY
+      //   });
+      // }
     } else {
       this.setState({
         guides: []
       });
     }
+
   };
 
   onObjectDragMove = (obj, e) => {
@@ -2784,8 +2856,11 @@ class Graphics extends Component {
     let foundGuideItem = false;
     stageRef.find('.shape, .customObj').forEach((guideItem) => {
       if (foundGuideItem) return;
+
       if (guideItem === skipShape ||
         (guideItem.attrs.currentId && guideItem.attrs.currentId === skipShape.attrs.id)) return;
+
+
 
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
@@ -2799,11 +2874,38 @@ class Graphics extends Component {
         const y = (box.y - layerY) / layerScale;
         const height = box.height / layerScale;
 
-        // Get snap points at edges and center of each object
-        vertical.push([x, x + width, x + width / 2]);
-        horizontal.push([y, y + height, y + height / 2]);
+        const gTop = box.y;
+        const gBottom = box.y + box.height;
+        const gLeft = box.x;
+        const gRight = box.x + box.width;
 
-        foundGuideItem = true;
+        const oMiddleX = compBox.x + compBox.width / 2;
+        const oMiddleY = compBox.y + compBox.height / 2;
+
+        let isBetweenTopBottom = false;
+        let isBetweenLeftRight = false;
+
+        if (oMiddleY > gTop && oMiddleY < gBottom) {
+          isBetweenTopBottom = true;
+        }
+        if (oMiddleX > gLeft && oMiddleX < gRight) {
+          isBetweenLeftRight = true;
+        }
+
+        if (!isBetweenTopBottom) {
+          vertical.push([x, x + width, x + width / 2]);
+          horizontal.push([-0, -0, -0]);
+        }
+        if (!isBetweenLeftRight) {
+          vertical.push([-0, -0, -0]);
+          horizontal.push([y, y + height, y + height / 2]);
+        }
+        if (isBetweenTopBottom && isBetweenLeftRight) {
+          vertical.push([x, x + width, x + width / 2]);
+          horizontal.push([y, y + height, y + height / 2]);
+        }
+
+        // foundGuideItem = true;
       }
     });
 
@@ -3336,7 +3438,7 @@ class Graphics extends Component {
       this.state[type].forEach((obj) => {
         let layerArray = this.state.pages[this.state.level - 1].personalLayers
         let copyObj = { ...obj };
-        
+
         if (obj.rolelevel === roleName && layerArray.includes(obj.id)) {
           console.log(obj)
           copyObj.rolelevel = roleName;
@@ -3757,6 +3859,7 @@ class Graphics extends Component {
                   selectedShapeName={this.state.selectedShapeName}
                   getObj={this.getKonvaObj}
                   getObjState={this.getSelectedObj}
+                  getObjGroup={this.getSelectedGroup}
                   updateObjState={this.updateSelectedObj}
                   selectedFont={this.state.selectedFont}
                   handleUngrouping={this.handleUngrouping}

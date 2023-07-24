@@ -124,7 +124,8 @@ export default async (server, client, event, args) => {
         const roomStatus = await getRoomStatus(room);
         const messages = await getChatlog(room);
         const interactions = await getInteractions(room);
-        const { dataValues } = await supabase.from('gamerooms').select('*').eq('gameroom_url', room).single()
+        const {  data: dataValues, error } = await supabase.from('gamerooms').select('*').eq('gameroom_url', room).single()
+        console.log('room', dataValues)
         await supabase.from('gameactions').insert([
           {
             gamedata: {
@@ -137,27 +138,13 @@ export default async (server, client, event, args) => {
           }
         ])
 
-        // let { dataValues } = await GameRoom.findOne({
-        //   where: {
-        //     gameroom_url: room
-        //   }
-        // });
-        // await GameActions.create({
-        //   gamedata: {
-        //     roomStatus,
-        //     messages,
-        //     interactions
-        //   },
-        //   gameroomid: dataValues.gameroomid,
-        //   gameinstanceid: dataValues.gameinstanceid
-        // });
         const newStatus = await clearRoomStatus(room);
         server.to(room).emit("roomStatusUpdate", {
           room,
           status: newStatus,
           refresh: true
         });
-        clearRoomTimeout(room);
+        // clearRoomTimeout(room);
       } else {
         const rooms = await getSimulationRooms(game);
         for (let i = 0; i < rooms.length; i++) {

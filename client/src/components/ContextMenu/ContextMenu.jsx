@@ -91,6 +91,7 @@ const ContextMenu = (props) => {
         conditions
       });
     }
+    console.log(drop)
     setConditionsVisible(false);
   }
 
@@ -200,9 +201,10 @@ const ContextMenu = (props) => {
           {!props.addGroup && !props.unGroup && (
             <li onClick={handleConditionsVisible}>{t("edit.changeConditions")}</li>
           )}
-          {!props.addGroup && !props.unGroup &&
+          {/* {!props.addGroup && !props.unGroup && */}
+          {
             !props.selectedShapeName.includes("richText") && (
-              <li onClick={handleEdit}>{"Edit " + props.getObjState()?.name}</li>
+              <li onClick={handleEdit}>{props.addGroup ? "Edit group" : "Edit " + props.getObjState()?.name}</li>
             )}
           {props.addGroup && (
             <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>
@@ -251,6 +253,8 @@ const ContextMenu = (props) => {
                 selectedShapeName={props.selectedShapeName}
                 getObj={props.getObj}
                 getObjState={props.getObjState}
+                grouped={props.addGroup}
+                getObjGroup={props.getObjGroup}
                 updateObjState={props.updateObjState}
                 globalVars={props.globalVars}
               />

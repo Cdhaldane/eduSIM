@@ -100,7 +100,7 @@ const Variables = (props) => {
   const [ref, dimensions, position] = useResizeObserver();
   const [group, setGroup] = useState(props.groups);
   const [height, setDomHeight] = useState(180);
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState("variable");
 
   useEffect(() => {
     let allShapes = []; // Initialize allShapes as an empty array
@@ -148,7 +148,6 @@ const Variables = (props) => {
         ...prevState,
         [page]: pageData
       }
-      console.log(out)
       props.handleGroups(out);
       return out;
     });
@@ -227,7 +226,7 @@ const Variables = (props) => {
                   Random = Random(min, max, step) <br />
                   Seperate values in array with ','
                 </ReactTooltip>
-                {selectedTab !== 'interaction' || selectedTab !== 'trigger' ?
+                {selectedTab === 'variable' || selectedTab === 'condition' ?
                   <select style={{ display: 'inline-block' }} onChange={handleChange} className={'variable-page-select'}>
                     <option value={0}>All</option>
                     {[...Array(props.pages)]?.map((_, index) => (

@@ -145,7 +145,6 @@ const Game = (props) => {
         if (lastSetVar) {
           sessionStorage.setItem('lastSetVar', lastSetVar);
         }
-        console.log(status.level)
         if(status.level) setLevel(status.level)
         setRoomStatus(status);
       });

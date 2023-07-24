@@ -15,6 +15,7 @@ import DropdownEditPoll from './DropdownEditPoll';
 
 
 import Left from "../../../public/icons/arrow-left.svg"
+import { use } from 'i18next';
 
 const DEFAULT_FONT_SIZE = 50;
 
@@ -31,14 +32,15 @@ const DropdownEditObject = (props) => {
   const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "180px" });
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
-  const [objState, setObjState] = useState(props.getObjState());
+  const [objState, setObjState] = useState(props.grouped ? props.getObjGroup() : props.getObjState());
   const { t } = useTranslation();
   const [texts, setTexts] = useState("")
-  const [vTexts, setVTexts] = useState(objState.varName ? objState.varName : [])
+  const [vTexts, setVTexts] = useState(objState.style ? objState.varName : [])
+  const [title, setTitle] = useState(props.title)
 
-  const [vTextsV, setVTextsV] = useState(objState.varValue ? objState.varValue : [])
-  const [varOne, setVarOne] = useState(objState.varOne ? objState.varOne : "")
-  const [varTwo, setVarTwo] = useState(objState.varTwo ? objState.varTwo : "")
+  const [vTextsV, setVTextsV] = useState(objState.style ? objState.varValue : [])
+  const [varOne, setVarOne] = useState(objState.style ? objState.varOne : "")
+  const [varTwo, setVarTwo] = useState(objState.style ? objState.varTwo : "")
 
   const [showFill, setShowFill] = useState(false);
   const [showStroke, setShowStroke] = useState(false);
@@ -50,19 +52,32 @@ const DropdownEditObject = (props) => {
   //const DEFAULT_INPUT_STROKE = "rgb(44, 44, 44)";
   const [inputFillColor, setInputFillColor] = useState(objState.style ?
     (objState.style.backgroundColor ? objState.style.backgroundColor : DEFAULT_INPUT_FILL) : DEFAULT_INPUT_FILL);
-  const [inputStrokeWidth, setInputStrokeWidth] = useState(objState.style ?
-    (objState.style.borderWidth ? objState.style.borderWidth : DEFAULT_INPUT_STROKE_W) : DEFAULT_INPUT_STROKE_W);
+  const [inputStrokeWidth, setInputStrokeWidth] = useState(objState ?
+    (objState.style ? objState.style.borderWidth : DEFAULT_INPUT_STROKE_W) : DEFAULT_INPUT_STROKE_W);
   const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
 
   const calcTopOffset = () => {
-    const thresholdPx = props.title === "Edit Shap" ? 215 : 165;
+    const thresholdPx = title === "Edit Shap" ? 215 : 165;
     if (props.top < thresholdPx) {
       return thresholdPx - props.top;
     }
   }
   const [topOffset, setTopOffset] = useState(calcTopOffset());
 
+ 
+
   useEffect(() => {
+    if(Array.isArray(objState)){
+      setTexts(objState.map((obj) => obj.varName))
+      setVTexts(objState.map((obj) => obj.varName))
+      setVTextsV(objState.map((obj) => obj.varValue))
+      setVarOne(objState.map((obj) => obj.varOne))
+      setVarTwo(objState.map((obj) => obj.varTwo))
+      // setInputFillColor(objState.map((obj) => obj.style.backgroundColor))
+      // setInputStrokeWidth(objState.map((obj) => obj.style.borderWidth))
+      setTitle("shape")
+      setObjState(objState[0])
+    }
     if (!objState.volume) {
       props.updateObjState({ volume: 1 });
       setObjState(prev => ({
@@ -70,12 +85,13 @@ const DropdownEditObject = (props) => {
         volume: 1
       }));
     }
-    if (props.title === "shape") {
+    console.log(title)
+    if (title === "shape") {
       setOpacity(shape.attrs.opacity ? shape.attrs.opacity : 1);
       setStrokeColor(shape.attrs.stroke);
       setFillColor(shape.attrs.fill);
       setStrokeWidth(shape.attrs.strokeWidth);
-    } else if (props.title === "text") {
+    } else if (title === "text") {
       if (props.font) {
         setFillColor(props.font.attrs.fill);
         setOpacity(props.font.attrs.opacity);
@@ -84,7 +100,7 @@ const DropdownEditObject = (props) => {
       } else {
         console.error("ERROR: No Font.");
       }
-    } else if (props.title === "Edit Poll") {
+    } else if (title === "Edit Poll") {
 
     }
 
@@ -95,6 +111,7 @@ const DropdownEditObject = (props) => {
     // setTexts([])
   }, [activeMenu])
 
+ 
   // Slider Styles
   const railStyle = {
     height: 4,
@@ -344,7 +361,7 @@ const DropdownEditObject = (props) => {
     setInputCurrentOptions(tab);
   }
   if (!loading) {
-    if (props.title === "shape") {
+    if (title === "shape") {
       /* Edit a Shape Object */
       return (
         <div
@@ -478,7 +495,7 @@ const DropdownEditObject = (props) => {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "text") {
+    } else if (title === "text") {
       /* Edit a Text Object */
       return (
         <div
@@ -581,7 +598,7 @@ const DropdownEditObject = (props) => {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "poll") {
+    } else if (title === "poll") {
       return (
         <div
           className="dropdownedit"
@@ -616,7 +633,7 @@ const DropdownEditObject = (props) => {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "timer") {
+    } else if (title === "timer") {
       return (
         <div
           className="dropdownedit timer"
@@ -662,7 +679,7 @@ const DropdownEditObject = (props) => {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "html") {
+    } else if (title === "html") {
       return (
         <div
           className="dropdownedit html"
@@ -711,7 +728,7 @@ const DropdownEditObject = (props) => {
           </CSSTransition>
         </div>
       );
-    } else if (props.title === "input") {
+    } else if (title === "input") {
       return (
         <div
           className="dropdownedit input"
