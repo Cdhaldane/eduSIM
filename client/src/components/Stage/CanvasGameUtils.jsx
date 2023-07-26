@@ -57,16 +57,13 @@ const CanvasUtils = (props) => {
 
   const setCondition = (var1, var2, math, var3) => {
     let [variable1, variable2, variable3] = getRealValue(var1, var2, var3);
-    console.log(getRealValue(var1, var2, var3))
     if (variable1 === undefined || variable2 === undefined) return false;
     let x = handleThenCompare(variable2, math, variable3);
-    console.log(var1, x)
     if (props.globalVars[var1] !== x) props.handleVariable(var1, x);
   };
 
   const getRealValue = (var1, var2, var3) => {
     let variable1, variable2, variable3;   
-    console.log(var1)
     variable1 = props.globalVars[var1.toString()];
     
     if (Array.isArray(var2)) variable2 = props.globalVars[var2.toString()];
@@ -85,7 +82,6 @@ const CanvasUtils = (props) => {
     if (isNumeric(variable3)) variable3 = parseInt(variable3);
 
     // if (variable1 === undefined || variable2 === undefined) return [false];
-    console.log(variable1, variable2, variable3)
     return [variable1, variable2, variable3];
   };
 

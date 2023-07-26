@@ -780,6 +780,7 @@ class Graphics extends Component {
       createdby_adminid: localStorage.adminid,
       invite_url: 'value'
     }
+    this.props.showAlert("Saved", "info");
 
     // Save the game_parameters
     await axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then(() => {
@@ -2155,12 +2156,12 @@ class Graphics extends Component {
         )
       }));
     } else {
-      this.state.groupSelection.forEach(objName => {
+      this.state.groupSelection.flat().forEach(objName => {
         const type = this.getObjType(objName);
-        console.log(type)
-        if(!type) return;
+        console.log(objName)
+        if (!type) return;
         this.setState(prevState => ({
-          [type]: prevState[type].map(obj => 
+          [type]: prevState[type].map(obj =>
             obj.id === objName.toString()
               ? {
                 ...obj,
@@ -2168,82 +2169,117 @@ class Graphics extends Component {
               }
               : obj
           )
-      }));
+        }));
       })
     }
 
   }
 
-
-
-
-
   // Stroke Color
   handleStrokeColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
-    if(type) {
-    this.setState(prevState => ({
-      [type]: prevState[type].map(obj =>
-        obj.id === this.state.selectedShapeName
-          ? {
-            ...obj,
-            stroke: e.hex
-          }
-          : obj
-      )
-    }));
-  } else {
-    this.state.groupSelection.forEach(objName => {
-      const type = this.getObjType(objName);
-      if(!type) return;
+    if (type) {
       this.setState(prevState => ({
-        [type]: prevState[type].map(obj => 
-          obj.id === objName.toString()
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
             ? {
               ...obj,
               stroke: e.hex
             }
             : obj
         )
-    }));
-    })
-  }
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                stroke: e.hex
+              }
+              : obj
+          )
+        }));
+      })
+    }
   }
 
   handleBackgroundColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
-    this.setState(prevState => ({
-      [type]: prevState[type].map(obj =>
-        obj.id === this.state.selectedShapeName
-          ? {
-            ...obj,
-            backgroundColor: e.hex
-          }
-          : obj
-      )
-    }));
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              backgroundColor: e.hex
+            }
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                backgroundColor: e.hex
+              }
+              : obj
+          )
+        }));
+      })
+    }
   }
 
   // Font Family
   handleFont = (font) => {
-    this.setState({
-      texts: this.state.texts.map((t) => {
-        if (t.id === this.state.selectedShapeName) {
-          return {
-            ...t,
-            fontFamily: font
-          }
-        } else {
-          return t;
-        }
+    const type = this.getObjType(this.state.selectedShapeName);
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              fontFamily: font
+            }
+            : obj
+        )
+      }), () => {
+        setTimeout(() => {
+          const stageType = this.state.overlayOpen ? "overlayStage" :
+            (this.personalAreaOpen ? "personalStage" : "groupStage");
+          this.refs[stageType].draw();
+        }, 300);
+      });
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                fontFamily: font
+              }
+              : obj
+          )
+        }), () => {
+          setTimeout(() => {
+            const stageType = this.state.overlayOpen ? "overlayStage" :
+              (this.personalAreaOpen ? "personalStage" : "groupStage");
+            this.refs[stageType].draw();
+          }, 300);
+        });
       })
-    }, () => {
-      setTimeout(() => {
-        const stageType = this.state.overlayOpen ? "overlayStage" :
-          (this.personalAreaOpen ? "personalStage" : "groupStage");
-        this.refs[stageType].draw();
-      }, 300);
-    });
+    }
   }
 
   // Font Size
@@ -2253,57 +2289,97 @@ class Graphics extends Component {
     } else {
       e = parseInt(e);
     }
-    this.setState(prevState => ({
-      texts: prevState.texts.map(eachRect =>
-        eachRect.id === this.state.selectedShapeName
-          ? {
-            ...eachRect,
-            fontSize: e
-          }
-          : eachRect
-      )
-    }));
+    const type = this.getObjType(this.state.selectedShapeName);
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              fontSize: e
+            }
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                fontSize: e
+              }
+              : obj
+          )
+        }));
+      })
+    }
   }
 
   // Stroke Width
   handleWidth = (e) => {
-    const objType = this.getObjType(this.state.selectedShapeName);
-    const objects = JSON.parse(JSON.stringify(this.state[objType]));
-    if (Array.isArray(objects) && objects.length) {
-      objects.forEach((object) => {
-        if (object.id === this.state.selectedShapeName) {
-          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
-          this.setState(prevState => {
-            const objects = JSON.parse(JSON.stringify(prevState[objType]));
-            objects.splice(index, 1);
-            return {
-              ...prevState,
-              [objType]: objects.concat({ ...object, strokeWidth: e })
+    const type = this.getObjType(this.state.selectedShapeName);
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              strokeWidth: e
             }
-          });
-        }
-      });
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                strokeWidth: e
+              }
+              : obj
+          )
+        }));
+      })
     }
   }
 
   // Object Opacity
   handleOpacity = (e) => {
-    const objType = this.getObjType(this.state.selectedShapeName);
-    const objects = JSON.parse(JSON.stringify(this.state[objType]));
-    if (Array.isArray(objects) && objects.length) {
-      objects.forEach((object) => {
-        if (object.id === this.state.selectedShapeName) {
-          const index = objects.map(object => object.id).indexOf(this.state.selectedShapeName);
-          this.setState(prevState => {
-            const objects = JSON.parse(JSON.stringify(prevState[objType]));
-            objects.splice(index, 1);
-            return {
-              ...prevState,
-              [objType]: objects.concat({ ...object, opacity: e })
+    const type = this.getObjType(this.state.selectedShapeName);
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              opacity: e
             }
-          });
-        }
-      });
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                opacity: e
+              }
+              : obj
+          )
+        }));
+      })
     }
   }
 
@@ -2539,6 +2615,7 @@ class Graphics extends Component {
       z = 90,
       y = 89,
       r = 82,
+      s = 83,
       left = 37,
       up = 38,
       right = 39,
@@ -2547,24 +2624,28 @@ class Graphics extends Component {
     if (event.keyCode === left || event.keyCode === up || event.keyCode === right || event.keyCode === down) {
       handleArrowKeys(event.keyCode, this)
     }
-    if (event.ctrlKey && event.keyCode === x && !this.state.isPasteDisabled) {
+
+    if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === x && !this.state.isPasteDisabled) {
       this.handleDelete();
       this.handleCopy();
     } else if (event.shiftKey && event.keyCode === r) {
       this.props.reCenter("edit");
     } else if (event.keyCode === deleteKey && !this.state.isPasteDisabled) {
       this.handleDelete();
-    } else if (event.ctrlKey && event.keyCode === z) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === z) {
       this.handleUndo();
-    } else if (event.ctrlKey && event.keyCode === y) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === s) {
+      event.preventDefault();
+      this.handleSave();
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === y) {
       this.handleRedo();
-    } else if (event.ctrlKey && event.keyCode === copy) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === copy) {
       this.handleCopy();
-    } else if (event.ctrlKey && event.keyCode === paste && event.shiftKey) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === paste && event.shiftKey) {
       this.handlePaste('inPlace');
-    } else if (event.ctrlKey && event.keyCode === paste && !this.state.isPasteDisabled) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) && event.keyCode === paste && !this.state.isPasteDisabled) {
       this.handlePaste();
-    } else if (event.ctrlKey) {
+    } else if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)) {
       document.body.style.cursor = "grab";
       const mainContainer = document.getElementById("editMainContainer");
       mainContainer.classList.remove("noCursor");
@@ -2629,18 +2710,17 @@ class Graphics extends Component {
   getSelectedGroup = () => {
     let out = [];
     for (let name of this.savedObjects) {
-      this.state.groupSelection.map((obj) => {
-        if (Array.isArray(obj)) return;
+      for (let obj of this.state.groupSelection.flat()) {
         if (obj.toString().startsWith(name)) {
-          this.state[name].map((obj2) => {
+          for (let obj2 of this.state[name]) {
             if (obj2.id === obj) {
               out.push(obj2)
             }
-          })
+          }
         }
-      })
+      }
     }
-    return out
+    return out;
   }
 
   updateSelectedObj = (newState) => {
@@ -2651,18 +2731,34 @@ class Graphics extends Component {
           type = name;
         }
       }
-    } else return;
-    if (!type) return;
-    this.setState(prevState => ({
-      [type]: prevState[type].map(obj =>
-        obj.id === this.state.selectedShapeName
-          ? {
-            ...obj,
-            ...newState
-          }
-          : obj
-      )
-    }));
+    }
+    if (type) {
+      this.setState(prevState => ({
+        [type]: prevState[type].map(obj =>
+          obj.id === this.state.selectedShapeName
+            ? {
+              ...obj,
+              ...newState
+            }
+            : obj
+        )
+      }));
+    } else {
+      this.state.groupSelection.flat().forEach(objName => {
+        const type = this.getObjType(objName);
+        if (!type) return;
+        this.setState(prevState => ({
+          [type]: prevState[type].map(obj =>
+            obj.id === objName.toString()
+              ? {
+                ...obj,
+                ...newState
+              }
+              : obj
+          )
+        }));
+      })
+    }
     // there's a timeout here since placing this func in the
     // setState callback lags the transformer behind a little
     setTimeout(() => this.handleObjectSelection(), 20)
@@ -2697,40 +2793,6 @@ class Graphics extends Component {
     }
   }
 
-  getNearestGuide = (obj, stage) => {
-    const stageRef = this.refs[`${stage}Stage`];
-    const layerX = this.state[`${stage}LayerX`];
-    const layerY = this.state[`${stage}LayerY`];
-    const layerScale = this.state[`${stage}LayerScale`];
-
-    const objBox = obj.getClientRect();
-    const guides = stageRef.find('.guide');
-
-    for (let i = 0; i < guides.length; i++) {
-      const g = guides[i];
-      let gBox = g.getClientRect();
-      let paddingW = objBox.width / 2;
-      let paddingH = objBox.height / 2;
-
-      gBox.x -= paddingW
-      gBox.y -= paddingH
-
-      // Make box bigger for easier selection
-      if (objBox.x > gBox.x - paddingW && objBox.x < gBox.x + paddingW) {
-        obj.absolutePosition({
-          x: gBox.x,
-          y: objBox.y
-        });
-      }
-      if (objBox.y > gBox.y - paddingH && objBox.y < gBox.y + paddingH) {
-        obj.absolutePosition({
-          x: objBox.x,
-          y: gBox.y
-        });
-      }
-    }
-  };
-
   objectSnapping = (obj, e) => {
     if (e && e.evt.shiftKey) {
       const objStage = obj.attrs ? obj.attrs : obj;
@@ -2747,25 +2809,32 @@ class Graphics extends Component {
       let paddingH = objBox.height / 2;
       let middleX = objBox.x + objBox.width / 2;
       let middleY = objBox.y + objBox.height / 2;
+
       for (let i = 0; i < guides.length; i++) {
         const g = guides[i];
         let gBox = g.getClientRect();
         let newX = gBox.x;
         let newY = gBox.y;
-
-
+        let newBoxX = objBox.x + objBox.width / 2;
+        let newBoxY = objBox.y + objBox.height / 2;
         if (middleX > (newX - paddingW) && middleX < (newX + paddingW)) isTouchingX = true;
         if (middleY > (newY - paddingH) && middleY < (newY + paddingH)) isTouchingY = true;
+        if (objRef.attrs.id.includes('rectangles')) {
+          newX = gBox.x - objBox.width / 2;
+          newY = gBox.y - objBox.height / 2;
+          newBoxX = objBox.x;
+          newBoxY = objBox.y;
+        }
         if (isTouchingX) {
           objRef.absolutePosition({
-            x: newX - objBox.width / 2,
-            y: objBox.y
+            x: newX,
+            y: newBoxY
           });
         }
         if (isTouchingY) {
           objRef.absolutePosition({
-            x: objBox.x,
-            y: newY - objBox.height / 2
+            x: newBoxX,
+            y: newY
           });
         }
         isTouchingX = false;
@@ -2854,6 +2923,7 @@ class Graphics extends Component {
     const layerScale = this.state[`${stage}LayerScale`];
     const compBox = skipShape.getClientRect();
     let foundGuideItem = false;
+    const distances = [];  // Array to store distances
     stageRef.find('.shape, .customObj').forEach((guideItem) => {
       if (foundGuideItem) return;
 
@@ -2861,6 +2931,8 @@ class Graphics extends Component {
         (guideItem.attrs.currentId && guideItem.attrs.currentId === skipShape.attrs.id)) return;
 
 
+
+     
 
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
@@ -2891,7 +2963,12 @@ class Graphics extends Component {
         if (oMiddleX > gLeft && oMiddleX < gRight) {
           isBetweenLeftRight = true;
         }
-
+        const distance = Math.sqrt(Math.pow(oMiddleX - (box.x + box.width / 2), 2) + Math.pow(oMiddleY - (box.y + box.height / 2), 2));
+        distances.push({
+          vertical: [x, x + width, x + width / 2],
+          horizontal: [y, y + height, y + height / 2],
+          distance
+        });
         if (!isBetweenTopBottom) {
           vertical.push([x, x + width, x + width / 2]);
           horizontal.push([-0, -0, -0]);
@@ -2935,7 +3012,12 @@ class Graphics extends Component {
         pos: i % 3 === 2 ? "center" : "edge"
       });
     }
+    distances.sort((a, b) => a.distance - b.distance).slice(0, 3);
 
+    // Use the first 10 elements
+    vertical = distances.flatMap(item => item.vertical);
+    horizontal = distances.flatMap(item => item.horizontal);
+    console.log({ vertical, horizontal })
     this.setState({
       guides: [...guidesV, ...guidesH]
     });
@@ -3283,6 +3365,7 @@ class Graphics extends Component {
     layers.map(id => {
       if (this.refs[id] === undefined) return;
       const tempRef = this.refs[id];
+      console.log(tempRef)
       const tempBox = isCustom ? tempRef.getBoundingClientRect() : tempRef.getClientRect();
       if (this.isTouching(objBox, tempBox)) {
         layer.push(id)
@@ -3300,8 +3383,10 @@ class Graphics extends Component {
     let newObject = [];
     let tempInputs = []
     let tempObject = []
+    const editTitleOptions = ["polls", "connect4s", "tics", "htmls", "inputs", "timers"];
     for (let i = 0; i < newLayers.length; i++) {
-      if (newLayers[i]?.includes('inputs')) {
+      console.log(newLayers[i])
+      if (editTitleOptions.includes(newLayers[i].replace(/\d+/g, ''))) {
         inputIds.push(newLayers[i]);
       } else {
         newObject.push(newLayers[i]);

@@ -48,11 +48,10 @@ const ContextMenu = (props) => {
   const calcOutOfBounds = (x, y) => {
     const dropHeight = menuRef.current ? menuRef.current.clientHeight : 235;
     const dropWidth = menuRef.current ? menuRef.current.clientWidth : 155;
-    const editModalWidth = 400;
     const paddingPx = 7;
     const screenH = window.innerHeight - paddingPx;
     const screenW = window.innerWidth - paddingPx;
-
+    const editModalWidth = 180;
     let transformX = (x + dropWidth) - screenW;
     if (transformX < 0) {
       transformX = 0;
@@ -83,7 +82,7 @@ const ContextMenu = (props) => {
     setUpdater(true)
     setEditModalLeft(offset.left);
   }
-
+ 
   const handleEdit = () => {
     setDrop(!drop);
     if (conditionsVisible) {
@@ -91,8 +90,8 @@ const ContextMenu = (props) => {
         conditions
       });
     }
-    console.log(drop)
     setConditionsVisible(false);
+    
   }
 
   const handleConditionsVisible = () => {
@@ -188,7 +187,6 @@ const ContextMenu = (props) => {
         key={props.position.x}
         className={`cmenu `}
         style={{
-          width: "170px",
           left: props.position.x + offsetX,
           top: props.position.y + offsetY
         }}
@@ -204,7 +202,7 @@ const ContextMenu = (props) => {
           {/* {!props.addGroup && !props.unGroup && */}
           {
             !props.selectedShapeName.includes("richText") && (
-              <li onClick={handleEdit}>{props.addGroup ? "Edit group" : "Edit " + props.getObjState()?.name}</li>
+              <li onClick={handleEdit}>{props.addGroup || props.unGroup ? "Edit group" : "Edit " + props.getObjState()?.name}</li>
             )}
           {props.addGroup && (
             <li onClick={handleGrouping}>{t("edit.groupObjects")}</li>
@@ -253,7 +251,7 @@ const ContextMenu = (props) => {
                 selectedShapeName={props.selectedShapeName}
                 getObj={props.getObj}
                 getObjState={props.getObjState}
-                grouped={props.addGroup}
+                grouped={props.addGroup || props.unGroup}
                 getObjGroup={props.getObjGroup}
                 updateObjState={props.updateObjState}
                 globalVars={props.globalVars}

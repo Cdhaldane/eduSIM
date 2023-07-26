@@ -29,7 +29,7 @@ const DropdownEditObject = (props) => {
   const [opacity, setOpacity] = React.useState(1);
   const [font, setFont] = React.useState("Belgrano");
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
-  const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "180px" });
+  const [leftOrRight, setLeftOrRight] = useState(props.left ? { right: "110px", } : { left: "155px" });
   const [loading, setLoading] = useState(true);
   const [shape, setShape] = useState(props.getObj(props.selectedShapeName, false, false));
   const [objState, setObjState] = useState(props.grouped ? props.getObjGroup() : props.getObjState());
@@ -57,17 +57,26 @@ const DropdownEditObject = (props) => {
   const [inputCurrentOptions, setInputCurrentOptions] = useState("fill");
 
   const calcTopOffset = () => {
-    const thresholdPx = title === "Edit Shap" ? 215 : 165;
-    if (props.top < thresholdPx) {
-      return thresholdPx - props.top;
+    const element = document.getElementsByClassName("dropdownedit")[0];
+    if (element) {
+      const dropHeight = element.clientHeight;
+      const contextHeight = 300;
+      const thresholdPx = dropHeight - contextHeight;
+      if (props.top < thresholdPx) {
+        return thresholdPx;
+      }
     }
+    return null;
   }
-  const [topOffset, setTopOffset] = useState(calcTopOffset());
+  setTimeout(() => {
+    setTopOffset(calcTopOffset());
+  }, 10);
+  const [topOffset, setTopOffset] = useState(null);
 
- 
+
 
   useEffect(() => {
-    if(Array.isArray(objState)){
+    if (Array.isArray(objState)) {
       setTexts(objState.map((obj) => obj.varName))
       setVTexts(objState.map((obj) => obj.varName))
       setVTextsV(objState.map((obj) => obj.varValue))
@@ -75,7 +84,19 @@ const DropdownEditObject = (props) => {
       setVarTwo(objState.map((obj) => obj.varTwo))
       // setInputFillColor(objState.map((obj) => obj.style.backgroundColor))
       // setInputStrokeWidth(objState.map((obj) => obj.style.borderWidth))
-      setTitle("shape")
+      if (props.grouped) {
+        let shapeNames = [];
+        const editTitleOptions = ["text", "poll", "connect4", "tic", "html", "input", "timer"];
+        objState.map((obj) => {
+          shapeNames.push(obj.id.replace(/\d+/g, ''))
+        })
+        const allEqual = arr => arr.every(v => v === arr[0]);
+        if (allEqual(shapeNames) && editTitleOptions.includes(shapeNames[0].slice(0, -1))) {
+          setTitle(shapeNames[0].slice(0, -1))
+        } else {
+          setTitle("shape")
+        }
+      }
       setObjState(objState[0])
     }
     if (!objState.volume) {
@@ -111,7 +132,7 @@ const DropdownEditObject = (props) => {
     // setTexts([])
   }, [activeMenu])
 
- 
+
   // Slider Styles
   const railStyle = {
     height: 4,
@@ -743,27 +764,113 @@ const DropdownEditObject = (props) => {
             classNames="edit-menu-primary"
             unmountOnExit>
             <div className="menuedit htmledit">
-              <h1>{t("edit.inputEdit")}</h1>
-              <p>{t("edit.inputType")}</p>
-              <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
-                <option value="checkbox">{t("edit.input.checkbox")}</option>
-                <option value="text">{t("edit.input.textbox")}</option>
-                <option value="button">{t("edit.input.button")}</option>
-                <option value="radio">{t("edit.input.radio")}</option>
-                <option value="variable">{t("edit.input.variable")}</option>
-              </select>
+              <input id="menuedit-name" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+
+              {objState.varType !== "checkbox" && (
+
+                <div className="menuedit-color-container">
+                  <>
+                    <div className='color-button-container text'>
+                      <button
+                        className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
+                        onClick={() => { newTabInputSettings("fill") }}
+                      >
+                        {t("edit.colorFill")}
+                      </button>
+                      <button
+                        className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
+                        onClick={() => newTabInputSettings("stroke")}
+                      >
+                        {t("edit.colorStroke")}
+                      </button>
+                      <button
+                        className={`${inputCurrentOptions === "text" ? "editInputOptionSelected" : ""}`}
+                        onClick={() => newTabInputSettings("text")}
+                      >
+                        {t("edit.shape.simpleText")}
+                      </button>
+                    </div>
+                    {inputCurrentOptions === "fill" &&
+                      <ChromePicker
+                        className="compactPickerEditInput"
+                        color={inputFillColor}
+                        disableAlpha={true}
+                        onChange={(color) => {
+                          setInputFillColor(color.hex);
+                          handleInputStyle("backgroundColor", color.hex);
+                        }}
+                      />
+                    }
+                    {inputCurrentOptions === "stroke" &&
+                      <>
+                        <ChromePicker
+                          className="compactPickerEditInput"
+                          color={inputFillColor}
+                          disableAlpha={true}
+                          onChange={(color) => {
+                            setInputFillColor(color.hex);
+                            handleInputStyle("borderColor", color.hex);
+                          }} />
+                        <div className="menuedit-sliders">
+                          <div className='slider-container'>
+                            <h1>{t("edit.strokeWidth")}</h1>
+                            <input type="number" value={inputStrokeWidth} onChange={(e) => {
+                              setInputStrokeWidth(e.target.value);
+                              handleInputStyle("borderWidth", e.target.value + "px");
+                            }} />
+                          </div>
+                          <Slider
+                            min={0}
+                            max={100}
+                            step={0.01}
+                            className="slider"
+                            value={inputStrokeWidth}
+                            onChange={(e) => {
+                              setInputStrokeWidth(e);
+                              handleInputStyle("borderWidth", e + "px");
+                            }}
+                            railStyle={railStyle}
+                            handleStyle={handleStyle}
+                            trackStyle={trackStyle}
+                          />
+                        </div>
+                      </>
+                    }
+                    {inputCurrentOptions === "text" &&
+                      <>
+                        <ChromePicker
+                          className="compactPickerEditInput"
+                          color={inputFillColor}
+                          disableAlpha={true}
+                          onChange={(color) => {
+                            setInputFillColor(color.hex);
+                            handleInputStyle("color", color.hex);
+                          }} />
+
+                      </>
+                    }
+                  </>
+                </div>
+              )}
+              <div className="menuedit-sliders">
+                <p>{t("edit.inputType")}</p>
+                <select name="inputtype" onChange={e => handleVarType(e.target.value)} value={objState?.varType}>
+                  <option value="checkbox">{t("edit.input.checkbox")}</option>
+                  <option value="text">{t("edit.input.textbox")}</option>
+                  <option value="button">{t("edit.input.button")}</option>
+                  <option value="radio">{t("edit.input.radio")}</option>
+                  <option value="variable">{t("edit.input.variable")}</option>
+                </select>
+              </div>
 
               {/* TODO MAKE LOCALSTORAGE WORK FOR INTERACTIONS AND CONDITIONS */}
-              <div className="htmliframeinput">
-                <input type="checkbox" checked={!!objState.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
-                <p>{t("edit.variableSync")}</p>
+              <div className="menuedit-sliders">
+                <div className="htmliframeinput">
+                  <input type="checkbox" checked={!!objState.sync} onChange={() => handleProperty(!objState?.sync, 'sync')} />
+                  <p>{t("edit.variableSync")}</p>
+                </div>
               </div>
-              {objState?.varType === "button" ? (
-                <>
-                  <p>Button name to set</p>
-                  <input type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
-                </>
-              ) : <>
+              {objState?.varType !== "button" && <div className="menuedit-sliders">
                 <p>{t("edit.variableNameToSet")}</p>
                 <select onChange={e => handleVarName(e.target.value)} value={objState?.varName}>
                   {props.globalVars.map((data) => {
@@ -774,100 +881,29 @@ const DropdownEditObject = (props) => {
                     );
                   })}
                 </select>
-              </>}
+              </div>}
               {objState?.varType === "radio" && (
-                <div className="radio-dropdown">
-                  <p>{t("edit.radioAmount")}</p>
-                  <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} maxLength="1" />
-                  <p>{t("edit.radioText")}</p>
-                  {populateRadio()}
+                <div className="menuedit-sliders">
+                  <div className="radio-dropdown">
+                    <p>{t("edit.radioAmount")}</p>
+                    <input type="text" value={objState?.amount} placeholder={3} onChange={e => handleRadio(e.target.value)} maxLength="1" />
+                    <p>{t("edit.radioText")}</p>
+                    {populateRadio()}
+                  </div>
                 </div>
               )}
               {objState?.varType === "checkbox" && (
-                <div className="radio-dropdown">
-                  <p>{t("edit.variableNameToSet")}</p>
-                  <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                <div className="menuedit-sliders">
+                  <div className="radio-dropdown">
+                    <p>{t("edit.variableNameToSet")}</p>
+                    <input className="margin-bottom" type="text" onChange={e => handleVarName(e.target.value)} value={objState?.varName} placeholder={objState?.id} />
+                  </div>
                 </div>
               )}
-              <p>{t("edit.label")}</p>
-              <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
-              {objState.varType !== "checkbox" && (
-                <>
-                  <div className="color-buttons">
-                    <button
-                      className={`${inputCurrentOptions === "fill" ? "editInputOptionSelected" : ""}`}
-                      onClick={() => newTabInputSettings("fill")}
-                    >
-                      {t("edit.colorFill")}
-                    </button>
-                    <button
-                      className={`${inputCurrentOptions === "stroke" ? "editInputOptionSelected" : ""}`}
-                      onClick={() => newTabInputSettings("stroke")}
-                    >
-                      {t("edit.colorStroke")}
-                    </button>
-                    <button
-                      className={`${inputCurrentOptions === "text" ? navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "editInputOptionSelected simple" : "editInputOptionSelected notSimple" : navigator.userAgentData?.brands?.some(b => b.brand === 'Google Chrome') ? "simple" : "notSimple"}`}
-                      onClick={() => newTabInputSettings("text")}
-                    >
-                      {t("edit.shape.simpleText")}
-                    </button>
-                  </div>
-                  {inputCurrentOptions === "fill" && (
-
-                    <CompactPicker
-                      className="compactPickerEditInput"
-                      color={inputFillColor}
-                      disableAlpha={true}
-                      onChange={(color) => {
-                        setInputFillColor(color.hex);
-                        handleInputStyle("backgroundColor", color.hex);
-                      }}
-                      style={{
-                        boxShadow: "none"
-                      }}
-                    />
-                  )}
-                  {inputCurrentOptions === "stroke" && (
-                    <>
-                      <CompactPicker
-                        className="compactPickerEditInput"
-                        color={inputFillColor}
-                        disableAlpha={true}
-                        onChange={(color) => {
-                          setInputFillColor(color.hex);
-                          handleInputStyle("borderColor", color.hex);
-                        }}
-                      />
-                      <span>{t("edit.strokeWidth")}</span>
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={inputStrokeWidth}
-                        className="inputEditSlider"
-                        onChange={(e) => {
-                          setInputStrokeWidth(e.target.value);
-                          handleInputStyle("borderWidth", e.target.value + "px");
-                        }}
-                      />
-                    </>
-                  )}
-                  {inputCurrentOptions === "text" && (
-                    <>
-                      <CompactPicker
-                        className="compactPickerEditInput"
-                        color={inputFillColor}
-                        disableAlpha={true}
-                        onChange={(color) => {
-                          setInputFillColor(color.hex);
-                          handleInputStyle("color", color.hex);
-                        }}
-                      />
-                    </>
-                  )}
-                </>
-              )}
+              <div className="menuedit-sliders">
+                <p>{t("edit.label")}</p>
+                <input type="text" onChange={e => handleVarLabel(e.target.value)} value={objState?.label} />
+              </div>
             </div>
           </CSSTransition>
         </div>

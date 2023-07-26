@@ -268,7 +268,7 @@ const Level = (props) => {
           )}
           {!props.gamepage && (
             <>
-              <div className="level-save" onClick={() => props.saveGame()}> <Save /> Save </div>
+              <div className="level-save" onClick={() => {props.saveGame(), alertContext.showAlert("Saved", "info");}}> <Save /> Save </div>
               <Link onClick={saveOnClose} to="/dashboard" className="level-close">
                 <Exit />
                 <h1>{t("edit.exit")}</h1>

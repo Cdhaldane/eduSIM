@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "./SimNote.css";
 import { Image } from "cloudinary-react";
@@ -20,7 +20,12 @@ const SimNote = (props) => {
   const [json, setJson] = useState("");
   const [currDate, setDate] = useState("");
   const [simName, setSimName] = useState("");
+  const [loading , setLoading] = useState(true);
 
+  const strDate = useMemo(() => {
+    const str = currDate
+    return str;
+  }, [json]);
 
   useEffect(() => {
     const getJson = async () => {
@@ -31,17 +36,21 @@ const SimNote = (props) => {
         }
       }).then((res) => {
         setJson(JSON.stringify(res.data));
-        let str = "";
-        if (res.data.updatedAt !== undefined)
-          str = res.data.updatedAt.substring(0, 10);
-        setDate(str)
+        setDate(res.data.updatedAt.substring(0, 10));
         setSimName(res.data.gameinstance_name)
+        setLoading(false);
       }).catch(error => {
         console.error(error);
       })
     }
     getJson();
-  }, [props]);
+  }, []); // Will only run once after initial render
+
+  useEffect(() => {
+    if (strDate !== currDate) {
+      setDate(strDate);
+    }
+  }, [strDate, currDate]);
 
 
 
@@ -58,7 +67,7 @@ const SimNote = (props) => {
 
   }
 
-  return (
+  if(!loading) return (
     <div className="notesim" >
       <div className="notesim-draggable"><div className="drag-icons"></div></div>
       <div className="notesim-thumbnail">

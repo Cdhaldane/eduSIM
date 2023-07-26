@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { withAuth0, useAuth0 } from "@auth0/auth0-react";
 import SimNote from "../components/SimNote/SimNote";
 import CreateArea from "../components/CreateArea/CreateArea";
@@ -42,6 +42,8 @@ const Dashboard = (props) => {
   const [adminid, setAdminid] = useState(null);
   const [adminEmail, setAdminEmail] = useState(null);
 
+  const memoizedGamedata = useMemo(() => gamedata, [gamedata]);
+
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
@@ -57,6 +59,7 @@ const Dashboard = (props) => {
           const allData = res.data;
           localStorage.setItem('adminid', allData.adminid);
           localStorage.setItem('adminEmail', allData.email);
+          setUsers(allData)
           setAdminid(allData.adminid);
           setAdminEmail(allData.email);
           let body = {
@@ -70,7 +73,6 @@ const Dashboard = (props) => {
           console.error(error);
         });
       } else {
-        setLoading(false)
         setShowAuth(true)
       }
     })
@@ -99,14 +101,11 @@ const Dashboard = (props) => {
         setOrder(allData2)
 
         setHeight(allData2.length * 150);
-        setLoading(false)
       }).catch(error => {
         console.error(error);
-        setLoading(false)
       });
     } catch (error) {
       console.error(error);
-      setLoading(false)
     }
   }
 
@@ -128,7 +127,7 @@ const Dashboard = (props) => {
       getGamedata(data);
       localStorage.setItem('order', JSON.stringify(data));
     }
-
+    setLoading(false)
 
   }
 
@@ -145,6 +144,7 @@ const Dashboard = (props) => {
       }
     };
     getAllGameInstances();
+    
   }, [user]);
 
 
@@ -224,13 +224,14 @@ const Dashboard = (props) => {
             <SimNote
               key={i}
               id={i}
-              gameid={items[i].gameinstanceid}
-              img={items[i].gameinstance_photo_path}
-              adminid={items[i].createdby_adminid}
+              gameid={memoizedGamedata[i].gameinstanceid}
+              img={memoizedGamedata[i].gameinstance_photo_path}
+              adminid={memoizedGamedata[i].createdby_adminid}
               setConfirmationModal={setConfirmationModal}
-              title={items[i].gameinstance_name}
-              superadmin={items[i].createdby_adminid === localStorage.adminid}
+              title={memoizedGamedata[i].gameinstance_name}
+              superadmin={memoizedGamedata[i].createdby_adminid === localStorage.adminid}
             />
+
           </animated.div>
         ))}
       </div>
@@ -254,7 +255,7 @@ const Dashboard = (props) => {
         <div className="page-margin">
           <h2>{t("admin.mySimulations")}</h2>
           <div className="dashsim" index={updater} style={{ height: height }}>
-            <DraggableList items={gamedata ? gamedata : []} />
+          <DraggableList items={memoizedGamedata ? memoizedGamedata : []} />
           </div>
           <Modal
             isOpen={showNote}

@@ -83,12 +83,13 @@ exports.getName = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { email, followers, picture, bannerpath, likedSims, downloadedSims, following } = req.body;
+  const { email, followers, picture, bannerpath, likedsims, downloadedsims, following } = req.body;
 
   const { data, error } = await supabase
     .from('adminaccounts')
     .select('*')
     .eq('email', email);
+
 
   if (error) {
     console.error(error);
@@ -107,8 +108,8 @@ exports.updateProfile = async (req, res) => {
       followers,
       picture,
       bannerpath,
-      likedSims,
-      downloadedSims,
+      likedsims,
+      downloadedsims,
       following
     })
     .eq('email', email);

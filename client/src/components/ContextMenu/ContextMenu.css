@@ -1,12 +1,13 @@
 .cmenu {
   background-color: white;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   border: 1px solid var(--primary);
   font-family: "Montserrat", sans-serif;
   border-radius: 10px;
   box-shadow: var(--box-shadow);
   position: absolute;
   z-index: 20000;
+  width: 150px;
   animation-duration: 0.3s;
   animation-name: slidein;
 

@@ -149,13 +149,14 @@ a {
   transform: translateY(-5px);
 }
 
-.overlayDeleteRow>.icons:hover {
-  cursor: pointer;
+.overlayDeleteRow> i:hover {
+  display: flex;
 }
 
-.overlayDeleteRow>.icons {
-  font-size: 1.1em;
+.overlayDeleteRow svg {
+  font-size: 1.0em;
   color: var(--primary);
+  cursor: pointer;
 }
 
 /**************************************************/

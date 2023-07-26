@@ -121,22 +121,22 @@ ul {
 
 .timer {
   animation-duration: 0.5s;
-  animation-name: timer;
+  animation-name: fadeIn;
 }
 
 .html {
   animation-duration: 0.5s;
-  animation-name: html;
+  animation-name: fadeIn;
 }
 
 .input {
   animation-duration: 0.5s;
-  animation-name: input;
+  animation-name: fadeIn;
 }
 
 .checkbox {
   animation-duration: 0.5s;
-  animation-name: checkbox;
+  animation-name: fadeIn;
 }
 
 .dropdowncheckbox {
@@ -289,15 +289,16 @@ ul {
 }
 
 .compactPickerEditInput {
-  margin: 5px !important;
+  margin: 10px !important;
   padding: 0px !important;
   width: 100% !important;
 }
 
 .editInputOptionSelected {
-  display: inline;
-  background-color: #bcd6ff;
-  border: 1px solid rgb(112, 112, 112) !important;
+  background-color: var(--primary) !important;
+  color: var(--white) !important;
+  border: 3px solid var(--primary) !important;
+  font-weight: bolder !important;
 }
 
 .simple {

@@ -36,12 +36,12 @@ export const handleArrowKeys = (keyCode, canvas) => {
   });
   const moveMargin = 5; // define the margin for moving the shape
   allShapes.map((shape) => {
-    if (shape.name === selected) {
+    if (shape.id === selected) {
       selected = shape;
       type = shape.type;
     }
   })
-  if (selected === '') {
+  if (typeof selected === 'string' ) {
     return;
   }
   switch (keyCode) {

@@ -28,12 +28,13 @@ const SimulationTable = (props) => {
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body)
       .then(response => {
         // Update the local state with the new action count
-        if (actionType === 'downloads' && (props.user?.downloadedSims.includes(simulation.gameinstanceid))) {
+        if (actionType === 'downloads' && (props.user?.downloadedSims?.includes(simulation.gameinstanceid))) {
           return;
         }
         const updatedSimulations = simulations.map(sims => {
           if (sims.gameinstanceid === simulation.gameinstanceid) {
-            return { ...sims, [actionType]: response.data.gameinstance[actionType] };
+            console.log(response)
+            return { ...sims, [actionType]: response.data[actionType] };
           } else {
             return sims;
           }
@@ -46,9 +47,10 @@ const SimulationTable = (props) => {
       if(actionType === 'downloads'){
         let downloadedSims = props.user?.downloadedSims || []
         downloadedSims.push(simulation.gameinstanceid)
+        console.log(props)
         let body = {
-          email: props.user?.email,
-          downloadedSims: downloadedSims
+          email: props.user.email,
+          downloadedsims: downloadedSims
         }
         axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
 
@@ -66,7 +68,7 @@ const SimulationTable = (props) => {
         likedSims.push(simulation.gameinstanceid)
         let body = {
           email: props.user.email,
-          likedSims: likedSims
+          likedsims: likedSims
         }
         axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
       }

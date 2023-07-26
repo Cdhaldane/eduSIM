@@ -102,13 +102,18 @@ exports.updateGameInstance = async (req, res) => {
     .from('gameinstances')
     .update(updates)
     .eq('gameinstanceid', id);
+  
+    const { data: updatedGameInstance2, error2 } = await supabase
+    .from('gameinstances')
+    .select('*')
+    .eq('gameinstanceid', id).single();
 
   if (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
   }
 
-  return res.json(updatedGameInstance);
+  return res.json(updatedGameInstance2);
 };
 
 // Delete a game instance
