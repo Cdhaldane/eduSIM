@@ -633,27 +633,12 @@ const CanvasPage = (props) => {
       });
     }
     return {
-      key: obj.id,
-      visible: canvas.state.canvasLoading ? false :
-        (obj.visible && (!editMode ? canvas.checkObjConditions(obj.conditions) : true)),
-      rotation: obj.rotation,
-      ref: obj.ref,
-      fill: obj.fill,
-      opacity: obj.opacity,
-      name: "shape",
-      id: obj.id,
-      lock: obj.lock,
-      scaleX: obj.scaleX,
-      scaleY: obj.scaleY,
-      infolevel: obj.infolevel,
-      overlay: obj.overlay,
       textDecoration: obj.link ? "underline" : "",
       width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
-      padding: obj.strokeWidth / 2,
       ...(editMode ?
         {
           onTransform: canvas.handleTextTransform,
@@ -669,26 +654,8 @@ const CanvasPage = (props) => {
             canvas.setState({
               selectedFont: canvas.refs[obj.ref]
             });
-          },
-          onTransform: (e) => {
-            if (editMode) {
-              canvas.handleTextTransform(e);
-            }
-    
-            const node = e.target;
-            // assuming a constant lineHeight
-            const lineHeight = node.fontSize();
-            let type = 'group'
-            if (obj.overlay) type = 'overlay'
-            if (obj.infolevel) type = 'personal'
-            const textArr = canvas.refs[type + 'Transformer']._nodes[0].textArr.length;
-            const textHeight = textArr * lineHeight + 10;
-            obj.width = node.width();
-            obj.height = textHeight;
-          },
-        } : {}),
-
-      
+          }
+        } : {})
     }
   }
 
@@ -1016,12 +983,13 @@ const CanvasPage = (props) => {
       case "stars":
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
-        return (
-          <Group {...groupProps(obj, canvas, editMode)}>
-            <Rect {...textRectProps(obj, canvas, editMode)} />
-            <Text {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />
-          </Group>
-        );
+        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
+        // return (
+        //   <Group {...groupProps(obj, canvas, editMode)}>
+        //     <Rect {...textRectProps(obj, canvas, editMode)} />
+        //     <Text {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />
+        //   </Group>
+        // );
       case "lines":
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "richTexts":
@@ -1089,6 +1057,7 @@ const CanvasPage = (props) => {
         return <Timer
           defaultProps={{ ...defaultObjProps(obj, canvas, editMode) }}
           {...defaultObjProps(obj, canvas, editMode)}
+          {...canvas.getVariableProps()}
           {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
           {...timerProps(obj, canvas, editMode)}

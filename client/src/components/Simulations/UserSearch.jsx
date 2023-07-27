@@ -16,7 +16,6 @@ function UserSearch(props) {
     setLoading(true);
     axios.get(`${process.env.REACT_APP_API_ORIGIN}/api/adminaccounts/getProfile/email/${searchTerm}`)
       .then((res) => {
-        console.log(res.data);
         props.setUser(res.data)
         setLoading(false);
       }).catch(error => {

@@ -106,7 +106,6 @@ const DropdownEditObject = (props) => {
         volume: 1
       }));
     }
-    console.log(title)
     if (title === "shape") {
       setOpacity(shape.attrs.opacity ? shape.attrs.opacity : 1);
       setStrokeColor(shape.attrs.stroke);
@@ -374,7 +373,6 @@ const DropdownEditObject = (props) => {
   }
 
   const newTabInputSettings = (tab) => {
-    console.log(objState)
     setInputStrokeWidth(objState.style.borderWidth ?
       parseInt(objState.style.borderWidth.slice(0, -2)) : DEFAULT_INPUT_STROKE_W);
     setInputFillColor(tab === "fill" ? objState.style.backgroundColor :

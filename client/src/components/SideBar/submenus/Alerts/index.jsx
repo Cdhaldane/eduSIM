@@ -245,8 +245,10 @@ const Alerts = (props) => {
     let page = props.page
     for (let i = 0; i < out.length; i++) {
       if (checkObjConditions(out[i].varName, out[i].varCondition, out[i].varCheck, out[i].varCheckAlt)) {
+        console.log("advance", out[i].advance)
         if (!out[i].advance) {
           if (checkAdvance() && firstLoad === true) {
+            alertContext.showAlert("Objective completed!", "success");
             // props.handleLevel(page + 1)
             return;
           }

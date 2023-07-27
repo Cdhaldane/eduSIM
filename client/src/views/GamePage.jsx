@@ -87,7 +87,6 @@ const Game = (props) => {
   useEffect(() => {
     document.title = ('eduSIM - Playing');
     // Clean up the title when the component unmounts
-    console.log(roomStatus)
     return () => {
       document.title = 'eduSIM';
     };
@@ -103,6 +102,7 @@ const Game = (props) => {
         }
       });
       let gameData = roomData;
+      console.log(gameData)
       setRoomInfo(roomData);
       
       if (userid) {
@@ -229,7 +229,6 @@ const Game = (props) => {
 
 
   const handleLevel = (x, type) => {
-    console.log(x)
     if (type === 'game')
       setLevel(x)
     else {
@@ -325,6 +324,7 @@ const Game = (props) => {
             savedObjects={props.savedObjects}
             adminid={localStorage.adminid}
             gameinstance={room.gameinstance}
+            gameinstanceid={room.gameinstanceid}
             socket={socket}
             alerts={tasks || []}
             players={parsedPlayers}

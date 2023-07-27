@@ -33,7 +33,6 @@ const SimulationTable = (props) => {
         }
         const updatedSimulations = simulations.map(sims => {
           if (sims.gameinstanceid === simulation.gameinstanceid) {
-            console.log(response)
             return { ...sims, [actionType]: response.data[actionType] };
           } else {
             return sims;
@@ -47,7 +46,6 @@ const SimulationTable = (props) => {
       if(actionType === 'downloads'){
         let downloadedSims = props.user?.downloadedSims || []
         downloadedSims.push(simulation.gameinstanceid)
-        console.log(props)
         let body = {
           email: props.user.email,
           downloadedsims: downloadedSims

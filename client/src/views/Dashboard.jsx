@@ -76,7 +76,7 @@ const Dashboard = (props) => {
         setShowAuth(true)
       }
     })
-
+    console.log(2)
   }, [])
 
   const setConfirmationModal = (data, index) => {
@@ -99,7 +99,6 @@ const Dashboard = (props) => {
       }).then((res) => {
         const allData2 = res.data;
         setOrder(allData2)
-
         setHeight(allData2.length * 150);
       }).catch(error => {
         console.error(error);
@@ -111,6 +110,7 @@ const Dashboard = (props) => {
 
   const setOrder = (data) => {
     // set gamedata to be in order of localStorage.order
+    
     if (localStorage.order && data) {
       let order = JSON.parse(localStorage.order);
       if (order.length !== data.length) {
@@ -122,13 +122,14 @@ const Dashboard = (props) => {
         if (item === null) localStorage.removeItem('order');
       })
 
+      console.log(gamedata, order)
       getGamedata(order);
     } else {
+      console.log(data, order)
       getGamedata(data);
       localStorage.setItem('order', JSON.stringify(data));
-    }
+    } 
     setLoading(false)
-
   }
 
 
@@ -230,6 +231,9 @@ const Dashboard = (props) => {
               setConfirmationModal={setConfirmationModal}
               title={memoizedGamedata[i].gameinstance_name}
               superadmin={memoizedGamedata[i].createdby_adminid === localStorage.adminid}
+              date={memoizedGamedata[i].updatedAt}
+              data={memoizedGamedata[i].game_parameters}
+              updater={updater}
             />
 
           </animated.div>

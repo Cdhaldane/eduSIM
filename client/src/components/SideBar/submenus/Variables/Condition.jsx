@@ -150,7 +150,6 @@ const Condition = (props) => {
       return
     }
     let newItem = condition
-    console.log(condition)
     newItem.splice(ifs, 4 - ifs)
     if (props.current === 'session') {
       let data = fullConditions

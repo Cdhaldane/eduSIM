@@ -67,6 +67,12 @@ const Timer = forwardRef((props, ref) => {
       setStartTime(props.status.startTime);
       setElapsedTime(props.status.elapsedTime);
     }
+    
+    if(isDone() && props.status.finished !== true){
+      props.updateStatus(formatData({
+        finished: true
+      }));
+    }
   }, [props.status]);
 
 
@@ -154,10 +160,11 @@ const Timer = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
-    if (props.varEnable && sessionStorage.lastSetVar === props.varEnable && !running) {
+    if(props.editMode) return;
+    if(props.variables[props.varEnable] && !running){
       toggleRun();
     }
-  }, [sessionStorage.lastSetVar]);
+  }, [props.variables]);
 
   return (
     <CustomWrapper {...props} ref={ref}>

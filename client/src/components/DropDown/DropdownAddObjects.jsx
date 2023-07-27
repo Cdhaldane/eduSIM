@@ -120,7 +120,6 @@ const DropdownAddObjects = (props) => {
 
 
   const uploadFile = async (info, type) => {
-    console.log(info, type)
     try {
       if (type === "image") {
         setImageUploading(true);
@@ -139,7 +138,6 @@ const DropdownAddObjects = (props) => {
         addAudio(name)
         props.handleAudio(name);
       } else if (type === "pdf") {
-        console.log(type)
         const name = info.secure_url;
         addDocument(name)
         props.handleDocument(name);
@@ -199,7 +197,6 @@ const DropdownAddObjects = (props) => {
           onTop: true
         } : {})
     };
-    console.log(object)
     let newPages = [...props.state.pages];
     const thisPage = { ...newPages[props.state.level - 1] };
     if (props.layer.attrs.name === "group") {
@@ -390,7 +387,6 @@ const DropdownAddObjects = (props) => {
   }
 
   const addDocument = (document) => {
-    console.log(props.state.docimage)
     addObjectToLayer(
       "documents",
       {
@@ -568,7 +564,6 @@ const DropdownAddObjects = (props) => {
   }
 
   const openWidget = (preset) => {
-    console.log(preset)
     let myWidget = window.cloudinary.createUploadWidget(
       {
         cloudName: "uottawaedusim",
@@ -578,7 +573,6 @@ const DropdownAddObjects = (props) => {
       (error, result) => {
         if (!error && result && result.event === "success") {
           let type = "";
-          console.log(preset)
           if (preset == "bb8lewrh") {
             type = "image"
           } else if (preset == "tj5ptxi8") {
@@ -588,7 +582,6 @@ const DropdownAddObjects = (props) => {
           } else if (preset == "mfcgzpkg") {
             type = "pdf"
           }
-          console.log(type)
           uploadFile(result.info, type);
           myWidget.close();
         }

@@ -67,7 +67,6 @@ const Interaction = (props) => {
     }
     
     out.sort((a, b) => {
-      console.log(a, b)
       if(a.varName)
         return a.varName.localeCompare(b.varName)
     })
@@ -201,12 +200,10 @@ const Interaction = (props) => {
   const handle1 = () => {
     setShowAddition(!showAddition)
     let x = [...interaction]
-    console.log(showAddition)
     if(showAddition){
       x[4] = ''
       x[5] = ''
     } else {
-      console.log(fullInteractions, editingIndex)
 
       x[4] = fullInteractions[editingIndex][4]
       x[5] = fullInteractions[editingIndex][5]
@@ -302,14 +299,12 @@ const Interaction = (props) => {
   const handleInteraction = (n, e) => {
     let input = [...interaction]
     input[n] = e.target.value
-    console.log(input)
     setInteraction(input)
   }
 
   const handleChange = (value, x) => {
     let input = [...interaction]
     input[x] = value.label
-    console.log(input)
     setInteraction(input)
   }
 

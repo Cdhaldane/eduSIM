@@ -104,7 +104,6 @@ const CanvasUtils = (props) => {
           }
           else {
             if (!result.includes(false)) {
-              console.log(result)
 
               setCondition(var1, var2, math, var3);
             }

@@ -131,7 +131,7 @@ const DropdownRoles = (props) => {
       setSelectedRole(roleName);
       setRoleDesc(roles[index].roleDesc)
       setActiveMenu('main');
-      props.roleLevel(roleName, roleNum, roleDesc);
+      props.roleLevel(roleName);
     }
   }
 
@@ -142,6 +142,7 @@ const DropdownRoles = (props) => {
     setRoles(newRoles);
     props.handleSetRoles(newRoles);
     props.handleDeleteRole(roles[e]);
+    props.roleLevel("");
     setSelectedRole()
     setActiveMenu('main')
     setModifyIndex(-1);
@@ -243,7 +244,9 @@ const DropdownRoles = (props) => {
     setCopyRole(role)
   }
   const handleCopyRole = async () => {
+
     props.handleCopyRole(copyRole, copyTo);
+    setActiveMenu('main')
   };
 
   const AvailableRoles = (

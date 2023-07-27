@@ -79,7 +79,6 @@ const CreateArea = (props) => {
         });
       } else {
         await axios.post(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/createGameInstance', data).then((res) => {
-          console.log(res)
           props.setOrder(res.data);
         }).catch(error => {
           console.error(error);

@@ -97,8 +97,7 @@ class Graphics extends Component {
     localStorage.setItem("localInts", JSON.stringify(this.props.localInts));
     localStorage.setItem("localTrigs", JSON.stringify(this.props.localTrigs));
 
-    console.log(this.props)
-
+    console.log(props)
     this.state = {
       // Objects
       ...objectState,
@@ -129,7 +128,7 @@ class Graphics extends Component {
       gameroles: [],
       state: false,
       selectrole: false,
-      gameinstanceid: this.props.gameinstance.gameinstanceid,
+      gameinstanceid: this.props.gameinstanceid,
       adminid: this.props.adminid,
       canvasLoading: true,
       updateRanOnce: false,
@@ -258,7 +257,6 @@ class Graphics extends Component {
     let trueValueAlt = isNaN(conditions.trueValueAlt) ? conditions.trueValueAlt : parseInt(conditions.trueValueAlt);
     let val = isNaN(val) ? vars[conditions.varName] : parseInt(vars[conditions.varName]);
     let varLen = isNaN(val) ? (val || "").length : val;
-    console.log("checkObjConditions", conditions, vars, trueValue, trueValueAlt, val, varLen)
     if (val === true) val = 'true'
 
     if (val === false) val = 'false'

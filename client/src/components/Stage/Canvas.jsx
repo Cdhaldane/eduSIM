@@ -543,6 +543,8 @@ class Graphics extends Component {
 
 
 
+
+
     this.props.setGameEditProps({
       setState: this.setState,
       state: this.state,
@@ -577,7 +579,34 @@ class Graphics extends Component {
     });
 
     this.setState({ canvasLoading: false })
+
   }
+
+  handleFixer = () => {
+    // Create a copy of the state.
+    let newState = JSON.parse(JSON.stringify(this.state));
+    const layers = newState.pages.flatMap(page => [
+      ...page.groupLayers,
+      ...page.personalLayers,
+      ...page.overlays.flatMap(overlay => overlay.layers),
+    ]);
+    let removedLayers = [];
+  
+    layers.forEach((layer) => {
+      const type = this.getObjType(layer);
+  
+      // Identify the removed items
+      const removed = newState[type].filter(item => !layers.includes(item.id));
+      removedLayers = removedLayers.concat(removed);
+  
+      // Filter the state to only include items that are in the layers array
+      newState[type] = newState[type].filter(item => layers.includes(item.id));
+    });
+  
+    // Use setState to update the state.
+    
+    this.setState(newState);
+  };
 
   componentWillUnmount = () => {
     clearInterval(this.saveInterval);
@@ -596,11 +625,11 @@ class Graphics extends Component {
     }
   }
 
-
-
   componentDidUpdate = (prevProps, prevState) => {
-
     if (this.state.savedStateLoaded) {
+      if (prevState.level !== this.state.level) {
+        this.handleFixer();
+      }
       const prevMainShapes = [];
       let currentMainShapes = [];
       let allShapes = [];
@@ -611,6 +640,12 @@ class Graphics extends Component {
         allShapes = allShapes.concat(this.state[type]);
       }
       this.props.handleSetPages(this.state.pages.length)
+
+      if (this.state.personalAreaOpen === 0 && this.state.rolelevel !== '') {
+        this.setState({ rolelevel: '' })
+      }
+
+
 
       // let pages = [...this.state.pages]; // Clone pages array
       // for (let j = 0; j < pages.length; j++) {
@@ -2144,7 +2179,6 @@ class Graphics extends Component {
   handleFillColor = (e) => {
     const type = this.getObjType(this.state.selectedShapeName);
     if (type) {
-      console.log(type)
       this.setState(prevState => ({
         [type]: prevState[type].map(obj =>
           obj.id === this.state.selectedShapeName
@@ -2158,7 +2192,6 @@ class Graphics extends Component {
     } else {
       this.state.groupSelection.flat().forEach(objName => {
         const type = this.getObjType(objName);
-        console.log(objName)
         if (!type) return;
         this.setState(prevState => ({
           [type]: prevState[type].map(obj =>
@@ -2588,8 +2621,10 @@ class Graphics extends Component {
   }
 
   handleRoleLevel = (e) => {
+    console.log(e)
     this.setState({
-      rolelevel: e
+      rolelevel: e,
+      canvasLoading: false
     });
   }
 
@@ -2932,7 +2967,7 @@ class Graphics extends Component {
 
 
 
-     
+
 
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
@@ -3385,7 +3420,6 @@ class Graphics extends Component {
     let tempObject = []
     const editTitleOptions = ["polls", "connect4s", "tics", "htmls", "inputs", "timers"];
     for (let i = 0; i < newLayers.length; i++) {
-      console.log(newLayers[i])
       if (editTitleOptions.includes(newLayers[i].replace(/\d+/g, ''))) {
         inputIds.push(newLayers[i]);
       } else {
@@ -3446,7 +3480,6 @@ class Graphics extends Component {
     }
     newLayers.unshift(...tempObject);
     newLayers.unshift(...tempInputs);
-
     newLayers = [...newLayers];
     this.setLayers(newLayers);
   }
@@ -3514,35 +3547,42 @@ class Graphics extends Component {
   }
   handleCopyRole = async (role, level) => {
     let roleName = role.roleName;
-    for (let i = 0; i < this.savedObjects.length; i++) {
-      let type = this.savedObjects[i];
-      let newObj = []
-      let delCount = this.state[this.deletionCounts[i]];
-      let num = this.state[type].length + delCount + 1;
-      let layerOut = []
-      this.state[type].forEach((obj) => {
-        let layerArray = this.state.pages[this.state.level - 1].personalLayers
-        let copyObj = { ...obj };
-
-        if (obj.rolelevel === roleName && layerArray.includes(obj.id)) {
-          console.log(obj)
-          copyObj.rolelevel = roleName;
-          copyObj.name = type + num;
-          copyObj.ref = type + num;
-          copyObj.id = type + num;
-          copyObj.level = level;
-          newObj.push(copyObj);
-          num++;
-          layerOut.push(copyObj.id)
-          this.state.pages[level - 1].personalLayers = layerOut;
-        }
-      })
-      this.setState({
-        [type]: [...this.state[type], ...newObj]
-      })
-
-    }
-  }
+    let toLevel = level - 1;
+    let newState = JSON.parse(JSON.stringify(this.state));  // Copy the state
+    let currLevel = this.state.level - 1;
+    let toLayer = newState.pages[toLevel].personalLayers;
+    let currLayer = newState.pages[currLevel].personalLayers;
+    let newLayers = [];
+    newState.pages[toLevel].personalLayers = [];
+    
+    // toLayer.forEach((layer) => {
+    //   const type = this.getObjType(layer);  
+    //   newState[type] = newState[type].filter(item => item.id !== layer);
+    // });
+    
+    currLayer.forEach((layer, i) => {
+      const type = this.getObjType(layer);
+      let num = newState[type].length + 1;
+      
+      // Retrieve the object from newState instead of this.state
+      let oldObj = newState[type].find(item => item.id === layer);
+    
+      // Make sure oldObj exists and it matches the correct role level before processing
+      if(oldObj && oldObj.rolelevel === roleName && oldObj.level === currLevel + 1){
+        let newObj = { ...oldObj } // Create a new copy of oldObj
+        newObj.id = type + num;
+        newObj.ref = type + num;
+        newObj.name = type + num;
+        newObj.level = level;
+        num++;
+        newLayers.push(newObj.id); 
+        newState[type].push(newObj)
+      }
+    });
+    
+    newState.pages[toLevel].personalLayers = newLayers;
+    await this.setState(newState);
+  };
   handleDeleteRole = (role) => {
     let roleName = role.roleName;
     for (let i = 0; i < this.savedObjects.length; i++) {

@@ -17,15 +17,9 @@ import Play from "../../../public/icons/play.svg"
 const SimNote = (props) => {
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
-  const [json, setJson] = useState("");
-  const [currDate, setDate] = useState("");
-  const [simName, setSimName] = useState("");
-  const [loading , setLoading] = useState(true);
-
-  const strDate = useMemo(() => {
-    const str = currDate
-    return str;
-  }, [json]);
+  const [json, setJson] = useState({});
+  const [currDate, setDate] = useState(props.date.substring(0, 10));
+  console.log(props)
 
   useEffect(() => {
     const getJson = async () => {
@@ -35,24 +29,13 @@ const SimNote = (props) => {
           gameid: props.gameid
         }
       }).then((res) => {
-        setJson(JSON.stringify(res.data));
-        setDate(res.data.updatedAt.substring(0, 10));
-        setSimName(res.data.gameinstance_name)
-        setLoading(false);
+        setJson(JSON.stringify(res.data));        
       }).catch(error => {
         console.error(error);
       })
     }
     getJson();
-  }, []); // Will only run once after initial render
-
-  useEffect(() => {
-    if (strDate !== currDate) {
-      setDate(strDate);
-    }
-  }, [strDate, currDate]);
-
-
+  }, [props.data]); // Will only run once after initial render
 
   const downloadFile = async () => {
     let jsonCopy = JSON.parse(json);
@@ -60,14 +43,14 @@ const SimNote = (props) => {
     const href = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
-    link.download = simName + ".json";
+    link.download = props.title + ".json";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
   }
 
-  if(!loading) return (
+  return (
     <div className="notesim" >
       <div className="notesim-draggable"><div className="drag-icons"></div></div>
       <div className="notesim-thumbnail">
