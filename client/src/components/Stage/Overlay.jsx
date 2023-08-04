@@ -63,6 +63,7 @@ class Overlay extends Component {
     } else if (document.getElementById("overlayGameContainer")) {
       stageHeight = document.getElementById("overlayGameContainer").clientHeight - 1;
     }
+    console.log(this.props)
     return (
       <div className={`overlayMain`}>
         <div>
