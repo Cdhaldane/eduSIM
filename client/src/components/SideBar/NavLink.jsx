@@ -12,6 +12,7 @@ import Graph from "../../../public/icons/graph-alt-4.svg"
 import Cog from "../../../public/icons/cog.svg"
 import Control from "../../../public/icons/control-panel.svg"
 import Notes from "../../../public/icons/notepad.svg"
+import Pallet from "../../../public/icons/pallet.svg"
 
 const StyledLink = styled.a`
   min-height: 56px;
@@ -86,7 +87,7 @@ const StyledLink = styled.a`
       text-decoration: none;
       background-color: var(--primary);
       color: var(--white);
-      i {
+      svg {
         fill: var(--white) !important;
       }
     }
@@ -128,6 +129,9 @@ const NavLink = forwardRef((props, ref) => {
           break;
         case "notes":
           return <Notes />
+          break;
+        case "pallet":
+          return <Pallet />
           break;
       }
 

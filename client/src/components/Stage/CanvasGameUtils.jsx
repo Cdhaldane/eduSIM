@@ -71,16 +71,15 @@ const CanvasUtils = (props) => {
     if (Array.isArray(var3)) variable3 = props.globalVars[var3.toString()];
     else variable3 = var3;
 
-    if (var1 === 'true') variable1 = true;
-    if (var1 === 'false') variable1 = false;
-    if (var2 === 'true') variable2 = true;
-    if (var2 === 'false') variable2 = false;
-    if (var3 === 'true') variable3 = true;
-    if (var3 === 'false') variable3 = false;
+    if (variable1 === 'true') variable1 = true;
+    if (variable1 === 'false') variable1 = false;
+    if (variable2 === 'true') variable2 = true;
+    if (variable2 === 'false') variable2 = false;
+    if (variable3 === 'true') variable3 = true;
+    if (variable3 === 'false') variable3 = false;
     if (isNumeric(variable1)) variable1 = parseInt(variable1);
     if (isNumeric(variable2)) variable2 = parseInt(variable2);
     if (isNumeric(variable3)) variable3 = parseInt(variable3);
-
     // if (variable1 === undefined || variable2 === undefined) return [false];
     return [variable1, variable2, variable3];
   };
@@ -104,7 +103,7 @@ const CanvasUtils = (props) => {
           }
           else {
             if (!result.includes(false)) {
-
+              console.log(var1, var2, math, var3)
               setCondition(var1, var2, math, var3);
             }
           }

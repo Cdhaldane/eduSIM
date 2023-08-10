@@ -53,16 +53,18 @@ const EditPage = (props) => {
 
   const [tasks, setTasks] = useState([]);
   const [globalVars, setGlobalVars] = useState([]);
-  const [globalCons , setGlobalCons] = useState([]);
+  const [globalCons, setGlobalCons] = useState([]);
   const [globalInts, setGlobalInts] = useState([]);
   const [globalTrigs, setGlobalTrigs] = useState([]);
   const [localVars, setLocalVars] = useState([]);
-  const [localCons , setLocalCons] = useState([]);
+  const [localCons, setLocalCons] = useState([]);
   const [localInts, setLocalInts] = useState([]);
   const [localTrigs, setLocalTrigs] = useState([]);
   const [page, setPage] = useState(1);
   const [groups, setGroups] = useState({});
   const [roles, setRoles] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const [shapeThemes, setShapeThemes] = useState([]);
 
   const [pages, setPages] = useState(6);
   const [shapes, setShapes] = useState([])
@@ -83,7 +85,7 @@ const EditPage = (props) => {
       setUpdater(updater + 1);
     }
     document.body.style.zoom = "100%";
-    
+
   }, [updater]);
 
   useEffect(() => {
@@ -129,7 +131,7 @@ const EditPage = (props) => {
   const handleLocalTrigs = (data) => {
     setLocalTrigs(data)
   }
-  
+
   const handleSetShapes = (data) => {
     setShapes(data.inputs)
   }
@@ -141,6 +143,12 @@ const EditPage = (props) => {
   }
   const handleGroups = (data) => {
     setGroups(data)
+  }
+  const handleSetThemes = (data) => {
+    setThemes(data)
+  }
+  const handleSetShapeThemes = (data) => {
+    setShapeThemes(data)
   }
 
   return (
@@ -185,56 +193,64 @@ const EditPage = (props) => {
               setAlerts={handleSetTasks}
               alerts={tasks || []}
               groups={groups}
+              themes={themes}
+              setThemes={handleSetThemes}
+              shapeThemes={shapeThemes}
+              setShapeThemes={handleSetShapeThemes}
             />
           </GridNav>
           <GridMain color={pageColor}>
-              <Canvas
-                setPageColor={setPageColor}
-                setCanvasLoading={setCanvasLoading}
-                loadObjects={props.loadObjects}
-                customDeletes={props.customDeletes}
-                allDeletes={props.allDeletes}
-                customObjects={props.customObjects}
-                savedObjects={props.savedObjects}
-                reCenter={props.reCenter}
-                setGameEditProps={props.setGameEditProps}
-                setPerformanceFunctions={setPerformanceFunctions}
-                setCustomObjs={setCustomObjs}
-                doNotRecalculateBounds={updater > 0}
-                reloadCanvasFull={() => setUpdater(updater + 1)}
-                setDropdownType={dropdownContext.setType}
-                showAlert={alertContext.showAlert}
-                adminid={localStorage.adminid}
-                gameinstance={localStorage.gameinstance}
-                globalVars={globalVars}
-                globalCons={globalCons}
-                globalInts={globalInts}
-                globalTrigs={globalTrigs}
-                localVars={localVars}
-                localCons={localCons}
-                localInts={localInts}
-                localTrigs={localTrigs}
-                tasks={tasks}
-                page={page}
-                setTasks={handleSetTasks}
-                setShapes={handleSetShapes}
-                setAllShapes={handleSetAllShapes}
-                setGlobalVars={handleGlobalsVars}
-                setGlobalCons={handleGlobalsCons}
-                setGlobalInts={handleGlobalsInts}
-                setGlobalTrigs={handleGlobalsTrigs}
-                setLocalVars={handleLocalVars}
-                setLocalCons={handleLocalCons}
-                setLocalInts={handleLocalInts}
-                setLocalTrigs={handleLocalTrigs}  
-                handleGroups={handleGroups}
-                setEditState={props.setEditState}
-                handleLevel={handlePage}
-                handleSetPages={handleSetPages}
-                groups={groups}
-                roles ={roles}
-                setRoles={handleSetRoles}
-              />
+            <Canvas
+              setPageColor={setPageColor}
+              setCanvasLoading={setCanvasLoading}
+              loadObjects={props.loadObjects}
+              customDeletes={props.customDeletes}
+              allDeletes={props.allDeletes}
+              customObjects={props.customObjects}
+              savedObjects={props.savedObjects}
+              reCenter={props.reCenter}
+              setGameEditProps={props.setGameEditProps}
+              setPerformanceFunctions={setPerformanceFunctions}
+              setCustomObjs={setCustomObjs}
+              doNotRecalculateBounds={updater > 0}
+              reloadCanvasFull={() => setUpdater(updater + 1)}
+              setDropdownType={dropdownContext.setType}
+              showAlert={alertContext.showAlert}
+              adminid={localStorage.adminid}
+              gameinstance={localStorage.gameinstance}
+              globalVars={globalVars}
+              globalCons={globalCons}
+              globalInts={globalInts}
+              globalTrigs={globalTrigs}
+              localVars={localVars}
+              localCons={localCons}
+              localInts={localInts}
+              localTrigs={localTrigs}
+              tasks={tasks}
+              page={page}
+              themes={themes}
+              setThemes={handleSetThemes}
+              shapeThemes={shapeThemes}
+              setShapeThemes={handleSetShapeThemes}
+              setTasks={handleSetTasks}
+              setShapes={handleSetShapes}
+              setAllShapes={handleSetAllShapes}
+              setGlobalVars={handleGlobalsVars}
+              setGlobalCons={handleGlobalsCons}
+              setGlobalInts={handleGlobalsInts}
+              setGlobalTrigs={handleGlobalsTrigs}
+              setLocalVars={handleLocalVars}
+              setLocalCons={handleLocalCons}
+              setLocalInts={handleLocalInts}
+              setLocalTrigs={handleLocalTrigs}
+              handleGroups={handleGroups}
+              setEditState={props.setEditState}
+              handleLevel={handlePage}
+              handleSetPages={handleSetPages}
+              groups={groups}
+              roles={roles}
+              setRoles={handleSetRoles}
+            />
           </GridMain>
         </Grid>
       </div>

@@ -357,7 +357,7 @@ class Graphics extends Component {
             objects[type] = newStateArray;
           }
         }
-
+        console.log(objects)
         if (this.props.setRoles) {
           this.props.setRoles(objects.roles || []);
         }
@@ -396,6 +396,12 @@ class Graphics extends Component {
         if (this.props.setNotes) {
           this.props.setNotes(objects.notes || {});
         }
+        if (this.props.setThemes) {
+          this.props.setThemes(objects.themes || []);
+        }
+        if (this.props.setShapeThemes) 
+          this.props.setShapeThemes(objects.shapeThemes || []);
+
 
 
 
@@ -591,20 +597,20 @@ class Graphics extends Component {
       ...page.overlays.flatMap(overlay => overlay.layers),
     ]);
     let removedLayers = [];
-  
+
     layers.forEach((layer) => {
       const type = this.getObjType(layer);
-  
+
       // Identify the removed items
       const removed = newState[type].filter(item => !layers.includes(item.id));
       removedLayers = removedLayers.concat(removed);
-  
+
       // Filter the state to only include items that are in the layers array
       newState[type] = newState[type].filter(item => layers.includes(item.id));
     });
-  
+
     // Use setState to update the state.
-    
+
     this.setState(newState);
   };
 
@@ -681,7 +687,11 @@ class Graphics extends Component {
               history = uh.slice(0, historyStep + 1);
               let toAppend = this.state;
               history = history.concat(toAppend);
-              historyStep++;
+              if (this.state.groupSelection.length === 0) {
+                historyStep++;
+              } else {
+                historyStep = historyStep + 1 / this.state.groupSelection[0].length;
+              }
             }
           }
         }
@@ -805,6 +815,8 @@ class Graphics extends Component {
     storedObj.localTrigs = this.props.localTrigs;
     storedObj.groups = this.props.groups;
     storedObj.roles = this.props.roles;
+    storedObj.themes = this.props.themes;
+    storedObj.shapeThemes = this.props.shapeThemes;
     this.setState({
       saved: storedObj
     });
@@ -1771,16 +1783,18 @@ class Graphics extends Component {
   }
 
   handleUndo = () => {
-    this.handleSave();
+    // this.handleSave();
     const stageType = this.state.overlayOpen ? "overlayLayers" :
       (this.personalAreaOpen ? "personalLayers" : "groupLayers");
     if (!this.state.isTransforming) {
       if (!this.state.textEditVisible) {
-        if (historyStep === 0) {
+        historyStep = Math.round(historyStep);
+        if (historyStep === 1) {
           return;
         }
         historyStep--;
         const previous = history[historyStep];
+
         for (let i = 0; i < this.savedObjects.length; i++) {
           this.setState({
             [this.savedObjects[i]]: previous[this.savedObjects[i]],
@@ -1802,11 +1816,12 @@ class Graphics extends Component {
           ? ""
           : this.state.selectedShapeName
       });
+
     }
   };
 
   handleRedo = () => {
-    this.handleSave();
+    // this.handleSave();
     if (!this.state.isTransforming) {
       if (!this.state.textEditVisible) {
         if (historyStep === history.length - 1) {
@@ -1953,7 +1968,6 @@ class Graphics extends Component {
       }
     }
 
-
     // Get group item ids
     const groupCopiedIds = [];
     for (let i = 0; i < stateItems.length; i++) {
@@ -1992,7 +2006,7 @@ class Graphics extends Component {
       const delCount = this.state[this.deletionCounts[typeIndex]];
       for (let j = 0; j < itemsFlat.length; j++) {
         let pasteX = this.state.selection.x1 + (itemsFlat[j].x - originX);
-        let pasteY = this.state.selection.y1 - (itemsFlat[j].y - originY);
+        let pasteY = this.state.selection.y1 + (itemsFlat[j].y - originY);
         if (direction === 'inPlace') {
           pasteX = itemsFlat[j].x;
           pasteY = itemsFlat[j].y;
@@ -2927,23 +2941,57 @@ class Graphics extends Component {
 
   // Snapping functionality based on:
   // https://konvajs.org/docs/sandbox/Objects_Snapping.html
-  collide = (rect1, rect2, padding) => {
-    let rect1Top = rect1.y;
-    let rect1Bottom = rect1.y + rect1.height;
-    let rect1Left = rect1.x;
-    let rect1Right = rect1.x + rect1.width;
-    const rect2Top = rect2.y - padding;
-    const rect2Bottom = rect2.y + rect2.height + padding;
-    const rect2Left = rect2.x - padding;
-    const rect2Right = rect2.x + rect2.width + padding;
+  collide = (rect1, rect2, stage) => {
+    const rect1MiddleY = rect1.y + rect1.height / 2;
+    const rect1MiddleX = rect1.x + rect1.width / 2
+    const rect2Top = rect2.y;
+    const rect2Bottom = rect2.y + rect2.height;
+    const rect2Left = rect2.x;
+    const rect2Right = rect2.x + rect2.width;
+    const rect2MiddleY = rect2.y + rect2.height / 2;
+    const rect2MiddleX = rect2.x + rect2.width / 2
+    const padding = rect1.width;
 
+    let vertical = []
+    let horizontal = []
+    const layerX = this.state[`${stage}LayerX`];
+    const layerY = this.state[`${stage}LayerY`];
+    const layerScale = this.state[`${stage}LayerScale`];
 
-    return !(
-      rect1Top > rect2Bottom ||
-      rect1Right < rect2Left ||
-      rect1Bottom < rect2Top ||
-      rect1Left > rect2Right
-    );
+    const x = (rect2.x - layerX) / layerScale;
+    const width = rect2.width / layerScale;
+
+    const y = (rect2.y - layerY) / layerScale;
+    const height = rect2.height / layerScale;
+    if (rect1MiddleX > rect2Left - padding && rect1MiddleX < rect2Left + padding) {
+      horizontal.push([null, null, null]);
+      vertical.push([x]);
+    }
+    if (rect1MiddleX > rect2Right - padding && rect1MiddleX < rect2Right + padding) {
+      horizontal.push([null, null, null]);
+      vertical.push([x + width]);
+    }
+    if (rect1MiddleX > rect2MiddleX - padding && rect1MiddleX < rect2MiddleX + padding) {
+      horizontal.push([null, null, null]);
+      vertical.push([x + width / 2]);
+    }
+    if (rect1MiddleY > rect2Top - padding && rect1MiddleY < rect2Top + padding) {
+      horizontal.push([y]);
+      vertical.push([null, null, null]);
+    }
+    if (rect1MiddleY > rect2Bottom - padding && rect1MiddleY < rect2Bottom + padding) {
+      horizontal.push([y + height]);
+      vertical.push([null, null, null]);
+    }
+    if (rect1MiddleY > rect2MiddleY - padding && rect1MiddleY < rect2MiddleY + padding) {
+      horizontal.push([y + height / 2]);
+      vertical.push([null, null, null]);
+    }
+    if (rect1MiddleY > rect2Top && rect1MiddleY < rect2Bottom && rect1MiddleX > rect2Left && rect1MiddleX < rect2Right) {
+      vertical.push([x, x + width, x + width / 2]);
+      horizontal.push([y, y + height, y + height / 2]);
+    }
+    return ([vertical, horizontal])
   }
 
   // Where can we snap our objects?
@@ -2965,59 +3013,14 @@ class Graphics extends Component {
       if (guideItem === skipShape ||
         (guideItem.attrs.currentId && guideItem.attrs.currentId === skipShape.attrs.id)) return;
 
-
-
-
-
       // Check if shape is close by
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
       const box = guideItem.getClientRect();
-      const padding = 100;
-      if (this.collide(compBox, box, padding)) {
-
-        const x = (box.x - layerX) / layerScale;
-        const width = box.width / layerScale;
-
-        const y = (box.y - layerY) / layerScale;
-        const height = box.height / layerScale;
-
-        const gTop = box.y;
-        const gBottom = box.y + box.height;
-        const gLeft = box.x;
-        const gRight = box.x + box.width;
-
-        const oMiddleX = compBox.x + compBox.width / 2;
-        const oMiddleY = compBox.y + compBox.height / 2;
-
-        let isBetweenTopBottom = false;
-        let isBetweenLeftRight = false;
-
-        if (oMiddleY > gTop && oMiddleY < gBottom) {
-          isBetweenTopBottom = true;
-        }
-        if (oMiddleX > gLeft && oMiddleX < gRight) {
-          isBetweenLeftRight = true;
-        }
-        const distance = Math.sqrt(Math.pow(oMiddleX - (box.x + box.width / 2), 2) + Math.pow(oMiddleY - (box.y + box.height / 2), 2));
-        distances.push({
-          vertical: [x, x + width, x + width / 2],
-          horizontal: [y, y + height, y + height / 2],
-          distance
-        });
-        if (!isBetweenTopBottom) {
-          vertical.push([x, x + width, x + width / 2]);
-          horizontal.push([-0, -0, -0]);
-        }
-        if (!isBetweenLeftRight) {
-          vertical.push([-0, -0, -0]);
-          horizontal.push([y, y + height, y + height / 2]);
-        }
-        if (isBetweenTopBottom && isBetweenLeftRight) {
-          vertical.push([x, x + width, x + width / 2]);
-          horizontal.push([y, y + height, y + height / 2]);
-        }
-
-        // foundGuideItem = true;
+      let guideArray = this.collide(compBox, box, stage)
+      console.log(guideArray)
+      if (guideArray) {
+        vertical.push(guideArray[0][0])
+        horizontal.push(guideArray[1][0])
       }
     });
 
@@ -3554,32 +3557,32 @@ class Graphics extends Component {
     let currLayer = newState.pages[currLevel].personalLayers;
     let newLayers = [];
     newState.pages[toLevel].personalLayers = [];
-    
+
     // toLayer.forEach((layer) => {
     //   const type = this.getObjType(layer);  
     //   newState[type] = newState[type].filter(item => item.id !== layer);
     // });
-    
+
     currLayer.forEach((layer, i) => {
       const type = this.getObjType(layer);
       let num = newState[type].length + 1;
-      
+
       // Retrieve the object from newState instead of this.state
       let oldObj = newState[type].find(item => item.id === layer);
-    
+
       // Make sure oldObj exists and it matches the correct role level before processing
-      if(oldObj && oldObj.rolelevel === roleName && oldObj.level === currLevel + 1){
+      if (oldObj && oldObj.rolelevel === roleName && oldObj.level === currLevel + 1) {
         let newObj = { ...oldObj } // Create a new copy of oldObj
         newObj.id = type + num;
         newObj.ref = type + num;
         newObj.name = type + num;
         newObj.level = level;
         num++;
-        newLayers.push(newObj.id); 
+        newLayers.push(newObj.id);
         newState[type].push(newObj)
       }
     });
-    
+
     newState.pages[toLevel].personalLayers = newLayers;
     await this.setState(newState);
   };
@@ -3815,6 +3818,7 @@ class Graphics extends Component {
         </Stage>*/}
 
         {/* ---- OVERLAY CANVAS ---- */}
+        {}
         {this.state.overlayOpen && (
           <>
             {/* The right click menu for the overlay area */}
@@ -3840,6 +3844,7 @@ class Graphics extends Component {
                     choosecolor={this.chooseColor}
                     close={() => this.setState({ overlayAreaContextMenuVisible: false })}
                     customObjects={this.customObjects}
+                    shapeThemes={this.props.shapeThemes}
                   />
                 </>
               )}
@@ -3895,6 +3900,8 @@ class Graphics extends Component {
                 choosecolor={this.chooseColor}
                 customObjects={this.customObjects}
                 close={() => this.setState({ groupAreaContextMenuVisible: false })}
+                shapeThemes={this.props.shapeThemes}
+
               />
             )}
           {this.state.drawMode && (
@@ -3975,6 +3982,8 @@ class Graphics extends Component {
                   choosecolor={this.chooseColor}
                   customObjects={this.customObjects}
                   close={() => this.setState({ personalAreaContextMenuVisible: false })}
+                  shapeThemes={this.props.shapeThemes}
+
                 />
               )}
             {this.state.selectedContextMenu && this.state.selectedContextMenu.type === "ObjectMenu" && (
@@ -4009,6 +4018,7 @@ class Graphics extends Component {
                   setCustomObjData={this.setCustomObjData}
                   layerTo={this.layerTo}
                   pages={this.state.pages}
+                  themes={this.props.themes}
                   layerToBottom={this.layerToBottom}
                   layers={this.getLayers()}
                   contextDisabled={this.state.contextDisabled}

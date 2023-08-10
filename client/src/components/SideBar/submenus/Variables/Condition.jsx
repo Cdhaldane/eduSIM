@@ -280,9 +280,11 @@ const Condition = (props) => {
   const getSpecialBox = (i, n, x) => {
     let list = []
     list.push(
-      <div className='var-box'>
-        <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var' ? 'white' : "black" }} onClick={() => updateState('var', i)}>Var</button>
-        <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
+      <div>
+        <div className='var-box'>
+          <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var' ? 'white' : "black" }} onClick={() => updateState('var', i)}>Var</button>
+          <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
+        </div>
         <div className="box int-special">
           {box[i].state === 'var' ? (
             <Multilevel data={variables} handleChange={handleChange} x={x} y={n} baseValue={condition[x][n]} />
@@ -295,8 +297,13 @@ const Condition = (props) => {
               value={condition[x][n]}
             />
           )}
-
         </div>
+        {box[i].state === 'val' &&
+          <div className="special-box-tf">
+            <button onClick={() => handleSelectChange({ value: 'true' }, x, n)}>True</button>
+            <button onClick={() => handleSelectChange({ value: 'false' }, x, n)}>False</button>
+          </div>
+        }
       </div>
     )
 
@@ -305,6 +312,7 @@ const Condition = (props) => {
 
   const handleSelectChange = (event, x, y) => {
     // Make a copy of your state
+    console.log(event.value)
     let newCondition = [...condition];
     // Change the value at the specific index
     newCondition[x][y] = event.value;

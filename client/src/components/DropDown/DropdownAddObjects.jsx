@@ -18,7 +18,7 @@ import TextAlt from "../../../public/icons/text-alt.svg"
 import Square from "../../../public/icons/stop.svg"
 import Circle from "../../../public/icons/circle.svg"
 import Triangle from "../../../public/icons/triangle-9.svg"
-import Line from "../../../public/icons/minus.svg"
+import Line from "../../../public/icons/vector-alt.svg"
 import Draw from "../../../public/icons/paint-roller-alt-2.svg"
 import Video from "../../../public/icons/video-camera-alt-2.svg"
 import Audio from "../../../public/icons/volume-medium.svg"
@@ -222,7 +222,7 @@ const DropdownAddObjects = (props) => {
     }
     newPages[props.state.level - 1] = thisPage;
 
-    
+
 
     props.setState({
       [objectName]: [...objectsState, object],
@@ -233,15 +233,16 @@ const DropdownAddObjects = (props) => {
   }
 
   const addRectangle = () => {
+    console.log(props.shapeThemes)
     addObjectToLayer(
       "rectangles",
       {
         width: 100,
         height: 100,
-        stroke: 'black',
+        stroke: props.shapeThemes[0] ? props.shapeThemes[0][1] : 'black',
         strokeWidth: DEFAULT_STROKE,
         rotation: 0,
-        fill: props.state.colorf,
+        fill: props.shapeThemes[0] ? props.shapeThemes[0][0] : 'black',
         useImage: false,
       }
     );
@@ -253,9 +254,9 @@ const DropdownAddObjects = (props) => {
       {
         radiusX: 50,
         radiusY: 50,
-        stroke: 'black',
+        stroke: props.shapeThemes[1] ? props.shapeThemes[1][1] : 'black',
         strokeWidth: DEFAULT_STROKE,
-        fill: props.state.colorf,
+        fill: props.shapeThemes[1] ? props.shapeThemes[1][0] : 'black',
         rotation: 0
       }
     );
@@ -268,9 +269,9 @@ const DropdownAddObjects = (props) => {
         numPoints: 5,
         innerRadius: 30,
         outerRadius: 70,
-        stroke: 'black',
+        stroke: props.shapeThemes[3] ? props.shapeThemes[3][1] : 'black',
         strokeWidth: DEFAULT_STROKE,
-        fill: props.state.colorf,
+        fill: props.shapeThemes[3] ? props.shapeThemes[3][0] : 'black',
         rotation: 0,
         width: 100,
         height: 100
@@ -296,10 +297,10 @@ const DropdownAddObjects = (props) => {
       {
         sides: 3,
         radius: 70,
-        stroke: 'black',
+        stroke: props.shapeThemes[2] ? props.shapeThemes[2][1] : 'black',
         strokeWidth: DEFAULT_STROKE,
         useImage: false,
-        fill: props.state.colorf,
+        fill: props.shapeThemes[2] ? props.shapeThemes[2][0] : 'black',
         rotation: 0,
         width: 100,
         height: 100
@@ -324,18 +325,18 @@ const DropdownAddObjects = (props) => {
   }
 
   const addImage = (img, info) => {
-        addObjectToLayer(
-          "images",
-          {
-            temporary: false,
-            imgsrc: img,
-            stroke: 'black',
-            strokeWidth: 0,
-            opacity: 1,
-            width: info.width,
-            height: info.height
-          }
-        );
+    addObjectToLayer(
+      "images",
+      {
+        temporary: false,
+        imgsrc: img,
+        stroke: 'black',
+        strokeWidth: 0,
+        opacity: 1,
+        width: info.width,
+        height: info.height
+      }
+    );
   }
 
   const addVideo = (video) => {
@@ -365,11 +366,11 @@ const DropdownAddObjects = (props) => {
         text: "Edit this",
         fontFamily: "Belgrano",
         opacity: 1,
-        fill: props.state.colorf,
+        fill: props.shapeThemes[5] ? props.shapeThemes[5][0] : 'black',
         rotation: 0,
         width: 300,
         height: 60,
-        stroke: 'black',
+        stroke: props.shapeThemes[5] ? props.shapeThemes[5][1] : 'black',
         strokeWidth: 0,
         backgroundColor: "transparent",
       }
@@ -480,8 +481,14 @@ const DropdownAddObjects = (props) => {
 
   const addInput = (varType) => {
     addObjectToLayer(
-      "inputs", { varType, label: t("edit.labelText"),
-    zIndex: 0 }
+      "inputs", {
+      varType,
+      label: t("edit.labelText"),
+      zIndex: 0,
+      fill: props.shapeThemes[4] ? props.shapeThemes[4][0] : 'white',
+      stroke: props.shapeThemes[4] ? props.shapeThemes[4][1] : 'black',
+      textColor: props.shapeThemes[4] ? props.shapeThemes[4][2] : 'black',
+    }
     );
   }
 
@@ -670,8 +677,8 @@ const DropdownAddObjects = (props) => {
           <DropdownItem onClick={addStar} leftIcon={<i onClick={addStar}><i><Star className="icon add-icons" /></i></i>}>{t("edit.shape.star")}</DropdownItem>
           <DropdownItem
             onClick={addLine}
-            leftIcon={<i className="add-icons-line" onClick={addLine}>
-              /
+            leftIcon={<i onClick={addLine}>
+              <Line className="icon add-icons" />
             </i>}
           >
             {t("edit.shape.line")}

@@ -774,26 +774,42 @@ const CanvasPage = (props) => {
     sync: obj.sync || false
   });
 
-  const inputProps = (obj, canvas) => ({
-    style: obj.style,
-    varType: obj.varType,
-    varName: obj.varName,
-    varValue: obj.varValue,
-    varOne: obj.varOne,
-    conEquals: obj.conEquals,
-    varTwo: obj.varTwo,
-    math: obj.math,
-    amount: obj.amount,
-    variableAmount: obj.variableAmount,
-    conditionAmount: obj.conditionAmount,
-    varCon: obj.varCon,
-    incr: obj.incr,
-    radioText: obj.radioText,
-    refresh: canvas.refresh,
-    label: obj.label,
-    sync: obj.sync || true,
-    conditional: obj.conditional,
-  })
+  const inputProps = (obj, canvas) => {
+    let style = obj.style;
+    if(!style) style = {};
+    if (!style.backgroundColor) 
+      style.backgroundColor = obj.fill;
+    if (!style.color) 
+      style.color = obj.textColor;
+
+    if (!style.borderColor) 
+      style.borderColor = obj.stroke;
+    
+    if (!style.borderWidth) 
+      style.borderWidth = 1;
+    
+
+    return {
+      style: style,
+      varType: obj.varType,
+      varName: obj.varName,
+      varValue: obj.varValue,
+      varOne: obj.varOne,
+      conEquals: obj.conEquals,
+      varTwo: obj.varTwo,
+      math: obj.math,
+      amount: obj.amount,
+      variableAmount: obj.variableAmount,
+      conditionAmount: obj.conditionAmount,
+      varCon: obj.varCon,
+      incr: obj.incr,
+      radioText: obj.radioText,
+      refresh: canvas.refresh,
+      label: obj.label,
+      sync: obj.sync || true,
+      conditional: obj.conditional,
+    }
+  }
 
   const timerProps = (obj, canvas, editMode) => ({
     timeLimit: obj.timeLimit,
@@ -984,12 +1000,12 @@ const CanvasPage = (props) => {
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
         return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
-        // return (
-        //   <Group {...groupProps(obj, canvas, editMode)}>
-        //     <Rect {...textRectProps(obj, canvas, editMode)} />
-        //     <Text {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />
-        //   </Group>
-        // );
+      // return (
+      //   <Group {...groupProps(obj, canvas, editMode)}>
+      //     <Rect {...textRectProps(obj, canvas, editMode)} />
+      //     <Text {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />
+      //   </Group>
+      // );
       case "lines":
         return <Line {...lineObjProps(obj, canvas, editMode)} />;
       case "richTexts":
@@ -1229,7 +1245,7 @@ const CanvasPage = (props) => {
                 ) ?
                   <Arrow {...arrowProps(obj, index, canvas, editMode)} /> : null
               })}
-              
+
               {/* This is the stage container (positionRect) */}
               {positionRect && (
                 <>

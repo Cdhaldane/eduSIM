@@ -183,7 +183,7 @@ const Interaction = (props) => {
   }
   const deleteCon = (int) => {
     let a = props.current === 'global' ? props.globalInts : props.localInts
-    let page = getPageData(int)
+    // let page = getPageData(int)
     let x = []
     a.map((temp) => {
       if(temp !== int)
@@ -192,8 +192,6 @@ const Interaction = (props) => {
     
     if (props.current === 'session') props.setLocalInts(x)
     if (props.current === 'global') props.setGlobalInts(x)
-
-    props.handleGroup(page, int, 'remove', 'interaction')
     setConfirmationModal(false)
     // setFullInteractions(x)
   }
@@ -227,7 +225,7 @@ const Interaction = (props) => {
       setIsCheck(false)
       setIsVCheck(false)
     }
-    handleInteraction(6, e)
+    handleInteraction(6, e.target.value)
   }
 
 
@@ -273,16 +271,18 @@ const Interaction = (props) => {
   const getSpecialBox = (i, n) => {
     let list = []
     list.push(
+      <div>
       <div className='var-box'>
         <button style={{ backgroundColor: box[i].state === 'var' ? 'var(--primary)' : "white", color: box[i].state === 'var' ? 'white' : "black" }} onClick={() => updateState('var', i)}>Var</button>
         <button style={{ backgroundColor: box[i].state === 'val' ? 'var(--primary)' : "white", color: box[i].state === 'val' ? 'white' : "black" }} onClick={() => updateState('val', i)}>Val</button>
+        </div>
         <div className="box int-special">
           {box[i].state === 'var' ? (
             <MultiLevel data={variables} handleChange={handleChange} x={n} baseValue={interaction[n]} />
           ) : (
             <input
               className="int-box"
-              onChange={(e) => { handleInteraction(n, e) }}
+              onChange={(e) => { handleInteraction(n, e.target.value) }}
               type="text"
               placeholder="value"
               value={interaction[n]}
@@ -290,15 +290,21 @@ const Interaction = (props) => {
           )}
 
         </div>
+        {box[i].state === 'val' && check === 'var' &&
+          <div className="special-box-tf">
+            <button onClick={() => handleInteraction(n, 'true' )}>True</button>
+            <button onClick={() => handleInteraction(n, 'false' )}>False</button>
+          </div>
+        }
       </div>
     )
     return list
   }
 
 
-  const handleInteraction = (n, e) => {
+  const handleInteraction = (n, value) => {
     let input = [...interaction]
-    input[n] = e.target.value
+    input[n] = value
     setInteraction(input)
   }
 
@@ -359,7 +365,7 @@ const Interaction = (props) => {
                 {showAddition && (
                   <>
                     <div className="box select">
-                      <select onChange={(e) => handleInteraction(4, e)} value={interaction[4]}>
+                      <select onChange={(e) => handleInteraction(4, e.target.value)} value={interaction[4]}>
                         <option value="+">+</option>
                         <option value="-">-</option>
                         <option value="x"> x </option>
@@ -396,7 +402,7 @@ const Interaction = (props) => {
               <div className={'ints-con'}>
                 <div className="int-page-con">
                   <h2 className="smaller-text">Go to page </h2>
-                  <input className="int-page-box" onChange={(e) => handleInteraction(5, e)} type="text" placeholder="page" value={interaction[5]} />
+                  <input className="int-page-box" onChange={(e) => handleInteraction(5, e.target.value)} type="text" placeholder="page" value={interaction[5]} />
                 </div>
               </div>
             )}

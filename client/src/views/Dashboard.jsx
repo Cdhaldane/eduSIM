@@ -68,7 +68,7 @@ const Dashboard = (props) => {
           }
           axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
           getAllGamedata(allData.adminid)
-
+          
         }).then(res => { }).catch(error => {
           console.error(error);
         });
@@ -76,7 +76,6 @@ const Dashboard = (props) => {
         setShowAuth(true)
       }
     })
-    console.log(2)
   }, [])
 
   const setConfirmationModal = (data, index) => {

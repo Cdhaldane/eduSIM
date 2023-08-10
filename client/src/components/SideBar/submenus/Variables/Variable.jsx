@@ -9,6 +9,7 @@ import "./Variable.css"
 import Trash from "../../../../../public/icons/trash-can-alt-2.svg"
 import Plus from "../../../../../public/icons/circle-plus.svg"
 import Pencil from "../../../../../public/icons/pencil.svg"
+import { set } from "draft-js/lib/EditorState";
 
 
 const VariableTypes = {
@@ -65,7 +66,7 @@ const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, h
 
   const addVar = useCallback(() => {
     const value = getValueByVarType(varType, varValue);
-  
+    console.log(varValue)
     if (value !== value || value === NaN) {
       alertContext.showAlert(t("Value Not Valid"), "warning");
       return;
@@ -151,7 +152,7 @@ const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, h
 
   const populateGameVars = useCallback((data) => {
     let list = [];
-
+    console.log(data)
     for (let i = 0; i < data.length; i++) {
       let x = getPageData(data[i]);
       let divElement = (
@@ -204,11 +205,10 @@ const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, h
     }
   }
 
-  
-
-
- 
-
+  useEffect(() => { 
+    if(varType === 'boolean') setVarValue('true') 
+    else setVarValue('')
+  }, [varType]);
 
   return (
     <div className="menu-context-container">
@@ -240,7 +240,7 @@ const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, h
             {varType !== 'boolean' ? (
               <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
             ) : (
-              <select name="var-value" id="var-value" onChange={(e) => setVarValue(e.target.value)} value={varValue}>
+              <select name="var-value" id="var-value" onChange={(e) => {setVarValue(e.target.value), console.log(e.target.value)}} value={varValue}>
                 <option value="true">True</option>
                 <option value="false">False</option>
               </select>

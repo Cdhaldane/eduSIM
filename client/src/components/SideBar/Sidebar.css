@@ -242,8 +242,9 @@
   margin-top: 4px;
   border: none;
 }
-.sidebar-icons {
-  fill: var(--primary);
+.sidebar-icon svg {
+  fill: var(--primary) !important;
+  color: var(--primary) !important;
 }
 
 .sidebar-icons span {
@@ -824,10 +825,34 @@
   text-align: left;
   padding: 10px 5px;
 }
-
+.special-box-tf {
+  position: relative;
+  top: -15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: -15px;
+}
+.special-box-tf button {
+  width: 50%;
+  border: none;
+  border-radius: 0px 0px 0px 9px;
+  background-color: var(--green);
+  color: var(--text-color);
+  font-weight: bold;
+  
+}
+.special-box-tf button:nth-child(2) {
+  border-left: none;
+  border-radius: 0px 0px 9px 0px;
+  background-color: var(--red);
+  color: white;
+}
 .var-box {
   position: relative;
- bottom: 10px;
+  bottom: 0px;
+  margin-top: -17px;
 }
 .var-box button{
   position: relative;
@@ -876,6 +901,7 @@
   justify-content: space-evenly;
   position: relative;
   align-items: center;
+  margin: 20px;
 }
 
 .fixer{
@@ -1430,3 +1456,174 @@
 											  transparent 75%,
 											  transparent)
 }
+
+
+/* THEMES */
+
+.theme-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  
+}
+
+.main-theme {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.theme-title {
+  text-align: left !important;
+  display: block;
+  font-size: 1.5em;
+  margin-bottom: 0px;
+  font-weight: bold;
+}
+
+.main-theme hr {
+  width: 100%;
+  margin: 0px;
+  margin-bottom: 10px;
+}
+
+.theme-boxes {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 65px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  background-color: #e4e4e4;
+  padding: 10px;
+  border-radius: 9px;
+}
+.theme-box {
+  width: 15%;
+  height: 100%;
+  cursor: pointer;
+}
+.theme-boxes-dropdown {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  background-color: #e4e4e4;
+  padding: 10px;
+  border-radius: 9px;
+}
+.theme-box-color.selected {
+  /* Some styles that make the element visually distinct, e.g.: */
+  position: relative;
+  transform: scale(1.1);
+  animation: growMiddle 0.5s ease-in-out;
+
+}
+
+@keyframes growMiddle {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+
+.theme-box-color {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.theme-color-picker {
+  width: 95% !important;
+  margin: 0px auto !important;
+}
+
+.shape-theme {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+.shape-boxes {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 65px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+  background-color: #e4e4e4;
+  padding: 10px;
+  border-radius: 9px;
+  align-items: center;
+}
+
+.shape-box {
+  width: 15%;
+  height: 100%;
+  margin: 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.shape-box-color {
+  width: 100%;
+  height: 100%;
+  border: 3px solid;
+  border-radius: 4px;
+
+}
+.shape-box-color svg {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  /* border: 1px solid white; */
+  padding: 2px;
+  
+}
+.shape-box-color.selected {
+  /* Some styles that make the element visually distinct, e.g.: */
+  position: relative;
+  transform: scale(1.1);
+  animation: growMiddle 0.5s ease-in-out;
+}
+
+.theme-buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 50px;
+  margin-top: 0px;
+  padding: 10px;
+  border-radius: 9px;
+}
+
+.theme-buttons button {
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 3px solid var(--primary);
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  font-weight: bold;
+}
+
+.theme-button-selected {
+  /* Some styles that make the element visually distinct, e.g.: */
+  position: relative;
+  transform: scale(1.1);
+  animation: growMiddle 0.5s ease-in-out;
+}
+

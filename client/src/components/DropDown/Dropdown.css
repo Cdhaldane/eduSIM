@@ -57,7 +57,7 @@ a {
   align-items: center !important;
   vertical-align: middle !important;
   transition: filter 300ms;
-
+  padding: 1px;
 }
 
 .icon-button i {

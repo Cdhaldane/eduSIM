@@ -124,6 +124,7 @@ class Graphics extends Component {
       pageNumber: 6,
       pages: [],
       end: false,
+      rolelevel: 'Role',
 
       gameroles: [],
       state: false,

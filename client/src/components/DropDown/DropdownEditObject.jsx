@@ -38,6 +38,8 @@ const DropdownEditObject = (props) => {
   const [vTexts, setVTexts] = useState(objState.style ? objState.varName : [])
   const [title, setTitle] = useState(props.title)
 
+  const [index, setIndex] = useState(0)
+
   const [vTextsV, setVTextsV] = useState(objState.style ? objState.varValue : [])
   const [varOne, setVarOne] = useState(objState.style ? objState.varOne : "")
   const [varTwo, setVarTwo] = useState(objState.style ? objState.varTwo : "")
@@ -49,6 +51,7 @@ const DropdownEditObject = (props) => {
   // Input Settings
   const DEFAULT_INPUT_FILL = "#e4e4e4";
   const DEFAULT_INPUT_STROKE_W = 2;
+  
   //const DEFAULT_INPUT_STROKE = "rgb(44, 44, 44)";
   const [inputFillColor, setInputFillColor] = useState(objState.style ?
     (objState.style.backgroundColor ? objState.style.backgroundColor : DEFAULT_INPUT_FILL) : DEFAULT_INPUT_FILL);
@@ -63,7 +66,7 @@ const DropdownEditObject = (props) => {
       const contextHeight = 300;
       const thresholdPx = dropHeight - contextHeight;
       if (props.top < thresholdPx) {
-        return thresholdPx;
+        return thresholdPx / 2;
       }
     }
     return null;
@@ -373,12 +376,28 @@ const DropdownEditObject = (props) => {
   }
 
   const newTabInputSettings = (tab) => {
-    setInputStrokeWidth(objState.style.borderWidth ?
-      parseInt(objState.style.borderWidth.slice(0, -2)) : DEFAULT_INPUT_STROKE_W);
-    setInputFillColor(tab === "fill" ? objState.style.backgroundColor :
-      (tab === "stroke" ? objState.style.borderColor : objState.style.color));
+    console.log(objState)
+    setInputStrokeWidth(objState.style && objState.style.borderWidth ?
+      parseInt(objState.style.borderWidth) : DEFAULT_INPUT_STROKE_W);
+    setInputFillColor(tab === "fill" ? objState.style && objState.style.backgroundColor :
+      (tab === "stroke" ? objState.style && objState.style.borderColor : DEFAULT_INPUT_FILL));
     setInputCurrentOptions(tab);
   }
+  const getThemesBoxes = () => {
+    console.log(props.themes)
+    return props.themes.map((theme, i) => {
+      return (
+        <div className="theme-box" key={i} onClick={() => {
+          setIndex(i)
+          if (showFill) handleChangeF({ hex: theme })
+          else if (showStroke) handleChangeS({ hex: theme })
+        }}>
+          <div className={"theme-box-color " + (i === index ? "selected" : "")  } style={{ backgroundColor: theme }}></div>
+        </div>
+      )
+    })
+  }
+
   if (!loading) {
     if (title === "shape") {
       /* Edit a Shape Object */
@@ -406,6 +425,11 @@ const DropdownEditObject = (props) => {
                           <button onClick={() => { setShowFill(!showFill), setShowStroke(false) }} className={showFill ? 'active' : ''}  >Fill Color</button>
                           <button onClick={() => { setShowStroke(!showStroke), setShowFill(false) }} className={showStroke ? 'active' : ''}>Stroke Color</button>
                         </div>
+                        {(showFill || showStroke) &&
+                          <div className="theme-boxes-dropdown">
+                            {getThemesBoxes()}
+                          </div>
+                        }
                         {showFill &&
                           <ChromePicker
                             color={fillColor}
@@ -425,7 +449,7 @@ const DropdownEditObject = (props) => {
                   <div className="menuedit-sliders">
                     <div className='slider-container'>
                       <h1>{t("edit.strokeWidth")}</h1>
-                      <input type="number" value={strokeWidth} onChange={e => onSliderChange(e.target.value)} />
+                      <input type="number" value={Math.round(strokeWidth)} onChange={e => onSliderChange(e.target.value)} />
                     </div>
                     <Slider
                       min={0}
@@ -560,7 +584,7 @@ const DropdownEditObject = (props) => {
                     <div className="menuedit-sliders">
                       <div className='slider-container'>
                         <h1>{t("edit.strokeWidth")}</h1>
-                        <input type="number" value={strokeWidth} onChange={e => onSliderChange(e.target.value)} />
+                        <input type="number" value={Math.round(strokeWidth)} onChange={e => onSliderChange(e.target.value)} />
                       </div>
                       <Slider
                         min={0}
@@ -812,7 +836,7 @@ const DropdownEditObject = (props) => {
                         <div className="menuedit-sliders">
                           <div className='slider-container'>
                             <h1>{t("edit.strokeWidth")}</h1>
-                            <input type="number" value={inputStrokeWidth} onChange={(e) => {
+                            <input type="number" value={Math.round(inputStrokeWidth)} onChange={(e) => {
                               setInputStrokeWidth(e.target.value);
                               handleInputStyle("borderWidth", e.target.value + "px");
                             }} />

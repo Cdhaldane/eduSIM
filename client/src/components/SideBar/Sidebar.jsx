@@ -5,12 +5,15 @@ import Backdrop from "../../ui/Backdrop";
 import NavLinksGroup from "./NavLinksGroup";
 import NavToggle from "./NavToggle";
 import Pencil from "../Pencils/Pencil";
+
 import Messages from "./submenus/Messages";
 import Settings from "./submenus/Settings";
 import Variables from "./submenus/Variables/Variables";
 import Notes from "./submenus/Notes";
 import Alerts from "./submenus/Alerts";
 import Players from "./submenus/Players";
+import Themes from "./submenus/Themes";
+
 import Modal from "react-modal";
 import Performance from "./Performance";
 import { useTranslation } from "react-i18next";
@@ -294,6 +297,20 @@ const Sidebar = (props) => {
           delNotes={props.delNotes}
           notes = {props.notes}
           socket={props.socket}
+        />
+      )
+    },
+    {
+      icon: "pallet",
+      id: "themes",
+      label: "Themes",
+      visible: props.game ? false : true,
+      submenu: (
+        <Themes
+          themes={props.themes}
+          setThemes={props.setThemes}
+          shapeThemes={props.shapeThemes}
+          setShapeThemes={props.setShapeThemes}
         />
       )
     },

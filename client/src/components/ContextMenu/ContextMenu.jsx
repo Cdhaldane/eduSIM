@@ -255,6 +255,7 @@ const ContextMenu = (props) => {
                 getObjGroup={props.getObjGroup}
                 updateObjState={props.updateObjState}
                 globalVars={props.globalVars}
+                themes={props.themes}
               />
             </div>
           )
