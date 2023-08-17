@@ -52,15 +52,48 @@ app.use('/api/video', routes.video);
 app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
+let io;
+if (ENV === 'production') {
 
-const httpServer = http.createServer(app);
+  app.enable("trust proxy");
+  app.use((req, res, next) => {
+    console.log("https://" + req.headers.host + req.url);
+    console.log(req.secure);
+    req.secure ? next() : res.redirect("https://" + req.headers.host + req.url);
+  });
 
-const io = require("socket.io")(httpServer, {
-  cors: {
-    origin: true,
-    credentials: true
-  },
-});
+  const privateKey = fs.readFileSync(
+    path.join(__dirname, `./privkey.pem`),
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    path.join(__dirname, `./fullchain.pem`),
+    "utf8"
+  );
+
+  const httpsServer = https.createServer(
+    {
+      key: privateKey,
+      cert: certificate,
+    },
+    app
+  );
+
+  io = require("socket.io")(httpsServer, {
+    cors: {
+      origin: true,
+      credentials: true
+    },
+  });
+} else {
+  const httpServer = https.createServer(app);
+  io = require("socket.io")(httpServer, {
+    cors: {
+      origin: true,
+      credentials: true
+    },
+  });
+}
 
 io.on("connection", (socket) => events(io, socket));
 io.eio.pingTimeout = 320000; // 2 minutes
@@ -98,7 +131,7 @@ if (ENV === 'production') {
     path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
-  
+
   const httpsServer = https.createServer(
     {
       key: privateKey,
