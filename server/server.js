@@ -88,11 +88,11 @@ if (process.env.STATUS === 'production') {
   });
 
   const privateKey = fs.readFileSync(
-    path.join(__dirname, `/etc/letsencrypt/live/edusim.ca/privkey.pem`),
+    path.join(__dirname, `./privkey.pem`),
     "utf8"
   );
   const certificate = fs.readFileSync(
-    path.join(__dirname, `/etc/letsencrypt/live/edusim.ca/fullchain.pem`),
+    path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
   const httpsServer = https.createServer(
