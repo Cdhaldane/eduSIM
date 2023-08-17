@@ -28,11 +28,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(helmet());
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({ limit: '50mb',
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({
+  limit: '50mb',
   parameterLimit: 100000,
-  extended: true }));
-app.use(bodyParser.json({limit: '50mb'}));
+  extended: true
+}));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(fileUpload());
 
 app.use('/api/gameinstances', routes.gameinstance);
@@ -61,7 +63,7 @@ io.eio.pingTimeout = 320000; // 2 minutes
 io.eio.pingInterval = 10000;  // 5 seconds
 
 io.on("connection", (socket) => {
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     console.log('Got disconnect!');
   });
   socket.on("disconnecting", (reason) => {
@@ -73,8 +75,37 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`Server listening on portt ${PORT}!`);
-});
+
+if (process.env.STATUS === 'production') {
+  // Redirect HTTP requests to HTTPS
+  app.enable("trust proxy");
+  app.use((req, res, next) => {
+    console.log("https://" + req.headers.host + req.url);
+    console.log(req.secure);
+    req.secure ? next() : res.redirect("https://" + req.headers.host + req.url);
+  });
+
+  const privateKey = fs.readFileSync(
+    path.join(__dirname, `/etc/letsencrypt/live/edusim.ca/privkey.pem`),
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    path.join(__dirname, `/etc/letsencrypt/live/edusim.ca/fullchain.pem`),
+    "utf8"
+  );
+  const httpsServer = https.createServer(
+    {
+      key: privateKey,
+      cert: certificate,
+    },
+    app
+  );
+  
+  httpsServer.listen(PORT, () =>
+    console.log(`HTTPS server started on PORT=${PORT}`)
+  );
+}
+
+
 
 module.exports = app;
