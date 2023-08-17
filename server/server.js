@@ -56,8 +56,14 @@ let server;
 
 if (ENV === 'production') {
   // Use HTTPS in production
-  const privateKey = fs.readFileSync('/etc/letsencrypt/live/edusim.ca/privkey.pem', 'utf8');
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/edusim.ca/fullchain.pem', 'utf8');
+  const privateKey = fs.readFileSync(
+    path.join(__dirname, `./privkey.pem`),
+    "utf8"
+  );
+  const certificate = fs.readFileSync(
+    path.join(__dirname, `./fullchain.pem`),
+    "utf8"
+  );
 
   server = https.createServer({ key: privateKey, cert: certificate }, app);
 } else {
