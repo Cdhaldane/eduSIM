@@ -53,7 +53,7 @@ app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
 
-const httpServer = https.createServer(app);
+const httpServer = http.createServer(app);
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -79,8 +79,8 @@ io.on("connection", (socket) => {
   });
 });
 
-
-if (process.env.STATUS === 'production') {
+console.log(ENV)
+if (ENV === 'production') {
   // Redirect HTTP requests to HTTPS
 
   app.enable("trust proxy");
@@ -98,6 +98,7 @@ if (process.env.STATUS === 'production') {
     path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
+  
   const httpsServer = https.createServer(
     {
       key: privateKey,
