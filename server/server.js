@@ -6,6 +6,7 @@ import events from './events';
 import clean from './routes/dbCleanup'
 const fs = require("fs");
 const https = require("https");
+const http = require("http");
 
 const path = require('path');
 const express = require('express');
@@ -52,7 +53,7 @@ app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
 
-const httpServer = require("http").createServer(app);
+const httpServer = http.createServer(app);
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -97,7 +98,7 @@ if (process.env.STATUS === 'production') {
     path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
-  
+
   const httpsServer = https.createServer(
     {
       key: privateKey,
@@ -105,6 +106,11 @@ if (process.env.STATUS === 'production') {
     },
     app
   );
+
+  http.createServer((req, res) => {
+    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+    res.end();
+  }).listen(80, () => console.log('HTTP server redirecting to HTTPS'));
 
   httpsServer.listen(PORT, () =>
     console.log(`HTTPS server started on PORT=${PORT}`)
