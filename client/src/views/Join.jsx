@@ -18,7 +18,6 @@ import Pause from "../../public/icons/pause.svg"
 import Reload from "../../public/icons/reload.svg"
 import Left from "../../public/icons/angle-double-left.svg"
 import Right from "../../public/icons/angle-double-right.svg"
-import Clipboard from "../../public/icons/clipboard.svg"
 
 const Join = (props) => {
   const [showNote, setShowNote] = useState(false);
@@ -34,7 +33,6 @@ const Join = (props) => {
   const [image, setImage] = useState();
   const [title, setTitle] = useState();
   const [refreshRooms, setRefreshRooms] = useState(0);
-  const alertContext = useAlertContext();
   const { t } = useTranslation();
 
   if (props.location.gameinstance !== undefined) {
@@ -208,14 +206,7 @@ const Join = (props) => {
   const updateImg = (img) => {
     setImage(img);
   }
-  const copyToClipboard = () => {
-    const roomCode = currentRoom && currentRoom[2];
-    if (roomCode) {
-      alertContext.showAlert("Copied to clipboard", "info");
-      navigator.clipboard.writeText(roomCode);
-    }
-  };
-  const textInputRef = useRef(null);
+  
   const advanceMode = Object.keys(roomStatus).length > 0 ? roomStatus[Object.keys(roomStatus)[0]].settings?.advanceMode : null
 
   const displayPause = currentRoom
@@ -248,20 +239,7 @@ const Join = (props) => {
               {t("admin.addStudentCSV")}
             </button>
           </div>
-          {currentRoom && (
-            <div className="joinboard-room">
-              <p>Room Code:</p>
-              <p>{currentRoom[2]}</p>
-              <button onClick={copyToClipboard}><Clipboard /></button>
-              <input
-                ref={textInputRef}
-                type="text"
-                value={currentRoom && currentRoom[2]}
-                readOnly
-                style={{ position: 'absolute', left: '-9999px' }}
-              />
-            </div>
-          )}
+          
           <div className="joinboard-controls">
             {currentRoom ? (
               <>

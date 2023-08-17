@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import Table from "../Table/Table";
@@ -17,6 +17,8 @@ import Loading from "../Loading/Loading";
 import Pencil from "../../../public/icons/pencil.svg"
 import Check from "../../../public/icons/checkmark.svg"
 import Trash from "../../../public/icons/trash-can-alt-2.svg"
+import Clipboard from "../../../public/icons/clipboard.svg"
+
 
 import "./Tabs.css";
 
@@ -47,10 +49,12 @@ const Tabs = (props) => {
   const [roles, setRoles] = useState(null);
   const userid = "Admin"
   const [queryUser, setQueryUser] = useState({});
-
+  
   const { t } = useTranslation();
 
   const alertContext = useAlertContext();
+
+
 
   useEffect(() => {
     axios.get(process.env.REACT_APP_API_ORIGIN + "/api/playerrecords/getRooms/:gameinstanceid", {
@@ -313,9 +317,9 @@ const Tabs = (props) => {
 
   useEffect(() => {
     let messages = props.allMessages;
-    for(let i = 0; i < tabs.length; i++){
-      for(let j = 0; j < props.allMessages.length; j++){
-        if(messages[j][0] === tabs[i][2])
+    for (let i = 0; i < tabs.length; i++) {
+      for (let j = 0; j < props.allMessages.length; j++) {
+        if (messages[j][0] === tabs[i][2])
           messages[j][0] = tabs[i][0]
       }
     }
@@ -329,9 +333,9 @@ const Tabs = (props) => {
         params: {
           url: tabs[x][2],
         }
-      }).catch((error) => {console.error(error)});
-     
-      let adminJSON = {"gameid":tabs[x][2],"role":"None","name":"Admin","dbid":"111111"}
+      }).catch((error) => { console.error(error) });
+
+      let adminJSON = { "gameid": tabs[x][2], "role": "None", "name": "Admin", "dbid": "111111" }
       localStorage.setItem("userInfo", JSON.stringify(adminJSON))
       setQueryUser("Admin");
 
@@ -378,6 +382,16 @@ const Tabs = (props) => {
     }());
   }
 
+  const copyToClipboard = (roomCode) => {
+
+    if (roomCode) {
+      alertContext.showAlert("Copied to clipboard", "info");
+      navigator.clipboard.writeText(roomCode);
+    }
+  };
+  const textInputRef = useRef(null);
+
+
   return (
     <>
       {(toggleState > 0 && toggleState < tabs.length + 1 && logs[tabs[toggleState - 1][1]] && logs[tabs[toggleState - 1][1]].length > 0) ? (
@@ -399,7 +413,7 @@ const Tabs = (props) => {
                 <button onClick={() => setRemoveLog({
                   id: data.gameactionid,
                   room: tabs[toggleState - 1][1]
-                })}><i><Trash className="icon"/></i></button>
+                })}><i><Trash className="icon" /></i></button>
               </div>
             </div>
           ))}
@@ -424,12 +438,12 @@ const Tabs = (props) => {
               key={i}
               className={toggleState === i + 1 ? "tab-container selected" : "tab-container"}
             >
-              <span 
-              className="tab-text"
-              onClick={() => {
-                toggleTab(i + 1)
-                connectChat(i)
-              }}
+              <span
+                className="tab-text"
+                onClick={() => {
+                  toggleTab(i + 1)
+                  connectChat(i)
+                }}
               >{tab[0]}</span>
               <i onClick={() => handleDeleteGroup(tab)}><Trash className="icon var-trash" /></i>
             </li>
@@ -448,12 +462,12 @@ const Tabs = (props) => {
             <div className="content-row">
               <div className="content-settings">
                 <h3>{t("admin.settings")}</h3>
-                  <button
-                    onClick={() => {setIsOpen(!isOpen)}}
-                    className="studentbuttonemail"
-                  >
-                    {t("admin.openEmailModal")}
-                  </button>
+                <button
+                  onClick={() => { setIsOpen(!isOpen) }}
+                  className="studentbuttonemail"
+                >
+                  {t("admin.openEmailModal")}
+                </button>
                 <div className="simadv">
                   <h3>{t("admin.simulationAdvancement")}</h3>
 
@@ -551,12 +565,12 @@ const Tabs = (props) => {
                     <h3>{t("admin.chat")}</h3>
                     <div className="group-chatlog">
                       <div>
-                        {allRoomMessages.map(( message, index) => (
+                        {allRoomMessages.map((message, index) => (
                           <p key={index}><b className="bold1">{message[0]} - </b><b className={message[1]}>{message[1]}: </b>{message[2]}</p>
                         ))}
                       </div>
                     </div>
-                    <Messages socket={props.socket}/>
+                    <Messages socket={props.socket} />
                   </div>
                 </div>
               </div>
@@ -593,21 +607,34 @@ const Tabs = (props) => {
                 {editingName ? (
                   <div>
                     <input type="text" className="content-inputname" value={newName} onChange={e => setNewName(e.target.value)}></input>
-                  <i className="content-editname" onClick={handleGroupName} ><Check className="icon edit-icon"/></i>
+                    <i className="content-editname" onClick={handleGroupName} ><Check className="icon edit-icon" /></i>
                   </div>
                 ) : (
                   <div>
                     <h2>{tab[0]}</h2>
                     <i className="content-editname" onClick={() => {
                       setEditingName(true); setNewName(tab[0]);
-                    }} ><Pencil className="icon edit-icon"/> <h1>Edit</h1></i>
+                    }} ><Pencil className="icon edit-icon" /> <h1>Edit</h1></i>
+                  </div>
+                )}
+                {tab && (
+                  <div className="joinboard-room">
+                    <p>Room Code:</p>
+                    <p>{tab[2]}</p>
+                    <button onClick={() =>copyToClipboard(tab[2])}><Clipboard /></button>
+                    <input
+                      ref={textInputRef}
+                      type="text"
+                      value={tab && tab[2]}
+                      readOnly
+                      style={{ position: 'absolute', left: '-9999px' }}
+                    />
                   </div>
                 )}
                 <a className="content-roomlink" href={`/gamepage/${tab[2]}`} target="#">
                   {t("admin.joinRoom")}
                 </a>
               </div>
-              <hr />
               <div className="groupcontainer">
                 <div className="group-column">
                   <h3>{t("admin.chat")}</h3>

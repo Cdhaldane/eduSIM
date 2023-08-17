@@ -5,3 +5,5 @@ client/node_modules
 server/node_modules
 .env
 Assets/images
+server/privkey.pem
+server/fullchain.pem
