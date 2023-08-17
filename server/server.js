@@ -48,9 +48,9 @@ app.use('/api/playerrecords', routes.playerrecord);
 app.use('/api/image', routes.image);
 app.use('/api/video', routes.video);
 
-app.use((req, res) => {
-  res.status(404).send('404: Page not found');
-});
+// app.use((req, res) => {
+//   res.status(404).send('404: Page not found');
+// });
 
 if(process.env.STATUS === 'production'){
 app.get("*", (req, res) => {
