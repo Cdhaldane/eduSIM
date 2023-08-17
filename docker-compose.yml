@@ -15,6 +15,6 @@ services:
       dockerfile: Dockerfile
     image: "reactapp"
     ports:
-      - "443:3000"
+      - "3000:3000"
     depends_on:
       - backend
