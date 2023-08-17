@@ -98,7 +98,6 @@ if (process.env.STATUS === 'production') {
     path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
-
   const httpsServer = https.createServer(
     {
       key: privateKey,
@@ -106,11 +105,6 @@ if (process.env.STATUS === 'production') {
     },
     app
   );
-
-  http.createServer((req, res) => {
-    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-    res.end();
-  }).listen(80, () => console.log('HTTP server redirecting to HTTPS'));
 
   httpsServer.listen(PORT, () =>
     console.log(`HTTPS server started on PORT=${PORT}`)
