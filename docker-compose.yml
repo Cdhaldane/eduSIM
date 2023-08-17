@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: "simapp"
     ports:
-      - "8080:8080"
+      - "8080:80"
   
   frontend:
     build:

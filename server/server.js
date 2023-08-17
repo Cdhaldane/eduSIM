@@ -97,6 +97,7 @@ if (process.env.STATUS === 'production') {
     path.join(__dirname, `./fullchain.pem`),
     "utf8"
   );
+  
   const httpsServer = https.createServer(
     {
       key: privateKey,
