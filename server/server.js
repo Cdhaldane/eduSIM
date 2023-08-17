@@ -53,7 +53,7 @@ app.use((req, res) => {
   res.status(404).send('404: Page not found');
 });
 
-const httpServer = http.createServer(app);
+const httpServer = https.createServer(app);
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -79,7 +79,7 @@ io.on("connection", (socket) => {
   });
 });
 
-console.log(ENV)
+
 if (process.env.STATUS === 'production') {
   // Redirect HTTP requests to HTTPS
 
@@ -109,12 +109,6 @@ if (process.env.STATUS === 'production') {
   httpsServer.listen(PORT, () =>
     console.log(`HTTPS server started on PORT=${PORT}`)
   );
-} else {
-
-  httpServer.listen(PORT, () => {
-    console.log(`Server listening on portt ${PORT}!`);
-  });
-
 }
 
 
