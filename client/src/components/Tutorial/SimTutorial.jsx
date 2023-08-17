@@ -82,6 +82,7 @@ const SimTutorial = ({ startTutorial, endTutorial }) => {
     };
 
     const handleStart = () => {
+        setCurrentStep(0);
         endTutorial(false);
     };
 
