@@ -48,23 +48,11 @@ app.use('/api/playerrecords', routes.playerrecord);
 app.use('/api/image', routes.image);
 app.use('/api/video', routes.video);
 
-// app.use((req, res) => {
-//   res.status(404).send('404: Page not found');
-// });
-
-if(process.env.STATUS === 'production'){
-app.get("*", (req, res) => {
-  console.log(__dirname, `../../client/build/`)
-  res.sendFile("index.html", {
-    root: path.join(__dirname, `../../client/build/`),
-  });
-
+app.use((req, res) => {
+  res.status(404).send('404: Page not found');
 });
-}
 
 const httpServer = require("http").createServer(app);
-
-
 
 const io = require("socket.io")(httpServer, {
   cors: {
@@ -93,7 +81,7 @@ io.on("connection", (socket) => {
 
 if (process.env.STATUS === 'production') {
   // Redirect HTTP requests to HTTPS
-  
+
   app.enable("trust proxy");
   app.use((req, res, next) => {
     console.log("https://" + req.headers.host + req.url);
