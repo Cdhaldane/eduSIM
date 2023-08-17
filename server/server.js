@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import routes from './routes';
 import events from './events';
 import clean from './routes/dbCleanup'
+const fs = require("fs");
+
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -100,7 +102,7 @@ if (process.env.STATUS === 'production') {
     },
     app
   );
-  
+
   httpsServer.listen(PORT, () =>
     console.log(`HTTPS server started on PORT=${PORT}`)
   );

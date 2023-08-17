@@ -29,6 +29,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "fs": "0.0.1-security",
     "helmet": "^4.6.0",
     "moment": "^2.29.1",
     "nodemailer": "^6.6.3",
