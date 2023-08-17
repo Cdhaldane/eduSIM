@@ -13,6 +13,7 @@ import { useLocalStorage } from 'usehooks-ts'
 import "./components/CreateCsv/CreateCsv.css";
 import "./components/CreateArea/CreateArea.css";
 import { set } from "draft-js/lib/EditorState";
+import ErrorWrapper from "./components/Error/ErrorWrapper";
 
 const Welcome = React.lazy(() => import("./views/Welcome"));
 const Home = React.lazy(() => import("./views/Home"));
@@ -99,27 +100,31 @@ const App = (props) => {
               <Loading />
             </>}>
               <Switch>
-                <Route exact path="/" >
-                  <Home show={showProfileDropdown}/>
-                </Route>
-                {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
-                  <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
-                )}
-                <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
-                <Route exact path="/about" render={(props) => <About {...props} />} />
-                <Route exact path="/terms" render={(props) => <Terms {...props} />} />
-                <Route exact path="/privacy" render={(props) => <Policy {...props} />} />
-                <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
-                <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
-                <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
-                <Route path="/profile/:adminid" render={(props) => <Profile {...props} />} />
-                <Route path="/dashboard" render={(props) => <Dashboard {...props} />} hashType="noslash"/>
-                <Route path="/join" render={(props) =>
-                  <Join
-                    customObjects={customObjects}
-                    {...props}
-                  />}
-                />
+                <ErrorWrapper>
+                  <Route exact path="/" >
+                    <Home show={showProfileDropdown} />
+                  </Route>
+                  {!(location.pathname.startsWith("/gamepage") || location.pathname === "/editpage") && (
+                    <Route exact path="../components/Navbar" render={(props) => <Navbar {...props} />} />
+                  )}
+                  <Route exact path="/welcome" render={(props) => <Welcome {...props} />} />
+                  <Route exact path="/about" render={(props) => <About {...props} />} />
+                  <Route exact path="/terms" render={(props) => <Terms {...props} />} />
+                  <Route exact path="/privacy" render={(props) => <Policy {...props} />} />
+                  <Route exact path="/gamepage/:roomid" render={(props) => <CanvasPage {...props} customObjects={customObjects} />} />
+                  <Route exact path="/editpage" render={(props) => <CanvasPage edit {...props} customObjects={customObjects} />} />
+                  <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
+                  <Route path="/profile/:adminid" render={(props) => <Profile {...props} />} />
+
+                  <Route path="/dashboard" render={(props) => <Dashboard {...props} />} hashType="noslash" />
+
+                  <Route path="/join" render={(props) =>
+                    <Join
+                      customObjects={customObjects}
+                      {...props}
+                    />}
+                  />
+                </ErrorWrapper>
               </Switch>
               {document.cookie.split(";").filter(cookie => cookie.includes("cookiesAccepted")).length === 0 && (
                 <Modal

@@ -154,6 +154,8 @@ const Dashboard = (props) => {
         setUploadedImages(res.data.resources);
       });
     }
+    throw new Error('I crashed!');
+
     setShowNote(!showNote);
   }
 

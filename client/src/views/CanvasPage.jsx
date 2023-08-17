@@ -196,7 +196,7 @@ const CanvasPage = (props) => {
     const areaString = canvas.state.overlayOpen ? "overlay" :
       (canvas.state.personalAreaOpen ? "personal" : "group");
     const page = canvas.state.pages[canvas.state.level - 1];
-    const group = page.groupPositionRect;
+    const group = page?.groupPositionRect;
     const personal = page.personalPositionRect[canvas.state.rolelevel];
     const overlayI = canvas.state.overlayOpen ? page.overlays.findIndex(overlay =>
       overlay.id === canvas.state.overlayOpenIndex

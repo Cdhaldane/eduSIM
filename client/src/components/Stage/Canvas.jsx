@@ -313,6 +313,7 @@ class Graphics extends Component {
       if (res.data.game_parameters) {
         // Load saved object data
         let objects = JSON.parse(res.data.game_parameters);
+        
         // Parse the saved groups
         let parsedSavedGroups = [];
         for (let i = 0; i < objects.savedGroups.length; i++) {
@@ -326,7 +327,6 @@ class Graphics extends Component {
           parsedSavedGroups.push(savedGroup);
         }
         objects.savedGroups = parsedSavedGroups;
-
         let currentMainShapes = [];
         for (let i = 0; i < this.savedObjects.length; i++) {
           const type = this.savedObjects[i];
@@ -342,22 +342,6 @@ class Graphics extends Component {
           uniqueShapesSet.push(uniqueArray)
         })
 
-        let roles = objects.roles.map((role) => role.roleName);
-        roles.push('')
-
-        for (let i = 0; i < this.savedObjects.length; i++) {
-          let newStateArray = []
-          let type = this.savedObjects[i];
-          if (type !== 'roles') {
-            objects[type].forEach((obj) => {
-              if (roles.includes(obj.rolelevel)) {
-                newStateArray.push(obj)
-              }
-            })
-            objects[type] = newStateArray;
-          }
-        }
-        console.log(objects)
         if (this.props.setRoles) {
           this.props.setRoles(objects.roles || []);
         }
@@ -399,12 +383,8 @@ class Graphics extends Component {
         if (this.props.setThemes) {
           this.props.setThemes(objects.themes || []);
         }
-        if (this.props.setShapeThemes) 
+        if (this.props.setShapeThemes)
           this.props.setShapeThemes(objects.shapeThemes || []);
-
-
-
-
 
         // Put parsed saved data into state
         this.savedState.forEach((object, index, arr) => {
@@ -453,7 +433,11 @@ class Graphics extends Component {
                     canvasLoading: true
                   }, () => {
                     this.props.setCanvasLoading(this.state.canvasLoading);
-                    setTimeout(() => this.props.reCenter("edit"), 1000);
+                    setTimeout(() => {
+                      this.handleFixer();
+                      this.props.reCenter("edit")
+                      
+                    }, 1000);
                   });
                 }
               });
@@ -485,7 +469,6 @@ class Graphics extends Component {
     }).catch(error => {
       console.error(error);
     });
-
   }
 
 
@@ -521,6 +504,7 @@ class Graphics extends Component {
     const MINUTE_MS = 1000 * 60;
 
     this.removeJSGIFS();
+    
 
     // Auto save the canvas every minute
     this.saveInterval = setInterval(() => {
@@ -589,29 +573,56 @@ class Graphics extends Component {
   }
 
   handleFixer = () => {
-    // Create a copy of the state.
     let newState = JSON.parse(JSON.stringify(this.state));
+    let removedLayers = [];
+    let roles = []
+
+    console.log('Performing State Fix...')
+  
     const layers = newState.pages.flatMap(page => [
       ...page.groupLayers,
       ...page.personalLayers,
       ...page.overlays.flatMap(overlay => overlay.layers),
     ]);
-    let removedLayers = [];
-
-    layers.forEach((layer) => {
+  
+    const groupLayers = newState.pages.flatMap(page => page.groupLayers);
+  
+    this.savedObjects.forEach((type) => {
+      const uniqueById = new Map();
+      let newObjectArray = [];
+      console.log(newState[type])
+      newState[type] = newState[type].filter(item => {
+        if(!roles.includes(item.rolelevel) && item.rolelevel !== undefined && item.rolelevel !== "") roles.push(item.rolelevel);
+        if (layers.includes(item.id)) {
+          uniqueById.set(item.id, true);
+          newObjectArray.push(item);
+          return true;
+        }
+        removedLayers.push(item);
+        return false;
+      });
+  
+      newState[type] = newObjectArray;
+    });
+    roles.map(role => {
+      let roleInfo = {numOfSpots: 1, roleDesc: "", roleName: role}
+      newState.roles.push(roleInfo)
+    })
+    this.props.setRoles(newState.roles)
+    
+    console.log('Removed Layers: ', removedLayers)
+    
+    groupLayers.forEach(layer => {
       const type = this.getObjType(layer);
-
-      // Identify the removed items
-      const removed = newState[type].filter(item => !layers.includes(item.id));
-      removedLayers = removedLayers.concat(removed);
-
-      // Filter the state to only include items that are in the layers array
-      newState[type] = newState[type].filter(item => layers.includes(item.id));
+      newState[type].forEach(item => {
+        if (item.id === layer) item.rolelevel = "";
+      });
     });
 
-    // Use setState to update the state.
 
-    this.setState(newState);
+    
+    this.setState(newState)
+    this.setState({canvasLoading: false})
   };
 
   componentWillUnmount = () => {
@@ -633,9 +644,9 @@ class Graphics extends Component {
 
   componentDidUpdate = (prevProps, prevState) => {
     if (this.state.savedStateLoaded) {
-      if (prevState.level !== this.state.level) {
-        this.handleFixer();
-      }
+      // if (prevState.level !== this.state.level) {
+      //   this.handleFixer();
+      // }
       const prevMainShapes = [];
       let currentMainShapes = [];
       let allShapes = [];
@@ -650,30 +661,6 @@ class Graphics extends Component {
       if (this.state.personalAreaOpen === 0 && this.state.rolelevel !== '') {
         this.setState({ rolelevel: '' })
       }
-
-
-
-      // let pages = [...this.state.pages]; // Clone pages array
-      // for (let j = 0; j < pages.length; j++) {
-      //   let layer = pages[j].personalLayers
-      //   for (let i = 0; i < this.savedObjects.length; i++) {
-      //     currentMainShapes[i].forEach((obj) => {
-      //       console.log(obj)
-      //       if (obj.level - 1 === j && obj.rolelevel === this.state.rolelevel) {
-      //         console.log(layer, obj.id, layer.includes(obj.id))
-      //         if(!layer.includes(obj.id)) layer.splice(i, 0, obj.id)
-      //       }
-      //     })
-      //   }
-      //   console.log(layer)
-      //   pages[j].personalLayers = layer;
-      // }
-      // // Check if pages has changed before setting state
-      // if (JSON.stringify(pages) !== JSON.stringify(this.state.pages)) {
-      //   this.setState({
-      //     pages: pages
-      //   });
-      // }
 
 
       if (!this.state.isTransforming && !this.state.redoing) {
@@ -2635,7 +2622,6 @@ class Graphics extends Component {
   }
 
   handleRoleLevel = (e) => {
-    console.log(e)
     this.setState({
       rolelevel: e,
       canvasLoading: false
@@ -2854,10 +2840,11 @@ class Graphics extends Component {
       const guides = stageRef.find('.guide');
       let isTouchingX = false;
       let isTouchingY = false;
-      let paddingW = objBox.width / 2;
-      let paddingH = objBox.height / 2;
+      let paddingW = objBox.width / 3;
+      let paddingH = objBox.height / 3;
       let middleX = objBox.x + objBox.width / 2;
       let middleY = objBox.y + objBox.height / 2;
+      let strokeWidth = objRef.attrs.strokeWidth;
 
       for (let i = 0; i < guides.length; i++) {
         const g = guides[i];
@@ -2868,12 +2855,13 @@ class Graphics extends Component {
         let newBoxY = objBox.y + objBox.height / 2;
         if (middleX > (newX - paddingW) && middleX < (newX + paddingW)) isTouchingX = true;
         if (middleY > (newY - paddingH) && middleY < (newY + paddingH)) isTouchingY = true;
-        if (objRef.attrs.id.includes('rectangles')) {
-          newX = gBox.x - objBox.width / 2;
-          newY = gBox.y - objBox.height / 2;
-          newBoxX = objBox.x;
-          newBoxY = objBox.y;
-        }
+
+        newX = gBox.x - objBox.width / 2 + strokeWidth / 3;
+        newY = gBox.y - objBox.height / 2 + strokeWidth / 3;
+        newBoxX = objBox.x;
+        newBoxY = objBox.y;
+
+
         if (isTouchingX) {
           objRef.absolutePosition({
             x: newX,
@@ -2950,7 +2938,7 @@ class Graphics extends Component {
     const rect2Right = rect2.x + rect2.width;
     const rect2MiddleY = rect2.y + rect2.height / 2;
     const rect2MiddleX = rect2.x + rect2.width / 2
-    const padding = rect1.width;
+    const padding = rect1.width / 2;
 
     let vertical = []
     let horizontal = []
@@ -2960,9 +2948,18 @@ class Graphics extends Component {
 
     const x = (rect2.x - layerX) / layerScale;
     const width = rect2.width / layerScale;
-
     const y = (rect2.y - layerY) / layerScale;
     const height = rect2.height / layerScale;
+
+
+    if (rect1MiddleY > rect2MiddleY - padding && rect1MiddleY < rect2MiddleY + padding) {
+      horizontal.push([y + height / 2]);
+      vertical.push([null, null, null]);
+    }
+    if (rect1MiddleX > rect2MiddleX - padding && rect1MiddleX < rect2MiddleX + padding) {
+      horizontal.push([null, null, null]);
+      vertical.push([x + width / 2]);
+    }
     if (rect1MiddleX > rect2Left - padding && rect1MiddleX < rect2Left + padding) {
       horizontal.push([null, null, null]);
       vertical.push([x]);
@@ -2971,10 +2968,7 @@ class Graphics extends Component {
       horizontal.push([null, null, null]);
       vertical.push([x + width]);
     }
-    if (rect1MiddleX > rect2MiddleX - padding && rect1MiddleX < rect2MiddleX + padding) {
-      horizontal.push([null, null, null]);
-      vertical.push([x + width / 2]);
-    }
+
     if (rect1MiddleY > rect2Top - padding && rect1MiddleY < rect2Top + padding) {
       horizontal.push([y]);
       vertical.push([null, null, null]);
@@ -2983,14 +2977,12 @@ class Graphics extends Component {
       horizontal.push([y + height]);
       vertical.push([null, null, null]);
     }
-    if (rect1MiddleY > rect2MiddleY - padding && rect1MiddleY < rect2MiddleY + padding) {
-      horizontal.push([y + height / 2]);
-      vertical.push([null, null, null]);
-    }
     if (rect1MiddleY > rect2Top && rect1MiddleY < rect2Bottom && rect1MiddleX > rect2Left && rect1MiddleX < rect2Right) {
-      vertical.push([x, x + width, x + width / 2]);
-      horizontal.push([y, y + height, y + height / 2]);
+      vertical = ([x, x + width, x + width / 2]);
+      horizontal = ([y, y + height, y + height / 2]);
     }
+
+
     return ([vertical, horizontal])
   }
 
@@ -3017,10 +3009,9 @@ class Graphics extends Component {
       if (guideItem.attrs.name === "customObj") this.getKonvaObj(guideItem.attrs.id, true);
       const box = guideItem.getClientRect();
       let guideArray = this.collide(compBox, box, stage)
-      console.log(guideArray)
       if (guideArray) {
-        vertical.push(guideArray[0][0])
-        horizontal.push(guideArray[1][0])
+        if(vertical.length < 6) vertical.push(guideArray[0][0])
+        if(horizontal.length < 6) horizontal.push(guideArray[1][0])
       }
     });
 
@@ -3028,6 +3019,12 @@ class Graphics extends Component {
 
     vertical = vertical.flat();
     horizontal = horizontal.flat();
+
+    // remove null and undefined from vertical and horizontal and limit them to 10 elements
+
+    vertical = vertical.filter(item => item !== undefined);
+    horizontal = horizontal.filter(item => item !== undefined);
+
 
     const l = Math.max(window.innerWidth, window.innerHeight) / layerScale;
     const guidesV = [];
@@ -3050,12 +3047,6 @@ class Graphics extends Component {
         pos: i % 3 === 2 ? "center" : "edge"
       });
     }
-    distances.sort((a, b) => a.distance - b.distance).slice(0, 3);
-
-    // Use the first 10 elements
-    vertical = distances.flatMap(item => item.vertical);
-    horizontal = distances.flatMap(item => item.horizontal);
-    console.log({ vertical, horizontal })
     this.setState({
       guides: [...guidesV, ...guidesH]
     });
@@ -3403,7 +3394,6 @@ class Graphics extends Component {
     layers.map(id => {
       if (this.refs[id] === undefined) return;
       const tempRef = this.refs[id];
-      console.log(tempRef)
       const tempBox = isCustom ? tempRef.getBoundingClientRect() : tempRef.getClientRect();
       if (this.isTouching(objBox, tempBox)) {
         layer.push(id)
@@ -3818,7 +3808,7 @@ class Graphics extends Component {
         </Stage>*/}
 
         {/* ---- OVERLAY CANVAS ---- */}
-        {}
+        { }
         {this.state.overlayOpen && (
           <>
             {/* The right click menu for the overlay area */}

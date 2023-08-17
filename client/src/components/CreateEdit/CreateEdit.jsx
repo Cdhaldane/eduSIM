@@ -27,11 +27,12 @@ const CreateEdit = (props) => {
   const [willUpload, setWillUpload] = useState(false);
   const detailsArea = new useRef();
   const imageArea = new useRef();
-  const fileInputRef= new useRef();
+  const fileInputRef = new useRef();
 
- 
+
 
   const handleChange = (event) => {
+    console.log(event)
     setTitle(event.target.value);
   }
 
@@ -66,14 +67,14 @@ const CreateEdit = (props) => {
       return;
     }
     event.preventDefault();
-    if(localStorage.images == null || localStorage.images == "" ){
+    if (localStorage.images == null || localStorage.images == "") {
       var temp = []
       temp.push(imageSelected)
       localStorage.setItem("images", JSON.stringify(temp))
     } else {
       var temp = JSON.parse(localStorage.getItem("images"));
       temp.push(imageSelected)
-      if(temp.length > 5){
+      if (temp.length > 5) {
         temp.shift();
       }
       localStorage.setItem("images", JSON.stringify(temp))
@@ -87,11 +88,11 @@ const CreateEdit = (props) => {
     axios.put(process.env.REACT_APP_API_ORIGIN + '/api/gameinstances/update/:id', body).then((res) => {
     })
     var temp = JSON.parse(localStorage.getItem("order"));
-    for(let i = 0; i < JSON.parse(localStorage.order).length; i++){
-      if(temp[i].gameinstance_name == localStorage.title ){
+    for (let i = 0; i < JSON.parse(localStorage.order).length; i++) {
+      if (temp[i].gameinstance_name == localStorage.title) {
         temp[i].gameinstance_name = title;
       }
-      if(temp[i].gameinstance_photo_path == localStorage.img ){
+      if (temp[i].gameinstance_photo_path == localStorage.img) {
         temp[i].gameinstance_photo_path = imageSelected;
       }
     }
@@ -112,16 +113,16 @@ const CreateEdit = (props) => {
             tpye="text"
             id="namei"
             name="title"
-            onChange={handleChange}
+            onChange={(e) => handleChange(e)}
             value={title}
             placeholder={localStorage.title}
-            maxLength="13"
+
           />
         </div>
         <div className="gradient-border">
-          <div>
+          <div className="create-edit-icon">
             {t("modal.chooseImage")}
-              <i onClick={() => setMoreImages(!moreImages)} ><Plus className="icon"/></i>
+            <Plus className="icon" onClick={() => setMoreImages(!moreImages)} />
           </div>
           <div className="form-imgpreview">
             {img ? (
@@ -143,33 +144,36 @@ const CreateEdit = (props) => {
         </div>
         <div className="button-container">
 
-        <button type="button" className="green left-ca top" onClick={uploadImage}>
-          {t("common.save")}
-        </button>
-        <button type="button" className="red top" onClick={props.close}>
-          {t("common.cancel")}
-        </button>
+          <button type="button" className="green left-ca top" onClick={uploadImage}>
+            {t("common.save")}
+          </button>
+          <button type="button" className="red top" onClick={props.close}>
+            {t("common.cancel")}
+          </button>
 
-      </div>
+        </div>
       </form>
       {moreImages && (
-        <form ref={imageArea} className="form-imgs">
-        {JSON.parse(localStorage.images).map((image, index) => (
-            <Image
-              key={index}
-              cloudName="uottawaedusim"
-              publicId={image}
-              onClick={() => {
-                setImageSelected(image);
-                setImg(image);
-              }}
-              alt={t("alt.sim")}
-            />
-          ))}
-      <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
-      {t("modal.imageFromFile")}
-      </button>
-        </form>
+        <div className="create-edit-images">
+          <form ref={imageArea} >
+            {JSON.parse(localStorage.images).map((image, index) => (
+              <Image
+                key={index}
+                cloudName="uottawaedusim"
+                publicId={image}
+                onClick={() => {
+                  setImageSelected(image);
+                  setImg(image);
+                }}
+                alt={t("alt.sim")}
+              />
+            ))}
+            
+          </form>
+          <button type="button" className="modal-button green form-imgsubmit" onClick={openWidget}>
+              {t("modal.imageFromFile")}
+            </button>
+        </div>
       )}
     </div>
   );

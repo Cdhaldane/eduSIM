@@ -19,7 +19,6 @@ const SimNote = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [json, setJson] = useState({});
   const [currDate, setDate] = useState(props.date.substring(0, 10));
-  console.log(props)
 
   useEffect(() => {
     const getJson = async () => {

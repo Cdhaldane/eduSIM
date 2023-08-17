@@ -445,7 +445,6 @@ class Graphics extends Component {
             layerGroup.push(obj.id)
             this.refresh()
           }
-
           // const screenRect = {
           //   x: (-stage.x() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? 70 : 0)) / stage.scaleX(),
           //   y: (-stage.y() + (!this.state.overlayOpen && !this.state.personalAreaOpen ? this.topPad : 0)) / stage.scaleY(),
@@ -473,12 +472,18 @@ class Graphics extends Component {
               img.overlayIndex === obj.overlayIndex &&
               img.id !== obj.id &&
               img.anchor
-            )).forEach(({ x, y, width, height, radiusX, radiusY, id }) => {
+            )).forEach(({ x, y, width, height, radiusX, radiusY, id, rolelevel }) => {
               let sX, sY;
+              console.log(obj)
+              if(!layerGroup.includes(id)){
+                return
+              }
+              
               if (this.props.gamepieceStatus[id]) {
                 sX = this.props.gamepieceStatus[id].x;
                 sY = this.props.gamepieceStatus[id].y;
               }
+              
               if (!sX || !sY) {
                 sX = x;
                 sY = y;

@@ -161,7 +161,11 @@ const Timer = forwardRef((props, ref) => {
 
   useEffect(() => {
     if(props.editMode) return;
-    if(props.variables[props.varEnable] && !running){
+    let finished = false;
+    let running = false;
+    if(props.status.finished !== undefined) finished = props.status.finished;
+    if(props.status.running !== undefined) running = props.status.running;
+    if(props.variables[props.varEnable] && !running ){
       toggleRun();
     }
   }, [props.variables]);

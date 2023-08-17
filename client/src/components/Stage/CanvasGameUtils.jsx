@@ -103,7 +103,6 @@ const CanvasUtils = (props) => {
           }
           else {
             if (!result.includes(false)) {
-              console.log(var1, var2, math, var3)
               setCondition(var1, var2, math, var3);
             }
           }
@@ -184,6 +183,7 @@ export const handleCollisions = (props, state) => {
   let result = props.savedObjects.flatMap(key => state[key])
   let filteredResult = result.filter(obj => obj.level === state.level);
   let groupedArrays = splitArrayByValue(trigs, 2);
+
   groupedArrays = filterArrayBasedOnArray(groupedArrays, filteredResult)
   const gamepieces = filterObjectBasedOnArray(props.gamepieceStatus, filteredResult)
   groupedArrays.map((group) => {

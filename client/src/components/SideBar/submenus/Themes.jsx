@@ -28,13 +28,13 @@ const Themes = (props) => {
 
     useEffect(() => {
         // if(typeof props.shapeThemes !== "array") props.setShapeThemes(["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"])
-        if (props.themes.length !== 0) setThemes(props.themes);
-        if (props.shapeThemes.length !== 0 && Array.isArray(props.shapeThemes)) setShapeThemes(props.shapeThemes);
+        if (props?.themes?.length !== 0) setThemes(props.themes);
+        if (props?.shapeThemes?.length !== 0 && Array.isArray(props.shapeThemes)) setShapeThemes(props.shapeThemes);
     }, [props])
 
 
     const getThemesBoxes = () => {
-        return themes.map((theme, i) => {
+        return themes?.map((theme, i) => {
             return (
                 <div className="theme-box" key={i} onClick={() => {
                     setIndex(i)
@@ -46,7 +46,7 @@ const Themes = (props) => {
     }
 
     const getShapesDropdown = () => {
-        return shapes.map((shape, i) => {
+        return shapes?.map((shape, i) => {
             return (
                 <div className="shape-box" style={{ backgroundColor: shapeThemes[i][0] }} key={i} onClick={() => {
                     setShapeIndex(i)

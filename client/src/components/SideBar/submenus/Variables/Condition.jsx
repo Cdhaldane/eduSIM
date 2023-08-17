@@ -300,8 +300,8 @@ const Condition = (props) => {
         </div>
         {box[i].state === 'val' &&
           <div className="special-box-tf">
-            <button onClick={() => handleSelectChange({ value: 'true' }, x, n)}>True</button>
-            <button onClick={() => handleSelectChange({ value: 'false' }, x, n)}>False</button>
+            <button onClick={() => handleSelectChange({ value: 'true' }, x, n)}>true</button>
+            <button onClick={() => handleSelectChange({ value: 'false' }, x, n)}>false</button>
           </div>
         }
       </div>

@@ -198,17 +198,17 @@ const Profile = ({ auth0 }) => {
     e.preventDefault();
     if (icon === 'plus' && text === 'Follow') {
       let body = {
-        email: users.email,
-        followers: users.followers + 1,
-        following: [...users.following, localStorage.adminid]
+        email: user.email,
+        followers: user.follers ? user.followers + 1 : 1,
+        following: user.following ? [...user.following, localStorage.adminid] : [localStorage.adminid]
       }
       axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
         .then(response => {
           // Update the local state with the new download count
           const updatedUser = () => {
-            return { ...users, followers: response.data.adminaccount.followers };
+            return { ...user, followers: user.follers ? user.followers + 1 : 1 };
           };
-          setUsers(updatedUser);
+          setUser(updatedUser);
         })
         .catch(error => {
           console.error('Error updating download count:', error);
@@ -218,17 +218,17 @@ const Profile = ({ auth0 }) => {
  
     } else {
       let body = {
-        email: users.email,
-        followers: users.followers - 1,
-        following: users.following.filter((id) => id !== localStorage.adminid)
+        email: user.email,
+        followers: user.followers - 1,
+        following: user.following.filter((id) => id !== localStorage.adminid)
       }
       axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
         .then(response => {
           // Update the local state with the new download count
           const updatedUser = () => {
-            return { ...users, followers: response.data.adminaccount.followers };
+            return { ...user, followers: user.followers - 1 };
           };
-          setUsers(updatedUser);
+          setUser(updatedUser);
         })
         .catch(error => {
           console.error('Error updating download count:', error);

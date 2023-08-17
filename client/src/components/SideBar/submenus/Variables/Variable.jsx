@@ -241,8 +241,8 @@ const Variable = ({ globalVars, localVars, setGlobalVars, setLocalVars, group, h
               <input type="text" value={varValue} placeholder={"Value"} onChange={(e) => setVarValue(e.target.value)} />
             ) : (
               <select name="var-value" id="var-value" onChange={(e) => {setVarValue(e.target.value), console.log(e.target.value)}} value={varValue}>
-                <option value="true">True</option>
-                <option value="false">False</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
               </select>
             )}
           </div>

@@ -495,6 +495,7 @@ a {
   font-family: "Montserrat", sans-serif;
   font-size: 1vw;
   padding: 20px;
+  margin-top: 0px;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -856,6 +857,9 @@ a {
 @media screen and (orientation: portrait) {
   .addbutton {
     font-size: 1.0rem;
+  }
+  .join {
+    margin-top: 70px;
   }
 
   .page-margin h2 {
