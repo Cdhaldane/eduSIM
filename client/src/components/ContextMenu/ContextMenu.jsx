@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import debounce from 'lodash.debounce';
-import DropdownEditObject from "../Dropdown/DropdownEditObject";
+import DropdownEditObject from "../DropDown/DropdownEditObject";
 import DeckCreator from "./DeckCreator";
 import Modal from "react-modal";
 import { useTranslation } from "react-i18next";
