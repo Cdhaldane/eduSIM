@@ -221,6 +221,8 @@ const CanvasPage = (props) => {
       let groupGameContainer = document.getElementById('groupGameContainer');
       let personalGameContainer = document.getElementById('personalGameContainer');
       let overlayGameContainer = document.getElementById('overlayGameContainer');
+      // console.log(groupGameContainer, personalGameContainer, overlayGameContainer)
+      // if(!groupGameContainer || !personalGameContainer || !overlayGameContainer) return;
       let area = {
         width: groupGameContainer.clientWidth - 70,
         height: groupGameContainer.clientHeight

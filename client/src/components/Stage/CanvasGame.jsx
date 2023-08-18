@@ -27,6 +27,7 @@ import {
 import Layers from "../../../public/icons/layers.svg"
 import Up from "../../../public/icons/chevron-up.svg"
 import Down from "../../../public/icons/chevron-down.svg"
+import { set } from 'draft-js/lib/EditorState';
 
 const EndScreen = styled.div`
   position: fixed;
@@ -129,7 +130,7 @@ class Graphics extends Component {
 
       gameroles: [],
       state: false,
-      
+
       startTutorial: false,
       selectrole: false,
       gameinstanceid: this.props.gameinstanceid,
@@ -341,6 +342,24 @@ class Graphics extends Component {
       });
     }
   }
+  endTutorial = (value) => {
+    if (value) {
+      this.setState({
+        startTutorial: false,
+      })
+      localStorage.setItem("tutorial", "true")
+      setTimeout(() => {
+      if(this.state.overlayOpen){
+        document.getElementsByClassName('overlayMain')[0].style.visibility = 'visible'
+      }
+      }, 100);
+    } else {
+      this.setState({
+        startTutorial: true,
+      })
+      localStorage.setItem("tutorial", "false")
+    }
+  }
 
   componentDidUpdate = (prevProps, prevState) => {
     if (prevState.canvasLoading !== this.state.canvasLoading) {
@@ -350,6 +369,24 @@ class Graphics extends Component {
       this.setState({ level: this.props.level })
     }
     handleCollisions(this.props, this.state);
+
+    if (localStorage.getItem("tutorial") === "true") {
+      if (this.state.startTutorial)
+        this.setState({
+          startTutorial: false
+        })
+    } else {
+      if (!this.state.startTutorial)
+        this.setState({
+          startTutorial: true
+        })
+      console.log(this.state.overlayOpen)
+      if (this.state.overlayOpen) {
+        console.log(document.getElementsByClassName('overlayMain')[0])
+        document.getElementsByClassName('overlayMain')[0].style.visibility = 'hidden'
+      }
+      // localStorage.setItem("tutorial", "true")
+    }
 
     // Show overlay if it is the next page and a pageEnter overlay is available
     const page = this.getPage(this.state.level - 1);
@@ -478,15 +515,15 @@ class Graphics extends Component {
             )).forEach(({ x, y, width, height, radiusX, radiusY, id, rolelevel }) => {
               let sX, sY;
               console.log(obj)
-              if(!layerGroup.includes(id)){
+              if (!layerGroup.includes(id)) {
                 return
               }
-              
+
               if (this.props.gamepieceStatus[id]) {
                 sX = this.props.gamepieceStatus[id].x;
                 sY = this.props.gamepieceStatus[id].y;
               }
-              
+
               if (!sX || !sY) {
                 sX = x;
                 sY = y;
@@ -560,7 +597,7 @@ class Graphics extends Component {
 
   handlePlayerInfo = ({ role: initRole, name, dbid }) => {
     this.toggleModal();
-    this.setState({selectrole: false})
+    this.setState({ selectrole: false })
     let role = initRole;
     if (this.props.roleSelection === "random") role = -1;
     else if (this.props.roleSelection === "randomByLevel") role = -2; //seeded
@@ -576,41 +613,18 @@ class Graphics extends Component {
     localStorage.setItem('userInfo', JSON.stringify({ gameid, role, name, dbid: this.props.initialUserId || id }));
   }
 
-  endTutorial = ( value ) => {
-    if (value) {
-      this.setState({
-        startTutorial: false,
-      })
-    } else {
-      this.setState({
-        startTutorial: true,
-      })
-    }
-  }
-
   componentDidMount() {
-
-    if(this.props.gamepieceStatus.running) {
+    if (this.props.gamepieceStatus.running) {
       this.setState({
         selectrole: false,
-        startTutorial: false
       })
     } else {
       this.setState({
         selectrole: true
       })
-      if(localStorage.getItem("tutorial") === "true") {
-        this.setState({
-          startTutorial: false
-        })
-      } else {
-        this.setState({
-          startTutorial: true
-        })
-        localStorage.setItem("tutorial", "true")
-      }
     }
-    
+
+
     this.setState({
       nextLevel: this.state.level + 1
     })
@@ -646,7 +660,6 @@ class Graphics extends Component {
     };
 
     // Check if shape is draggable, move to top of page layers
-
   }
 
   getInteractiveProps = (id) => ({
@@ -850,7 +863,7 @@ class Graphics extends Component {
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}
-        {this.state.overlayOpen && !this.state.startTutorial && (
+        {this.state.overlayOpen && (
           <Overlay
             playMode={true}
             closeOverlay={() => {
@@ -876,11 +889,11 @@ class Graphics extends Component {
         <div tabIndex="0" onKeyDown={this.contextMenuEventShortcuts} id="groupGameContainer" className="playModeCanvasContainer">
           <div className="stageContainer">
             <Stage
-              height={this.state.pages[this.state.level - 1] 
-                ? ((this.state.pages[this.state.level - 1].groupPositionRect.h * this.state.pages[this.state.level - 1].groupPositionRect.scaleY) * this.state.groupLayerScale ) 
+              height={this.state.pages[this.state.level - 1]
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.h * this.state.pages[this.state.level - 1].groupPositionRect.scaleY) * this.state.groupLayerScale)
                 : window.innerHeight - 50}
-              width={this.state.pages[this.state.level - 1] 
-                ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale) 
+              width={this.state.pages[this.state.level - 1]
+                ? ((this.state.pages[this.state.level - 1].groupPositionRect.w * this.state.pages[this.state.level - 1].groupPositionRect.scaleX) * this.state.groupLayerScale)
                 : window.innerWidth}
               offsetX={this.state.groupCenterX}
               offsetY={this.state.groupCenterY}
@@ -939,17 +952,17 @@ class Graphics extends Component {
               <div
                 id="personalGameContainer"
                 className="personalAreaStageContainer playModeCanvasContainer"
-                style={{backgroundImage: 'none'}}
+                style={{ backgroundImage: 'none' }}
               >
                 <Stage
                   height={this.state.pages[this.state.level - 1]
-                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.h * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleY) * this.state.personalLayerScale ) 
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.h * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleY) * this.state.personalLayerScale)
                     : window.innerHeight - 50}
-                  width={this.state.pages[this.state.level - 1] 
-                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.w * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleX) * this.state.personalLayerScale) 
+                  width={this.state.pages[this.state.level - 1]
+                    ? ((this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.w * this.state.pages[this.state.level - 1]?.personalPositionRect[this.state.rolelevel]?.scaleX) * this.state.personalLayerScale)
                     : window.innerWidth}
-                    offsetX={this.state.personalCenterX}
-                    offsetY={this.state.personalCenterY}
+                  offsetX={this.state.personalCenterX}
+                  offsetY={this.state.personalCenterY}
                   ref="personalAreaStage"
                 >
                   {this.state.personalAreaOpen && !this.state.overlayOpen ? this.props.loadObjects("personal", "play") : null}

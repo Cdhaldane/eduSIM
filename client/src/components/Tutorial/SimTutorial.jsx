@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 
-import Question from "../../../public/icons/question-circle.svg"
+// import Question from "../../../public/icons/question-circle.svg"
+import Question from "../../../public/icons/FAQ.svg"
 
 const TutorialButton = styled.button`
     font-family: "Montserrat", sans-serif;
