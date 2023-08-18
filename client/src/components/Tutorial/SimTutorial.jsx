@@ -17,6 +17,15 @@ const TutorialButton = styled.button`
     border-color: var(--color);
 `;
 
+const ProgressBar = styled.div`
+  height: 10px;
+  background-color: var(--primary);
+  width: ${props => props.width}%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+`;
+
+
 const tutorialSteps = [
 
     {
@@ -86,58 +95,62 @@ const SimTutorial = ({ startTutorial, endTutorial }) => {
         endTutorial(false);
     };
 
+    // if progress is 0% make its 5 % so the bar is visible
+    let progress = (currentStep / (tutorialSteps.length - 1)) * 100;
+    if(progress === 0) progress = 3;
+
     return (
         <>
-        {startTutorial && (
-            <div className="tutorial">
-                <div className="tutorial-background">
-                    {
-                        currentStep != 1 ?
-                        <div className="section-bg page-background" style={{height: "calc(100vh - 50px - 90px)", width: "calc(100vw - 70px - 90px)", left: "70px", top: "50px"}}/>
-                        : null
-                    }
-                    {
-                        currentStep != 2 ?
-                        <div className="section-bg timeline-background" style={{height: '50px', width: 'calc(100vw - 70px)', left: '70px'}}/>
-                        : null
-                    }
-                    {
-                        currentStep != 3 ?
-                        <div className="section-bg sidebar-background" style={{height: '100vh', width: "70px"}}/>
-                        : null
-                    }
-                    {
-                        currentStep != 4 ?
-                        <div className="section-bg overlay-background" style={{height: 'calc(100vh - 50px - 90px)', width: '90px', left: 'calc(100vw - 90px)', top: '50px'}}/>
-                        : null
-                    }
-                    {
-                        currentStep != 5 ?
-                        <div className="section-bg role-background" style={{height: '90px', width: 'calc(100vw - 70px)', left: '70px', top: 'calc(100vh - 90px)'}}/>
-                        : null
-                    }
-                </div>
-                <div className="areacsv">
-                    <div className="areacsvform modal-tutorial">
-                        <div className="modal-tutorial-header">
-                            <h2>{tutorialSteps[currentStep].title}</h2>
-                            <p>{tutorialSteps[currentStep].description}</p>
-                        </div>
-                        <div className="modal-tutorial-buttons">
-                            {currentStep >= 1 ? <TutorialButton onClick={handleBack}>Back</TutorialButton> : null}
-                            {currentStep < tutorialSteps.length - 1 ? <TutorialButton onClick={handleNext}>Next</TutorialButton> : null}
-                            {currentStep < tutorialSteps.length - 1 ? <TutorialButton onClick={handleSkip}>Skip Tutorial</TutorialButton> : null}
-                            {currentStep === tutorialSteps.length - 1 ? <TutorialButton onClick={handleSkip}>End Tutorial</TutorialButton> : null}
+            {startTutorial && (
+                <div className="tutorial">
+                    <div className="tutorial-background">
+                        {
+                            currentStep != 1 ?
+                                <div className="section-bg page-background" style={{ height: "calc(100vh - 50px - 90px)", width: "calc(100vw - 70px - 90px)", left: "70px", top: "50px" }} />
+                                : null
+                        }
+                        {
+                            currentStep != 2 ?
+                                <div className="section-bg timeline-background" style={{ height: '50px', width: 'calc(100vw - 70px)', left: '70px' }} />
+                                : null
+                        }
+                        {
+                            currentStep != 3 ?
+                                <div className="section-bg sidebar-background" style={{ height: '100vh', width: "70px" }} />
+                                : null
+                        }
+                        {
+                            currentStep != 4 ?
+                                <div className="section-bg overlay-background" style={{ height: 'calc(100vh - 50px - 90px)', width: '90px', left: 'calc(100vw - 90px)', top: '50px' }} />
+                                : null
+                        }
+                        {
+                            currentStep != 5 ?
+                                <div className="section-bg role-background" style={{ height: '90px', width: 'calc(100vw - 70px)', left: '70px', top: 'calc(100vh - 90px)' }} />
+                                : null
+                        }
+                    </div>
+                    <div className="areacsv">
+                        <div className="areacsvform modal-tutorial">
+                            <div className="modal-tutorial-header">
+                                
+                                <h2>{tutorialSteps[currentStep].title}</h2>
+                                <p>{tutorialSteps[currentStep].description}</p>
+                            </div>
+                            <div className="modal-tutorial-buttons">
+                                {currentStep >= 1 ? <TutorialButton onClick={handleBack}>Back</TutorialButton> : null}
+                                {currentStep < tutorialSteps.length - 1 ? <TutorialButton onClick={handleNext}>Next</TutorialButton> : null}
+                                {currentStep < tutorialSteps.length - 1 ? <TutorialButton onClick={handleSkip}>Skip Tutorial</TutorialButton> : null}
+                                {currentStep === tutorialSteps.length - 1 ? <TutorialButton onClick={handleSkip}>End Tutorial</TutorialButton> : null}
+                            </div>
+                            <ProgressBar className="tutorial-progress" width={progress} />
                         </div>
                     </div>
                 </div>
-            </div>
-        )}
-        {!startTutorial && (
-            <button className="tutorial-button">
-                <Question onClick={handleStart}/>
-            </button>
-        )}
+            )}
+            {!startTutorial && (
+                <Question className="tutorial-button" onClick={handleStart} />
+            )}
         </>
     );
 }

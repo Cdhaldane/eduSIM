@@ -850,7 +850,7 @@ class Graphics extends Component {
         )}
 
         {/* ---- OVERLAY CANVAS ---- */}
-        {this.state.overlayOpen && (
+        {this.state.overlayOpen && !this.state.startTutorial && (
           <Overlay
             playMode={true}
             closeOverlay={() => {

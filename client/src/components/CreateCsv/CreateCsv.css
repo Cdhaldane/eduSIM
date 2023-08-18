@@ -287,17 +287,31 @@
 
 .tutorial-button {
   position: absolute;
-  left: 10px;
+  left: 15px;
   bottom: 10px;
   z-index: 1000;
-  border: none;
-  background: none;
+  padding: -1ps;;
+  background: var(--white) !important;
   fill: var(--primary) !important;
   cursor: pointer;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 100%;
+  transition: all 0.3s ease-in-out;
 }
 
+
 .tutorial-button:hover {
-  fill: red !important;
+  background: var(--primary) !important;
+  fill: var(--white) !important;
+}
+
+.tutorial-progress {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 0px !important;
+  align-self: flex-start !important;
+  transition: all 0.3s ease-in-out;
 }
 
 .section-bg {
