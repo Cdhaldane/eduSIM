@@ -57,6 +57,7 @@ const Game = (props) => {
   const [level, setLevel] = useState(1);
   const [roles, setRoles] = useState([]);
   const alertContext = useAlertContext();
+  const [startTutorial, setStartTutorial] = useState(false);
   const [selectrole, setSelectrole] = useState(false);
   const [notes, setNotes] = useState();
   const [userId, setUserId] = useState();
@@ -135,6 +136,7 @@ const Game = (props) => {
         setLocalInts(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localInts)
         setLocalTrigs(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).localTrigs)
         setRoles(gameData?.gameinstance?.game_parameters && JSON.parse(gameData.gameinstance.game_parameters).roles)
+        setStartTutorial(true);
         setSelectrole(true);
       });
       client.on("roomStatusUpdate", ({ status, refresh, lastSetVar }) => {
@@ -310,6 +312,7 @@ const Game = (props) => {
         />
         <Main color={pageColor} className="playModeMain">
           <CanvasGame
+            startTutorial={startTutorial}
             selectrole={selectrole}
             setPageColor={setPageColor}
             canvasHeights={props.canvasHeights}

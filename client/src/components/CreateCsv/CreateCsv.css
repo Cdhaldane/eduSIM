@@ -225,7 +225,8 @@
   left: -60px;
 }
 
-.modal-role-select {
+.modal-role-select,
+.modal-tutorial {
   align-items: center;
   justify-content: space-between;
 
@@ -233,7 +234,8 @@
 .modal-role-select > #rolesdrops > span {
   transform: translateX(calc(-100% - 10px))
 }
-.modal-role-select span {
+.modal-role-select span,
+.modal-tutorial span {
   font-size: 1.3em;
   align-self: center;
   margin-right: 10px;
@@ -245,8 +247,62 @@
   justify-content: center;
 }
 
-.modal-role-header {
+.modal-role-header,
+.modal-tutorial-header {
   font-size: 1.6rem;
+}
+
+.modal-tutorial-header p {
+  margin-top: 10px;
+}
+
+.modal-tutorial-header ul {
+  text-align: left;
+}
+
+.modal-tutorial-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tutorial {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.tutorial-background {
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+.tutorial-button {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1000;
+  border: none;
+  background: none;
+  fill: var(--primary) !important;
+  cursor: pointer;
+}
+
+.tutorial-button:hover {
+  fill: red !important;
+}
+
+.section-bg {
+  background-color: rgba(0, 0, 0, 0.75);
+  position: absolute;
 }
 
 .emailmodal-table {

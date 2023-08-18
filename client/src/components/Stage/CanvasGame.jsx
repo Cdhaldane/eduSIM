@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Level from "../Level/Level";
 import Modal from "react-modal";
 import CreateRole from "../CreateRoleSelection/CreateRole";
+import SimTutorial from '../Tutorial/SimTutorial';
 import styled from "styled-components";
 import moment from "moment";
 import { OrderedSet } from "immutable";
@@ -128,6 +129,8 @@ class Graphics extends Component {
 
       gameroles: [],
       state: false,
+      
+      startTutorial: false,
       selectrole: false,
       gameinstanceid: this.props.gameinstanceid,
       adminid: this.props.adminid,
@@ -573,16 +576,39 @@ class Graphics extends Component {
     localStorage.setItem('userInfo', JSON.stringify({ gameid, role, name, dbid: this.props.initialUserId || id }));
   }
 
+  endTutorial = ( value ) => {
+    if (value) {
+      this.setState({
+        startTutorial: false,
+      })
+    } else {
+      this.setState({
+        startTutorial: true,
+      })
+    }
+  }
+
   componentDidMount() {
 
     if(this.props.gamepieceStatus.running) {
       this.setState({
-        selectrole: false
+        selectrole: false,
+        startTutorial: false
       })
     } else {
       this.setState({
         selectrole: true
       })
+      if(localStorage.getItem("tutorial") === "true") {
+        this.setState({
+          startTutorial: false
+        })
+      } else {
+        this.setState({
+          startTutorial: true
+        })
+        localStorage.setItem("tutorial", "true")
+      }
     }
     
     this.setState({
@@ -744,7 +770,11 @@ class Graphics extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.selectrole && (
+        <SimTutorial
+          startTutorial={this.state.startTutorial}
+          endTutorial={this.endTutorial}
+        />
+        {this.state.selectrole && !this.state.startTutorial && (
           <div>
             <Modal
               isOpen={this.state.selectrole}
