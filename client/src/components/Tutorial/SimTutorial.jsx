@@ -72,7 +72,7 @@ const tutorialSteps = [
     },
 ]
 
-const SimTutorial = ({ startTutorial, endTutorial }) => {
+const SimTutorial = ({ startTutorial, endTutorial, visible }) => {
     const [currentStep, setCurrentStep] = useState(0);
 
     const handleNext = () => {
@@ -95,6 +95,8 @@ const SimTutorial = ({ startTutorial, endTutorial }) => {
         setCurrentStep(0);
         endTutorial(false);
     };
+    
+    useEffect(() => {console.log(visible)}, [visible]);
 
     // if progress is 0% make its 5 % so the bar is visible
     let progress = (currentStep / (tutorialSteps.length - 1)) * 100;
@@ -150,7 +152,7 @@ const SimTutorial = ({ startTutorial, endTutorial }) => {
                 </div>
             )}
             {!startTutorial && (
-                <Question className="tutorial-button" onClick={handleStart} />
+                <Question className={visible ? "tutorial-button expanded" : "tutorial-button"} onClick={handleStart} />
             )}
         </>
     );

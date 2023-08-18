@@ -786,6 +786,7 @@ class Graphics extends Component {
         <SimTutorial
           startTutorial={this.state.startTutorial}
           endTutorial={this.endTutorial}
+          visible={this.props.visible}
         />
         {this.state.selectrole && !this.state.startTutorial && (
           <div>

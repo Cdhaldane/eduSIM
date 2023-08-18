@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 
 import cryptoRandomString from 'crypto-random-string';
-import { 
+import {
   getInteractionBreakdown,
   getInteractions,
   getChatlog,
@@ -164,7 +164,7 @@ exports.getRunningSimulationLogs = async (req, res) => {
       }
     });
     const roomData = [];
-    for (let i=0; i<rooms.length; i++) {
+    for (let i = 0; i < rooms.length; i++) {
       const { dataValues } = rooms[i];
       const roomStatus = await getRoomStatus(dataValues.gameroom_url);
       const messages = await getChatlog(dataValues.gameroom_url);
@@ -193,7 +193,7 @@ exports.getGameLogs = async (req, res) => {
       .eq('gameroomid', gameroomid).select();
 
     if (error) throw error;
-    
+
     return res.send(data);
   } catch (err) {
     return [];
@@ -377,6 +377,7 @@ exports.updateRoomName = async (req, res) => {
 
 exports.getRoomByURL = async (req, res) => {
   const roomurl = req.query.url;
+  console.log(req.query, req.body)
   try {
     const { data: gameroom, error } = await supabase
       .from('gamerooms')
@@ -384,11 +385,14 @@ exports.getRoomByURL = async (req, res) => {
       .eq('gameroom_url', roomurl)
       .single();
 
+    console.log(roomurl, gameroom)
+    if (!gameroom) return res.send({ message: 'No room found', success: false });
+
     const { data: gameinfo } = await supabase
-    .from('gameinstances')
-    .select('*')
-    .eq('gameinstanceid', gameroom.gameinstanceid)
-    .single();
+      .from('gameinstances')
+      .select('*')
+      .eq('gameinstanceid', gameroom.gameinstanceid)
+      .single();
 
     gameroom.gameinstance = gameinfo;
 

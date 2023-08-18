@@ -13,6 +13,7 @@ const Home = (props) => {
   const handleRedirect = () => {
     window.location.href = window.location.origin + "/dashboard";
   }
+  
 
   return (
     <div className="welcome-container">

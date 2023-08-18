@@ -22,11 +22,11 @@ const Welcome = (props) => {
     const { data: roomData } = await axios.get(
       process.env.REACT_APP_API_ORIGIN + '/api/playerrecords/getRoomByURL', {
       params: {
-        id: code,
+        url: code,
       }
     });
-
-    if (!!roomData) {
+    console.log(roomData)
+    if (!!roomData.gameroomid) {
       history.push(`/gamepage/${code}`);
     } else {
       alertContext.showAlert(t("alert.roomDoesntExist"), "error");

@@ -148,9 +148,11 @@ const Sidebar = (props) => {
         setSubmenu(nav);
         setSubmenuVisible(true);
         setExpanded(true);
+        props.close(true);
       } else {
         setSubmenuVisible(false);
         setExpanded(false);
+        props.close(false);
       }
     }
 
@@ -168,6 +170,7 @@ const Sidebar = (props) => {
   useEffect(() => {
     setExpanded(false);
     setSubmenuVisible(false);
+    props.close(false);
   }, [props.disabled]);
 
 
@@ -176,6 +179,7 @@ const Sidebar = (props) => {
       setExpanded(val);
       if (!val) {
         setSubmenuVisible(false);
+        props.close(false);
       }
     }
   }

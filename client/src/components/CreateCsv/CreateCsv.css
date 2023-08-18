@@ -297,7 +297,13 @@
   width: 40px !important;
   height: 40px !important;
   border-radius: 100%;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.19s linear;
+}
+
+
+
+.tutorial-button.expanded {
+  left: 370px;
 }
 
 

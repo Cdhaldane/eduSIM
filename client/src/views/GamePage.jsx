@@ -80,7 +80,9 @@ const Game = (props) => {
   const [localTrigs, setLocalTrigs] = useState([]);
 
 
-  const toggle = () => setShowNav(!showNav);
+  const toggle = (e) => {
+    setShowNav(e);
+  }
 
   const userid = (new URLSearchParams(useLocation().search)).get("user");
   const [queryUser, setQueryUser] = useState({});
@@ -346,6 +348,7 @@ const Game = (props) => {
             localTrigs={localTrigs || []}
             roles={roles || []}
             setNotes={setNotes}
+            visible={showNav}
             notes={notes || []}
             roleSelection={roomStatus.settings?.roleMode || "student"}
             initialUserInfo={queryUser}

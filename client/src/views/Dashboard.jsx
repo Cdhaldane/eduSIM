@@ -39,6 +39,8 @@ const Dashboard = (props) => {
   const [user, setUser] = useState(null)
   const [showAuth, setShowAuth] = useState(false)
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [adminid, setAdminid] = useState(null);
   const [adminEmail, setAdminEmail] = useState(null);
 
@@ -68,7 +70,7 @@ const Dashboard = (props) => {
           }
           axios.put(process.env.REACT_APP_API_ORIGIN + '/api/adminaccounts/update/:email', body)
           getAllGamedata(allData.adminid)
-          
+
         }).then(res => { }).catch(error => {
           console.error(error);
         });
@@ -77,6 +79,25 @@ const Dashboard = (props) => {
       }
     })
   }, [])
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') setIsAuthenticated(false)
+      if (event === 'SIGNED_IN') setIsAuthenticated(true)
+    })
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setIsAuthenticated(true)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+    })
+    if(!isAuthenticated) props.show();
+    return () => subscription.unsubscribe()
+  }, [])
+
+
 
   const setConfirmationModal = (data, index) => {
     setConfirmationVisible(data);
@@ -99,6 +120,8 @@ const Dashboard = (props) => {
         const allData2 = res.data;
         setOrder(allData2)
         setHeight(allData2.length * 150);
+        setLoading(false)
+
       }).catch(error => {
         console.error(error);
       });
@@ -109,7 +132,7 @@ const Dashboard = (props) => {
 
   const setOrder = (data) => {
     // set gamedata to be in order of localStorage.order
-    
+
     if (localStorage.order && data) {
       let order = JSON.parse(localStorage.order);
       if (order.length !== data.length) {
@@ -124,11 +147,9 @@ const Dashboard = (props) => {
       console.log(gamedata, order)
       getGamedata(order);
     } else {
-      console.log(data, order)
       getGamedata(data);
       localStorage.setItem('order', JSON.stringify(data));
-    } 
-    setLoading(false)
+    }
   }
 
 
@@ -144,7 +165,7 @@ const Dashboard = (props) => {
       }
     };
     getAllGameInstances();
-    
+
   }, [user]);
 
 
@@ -260,7 +281,7 @@ const Dashboard = (props) => {
         <div className="page-margin">
           <h2>{t("admin.mySimulations")}</h2>
           <div className="dashsim" index={updater} style={{ height: height }}>
-          <DraggableList items={memoizedGamedata ? memoizedGamedata : []} />
+            <DraggableList items={memoizedGamedata ? memoizedGamedata : []} />
           </div>
           <Modal
             isOpen={showNote}

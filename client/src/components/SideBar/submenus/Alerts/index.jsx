@@ -248,7 +248,7 @@ const Alerts = (props) => {
         if (!out[i].advance) {
           if (checkAdvance() && firstLoad === true) {
             alertContext.showAlert("Objective completed!", "success");
-            // props.handleLevel(page + 1)
+            props.handleLevel(page + 1)
             return;
           }
         } else {

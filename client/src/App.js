@@ -116,7 +116,7 @@ const App = (props) => {
                   <Route exact path="/collab-invite" render={(props) => <CollabLogin {...props} />} />
                   <Route path="/profile/:adminid" render={(props) => <Profile {...props} />} />
 
-                  <Route path="/dashboard" render={(props) => <Dashboard {...props} />} hashType="noslash" />
+                  <Route path="/dashboard" render={(props) => <Dashboard {...props} show={showProfileDropdown} />} hashType="noslash" />
 
                   <Route path="/join" render={(props) =>
                     <Join
