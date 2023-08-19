@@ -207,6 +207,7 @@ const Performance = forwardRef((props, ref) => {
               name = input.label;
               inputType = input.varType;
               // varType = vars[type];
+              if(!props.status.gamepieces) return
               if (inputType === "button") {
                 fill = "pushed";
                 button = "times";
@@ -426,7 +427,9 @@ const Performance = forwardRef((props, ref) => {
               {props.status && props.customObjs && (
                 <>
                   {props.customObjs.polls.map((poll, pollI) => {
-                    if(Object.keys(props.status).length === 0) return (<></>)
+                    if (Object.keys(props.status).length === 0) return (<></>)
+                    if (!props.status.gamepieces) return (<></>)
+                    if (Object.keys(props.status.gamepieces)?.length === 0) return (<></>)
                     if (props.status.gamepieces[poll.id] && poll.performanceEnabled) {
                       let pollData = "";
                       if (props.adminMode) {
