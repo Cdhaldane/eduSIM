@@ -8,8 +8,8 @@ import "./Performance.css";
 
 const Performance = forwardRef((props, ref) => {
   const { t } = useTranslation();
-  const [ showInputs, setShowInputs] = useState(false)
-  const [ showTimers, setShowTimers] = useState(false)
+  const [showInputs, setShowInputs] = useState('none')
+
 
   const pollQOptionChanged = (e, pollI, pageI, qI) => {
     const val = e.target.value;
@@ -129,341 +129,405 @@ const Performance = forwardRef((props, ref) => {
   const getTimer = () => {
     let timers = props.status?.gamepieces;
     let timerObjs = props.customObjs?.timers;
-    if(timers){
-      let list =[]
-      var result = Object.keys(timers).map((key) => [Number(key), timers[key]]);
-      for(let i = 0; i < result.length; i++){
-        let time = moment(moment().diff(moment(result[i][1].startTime - result[i][1].elapsedTime))).format('mm:ss.SS')
-        list.push(<div className="performance-timers">{timerObjs[i].id} - Page:{timerObjs[i].level} {time}</div>)
-      }
-      return list
+    if (timerObjs.length === 0) return <div className="performance-timers">No timers</div>
+    if (timers) {
+      return (
+        <div className="performance-tabs-container timers">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {timerObjs?.map((timer, i) => {
+                let time = moment(moment().diff(moment(timers[timer.id]?.startTime - timers[timer.id]?.elapsedTime))).format('mm:ss.SS')
+                if (time === 'Invalid date') time = '00:00.00'
+                return (
+                  <tr key={i} className={"performance-inputs "}>
+                    <td>{timer.id}</td>
+                    <td>Page:{timer.level}</td>
+                    <td>{time}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )
     }
   }
+  const [toggleState, setToggleState] = useState("button");
 
   const getInputs = () => {
     let vars = props?.variables;
+    //organize inputs by type
     let inputs = props.customObjs?.inputs;
     let fill = "";
-    let button = ""
+    let button = "";
     let type;
     let varType;
     let inputType;
     let name;
-    let list=[];
-    for(let i = 0; i < inputs.length; i++){
-      type = (inputs[i].varName)
-      name=(inputs[i].label)
-      inputType=(inputs[i].varType)
-      varType = vars[type]
-      if(inputType === "button"){
-        fill = "pushed"
-        button = "times"
-      } else {
-        button = ""
-      }
-      if(inputType === "text"){
-        fill = "equals"
-      }
-      if(inputType === "checkbox"){
-        if(varType){
-          varType = "true"
-        } else {
-          varType = "false"
-        }
-      }
-      list.push(<div className="performance-inputs">{inputType}: {name} {fill} {varType} {button}</div>)
-    }
-    return list
-  }
+    let types = ["button", "text", "checkbox", "radio"]
 
+    return (
+      <div className="performance-tabs-container">
+        <ul className="performance-selected-tab">
+          {types.map((tab, i) => {
+
+            return (
+              <li
+                onClick={() => {
+                  setToggleState(tab)
+                }}
+                className={toggleState === tab ? "selected" : "tab-overview"}
+              >
+                <span className="performance-tab-text">{tab}</span>
+              </li>
+            )
+          })}
+        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Name</th>
+              <th></th>
+              <th>Value</th>
+              <th>Button</th>
+            </tr>
+          </thead>
+          <tbody>
+            {inputs?.map((input, i) => {
+              if (input.varType !== toggleState) return
+              type = input.varName;
+              name = input.label;
+              inputType = input.varType;
+              // varType = vars[type];
+              if (inputType === "button") {
+                fill = "pushed";
+                button = "times";
+                varType = props.status.gamepieces[input.id]?.clickAmount;
+                if (varType === undefined) varType = 0;
+              } else {
+                button = "";
+              }
+              if (inputType === "text") {
+                fill = "equals";
+              }
+              if (inputType === "checkbox") {
+                varType = varType ? "true" : "false";
+              }
+              return (
+                <tr key={i} className={"performance-inputs " + inputType}>
+                  <td>{inputType}</td>
+                  <td>{name}</td>
+                  <td>{fill}</td>
+                  <td>{varType}</td>
+                  <td>{button}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  console.log(props)
   return (
     <>
-      <div className={`area ${props.adminMode ? "forceDivNormal" : ""}`}>
-        <form className={`form-input performanceForm
+      <form className={`form-input performanceForm
         ${props.adminMode ? "forceDivNormal noForm" : ""}`} ref={ref}>
-          {props.setData && (
-            <div className="performanceContainer">
-              <h2 className="performanceTitle">{t("edit.performanceReportSettings")}</h2>
-              <div className="performanceTableContainer">
-                <table className="performanceTable">
-                  <tbody>
-                    {Object.keys(props.customObjs).map((key) => {
-                      switch (key) {
-                        case "polls":
-                          return props.customObjs[key].map((poll, i) => {
-                            return (
-                              <tr key={i} className="performancePollRow">
-                                <td>
-                                  <Switch
-                                    onColor="#1b65f3"
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                    className="react-switch"
-                                    height={25}
-                                    width={45}
-                                    handleDiameter={23}
-                                    onChange={(val) => {
-                                      props.setData.setCustomObjData("polls", "performanceEnabled", val, poll.id);
-                                    }}
-                                    checked={poll.performanceEnabled}
-                                  />
-                                  <span>
-                                    {t("edit.pollXName", { num: i + 1, name: poll.customName ? poll.customName : t("edit.untitled") })}
-                                  </span>
-                                  {poll.performanceEnabled && (
-                                    <>
-                                      {poll.json.pages.map((page, pageI) => (
-                                        <React.Fragment key={pageI}>
-                                          {page.questions.map((q, qI) => {
-                                            return (
-                                              <div key={qI}>
-                                                <div className="performanceQNames">
-                                                  {q.title}
-                                                </div>
-                                                <div className="performanceQOptions">
-                                                  <table>
-                                                    <tbody>
-                                                      {(poll.infolevel || poll.overlay) && (
-                                                        <>
-                                                          <tr>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "personalResponse"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="personalResponse"
-                                                                />
-                                                                {t("edit.showOnlyUsersOwnAnswer")}
-                                                              </label>
-                                                            </td>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "commonResponse"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="commonResponse"
-                                                                />
-                                                                {t("edit.showMostCommonAnswer")}
-                                                              </label>
-                                                            </td>
-                                                          </tr>
-                                                          <tr>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "allResponses"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="allResponses"
-                                                                />
-                                                                {t("edit.showAllUserAnswers")}
-                                                              </label>
-                                                            </td>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "noShow"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="noShow"
-                                                                />
-                                                                {t("edit.dontShowQuestion")}
-                                                              </label>
-                                                            </td>
-                                                          </tr>
-                                                        </>
-                                                      )}
-                                                      {!(poll.infolevel || poll.overlay) && (
-                                                        <>
-                                                          <tr>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "groupResponse"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="groupResponse"
-                                                                />
-                                                                {t("edit.showGroupAnswer")}
-                                                              </label>
-                                                            </td>
-                                                            <td>
-                                                              <label>
-                                                                <input
-                                                                  checked={q.performanceOption === "noShow"}
-                                                                  onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
-                                                                  type="radio"
-                                                                  name={`poll${i}P${pageI}Q${qI}`}
-                                                                  value="noShow"
-                                                                />
-                                                                {t("edit.dontShowQuestion")}
-                                                              </label>
-                                                            </td>
-                                                          </tr>
-                                                        </>
-                                                      )}
-                                                    </tbody>
-                                                  </table>
-                                                </div>
-                                              </div>
-                                            )
-                                          })}
-                                        </React.Fragment>
-                                      ))}
-                                    </>
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          });
-                        default:
-                          break;
-                      }
-                    })}
-                  </tbody>
-                </table>
-                {!Object.keys(props.customObjs).some(key => props.customObjs[key].length) && (
-                  <div className="performanceNoObjects">
-                    <div><b>{t("edit.noInteractiveObjects")}</b></div>
-                    <p>
-                      {t("edit.interactiveObjectsExplanation")}
-                    </p>
-                    <p>
-                      {t("edit.performanceReportExplanation")}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {!props.setData && props.gameMode && (
-            <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
-              <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
-              <div>
-                <div className="input-container">
-                  <p onClick={() => setShowTimers(!showTimers)}>Timers:</p>
-                  {showTimers && (
-                    getTimer()
-                  )}
-                  <p onClick={() => setShowInputs(!showInputs)}>Inputs:</p>
-                    {showInputs && (
-                      getInputs()
-                    )}
-                </div>
-                {props.status && props.customObjs && (
-                  <>
-                    {props.customObjs.polls.map((poll, pollI) => {
-                      if (props.status[poll.id] && poll.performanceEnabled) {
-                        let pollData = "";
-                        if (props.adminMode) {
-                          pollData = props.status[poll.id];
-                        } else {
-                          pollData = (poll.infolevel || poll.overlay) ?
-                            (props.status[poll.id][props.userId] ? props.status[poll.id][props.userId].data : null) :
-                            props.status[poll.id].data;
-                        }
-                        if (pollData) {
-                          let questions = [];
-                          for (let i = 0; i < poll.json.pages.length; i++) {
-                            questions.push(poll.json.pages[i].questions);
-                          }
-                          questions = questions.flat();
+        {props.setData && (
+          <div className="performanceContainer">
+            <h2 className="performanceTitle">{t("edit.performanceReportSettings")}</h2>
+            <div className="performanceTableContainer">
+              <table className="performanceTable">
+                <tbody>
+                  {Object.keys(props.customObjs).map((key) => {
+                    switch (key) {
+                      case "polls":
+                        return props.customObjs[key].map((poll, i) => {
                           return (
-                            <React.Fragment key={pollI}>
-                              <div className="h2">{t("edit.pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
-                              {questions.map((question, questionI) => {
-                                let answer = "";
-                                if (props.adminMode) {
-                                  if (question.performanceOption === "groupResponse") {
-                                    if (pollData.data) {
-                                      answer = pollAnswerHTML(pollData.data[question.name], question);
-                                    } else {
-                                      answer = t("edit.noResponses");
-                                    }
-                                  } else {
-                                    answer = pollAllDataAnswer(props.status[poll.id], question);
-                                  }
-                                } else if (pollData[question.name] || pollData[question.name] === false) {
-                                  if (question.performanceOption === "noShow") {
-                                    answer = "";
-                                  } else if (
-                                    question.performanceOption === "groupResponse" ||
-                                    question.performanceOption === "personalResponse"
-                                  ) {
-                                    answer = pollAnswerHTML(pollData[question.name], question);
-                                  } else {
-                                    answer = pollAllDataAnswer(props.status[poll.id], question);
-                                  }
-                                } else {
-                                  answer = t("edit.noResponses");
-                                }
-                                return (
-                                  <React.Fragment key={questionI}>
-                                    {question.performanceOption !== "noShow" && (
-                                      <>
-                                        <div className="newQ"><span>Q: </span>{question.title}</div>
-                                        <div><span>A: </span>
-                                          {answer === null ? (
-                                            <i>
-                                              {t("edit.noResponseYet")}
-                                            </i>
-                                          ) : (
-                                            <>
-                                              {answer}
-                                            </>
-                                          )}
-                                        </div>
-                                      </>
-                                    )}
-                                  </React.Fragment>
-                                );
-                              })}
-                            </React.Fragment>
-                          )
-                        }
-                      }
-                    })}
-                  </>
+                            <tr key={i} className="performancePollRow">
+                              <td>
+                                <Switch
+                                  onColor="#1b65f3"
+                                  uncheckedIcon={false}
+                                  checkedIcon={false}
+                                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                  className="react-switch"
+                                  height={25}
+                                  width={45}
+                                  handleDiameter={23}
+                                  onChange={(val) => {
+                                    props.setData.setCustomObjData("polls", "performanceEnabled", val, poll.id);
+                                  }}
+                                  checked={poll.performanceEnabled}
+                                />
+                                <span>
+                                  {t("edit.pollXName", { num: i + 1, name: poll.customName ? poll.customName : t("edit.untitled") })}
+                                </span>
+                                {poll.performanceEnabled && (
+                                  <>
+                                    {poll.json.pages.map((page, pageI) => (
+                                      <React.Fragment key={pageI}>
+                                        {page.questions.map((q, qI) => {
+                                          return (
+                                            <div key={qI}>
+                                              <div className="performanceQNames">
+                                                {q.title}
+                                              </div>
+                                              <div className="performanceQOptions">
+                                                <table>
+                                                  <tbody>
+                                                    {(poll.infolevel || poll.overlay) && (
+                                                      <>
+                                                        <tr>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "personalResponse"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="personalResponse"
+                                                              />
+                                                              {t("edit.showOnlyUsersOwnAnswer")}
+                                                            </label>
+                                                          </td>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "commonResponse"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="commonResponse"
+                                                              />
+                                                              {t("edit.showMostCommonAnswer")}
+                                                            </label>
+                                                          </td>
+                                                        </tr>
+                                                        <tr>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "allResponses"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="allResponses"
+                                                              />
+                                                              {t("edit.showAllUserAnswers")}
+                                                            </label>
+                                                          </td>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "noShow"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="noShow"
+                                                              />
+                                                              {t("edit.dontShowQuestion")}
+                                                            </label>
+                                                          </td>
+                                                        </tr>
+                                                      </>
+                                                    )}
+                                                    {!(poll.infolevel || poll.overlay) && (
+                                                      <>
+                                                        <tr>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "groupResponse"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="groupResponse"
+                                                              />
+                                                              {t("edit.showGroupAnswer")}
+                                                            </label>
+                                                          </td>
+                                                          <td>
+                                                            <label>
+                                                              <input
+                                                                checked={q.performanceOption === "noShow"}
+                                                                onChange={(e) => pollQOptionChanged(e, i, pageI, qI)}
+                                                                type="radio"
+                                                                name={`poll${i}P${pageI}Q${qI}`}
+                                                                value="noShow"
+                                                              />
+                                                              {t("edit.dontShowQuestion")}
+                                                            </label>
+                                                          </td>
+                                                        </tr>
+                                                      </>
+                                                    )}
+                                                  </tbody>
+                                                </table>
+                                              </div>
+                                            </div>
+                                          )
+                                        })}
+                                      </React.Fragment>
+                                    ))}
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        });
+                      default:
+                        break;
+                    }
+                  })}
+                </tbody>
+              </table>
+              {!Object.keys(props.customObjs).some(key => props.customObjs[key].length) && (
+                <div className="performanceNoObjects">
+                  <div><b>{t("edit.noInteractiveObjects")}</b></div>
+                  <p>
+                    {t("edit.interactiveObjectsExplanation")}
+                  </p>
+                  <p>
+                    {t("edit.performanceReportExplanation")}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {!props.setData && props.gameMode && (
+          <div className={`performancePollResult ${props.adminMode ? "adminPagePerformancePollResult" : ""}`}>
+            <div>
+              <div className="input-container">
+                <div className="input-header">
+                  <h2 style={{ display: props.adminMode ? "none" : "block" }}>{t("edit.performanceReport")}</h2>
+                  <p className={showInputs === 'timers' && 'selected'} onClick={() => { showInputs !== 'timers' ? setShowInputs('timers') : setShowInputs('none') }}>Timers</p>
+                  <p className={showInputs === 'inputs' && 'selected'} onClick={() => { showInputs !== 'inputs' ? setShowInputs('inputs') : setShowInputs('none') }}>Inputs</p>
+                </div>
+                {showInputs === 'timers' && (
+                  getTimer()
+                )}
+                {showInputs === 'inputs' && (
+                  getInputs()
                 )}
 
-                {!props.status && (
-                  <>
-                    {props.adminMode && (
-                      <>
-                        <p><b>
-                          {t("edit.noDataToDisplay")}
-                        </b></p>
-                        <p>
-                          {t("edit.noDataExplanationAdmin")}
-                        </p>
-                      </>
-                    )}
-                    {!props.adminMode && (
-                      <>
-                        <p><b>
-                          {t("edit.noDataToDisplay")}
-                        </b></p>
-                        <p>
-                          {t("edit.noDataExplanation")}
-                        </p>
-                      </>
-                    )}
-                  </>
-                )}
               </div>
+              {props.status && props.customObjs && (
+                <>
+                  {props.customObjs.polls.map((poll, pollI) => {
+                    if(Object.keys(props.status).length === 0) return (<></>)
+                    if (props.status.gamepieces[poll.id] && poll.performanceEnabled) {
+                      let pollData = "";
+                      if (props.adminMode) {
+                        pollData = props.status.gamepieces[poll.id];
+                      } else {
+                        pollData = (poll.infolevel || poll.overlay) ?
+                          (props.status.gamepieces[poll.id][props.userId] ? props.status.gamepieces[poll.id][props.userId].data : null) :
+                          props.status.gamepieces[poll.id].data;
+                      }
+                      if (pollData) {
+                        let questions = [];
+                        for (let i = 0; i < poll.json.pages.length; i++) {
+                          questions.push(poll.json.pages[i].questions);
+                        }
+                        questions = questions.flat();
+                        return (
+                          <React.Fragment key={pollI}>
+                            <div className="h2">{t("edit.pollColonName", { name: poll.customName ? poll.customName : t("edit.untitled") })}</div>
+                            {questions.map((question, questionI) => {
+                              let answer = "";
+                              if (props.adminMode) {
+                                if (question.performanceOption === "groupResponse") {
+                                  if (pollData.data) {
+                                    answer = pollAnswerHTML(pollData.data[question.name], question);
+                                  } else {
+                                    answer = t("edit.noResponses");
+                                  }
+                                } else {
+                                  answer = pollAllDataAnswer(props.status.gamepieces[poll.id], question);
+                                }
+                              } else if (pollData[question.name] || pollData[question.name] === false) {
+                                if (question.performanceOption === "noShow") {
+                                  answer = "";
+                                } else if (
+                                  question.performanceOption === "groupResponse" ||
+                                  question.performanceOption === "personalResponse"
+                                ) {
+                                  answer = pollAnswerHTML(pollData[question.name], question);
+                                } else {
+                                  answer = pollAllDataAnswer(props.status.gamepieces[poll.id], question);
+                                }
+                              } else {
+                                answer = t("edit.noResponses");
+                              }
+                              return (
+                                <React.Fragment key={questionI}>
+                                  {question.performanceOption !== "noShow" && (
+                                    <>
+                                      <div className="newQ"><span>Q: </span>{question.title}</div>
+                                      <div><span>A: </span>
+                                        {answer === null ? (
+                                          <i>
+                                            {t("edit.noResponseYet")}
+                                          </i>
+                                        ) : (
+                                          <>
+                                            {answer}
+                                          </>
+                                        )}
+                                      </div>
+                                    </>
+                                  )}
+                                </React.Fragment>
+                              );
+                            })}
+                          </React.Fragment>
+                        )
+                      }
+                    }
+                  })}
+                </>
+              )}
+
+              {!props.status && (
+                <>
+                  {props.adminMode && (
+                    <>
+                      <p><b>
+                        {t("edit.noDataToDisplay")}
+                      </b></p>
+                      <p>
+                        {t("edit.noDataExplanationAdmin")}
+                      </p>
+                    </>
+                  )}
+                  {!props.adminMode && (
+                    <>
+                      <p><b>
+                        {t("edit.noDataToDisplay")}
+                      </b></p>
+                      <p>
+                        {t("edit.noDataExplanation")}
+                      </p>
+                    </>
+                  )}
+                </>
+              )}
             </div>
-          )}
-        </form>
-      </div>
+          </div>
+        )}
+      </form>
     </>
   );
 });

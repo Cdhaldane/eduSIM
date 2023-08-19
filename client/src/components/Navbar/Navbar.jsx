@@ -50,7 +50,7 @@ const NavBar = (props) => {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') setIsAuthenticated(false)
+      if (event === 'SIGNED_OUT') {setIsAuthenticated(false)}
       if (event === 'SIGNED_IN') setIsAuthenticated(true)
     })
     supabase.auth.getSession().then(({ data: { session } }) => {

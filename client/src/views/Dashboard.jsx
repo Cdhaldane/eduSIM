@@ -81,20 +81,9 @@ const Dashboard = (props) => {
   }, [])
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') setIsAuthenticated(false)
-      if (event === 'SIGNED_IN') setIsAuthenticated(true)
-    })
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setIsAuthenticated(true)
+      if (!session) props.show();
     })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-    })
-    if(!isAuthenticated) props.show();
-    return () => subscription.unsubscribe()
   }, [])
 
 

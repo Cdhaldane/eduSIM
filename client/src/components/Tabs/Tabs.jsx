@@ -651,12 +651,12 @@ const Tabs = (props) => {
                 </div>
                 <div className="group-column">
                   <h3 >{t("admin.performanceReport")}</h3>
+                  {console.log("roomStatus", props.roomStatus)}
                   <Performance
                     adminMode={true}
-                    status={props.roomStatus[Object.keys(props.roomStatus)[0]]
-                      ? props.roomStatus[Object.keys(props.roomStatus)[0]].gamepieces : {}}
+                    status={props.roomStatus[Object.keys(props.roomStatus)[0]]}
                     customObjs={customObjs}
-                    gameMode={false}
+                    gameMode={true}
                   />
                 </div>
               </div>

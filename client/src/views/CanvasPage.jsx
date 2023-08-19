@@ -40,6 +40,7 @@ import {
 import { Socket } from "socket.io-client";
 import { is } from "immutable";
 import { to } from "react-spring";
+import { set } from "draft-js/lib/EditorState";
 
 const konvaObjects = [
   "rectangles",
@@ -620,27 +621,35 @@ const CanvasPage = (props) => {
     }
   }
 
-  const textProps = (obj, canvas, editMode) => {
-    // Load in the font if it hasn't been loaded yet
-    if (!loadedFontsRef.current.includes(obj.fontFamily)) {
-      WebFont.load({
-        google: {
-          families: [obj.fontFamily]
-        },
-        fontactive: (fontFamily, fvd) => {
-          if (!loadedFontsRef.current.includes(obj.fontFamily)) {
-            setLoadedFonts([...loadedFontsRef.current, fontFamily])
+  const [fontLoaded, setFontLoaded] = useState(false);
+  const loadFonts = (obj, canvas) => {
+    if (obj?.fontFamily) {
+      if (!loadedFontsRef.current.includes(obj.fontFamily)) {
+        WebFont.load({
+          google: {
+            families: [obj.fontFamily]
+          },
+          fontactive: (fontFamily, fvd) => {
+            if (!loadedFontsRef.current.includes(obj.fontFamily)) {
+              setLoadedFonts([...loadedFontsRef.current, fontFamily])
+              setFontLoaded(true);
+            }
           }
-        }
-      });
+        })
+      }
     }
+  }
+
+  
+  const textProps = (obj, canvas, editMode, stage) => {
+    if(!fontLoaded) return null
     return {
       textDecoration: obj.link ? "underline" : "",
-      width: obj.width,
       fontFamily: obj.fontFamily,
       fontSize: obj.fontSize * (parseFloat(localSettings.textsize) || 1),
       text: editMode ? obj.text : canvas.formatTextMacros(true, obj.text),
       link: obj.link,
+      width: obj.width,
       ...(editMode ?
         {
           onTransform: canvas.handleTextTransform,
@@ -778,18 +787,18 @@ const CanvasPage = (props) => {
 
   const inputProps = (obj, canvas) => {
     let style = obj.style;
-    if(!style) style = {};
-    if (!style.backgroundColor) 
+    if (!style) style = {};
+    if (!style.backgroundColor)
       style.backgroundColor = obj.fill;
-    if (!style.color) 
+    if (!style.color)
       style.color = obj.textColor;
 
-    if (!style.borderColor) 
+    if (!style.borderColor)
       style.borderColor = obj.stroke;
-    
-    if (!style.borderWidth) 
+
+    if (!style.borderWidth)
       style.borderWidth = 1;
-    
+
 
     return {
       style: style,
@@ -962,8 +971,13 @@ const CanvasPage = (props) => {
 
 
   const renderObject = (obj, index, canvas, editMode, type, stage) => {
+    if(!canvas || !stage) {
+      return null
+    }
     const layer = canvas.refs[`${stage}AreaLayer.objects`];
     if (Object.keys(canvas.refs).length === 0) return null; //important! prevents render before canvas is ready
+
+
 
     switch (type) {
       case "rectangles":
@@ -1001,7 +1015,7 @@ const CanvasPage = (props) => {
       case "stars":
         return <Star {...defaultObjProps(obj, canvas, editMode)} {...starProps(obj)} {...canvas.getDragProps(obj.id)} />;
       case "texts":
-        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode)} {...canvas.getDragProps(obj.id)} />;
+        return <Text {...defaultObjProps(obj, canvas, editMode)} {...textProps(obj, canvas, editMode, stage)} {...canvas.getDragProps(obj.id)} />;
       // return (
       //   <Group {...groupProps(obj, canvas, editMode)}>
       //     <Rect {...textRectProps(obj, canvas, editMode)} />
@@ -1087,6 +1101,7 @@ const CanvasPage = (props) => {
           {...inputProps(obj, canvas)}
           {...canvas.getVariableProps()}
           {...canvas.getPageProps()}
+          {...canvas.getInteractiveProps(obj.id)}
           {...(editMode ? customObjProps(obj, canvas) : {})}
         />;
       default:
@@ -1228,8 +1243,11 @@ const CanvasPage = (props) => {
               if (id.length > 0) {
                 const type = id.replace(/\d+$/, "");
                 const obj = canvas.state[type].filter(obj => obj?.id === id)[0];
-                if (obj && objectIsOnStage(obj, canvas))
-                  out.push(renderObject(obj, index, canvas, editMode, type, stage))
+                if (type === 'texts') {
+                  loadFonts(obj, canvas)                
+                }
+                  if (obj && objectIsOnStage(obj, canvas))
+                    out.push(renderObject(obj, index, canvas, editMode, type, stage))
               }
             });
             return out

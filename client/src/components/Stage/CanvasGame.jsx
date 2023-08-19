@@ -349,9 +349,9 @@ class Graphics extends Component {
       })
       localStorage.setItem("tutorial", "true")
       setTimeout(() => {
-      if(this.state.overlayOpen){
-        document.getElementsByClassName('overlayMain')[0].style.visibility = 'visible'
-      }
+        if (this.state.overlayOpen) {
+          document.getElementsByClassName('overlayMain')[0].style.visibility = 'visible'
+        }
       }, 100);
     } else {
       this.setState({
@@ -366,25 +366,34 @@ class Graphics extends Component {
       this.props.setCanvasLoading(this.state.canvasLoading);
     }
     if (prevProps.level !== this.props.level) {
-      this.setState({ level: this.props.level })
+      this.setState({ overlayOpen: false, overlayOpenIndex: -1 })
+
+      setTimeout(() => {
+        this.setState({ level: this.props.level })
+      }, 100);
     }
+
     handleCollisions(this.props, this.state);
 
     if (localStorage.getItem("tutorial") === "true") {
-      if (this.state.startTutorial)
+      if (this.state.startTutorial) {
         this.setState({
           startTutorial: false
         })
+      } else {
+        if (!this.props.running) {
+          document.getElementById('gamePaused').style.background = 'rgba(0,0,0,0.7)'
+        }
+      }
     } else {
       if (!this.state.startTutorial)
         this.setState({
           startTutorial: true
         })
-      console.log(this.state.overlayOpen)
       if (this.state.overlayOpen) {
-        console.log(document.getElementsByClassName('overlayMain')[0])
         document.getElementsByClassName('overlayMain')[0].style.visibility = 'hidden'
       }
+
       // localStorage.setItem("tutorial", "true")
     }
 
@@ -418,10 +427,15 @@ class Graphics extends Component {
       overlayPageEnter &&
       (prevState.level < this.state.level || !this.state.updateRanOnce)
     ) {
-      this.setState({
-        overlayOpenIndex: overlayPageEnter.id,
-        overlayOpen: true
-      });
+      // setTimeout(() => {
+        this.setState({
+          overlayOpenIndex: overlayPageEnter.id,
+          overlayOpen: true
+        });
+      // }, 10);
+    }
+    if (this.props.gamepieceStatus.running === false) {
+      document.getElementById('gamePaused').style.background = 'rgba(0,0,0,0.7)'
     }
 
     if (!this.state.updateRanOnce) {
@@ -514,7 +528,6 @@ class Graphics extends Component {
               img.anchor
             )).forEach(({ x, y, width, height, radiusX, radiusY, id, rolelevel }) => {
               let sX, sY;
-              console.log(obj)
               if (!layerGroup.includes(id)) {
                 return
               }

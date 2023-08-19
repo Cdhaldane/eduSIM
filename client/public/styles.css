@@ -126,6 +126,23 @@ img {
   /* Firefox */
 }
 
+  
+#gamePaused {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2em;
+  z-index: 19000;
+
+}
+
 
 
 #root {
@@ -675,7 +692,6 @@ a {
   right: 0;
   bottom: 0;
   background-color: white
-  
 }
 
 .editpage-container {
@@ -868,6 +884,7 @@ a {
   .addbutton {
     font-size: 1.0rem;
   }
+
   .join {
     margin-top: 70px;
   }

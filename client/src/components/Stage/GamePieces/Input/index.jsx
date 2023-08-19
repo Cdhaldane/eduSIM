@@ -108,7 +108,11 @@ const Input = forwardRef((props, ref) => {
     let value;
     let int;
     const delayInMilliseconds = 50; // customize this value to your needs
-
+    props.updateStatus({
+      button: props.label,
+      clickAmount: props.status.clickAmount ? props.status.clickAmount + 1 : 1
+    })
+    console.log(props)
     for (let i = 0; i < props.interactions.length; i++) {
       setTimeout(() => {
         int = props.interactions[i].flat()

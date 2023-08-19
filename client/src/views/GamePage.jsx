@@ -355,12 +355,13 @@ const Game = (props) => {
             initialUserId={userid}
             alert={alertContext.showAlert}
             refresh={() => setInvalidateSidebar(Math.random())}
+            running={roomStatus.running}
             countdown={roomStatus.settings && !isNaN(roomStatus.settings.advanceMode) && countdown}
           />
-          {!roomStatus.running && (<PauseCover>
+          {!roomStatus.running && (<div id="gamePaused"> 
             <i className="fa fa-pause-circle fa-2x"></i>
             <p>{t("game.paused")}</p>
-          </PauseCover>)}
+          </div>)}
         </Main>
         {!isNaN(roomStatus.settings?.advanceMode) && (
           <AutoUpdate

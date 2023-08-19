@@ -123,8 +123,9 @@ const Sidebar = (props) => {
   const handleClickOutside = e => {
     if ((!sidebarRef.current?.contains(e.target) || backdropRef.current.contains(e.target)) &&
       !e.target.className.toString().includes('remove-whisper')) {
-      // setExpanded(false);
-      // setSubmenuVisible(false);
+      setExpanded(false);
+      setSubmenuVisible(false);
+      props.close(false);
     }
 
     if (performanceModal.current && performanceBtn.current &&
@@ -269,7 +270,7 @@ const Sidebar = (props) => {
       icon: "graph",
       id: "performance",
       label: t("sidebar.performance"),
-      visible: pevisible
+      visible: true,
     },
     {
       icon: "cog",
@@ -370,7 +371,7 @@ const Sidebar = (props) => {
       <Modal
         isOpen={showPerformanceModal}
         onRequestClose={() => setShowPerformanceModal(false)}
-        className="createmodalarea"
+        className="performanceModal"
         overlayClassName="myoverlay"
         closeTimeoutMS={250}
         ariaHideApp={false}
@@ -380,8 +381,9 @@ const Sidebar = (props) => {
           status={props.gamepieceStatus}
           customObjs={props.customObjs}
           ref={performanceModal}
+          gameMode={props.game}
           setData={props.performanceFunctions}
-          variables={props.variables}
+          variables={props.game ? props.globalVars : props.variables}
         />
       </Modal>
       {showVariables && (
